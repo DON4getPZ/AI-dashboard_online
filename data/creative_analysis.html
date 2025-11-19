@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>광고 소재별 분석 - 마케팅 대시보드</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Berry Theme Colors */
+            --primary-main: #673ab7;
+            --primary-light: #ede7f6;
+            --primary-dark: #5e35b1;
+            --secondary-main: #2196f3;
+            --secondary-light: #e3f2fd;
+            --success-main: #00c853;
+            --success-light: #b9f6ca;
+            --warning-main: #ffab00;
+            --warning-light: #fff8e1;
+            --error-main: #ff1744;
+            --error-light: #ffeaea;
+            --grey-50: #fafafa;
+            --grey-100: #f5f5f5;
+            --grey-200: #eeeeee;
+            --grey-300: #e0e0e0;
+            --grey-500: #9e9e9e;
+            --grey-700: #616161;
+            --grey-900: #212121;
+            --paper: #ffffff;
+            --background: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--grey-900);
+            line-height: 1.5;
+        }
+
+        /* 레이아웃 구조 */
+        .app-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--grey-200);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-main) 0%, var(--primary-dark) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .sidebar-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .sidebar-logo-subtitle {
+            font-size: 11px;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Simplebar 스타일 래퍼 */
+        .simplebar-content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-thumb {
+            background: var(--grey-300);
+            border-radius: 3px;
+        }
+
+        .sidebar-content {
+            padding: 16px 12px;
+        }
+
+        /* 네비게이션 그룹 */
+        .nav-group {
+            margin-bottom: 16px;
+        }
+
+        .nav-group-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 16px;
+            margin-bottom: 4px;
+        }
+
+        /* 네비게이션 아이템 */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: var(--grey-700);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: var(--grey-100);
+            color: var(--primary-main);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .nav-item-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .nav-item-text {
+            flex: 1;
+        }
+
+        /* 메인 컨텐츠 영역 */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* 헤더 */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin: 0;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--grey-500);
+            margin-top: 4px;
+        }
+
+        /* 카드 공통 스타일 */
+        .card {
+            background: var(--paper);
+            border-radius: 12px;
+            box-shadow: 0 2px 14px 0 rgba(32, 40, 45, 0.08);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 20px 0 rgba(32, 40, 45, 0.12);
+        }
+
+        /* 필터 섹션 */
+        .filter-section {
+            padding: 20px 24px;
+            margin-bottom: 24px;
+        }
+
+        .filter-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-header::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--primary-main);
+            border-radius: 2px;
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .filter-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 160px;
+            flex: 1;
+        }
+
+        .filter-group label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--grey-700);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 10px 14px;
+            border: 1px solid var(--grey-300);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--paper);
+            color: var(--grey-900);
+            transition: all 0.2s ease;
+        }
+
+        .filter-group select:hover,
+        .filter-group input:hover {
+            border-color: var(--primary-main);
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary-main);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        /* 소재 그리드 */
+        .creative-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* 소재 카드 */
+        .creative-card {
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .creative-image-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* 1:1 비율 */
+            background: var(--grey-100);
+            overflow: hidden;
+        }
+
+        .creative-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .creative-card:hover .creative-image {
+            transform: scale(1.05);
+        }
+
+        .creative-image-link {
+            display: block;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .creative-image-link:hover::after {
+            content: '원본 보기';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            pointer-events: none;
+        }
+
+        .creative-image-link .creative-image-wrapper {
+            cursor: pointer;
+        }
+
+        .creative-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--grey-500);
+            text-align: center;
+        }
+
+        .creative-placeholder svg {
+            width: 48px;
+            height: 48px;
+            fill: var(--grey-300);
+            margin-bottom: 8px;
+        }
+
+        .creative-info {
+            padding: 20px;
+        }
+
+        .creative-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .creative-name.clickable {
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .creative-name.clickable:hover {
+            color: var(--primary-main);
+            text-decoration: underline;
+        }
+
+        .creative-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .creative-metric {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metric-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .metric-value.positive {
+            color: var(--success-main);
+        }
+
+        .metric-value.negative {
+            color: var(--error-main);
+        }
+
+        /* 요약 카드 */
+        .summary-section {
+            margin-bottom: 24px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+
+        .summary-card {
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .summary-card h3 {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .summary-card .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .summary-card .unit {
+            font-size: 11px;
+            color: var(--grey-500);
+            margin-top: 4px;
+        }
+
+        /* 로딩 */
+        .loading {
+            text-align: center;
+            padding: 60px 40px;
+            color: var(--grey-500);
+        }
+
+        /* 빈 상태 */
+        .empty-state {
+            text-align: center;
+            padding: 80px 40px;
+            color: var(--grey-500);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            fill: var(--grey-300);
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--grey-700);
+            margin-bottom: 8px;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1400px) {
+            .summary-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 16px;
+            }
+
+            .creative-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filter-row {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 모달 스타일 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--paper);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--grey-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--grey-500);
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--grey-900);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        /* 모달 KPI 그리드 */
+        .modal-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .modal-kpi-card {
+            background: var(--grey-50);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .modal-kpi-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .modal-kpi-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        /* 모달 차트 */
+        .modal-chart-section {
+            margin-top: 24px;
+        }
+
+        .modal-chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 16px;
+        }
+
+        .modal-chart {
+            width: 100%;
+            height: 300px;
+            background: var(--grey-50);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .modal-kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="sidebar-logo-text">Analytics</div>
+                        <div class="sidebar-logo-subtitle">Dashboard</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="simplebar-content-wrapper">
+                <div class="sidebar-content">
+                    <!-- 대시보드 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">대시보드</div>
+                        <a href="marketing_dashboard_v3.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">광고 성과 대시보드</span>
+                        </a>
+                    </div>
+
+                    <!-- 분석 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">분석</div>
+                        <a href="creative_analysis.html" class="nav-item active">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">광고 소재별 분석</span>
+                        </a>
+                        <a href="#" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2.03 0v8.99H22c-.47-4.74-4.24-8.52-8.97-8.99zm0 11.01V22c4.74-.47 8.5-4.25 8.97-8.99h-8.97z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">채널별 비교</span>
+                        </a>
+                        <a href="#" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">기간별 리포트</span>
+                        </a>
+                    </div>
+
+                    <!-- 설정 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">설정</div>
+                        <a href="#" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">데이터 설정</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <div class="container">
+                <!-- 헤더 -->
+                <div class="header">
+                    <div>
+                        <h1>광고 소재별 분석</h1>
+                        <div class="header-subtitle">광고 소재(이미지/영상)별 성과 분석</div>
+                    </div>
+                </div>
+
+                <!-- 필터 섹션 -->
+                <div class="filter-section card">
+                    <div class="filter-header">필터 설정</div>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>유형구분</label>
+                            <select id="filterType">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>브랜드명</label>
+                            <select id="filterBrand">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>상품명</label>
+                            <select id="filterProduct">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>추가구분</label>
+                            <select id="filterExtra">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>캠페인</label>
+                            <select id="filterCampaign">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>광고세트</label>
+                            <select id="filterAdSet">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>기간 선택</label>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <input type="date" id="startDate">
+                                <span style="color: var(--grey-500); font-weight: 500;">~</span>
+                                <input type="date" id="endDate">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 요약 섹션 -->
+                <div class="summary-section">
+                    <div class="summary-grid">
+                        <div class="summary-card card">
+                            <h3>총 소재 수</h3>
+                            <div class="value" id="totalCreatives">-</div>
+                            <div class="unit">개</div>
+                        </div>
+                        <div class="summary-card card">
+                            <h3>총 비용</h3>
+                            <div class="value" id="totalCost">-</div>
+                            <div class="unit">원</div>
+                        </div>
+                        <div class="summary-card card">
+                            <h3>총 클릭</h3>
+                            <div class="value" id="totalClicks">-</div>
+                            <div class="unit">회</div>
+                        </div>
+                        <div class="summary-card card">
+                            <h3>평균 CPC</h3>
+                            <div class="value" id="avgCPC">-</div>
+                            <div class="unit">원</div>
+                        </div>
+                        <div class="summary-card card">
+                            <h3>평균 ROAS</h3>
+                            <div class="value" id="avgROAS">-</div>
+                            <div class="unit"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 소재 그리드 -->
+                <div class="creative-grid" id="creativeGrid">
+                    <div class="loading">데이터를 불러오는 중...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 세부 성과 모달 -->
+    <div class="modal-overlay" id="creativeModal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">소재 세부 성과</div>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- KPI 카드 -->
+                <div class="modal-kpi-grid" id="modalKpiGrid">
+                    <!-- JS로 동적 생성 -->
+                </div>
+
+                <!-- 일별 추이 차트 -->
+                <div class="modal-chart-section">
+                    <div class="modal-chart-title">일별 성과 추이</div>
+                    <div class="modal-chart">
+                        <canvas id="modalChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // 전역 변수
+        let allData = [];
+        let imageUrlMap = {}; // 소재이름 -> 이미지 URL 매핑 (1순위)
+        let fallbackUrlMap = {}; // 소재이름 -> 대체 이미지 URL 매핑 (2순위)
+        let originalUrlMap = {}; // 소재이름 -> 원본 URL 매핑
+        let filters = {
+            type: '',
+            brand: '',
+            product: '',
+            extra: '',
+            campaign: '',
+            adSet: '',
+            startDate: '',
+            endDate: ''
+        };
+
+        // 소재 데이터 파일 (data/creative 폴더)
+        const creativeDataFile = './creative/2025-11.csv';
+        // 이미지 URL 매핑 파일
+        const imageUrlFile = './creative/Meta-이미지-URL_url.csv';
+
+        // CSV 파싱 함수 (기본)
+        function parseCSV(text) {
+            const lines = text.trim().split('\n');
+            const headers = lines[0].split(',');
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',');
+                if (values.length === headers.length) {
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header.trim()] = values[index].trim();
+                    });
+                    data.push(row);
+                }
+            }
+            return data;
+        }
+
+        // CSV 파싱 함수 (따옴표 처리)
+        function parseCSVWithQuotes(text) {
+            const lines = text.trim().split('\n');
+            const headers = parseCSVLine(lines[0]);
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                if (values.length >= 2) {
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header.trim().replace(/^"|"$/g, '')] = (values[index] || '').trim().replace(/^"|"$/g, '');
+                    });
+                    data.push(row);
+                }
+            }
+            return data;
+        }
+
+        // CSV 한 줄 파싱 (따옴표 내부 쉼표 처리)
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            return result;
+        }
+
+        // 데이터 로드
+        async function loadData() {
+            try {
+                // 1. 이미지 URL 매핑 데이터 로드
+                const urlResponse = await fetch(imageUrlFile);
+                if (urlResponse.ok) {
+                    const urlText = await urlResponse.text();
+                    const urlData = parseCSVWithQuotes(urlText);
+                    // 소재이름 -> URL 매핑 생성 (facebook.com/ads/image 최우선, scontent fallback)
+                    urlData.forEach(row => {
+                        const creativeName = row['광고,에셋이름'] || row['광고'];
+                        const url = row['url'];
+                        const originalUrl = row['원본 url / ID'] || row['원본url/ID'] || '';
+
+                        if (creativeName && url) {
+                            // URL 우선순위: facebook.com/ads/image, img.youtube.com > scontent > 기타
+                            const isFacebookAdsImage = url.includes('facebook.com/ads/image');
+                            const isYoutubeThumbnail = url.includes('img.youtube.com/vi/');
+                            const isScontent = url.includes('scontent') || url.includes('googlesyndication');
+                            const isPrimaryUrl = isFacebookAdsImage || isYoutubeThumbnail;
+
+                            // facebook.com/ads/image 또는 img.youtube.com URL은 최우선
+                            if (isPrimaryUrl) {
+                                // 기존에 primary URL이 없거나, scontent만 있으면 덮어쓰기
+                                const existingUrl = imageUrlMap[creativeName];
+                                const existingIsPrimary = existingUrl &&
+                                    (existingUrl.includes('facebook.com/ads/image') || existingUrl.includes('img.youtube.com/vi/'));
+
+                                if (!existingIsPrimary) {
+                                    // 기존 URL이 scontent면 fallback으로 이동
+                                    if (existingUrl && (existingUrl.includes('scontent') || existingUrl.includes('googlesyndication'))) {
+                                        fallbackUrlMap[creativeName] = existingUrl;
+                                    }
+                                    imageUrlMap[creativeName] = url;
+                                    if (originalUrl && originalUrl !== '-') {
+                                        originalUrlMap[creativeName] = originalUrl;
+                                    }
+                                }
+                            }
+                            // scontent 등 URL은 fallback으로 저장
+                            else if (isScontent) {
+                                // 이미 primary URL이 있으면 fallback으로 저장
+                                const existingUrl = imageUrlMap[creativeName];
+                                const existingIsPrimary = existingUrl &&
+                                    (existingUrl.includes('facebook.com/ads/image') || existingUrl.includes('img.youtube.com/vi/'));
+
+                                if (existingIsPrimary) {
+                                    if (!fallbackUrlMap[creativeName]) {
+                                        fallbackUrlMap[creativeName] = url;
+                                    }
+                                }
+                                // primary URL이 없으면 primary로 저장
+                                else if (!imageUrlMap[creativeName]) {
+                                    imageUrlMap[creativeName] = url;
+                                    if (originalUrl && originalUrl !== '-') {
+                                        originalUrlMap[creativeName] = originalUrl;
+                                    }
+                                }
+                            }
+                            // 기타 URL은 아무것도 없을 때만
+                            else if (!imageUrlMap[creativeName]) {
+                                imageUrlMap[creativeName] = url;
+                                if (originalUrl && originalUrl !== '-') {
+                                    originalUrlMap[creativeName] = originalUrl;
+                                }
+                            }
+                        }
+                    });
+                    console.log('이미지 URL 매핑 완료:', Object.keys(imageUrlMap).length, '개');
+                    console.log('Fallback URL 매핑 완료:', Object.keys(fallbackUrlMap).length, '개');
+                    console.log('원본 URL 매핑 완료:', Object.keys(originalUrlMap).length, '개');
+                }
+
+                // 2. 소재 성과 데이터 로드
+                const dataResponse = await fetch(creativeDataFile);
+                if (!dataResponse.ok) throw new Error('Failed to load creative data');
+                const dataText = await dataResponse.text();
+                allData = parseCSV(dataText);
+
+                // 필터 옵션 설정
+                populateFilters();
+
+                // 날짜 범위 설정
+                setDateRange();
+
+                // 대시보드 업데이트
+                updateDashboard();
+            } catch (err) {
+                console.error('Error loading data:', err);
+                document.getElementById('creativeGrid').innerHTML =
+                    '<div class="empty-state" style="grid-column: 1 / -1;"><h3>데이터 로드 실패</h3><p>데이터를 불러올 수 없습니다</p></div>';
+            }
+        }
+
+        // 필터 옵션 설정 (유형구분만 초기화, 나머지는 계층 구조)
+        function populateFilters() {
+            const types = [...new Set(allData.map(d => d['유형구분']))].filter(Boolean).sort();
+            populateSelect('filterType', types);
+            updateBrandFilter();
+        }
+
+        // 브랜드명 필터 (유형구분의 하위)
+        function updateBrandFilter() {
+            const filteredData = allData.filter(row => {
+                if (filters.type && row['유형구분'] !== filters.type) return false;
+                return true;
+            });
+            const brands = [...new Set(filteredData.map(d => d['브랜드명']))].filter(Boolean).sort();
+            const brandSelect = document.getElementById('filterBrand');
+            brandSelect.innerHTML = '<option value="">전체</option>';
+            brands.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                brandSelect.appendChild(option);
+            });
+            if (!brands.includes(filters.brand)) {
+                filters.brand = '';
+                brandSelect.value = '';
+            }
+            updateProductFilter();
+        }
+
+        // 상품명 필터 (브랜드명의 하위)
+        function updateProductFilter() {
+            const filteredData = allData.filter(row => {
+                if (filters.type && row['유형구분'] !== filters.type) return false;
+                if (filters.brand && row['브랜드명'] !== filters.brand) return false;
+                return true;
+            });
+            const products = [...new Set(filteredData.map(d => d['상품명']))].filter(Boolean).sort();
+            const productSelect = document.getElementById('filterProduct');
+            productSelect.innerHTML = '<option value="">전체</option>';
+            products.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                productSelect.appendChild(option);
+            });
+            if (!products.includes(filters.product)) {
+                filters.product = '';
+                productSelect.value = '';
+            }
+            updateExtraFilter();
+        }
+
+        // 추가구분 필터 (상품명의 하위)
+        function updateExtraFilter() {
+            const filteredData = allData.filter(row => {
+                if (filters.type && row['유형구분'] !== filters.type) return false;
+                if (filters.brand && row['브랜드명'] !== filters.brand) return false;
+                if (filters.product && row['상품명'] !== filters.product) return false;
+                return true;
+            });
+            const extras = [...new Set(filteredData.map(d => d['추가 구분']))].filter(Boolean).sort();
+            const extraSelect = document.getElementById('filterExtra');
+            extraSelect.innerHTML = '<option value="">전체</option>';
+            extras.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                extraSelect.appendChild(option);
+            });
+            if (!extras.includes(filters.extra)) {
+                filters.extra = '';
+                extraSelect.value = '';
+            }
+            updateCampaignFilter();
+        }
+
+        // 캠페인 필터 (추가구분의 하위)
+        function updateCampaignFilter() {
+            const filteredData = allData.filter(row => {
+                if (filters.type && row['유형구분'] !== filters.type) return false;
+                if (filters.brand && row['브랜드명'] !== filters.brand) return false;
+                if (filters.product && row['상품명'] !== filters.product) return false;
+                if (filters.extra && row['추가 구분'] !== filters.extra) return false;
+                return true;
+            });
+            const campaigns = [...new Set(filteredData.map(d => d['캠페인']))].filter(Boolean).sort();
+            const campaignSelect = document.getElementById('filterCampaign');
+            campaignSelect.innerHTML = '<option value="">전체</option>';
+            campaigns.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                campaignSelect.appendChild(option);
+            });
+            if (!campaigns.includes(filters.campaign)) {
+                filters.campaign = '';
+                campaignSelect.value = '';
+            }
+            updateAdSetFilter();
+        }
+
+        // 광고세트 필터 (캠페인의 하위)
+        function updateAdSetFilter() {
+            const filteredData = allData.filter(row => {
+                if (filters.type && row['유형구분'] !== filters.type) return false;
+                if (filters.brand && row['브랜드명'] !== filters.brand) return false;
+                if (filters.product && row['상품명'] !== filters.product) return false;
+                if (filters.extra && row['추가 구분'] !== filters.extra) return false;
+                if (filters.campaign && row['캠페인'] !== filters.campaign) return false;
+                return true;
+            });
+            const adSets = [...new Set(filteredData.map(d => d['광고세트']))].filter(Boolean).sort();
+            const adSetSelect = document.getElementById('filterAdSet');
+            adSetSelect.innerHTML = '<option value="">전체</option>';
+            adSets.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                adSetSelect.appendChild(option);
+            });
+            if (!adSets.includes(filters.adSet)) {
+                filters.adSet = '';
+                adSetSelect.value = '';
+            }
+        }
+
+        function populateSelect(id, options) {
+            const select = document.getElementById(id);
+            options.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                select.appendChild(option);
+            });
+        }
+
+        // 날짜 범위 설정
+        function setDateRange() {
+            const dates = allData
+                .map(d => d['날짜'])
+                .filter(Boolean)
+                .map(d => new Date(d))
+                .filter(d => !isNaN(d));
+
+            if (dates.length > 0) {
+                const minDate = new Date(Math.min(...dates));
+                const maxDate = new Date(Math.max(...dates));
+
+                document.getElementById('startDate').value = formatDateForInput(minDate);
+                document.getElementById('endDate').value = formatDateForInput(maxDate);
+
+                filters.startDate = formatDateForInput(minDate);
+                filters.endDate = formatDateForInput(maxDate);
+            }
+        }
+
+        function formatDateForInput(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        // 데이터 필터링
+        function filterData() {
+            return allData.filter(row => {
+                if (filters.type && row['유형구분'] !== filters.type) return false;
+                if (filters.brand && row['브랜드명'] !== filters.brand) return false;
+                if (filters.product && row['상품명'] !== filters.product) return false;
+                if (filters.extra && row['추가 구분'] !== filters.extra) return false;
+                if (filters.campaign && row['캠페인'] !== filters.campaign) return false;
+                if (filters.adSet && row['광고세트'] !== filters.adSet) return false;
+
+                if (filters.startDate || filters.endDate) {
+                    const rowDate = new Date(row['날짜']);
+                    if (isNaN(rowDate)) return false;
+                    if (filters.startDate && rowDate < new Date(filters.startDate)) return false;
+                    if (filters.endDate && rowDate > new Date(filters.endDate)) return false;
+                }
+
+                return true;
+            });
+        }
+
+        // 소재별 데이터 집계 (소재이름 기준)
+        function aggregateByCreative(data) {
+            const groups = {};
+
+            data.forEach(row => {
+                const key = row['소재이름'] || '기타';
+
+                if (!groups[key]) {
+                    groups[key] = {
+                        name: key,
+                        비용: 0,
+                        노출: 0,
+                        클릭: 0,
+                        전환수: 0,
+                        전환값: 0
+                    };
+                }
+
+                groups[key].비용 += parseFloat(row['비용']) || 0;
+                groups[key].노출 += parseFloat(row['노출']) || 0;
+                groups[key].클릭 += parseFloat(row['클릭']) || 0;
+                groups[key].전환수 += parseFloat(row['전환수']) || 0;
+                groups[key].전환값 += parseFloat(row['전환값']) || 0;
+            });
+
+            // KPI 계산
+            return Object.values(groups).map(g => ({
+                ...g,
+                CPM: g.노출 > 0 ? (g.비용 / g.노출 * 1000) : 0,
+                CPC: g.클릭 > 0 ? (g.비용 / g.클릭) : 0,
+                CPA: g.전환수 > 0 ? (g.비용 / g.전환수) : 0,
+                ROAS: g.비용 > 0 ? (g.전환값 / g.비용 * 100) : 0
+            })).sort((a, b) => b.비용 - a.비용); // 비용 높은 순 정렬
+        }
+
+        // 대시보드 업데이트
+        function updateDashboard() {
+            const filteredData = filterData();
+            const creativeData = aggregateByCreative(filteredData);
+
+            // 요약 업데이트
+            updateSummary(creativeData);
+
+            // 소재 그리드 업데이트
+            updateCreativeGrid(creativeData);
+        }
+
+        // 요약 업데이트
+        function updateSummary(data) {
+            const totals = data.reduce((acc, row) => {
+                acc.비용 += row.비용;
+                acc.클릭 += row.클릭;
+                acc.전환값 += row.전환값;
+                return acc;
+            }, { 비용: 0, 클릭: 0, 전환값: 0 });
+
+            const avgCPC = totals.클릭 > 0 ? (totals.비용 / totals.클릭) : 0;
+            const avgROAS = totals.비용 > 0 ? (totals.전환값 / totals.비용 * 100) : 0;
+
+            document.getElementById('totalCreatives').textContent = formatNumber(data.length);
+            document.getElementById('totalCost').textContent = formatNumber(totals.비용);
+            document.getElementById('totalClicks').textContent = formatNumber(totals.클릭);
+            document.getElementById('avgCPC').textContent = formatNumber(avgCPC);
+            document.getElementById('avgROAS').textContent = formatROAS(avgROAS);
+        }
+
+        // 소재 그리드 업데이트
+        function updateCreativeGrid(data) {
+            const grid = document.getElementById('creativeGrid');
+
+            if (data.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                        </svg>
+                        <h3>소재 데이터가 없습니다</h3>
+                        <p>필터 조건을 변경해 주세요</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = data.map(creative => {
+                // 이미지 URL 매핑에서 소재이름으로 URL 찾기
+                const imageUrl = imageUrlMap[creative.name];
+                const fallbackUrl = fallbackUrlMap[creative.name];
+                const originalUrl = originalUrlMap[creative.name];
+
+                // 클릭 가능 여부 및 링크 URL 결정
+                const hasLink = originalUrl || imageUrl;
+                const linkUrl = originalUrl || imageUrl || '#';
+
+                // onerror 핸들러: fallback URL이 있으면 시도, 없으면 placeholder 표시
+                const errorHandler = fallbackUrl
+                    ? `onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='${fallbackUrl}';}else{this.style.display='none';this.nextElementSibling.style.display='block';}"`
+                    : `onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"`;
+
+                const imageContent = imageUrl
+                    ? `<img src="${imageUrl}" alt="${creative.name}" class="creative-image" ${errorHandler}>
+                       <div class="creative-placeholder" style="display: none;">
+                           <svg viewBox="0 0 24 24">
+                               <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                           </svg>
+                           <div>이미지 로드 실패</div>
+                       </div>`
+                    : `<div class="creative-placeholder">
+                           <svg viewBox="0 0 24 24">
+                               <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                           </svg>
+                           <div>이미지 없음</div>
+                       </div>`;
+
+                // 이미지 영역을 링크로 감싸기
+                const imageWrapper = hasLink
+                    ? `<a href="${linkUrl}" target="_blank" rel="noopener noreferrer" class="creative-image-link" title="원본 보기">
+                           <div class="creative-image-wrapper">
+                               ${imageContent}
+                           </div>
+                       </a>`
+                    : `<div class="creative-image-wrapper">
+                           ${imageContent}
+                       </div>`;
+
+                return `
+                <div class="creative-card card">
+                    ${imageWrapper}
+                    <div class="creative-info">
+                        <div class="creative-name clickable" title="${creative.name}" onclick="showCreativeDetail('${creative.name.replace(/'/g, "\\'")}')">${creative.name}</div>
+                        <div class="creative-metrics">
+                            <div class="creative-metric">
+                                <span class="metric-label">비용</span>
+                                <span class="metric-value">${formatNumber(creative.비용)}</span>
+                            </div>
+                            <div class="creative-metric">
+                                <span class="metric-label">CPA</span>
+                                <span class="metric-value">${formatNumber(creative.CPA)}</span>
+                            </div>
+                            <div class="creative-metric">
+                                <span class="metric-label">ROAS</span>
+                                <span class="metric-value ${creative.ROAS >= 100 ? 'positive' : 'negative'}">${formatROAS(creative.ROAS)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        // 숫자 포맷
+        function formatNumber(num) {
+            if (num === 0 || num === null || num === undefined) return '-';
+            return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // ROAS 포맷
+        function formatROAS(num) {
+            if (num === 0 || num === null || num === undefined) return '-';
+            return Math.round(num) + '%';
+        }
+
+        // 모달 차트 인스턴스
+        let modalChartInstance = null;
+
+        // 소재 세부 성과 모달 표시
+        function showCreativeDetail(creativeName) {
+            // 해당 소재의 데이터 필터링
+            const creativeData = filterData().filter(row => row['소재이름'] === creativeName);
+
+            if (creativeData.length === 0) {
+                alert('해당 소재의 데이터가 없습니다.');
+                return;
+            }
+
+            // KPI 집계
+            const totals = creativeData.reduce((acc, row) => {
+                acc.비용 += parseFloat(row['비용']) || 0;
+                acc.노출 += parseFloat(row['노출']) || 0;
+                acc.클릭 += parseFloat(row['클릭']) || 0;
+                acc.전환수 += parseFloat(row['전환수']) || 0;
+                acc.전환값 += parseFloat(row['전환값']) || 0;
+                return acc;
+            }, { 비용: 0, 노출: 0, 클릭: 0, 전환수: 0, 전환값: 0 });
+
+            // 파생 지표 계산
+            const kpis = {
+                비용: totals.비용,
+                노출: totals.노출,
+                클릭: totals.클릭,
+                전환수: totals.전환수,
+                전환값: totals.전환값,
+                CPM: totals.노출 > 0 ? (totals.비용 / totals.노출 * 1000) : 0,
+                CPC: totals.클릭 > 0 ? (totals.비용 / totals.클릭) : 0,
+                CPA: totals.전환수 > 0 ? (totals.비용 / totals.전환수) : 0,
+                ROAS: totals.비용 > 0 ? (totals.전환값 / totals.비용 * 100) : 0
+            };
+
+            // 모달 제목 업데이트
+            document.getElementById('modalTitle').textContent = creativeName;
+
+            // KPI 카드 렌더링
+            const kpiGrid = document.getElementById('modalKpiGrid');
+            kpiGrid.innerHTML = `
+                <div class="modal-kpi-card">
+                    <div class="modal-kpi-label">비용</div>
+                    <div class="modal-kpi-value">${formatNumber(kpis.비용)}원</div>
+                </div>
+                <div class="modal-kpi-card">
+                    <div class="modal-kpi-label">노출</div>
+                    <div class="modal-kpi-value">${formatNumber(kpis.노출)}</div>
+                </div>
+                <div class="modal-kpi-card">
+                    <div class="modal-kpi-label">클릭</div>
+                    <div class="modal-kpi-value">${formatNumber(kpis.클릭)}</div>
+                </div>
+                <div class="modal-kpi-card">
+                    <div class="modal-kpi-label">전환수</div>
+                    <div class="modal-kpi-value">${formatNumber(kpis.전환수)}</div>
+                </div>
+                <div class="modal-kpi-card">
+                    <div class="modal-kpi-label">전환값</div>
+                    <div class="modal-kpi-value">${formatNumber(kpis.전환값)}원</div>
+                </div>
+                <div class="modal-kpi-card">
+                    <div class="modal-kpi-label">CPC</div>
+                    <div class="modal-kpi-value">${formatNumber(kpis.CPC)}원</div>
+                </div>
+                <div class="modal-kpi-card">
+                    <div class="modal-kpi-label">CPA</div>
+                    <div class="modal-kpi-value">${formatNumber(kpis.CPA)}원</div>
+                </div>
+                <div class="modal-kpi-card">
+                    <div class="modal-kpi-label">ROAS</div>
+                    <div class="modal-kpi-value">${formatROAS(kpis.ROAS)}</div>
+                </div>
+            `;
+
+            // 일별 데이터 집계
+            const dailyData = {};
+            creativeData.forEach(row => {
+                const date = row['날짜'];
+                if (!dailyData[date]) {
+                    dailyData[date] = { 비용: 0, 클릭: 0, 전환수: 0, 전환값: 0 };
+                }
+                dailyData[date].비용 += parseFloat(row['비용']) || 0;
+                dailyData[date].클릭 += parseFloat(row['클릭']) || 0;
+                dailyData[date].전환수 += parseFloat(row['전환수']) || 0;
+                dailyData[date].전환값 += parseFloat(row['전환값']) || 0;
+            });
+
+            // 날짜순 정렬
+            const sortedDates = Object.keys(dailyData).sort();
+            const chartLabels = sortedDates.map(d => {
+                const date = new Date(d);
+                return `${date.getMonth() + 1}/${date.getDate()}`;
+            });
+
+            // ROAS 계산
+            const roasData = sortedDates.map(date => {
+                const d = dailyData[date];
+                return d.비용 > 0 ? Math.round(d.전환값 / d.비용 * 100) : 0;
+            });
+
+            // 차트 생성
+            const ctx = document.getElementById('modalChart').getContext('2d');
+
+            // 기존 차트 제거
+            if (modalChartInstance) {
+                modalChartInstance.destroy();
+            }
+
+            modalChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [
+                        {
+                            label: '비용',
+                            data: sortedDates.map(date => dailyData[date].비용),
+                            borderColor: '#673ab7',
+                            backgroundColor: 'rgba(103, 58, 183, 0.1)',
+                            yAxisID: 'y',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'ROAS',
+                            data: roasData,
+                            borderColor: '#00c853',
+                            backgroundColor: 'rgba(0, 200, 83, 0.1)',
+                            yAxisID: 'y1',
+                            tension: 0.3,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.dataset.label === 'ROAS') {
+                                        label += context.parsed.y + '%';
+                                    } else {
+                                        label += formatNumber(context.parsed.y) + '원';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: '비용 (원)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return formatNumber(value);
+                                }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'ROAS (%)'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 모달 표시
+            document.getElementById('creativeModal').classList.add('active');
+        }
+
+        // 모달 닫기
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('creativeModal').classList.remove('active');
+        }
+
+        // 이벤트 리스너
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+
+            // 필터 변경 이벤트 (계층 구조)
+            document.getElementById('filterType').addEventListener('change', e => {
+                filters.type = e.target.value;
+                updateBrandFilter();
+                updateDashboard();
+            });
+
+            document.getElementById('filterBrand').addEventListener('change', e => {
+                filters.brand = e.target.value;
+                updateProductFilter();
+                updateDashboard();
+            });
+
+            document.getElementById('filterProduct').addEventListener('change', e => {
+                filters.product = e.target.value;
+                updateExtraFilter();
+                updateDashboard();
+            });
+
+            document.getElementById('filterExtra').addEventListener('change', e => {
+                filters.extra = e.target.value;
+                updateCampaignFilter();
+                updateDashboard();
+            });
+
+            document.getElementById('filterCampaign').addEventListener('change', e => {
+                filters.campaign = e.target.value;
+                updateAdSetFilter();
+                updateDashboard();
+            });
+
+            document.getElementById('filterAdSet').addEventListener('change', e => {
+                filters.adSet = e.target.value;
+                updateDashboard();
+            });
+
+            document.getElementById('startDate').addEventListener('change', e => {
+                filters.startDate = e.target.value;
+                updateDashboard();
+            });
+
+            document.getElementById('endDate').addEventListener('change', e => {
+                filters.endDate = e.target.value;
+                updateDashboard();
+            });
+        });
+    </script>
+</body>
+</html>

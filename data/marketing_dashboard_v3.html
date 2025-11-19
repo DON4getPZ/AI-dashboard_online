@@ -31,6 +31,8 @@
             --grey-900: #212121;
             --paper: #ffffff;
             --background: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --sidebar-width: 260px;
         }
 
         * {
@@ -43,8 +45,173 @@
             font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--background);
             color: var(--grey-900);
-            padding: 24px;
             line-height: 1.5;
+        }
+
+        /* 레이아웃 구조 */
+        .app-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--grey-200);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-main) 0%, var(--primary-dark) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .sidebar-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .sidebar-logo-subtitle {
+            font-size: 11px;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Simplebar 스타일 래퍼 */
+        .simplebar-content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-thumb {
+            background: var(--grey-300);
+            border-radius: 3px;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-thumb:hover {
+            background: var(--grey-500);
+        }
+
+        .sidebar-content {
+            padding: 16px 12px;
+        }
+
+        /* 네비게이션 그룹 */
+        .nav-group {
+            margin-bottom: 16px;
+        }
+
+        .nav-group-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 16px;
+            margin-bottom: 4px;
+        }
+
+        /* 네비게이션 아이템 */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: var(--grey-700);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: var(--grey-100);
+            color: var(--primary-main);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .nav-item-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .nav-item-text {
+            flex: 1;
+        }
+
+        .nav-item-badge {
+            background: var(--primary-main);
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* 메인 컨텐츠 영역 */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 24px;
+            min-height: 100vh;
         }
 
         .container {
@@ -620,7 +787,7 @@
         }
 
         /* 반응형 */
-        @media (max-width: 1200px) {
+        @media (max-width: 1400px) {
             .kpi-row-primary {
                 grid-template-columns: repeat(3, 1fr);
             }
@@ -629,8 +796,27 @@
             }
         }
 
+        @media (max-width: 1200px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+        }
+
         @media (max-width: 768px) {
-            body {
+            .main-content {
                 padding: 16px;
             }
 
@@ -674,341 +860,422 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 헤더 -->
-        <div class="header">
-            <div>
-                <h1>마케팅 성과 대시보드</h1>
-                <div class="header-subtitle">광고 캠페인 성과 분석 및 KPI 모니터링</div>
+    <div class="app-wrapper">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="sidebar-logo-text">Analytics</div>
+                        <div class="sidebar-logo-subtitle">Dashboard</div>
+                    </div>
+                </a>
             </div>
-        </div>
 
-        <!-- 신규 KPI 카드 - 총합계 (간단 디자인) -->
-        <div class="kpi-wrapper kpi-summary">
-            <div class="kpi-row kpi-row-primary">
-                <div class="kpi-card card kpi-simple">
-                    <h3>총 비용</h3>
-                    <div class="value" id="summaryTotalCost">-</div>
-                    <div class="unit">원</div>
-                </div>
-                <div class="kpi-card card kpi-simple">
-                    <h3>CPM</h3>
-                    <div class="value" id="summaryAvgCPM">-</div>
-                    <div class="unit">원</div>
-                </div>
-                <div class="kpi-card card kpi-simple">
-                    <h3>CPC</h3>
-                    <div class="value" id="summaryAvgCPC">-</div>
-                    <div class="unit">원</div>
-                </div>
-                <div class="kpi-card card kpi-simple">
-                    <h3>CPA</h3>
-                    <div class="value" id="summaryAvgCPA">-</div>
-                    <div class="unit">원</div>
-                </div>
-                <div class="kpi-card card kpi-simple">
-                    <h3>ROAS</h3>
-                    <div class="value" id="summaryTotalROAS">-</div>
-                    <div class="unit"></div>
-                </div>
-            </div>
-            <div class="kpi-row kpi-row-secondary">
-                <div class="kpi-card card kpi-simple">
-                    <h3>총 노출</h3>
-                    <div class="value" id="summaryTotalImpressions">-</div>
-                    <div class="unit">회</div>
-                </div>
-                <div class="kpi-card card kpi-simple">
-                    <h3>총 클릭</h3>
-                    <div class="value" id="summaryTotalClicks">-</div>
-                    <div class="unit">회</div>
-                </div>
-                <div class="kpi-card card kpi-simple">
-                    <h3>총 전환수</h3>
-                    <div class="value" id="summaryTotalConversions">-</div>
-                    <div class="unit">건</div>
-                </div>
-                <div class="kpi-card card kpi-simple">
-                    <h3>총 전환값</h3>
-                    <div class="value" id="summaryTotalConversionValue">-</div>
-                    <div class="unit">원</div>
-                </div>
-            </div>
-        </div>
+            <div class="simplebar-content-wrapper">
+                <div class="sidebar-content">
+                    <!-- 대시보드 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">대시보드</div>
+                        <a href="#" class="nav-item active">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">광고 성과 대시보드</span>
+                        </a>
+                    </div>
 
-        <!-- 필터 섹션 -->
-        <div class="filter-section card">
-            <div class="filter-header">필터 설정</div>
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label>유형구분</label>
-                    <select id="filterType">
-                        <option value="">전체</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>브랜드명</label>
-                    <select id="filterBrand">
-                        <option value="">전체</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>상품명</label>
-                    <select id="filterProduct">
-                        <option value="">전체</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>추가 구분</label>
-                    <select id="filterExtra">
-                        <option value="">전체</option>
-                    </select>
-                </div>
-            </div>
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label>기간 선택</label>
-                    <div class="date-range">
-                        <input type="date" id="startDate">
-                        <span>~</span>
-                        <input type="date" id="endDate">
+                    <!-- 분석 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">분석</div>
+                        <a href="creative_analysis.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">광고 소재별 분석</span>
+                        </a>
+                        <a href="#" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2.03 0v8.99H22c-.47-4.74-4.24-8.52-8.97-8.99zm0 11.01V22c4.74-.47 8.5-4.25 8.97-8.99h-8.97z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">채널별 비교</span>
+                        </a>
+                        <a href="#" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">기간별 리포트</span>
+                        </a>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- 세부 필터 섹션 -->
-        <div class="filter-section card">
-            <div class="filter-header">세부 필터 설정</div>
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label>캠페인</label>
-                    <select id="filterCampaign">
-                        <option value="">전체</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>세트이름</label>
-                    <select id="filterSetName">
-                        <option value="">전체</option>
-                    </select>
+                    <!-- 설정 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">설정</div>
+                        <a href="#" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">데이터 설정</span>
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
+        </aside>
 
-        <!-- 뷰 타입 선택 -->
-        <div class="view-type-section">
-            <button class="view-btn active" data-view="daily">일별</button>
-            <button class="view-btn" data-view="weekly">주별</button>
-            <button class="view-btn" data-view="monthly">월별</button>
-        </div>
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <div class="container">
+                <!-- 헤더 -->
+                <div class="header">
+                    <div>
+                        <h1>마케팅 성과 대시보드</h1>
+                        <div class="header-subtitle">광고 캠페인 성과 분석 및 KPI 모니터링</div>
+                    </div>
+                </div>
 
-        <!-- 기존 KPI 카드 - 최신 기간 데이터 + 증감 -->
-        <div class="kpi-wrapper">
-            <!-- 상단 5개: 비용, CPM, CPC, CPA, ROAS -->
-            <div class="kpi-row kpi-row-primary">
-                <div class="kpi-card card">
-                    <h3>비용</h3>
-                    <div class="value" id="totalCost">-</div>
-                    <div class="unit">원</div>
-                    <div class="trend-wrapper" id="trendCostWrapper">
-                        <div class="trend-row">
-                            <div class="trend up" id="trendCost">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
-                                <span>0%</span>
-                            </div>
-                            <span class="trend-pp" id="trendCostPP"></span>
+                <!-- 신규 KPI 카드 - 총합계 (간단 디자인) -->
+                <div class="kpi-wrapper kpi-summary">
+                    <div class="kpi-row kpi-row-primary">
+                        <div class="kpi-card card kpi-simple">
+                            <h3>총 비용</h3>
+                            <div class="value" id="summaryTotalCost">-</div>
+                            <div class="unit">원</div>
                         </div>
-                        <div class="trend-detail" id="trendCostDetail"></div>
+                        <div class="kpi-card card kpi-simple">
+                            <h3>CPM</h3>
+                            <div class="value" id="summaryAvgCPM">-</div>
+                            <div class="unit">원</div>
+                        </div>
+                        <div class="kpi-card card kpi-simple">
+                            <h3>CPC</h3>
+                            <div class="value" id="summaryAvgCPC">-</div>
+                            <div class="unit">원</div>
+                        </div>
+                        <div class="kpi-card card kpi-simple">
+                            <h3>CPA</h3>
+                            <div class="value" id="summaryAvgCPA">-</div>
+                            <div class="unit">원</div>
+                        </div>
+                        <div class="kpi-card card kpi-simple">
+                            <h3>ROAS</h3>
+                            <div class="value" id="summaryTotalROAS">-</div>
+                            <div class="unit"></div>
+                        </div>
+                    </div>
+                    <div class="kpi-row kpi-row-secondary">
+                        <div class="kpi-card card kpi-simple">
+                            <h3>총 노출</h3>
+                            <div class="value" id="summaryTotalImpressions">-</div>
+                            <div class="unit">회</div>
+                        </div>
+                        <div class="kpi-card card kpi-simple">
+                            <h3>총 클릭</h3>
+                            <div class="value" id="summaryTotalClicks">-</div>
+                            <div class="unit">회</div>
+                        </div>
+                        <div class="kpi-card card kpi-simple">
+                            <h3>총 전환수</h3>
+                            <div class="value" id="summaryTotalConversions">-</div>
+                            <div class="unit">건</div>
+                        </div>
+                        <div class="kpi-card card kpi-simple">
+                            <h3>총 전환값</h3>
+                            <div class="value" id="summaryTotalConversionValue">-</div>
+                            <div class="unit">원</div>
+                        </div>
                     </div>
                 </div>
-                <div class="kpi-card card">
-                    <h3>CPM</h3>
-                    <div class="value" id="avgCPM">-</div>
-                    <div class="unit">원</div>
-                    <div class="trend-wrapper" id="trendCPMWrapper">
-                        <div class="trend-row">
-                            <div class="trend down" id="trendCPM">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
-                                <span>0%</span>
-                            </div>
-                            <span class="trend-pp" id="trendCPMPP"></span>
-                        </div>
-                        <div class="trend-detail" id="trendCPMDetail"></div>
-                    </div>
-                </div>
-                <div class="kpi-card card">
-                    <h3>CPC</h3>
-                    <div class="value" id="avgCPC">-</div>
-                    <div class="unit">원</div>
-                    <div class="trend-wrapper" id="trendCPCWrapper">
-                        <div class="trend-row">
-                            <div class="trend down" id="trendCPC">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
-                                <span>0%</span>
-                            </div>
-                            <span class="trend-pp" id="trendCPCPP"></span>
-                        </div>
-                        <div class="trend-detail" id="trendCPCDetail"></div>
-                    </div>
-                </div>
-                <div class="kpi-card card">
-                    <h3>CPA</h3>
-                    <div class="value" id="avgCPA">-</div>
-                    <div class="unit">원</div>
-                    <div class="trend-wrapper" id="trendCPAWrapper">
-                        <div class="trend-row">
-                            <div class="trend down" id="trendCPA">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
-                                <span>0%</span>
-                            </div>
-                            <span class="trend-pp" id="trendCPAPP"></span>
-                        </div>
-                        <div class="trend-detail" id="trendCPADetail"></div>
-                    </div>
-                </div>
-                <div class="kpi-card card">
-                    <h3>ROAS</h3>
-                    <div class="value" id="totalROAS">-</div>
-                    <div class="unit"></div>
-                    <div class="trend-wrapper" id="trendROASWrapper">
-                        <div class="trend-row">
-                            <div class="trend up" id="trendROAS">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
-                                <span>0%</span>
-                            </div>
-                            <span class="trend-pp" id="trendROASPP"></span>
-                        </div>
-                        <div class="trend-detail" id="trendROASDetail"></div>
-                    </div>
-                </div>
-            </div>
-            <!-- 하단 4개: 노출, 클릭, 전환수, 전환값 -->
-            <div class="kpi-row kpi-row-secondary">
-                <div class="kpi-card card">
-                    <h3>노출</h3>
-                    <div class="value" id="totalImpressions">-</div>
-                    <div class="unit">회</div>
-                    <div class="trend-wrapper" id="trendImpressionsWrapper">
-                        <div class="trend-row">
-                            <div class="trend up" id="trendImpressions">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
-                                <span>0%</span>
-                            </div>
-                            <span class="trend-pp" id="trendImpressionsPP"></span>
-                        </div>
-                        <div class="trend-detail" id="trendImpressionsDetail"></div>
-                    </div>
-                </div>
-                <div class="kpi-card card">
-                    <h3>클릭</h3>
-                    <div class="value" id="totalClicks">-</div>
-                    <div class="unit">회</div>
-                    <div class="trend-wrapper" id="trendClicksWrapper">
-                        <div class="trend-row">
-                            <div class="trend up" id="trendClicks">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
-                                <span>0%</span>
-                            </div>
-                            <span class="trend-pp" id="trendClicksPP"></span>
-                        </div>
-                        <div class="trend-detail" id="trendClicksDetail"></div>
-                    </div>
-                </div>
-                <div class="kpi-card card">
-                    <h3>전환수</h3>
-                    <div class="value" id="totalConversions">-</div>
-                    <div class="unit">건</div>
-                    <div class="trend-wrapper" id="trendConversionsWrapper">
-                        <div class="trend-row">
-                            <div class="trend up" id="trendConversions">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
-                                <span>0%</span>
-                            </div>
-                            <span class="trend-pp" id="trendConversionsPP"></span>
-                        </div>
-                        <div class="trend-detail" id="trendConversionsDetail"></div>
-                    </div>
-                </div>
-                <div class="kpi-card card">
-                    <h3>전환값</h3>
-                    <div class="value" id="totalConversionValue">-</div>
-                    <div class="unit">원</div>
-                    <div class="trend-wrapper" id="trendConversionValueWrapper">
-                        <div class="trend-row">
-                            <div class="trend up" id="trendConversionValue">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
-                                <span>0%</span>
-                            </div>
-                            <span class="trend-pp" id="trendConversionValuePP"></span>
-                        </div>
-                        <div class="trend-detail" id="trendConversionValueDetail"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- 차트 섹션 -->
-        <div class="chart-section card">
-            <div class="chart-header">성과 지표 추이</div>
-            <div class="chart-controls">
-                <div class="chart-checkbox-group">
-                    <label class="chart-checkbox cost">
-                        <input type="checkbox" id="chartCost" checked>
-                        <span>비용</span>
-                    </label>
-                    <label class="chart-checkbox cpm">
-                        <input type="checkbox" id="chartCPM">
-                        <span>CPM</span>
-                    </label>
-                    <label class="chart-checkbox cpc">
-                        <input type="checkbox" id="chartCPC">
-                        <span>CPC</span>
-                    </label>
-                    <label class="chart-checkbox roas">
-                        <input type="checkbox" id="chartROAS" checked>
-                        <span>ROAS</span>
-                    </label>
+                <!-- 필터 섹션 -->
+                <div class="filter-section card">
+                    <div class="filter-header">필터 설정</div>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>유형구분</label>
+                            <select id="filterType">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>브랜드명</label>
+                            <select id="filterBrand">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>상품명</label>
+                            <select id="filterProduct">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>추가 구분</label>
+                            <select id="filterExtra">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>기간 선택</label>
+                            <div class="date-range">
+                                <input type="date" id="startDate">
+                                <span>~</span>
+                                <input type="date" id="endDate">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 세부 필터 섹션 -->
+                <div class="filter-section card">
+                    <div class="filter-header">세부 필터 설정</div>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>캠페인</label>
+                            <select id="filterCampaign">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>세트이름</label>
+                            <select id="filterSetName">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 뷰 타입 선택 -->
+                <div class="view-type-section">
+                    <button class="view-btn active" data-view="daily">일별</button>
+                    <button class="view-btn" data-view="weekly">주별</button>
+                    <button class="view-btn" data-view="monthly">월별</button>
+                </div>
+
+                <!-- 기존 KPI 카드 - 최신 기간 데이터 + 증감 -->
+                <div class="kpi-wrapper">
+                    <!-- 상단 5개: 비용, CPM, CPC, CPA, ROAS -->
+                    <div class="kpi-row kpi-row-primary">
+                        <div class="kpi-card card">
+                            <h3>비용</h3>
+                            <div class="value" id="totalCost">-</div>
+                            <div class="unit">원</div>
+                            <div class="trend-wrapper" id="trendCostWrapper">
+                                <div class="trend-row">
+                                    <div class="trend up" id="trendCost">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
+                                        <span>0%</span>
+                                    </div>
+                                    <span class="trend-pp" id="trendCostPP"></span>
+                                </div>
+                                <div class="trend-detail" id="trendCostDetail"></div>
+                            </div>
+                        </div>
+                        <div class="kpi-card card">
+                            <h3>CPM</h3>
+                            <div class="value" id="avgCPM">-</div>
+                            <div class="unit">원</div>
+                            <div class="trend-wrapper" id="trendCPMWrapper">
+                                <div class="trend-row">
+                                    <div class="trend down" id="trendCPM">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+                                        <span>0%</span>
+                                    </div>
+                                    <span class="trend-pp" id="trendCPMPP"></span>
+                                </div>
+                                <div class="trend-detail" id="trendCPMDetail"></div>
+                            </div>
+                        </div>
+                        <div class="kpi-card card">
+                            <h3>CPC</h3>
+                            <div class="value" id="avgCPC">-</div>
+                            <div class="unit">원</div>
+                            <div class="trend-wrapper" id="trendCPCWrapper">
+                                <div class="trend-row">
+                                    <div class="trend down" id="trendCPC">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+                                        <span>0%</span>
+                                    </div>
+                                    <span class="trend-pp" id="trendCPCPP"></span>
+                                </div>
+                                <div class="trend-detail" id="trendCPCDetail"></div>
+                            </div>
+                        </div>
+                        <div class="kpi-card card">
+                            <h3>CPA</h3>
+                            <div class="value" id="avgCPA">-</div>
+                            <div class="unit">원</div>
+                            <div class="trend-wrapper" id="trendCPAWrapper">
+                                <div class="trend-row">
+                                    <div class="trend down" id="trendCPA">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+                                        <span>0%</span>
+                                    </div>
+                                    <span class="trend-pp" id="trendCPAPP"></span>
+                                </div>
+                                <div class="trend-detail" id="trendCPADetail"></div>
+                            </div>
+                        </div>
+                        <div class="kpi-card card">
+                            <h3>ROAS</h3>
+                            <div class="value" id="totalROAS">-</div>
+                            <div class="unit"></div>
+                            <div class="trend-wrapper" id="trendROASWrapper">
+                                <div class="trend-row">
+                                    <div class="trend up" id="trendROAS">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
+                                        <span>0%</span>
+                                    </div>
+                                    <span class="trend-pp" id="trendROASPP"></span>
+                                </div>
+                                <div class="trend-detail" id="trendROASDetail"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 하단 4개: 노출, 클릭, 전환수, 전환값 -->
+                    <div class="kpi-row kpi-row-secondary">
+                        <div class="kpi-card card">
+                            <h3>노출</h3>
+                            <div class="value" id="totalImpressions">-</div>
+                            <div class="unit">회</div>
+                            <div class="trend-wrapper" id="trendImpressionsWrapper">
+                                <div class="trend-row">
+                                    <div class="trend up" id="trendImpressions">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
+                                        <span>0%</span>
+                                    </div>
+                                    <span class="trend-pp" id="trendImpressionsPP"></span>
+                                </div>
+                                <div class="trend-detail" id="trendImpressionsDetail"></div>
+                            </div>
+                        </div>
+                        <div class="kpi-card card">
+                            <h3>클릭</h3>
+                            <div class="value" id="totalClicks">-</div>
+                            <div class="unit">회</div>
+                            <div class="trend-wrapper" id="trendClicksWrapper">
+                                <div class="trend-row">
+                                    <div class="trend up" id="trendClicks">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
+                                        <span>0%</span>
+                                    </div>
+                                    <span class="trend-pp" id="trendClicksPP"></span>
+                                </div>
+                                <div class="trend-detail" id="trendClicksDetail"></div>
+                            </div>
+                        </div>
+                        <div class="kpi-card card">
+                            <h3>전환수</h3>
+                            <div class="value" id="totalConversions">-</div>
+                            <div class="unit">건</div>
+                            <div class="trend-wrapper" id="trendConversionsWrapper">
+                                <div class="trend-row">
+                                    <div class="trend up" id="trendConversions">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
+                                        <span>0%</span>
+                                    </div>
+                                    <span class="trend-pp" id="trendConversionsPP"></span>
+                                </div>
+                                <div class="trend-detail" id="trendConversionsDetail"></div>
+                            </div>
+                        </div>
+                        <div class="kpi-card card">
+                            <h3>전환값</h3>
+                            <div class="value" id="totalConversionValue">-</div>
+                            <div class="unit">원</div>
+                            <div class="trend-wrapper" id="trendConversionValueWrapper">
+                                <div class="trend-row">
+                                    <div class="trend up" id="trendConversionValue">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
+                                        <span>0%</span>
+                                    </div>
+                                    <span class="trend-pp" id="trendConversionValuePP"></span>
+                                </div>
+                                <div class="trend-detail" id="trendConversionValueDetail"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 차트 섹션 -->
+                <div class="chart-section card">
+                    <div class="chart-header">성과 지표 추이</div>
+                    <div class="chart-controls">
+                        <div class="chart-checkbox-group">
+                            <label class="chart-checkbox cost">
+                                <input type="checkbox" id="chartCost" checked>
+                                <span>비용</span>
+                            </label>
+                            <label class="chart-checkbox cpm">
+                                <input type="checkbox" id="chartCPM">
+                                <span>CPM</span>
+                            </label>
+                            <label class="chart-checkbox cpc">
+                                <input type="checkbox" id="chartCPC">
+                                <span>CPC</span>
+                            </label>
+                            <label class="chart-checkbox roas">
+                                <input type="checkbox" id="chartROAS" checked>
+                                <span>ROAS</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 데이터 테이블 -->
+                <div class="table-section card">
+                    <div class="table-header">상세 데이터</div>
+                    <div class="table-container">
+                        <table id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>기간</th>
+                                    <th>비용</th>
+                                    <th>노출</th>
+                                    <th>CPM</th>
+                                    <th>클릭</th>
+                                    <th>CPC</th>
+                                    <th>전환수</th>
+                                    <th>CPA</th>
+                                    <th>전환값</th>
+                                    <th>ROAS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <tr>
+                                    <td colspan="10" class="loading">데이터를 불러오는 중...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="show-more-container" id="showMoreContainer" style="display: none;">
+                        <button class="show-more-btn" id="showMoreBtn">더 보기 (<span id="hiddenCount">0</span>개)</button>
+                    </div>
+                    <div class="show-more-container" id="collapseContainer" style="display: none;">
+                        <button class="show-more-btn" id="collapseBtn">접기</button>
+                    </div>
                 </div>
             </div>
-            <div class="chart-container">
-                <canvas id="trendChart"></canvas>
-            </div>
-        </div>
-
-        <!-- 데이터 테이블 -->
-        <div class="table-section card">
-            <div class="table-header">상세 데이터</div>
-            <div class="table-container">
-                <table id="dataTable">
-                    <thead>
-                        <tr>
-                            <th>기간</th>
-                            <th>비용</th>
-                            <th>노출</th>
-                            <th>CPM</th>
-                            <th>클릭</th>
-                            <th>CPC</th>
-                            <th>전환수</th>
-                            <th>CPA</th>
-                            <th>전환값</th>
-                            <th>ROAS</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <tr>
-                            <td colspan="10" class="loading">데이터를 불러오는 중...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="show-more-container" id="showMoreContainer" style="display: none;">
-                <button class="show-more-btn" id="showMoreBtn">더 보기 (<span id="hiddenCount">0</span>개)</button>
-            </div>
-            <div class="show-more-container" id="collapseContainer" style="display: none;">
-                <button class="show-more-btn" id="collapseBtn">접기</button>
-            </div>
-        </div>
+        </main>
     </div>
 
     <script>
