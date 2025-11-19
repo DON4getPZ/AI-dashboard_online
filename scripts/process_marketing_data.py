@@ -34,8 +34,14 @@ matplotlib.use('Agg')  # GUI 없는 환경에서 사용
 import matplotlib.pyplot as plt
 import seaborn as sns
 from statsmodels.tsa.seasonal import seasonal_decompose
-from statsmodels.tsa.statespace.sarimax import SARIMAX
-from statsmodels.tsa.stattools import adfuller
+
+# Prophet 시계열 예측 라이브러리
+try:
+    from prophet import Prophet
+    PROPHET_AVAILABLE = True
+except ImportError:
+    PROPHET_AVAILABLE = False
+    print("⚠️ Prophet이 설치되지 않음. 단순 예측만 사용합니다.")
 
 warnings.filterwarnings('ignore')
 
@@ -308,7 +314,7 @@ def calculate_daily_statistics(df: pd.DataFrame, statistics: Dict) -> None:
 
 
 def simple_forecast(df: pd.DataFrame, days: int = 30) -> pd.DataFrame:
-    """추세 반영 이동평균 기반 예측"""
+    """최근 90일 데이터 기반 예측 (주간 패턴 반영)"""
     print(f"\n🔮 시계열 예측 중 ({days}일)...")
 
     # 일별 집계
@@ -322,63 +328,59 @@ def simple_forecast(df: pd.DataFrame, days: int = 30) -> pd.DataFrame:
 
     daily = daily.sort_values('일 구분')
 
-    # 최근 30일 데이터 가져오기
-    last_30_days = daily.tail(30).copy()
+    # 최근 90일 데이터 사용 (학습 기간)
+    learning_period = min(90, len(daily))
+    learning_data = daily.tail(learning_period).copy()
 
-    # 각 지표별 기준값 및 추세 계산
+    print(f"   ├ 학습 기간: 최근 {learning_period}일")
+
+    # 각 지표별 기준값 계산
     metrics = ['비용', '노출', '클릭', '전환수', '전환값']
     base_values = {}
-    trends = {}
+    std_values = {}
+    weekly_patterns = {}
 
     for metric in metrics:
-        # 이상치 제거: 하위 20% 제외하고 평균 계산 (캠페인 중단일 제외)
-        metric_data = last_30_days[metric].copy()
-        threshold = metric_data.quantile(0.20)
+        # 하위 10% 제외 (캠페인 중단일 등 이상치 제거)
+        metric_data = learning_data[metric].copy()
+        threshold = metric_data.quantile(0.10)
         filtered_data = metric_data[metric_data >= threshold]
 
-        if len(filtered_data) < 5:  # 데이터가 너무 적으면 전체 사용
+        if len(filtered_data) < 10:
             filtered_data = metric_data
 
+        # 평균과 표준편차 계산
         base_values[metric] = filtered_data.mean()
+        std_values[metric] = filtered_data.std() * 0.1  # 변동성 10%만 반영
 
-        # 선형 추세 계산 (최근 14일)
-        recent_days = min(14, len(last_30_days))
-        recent_data = last_30_days.tail(recent_days).copy()
-
-        # 이상치가 아닌 데이터만 사용
-        recent_filtered = recent_data[recent_data[metric] >= threshold]
-
-        if len(recent_filtered) >= 3:
-            # 선형 회귀로 추세 계산
-            x = np.arange(len(recent_filtered))
-            y = recent_filtered[metric].values
-
-            # 추세선 기울기 계산
-            if len(x) > 1 and np.std(y) > 0:
-                slope = np.polyfit(x, y, 1)[0]
-                trends[metric] = slope
-            else:
-                trends[metric] = 0
+        # 주간 패턴 계산 (요일별 평균 비율)
+        learning_data['dayofweek'] = pd.to_datetime(learning_data['일 구분']).dt.dayofweek
+        weekly_avg = learning_data.groupby('dayofweek')[metric].mean()
+        overall_avg = learning_data[metric].mean()
+        if overall_avg > 0:
+            weekly_patterns[metric] = (weekly_avg / overall_avg).to_dict()
         else:
-            trends[metric] = 0
+            weekly_patterns[metric] = {i: 1.0 for i in range(7)}
 
-        print(f"   ├ {metric}: 기준값={base_values[metric]:.1f}, 일별추세={trends[metric]:.1f}")
+        print(f"   ├ {metric}: 90일평균={base_values[metric]:.1f}, 표준편차={std_values[metric]:.1f}")
 
-    # 예측 데이터 생성
+    # 예측 데이터 생성 (주간 패턴 + 약간의 변동성)
     predictions = []
     last_date = daily['일 구분'].max()
+    np.random.seed(42)  # 재현성을 위한 시드 설정
 
     for i in range(1, days + 1):
         pred_date = last_date + timedelta(days=i)
+        dayofweek = pred_date.dayofweek
 
-        # 추세를 반영한 예측값
+        # 주간 패턴과 랜덤 변동성을 반영한 예측값
         pred_row = {
             '일 구분': pred_date.strftime('%Y-%m-%d'),
-            '비용_예측': max(0, float(base_values['비용'] + trends['비용'] * i)),
-            '노출_예측': max(0, int(base_values['노출'] + trends['노출'] * i)),
-            '클릭_예측': max(0, int(base_values['클릭'] + trends['클릭'] * i)),
-            '전환수_예측': max(0, float(base_values['전환수'] + trends['전환수'] * i)),
-            '전환값_예측': max(0, float(base_values['전환값'] + trends['전환값'] * i)),
+            '비용_예측': max(0, float(base_values['비용'] * weekly_patterns['비용'].get(dayofweek, 1.0) + np.random.normal(0, std_values['비용']))),
+            '노출_예측': max(0, int(base_values['노출'] * weekly_patterns['노출'].get(dayofweek, 1.0) + np.random.normal(0, std_values['노출']))),
+            '클릭_예측': max(0, int(base_values['클릭'] * weekly_patterns['클릭'].get(dayofweek, 1.0) + np.random.normal(0, std_values['클릭']))),
+            '전환수_예측': max(0, float(base_values['전환수'] * weekly_patterns['전환수'].get(dayofweek, 1.0) + np.random.normal(0, std_values['전환수']))),
+            '전환값_예측': max(0, float(base_values['전환값'] * weekly_patterns['전환값'].get(dayofweek, 1.0) + np.random.normal(0, std_values['전환값']))),
             'type': 'forecast'
         }
 
@@ -399,8 +401,8 @@ def simple_forecast(df: pd.DataFrame, days: int = 30) -> pd.DataFrame:
     # 합치기
     forecast_df = pd.concat([actual, pd.DataFrame(predictions)], ignore_index=True)
 
-    # CSV 저장 - 고정 파일명 사용
-    forecast_file = FORECAST_DIR / 'predictions.csv'
+    # CSV 저장 - predictions_daily.csv로 저장
+    forecast_file = FORECAST_DIR / 'predictions_daily.csv'
     forecast_df.to_csv(forecast_file, index=False, encoding='utf-8')
 
     print(f"   ✅ {forecast_file.name} 저장 완료")
@@ -411,8 +413,13 @@ def simple_forecast(df: pd.DataFrame, days: int = 30) -> pd.DataFrame:
 
 
 def advanced_detailed_forecast(df: pd.DataFrame, days: int = 30) -> Dict[str, pd.DataFrame]:
-    """상세 시계열 분석 및 예측 (SARIMAX 사용, 전체 데이터 활용)"""
+    """상세 시계열 분석 및 예측 (Prophet 사용, 전체 데이터 활용)"""
     print(f"\n🔬 상세 시계열 분석 시작 ({days}일 예측)...")
+
+    if not PROPHET_AVAILABLE:
+        print("   ⚠️ Prophet이 설치되지 않아 단순 예측을 사용합니다.")
+        # 단순 예측으로 대체
+        return simple_forecast_as_detailed(df, days)
 
     # 일별 집계 (전체 데이터 사용)
     daily = df.groupby('일 구분').agg({
@@ -424,10 +431,10 @@ def advanced_detailed_forecast(df: pd.DataFrame, days: int = 30) -> Dict[str, pd
     }).reset_index()
 
     daily = daily.sort_values('일 구분')
-    daily.set_index('일 구분', inplace=True)
+    daily_indexed = daily.set_index('일 구분')
 
     print(f"   ├ 학습 데이터: {len(daily)}일 (전체)")
-    print(f"   ├ 기간: {daily.index.min()} ~ {daily.index.max()}")
+    print(f"   ├ 기간: {daily['일 구분'].min()} ~ {daily['일 구분'].max()}")
 
     metrics = ['비용', '노출', '클릭', '전환수', '전환값']
     forecasts = {}
@@ -436,68 +443,81 @@ def advanced_detailed_forecast(df: pd.DataFrame, days: int = 30) -> Dict[str, pd
         print(f"   ├ {metric} 분석 중...")
 
         try:
-            # 데이터 준비
-            series = daily[metric].copy()
+            # Prophet용 데이터 준비 (ds, y 컬럼 필요)
+            prophet_df = daily[['일 구분', metric]].copy()
+            prophet_df.columns = ['ds', 'y']
+            prophet_df['ds'] = pd.to_datetime(prophet_df['ds'])
 
             # 결측치 처리
-            series = series.ffill().fillna(0)
+            prophet_df['y'] = prophet_df['y'].fillna(0)
 
-            # 정상성 검사 (ADF Test)
-            adf_result = adfuller(series)
-            is_stationary = adf_result[1] < 0.05
-
-            # ARIMA 차수 자동 결정
-            # 추세가 있으면 d=1, 없으면 d=0
-            d = 0 if is_stationary else 1
-
-            # SARIMAX 모델 (계절성 주기 = 7일)
-            model = SARIMAX(
-                series,
-                order=(1, d, 1),  # (p, d, q)
-                seasonal_order=(1, 1, 1, 7),  # (P, D, Q, s) - 주간 계절성
-                enforce_stationarity=False,
-                enforce_invertibility=False
+            # Prophet 모델 생성 (주간 계절성 활성화)
+            model = Prophet(
+                yearly_seasonality=False,  # 연간 계절성 (데이터가 1년 미만일 수 있음)
+                weekly_seasonality=True,   # 주간 계절성
+                daily_seasonality=False,   # 일간 계절성
+                seasonality_mode='additive',
+                changepoint_prior_scale=0.05  # 추세 변화 민감도
             )
 
-            results = model.fit(disp=False, maxiter=200)
+            # 모델 학습
+            model.fit(prophet_df)
+
+            # 미래 날짜 생성
+            future = model.make_future_dataframe(periods=days)
 
             # 예측
-            forecast = results.forecast(steps=days)
-            conf_int = results.get_forecast(steps=days).conf_int()
+            forecast_result = model.predict(future)
+
+            # 예측값 추출 (마지막 days개)
+            forecast_values = forecast_result.tail(days)[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].copy()
 
             # 음수 방지
-            forecast = forecast.clip(lower=0)
+            forecast_values['yhat'] = forecast_values['yhat'].clip(lower=0)
+            forecast_values['yhat_lower'] = forecast_values['yhat_lower'].clip(lower=0)
+            forecast_values['yhat_upper'] = forecast_values['yhat_upper'].clip(lower=0)
+
+            # 결과 저장
+            forecast_series = pd.Series(
+                forecast_values['yhat'].values,
+                index=pd.DatetimeIndex(forecast_values['ds'].values)
+            )
+
+            # 신뢰구간 데이터프레임
+            conf_int = pd.DataFrame({
+                'lower': forecast_values['yhat_lower'].values,
+                'upper': forecast_values['yhat_upper'].values
+            }, index=pd.DatetimeIndex(forecast_values['ds'].values))
 
             forecasts[metric] = {
-                'forecast': forecast,
+                'forecast': forecast_series,
                 'conf_int': conf_int,
-                'model': results,
-                'is_stationary': is_stationary,
-                'aic': results.aic,
-                'bic': results.bic
+                'model': model,
+                'model_type': 'Prophet'
             }
 
-            print(f"      └ AIC={results.aic:.1f}, 정상성={'예' if is_stationary else '아니오'}")
+            # 모델 성능 지표 (MAE 계산)
+            in_sample = forecast_result[forecast_result['ds'].isin(prophet_df['ds'])]
+            mae = np.mean(np.abs(in_sample['yhat'].values - prophet_df['y'].values))
+            print(f"      └ MAE={mae:.1f}, 주간계절성=예")
 
         except Exception as e:
-            print(f"      └ 경고: {metric} 모델링 실패, 단순 예측 사용 ({str(e)[:50]})")
+            print(f"      └ 경고: {metric} Prophet 모델링 실패, 단순 예측 사용 ({str(e)[:50]})")
             # 실패시 이동평균 사용
-            mean_val = series.tail(14).mean()
+            mean_val = daily_indexed[metric].tail(14).mean()
             forecast = pd.Series([mean_val] * days, index=pd.date_range(
-                start=daily.index.max() + timedelta(days=1), periods=days, freq='D'
+                start=daily_indexed.index.max() + timedelta(days=1), periods=days, freq='D'
             ))
             forecasts[metric] = {
                 'forecast': forecast,
                 'conf_int': None,
                 'model': None,
-                'is_stationary': False,
-                'aic': None,
-                'bic': None
+                'model_type': 'Simple'
             }
 
     # 예측 데이터프레임 생성
     forecast_dates = pd.date_range(
-        start=daily.index.max() + timedelta(days=1),
+        start=daily_indexed.index.max() + timedelta(days=1),
         periods=days,
         freq='D'
     )
@@ -513,7 +533,7 @@ def advanced_detailed_forecast(df: pd.DataFrame, days: int = 30) -> Dict[str, pd
     })
 
     # 실제 데이터 (최근 30일)
-    actual = daily.tail(30).reset_index()
+    actual = daily_indexed.tail(30).reset_index()
     actual['type'] = 'actual'
     actual = actual.rename(columns={
         '비용': '비용_예측',
@@ -534,7 +554,79 @@ def advanced_detailed_forecast(df: pd.DataFrame, days: int = 30) -> Dict[str, pd
     print(f"   ✅ {detailed_file.name} 저장 완료")
 
     return {
-        'daily': daily,
+        'daily': daily_indexed,
+        'forecasts': forecasts,
+        'predictions': detailed_forecast
+    }
+
+
+def simple_forecast_as_detailed(df: pd.DataFrame, days: int = 30) -> Dict[str, pd.DataFrame]:
+    """Prophet 미설치 시 단순 예측으로 대체"""
+    # 일별 집계
+    daily = df.groupby('일 구분').agg({
+        '비용': 'sum',
+        '노출': 'sum',
+        '클릭': 'sum',
+        '전환수': 'sum',
+        '전환값': 'sum'
+    }).reset_index()
+
+    daily = daily.sort_values('일 구분')
+    daily_indexed = daily.set_index('일 구분')
+
+    metrics = ['비용', '노출', '클릭', '전환수', '전환값']
+    forecasts = {}
+
+    for metric in metrics:
+        mean_val = daily_indexed[metric].tail(14).mean()
+        forecast = pd.Series([mean_val] * days, index=pd.date_range(
+            start=daily_indexed.index.max() + timedelta(days=1), periods=days, freq='D'
+        ))
+        forecasts[metric] = {
+            'forecast': forecast,
+            'conf_int': None,
+            'model': None,
+            'model_type': 'Simple'
+        }
+
+    # 예측 데이터프레임 생성
+    forecast_dates = pd.date_range(
+        start=daily_indexed.index.max() + timedelta(days=1),
+        periods=days,
+        freq='D'
+    )
+
+    predictions = pd.DataFrame({
+        '일 구분': forecast_dates.strftime('%Y-%m-%d'),
+        '비용_예측': forecasts['비용']['forecast'].values,
+        '노출_예측': forecasts['노출']['forecast'].values.astype(int),
+        '클릭_예측': forecasts['클릭']['forecast'].values.astype(int),
+        '전환수_예측': forecasts['전환수']['forecast'].values,
+        '전환값_예측': forecasts['전환값']['forecast'].values,
+        'type': 'forecast'
+    })
+
+    # 실제 데이터
+    actual = daily_indexed.tail(30).reset_index()
+    actual['type'] = 'actual'
+    actual = actual.rename(columns={
+        '비용': '비용_예측',
+        '노출': '노출_예측',
+        '클릭': '클릭_예측',
+        '전환수': '전환수_예측',
+        '전환값': '전환값_예측'
+    })
+    actual['일 구분'] = pd.to_datetime(actual['일 구분']).dt.strftime('%Y-%m-%d')
+
+    detailed_forecast = pd.concat([actual, predictions], ignore_index=True)
+
+    detailed_file = FORECAST_DIR / 'predictions_detailed.csv'
+    detailed_forecast.to_csv(detailed_file, index=False, encoding='utf-8')
+
+    print(f"   ✅ {detailed_file.name} 저장 완료 (단순 예측)")
+
+    return {
+        'daily': daily_indexed,
         'forecasts': forecasts,
         'predictions': detailed_forecast
     }
@@ -1077,14 +1169,14 @@ def generate_html_dashboard(df: pd.DataFrame, forecast_data: Dict[str, Any], sta
             <div class="section">
                 <h2>📊 정규분포 분석</h2>
                 <div class="chart-container">
-                    <img src="../visualizations/distribution_analysis.png" alt="정규분포 분석">
+                    <img src="visualizations/distribution_analysis.png" alt="정규분포 분석">
                 </div>
             </div>
 
             <div class="section">
                 <h2>🔄 계절성 분해 (7일 주기)</h2>
                 <div class="chart-container">
-                    <img src="../visualizations/seasonal_decomposition.png" alt="계절성 분해">
+                    <img src="visualizations/seasonal_decomposition.png" alt="계절성 분해">
                 </div>
             </div>
 
@@ -1093,11 +1185,11 @@ def generate_html_dashboard(df: pd.DataFrame, forecast_data: Dict[str, Any], sta
                 <div class="grid-2">
                     <div class="chart-container">
                         <h3 style="margin-bottom: 15px;">상관관계 히트맵</h3>
-                        <img src="../visualizations/correlation_heatmap.png" alt="상관관계">
+                        <img src="visualizations/correlation_heatmap.png" alt="상관관계">
                     </div>
                     <div class="chart-container">
                         <h3 style="margin-bottom: 15px;">이상치 탐지</h3>
-                        <img src="../visualizations/boxplot_outliers.png" alt="박스플롯">
+                        <img src="visualizations/boxplot_outliers.png" alt="박스플롯">
                     </div>
                 </div>
             </div>
@@ -1153,9 +1245,8 @@ def generate_html_dashboard(df: pd.DataFrame, forecast_data: Dict[str, Any], sta
                             <tr>
                                 <th>지표</th>
                                 <th>모델</th>
-                                <th>정상성</th>
-                                <th>AIC</th>
-                                <th>BIC</th>
+                                <th>주간 계절성</th>
+                                <th>상태</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1163,17 +1254,15 @@ def generate_html_dashboard(df: pd.DataFrame, forecast_data: Dict[str, Any], sta
 
     for metric in ['비용', '노출', '클릭', '전환수', '전환값']:
         forecast_info = forecasts[metric]
-        is_stationary = "예" if forecast_info['is_stationary'] else "아니오"
-        aic = f"{forecast_info['aic']:.1f}" if forecast_info['aic'] else "N/A"
-        bic = f"{forecast_info['bic']:.1f}" if forecast_info['bic'] else "N/A"
+        model_type = forecast_info.get('model_type', 'Prophet')
+        status = "정상" if forecast_info.get('model') else "대체 모델"
 
         html_content += f"""
                             <tr>
                                 <td><strong>{metric}</strong></td>
-                                <td>SARIMAX(1,{'1' if not forecast_info['is_stationary'] else '0'},1)(1,1,1,7)</td>
-                                <td>{is_stationary}</td>
-                                <td>{aic}</td>
-                                <td>{bic}</td>
+                                <td>{model_type}</td>
+                                <td>{'예' if model_type == 'Prophet' else '아니오'}</td>
+                                <td>{status}</td>
                             </tr>
 """
 
@@ -1187,7 +1276,7 @@ def generate_html_dashboard(df: pd.DataFrame, forecast_data: Dict[str, Any], sta
         <div class="footer">
             <p>🚀 마케팅 대시보드 v3.0 | 생성일: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
             <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
-                분석 엔진: SARIMAX | 시각화: Matplotlib, Seaborn{'& Plotly' if plotly_available else ''}
+                분석 엔진: Prophet | 시각화: Matplotlib, Seaborn{'& Plotly' if plotly_available else ''}
             </p>
         </div>
     </div>
@@ -1310,8 +1399,8 @@ def main():
         print("="*80)
         print("\n생성된 파일:")
         print("   📁 data/forecast/")
-        print("      ├ predictions.csv (일별 - 단순 예측)")
-        print("      ├ predictions_detailed.csv (일별 - SARIMAX 예측)")
+        print("      ├ predictions_daily.csv (일별 - 단순 예측)")
+        print("      ├ predictions_detailed.csv (일별 - Prophet 예측)")
         print("      ├ predictions_weekly.csv (주별 집계)")
         print("      └ predictions_monthly.csv (월별 집계)")
         print("   📁 data/visualizations/")

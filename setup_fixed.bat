@@ -116,12 +116,14 @@ if exist "%GOOGLE_JSON%\*" (
 )
 
 REM 파일 확장자 확인 (.json)
-echo %GOOGLE_JSON% | findstr /i "\.json$" >nul
+echo %GOOGLE_JSON% | findstr /i /c:".json" >nul
 if errorlevel 1 (
     echo [WARNING] File does not have .json extension
     echo File: %GOOGLE_JSON%
     set /p CONTINUE_JSON="Continue anyway? (Y/N): "
     if /i "!CONTINUE_JSON!" NEQ "Y" exit /b 1
+) else (
+    echo [OK] JSON extension verified
 )
 
 REM Python으로 JSON 유효성 검증
@@ -185,7 +187,7 @@ if errorlevel 1 (
 echo.
 echo [5/11] Installing Python packages (Python 3.13 compatible)...
 echo.
-echo This version uses binary wheels - no C++ compiler required!
+echo This version uses Prophet with cmdstanpy backend for time series forecasting!
 echo.
 
 REM requirements_fixed.txt 사용
@@ -235,6 +237,20 @@ if errorlevel 1 (
     echo [ERROR] gspread not installed correctly
 ) else (
     echo [OK] gspread verified
+)
+
+python -c "from prophet import Prophet; print('  - prophet: installed')"
+if errorlevel 1 (
+    echo [WARNING] prophet not installed - simple forecasting will be used
+) else (
+    echo [OK] prophet verified
+)
+
+python -c "import cmdstanpy; print('  - cmdstanpy:', cmdstanpy.__version__)"
+if errorlevel 1 (
+    echo [WARNING] cmdstanpy not installed
+) else (
+    echo [OK] cmdstanpy verified
 )
 
 echo.

@@ -9,11 +9,10 @@ numpy>=2.0.0
 gspread>=5.12.0
 oauth2client>=4.1.3
 
-# 시계열 예측 (선택사항 - setup 스크립트에서 별도 설치)
-# prophet>=1.1.5
-# - Windows: Microsoft C++ Build Tools 필요
-# - Mac: brew install gcc
-# - Linux: sudo apt-get install build-essential
+# 시계열 예측 - Prophet (cmdstanpy 백엔드)
+# Prophet 1.2.1+ 사용, cmdstanpy 1.3.0+ Python 3.13 지원
+prophet>=1.2.0
+cmdstanpy>=1.3.0
 
 # 통계 분석 (Python 3.13 호환 버전)
 scipy>=1.14.0
