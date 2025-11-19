@@ -129,19 +129,19 @@ if errorlevel 1 (
 )
 
 REM 성공
-if exist data_Creative (
+if exist data\creative (
     echo.
     echo ====================================================================
     echo [SUCCESS] URL data downloaded successfully!
     echo ====================================================================
     echo.
-    echo Files saved in: data_Creative\
-    dir /b data_Creative\*_url.csv 2>nul
+    echo Files saved in: data\creative\
+    dir /b data\creative\*_url.csv 2>nul
     echo.
     goto DOWNLOAD_SUCCESS
 ) else (
     echo.
-    echo [ERROR] data_Creative directory not created
+    echo [ERROR] data\creative directory not created
     goto DOWNLOAD_FAILED
 )
 

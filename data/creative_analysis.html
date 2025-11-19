@@ -673,6 +673,175 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+
+        /* 모달 뷰 타입 버튼 */
+        .modal-view-type-section {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .modal-view-btn {
+            padding: 8px 20px;
+            border: 1px solid var(--grey-300);
+            background: var(--paper);
+            color: var(--grey-700);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .modal-view-btn:hover {
+            border-color: var(--primary-main);
+            color: var(--primary-main);
+        }
+
+        .modal-view-btn.active {
+            background: var(--primary-main);
+            color: white;
+            border-color: var(--primary-main);
+        }
+
+        /* 모달 차트 체크박스 */
+        .modal-chart-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .modal-chart-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--grey-700);
+            padding: 6px 12px;
+            border-radius: 16px;
+            transition: all 0.2s ease;
+            background: var(--grey-100);
+        }
+
+        .modal-chart-checkbox:hover {
+            background: var(--grey-200);
+        }
+
+        .modal-chart-checkbox input {
+            width: 14px;
+            height: 14px;
+            accent-color: var(--primary-main);
+            cursor: pointer;
+        }
+
+        .modal-chart-checkbox.cost { border-left: 3px solid #673ab7; }
+        .modal-chart-checkbox.cpc { border-left: 3px solid #2196f3; }
+        .modal-chart-checkbox.cpa { border-left: 3px solid #ff9800; }
+        .modal-chart-checkbox.roas { border-left: 3px solid #00c853; }
+
+        /* 모달 테이블 */
+        .modal-table-section {
+            margin-top: 24px;
+        }
+
+        .modal-table-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 16px;
+        }
+
+        .modal-table-container {
+            background: var(--grey-50);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .modal-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .modal-table th {
+            background: var(--grey-100);
+            padding: 12px 16px;
+            text-align: right;
+            font-weight: 600;
+            color: var(--grey-700);
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .modal-table th:first-child {
+            text-align: left;
+        }
+
+        .modal-table td {
+            padding: 12px 16px;
+            text-align: right;
+            border-bottom: 1px solid var(--grey-200);
+            color: var(--grey-900);
+        }
+
+        .modal-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .modal-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .modal-table tr:hover {
+            background: rgba(103, 58, 183, 0.05);
+        }
+
+        /* 모달 더보기/접기 버튼 */
+        .modal-show-more-container {
+            padding: 12px 16px;
+            text-align: center;
+            border-top: 1px solid var(--grey-200);
+        }
+
+        .modal-show-more-btn {
+            padding: 8px 24px;
+            background: var(--grey-100);
+            color: var(--grey-700);
+            border: 1px solid var(--grey-300);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .modal-show-more-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary-main);
+            border-color: var(--primary-main);
+        }
+
+        /* 모달 KPI 2행 레이아웃 */
+        .modal-kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .modal-kpi-row:last-child {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            .modal-kpi-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
@@ -816,6 +985,10 @@
                                 <input type="date" id="endDate">
                             </div>
                         </div>
+                        <div class="filter-group">
+                            <label>소재 검색</label>
+                            <input type="text" id="searchText" placeholder="소재이름 검색..." style="flex: 1;">
+                        </div>
                     </div>
                 </div>
 
@@ -823,23 +996,23 @@
                 <div class="summary-section">
                     <div class="summary-grid">
                         <div class="summary-card card">
-                            <h3>총 소재 수</h3>
-                            <div class="value" id="totalCreatives">-</div>
-                            <div class="unit">개</div>
-                        </div>
-                        <div class="summary-card card">
                             <h3>총 비용</h3>
                             <div class="value" id="totalCost">-</div>
                             <div class="unit">원</div>
                         </div>
                         <div class="summary-card card">
-                            <h3>총 클릭</h3>
-                            <div class="value" id="totalClicks">-</div>
-                            <div class="unit">회</div>
+                            <h3>평균 CPM</h3>
+                            <div class="value" id="avgCPM">-</div>
+                            <div class="unit">원</div>
                         </div>
                         <div class="summary-card card">
                             <h3>평균 CPC</h3>
                             <div class="value" id="avgCPC">-</div>
+                            <div class="unit">원</div>
+                        </div>
+                        <div class="summary-card card">
+                            <h3>평균 CPA</h3>
+                            <div class="value" id="avgCPA">-</div>
                             <div class="unit">원</div>
                         </div>
                         <div class="summary-card card">
@@ -866,16 +1039,78 @@
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <!-- KPI 카드 -->
-                <div class="modal-kpi-grid" id="modalKpiGrid">
-                    <!-- JS로 동적 생성 -->
+                <!-- 뷰 타입 선택 -->
+                <div class="modal-view-type-section">
+                    <button class="modal-view-btn active" data-view="daily" onclick="changeModalViewType('daily')">일별</button>
+                    <button class="modal-view-btn" data-view="weekly" onclick="changeModalViewType('weekly')">주별</button>
+                    <button class="modal-view-btn" data-view="monthly" onclick="changeModalViewType('monthly')">월별</button>
                 </div>
 
-                <!-- 일별 추이 차트 -->
+                <!-- KPI 카드 (2행) -->
+                <div id="modalKpiGrid">
+                    <!-- 상단 행: 비용, CPC, CPA, ROAS -->
+                    <div class="modal-kpi-row" id="modalKpiRowTop">
+                        <!-- JS로 동적 생성 -->
+                    </div>
+                    <!-- 하단 행: 노출, 클릭, 전환수, 전환값 -->
+                    <div class="modal-kpi-row" id="modalKpiRowBottom">
+                        <!-- JS로 동적 생성 -->
+                    </div>
+                </div>
+
+                <!-- 성과 추이 차트 -->
                 <div class="modal-chart-section">
-                    <div class="modal-chart-title">일별 성과 추이</div>
+                    <div class="modal-chart-title">성과 추이</div>
+                    <div class="modal-chart-controls">
+                        <label class="modal-chart-checkbox cost">
+                            <input type="checkbox" id="modalChartCost" checked onchange="updateModalChart()">
+                            <span>비용</span>
+                        </label>
+                        <label class="modal-chart-checkbox cpc">
+                            <input type="checkbox" id="modalChartCPC" onchange="updateModalChart()">
+                            <span>CPC</span>
+                        </label>
+                        <label class="modal-chart-checkbox cpa">
+                            <input type="checkbox" id="modalChartCPA" onchange="updateModalChart()">
+                            <span>CPA</span>
+                        </label>
+                        <label class="modal-chart-checkbox roas">
+                            <input type="checkbox" id="modalChartROAS" checked onchange="updateModalChart()">
+                            <span>ROAS</span>
+                        </label>
+                    </div>
                     <div class="modal-chart">
                         <canvas id="modalChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 상세 데이터 테이블 -->
+                <div class="modal-table-section">
+                    <div class="modal-table-title">상세 데이터</div>
+                    <div class="modal-table-container">
+                        <table class="modal-table">
+                            <thead>
+                                <tr>
+                                    <th>기간</th>
+                                    <th>비용</th>
+                                    <th>노출</th>
+                                    <th>클릭</th>
+                                    <th>CPC</th>
+                                    <th>전환수</th>
+                                    <th>CPA</th>
+                                    <th>ROAS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalTableBody">
+                                <!-- JS로 동적 생성 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-show-more-container" id="modalShowMoreContainer" style="display: none;">
+                        <button class="modal-show-more-btn" onclick="expandModalTable()">더 보기 (<span id="modalHiddenCount">0</span>개)</button>
+                    </div>
+                    <div class="modal-show-more-container" id="modalCollapseContainer" style="display: none;">
+                        <button class="modal-show-more-btn" onclick="collapseModalTable()">접기</button>
                     </div>
                 </div>
             </div>
@@ -899,7 +1134,8 @@
             campaign: '',
             adSet: '',
             startDate: '',
-            endDate: ''
+            endDate: '',
+            searchText: ''
         };
 
         // 소재 데이터 파일 (data/creative 폴더)
@@ -1279,7 +1515,15 @@
         // 대시보드 업데이트
         function updateDashboard() {
             const filteredData = filterData();
-            const creativeData = aggregateByCreative(filteredData);
+            let creativeData = aggregateByCreative(filteredData);
+
+            // 소재 검색 필터 적용 (LIKE '%검색어%')
+            if (filters.searchText) {
+                const searchLower = filters.searchText.toLowerCase();
+                creativeData = creativeData.filter(creative =>
+                    creative.name.toLowerCase().includes(searchLower)
+                );
+            }
 
             // 요약 업데이트
             updateSummary(creativeData);
@@ -1292,18 +1536,22 @@
         function updateSummary(data) {
             const totals = data.reduce((acc, row) => {
                 acc.비용 += row.비용;
+                acc.노출 += row.노출;
                 acc.클릭 += row.클릭;
+                acc.전환수 += row.전환수;
                 acc.전환값 += row.전환값;
                 return acc;
-            }, { 비용: 0, 클릭: 0, 전환값: 0 });
+            }, { 비용: 0, 노출: 0, 클릭: 0, 전환수: 0, 전환값: 0 });
 
+            const avgCPM = totals.노출 > 0 ? (totals.비용 / totals.노출 * 1000) : 0;
             const avgCPC = totals.클릭 > 0 ? (totals.비용 / totals.클릭) : 0;
+            const avgCPA = totals.전환수 > 0 ? (totals.비용 / totals.전환수) : 0;
             const avgROAS = totals.비용 > 0 ? (totals.전환값 / totals.비용 * 100) : 0;
 
-            document.getElementById('totalCreatives').textContent = formatNumber(data.length);
             document.getElementById('totalCost').textContent = formatNumber(totals.비용);
-            document.getElementById('totalClicks').textContent = formatNumber(totals.클릭);
+            document.getElementById('avgCPM').textContent = formatNumber(avgCPM);
             document.getElementById('avgCPC').textContent = formatNumber(avgCPC);
+            document.getElementById('avgCPA').textContent = formatNumber(avgCPA);
             document.getElementById('avgROAS').textContent = formatROAS(avgROAS);
         }
 
@@ -1376,6 +1624,10 @@
                                 <span class="metric-value">${formatNumber(creative.비용)}</span>
                             </div>
                             <div class="creative-metric">
+                                <span class="metric-label">CPC</span>
+                                <span class="metric-value">${formatNumber(creative.CPC)}</span>
+                            </div>
+                            <div class="creative-metric">
                                 <span class="metric-label">CPA</span>
                                 <span class="metric-value">${formatNumber(creative.CPA)}</span>
                             </div>
@@ -1401,11 +1653,16 @@
             return Math.round(num) + '%';
         }
 
-        // 모달 차트 인스턴스
+        // 모달 관련 전역 변수
         let modalChartInstance = null;
+        let currentModalData = [];
+        let currentModalViewType = 'daily';
+        let isModalTableExpanded = false;
+        let currentCreativeName = '';
 
         // 소재 세부 성과 모달 표시
         function showCreativeDetail(creativeName) {
+            currentCreativeName = creativeName;
             // 해당 소재의 데이터 필터링
             const creativeData = filterData().filter(row => row['소재이름'] === creativeName);
 
@@ -1414,8 +1671,49 @@
                 return;
             }
 
+            // 모달 데이터 저장
+            currentModalData = creativeData;
+            currentModalViewType = 'daily';
+            isModalTableExpanded = false;
+
+            // 뷰 타입 버튼 초기화
+            document.querySelectorAll('.modal-view-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.view === 'daily') btn.classList.add('active');
+            });
+
+            // 모달 제목 업데이트
+            document.getElementById('modalTitle').textContent = creativeName;
+
+            // 모달 내용 업데이트
+            updateModalContent();
+
+            // 모달 표시
+            document.getElementById('creativeModal').classList.add('active');
+        }
+
+        // 뷰 타입 변경
+        function changeModalViewType(viewType) {
+            currentModalViewType = viewType;
+            isModalTableExpanded = false;
+
+            // 버튼 활성화 상태 변경
+            document.querySelectorAll('.modal-view-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.view === viewType) btn.classList.add('active');
+            });
+
+            // 모달 내용 업데이트
+            updateModalContent();
+        }
+
+        // 모달 내용 업데이트
+        function updateModalContent() {
+            // 데이터 집계
+            const aggregatedData = aggregateModalData(currentModalData, currentModalViewType);
+
             // KPI 집계
-            const totals = creativeData.reduce((acc, row) => {
+            const totals = currentModalData.reduce((acc, row) => {
                 acc.비용 += parseFloat(row['비용']) || 0;
                 acc.노출 += parseFloat(row['노출']) || 0;
                 acc.클릭 += parseFloat(row['클릭']) || 0;
@@ -1431,22 +1729,32 @@
                 클릭: totals.클릭,
                 전환수: totals.전환수,
                 전환값: totals.전환값,
-                CPM: totals.노출 > 0 ? (totals.비용 / totals.노출 * 1000) : 0,
                 CPC: totals.클릭 > 0 ? (totals.비용 / totals.클릭) : 0,
                 CPA: totals.전환수 > 0 ? (totals.비용 / totals.전환수) : 0,
                 ROAS: totals.비용 > 0 ? (totals.전환값 / totals.비용 * 100) : 0
             };
 
-            // 모달 제목 업데이트
-            document.getElementById('modalTitle').textContent = creativeName;
-
-            // KPI 카드 렌더링
-            const kpiGrid = document.getElementById('modalKpiGrid');
-            kpiGrid.innerHTML = `
+            // KPI 카드 렌더링 (상단: 비용, CPC, CPA, ROAS / 하단: 노출, 클릭, 전환수, 전환값)
+            document.getElementById('modalKpiRowTop').innerHTML = `
                 <div class="modal-kpi-card">
                     <div class="modal-kpi-label">비용</div>
                     <div class="modal-kpi-value">${formatNumber(kpis.비용)}원</div>
                 </div>
+                <div class="modal-kpi-card">
+                    <div class="modal-kpi-label">CPC</div>
+                    <div class="modal-kpi-value">${formatNumber(kpis.CPC)}원</div>
+                </div>
+                <div class="modal-kpi-card">
+                    <div class="modal-kpi-label">CPA</div>
+                    <div class="modal-kpi-value">${formatNumber(kpis.CPA)}원</div>
+                </div>
+                <div class="modal-kpi-card">
+                    <div class="modal-kpi-label">ROAS</div>
+                    <div class="modal-kpi-value">${formatROAS(kpis.ROAS)}</div>
+                </div>
+            `;
+
+            document.getElementById('modalKpiRowBottom').innerHTML = `
                 <div class="modal-kpi-card">
                     <div class="modal-kpi-label">노출</div>
                     <div class="modal-kpi-value">${formatNumber(kpis.노출)}</div>
@@ -1463,50 +1771,211 @@
                     <div class="modal-kpi-label">전환값</div>
                     <div class="modal-kpi-value">${formatNumber(kpis.전환값)}원</div>
                 </div>
-                <div class="modal-kpi-card">
-                    <div class="modal-kpi-label">CPC</div>
-                    <div class="modal-kpi-value">${formatNumber(kpis.CPC)}원</div>
-                </div>
-                <div class="modal-kpi-card">
-                    <div class="modal-kpi-label">CPA</div>
-                    <div class="modal-kpi-value">${formatNumber(kpis.CPA)}원</div>
-                </div>
-                <div class="modal-kpi-card">
-                    <div class="modal-kpi-label">ROAS</div>
-                    <div class="modal-kpi-value">${formatROAS(kpis.ROAS)}</div>
-                </div>
             `;
 
-            // 일별 데이터 집계
-            const dailyData = {};
-            creativeData.forEach(row => {
-                const date = row['날짜'];
-                if (!dailyData[date]) {
-                    dailyData[date] = { 비용: 0, 클릭: 0, 전환수: 0, 전환값: 0 };
+            // 테이블 업데이트
+            updateModalTable(aggregatedData);
+
+            // 차트 업데이트
+            updateModalChart();
+        }
+
+        // 모달 데이터 집계 (일별/주별/월별)
+        function aggregateModalData(data, viewType) {
+            const groups = {};
+
+            data.forEach(row => {
+                let key;
+                const date = new Date(row['날짜']);
+
+                if (viewType === 'daily') {
+                    key = row['날짜'];
+                } else if (viewType === 'weekly') {
+                    // 주 시작일 (월요일) 계산
+                    const day = date.getDay();
+                    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+                    const monday = new Date(date.setDate(diff));
+                    key = formatDateForInput(monday);
+                } else if (viewType === 'monthly') {
+                    key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
                 }
-                dailyData[date].비용 += parseFloat(row['비용']) || 0;
-                dailyData[date].클릭 += parseFloat(row['클릭']) || 0;
-                dailyData[date].전환수 += parseFloat(row['전환수']) || 0;
-                dailyData[date].전환값 += parseFloat(row['전환값']) || 0;
+
+                if (!groups[key]) {
+                    groups[key] = { 비용: 0, 노출: 0, 클릭: 0, 전환수: 0, 전환값: 0 };
+                }
+
+                groups[key].비용 += parseFloat(row['비용']) || 0;
+                groups[key].노출 += parseFloat(row['노출']) || 0;
+                groups[key].클릭 += parseFloat(row['클릭']) || 0;
+                groups[key].전환수 += parseFloat(row['전환수']) || 0;
+                groups[key].전환값 += parseFloat(row['전환값']) || 0;
             });
 
-            // 날짜순 정렬
-            const sortedDates = Object.keys(dailyData).sort();
-            const chartLabels = sortedDates.map(d => {
-                const date = new Date(d);
+            // 파생 지표 계산 및 정렬 (내림차순)
+            return Object.entries(groups)
+                .map(([period, values]) => ({
+                    period,
+                    ...values,
+                    CPC: values.클릭 > 0 ? (values.비용 / values.클릭) : 0,
+                    CPA: values.전환수 > 0 ? (values.비용 / values.전환수) : 0,
+                    ROAS: values.비용 > 0 ? (values.전환값 / values.비용 * 100) : 0
+                }))
+                .sort((a, b) => b.period.localeCompare(a.period));
+        }
+
+        // 모달 테이블 업데이트
+        function updateModalTable(data) {
+            const tbody = document.getElementById('modalTableBody');
+            const showMoreContainer = document.getElementById('modalShowMoreContainer');
+            const collapseContainer = document.getElementById('modalCollapseContainer');
+            const hiddenCount = document.getElementById('modalHiddenCount');
+
+            // 테이블 행 생성
+            tbody.innerHTML = data.map((row, index) => {
+                const displayStyle = (!isModalTableExpanded && index >= 5) ? 'display: none;' : '';
+                return `
+                    <tr style="${displayStyle}">
+                        <td>${formatPeriodLabel(row.period, currentModalViewType)}</td>
+                        <td>${formatNumber(row.비용)}</td>
+                        <td>${formatNumber(row.노출)}</td>
+                        <td>${formatNumber(row.클릭)}</td>
+                        <td>${formatNumber(row.CPC)}</td>
+                        <td>${formatNumber(row.전환수)}</td>
+                        <td>${formatNumber(row.CPA)}</td>
+                        <td>${formatROAS(row.ROAS)}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            // 더보기/접기 버튼 표시
+            if (data.length > 5) {
+                if (isModalTableExpanded) {
+                    showMoreContainer.style.display = 'none';
+                    collapseContainer.style.display = 'block';
+                } else {
+                    hiddenCount.textContent = data.length - 5;
+                    showMoreContainer.style.display = 'block';
+                    collapseContainer.style.display = 'none';
+                }
+            } else {
+                showMoreContainer.style.display = 'none';
+                collapseContainer.style.display = 'none';
+            }
+        }
+
+        // 기간 레이블 포맷
+        function formatPeriodLabel(period, viewType) {
+            if (viewType === 'monthly') {
+                const [year, month] = period.split('-');
+                return `${year}년 ${parseInt(month)}월`;
+            } else if (viewType === 'weekly') {
+                const date = new Date(period);
+                const endDate = new Date(date);
+                endDate.setDate(endDate.getDate() + 6);
+                return `${date.getMonth() + 1}/${date.getDate()} ~ ${endDate.getMonth() + 1}/${endDate.getDate()}`;
+            } else {
+                const date = new Date(period);
                 return `${date.getMonth() + 1}/${date.getDate()}`;
-            });
+            }
+        }
 
-            // ROAS 계산
-            const roasData = sortedDates.map(date => {
-                const d = dailyData[date];
-                return d.비용 > 0 ? Math.round(d.전환값 / d.비용 * 100) : 0;
-            });
+        // 모달 테이블 펼치기
+        function expandModalTable() {
+            isModalTableExpanded = true;
+            const aggregatedData = aggregateModalData(currentModalData, currentModalViewType);
+            updateModalTable(aggregatedData);
+        }
 
-            // 차트 생성
+        // 모달 테이블 접기
+        function collapseModalTable() {
+            isModalTableExpanded = false;
+            const aggregatedData = aggregateModalData(currentModalData, currentModalViewType);
+            updateModalTable(aggregatedData);
+        }
+
+        // 모달 차트 업데이트
+        function updateModalChart() {
+            const aggregatedData = aggregateModalData(currentModalData, currentModalViewType);
+
+            // 오름차순으로 정렬 (차트용)
+            const sortedData = [...aggregatedData].sort((a, b) => a.period.localeCompare(b.period));
+
+            const chartLabels = sortedData.map(d => formatPeriodLabel(d.period, currentModalViewType));
+
+            // 체크박스 상태 확인
+            const showCost = document.getElementById('modalChartCost').checked;
+            const showCPC = document.getElementById('modalChartCPC').checked;
+            const showCPA = document.getElementById('modalChartCPA').checked;
+            const showROAS = document.getElementById('modalChartROAS').checked;
+
+            // Y축 결정 로직 (모든 조합 고려)
+            // 우선순위: 비용 > CPC > CPA > ROAS
+            // 첫 번째 지표는 왼쪽, 나머지는 오른쪽
+            const hasCostMetric = showCost;
+            const hasCpcMetric = showCPC;
+            const hasCpaMetric = showCPA;
+
+            // 오른쪽 축 사용 여부 결정 (2개 이상 지표 선택 시)
+            const selectedCount = (showCost ? 1 : 0) + (showCPC ? 1 : 0) + (showCPA ? 1 : 0) + (showROAS ? 1 : 0);
+            const useRightAxis = selectedCount >= 2;
+
+            // 데이터셋 생성
+            const datasets = [];
+
+            if (showCost) {
+                datasets.push({
+                    label: '비용',
+                    data: sortedData.map(d => d.비용),
+                    borderColor: '#673ab7',
+                    backgroundColor: 'rgba(103, 58, 183, 0.1)',
+                    yAxisID: 'y',
+                    tension: 0.3,
+                    fill: true
+                });
+            }
+
+            if (showCPC) {
+                // CPC: 비용이 있으면 오른쪽, 없으면 왼쪽
+                datasets.push({
+                    label: 'CPC',
+                    data: sortedData.map(d => d.CPC),
+                    borderColor: '#2196f3',
+                    backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                    yAxisID: hasCostMetric ? 'y1' : 'y',
+                    tension: 0.3,
+                    fill: false
+                });
+            }
+
+            if (showCPA) {
+                // CPA: 비용 또는 CPC가 있으면 오른쪽, 없으면 왼쪽
+                datasets.push({
+                    label: 'CPA',
+                    data: sortedData.map(d => d.CPA),
+                    borderColor: '#ff9800',
+                    backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                    yAxisID: (hasCostMetric || hasCpcMetric) ? 'y1' : 'y',
+                    tension: 0.3,
+                    fill: false
+                });
+            }
+
+            if (showROAS) {
+                // ROAS: 비용/CPC/CPA 중 하나라도 있으면 오른쪽, ROAS만 있으면 왼쪽
+                datasets.push({
+                    label: 'ROAS',
+                    data: sortedData.map(d => d.ROAS),
+                    borderColor: '#00c853',
+                    backgroundColor: 'rgba(0, 200, 83, 0.1)',
+                    yAxisID: (hasCostMetric || hasCpcMetric || hasCpaMetric) ? 'y1' : 'y',
+                    tension: 0.3,
+                    fill: false
+                });
+            }
+
+            // 차트 생성/업데이트
             const ctx = document.getElementById('modalChart').getContext('2d');
 
-            // 기존 차트 제거
             if (modalChartInstance) {
                 modalChartInstance.destroy();
             }
@@ -1515,26 +1984,7 @@
                 type: 'line',
                 data: {
                     labels: chartLabels,
-                    datasets: [
-                        {
-                            label: '비용',
-                            data: sortedDates.map(date => dailyData[date].비용),
-                            borderColor: '#673ab7',
-                            backgroundColor: 'rgba(103, 58, 183, 0.1)',
-                            yAxisID: 'y',
-                            tension: 0.3,
-                            fill: true
-                        },
-                        {
-                            label: 'ROAS',
-                            data: roasData,
-                            borderColor: '#00c853',
-                            backgroundColor: 'rgba(0, 200, 83, 0.1)',
-                            yAxisID: 'y1',
-                            tension: 0.3,
-                            fill: false
-                        }
-                    ]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
@@ -1555,7 +2005,7 @@
                                         label += ': ';
                                     }
                                     if (context.dataset.label === 'ROAS') {
-                                        label += context.parsed.y + '%';
+                                        label += Math.round(context.parsed.y) + '%';
                                     } else {
                                         label += formatNumber(context.parsed.y) + '원';
                                     }
@@ -1576,37 +2026,62 @@
                             position: 'left',
                             title: {
                                 display: true,
-                                text: '비용 (원)'
+                                text: (function() {
+                                    if (showCost) return '비용 (원)';
+                                    if (showCPC) return 'CPC (원)';
+                                    if (showCPA) return 'CPA (원)';
+                                    if (showROAS) return 'ROAS (%)';
+                                    return '금액 (원)';
+                                })()
                             },
                             ticks: {
                                 callback: function(value) {
+                                    if (!showCost && !showCPC && !showCPA && showROAS) {
+                                        return value + '%';
+                                    }
                                     return formatNumber(value);
                                 }
                             }
                         },
                         y1: {
                             type: 'linear',
-                            display: true,
+                            display: useRightAxis,
                             position: 'right',
                             title: {
                                 display: true,
-                                text: 'ROAS (%)'
+                                text: (function() {
+                                    // 오른쪽 축에 있는 지표들 확인
+                                    const rightMetrics = [];
+                                    if (hasCostMetric && showCPC) rightMetrics.push('CPC');
+                                    if ((hasCostMetric || hasCpcMetric) && showCPA) rightMetrics.push('CPA');
+                                    if ((hasCostMetric || hasCpcMetric || hasCpaMetric) && showROAS) rightMetrics.push('ROAS');
+
+                                    if (rightMetrics.length === 0) return '';
+                                    if (rightMetrics.includes('ROAS') && rightMetrics.length === 1) return 'ROAS (%)';
+                                    if (rightMetrics.includes('ROAS')) return rightMetrics.join('/');
+                                    return rightMetrics.join('/') + ' (원)';
+                                })()
                             },
                             grid: {
                                 drawOnChartArea: false
                             },
                             ticks: {
                                 callback: function(value) {
-                                    return value + '%';
+                                    // 오른쪽 축에 ROAS만 있을 때는 % 표시
+                                    const hasRightCPC = hasCostMetric && showCPC;
+                                    const hasRightCPA = (hasCostMetric || hasCpcMetric) && showCPA;
+                                    const hasRightROAS = (hasCostMetric || hasCpcMetric || hasCpaMetric) && showROAS;
+
+                                    if (hasRightROAS && !hasRightCPC && !hasRightCPA) {
+                                        return value + '%';
+                                    }
+                                    return formatNumber(value);
                                 }
                             }
                         }
                     }
                 }
             });
-
-            // 모달 표시
-            document.getElementById('creativeModal').classList.add('active');
         }
 
         // 모달 닫기
@@ -1662,6 +2137,12 @@
 
             document.getElementById('endDate').addEventListener('change', e => {
                 filters.endDate = e.target.value;
+                updateDashboard();
+            });
+
+            // 소재 검색 이벤트 (입력 시 실시간 검색)
+            document.getElementById('searchText').addEventListener('input', e => {
+                filters.searchText = e.target.value;
                 updateDashboard();
             });
         });

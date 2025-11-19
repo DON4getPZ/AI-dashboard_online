@@ -1709,8 +1709,16 @@
             const showCPC = document.getElementById('chartCPC').checked;
             const showROAS = document.getElementById('chartROAS').checked;
 
-            // CPM/CPC가 비용과 함께 표시될 때 오른쪽 Y축 사용
-            const useRightAxisForCPMCPC = showCost && (showCPM || showCPC);
+            // Y축 결정 로직 (모든 조합 고려)
+            // 우선순위: 비용 > CPM > CPC > ROAS
+            // 첫 번째 지표는 왼쪽, 나머지는 오른쪽
+            const hasCostMetric = showCost;
+            const hasCpmMetric = showCPM;
+            const hasCpcMetric = showCPC;
+
+            // 오른쪽 축 사용 여부 결정 (2개 이상 지표 선택 시)
+            const selectedCount = (showCost ? 1 : 0) + (showCPM ? 1 : 0) + (showCPC ? 1 : 0) + (showROAS ? 1 : 0);
+            const useRightAxis = selectedCount >= 2;
 
             const datasets = [];
 
@@ -1742,7 +1750,7 @@
                     pointHoverRadius: 5,
                     fill: false,
                     tension: 0.4,
-                    yAxisID: useRightAxisForCPMCPC ? 'y1' : 'y',
+                    yAxisID: hasCostMetric ? 'y1' : 'y',
                     order: 3
                 });
             }
@@ -1762,7 +1770,7 @@
                     pointHoverRadius: 5,
                     fill: false,
                     tension: 0.4,
-                    yAxisID: useRightAxisForCPMCPC ? 'y1' : 'y',
+                    yAxisID: (hasCostMetric || hasCpmMetric) ? 'y1' : 'y',
                     order: 2
                 });
             }
@@ -1782,21 +1790,26 @@
                     pointHoverRadius: 6,
                     fill: true,
                     tension: 0.4,
-                    yAxisID: 'y1',
+                    yAxisID: (hasCostMetric || hasCpmMetric || hasCpcMetric) ? 'y1' : 'y',
                     order: 1
                 });
             }
 
             // 오른쪽 Y축 표시 여부와 타이틀 결정
-            const showY1 = showROAS || useRightAxisForCPMCPC;
-            let y1Title = '';
-            if (showROAS && useRightAxisForCPMCPC) {
-                y1Title = 'CPM/CPC/ROAS';
-            } else if (showROAS) {
-                y1Title = 'ROAS (%)';
-            } else if (useRightAxisForCPMCPC) {
-                y1Title = 'CPM/CPC (원)';
-            }
+            const showY1 = useRightAxis;
+
+            // 오른쪽 Y축 타이틀 결정
+            const y1Title = (function() {
+                const rightMetrics = [];
+                if (hasCostMetric && showCPM) rightMetrics.push('CPM');
+                if ((hasCostMetric || hasCpmMetric) && showCPC) rightMetrics.push('CPC');
+                if ((hasCostMetric || hasCpmMetric || hasCpcMetric) && showROAS) rightMetrics.push('ROAS');
+
+                if (rightMetrics.length === 0) return '';
+                if (rightMetrics.includes('ROAS') && rightMetrics.length === 1) return 'ROAS (%)';
+                if (rightMetrics.includes('ROAS')) return rightMetrics.join('/');
+                return rightMetrics.join('/') + ' (원)';
+            })();
 
             trendChart = new Chart(ctx, {
                 type: 'bar',
@@ -1872,7 +1885,13 @@
                             position: 'left',
                             title: {
                                 display: true,
-                                text: '금액 (원)',
+                                text: (function() {
+                                    if (showCost) return '비용 (원)';
+                                    if (showCPM) return 'CPM (원)';
+                                    if (showCPC) return 'CPC (원)';
+                                    if (showROAS) return 'ROAS (%)';
+                                    return '금액 (원)';
+                                })(),
                                 font: {
                                     family: "'Inter', sans-serif",
                                     size: 12
@@ -1887,6 +1906,10 @@
                                     size: 11
                                 },
                                 callback: function(value) {
+                                    // ROAS만 선택된 경우 % 표시
+                                    if (!showCost && !showCPM && !showCPC && showROAS) {
+                                        return value + '%';
+                                    }
                                     if (value >= 1000000) {
                                         return (value / 1000000).toFixed(1) + 'M';
                                     } else if (value >= 1000) {
@@ -1917,9 +1940,15 @@
                                     size: 11
                                 },
                                 callback: function(value) {
-                                    if (showROAS && !useRightAxisForCPMCPC) {
+                                    // 오른쪽 축에 ROAS만 있는 경우 % 표시
+                                    const rightMetrics = [];
+                                    if (hasCostMetric && showCPM) rightMetrics.push('CPM');
+                                    if ((hasCostMetric || hasCpmMetric) && showCPC) rightMetrics.push('CPC');
+                                    if ((hasCostMetric || hasCpmMetric || hasCpcMetric) && showROAS) rightMetrics.push('ROAS');
+
+                                    if (rightMetrics.includes('ROAS') && rightMetrics.length === 1) {
                                         return value + '%';
-                                    } else if (useRightAxisForCPMCPC && !showROAS) {
+                                    } else if (!rightMetrics.includes('ROAS')) {
                                         return formatNumber(value);
                                     }
                                     return value;

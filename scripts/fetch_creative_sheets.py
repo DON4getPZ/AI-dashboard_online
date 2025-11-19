@@ -7,7 +7,7 @@ Google Sheets 크리에이티브 데이터 가져오기 스크립트
 - WORKSHEET_NAME: 워크시트 이름 (기본값: Sheet1)
 
 출력:
-- data_Creative/{YYYY-MM}.csv 형식으로 저장
+- data/creative/{YYYY-MM}.csv 형식으로 저장
 """
 
 import os
@@ -98,8 +98,8 @@ def fetch_creative_sheets_data():
         if len(data) > 0:
             print(f"   └ 헤더: {', '.join(data[0][:5])}{'...' if len(data[0]) > 5 else ''}")
 
-        # data_Creative 디렉토리 생성
-        output_dir = 'data_Creative'
+        # data/creative 디렉토리 생성
+        output_dir = os.path.join('data', 'creative')
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
