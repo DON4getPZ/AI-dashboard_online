@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시계열 데이터 분석 - 마케팅 대시보드</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Berry Theme Colors */
+            --primary-main: #673ab7;
+            --primary-light: #ede7f6;
+            --primary-dark: #5e35b1;
+            --secondary-main: #2196f3;
+            --secondary-light: #e3f2fd;
+            --success-main: #00c853;
+            --success-light: #b9f6ca;
+            --warning-main: #ffab00;
+            --warning-light: #fff8e1;
+            --error-main: #ff1744;
+            --error-light: #ffeaea;
+            --grey-50: #fafafa;
+            --grey-100: #f5f5f5;
+            --grey-200: #eeeeee;
+            --grey-300: #e0e0e0;
+            --grey-500: #9e9e9e;
+            --grey-700: #616161;
+            --grey-900: #212121;
+            --paper: #ffffff;
+            --background: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--grey-900);
+            line-height: 1.5;
+        }
+
+        /* 레이아웃 구조 */
+        .app-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--grey-200);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-main) 0%, var(--primary-dark) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .sidebar-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .sidebar-logo-subtitle {
+            font-size: 11px;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .simplebar-content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-thumb {
+            background: var(--grey-300);
+            border-radius: 3px;
+        }
+
+        .sidebar-content {
+            padding: 16px 12px;
+        }
+
+        .nav-group {
+            margin-bottom: 16px;
+        }
+
+        .nav-group-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 16px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: var(--grey-700);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: var(--grey-100);
+            color: var(--primary-main);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .nav-item-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .nav-item-text {
+            flex: 1;
+        }
+
+        /* 메인 컨텐츠 영역 */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* 헤더 */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin: 0;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--grey-500);
+            margin-top: 4px;
+        }
+
+        /* 카드 공통 스타일 */
+        .card {
+            background: var(--paper);
+            border-radius: 12px;
+            box-shadow: 0 2px 14px 0 rgba(32, 40, 45, 0.08);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 20px 0 rgba(32, 40, 45, 0.12);
+        }
+
+        /* 인사이트 섹션 */
+        .insight-section {
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .insight-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .insight-header::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--warning-main);
+            border-radius: 2px;
+        }
+
+        .insight-content {
+            display: grid;
+            gap: 16px;
+        }
+
+        .insight-card {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--grey-50) 0%, var(--paper) 100%);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-main);
+        }
+
+        .insight-card.positive {
+            border-left-color: var(--success-main);
+        }
+
+        .insight-card.negative {
+            border-left-color: var(--error-main);
+        }
+
+        .insight-card.neutral {
+            border-left-color: var(--warning-main);
+        }
+
+        .insight-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .insight-title svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .insight-text {
+            font-size: 14px;
+            color: var(--grey-700);
+            line-height: 1.6;
+        }
+
+        /* KPI 요약 섹션 */
+        .kpi-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-summary-card {
+            padding: 20px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--paper) 0%, var(--grey-50) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .kpi-summary-card:nth-child(1)::before { background: #673ab7; }
+        .kpi-summary-card:nth-child(2)::before { background: #2196f3; }
+        .kpi-summary-card:nth-child(3)::before { background: #ff9800; }
+        .kpi-summary-card:nth-child(4)::before { background: #4caf50; }
+        .kpi-summary-card:nth-child(5)::before { background: #00c853; }
+
+        .kpi-summary-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .kpi-summary-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .kpi-summary-unit {
+            font-size: 11px;
+            color: var(--grey-500);
+            margin-top: 4px;
+        }
+
+        .kpi-forecast-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 12px;
+            margin-top: 8px;
+        }
+
+        .kpi-forecast-badge.up {
+            background: var(--success-light);
+            color: var(--success-main);
+        }
+
+        .kpi-forecast-badge.down {
+            background: var(--error-light);
+            color: var(--error-main);
+        }
+
+        /* 차트 섹션 */
+        .chart-section {
+            margin-bottom: 24px;
+            padding: 24px;
+        }
+
+        .chart-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-header::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--secondary-main);
+            border-radius: 2px;
+        }
+
+        .chart-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .chart-checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chart-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--grey-700);
+            padding: 6px 12px;
+            border-radius: 20px;
+            transition: all 0.2s ease;
+            background: var(--grey-100);
+        }
+
+        .chart-checkbox:hover {
+            background: var(--grey-200);
+        }
+
+        .chart-checkbox input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-main);
+            cursor: pointer;
+        }
+
+        .chart-checkbox.cost { border-left: 3px solid #673ab7; }
+        .chart-checkbox.impressions { border-left: 3px solid #2196f3; }
+        .chart-checkbox.clicks { border-left: 3px solid #ff9800; }
+        .chart-checkbox.conversions { border-left: 3px solid #4caf50; }
+        .chart-checkbox.value { border-left: 3px solid #00c853; }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+
+        /* 뷰 타입 버튼 */
+        .view-type-section {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .view-btn {
+            padding: 10px 24px;
+            border: none;
+            background: var(--paper);
+            color: var(--grey-700);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .view-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .view-btn.active {
+            background: var(--primary-main);
+            color: white;
+            box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+        }
+
+        /* 시각화 이미지 섹션 */
+        .visualization-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .visualization-card {
+            padding: 20px;
+        }
+
+        .visualization-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .visualization-title::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: var(--success-main);
+            border-radius: 2px;
+        }
+
+        .visualization-img {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid var(--grey-200);
+        }
+
+        /* 데이터 테이블 */
+        .table-section {
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--grey-200);
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table-header::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--success-main);
+            border-radius: 2px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: right;
+            font-size: 14px;
+        }
+
+        th {
+            background: var(--grey-50);
+            font-weight: 600;
+            color: var(--grey-700);
+            border-bottom: 2px solid var(--grey-200);
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+
+        td {
+            border-bottom: 1px solid var(--grey-100);
+            color: var(--grey-900);
+        }
+
+        th:first-child,
+        td:first-child {
+            text-align: left;
+            position: sticky;
+            left: 0;
+            background: var(--paper);
+            font-weight: 500;
+        }
+
+        th:first-child {
+            background: var(--grey-50);
+            z-index: 2;
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: var(--grey-50);
+        }
+
+        tbody tr:hover td:first-child {
+            background: var(--grey-50);
+        }
+
+        .forecast-row {
+            background: var(--primary-light) !important;
+        }
+
+        .forecast-row td {
+            color: var(--primary-dark);
+        }
+
+        .forecast-row td:first-child {
+            background: var(--primary-light) !important;
+        }
+
+        .mixed-row {
+            background: var(--warning-light) !important;
+        }
+
+        .mixed-row td {
+            color: var(--grey-900);
+        }
+
+        .mixed-row td:first-child {
+            background: var(--warning-light) !important;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1400px) {
+            .kpi-summary-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .visualization-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 16px;
+            }
+            .kpi-summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .chart-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="sidebar-logo-text">Analytics</div>
+                        <div class="sidebar-logo-subtitle">Dashboard</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="simplebar-content-wrapper">
+                <div class="sidebar-content">
+                    <!-- 대시보드 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">대시보드</div>
+                        <a href="marketing_dashboard_v3.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">광고 성과 대시보드</span>
+                        </a>
+                    </div>
+
+                    <!-- 분석 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">분석</div>
+                        <a href="creative_analysis.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">광고 소재별 분석</span>
+                        </a>
+                        <a href="#" class="nav-item active">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">시계열 데이터 분석</span>
+                        </a>
+                        <a href="#" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2.03 0v8.99H22c-.47-4.74-4.24-8.52-8.97-8.99zm0 11.01V22c4.74-.47 8.5-4.25 8.97-8.99h-8.97z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">채널별 비교</span>
+                        </a>
+                    </div>
+
+                    <!-- 설정 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">설정</div>
+                        <a href="#" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">데이터 설정</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <div class="container">
+                <!-- 헤더 -->
+                <div class="header">
+                    <div>
+                        <h1>시계열 데이터 분석</h1>
+                        <div class="header-subtitle">AI 기반 예측 모델을 통한 광고 성과 예측 및 인사이트</div>
+                    </div>
+                </div>
+
+                <!-- 인사이트 섹션 -->
+                <div class="insight-section card">
+                    <div class="insight-header">AI 인사이트</div>
+                    <div class="insight-content" id="insightContent">
+                        <!-- JS로 동적 생성 -->
+                    </div>
+                </div>
+
+                <!-- KPI 요약 -->
+                <div class="kpi-summary-grid" id="kpiSummaryGrid">
+                    <!-- JS로 동적 생성 -->
+                </div>
+
+                <!-- 뷰 타입 선택 -->
+                <div class="view-type-section">
+                    <button class="view-btn active" data-view="daily">일별</button>
+                    <button class="view-btn" data-view="weekly">주별</button>
+                    <button class="view-btn" data-view="monthly">월별</button>
+                </div>
+
+                <!-- 예측 차트 -->
+                <div class="chart-section card">
+                    <div class="chart-header">성과 예측 추이</div>
+                    <div class="chart-controls">
+                        <div class="chart-checkbox-group">
+                            <label class="chart-checkbox cost">
+                                <input type="checkbox" id="chartCost" checked>
+                                <span>비용</span>
+                            </label>
+                            <label class="chart-checkbox impressions">
+                                <input type="checkbox" id="chartImpressions">
+                                <span>노출</span>
+                            </label>
+                            <label class="chart-checkbox clicks">
+                                <input type="checkbox" id="chartClicks">
+                                <span>클릭</span>
+                            </label>
+                            <label class="chart-checkbox conversions">
+                                <input type="checkbox" id="chartConversions" checked>
+                                <span>전환수</span>
+                            </label>
+                            <label class="chart-checkbox value">
+                                <input type="checkbox" id="chartValue">
+                                <span>전환값</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="forecastChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 시각화 이미지 -->
+                <div class="visualization-grid">
+                    <div class="visualization-card card">
+                        <div class="visualization-title">시계열 예측 분석</div>
+                        <img src="visualizations/timeseries_forecast.png" alt="시계열 예측" class="visualization-img">
+                    </div>
+                    <div class="visualization-card card">
+                        <div class="visualization-title">계절성 분해</div>
+                        <img src="visualizations/seasonal_decomposition.png" alt="계절성 분해" class="visualization-img">
+                    </div>
+                    <div class="visualization-card card">
+                        <div class="visualization-title">상관관계 히트맵</div>
+                        <img src="visualizations/correlation_heatmap.png" alt="상관관계" class="visualization-img">
+                    </div>
+                    <div class="visualization-card card">
+                        <div class="visualization-title">이상치 분석</div>
+                        <img src="visualizations/boxplot_outliers.png" alt="이상치 분석" class="visualization-img">
+                    </div>
+                </div>
+
+                <!-- 데이터 테이블 -->
+                <div class="table-section card">
+                    <div class="table-header">예측 데이터</div>
+                    <div class="table-container">
+                        <table id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>기간</th>
+                                    <th>비용</th>
+                                    <th>노출</th>
+                                    <th>클릭</th>
+                                    <th>전환수</th>
+                                    <th>전환값</th>
+                                    <th>유형</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <tr>
+                                    <td colspan="7" class="loading">데이터를 불러오는 중...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 전역 변수
+        let forecastData = [];
+        let currentView = 'daily';
+        let forecastChart = null;
+
+        // 숫자 포맷
+        function formatNumber(num) {
+            if (num === 0 || num === null || num === undefined) return '0';
+            return Math.round(num).toLocaleString('ko-KR');
+        }
+
+        // CSV 파싱
+        function parseCSV(text) {
+            const lines = text.trim().split('\n');
+            const headers = lines[0].split(',');
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',');
+                if (values.length === headers.length) {
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header.trim()] = values[index].trim();
+                    });
+                    data.push(row);
+                }
+            }
+            return data;
+        }
+
+        // 데이터 로드
+        async function loadData() {
+            try {
+                // 항상 일별 데이터를 로드하고 뷰에 따라 집계
+                const response = await fetch('forecast/predictions_daily.csv');
+                const text = await response.text();
+                const dailyData = parseCSV(text);
+
+                // 뷰 타입에 따라 데이터 집계
+                if (currentView === 'daily') {
+                    forecastData = dailyData;
+                } else {
+                    forecastData = aggregateData(dailyData, currentView);
+                }
+
+                updateDashboard();
+            } catch (error) {
+                console.error('데이터 로드 실패:', error);
+            }
+        }
+
+        // 데이터 집계 (주별/월별)
+        function aggregateData(data, viewType) {
+            const groups = {};
+
+            data.forEach(row => {
+                let key;
+                const date = new Date(row['일 구분']);
+
+                if (viewType === 'weekly') {
+                    // 주 시작일 (월요일) 계산
+                    const day = date.getDay();
+                    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+                    const monday = new Date(date);
+                    monday.setDate(diff);
+                    key = monday.toISOString().split('T')[0];
+                } else if (viewType === 'monthly') {
+                    key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                }
+
+                if (!groups[key]) {
+                    groups[key] = {
+                        비용: 0, 노출: 0, 클릭: 0, 전환수: 0, 전환값: 0,
+                        hasActual: false, hasForecast: false
+                    };
+                }
+
+                groups[key].비용 += parseFloat(row['비용_예측']) || 0;
+                groups[key].노출 += parseFloat(row['노출_예측']) || 0;
+                groups[key].클릭 += parseFloat(row['클릭_예측']) || 0;
+                groups[key].전환수 += parseFloat(row['전환수_예측']) || 0;
+                groups[key].전환값 += parseFloat(row['전환값_예측']) || 0;
+
+                if (row.type === 'actual') groups[key].hasActual = true;
+                if (row.type === 'forecast') groups[key].hasForecast = true;
+            });
+
+            // 정렬 및 변환
+            return Object.entries(groups)
+                .sort((a, b) => a[0].localeCompare(b[0]))
+                .map(([period, values]) => ({
+                    '일 구분': period,
+                    '비용_예측': values.비용,
+                    '노출_예측': values.노출,
+                    '클릭_예측': values.클릭,
+                    '전환수_예측': values.전환수,
+                    '전환값_예측': values.전환값,
+                    // 예측 데이터가 포함되어 있으면 forecast로 표시
+                    type: values.hasForecast && !values.hasActual ? 'forecast' :
+                          values.hasForecast && values.hasActual ? 'mixed' : 'actual'
+                }));
+        }
+
+        // 대시보드 업데이트
+        function updateDashboard() {
+            updateKPISummary();
+            updateInsights();
+            updateChart();
+            updateTable();
+        }
+
+        // KPI 요약 업데이트
+        function updateKPISummary() {
+            const actualData = forecastData.filter(d => d.type === 'actual');
+            const forecastDataOnly = forecastData.filter(d => d.type === 'forecast');
+
+            // 실제 데이터 합계
+            const actualTotals = actualData.reduce((acc, row) => {
+                acc.비용 += parseFloat(row['비용_예측']) || 0;
+                acc.노출 += parseFloat(row['노출_예측']) || 0;
+                acc.클릭 += parseFloat(row['클릭_예측']) || 0;
+                acc.전환수 += parseFloat(row['전환수_예측']) || 0;
+                acc.전환값 += parseFloat(row['전환값_예측']) || 0;
+                return acc;
+            }, { 비용: 0, 노출: 0, 클릭: 0, 전환수: 0, 전환값: 0 });
+
+            // 예측 데이터 합계
+            const forecastTotals = forecastDataOnly.reduce((acc, row) => {
+                acc.비용 += parseFloat(row['비용_예측']) || 0;
+                acc.노출 += parseFloat(row['노출_예측']) || 0;
+                acc.클릭 += parseFloat(row['클릭_예측']) || 0;
+                acc.전환수 += parseFloat(row['전환수_예측']) || 0;
+                acc.전환값 += parseFloat(row['전환값_예측']) || 0;
+                return acc;
+            }, { 비용: 0, 노출: 0, 클릭: 0, 전환수: 0, 전환값: 0 });
+
+            // 변화율 계산
+            const calcChange = (forecast, actual) => {
+                if (actual === 0) return 0;
+                return ((forecast - actual) / actual * 100).toFixed(1);
+            };
+
+            const kpis = [
+                { label: '예측 비용', value: forecastTotals.비용, unit: '원', change: calcChange(forecastTotals.비용, actualTotals.비용) },
+                { label: '예측 노출', value: forecastTotals.노출, unit: '회', change: calcChange(forecastTotals.노출, actualTotals.노출) },
+                { label: '예측 클릭', value: forecastTotals.클릭, unit: '회', change: calcChange(forecastTotals.클릭, actualTotals.클릭) },
+                { label: '예측 전환수', value: forecastTotals.전환수, unit: '건', change: calcChange(forecastTotals.전환수, actualTotals.전환수) },
+                { label: '예측 전환값', value: forecastTotals.전환값, unit: '원', change: calcChange(forecastTotals.전환값, actualTotals.전환값) }
+            ];
+
+            document.getElementById('kpiSummaryGrid').innerHTML = kpis.map(kpi => `
+                <div class="kpi-summary-card card">
+                    <div class="kpi-summary-label">${kpi.label}</div>
+                    <div class="kpi-summary-value">${formatNumber(kpi.value)}</div>
+                    <div class="kpi-summary-unit">${kpi.unit}</div>
+                    <div class="kpi-forecast-badge ${parseFloat(kpi.change) >= 0 ? 'up' : 'down'}">
+                        ${parseFloat(kpi.change) >= 0 ? '▲' : '▼'} ${Math.abs(kpi.change)}%
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 인사이트 업데이트
+        function updateInsights() {
+            const actualData = forecastData.filter(d => d.type === 'actual');
+            const forecastDataOnly = forecastData.filter(d => d.type === 'forecast');
+
+            // 실제 vs 예측 분석
+            const actualCost = actualData.reduce((sum, d) => sum + (parseFloat(d['비용_예측']) || 0), 0);
+            const forecastCost = forecastDataOnly.reduce((sum, d) => sum + (parseFloat(d['비용_예측']) || 0), 0);
+            const actualConv = actualData.reduce((sum, d) => sum + (parseFloat(d['전환수_예측']) || 0), 0);
+            const forecastConv = forecastDataOnly.reduce((sum, d) => sum + (parseFloat(d['전환수_예측']) || 0), 0);
+            const actualValue = actualData.reduce((sum, d) => sum + (parseFloat(d['전환값_예측']) || 0), 0);
+            const forecastValue = forecastDataOnly.reduce((sum, d) => sum + (parseFloat(d['전환값_예측']) || 0), 0);
+
+            // ROAS 계산
+            const actualROAS = actualCost > 0 ? (actualValue / actualCost * 100) : 0;
+            const forecastROAS = forecastCost > 0 ? (forecastValue / forecastCost * 100) : 0;
+
+            // CPA 계산
+            const actualCPA = actualConv > 0 ? (actualCost / actualConv) : 0;
+            const forecastCPA = forecastConv > 0 ? (forecastCost / forecastConv) : 0;
+
+            const insights = [];
+
+            // 비용 인사이트
+            const costChange = actualCost > 0 ? ((forecastCost - actualCost) / actualCost * 100) : 0;
+            if (costChange > 10) {
+                insights.push({
+                    type: 'negative',
+                    title: '비용 증가 예상',
+                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
+                    text: `향후 예측 기간 동안 광고 비용이 약 ${Math.abs(costChange).toFixed(1)}% 증가할 것으로 예상됩니다. 예산 재조정이 필요할 수 있습니다.`
+                });
+            } else if (costChange < -10) {
+                insights.push({
+                    type: 'positive',
+                    title: '비용 감소 예상',
+                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
+                    text: `향후 예측 기간 동안 광고 비용이 약 ${Math.abs(costChange).toFixed(1)}% 감소할 것으로 예상됩니다. 효율적인 운영이 이루어지고 있습니다.`
+                });
+            }
+
+            // 전환 인사이트
+            const convChange = actualConv > 0 ? ((forecastConv - actualConv) / actualConv * 100) : 0;
+            if (convChange > 15) {
+                insights.push({
+                    type: 'positive',
+                    title: '전환수 증가 예상',
+                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>',
+                    text: `전환수가 약 ${Math.abs(convChange).toFixed(1)}% 증가할 것으로 예측됩니다. 현재 캠페인 전략이 효과적으로 작동하고 있습니다.`
+                });
+            } else if (convChange < -15) {
+                insights.push({
+                    type: 'negative',
+                    title: '전환수 감소 예상',
+                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"/></svg>',
+                    text: `전환수가 약 ${Math.abs(convChange).toFixed(1)}% 감소할 것으로 예측됩니다. 캠페인 최적화가 필요합니다.`
+                });
+            }
+
+            // ROAS 인사이트
+            const roasChange = actualROAS > 0 ? ((forecastROAS - actualROAS) / actualROAS * 100) : 0;
+            if (roasChange > 10) {
+                insights.push({
+                    type: 'positive',
+                    title: 'ROAS 개선 예상',
+                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>',
+                    text: `ROAS가 ${actualROAS.toFixed(0)}%에서 ${forecastROAS.toFixed(0)}%로 개선될 것으로 예상됩니다. 투자 대비 수익률이 향상되고 있습니다.`
+                });
+            } else if (roasChange < -10) {
+                insights.push({
+                    type: 'neutral',
+                    title: 'ROAS 하락 주의',
+                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>',
+                    text: `ROAS가 ${actualROAS.toFixed(0)}%에서 ${forecastROAS.toFixed(0)}%로 하락할 것으로 예상됩니다. 타겟팅 또는 크리에이티브 개선을 검토하세요.`
+                });
+            }
+
+            // CPA 인사이트
+            const cpaChange = actualCPA > 0 ? ((forecastCPA - actualCPA) / actualCPA * 100) : 0;
+            if (cpaChange < -15) {
+                insights.push({
+                    type: 'positive',
+                    title: 'CPA 효율화',
+                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
+                    text: `전환당 비용(CPA)이 ${formatNumber(actualCPA)}원에서 ${formatNumber(forecastCPA)}원으로 약 ${Math.abs(cpaChange).toFixed(1)}% 감소할 것으로 예상됩니다.`
+                });
+            } else if (cpaChange > 20) {
+                insights.push({
+                    type: 'negative',
+                    title: 'CPA 상승 경고',
+                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>',
+                    text: `전환당 비용(CPA)이 ${formatNumber(actualCPA)}원에서 ${formatNumber(forecastCPA)}원으로 약 ${cpaChange.toFixed(1)}% 상승할 것으로 예상됩니다. 비용 효율 개선이 필요합니다.`
+                });
+            }
+
+            // 기본 인사이트 추가
+            if (insights.length === 0) {
+                insights.push({
+                    type: 'neutral',
+                    title: '안정적인 성과 예측',
+                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
+                    text: `현재 광고 성과가 안정적으로 유지되고 있으며, 예측 기간 동안 큰 변동 없이 비슷한 수준을 유지할 것으로 예상됩니다.`
+                });
+            }
+
+            document.getElementById('insightContent').innerHTML = insights.map(insight => `
+                <div class="insight-card ${insight.type}">
+                    <div class="insight-title">
+                        ${insight.icon}
+                        ${insight.title}
+                    </div>
+                    <div class="insight-text">${insight.text}</div>
+                </div>
+            `).join('');
+        }
+
+        // 차트 업데이트
+        function updateChart() {
+            const ctx = document.getElementById('forecastChart').getContext('2d');
+
+            if (forecastChart) {
+                forecastChart.destroy();
+            }
+
+            const labels = forecastData.map(d => d['일 구분']);
+
+            const showCost = document.getElementById('chartCost').checked;
+            const showImpressions = document.getElementById('chartImpressions').checked;
+            const showClicks = document.getElementById('chartClicks').checked;
+            const showConversions = document.getElementById('chartConversions').checked;
+            const showValue = document.getElementById('chartValue').checked;
+
+            // 실제/예측 구분 인덱스 찾기
+            const lastActualIndex = forecastData.findIndex(d => d.type === 'forecast' || d.type === 'mixed') - 1;
+
+            // 데이터셋을 실제값과 예측값으로 분리하는 함수
+            function createSplitDatasets(label, data, color, yAxisID) {
+                const actualData = data.map((val, idx) => {
+                    const type = forecastData[idx].type;
+                    return (type === 'actual' || type === 'mixed') ? val : null;
+                });
+                const forecastDataArr = data.map((val, idx) => {
+                    const type = forecastData[idx].type;
+                    return (type === 'forecast' || type === 'mixed') ? val : null;
+                });
+
+                // 연결을 위해 마지막 실제값을 예측 데이터의 시작점에 추가
+                if (lastActualIndex >= 0 && lastActualIndex < data.length - 1) {
+                    forecastDataArr[lastActualIndex] = data[lastActualIndex];
+                }
+
+                const datasets = [];
+
+                // 실제값 데이터셋 (실선)
+                datasets.push({
+                    label: label,
+                    data: actualData,
+                    borderColor: color,
+                    backgroundColor: color.replace(')', ', 0.1)').replace('rgb', 'rgba'),
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointStyle: 'circle',
+                    yAxisID: yAxisID,
+                    fill: false,
+                    tension: 0.4,
+                    spanGaps: false
+                });
+
+                // 예측값 데이터셋 (점선)
+                datasets.push({
+                    label: label + ' (예측)',
+                    data: forecastDataArr,
+                    borderColor: color,
+                    backgroundColor: color.replace(')', ', 0.05)').replace('rgb', 'rgba'),
+                    borderWidth: 2,
+                    borderDash: [6, 4],
+                    pointRadius: 4,
+                    pointStyle: 'triangle',
+                    yAxisID: yAxisID,
+                    fill: false,
+                    tension: 0.4,
+                    spanGaps: false
+                });
+
+                return datasets;
+            }
+
+            const datasets = [];
+
+            // Y축 결정 로직: 비용/전환값은 금액(왼쪽), 노출/클릭/전환수는 수량(오른쪽)
+            // 단, 금액 지표가 없으면 수량 지표가 왼쪽 축 사용
+            const hasAmountMetric = showCost || showValue;
+
+            if (showCost) {
+                const data = forecastData.map(d => parseFloat(d['비용_예측']) || 0);
+                datasets.push(...createSplitDatasets('비용', data, '#673ab7', 'y'));
+            }
+
+            if (showImpressions) {
+                const data = forecastData.map(d => parseFloat(d['노출_예측']) || 0);
+                datasets.push(...createSplitDatasets('노출', data, '#2196f3', hasAmountMetric ? 'y1' : 'y'));
+            }
+
+            if (showClicks) {
+                const data = forecastData.map(d => parseFloat(d['클릭_예측']) || 0);
+                datasets.push(...createSplitDatasets('클릭', data, '#ff9800', hasAmountMetric ? 'y1' : 'y'));
+            }
+
+            if (showConversions) {
+                const data = forecastData.map(d => parseFloat(d['전환수_예측']) || 0);
+                datasets.push(...createSplitDatasets('전환수', data, '#4caf50', hasAmountMetric ? 'y1' : 'y'));
+            }
+
+            if (showValue) {
+                const data = forecastData.map(d => parseFloat(d['전환값_예측']) || 0);
+                datasets.push(...createSplitDatasets('전환값', data, '#00c853', 'y'));
+            }
+
+            // 오른쪽 축 표시 여부
+            const showRightAxis = hasAmountMetric && (showImpressions || showClicks || showConversions);
+
+            forecastChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            align: 'end',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                filter: function(item) {
+                                    // 예측 데이터셋은 범례에서 숨김
+                                    return !item.text.includes('(예측)');
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(33, 33, 33, 0.9)',
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    // (예측) 접미사 제거
+                                    label = label.replace(' (예측)', '');
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += formatNumber(context.parsed.y);
+
+                                    // 예측값 여부 표시
+                                    const dataIndex = context.dataIndex;
+                                    const type = forecastData[dataIndex].type;
+                                    if (type === 'forecast' || (type === 'mixed' && context.dataset.borderDash)) {
+                                        label += ' (예측)';
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        annotation: {
+                            annotations: lastActualIndex >= 0 ? {
+                                line1: {
+                                    type: 'line',
+                                    xMin: lastActualIndex + 0.5,
+                                    xMax: lastActualIndex + 0.5,
+                                    borderColor: 'rgba(103, 58, 183, 0.5)',
+                                    borderWidth: 2,
+                                    borderDash: [6, 6],
+                                    label: {
+                                        display: true,
+                                        content: '예측 시작',
+                                        position: 'start'
+                                    }
+                                }
+                            } : {}
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: hasAmountMetric ? '금액 (원)' : '수량'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1000000) {
+                                        return (value / 1000000).toFixed(1) + 'M';
+                                    } else if (value >= 1000) {
+                                        return (value / 1000).toFixed(0) + 'K';
+                                    }
+                                    return value;
+                                }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: showRightAxis,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: '수량'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1000000) {
+                                        return (value / 1000000).toFixed(1) + 'M';
+                                    } else if (value >= 1000) {
+                                        return (value / 1000).toFixed(0) + 'K';
+                                    }
+                                    return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 테이블 업데이트
+        function updateTable() {
+            const tbody = document.getElementById('tableBody');
+
+            // 유형 레이블 결정
+            function getTypeLabel(type) {
+                if (type === 'forecast') return '예측';
+                if (type === 'mixed') return '혼합';
+                return '실측';
+            }
+
+            tbody.innerHTML = forecastData.map(row => `
+                <tr class="${row.type === 'forecast' ? 'forecast-row' : row.type === 'mixed' ? 'mixed-row' : ''}">
+                    <td>${row['일 구분']}</td>
+                    <td>${formatNumber(parseFloat(row['비용_예측']) || 0)}</td>
+                    <td>${formatNumber(parseFloat(row['노출_예측']) || 0)}</td>
+                    <td>${formatNumber(parseFloat(row['클릭_예측']) || 0)}</td>
+                    <td>${formatNumber(parseFloat(row['전환수_예측']) || 0)}</td>
+                    <td>${formatNumber(parseFloat(row['전환값_예측']) || 0)}</td>
+                    <td>${getTypeLabel(row.type)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+
+            // 뷰 타입 버튼 이벤트
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentView = this.dataset.view;
+                    loadData();
+                });
+            });
+
+            // 차트 체크박스 이벤트
+            document.querySelectorAll('.chart-checkbox input').forEach(checkbox => {
+                checkbox.addEventListener('change', updateChart);
+            });
+        });
+    </script>
+</body>
+</html>
