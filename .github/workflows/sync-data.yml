@@ -1,0 +1,122 @@
+name: Daily Marketing Data Sync v2.0
+
+on:
+  schedule:
+    - cron: '30 1 * * *'
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: '3.12'
+
+jobs:
+  sync-and-process:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+      
+      - name: 📦 Install dependencies
+        run: |
+          pip install --no-cache-dir \
+            gspread==5.12.0 \
+            oauth2client==4.1.3 \
+            pandas==2.1.4 \
+            numpy==1.26.2 \
+            scipy==1.11.4 \
+            statsmodels==0.14.1
+          pip install prophet || echo "⚠️  Prophet 설치 실패"
+      
+      - name: 📊 Fetch data from Google Sheets
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+          WORKSHEET_NAME: ${{ secrets.WORKSHEET_NAME }}
+        run: |
+          if [ -z "$WORKSHEET_NAME" ]; then
+            export WORKSHEET_NAME="데이터_통합분류"
+          fi
+          python scripts/fetch_google_sheets.py
+      
+      - name: 🔧 Process and analyze data
+        run: |
+          INPUT_CSV_PATH="raw_data.csv" python scripts/process_marketing_data.py
+      
+      - name: 📈 Generate statistics
+        run: |
+          echo "## 📊 데이터 업데이트 요약" > summary.md
+          echo "" >> summary.md
+          echo "**업데이트 일시**: $(TZ='Asia/Seoul' date +'%Y-%m-%d %H:%M:%S KST')" >> summary.md
+          echo "" >> summary.md
+          
+          if [ -f "data/meta/latest.json" ]; then
+            echo "### 전체 성과" >> summary.md
+            cat data/meta/latest.json | jq -r '
+              "**기간**: \(.date_range.start) ~ \(.date_range.end)\n" +
+              "**총 광고비**: ₩\(.total_metrics.cost | tonumber | floor | tostring)\n" +
+              "**총 전환수**: \(.total_metrics.conversions | tonumber | floor | tostring)건\n" +
+              "**ROAS**: \(.kpis.roas)%"
+            ' >> summary.md || echo "통계 생성 실패" >> summary.md
+          fi
+          
+          echo "" >> summary.md
+          echo "### 생성된 파일" >> summary.md
+          echo "- 월별 데이터: \`data/raw/*.csv\`" >> summary.md
+          echo "- 통계 분석: \`data/statistics/*\`" >> summary.md
+          echo "- 예측 데이터: \`data/forecast/*\`" >> summary.md
+      
+      - name: 💾 Commit and push changes
+        run: |
+          echo "📁 Git 상태 확인 중..."
+          
+          git config user.name "Marketing Data Bot"
+          git config user.email "actions@github.com"
+          
+          # data 폴더와 summary 파일 추가
+          git add -A data/
+          git add summary.md || true
+          
+          # 상태 출력
+          echo "Git status:"
+          git status --short
+          
+          # 변경사항 확인
+          if git diff --staged --quiet; then
+            echo "⚠️  변경사항 없음 - 커밋 건너뜀"
+          else
+            echo "✅ 변경사항 감지됨 - 커밋 진행"
+            
+            # 간단한 커밋 메시지
+            git commit -m "📊 데이터 업데이트: $(TZ='Asia/Seoul' date +'%Y-%m-%d %H:%M') KST"
+            
+            # 푸시
+            git push
+            
+            echo "✅ 데이터 커밋 및 푸시 완료!"
+          fi
+      
+      - name: ✅ Complete
+        run: |
+          echo "🎉 데이터 동기화 완료!"
+          echo ""
+          echo "📁 생성된 파일:"
+          ls -lh data/raw/*.csv 2>/dev/null || echo "raw 폴더 없음"
+          ls -lh data/meta/*.json 2>/dev/null || echo "meta 폴더 없음"
+          ls -lh data/statistics/* 2>/dev/null || echo "statistics 폴더 없음"
+          ls -lh data/forecast/* 2>/dev/null || echo "forecast 폴더 없음"
+          echo ""
+          if [ -f "summary.md" ]; then
+            echo "📊 요약:"
+            cat summary.md
+          fi
