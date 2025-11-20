@@ -3,10 +3,10 @@ chcp 65001 >nul
 setlocal enabledelayedexpansion
 
 echo ================================================================================
-echo Marketing Dashboard v3.0 - Auto Setup (Python 3.13 Compatible)
+echo Marketing Dashboard v3.0 - Analysis Setup (Python 3.13 Compatible)
 echo ================================================================================
 echo.
-echo [1/11] Checking environment...
+echo [1/9] Checking environment...
 echo.
 
 REM Python check
@@ -44,45 +44,63 @@ if errorlevel 1 (
 )
 echo [OK] Node.js installed
 
-REM Git check
+REM Git check (optional for analysis mode)
 git --version >nul 2>&1
 if errorlevel 1 (
-    echo [ERROR] Git not installed
-    echo Please install Git from https://git-scm.com/downloads
-    pause
-    exit /b 1
+    echo [WARNING] Git not installed - GitHub features will be unavailable
+) else (
+    echo [OK] Git installed
 )
-echo [OK] Git installed
 
 echo.
-echo [2/11] Enter configuration details
+echo [2/9] Enter configuration details
 echo.
 
 REM 기존 config.json이 있는지 확인
 if exist config.json (
     echo Found existing config.json
-    set /p USE_EXISTING="Use existing configuration? (Y/N): "
+    set /p USE_EXISTING="Use existing configuration? (Y/N, default: Y): "
+    if "!USE_EXISTING!"=="" set USE_EXISTING=Y
+    echo [INPUT] Selected: !USE_EXISTING!
+
     if /i "!USE_EXISTING!"=="Y" (
         echo [OK] Using existing config.json
         REM config.json에서 값 읽기
         for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content config.json | ConvertFrom-Json).google.credentials_path"`) do set GOOGLE_JSON=%%i
         for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content config.json | ConvertFrom-Json).google.sheet_id"`) do set SHEET_ID=%%i
         for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content config.json | ConvertFrom-Json).google.worksheet_name"`) do set WORKSHEET_NAME=%%i
-        for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content config.json | ConvertFrom-Json).github.username"`) do set GITHUB_USERNAME=%%i
-        for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content config.json | ConvertFrom-Json).github.repository"`) do set REPO_NAME=%%i
+
+        REM 변수가 제대로 로드되었는지 확인
+        if not defined GOOGLE_JSON (
+            echo [ERROR] Failed to load credentials_path from config.json
+            echo Please re-enter configuration manually
+            goto CONFIG_MANUAL
+        )
+        if not defined SHEET_ID (
+            echo [ERROR] Failed to load sheet_id from config.json
+            echo Please re-enter configuration manually
+            goto CONFIG_MANUAL
+        )
+        if not defined WORKSHEET_NAME (
+            set WORKSHEET_NAME=data_integration
+        )
 
         echo.
         echo Loaded configuration:
-        echo    JSON file: %GOOGLE_JSON%
-        echo    Sheet ID: %SHEET_ID%
-        echo    Worksheet: %WORKSHEET_NAME%
-        echo    GitHub: %GITHUB_USERNAME%/%REPO_NAME%
+        echo    JSON file: !GOOGLE_JSON!
+        echo    Sheet ID: !SHEET_ID!
+        echo    Worksheet: !WORKSHEET_NAME!
         echo.
 
         goto CONFIG_DONE
+    ) else (
+        goto CONFIG_MANUAL
     )
+) else (
+    goto CONFIG_MANUAL
 )
 
+:CONFIG_MANUAL
 echo.
 echo Enter your configuration details:
 echo.
@@ -142,39 +160,37 @@ if errorlevel 1 (
 
 echo [OK] JSON file validated
 
+:SHEET_ID_INPUT
 set /p SHEET_ID="Google Sheets ID: "
+if "%SHEET_ID%"=="" (
+    echo [ERROR] Sheet ID cannot be empty
+    echo Please enter a valid Google Sheets ID
+    goto SHEET_ID_INPUT
+)
 echo [OK] Sheets ID: %SHEET_ID%
 
 set /p WORKSHEET_NAME="Worksheet name (default: data_integration): "
 if "%WORKSHEET_NAME%"=="" set WORKSHEET_NAME=data_integration
 echo [OK] Worksheet: %WORKSHEET_NAME%
 
-set /p GITHUB_USERNAME="GitHub Username: "
-echo [OK] GitHub: %GITHUB_USERNAME%
-
-set /p REPO_NAME="Repository name (default: marketing-dashboard): "
-if "%REPO_NAME%"=="" set REPO_NAME=marketing-dashboard
-echo [OK] Repository: %REPO_NAME%
-
 :CONFIG_DONE
 
 echo.
-echo [3/11] Creating config file...
+echo [3/9] Creating config file...
 echo.
 
-REM Use PowerShell to create JSON properly
-powershell -Command "$config = @{google=@{credentials_path='%GOOGLE_JSON:\\=\\\\%';sheet_id='%SHEET_ID%';worksheet_name='%WORKSHEET_NAME%'};github=@{username='%GITHUB_USERNAME%';repository='%REPO_NAME%'};schedule=@{cron='30 1 * * *';description='Daily at 10:30 KST'}}; $config | ConvertTo-Json -Depth 10 | Out-File -Encoding UTF8 config.json"
+REM Use PowerShell to create JSON properly (without GitHub)
+powershell -Command "$config = @{google=@{credentials_path='%GOOGLE_JSON:\\=\\\\%';sheet_id='%SHEET_ID%';worksheet_name='%WORKSHEET_NAME%'}}; $config | ConvertTo-Json -Depth 10 | Out-File -Encoding UTF8 config.json"
 
 if exist config.json (
-    echo [OK] config.json created
+    echo [OK] config.json created/updated
 ) else (
     echo [ERROR] Failed to create config.json
     pause
     exit /b 1
 )
-
 echo.
-echo [4/11] Upgrading pip to latest version...
+echo [4/9] Upgrading pip to latest version...
 echo.
 
 python -m pip install --upgrade pip
@@ -185,7 +201,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [5/11] Installing Python packages (Python 3.13 compatible)...
+echo [5/9] Installing Python packages (Python 3.13 compatible)...
 echo.
 echo This version uses Prophet with cmdstanpy backend for time series forecasting!
 echo.
@@ -208,7 +224,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [6/11] Verifying installed packages...
+echo [6/9] Verifying installed packages...
 echo.
 
 python -c "import pandas; print('  - pandas:', pandas.__version__)"
@@ -254,7 +270,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [7/11] Installing Node.js packages...
+echo [7/9] Installing Node.js packages...
 echo.
 
 cd react-app
@@ -269,25 +285,28 @@ echo [OK] Node.js packages installed
 cd ..
 
 echo.
-echo [8/11] Creating environment variables...
+echo [8/9] Creating environment variables...
 echo.
 
-REM Create .env.local
+REM Create .env.local with local data URL
 (
-echo NEXT_PUBLIC_DATA_URL=https://raw.githubusercontent.com/%GITHUB_USERNAME%/%REPO_NAME%/main/data
+echo NEXT_PUBLIC_DATA_URL=/data
 ) > react-app\.env.local
 
 if exist react-app\.env.local (
-    echo [OK] .env.local created
+    echo [OK] .env.local created for local development
 ) else (
     echo [ERROR] Failed to create .env.local
 )
 
 echo.
-echo [9/11] Local test (optional)
+echo [9/9] Data fetch and analysis test (optional)
 echo.
 
-set /p RUN_TEST="Run data fetch test? (Y/N): "
+set /p RUN_TEST="Run data fetch test? (Y/N, default: N): "
+if "%RUN_TEST%"=="" set RUN_TEST=N
+echo [INPUT] Selected: %RUN_TEST%
+
 if /i "%RUN_TEST%"=="Y" (
     echo.
     echo ========================================================================
@@ -395,6 +414,41 @@ if /i "%RUN_TEST%"=="Y" (
             goto TEST_FAILED
         ) else (
             echo.
+
+            REM ====================================================================
+            REM Step 5: 세그먼트별 분석 및 인사이트 생성 (추가된 단계)
+            REM ====================================================================
+            echo.
+            echo [Step 5] Running segment analysis and insight generation...
+            echo.
+
+            REM 5-1: 세그먼트별 처리
+            echo [Step 5-1] Processing segments (brand/channel/product)...
+            python scripts\segment_processor.py
+
+            if errorlevel 1 (
+                echo.
+                echo [WARNING] Segment processing failed
+                echo Continuing without segment analysis...
+                echo.
+            ) else (
+                echo [OK] Segment processing completed
+            )
+
+            REM 5-2: 인사이트 생성
+            echo.
+            echo [Step 5-2] Generating marketing insights...
+            python scripts\insight_generator.py
+
+            if errorlevel 1 (
+                echo.
+                echo [WARNING] Insight generation failed
+                echo Continuing without insights...
+                echo.
+            ) else (
+                echo [OK] Insight generation completed
+            )
+            echo.
             echo ====================================================================
             echo [SUCCESS] Test completed successfully!
             echo ====================================================================
@@ -411,6 +465,18 @@ if /i "%RUN_TEST%"=="Y" (
             )
             if exist data\forecast\predictions.csv (
                 echo    - data\forecast\predictions.csv (forecasts)
+            )
+            if exist data\forecast\segment_brand.csv (
+                echo    - data\forecast\segment_brand.csv (brand segments)
+            )
+            if exist data\forecast\segment_channel.csv (
+                echo    - data\forecast\segment_channel.csv (channel segments)
+            )
+            if exist data\forecast\segment_product.csv (
+                echo    - data\forecast\segment_product.csv (product segments)
+            )
+            if exist data\forecast\insights.json (
+                echo    - data\forecast\insights.json (marketing insights)
             )
             echo.
             goto TEST_SUCCESS
@@ -434,20 +500,70 @@ echo.
 echo You can:
 echo 1. Check the error messages above
 echo 2. Verify your Google Service Account setup
-echo 3. Continue with GitHub setup anyway
+echo 3. Continue anyway
 echo.
-set /p CONTINUE_SETUP="Continue with GitHub setup? (Y/N): "
+set /p CONTINUE_SETUP="Continue anyway? (Y/N, default: Y): "
+if "%CONTINUE_SETUP%"=="" set CONTINUE_SETUP=Y
+echo [INPUT] Selected: %CONTINUE_SETUP%
+
 if /i "%CONTINUE_SETUP%" NEQ "Y" (
     echo.
-    echo Setup paused. Fix the issues and run setup_fixed.bat again.
+    echo Setup paused. Fix the issues and run setup_analysis.bat again.
     pause
     exit /b 1
 )
-goto TEST_END
 
 :TEST_SUCCESS
-echo Setup will continue with GitHub repository creation...
+:TEST_END
+
+echo.
+echo ================================================================================
+echo Setup Complete! (Analysis Mode)
+echo ================================================================================
+echo.
+echo Created files:
+echo    - config.json
+echo    - react-app\.env.local
+echo.
+if exist data\raw (
+    echo    - data\raw\*.csv (monthly data)
+)
+if exist data\meta\latest.json (
+    echo    - data\meta\latest.json (metadata)
+)
+if exist data\statistics\statistics.json (
+    echo    - data\statistics\statistics.json (statistics)
+)
+if exist data\forecast\predictions_daily.csv (
+    echo    - data\forecast\predictions_*.csv (forecasts)
+)
+if exist data\forecast\segment_brand.csv (
+    echo    - data\forecast\segment_*.csv (segment analysis)
+)
+if exist data\forecast\insights.json (
+    echo    - data\forecast\insights.json (marketing insights)
+)
+echo.
+echo Next steps:
+echo.
+echo    1. Run local dashboard:
+echo       cd react-app
+echo       npm run dev
+echo.
+echo    2. View dashboard at:
+echo       http://localhost:3000
+echo.
+echo    3. To update data:
+echo       python scripts\fetch_google_sheets.py
+echo       python scripts\process_marketing_data.py
+echo       python scripts\segment_processor.py
+echo       python scripts\insight_generator.py
+echo.
+echo Documentation:
+echo    - docs\SETUP_GUIDE.md
+echo    - docs\PROPHET_GUIDE.md
+echo    - docs\WORKSHEET_GUIDE.md
+echo.
+echo Data-driven marketing analysis ready!
 echo.
 pause
-
-:TEST_END

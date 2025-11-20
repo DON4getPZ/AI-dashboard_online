@@ -1,0 +1,121 @@
+{
+  "generated_at": "2025-11-20T20:09:07.800214",
+  "alerts": [
+    {
+      "type": "conversion_decline",
+      "segment_type": "channel",
+      "segment_value": "메타_트래픽",
+      "metric": "전환수",
+      "change_pct": -35.4,
+      "severity": "high"
+    },
+    {
+      "type": "roas_decline",
+      "segment_type": "channel",
+      "segment_value": "메타_전환",
+      "metric": "ROAS",
+      "change_pct": -22.5,
+      "severity": "high"
+    },
+    {
+      "type": "conversion_decline",
+      "segment_type": "product",
+      "segment_value": "발매트",
+      "metric": "전환수",
+      "change_pct": -27.2,
+      "severity": "high"
+    },
+    {
+      "type": "roas_decline",
+      "segment_type": "product",
+      "segment_value": "호랑이러그",
+      "metric": "ROAS",
+      "change_pct": -67.9,
+      "severity": "high"
+    },
+    {
+      "type": "conversion_decline",
+      "segment_type": "product",
+      "segment_value": "앞치마",
+      "metric": "전환수",
+      "change_pct": -10.8,
+      "severity": "medium"
+    },
+    {
+      "type": "revenue_decline",
+      "segment_type": "product",
+      "segment_value": "앞치마",
+      "metric": "전환값",
+      "change_pct": -20.2,
+      "severity": "high"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": 1,
+      "action": "예산 유지 및 모니터링",
+      "target": {
+        "type": "channel",
+        "value": "메타_전환"
+      },
+      "reasons": [
+        "ROAS 174.72%로 높은 효율",
+        "CVR 3.9%"
+      ],
+      "expected_impact": "현 성과 유지",
+      "metrics": {
+        "roas": 174.72,
+        "cvr": 3.9,
+        "cpa": 20482.53
+      }
+    },
+    {
+      "priority": 2,
+      "action": "예산 20% 증액",
+      "target": {
+        "type": "product",
+        "value": "파자마"
+      },
+      "reasons": [
+        "ROAS 254.9%로 높은 효율",
+        "CVR 3.32%",
+        "전환수 12.9% 증가 예상"
+      ],
+      "expected_impact": "전환수 15-20% 증가 예상",
+      "metrics": {
+        "roas": 254.9,
+        "cvr": 3.32,
+        "cpa": 27404.0
+      }
+    },
+    {
+      "priority": 3,
+      "action": "예산 유지 및 모니터링",
+      "target": {
+        "type": "brand",
+        "value": "신제품"
+      },
+      "reasons": [
+        "ROAS 194.75%로 높은 효율",
+        "CVR 2.97%"
+      ],
+      "expected_impact": "현 성과 유지",
+      "metrics": {
+        "roas": 194.75,
+        "cvr": 2.97,
+        "cpa": 20112.82
+      }
+    }
+  ],
+  "summary": "주의: channel '메타_트래픽'의 전환수이(가) 35.4% 하락할 것으로 예측됩니다.\n권장: channel '메타_전환'에 예산 유지 및 모니터링을 권장합니다. (ROAS 174.72%로 높은 효율, CVR 3.9%)\n예상 효과: 현 성과 유지\n추가 검토 대상: 파자마, 신제품",
+  "details": {
+    "total_alerts": 6,
+    "high_severity_alerts": 5,
+    "total_recommendations": 3,
+    "analyzed_segments": {
+      "brand": 2,
+      "channel": 7,
+      "product": 10
+    }
+  }
+}

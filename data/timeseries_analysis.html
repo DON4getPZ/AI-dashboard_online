@@ -654,6 +654,161 @@
             background: var(--warning-light) !important;
         }
 
+        /* 세그먼트 분석 스타일 */
+        .segment-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding: 0 24px;
+        }
+
+        .segment-tab {
+            padding: 10px 24px;
+            border: none;
+            background: var(--grey-100);
+            color: var(--grey-700);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .segment-tab:hover {
+            background: var(--grey-200);
+        }
+
+        .segment-tab.active {
+            background: var(--primary-main);
+            color: white;
+        }
+
+        .segment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            padding: 0 24px 24px;
+        }
+
+        .segment-card {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--grey-50) 0%, var(--paper) 100%);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-main);
+            transition: all 0.2s ease;
+        }
+
+        .segment-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .segment-card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 16px;
+        }
+
+        .segment-metrics {
+            display: grid;
+            gap: 12px;
+        }
+
+        .segment-metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .segment-metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .segment-metric-label {
+            font-size: 13px;
+            color: var(--grey-600);
+        }
+
+        .segment-metric-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-900);
+        }
+
+        .segment-metric-value.positive {
+            color: var(--success-main);
+        }
+
+        .segment-metric-value.negative {
+            color: var(--error-main);
+        }
+
+        /* 추천 카드 스타일 */
+        .recommendation-card {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--success-light) 0%, var(--paper) 100%);
+            border-radius: 12px;
+            border-left: 4px solid var(--success-main);
+        }
+
+        .recommendation-priority {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--success-main);
+            color: white;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .recommendation-action {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 8px;
+        }
+
+        .recommendation-target {
+            font-size: 13px;
+            color: var(--grey-600);
+            margin-bottom: 12px;
+        }
+
+        .recommendation-reasons {
+            list-style: none;
+            margin: 12px 0;
+        }
+
+        .recommendation-reasons li {
+            font-size: 13px;
+            color: var(--grey-700);
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .recommendation-reasons li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success-main);
+            font-weight: 600;
+        }
+
+        .recommendation-impact {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--success-main);
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--grey-200);
+        }
+
         /* 반응형 */
         @media (max-width: 1400px) {
             .kpi-summary-grid {
@@ -777,8 +932,24 @@
 
                 <!-- 인사이트 섹션 -->
                 <div class="insight-section card">
-                    <div class="insight-header">AI 인사이트</div>
+                    <div class="insight-header">🚨 주요 경고</div>
                     <div class="insight-content" id="insightContent">
+                        <!-- JS로 동적 생성 -->
+                    </div>
+                </div>
+
+                <!-- 투자 추천 섹션 -->
+                <div class="insight-section card">
+                    <div class="insight-header">💡 투자 추천</div>
+                    <div class="insight-content" id="recommendationContent">
+                        <!-- JS로 동적 생성 -->
+                    </div>
+                </div>
+
+                <!-- 세그먼트별 성과 분석 -->
+                <div class="insight-section card">
+                    <div class="insight-header">📊 세그먼트별 성과 분석</div>
+                    <div id="segmentAnalysisContent">
                         <!-- JS로 동적 생성 -->
                     </div>
                 </div>
@@ -880,6 +1051,8 @@
         let forecastData = [];
         let currentView = 'daily';
         let forecastChart = null;
+        let insightsData = null;
+        let segmentStatsData = null;
 
         // 숫자 포맷
         function formatNumber(num) {
@@ -936,6 +1109,26 @@
                 updateDashboard();
             } catch (error) {
                 console.error('데이터 로드 실패:', error);
+            }
+        }
+
+        // 인사이트 및 세그먼트 데이터 로드
+        async function loadInsightsAndSegments() {
+            try {
+                // insights.json 로드
+                const insightsResponse = await fetch('forecast/insights.json');
+                insightsData = await insightsResponse.json();
+
+                // segment_stats.json 로드
+                const segmentResponse = await fetch('forecast/segment_stats.json');
+                segmentStatsData = await segmentResponse.json();
+
+                // 인사이트 업데이트
+                updateInsightsFromData();
+                updateRecommendations();
+                updateSegmentAnalysis();
+            } catch (error) {
+                console.error('인사이트 데이터 로드 실패:', error);
             }
         }
 
@@ -1088,7 +1281,195 @@
             `;
         }
 
-        // 인사이트 업데이트
+        // insights.json 데이터로 인사이트 업데이트
+        function updateInsightsFromData() {
+            if (!insightsData || !insightsData.alerts) {
+                updateInsights(); // 폴백: 기존 로직 사용
+                return;
+            }
+
+            const alerts = insightsData.alerts.slice(0, 5); // 상위 5개만 표시
+
+            if (alerts.length === 0) {
+                document.getElementById('insightContent').innerHTML = `
+                    <div class="insight-card neutral">
+                        <div class="insight-title">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            모든 지표 정상
+                        </div>
+                        <div class="insight-text">현재 모든 세그먼트에서 특별한 경고 사항이 없습니다.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const getAlertIcon = (type) => {
+                const icons = {
+                    'conversion_decline': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"/></svg>',
+                    'roas_decline': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>',
+                    'revenue_decline': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>',
+                    'default': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>'
+                };
+                return icons[type] || icons['default'];
+            };
+
+            const getAlertTitle = (alert) => {
+                const titles = {
+                    'conversion_decline': '전환수 감소 경고',
+                    'roas_decline': 'ROAS 하락 경고',
+                    'revenue_decline': '매출 감소 경고'
+                };
+                return titles[alert.type] || '성과 변동 감지';
+            };
+
+            const getAlertText = (alert) => {
+                const segmentTypeKr = {
+                    'channel': '채널',
+                    'product': '제품',
+                    'brand': '브랜드'
+                };
+                return `${segmentTypeKr[alert.segment_type] || alert.segment_type} "${alert.segment_value}"의 ${alert.metric}이(가) ${Math.abs(alert.change_pct).toFixed(1)}% ${alert.change_pct < 0 ? '하락' : '상승'}할 것으로 예측됩니다.`;
+            };
+
+            document.getElementById('insightContent').innerHTML = alerts.map(alert => `
+                <div class="insight-card ${alert.severity === 'high' ? 'negative' : 'neutral'}">
+                    <div class="insight-title">
+                        ${getAlertIcon(alert.type)}
+                        ${getAlertTitle(alert)}
+                    </div>
+                    <div class="insight-text">${getAlertText(alert)}</div>
+                </div>
+            `).join('');
+        }
+
+        // 투자 추천 업데이트
+        function updateRecommendations() {
+            if (!insightsData || !insightsData.recommendations) {
+                return;
+            }
+
+            const recommendations = insightsData.recommendations;
+
+            if (recommendations.length === 0) {
+                document.getElementById('recommendationContent').innerHTML = `
+                    <div class="insight-card neutral">
+                        <div class="insight-text">현재 특별한 투자 추천 사항이 없습니다.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const getTargetTypeKr = (type) => {
+                const types = {
+                    'channel': '채널',
+                    'product': '제품',
+                    'brand': '브랜드'
+                };
+                return types[type] || type;
+            };
+
+            document.getElementById('recommendationContent').innerHTML = recommendations.map(rec => `
+                <div class="recommendation-card">
+                    <div class="recommendation-priority">우선순위 ${rec.priority}</div>
+                    <div class="recommendation-action">${rec.action}</div>
+                    <div class="recommendation-target">
+                        대상: ${getTargetTypeKr(rec.target.type)} > <strong>${rec.target.value}</strong>
+                    </div>
+                    <ul class="recommendation-reasons">
+                        ${rec.reasons.map(reason => `<li>${reason}</li>`).join('')}
+                    </ul>
+                    <div class="recommendation-impact">
+                        📈 예상 효과: ${rec.expected_impact}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 세그먼트 분석 업데이트
+        function updateSegmentAnalysis() {
+            if (!segmentStatsData) {
+                return;
+            }
+
+            const container = document.getElementById('segmentAnalysisContent');
+
+            // 탭 생성
+            container.innerHTML = `
+                <div class="segment-tabs">
+                    <button class="segment-tab active" data-segment="channel">채널별</button>
+                    <button class="segment-tab" data-segment="product">제품별</button>
+                    <button class="segment-tab" data-segment="brand">브랜드별</button>
+                </div>
+                <div class="segment-grid" id="segmentGrid">
+                    <!-- 세그먼트 카드 동적 생성 -->
+                </div>
+            `;
+
+            // 탭 클릭 이벤트
+            document.querySelectorAll('.segment-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.segment-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    renderSegmentCards(this.dataset.segment);
+                });
+            });
+
+            // 초기 렌더링 (채널별)
+            renderSegmentCards('channel');
+        }
+
+        // 세그먼트 카드 렌더링
+        function renderSegmentCards(segmentType) {
+            const grid = document.getElementById('segmentGrid');
+            const data = segmentStatsData[segmentType];
+
+            if (!data) {
+                grid.innerHTML = '<p style="padding: 24px;">데이터를 불러올 수 없습니다.</p>';
+                return;
+            }
+
+            // ROAS 기준 내림차순 정렬
+            const sortedData = Object.entries(data).sort((a, b) => b[1].roas - a[1].roas);
+
+            grid.innerHTML = sortedData.map(([name, stats]) => {
+                const roasClass = stats.roas >= 150 ? 'positive' : stats.roas < 100 ? 'negative' : '';
+                const cvrClass = stats.cvr >= 3 ? 'positive' : stats.cvr < 1 ? 'negative' : '';
+
+                return `
+                    <div class="segment-card">
+                        <div class="segment-card-title">${name}</div>
+                        <div class="segment-metrics">
+                            <div class="segment-metric-row">
+                                <span class="segment-metric-label">총 비용</span>
+                                <span class="segment-metric-value">${formatNumber(stats.total_cost)}원</span>
+                            </div>
+                            <div class="segment-metric-row">
+                                <span class="segment-metric-label">총 매출</span>
+                                <span class="segment-metric-value">${formatNumber(stats.total_revenue)}원</span>
+                            </div>
+                            <div class="segment-metric-row">
+                                <span class="segment-metric-label">전환수</span>
+                                <span class="segment-metric-value">${formatNumber(stats.total_conversions)}건</span>
+                            </div>
+                            <div class="segment-metric-row">
+                                <span class="segment-metric-label">ROAS</span>
+                                <span class="segment-metric-value ${roasClass}">${formatDecimal(stats.roas)}%</span>
+                            </div>
+                            <div class="segment-metric-row">
+                                <span class="segment-metric-label">CVR</span>
+                                <span class="segment-metric-value ${cvrClass}">${formatDecimal(stats.cvr)}%</span>
+                            </div>
+                            <div class="segment-metric-row">
+                                <span class="segment-metric-label">CPA</span>
+                                <span class="segment-metric-value">${formatNumber(stats.cpa)}원</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 기존 인사이트 업데이트 (폴백용)
         function updateInsights() {
             const actualData = forecastData.filter(d => d.type === 'actual');
             const forecastDataOnly = forecastData.filter(d => d.type === 'forecast');
@@ -1460,6 +1841,7 @@
         // 초기화
         document.addEventListener('DOMContentLoaded', function() {
             loadData();
+            loadInsightsAndSegments();
 
             // 뷰 타입 버튼 이벤트
             document.querySelectorAll('.view-btn').forEach(btn => {
