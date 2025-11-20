@@ -306,6 +306,13 @@
         }
 
         /* KPI 요약 섹션 */
+        #kpiSummaryGrid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
         .kpi-summary-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -335,6 +342,29 @@
         .kpi-summary-card:nth-child(3)::before { background: #ff9800; }
         .kpi-summary-card:nth-child(4)::before { background: #4caf50; }
         .kpi-summary-card:nth-child(5)::before { background: #00c853; }
+        .kpi-summary-card:nth-child(6)::before { background: #9c27b0; }
+        .kpi-summary-card:nth-child(7)::before { background: #03a9f4; }
+        .kpi-summary-card:nth-child(8)::before { background: #8bc34a; }
+        .kpi-summary-card:nth-child(9)::before { background: #ff5722; }
+
+        /* KPI 행 구분 스타일 */
+        .kpi-row-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+
+        .kpi-row-container {
+            margin-bottom: 16px;
+        }
+
+        .kpi-row-container:last-child {
+            margin-bottom: 0;
+        }
 
         .kpi-summary-label {
             font-size: 11px;
@@ -857,6 +887,18 @@
             return Math.round(num).toLocaleString('ko-KR');
         }
 
+        // 소수점 포맷 (2자리)
+        function formatDecimal(num) {
+            if (num === 0 || num === null || num === undefined || !isFinite(num)) return '0';
+            return num.toLocaleString('ko-KR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+        }
+
+        // 퍼센트 포맷
+        function formatPercent(num) {
+            if (num === 0 || num === null || num === undefined || !isFinite(num)) return '0';
+            return num.toLocaleString('ko-KR', { minimumFractionDigits: 0, maximumFractionDigits: 1 });
+        }
+
         // CSV 파싱
         function parseCSV(text) {
             const lines = text.trim().split('\n');
@@ -982,30 +1024,68 @@
                 return acc;
             }, { 비용: 0, 노출: 0, 클릭: 0, 전환수: 0, 전환값: 0 });
 
+            // 파생 지표 계산 (예측)
+            const forecastCPM = forecastTotals.노출 > 0 ? (forecastTotals.비용 / forecastTotals.노출 * 1000) : 0;
+            const forecastCPC = forecastTotals.클릭 > 0 ? (forecastTotals.비용 / forecastTotals.클릭) : 0;
+            const forecastCPA = forecastTotals.비용 > 0 ? (forecastTotals.전환수 / forecastTotals.비용) : 0;
+            const forecastROAS = forecastTotals.비용 > 0 ? (forecastTotals.전환값 / forecastTotals.비용 * 100) : 0;
+
+            // 파생 지표 계산 (실제)
+            const actualCPM = actualTotals.노출 > 0 ? (actualTotals.비용 / actualTotals.노출 * 1000) : 0;
+            const actualCPC = actualTotals.클릭 > 0 ? (actualTotals.비용 / actualTotals.클릭) : 0;
+            const actualCPA = actualTotals.비용 > 0 ? (actualTotals.전환수 / actualTotals.비용) : 0;
+            const actualROAS = actualTotals.비용 > 0 ? (actualTotals.전환값 / actualTotals.비용 * 100) : 0;
+
             // 변화율 계산
             const calcChange = (forecast, actual) => {
                 if (actual === 0) return 0;
                 return ((forecast - actual) / actual * 100).toFixed(1);
             };
 
-            const kpis = [
-                { label: '예측 비용', value: forecastTotals.비용, unit: '원', change: calcChange(forecastTotals.비용, actualTotals.비용) },
-                { label: '예측 노출', value: forecastTotals.노출, unit: '회', change: calcChange(forecastTotals.노출, actualTotals.노출) },
-                { label: '예측 클릭', value: forecastTotals.클릭, unit: '회', change: calcChange(forecastTotals.클릭, actualTotals.클릭) },
-                { label: '예측 전환수', value: forecastTotals.전환수, unit: '건', change: calcChange(forecastTotals.전환수, actualTotals.전환수) },
-                { label: '예측 전환값', value: forecastTotals.전환값, unit: '원', change: calcChange(forecastTotals.전환값, actualTotals.전환값) }
+            // 상위 행: 비용 및 효율 지표 (5개)
+            const topKpis = [
+                { label: '예측 비용', value: formatNumber(forecastTotals.비용), unit: '원', change: calcChange(forecastTotals.비용, actualTotals.비용) },
+                { label: '예측 CPM', value: formatDecimal(forecastCPM), unit: '원', change: calcChange(forecastCPM, actualCPM) },
+                { label: '예측 CPC', value: formatDecimal(forecastCPC), unit: '원', change: calcChange(forecastCPC, actualCPC) },
+                { label: '예측 CPA', value: formatDecimal(forecastCPA * 1000000), unit: '건/백만원', change: calcChange(forecastCPA, actualCPA) },
+                { label: '예측 ROAS', value: formatPercent(forecastROAS), unit: '%', change: calcChange(forecastROAS, actualROAS) }
             ];
 
-            document.getElementById('kpiSummaryGrid').innerHTML = kpis.map(kpi => `
+            // 하위 행: 기본 성과 지표 (4개)
+            const bottomKpis = [
+                { label: '예측 노출', value: formatNumber(forecastTotals.노출), unit: '회', change: calcChange(forecastTotals.노출, actualTotals.노출) },
+                { label: '예측 클릭', value: formatNumber(forecastTotals.클릭), unit: '회', change: calcChange(forecastTotals.클릭, actualTotals.클릭) },
+                { label: '예측 전환수', value: formatNumber(forecastTotals.전환수), unit: '건', change: calcChange(forecastTotals.전환수, actualTotals.전환수) },
+                { label: '예측 전환값', value: formatNumber(forecastTotals.전환값), unit: '원', change: calcChange(forecastTotals.전환값, actualTotals.전환값) }
+            ];
+
+            // KPI 카드 HTML 생성 함수
+            const createKpiCard = (kpi) => `
                 <div class="kpi-summary-card card">
                     <div class="kpi-summary-label">${kpi.label}</div>
-                    <div class="kpi-summary-value">${formatNumber(kpi.value)}</div>
+                    <div class="kpi-summary-value">${kpi.value}</div>
                     <div class="kpi-summary-unit">${kpi.unit}</div>
                     <div class="kpi-forecast-badge ${parseFloat(kpi.change) >= 0 ? 'up' : 'down'}">
                         ${parseFloat(kpi.change) >= 0 ? '▲' : '▼'} ${Math.abs(kpi.change)}%
                     </div>
                 </div>
-            `).join('');
+            `;
+
+            // 2행 레이아웃 HTML 생성
+            document.getElementById('kpiSummaryGrid').innerHTML = `
+                <div class="kpi-row-container">
+                    <div class="kpi-row-label">효율 지표</div>
+                    <div class="kpi-summary-grid" style="margin-bottom: 0;">
+                        ${topKpis.map(createKpiCard).join('')}
+                    </div>
+                </div>
+                <div class="kpi-row-container">
+                    <div class="kpi-row-label">기본 성과</div>
+                    <div class="kpi-summary-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 0;">
+                        ${bottomKpis.map(createKpiCard).join('')}
+                    </div>
+                </div>
+            `;
         }
 
         // 인사이트 업데이트

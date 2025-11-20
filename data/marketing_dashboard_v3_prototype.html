@@ -8806,6 +8806,14 @@
                             </div>
                             <span class="nav-item-text">광고 소재별 분석</span>
                         </a>
+                        <a href="timeseries_analysis.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">시계열 데이터 분석</span>
+                        </a>
                         <a href="#" class="nav-item">
                             <div class="nav-item-icon">
                                 <svg viewBox="0 0 24 24">
@@ -8848,6 +8856,20 @@
                     <div>
                         <h1>마케팅 성과 대시보드</h1>
                         <div class="header-subtitle">광고 캠페인 성과 분석 및 KPI 모니터링</div>
+                    </div>
+                </div>
+
+                <!-- 기간 선택 (최상단) -->
+                <div class="filter-section card" style="margin-bottom: 16px;">
+                    <div class="filter-header">기간 선택</div>
+                    <div class="filter-row" style="margin-bottom: 0;">
+                        <div class="filter-group">
+                            <div class="date-range">
+                                <input type="date" id="startDate">
+                                <span>~</span>
+                                <input type="date" id="endDate">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -8931,16 +8953,6 @@
                             <select id="filterExtra">
                                 <option value="">전체</option>
                             </select>
-                        </div>
-                    </div>
-                    <div class="filter-row">
-                        <div class="filter-group">
-                            <label>기간 선택</label>
-                            <div class="date-range">
-                                <input type="date" id="startDate">
-                                <span>~</span>
-                                <input type="date" id="endDate">
-                            </div>
                         </div>
                     </div>
                 </div>

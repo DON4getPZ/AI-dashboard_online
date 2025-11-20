@@ -842,6 +842,119 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+
+        /* KPI 필터 토글 버튼 */
+        .kpi-filter-toggle {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--grey-300);
+            border-radius: 8px;
+            background: var(--grey-100);
+            color: var(--grey-500);
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .kpi-filter-toggle:hover {
+            border-color: var(--primary-main);
+        }
+
+        .kpi-filter-toggle.active {
+            background: var(--primary-main);
+            color: white;
+            border-color: var(--primary-main);
+        }
+
+        .kpi-filter-toggle .toggle-status {
+            display: inline-block;
+        }
+
+        /* 조합 조건 라디오 버튼 */
+        .compound-radio-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            height: 38px;
+        }
+
+        .compound-radio-group .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--grey-700);
+        }
+
+        .compound-radio-group .radio-label input[type="radio"] {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .compound-radio-group .radio-label span {
+            white-space: nowrap;
+        }
+
+        /* 보조 필터 행 */
+        .sub-filter-row {
+            padding-top: 12px;
+            border-top: 1px dashed var(--grey-300);
+        }
+
+        .sub-filter-row::before {
+            content: '조건 2';
+            display: block;
+            font-size: 12px;
+            color: var(--primary-main);
+            font-weight: 600;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        /* 3차 필터 행 */
+        .tertiary-filter-row {
+            padding-top: 12px;
+            border-top: 1px dashed var(--grey-300);
+        }
+
+        .tertiary-filter-row::before {
+            content: '조건 3';
+            display: block;
+            font-size: 12px;
+            color: var(--primary-main);
+            font-weight: 600;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        /* 정렬 라디오 버튼 */
+        .sort-radio-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            height: 38px;
+        }
+
+        .sort-radio-group .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--grey-700);
+        }
+
+        .sort-radio-group .radio-label input[type="radio"] {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .sort-radio-group .radio-label span {
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -933,6 +1046,51 @@
                     </div>
                 </div>
 
+                <!-- 기간 선택 (최상단) -->
+                <div class="filter-section card" style="margin-bottom: 16px;">
+                    <div class="filter-header">기간 선택</div>
+                    <div class="filter-row" style="margin-bottom: 0;">
+                        <div class="filter-group">
+                            <div class="date-range">
+                                <input type="date" id="startDate">
+                                <span>~</span>
+                                <input type="date" id="endDate">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 요약 섹션 -->
+                <div class="summary-section">
+                    <div class="summary-grid">
+                        <div class="summary-card card">
+                            <h3>총 비용</h3>
+                            <div class="value" id="totalCost">-</div>
+                            <div class="unit">원</div>
+                        </div>
+                        <div class="summary-card card">
+                            <h3>평균 CPM</h3>
+                            <div class="value" id="avgCPM">-</div>
+                            <div class="unit">원</div>
+                        </div>
+                        <div class="summary-card card">
+                            <h3>평균 CPC</h3>
+                            <div class="value" id="avgCPC">-</div>
+                            <div class="unit">원</div>
+                        </div>
+                        <div class="summary-card card">
+                            <h3>평균 CPA</h3>
+                            <div class="value" id="avgCPA">-</div>
+                            <div class="unit">원</div>
+                        </div>
+                        <div class="summary-card card">
+                            <h3>평균 ROAS</h3>
+                            <div class="value" id="avgROAS">-</div>
+                            <div class="unit"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 필터 섹션 -->
                 <div class="filter-section card">
                     <div class="filter-header">필터 설정</div>
@@ -978,47 +1136,175 @@
                     </div>
                     <div class="filter-row">
                         <div class="filter-group">
-                            <label>기간 선택</label>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <input type="date" id="startDate">
-                                <span style="color: var(--grey-500); font-weight: 500;">~</span>
-                                <input type="date" id="endDate">
-                            </div>
-                        </div>
-                        <div class="filter-group">
                             <label>소재 검색</label>
                             <input type="text" id="searchText" placeholder="소재이름 검색..." style="flex: 1;">
                         </div>
                     </div>
                 </div>
 
-                <!-- 요약 섹션 -->
-                <div class="summary-section">
-                    <div class="summary-grid">
-                        <div class="summary-card card">
-                            <h3>총 비용</h3>
-                            <div class="value" id="totalCost">-</div>
-                            <div class="unit">원</div>
+                <!-- KPI 기준 필터 (독립 박스) -->
+                <div class="filter-section card">
+                    <div class="filter-header">KPI 기준 필터</div>
+                    <div class="filter-row" style="align-items: flex-end; margin-bottom: 0;">
+                        <div class="filter-group" style="flex: 0 0 120px;">
+                            <label>KPI 기준</label>
+                            <select id="kpiFilterMetric">
+                                <option value="비용">비용</option>
+                                <option value="노출">노출</option>
+                                <option value="클릭">클릭</option>
+                                <option value="전환수">전환수</option>
+                                <option value="전환값">전환값</option>
+                                <option value="CPC">CPC</option>
+                                <option value="CPA">CPA</option>
+                                <option value="ROAS">ROAS</option>
+                            </select>
                         </div>
-                        <div class="summary-card card">
-                            <h3>평균 CPM</h3>
-                            <div class="value" id="avgCPM">-</div>
-                            <div class="unit">원</div>
+                        <div class="filter-group" style="flex: 0 0 100px;">
+                            <label>조건</label>
+                            <select id="kpiFilterOperator">
+                                <option value=">">> (보다 큼)</option>
+                                <option value="<">< (보다 작음)</option>
+                                <option value=">=">>= (크거나 같음)</option>
+                                <option value="<="><= (작거나 같음)</option>
+                                <option value="=">= (같음)</option>
+                            </select>
                         </div>
-                        <div class="summary-card card">
-                            <h3>평균 CPC</h3>
-                            <div class="value" id="avgCPC">-</div>
-                            <div class="unit">원</div>
+                        <div class="filter-group" style="flex: 0 0 120px;">
+                            <label>기준값</label>
+                            <input type="text" id="kpiFilterValue" placeholder="수치 입력" class="formatted-number">
                         </div>
-                        <div class="summary-card card">
-                            <h3>평균 CPA</h3>
-                            <div class="value" id="avgCPA">-</div>
-                            <div class="unit">원</div>
+                        <div class="filter-group" style="flex: 0 0 120px;">
+                            <label>조합 조건</label>
+                            <div class="compound-radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="compoundLogic" value="none" checked>
+                                    <span>없음</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="compoundLogic" value="or">
+                                    <span>또는</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="compoundLogic" value="and">
+                                    <span>그리고</span>
+                                </label>
+                            </div>
                         </div>
-                        <div class="summary-card card">
-                            <h3>평균 ROAS</h3>
-                            <div class="value" id="avgROAS">-</div>
-                            <div class="unit"></div>
+                        <div class="filter-group" style="flex: 0 0 80px;">
+                            <label>ON/OFF</label>
+                            <button type="button" id="kpiFilterToggle" class="kpi-filter-toggle">
+                                <span class="toggle-status">OFF</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- 보조 필터 그룹 (OR/AND 선택시 표시) -->
+                    <div class="filter-row sub-filter-row" id="subFilterRow" style="align-items: flex-end; margin-top: 12px; display: none;">
+                        <div class="filter-group" style="flex: 0 0 120px;">
+                            <label>KPI 기준</label>
+                            <select id="kpiFilterMetricSub">
+                                <option value="비용">비용</option>
+                                <option value="노출">노출</option>
+                                <option value="클릭">클릭</option>
+                                <option value="전환수">전환수</option>
+                                <option value="전환값">전환값</option>
+                                <option value="CPC">CPC</option>
+                                <option value="CPA">CPA</option>
+                                <option value="ROAS">ROAS</option>
+                            </select>
+                        </div>
+                        <div class="filter-group" style="flex: 0 0 100px;">
+                            <label>조건</label>
+                            <select id="kpiFilterOperatorSub">
+                                <option value=">">> (보다 큼)</option>
+                                <option value="<">< (보다 작음)</option>
+                                <option value=">=">>= (크거나 같음)</option>
+                                <option value="<="><= (작거나 같음)</option>
+                                <option value="=">= (같음)</option>
+                            </select>
+                        </div>
+                        <div class="filter-group" style="flex: 0 0 120px;">
+                            <label>기준값</label>
+                            <input type="text" id="kpiFilterValueSub" placeholder="수치 입력" class="formatted-number">
+                        </div>
+                        <div class="filter-group" style="flex: 0 0 120px;">
+                            <label>조합 조건</label>
+                            <div class="compound-radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="compoundLogicSub" value="none" checked>
+                                    <span>없음</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="compoundLogicSub" value="or">
+                                    <span>또는</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="compoundLogicSub" value="and">
+                                    <span>그리고</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 3차 필터 그룹 (OR/AND 선택시 표시) -->
+                    <div class="filter-row tertiary-filter-row" id="tertiaryFilterRow" style="align-items: flex-end; margin-top: 12px; display: none;">
+                        <div class="filter-group" style="flex: 0 0 120px;">
+                            <label>KPI 기준</label>
+                            <select id="kpiFilterMetricTertiary">
+                                <option value="비용">비용</option>
+                                <option value="노출">노출</option>
+                                <option value="클릭">클릭</option>
+                                <option value="전환수">전환수</option>
+                                <option value="전환값">전환값</option>
+                                <option value="CPC">CPC</option>
+                                <option value="CPA">CPA</option>
+                                <option value="ROAS">ROAS</option>
+                            </select>
+                        </div>
+                        <div class="filter-group" style="flex: 0 0 100px;">
+                            <label>조건</label>
+                            <select id="kpiFilterOperatorTertiary">
+                                <option value=">">> (보다 큼)</option>
+                                <option value="<">< (보다 작음)</option>
+                                <option value=">=">>= (크거나 같음)</option>
+                                <option value="<="><= (작거나 같음)</option>
+                                <option value="=">= (같음)</option>
+                            </select>
+                        </div>
+                        <div class="filter-group" style="flex: 0 0 120px;">
+                            <label>기준값</label>
+                            <input type="text" id="kpiFilterValueTertiary" placeholder="수치 입력" class="formatted-number">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 정렬 설정 -->
+                <div class="filter-section card">
+                    <div class="filter-header">정렬 설정</div>
+                    <div class="filter-row" style="align-items: flex-end;">
+                        <div class="filter-group" style="flex: 0 0 150px;">
+                            <label>정렬 기준</label>
+                            <select id="sortMetric">
+                                <option value="비용">비용</option>
+                                <option value="노출">노출</option>
+                                <option value="클릭">클릭</option>
+                                <option value="전환수">전환수</option>
+                                <option value="전환값">전환값</option>
+                                <option value="CPC">CPC</option>
+                                <option value="CPA">CPA</option>
+                                <option value="ROAS">ROAS</option>
+                            </select>
+                        </div>
+                        <div class="filter-group" style="flex: 0 0 200px;">
+                            <label>정렬 순서</label>
+                            <div class="sort-radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="sortOrder" value="desc" checked>
+                                    <span>내림차순</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="sortOrder" value="asc">
+                                    <span>오름차순</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1137,6 +1423,45 @@
             endDate: '',
             searchText: ''
         };
+
+        // KPI 기준 필터
+        let kpiFilter = {
+            metric: '비용',
+            operator: '>',
+            value: '',
+            enabled: false,
+            compoundLogic: 'none',
+            subMetric: '비용',
+            subOperator: '>',
+            subValue: '',
+            subCompoundLogic: 'none',
+            tertiaryMetric: '비용',
+            tertiaryOperator: '>',
+            tertiaryValue: ''
+        };
+
+        // 정렬 설정
+        let sortConfig = {
+            metric: '비용',
+            order: 'desc'
+        };
+
+        // 숫자 포맷팅 함수 (#,###)
+        function formatNumberInput(value) {
+            // 숫자와 소수점만 남기기
+            const num = value.replace(/[^\d.]/g, '');
+            if (num === '') return '';
+
+            // 소수점 처리
+            const parts = num.split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            return parts.join('.');
+        }
+
+        // 포맷된 숫자에서 실제 값 추출
+        function parseFormattedNumber(value) {
+            return value.replace(/,/g, '');
+        }
 
         // 소재 데이터 파일 (data/creative 폴더)
         const creativeDataFile = './creative/2025-11.csv';
@@ -1509,7 +1834,11 @@
                 CPC: g.클릭 > 0 ? (g.비용 / g.클릭) : 0,
                 CPA: g.전환수 > 0 ? (g.비용 / g.전환수) : 0,
                 ROAS: g.비용 > 0 ? (g.전환값 / g.비용 * 100) : 0
-            })).sort((a, b) => b.비용 - a.비용); // 비용 높은 순 정렬
+            })).sort((a, b) => {
+                const aVal = a[sortConfig.metric];
+                const bVal = b[sortConfig.metric];
+                return sortConfig.order === 'desc' ? bVal - aVal : aVal - bVal;
+            });
         }
 
         // 대시보드 업데이트
@@ -1523,6 +1852,91 @@
                 creativeData = creativeData.filter(creative =>
                     creative.name.toLowerCase().includes(searchLower)
                 );
+            }
+
+            // KPI 기준 필터 적용
+            if (kpiFilter.enabled && kpiFilter.value !== '') {
+                const targetValue = parseFloat(kpiFilter.value);
+                if (!isNaN(targetValue)) {
+                    // 메트릭 값 가져오기 헬퍼 함수
+                    const getMetricValue = (creative, metric) => {
+                        switch (metric) {
+                            case '비용': return creative.비용;
+                            case '노출': return creative.노출;
+                            case '클릭': return creative.클릭;
+                            case '전환수': return creative.전환수;
+                            case '전환값': return creative.전환값;
+                            case 'CPC': return creative.CPC;
+                            case 'CPA': return creative.CPA;
+                            case 'ROAS': return creative.ROAS;
+                            default: return 0;
+                        }
+                    };
+
+                    // 비교 연산 헬퍼 함수
+                    const compareValues = (metricValue, operator, targetVal) => {
+                        switch (operator) {
+                            case '>': return metricValue > targetVal;
+                            case '<': return metricValue < targetVal;
+                            case '>=': return metricValue >= targetVal;
+                            case '<=': return metricValue <= targetVal;
+                            case '=': return metricValue === targetVal;
+                            default: return true;
+                        }
+                    };
+
+                    creativeData = creativeData.filter(creative => {
+                        // 기본 조건 평가
+                        const metricValue = getMetricValue(creative, kpiFilter.metric);
+                        const primaryResult = compareValues(metricValue, kpiFilter.operator, targetValue);
+
+                        // 복합 조건이 없으면 기본 조건만 반환
+                        if (kpiFilter.compoundLogic === 'none') {
+                            return primaryResult;
+                        }
+
+                        // 보조 조건 평가
+                        const subTargetValue = parseFloat(kpiFilter.subValue);
+                        let secondaryResult = true;
+                        if (!isNaN(subTargetValue) && kpiFilter.subValue !== '') {
+                            const subMetricValue = getMetricValue(creative, kpiFilter.subMetric);
+                            secondaryResult = compareValues(subMetricValue, kpiFilter.subOperator, subTargetValue);
+                        }
+
+                        // 3차 조건 평가 (subCompoundLogic이 설정된 경우에만)
+                        let tertiaryResult = true;
+                        let hasTertiaryCondition = false;
+                        if (kpiFilter.subCompoundLogic !== 'none') {
+                            const tertiaryTargetValue = parseFloat(kpiFilter.tertiaryValue);
+                            if (!isNaN(tertiaryTargetValue) && kpiFilter.tertiaryValue !== '') {
+                                hasTertiaryCondition = true;
+                                const tertiaryMetricValue = getMetricValue(creative, kpiFilter.tertiaryMetric);
+                                tertiaryResult = compareValues(tertiaryMetricValue, kpiFilter.tertiaryOperator, tertiaryTargetValue);
+                            }
+                        }
+
+                        // OR 또는 AND 연산 (1차-2차 조건)
+                        let result12;
+                        if (kpiFilter.compoundLogic === 'or') {
+                            result12 = primaryResult || (kpiFilter.subValue !== '' ? secondaryResult : false);
+                        } else if (kpiFilter.compoundLogic === 'and') {
+                            result12 = primaryResult && (kpiFilter.subValue !== '' ? secondaryResult : true);
+                        } else {
+                            return primaryResult;
+                        }
+
+                        // 3차 조건 적용 (subCompoundLogic 기반)
+                        if (hasTertiaryCondition) {
+                            if (kpiFilter.subCompoundLogic === 'or') {
+                                return result12 || tertiaryResult;
+                            } else if (kpiFilter.subCompoundLogic === 'and') {
+                                return result12 && tertiaryResult;
+                            }
+                        }
+
+                        return result12;
+                    });
+                }
             }
 
             // 요약 업데이트
@@ -2144,6 +2558,148 @@
             document.getElementById('searchText').addEventListener('input', e => {
                 filters.searchText = e.target.value;
                 updateDashboard();
+            });
+
+            // KPI 필터 이벤트
+            document.getElementById('kpiFilterMetric').addEventListener('change', e => {
+                kpiFilter.metric = e.target.value;
+                if (kpiFilter.enabled) {
+                    updateDashboard();
+                }
+            });
+
+            document.getElementById('kpiFilterOperator').addEventListener('change', e => {
+                kpiFilter.operator = e.target.value;
+                if (kpiFilter.enabled) {
+                    updateDashboard();
+                }
+            });
+
+            document.getElementById('kpiFilterValue').addEventListener('input', e => {
+                const formatted = formatNumberInput(e.target.value);
+                e.target.value = formatted;
+                kpiFilter.value = parseFormattedNumber(formatted);
+                if (kpiFilter.enabled) {
+                    updateDashboard();
+                }
+            });
+
+            document.getElementById('kpiFilterToggle').addEventListener('click', e => {
+                kpiFilter.enabled = !kpiFilter.enabled;
+                const toggle = e.target.closest('.kpi-filter-toggle');
+                const status = toggle.querySelector('.toggle-status');
+
+                if (kpiFilter.enabled) {
+                    toggle.classList.add('active');
+                    status.textContent = 'ON';
+                } else {
+                    toggle.classList.remove('active');
+                    status.textContent = 'OFF';
+                }
+                updateDashboard();
+            });
+
+            // 조합 조건 라디오 버튼 이벤트 (조건1 -> 조건2)
+            document.querySelectorAll('input[name="compoundLogic"]').forEach(radio => {
+                radio.addEventListener('change', e => {
+                    kpiFilter.compoundLogic = e.target.value;
+                    const subFilterRow = document.getElementById('subFilterRow');
+                    const tertiaryFilterRow = document.getElementById('tertiaryFilterRow');
+
+                    if (e.target.value === 'none') {
+                        subFilterRow.style.display = 'none';
+                        tertiaryFilterRow.style.display = 'none';
+                        // 조건2의 조합조건도 초기화
+                        kpiFilter.subCompoundLogic = 'none';
+                        document.querySelector('input[name="compoundLogicSub"][value="none"]').checked = true;
+                    } else {
+                        subFilterRow.style.display = 'flex';
+                        // tertiaryFilterRow는 subCompoundLogic에 의해 제어됨
+                    }
+
+                    if (kpiFilter.enabled) {
+                        updateDashboard();
+                    }
+                });
+            });
+
+            // 조합 조건 라디오 버튼 이벤트 (조건2 -> 조건3)
+            document.querySelectorAll('input[name="compoundLogicSub"]').forEach(radio => {
+                radio.addEventListener('change', e => {
+                    kpiFilter.subCompoundLogic = e.target.value;
+                    const tertiaryFilterRow = document.getElementById('tertiaryFilterRow');
+
+                    if (e.target.value === 'none') {
+                        tertiaryFilterRow.style.display = 'none';
+                    } else {
+                        tertiaryFilterRow.style.display = 'flex';
+                    }
+
+                    if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
+                        updateDashboard();
+                    }
+                });
+            });
+
+            // 보조 필터 이벤트
+            document.getElementById('kpiFilterMetricSub').addEventListener('change', e => {
+                kpiFilter.subMetric = e.target.value;
+                if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
+                    updateDashboard();
+                }
+            });
+
+            document.getElementById('kpiFilterOperatorSub').addEventListener('change', e => {
+                kpiFilter.subOperator = e.target.value;
+                if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
+                    updateDashboard();
+                }
+            });
+
+            document.getElementById('kpiFilterValueSub').addEventListener('input', e => {
+                const formatted = formatNumberInput(e.target.value);
+                e.target.value = formatted;
+                kpiFilter.subValue = parseFormattedNumber(formatted);
+                if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
+                    updateDashboard();
+                }
+            });
+
+            // 3차 필터 이벤트
+            document.getElementById('kpiFilterMetricTertiary').addEventListener('change', e => {
+                kpiFilter.tertiaryMetric = e.target.value;
+                if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
+                    updateDashboard();
+                }
+            });
+
+            document.getElementById('kpiFilterOperatorTertiary').addEventListener('change', e => {
+                kpiFilter.tertiaryOperator = e.target.value;
+                if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
+                    updateDashboard();
+                }
+            });
+
+            document.getElementById('kpiFilterValueTertiary').addEventListener('input', e => {
+                const formatted = formatNumberInput(e.target.value);
+                e.target.value = formatted;
+                kpiFilter.tertiaryValue = parseFormattedNumber(formatted);
+                if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none' && kpiFilter.subCompoundLogic !== 'none') {
+                    updateDashboard();
+                }
+            });
+
+            // 정렬 설정 이벤트
+            document.getElementById('sortMetric').addEventListener('change', e => {
+                sortConfig.metric = e.target.value;
+                updateDashboard();
+            });
+
+            document.querySelectorAll('input[name="sortOrder"]').forEach(radio => {
+                radio.addEventListener('change', e => {
+                    sortConfig.order = e.target.value;
+                    updateDashboard();
+                });
             });
         });
     </script>

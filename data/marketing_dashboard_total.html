@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마케팅 대시보드 - 통합</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================
+           공통 CSS 스타일
+           ======================================== */
+        :root {
+            /* Berry Theme Colors */
+            --primary-main: #673ab7;
+            --primary-light: #ede7f6;
+            --primary-dark: #5e35b1;
+            --secondary-main: #2196f3;
+            --secondary-light: #e3f2fd;
+            --success-main: #00c853;
+            --success-light: #b9f6ca;
+            --warning-main: #ffab00;
+            --warning-light: #fff8e1;
+            --error-main: #ff1744;
+            --error-light: #ffeaea;
+            --grey-50: #fafafa;
+            --grey-100: #f5f5f5;
+            --grey-200: #eeeeee;
+            --grey-300: #e0e0e0;
+            --grey-500: #9e9e9e;
+            --grey-700: #616161;
+            --grey-900: #212121;
+            --paper: #ffffff;
+            --background: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--grey-900);
+            line-height: 1.5;
+            overflow: hidden;
+        }
+
+        /* ========================================
+           레이아웃 구조
+           ======================================== */
+        .app-wrapper {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* ========================================
+           사이드바
+           ======================================== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--grey-200);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-main) 0%, var(--primary-dark) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .sidebar-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .sidebar-logo-subtitle {
+            font-size: 11px;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ========================================
+           스크롤바 스타일
+           ======================================== */
+        .simplebar-content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-thumb {
+            background: var(--grey-300);
+            border-radius: 3px;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-thumb:hover {
+            background: var(--grey-500);
+        }
+
+        .sidebar-content {
+            padding: 16px 12px;
+        }
+
+        /* ========================================
+           네비게이션 그룹
+           ======================================== */
+        .nav-group {
+            margin-bottom: 16px;
+        }
+
+        .nav-group-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 16px;
+            margin-bottom: 4px;
+        }
+
+        /* ========================================
+           네비게이션 아이템
+           ======================================== */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: var(--grey-700);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: var(--grey-100);
+            color: var(--primary-main);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .nav-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .nav-item.disabled:hover {
+            background: transparent;
+            color: var(--grey-700);
+        }
+
+        .nav-item-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .nav-item-text {
+            flex: 1;
+        }
+
+        .nav-item-badge {
+            background: var(--primary-main);
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* ========================================
+           메인 컨텐츠 영역
+           ======================================== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            height: 100vh;
+            position: relative;
+        }
+
+        /* ========================================
+           iframe 컨테이너
+           ======================================== */
+        .iframe-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .page-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: none;
+        }
+
+        .page-iframe.active {
+            display: block;
+        }
+
+        /* ========================================
+           로딩 인디케이터
+           ======================================== */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--background);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--grey-200);
+            border-top: 4px solid var(--primary-main);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 14px;
+            color: var(--grey-500);
+        }
+
+        /* ========================================
+           반응형 스타일
+           ======================================== */
+        @media (max-width: 1200px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- ========================================
+             사이드바 네비게이션
+             ======================================== -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo" onclick="switchPage('main')">
+                    <div class="sidebar-logo-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="sidebar-logo-text">Analytics</div>
+                        <div class="sidebar-logo-subtitle">Dashboard</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="simplebar-content-wrapper">
+                <div class="sidebar-content">
+                    <!-- 대시보드 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">대시보드</div>
+                        <a href="#main" class="nav-item active" data-page="main">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">광고 성과 대시보드</span>
+                        </a>
+                    </div>
+
+                    <!-- 분석 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">분석</div>
+                        <a href="#creative" class="nav-item" data-page="creative">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">광고 소재별 분석</span>
+                        </a>
+                        <a href="#timeseries" class="nav-item" data-page="timeseries">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">시계열 데이터 분석</span>
+                        </a>
+                        <a href="#" class="nav-item disabled">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2.03 0v8.99H22c-.47-4.74-4.24-8.52-8.97-8.99zm0 11.01V22c4.74-.47 8.5-4.25 8.97-8.99h-8.97z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">채널별 비교</span>
+                            <span class="nav-item-badge">Soon</span>
+                        </a>
+                        <a href="#" class="nav-item disabled">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">기간별 리포트</span>
+                            <span class="nav-item-badge">Soon</span>
+                        </a>
+                    </div>
+
+                    <!-- 설정 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">설정</div>
+                        <a href="#" class="nav-item disabled">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">데이터 설정</span>
+                            <span class="nav-item-badge">Soon</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ========================================
+             메인 컨텐츠 영역 (iframe)
+             ======================================== -->
+        <main class="main-content">
+            <div class="iframe-container">
+                <!-- 로딩 인디케이터 -->
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">페이지를 불러오는 중...</div>
+                </div>
+
+                <!-- 페이지 iframe들 -->
+                <iframe
+                    id="iframe-main"
+                    class="page-iframe active"
+                    src="marketing_dashboard_v3.html"
+                    onload="hideLoading('main')"
+                ></iframe>
+                <iframe
+                    id="iframe-creative"
+                    class="page-iframe"
+                    src="about:blank"
+                    onload="hideLoading('creative')"
+                ></iframe>
+                <iframe
+                    id="iframe-timeseries"
+                    class="page-iframe"
+                    src="about:blank"
+                    onload="hideLoading('timeseries')"
+                ></iframe>
+            </div>
+        </main>
+    </div>
+
+    <!-- ========================================
+         페이지 전환 스크립트
+         ======================================== -->
+    <script>
+        // ========================================
+        // 페이지 설정
+        // ========================================
+        const pages = {
+            main: {
+                src: 'marketing_dashboard_v3.html',
+                loaded: false
+            },
+            creative: {
+                src: 'creative_analysis.html',
+                loaded: false
+            },
+            timeseries: {
+                src: 'timeseries_analysis.html',
+                loaded: false
+            }
+        };
+
+        let currentPage = 'main';
+
+        // ========================================
+        // 페이지 전환 함수
+        // ========================================
+        function switchPage(pageName) {
+            // 유효한 페이지인지 확인
+            if (!pages[pageName]) return;
+
+            // 현재 페이지와 같으면 무시
+            if (currentPage === pageName) return;
+
+            // 로딩 표시
+            showLoading();
+
+            // 모든 iframe 숨기기
+            document.querySelectorAll('.page-iframe').forEach(iframe => {
+                iframe.classList.remove('active');
+            });
+
+            // 모든 네비게이션 아이템 비활성화
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // 선택된 iframe 표시
+            const targetIframe = document.getElementById('iframe-' + pageName);
+            if (targetIframe) {
+                targetIframe.classList.add('active');
+
+                // 아직 로드되지 않은 페이지면 src 설정
+                if (!pages[pageName].loaded) {
+                    targetIframe.src = pages[pageName].src;
+                    pages[pageName].loaded = true;
+                } else {
+                    // 이미 로드된 페이지면 로딩 숨기기
+                    hideLoading(pageName);
+                }
+            }
+
+            // 선택된 네비게이션 아이템 활성화
+            const targetNav = document.querySelector('.nav-item[data-page="' + pageName + '"]');
+            if (targetNav) {
+                targetNav.classList.add('active');
+            }
+
+            // 현재 페이지 업데이트
+            currentPage = pageName;
+
+            // URL hash 업데이트
+            window.location.hash = pageName;
+        }
+
+        // ========================================
+        // 로딩 표시/숨김 함수
+        // ========================================
+        function showLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.remove('hidden');
+        }
+
+        function hideLoading(pageName) {
+            // 로딩 오버레이 숨김
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.add('hidden');
+
+            // iframe 내부 사이드바 숨김 처리
+            hideIframeSidebar(pageName);
+        }
+
+        // ========================================
+        // iframe 내부 사이드바 숨김
+        // ========================================
+        function hideIframeSidebar(pageName) {
+            const iframe = document.getElementById('iframe-' + pageName);
+            if (iframe && iframe.contentDocument) {
+                try {
+                    const iframeDoc = iframe.contentDocument;
+                    // 이미 스타일이 추가되었는지 확인
+                    if (!iframeDoc.getElementById('embedded-style')) {
+                        const style = iframeDoc.createElement('style');
+                        style.id = 'embedded-style';
+                        style.textContent = `
+                            .sidebar { display: none !important; }
+                            .main-content { margin-left: 0 !important; }
+                            .app-wrapper > aside { display: none !important; }
+                        `;
+                        iframeDoc.head.appendChild(style);
+                    }
+                } catch (e) {
+                    // Cross-origin 접근 실패 시 무시
+                    console.warn('Could not access iframe content:', e);
+                }
+            }
+        }
+
+        // ========================================
+        // 초기화
+        // ========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // 네비게이션 클릭 이벤트
+            document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageName = this.getAttribute('data-page');
+                    switchPage(pageName);
+                });
+            });
+
+            // URL hash 기반 초기 페이지 설정
+            const hash = window.location.hash.replace('#', '');
+            if (hash && pages[hash]) {
+                switchPage(hash);
+            } else {
+                // 기본 페이지 로드 완료 처리
+                pages['main'].loaded = true;
+            }
+
+            // hash 변경 이벤트 처리 (뒤로가기/앞으로가기)
+            window.addEventListener('hashchange', function() {
+                const hash = window.location.hash.replace('#', '');
+                if (hash && pages[hash]) {
+                    switchPage(hash);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
