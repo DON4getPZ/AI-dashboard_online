@@ -47,10 +47,14 @@ class InsightGenerator:
         self.segment_data = {}
         self.segment_stats = {}
         self.forecasts = {}
+        self.predictions_data = {}  # predictions_*.csv 데이터
         self.insights = {
             'generated_at': datetime.now().isoformat(),
-            'alerts': [],
-            'recommendations': [],
+            'overall': {},  # 전체 성과 분석 추가
+            'segments': {
+                'alerts': [],
+                'recommendations': []
+            },
             'summary': '',
             'details': {}
         }
@@ -74,7 +78,8 @@ class InsightGenerator:
         segment_files = {
             'brand': FORECAST_DIR / 'segment_brand.csv',
             'channel': FORECAST_DIR / 'segment_channel.csv',
-            'product': FORECAST_DIR / 'segment_product.csv'
+            'product': FORECAST_DIR / 'segment_product.csv',
+            'promotion': FORECAST_DIR / 'segment_promotion.csv'
         }
 
         loaded_count = 0
@@ -94,6 +99,20 @@ class InsightGenerator:
             print(f"   Loaded: {stats_file.name}")
         else:
             print(f"   Warning: {stats_file.name} not found")
+
+        # predictions_*.csv 파일 로드
+        predictions_files = {
+            'daily': FORECAST_DIR / 'predictions_daily.csv',
+            'weekly': FORECAST_DIR / 'predictions_weekly.csv',
+            'monthly': FORECAST_DIR / 'predictions_monthly.csv'
+        }
+
+        for name, filepath in predictions_files.items():
+            if filepath.exists():
+                self.predictions_data[name] = pd.read_csv(filepath, encoding='utf-8')
+                print(f"   Loaded: {filepath.name}")
+            else:
+                print(f"   Info: {filepath.name} not found (optional)")
 
         if loaded_count == 0:
             print("\n   Error: No segment data found. Run segment_processor.py first.")
@@ -168,6 +187,167 @@ class InsightGenerator:
             self.forecasts[segment_name] = segment_analysis
             print(f"   Analyzed {len(segment_analysis)} {segment_name} segments")
 
+    def analyze_overall(self) -> None:
+        """전체 성과 분석 (predictions_*.csv 기반)"""
+        print("\n[2.5/5] Analyzing overall performance...")
+
+        if 'daily' not in self.predictions_data or self.predictions_data['daily'].empty:
+            print("   Warning: No daily predictions data available")
+            return
+
+        daily_df = self.predictions_data['daily']
+
+        # actual vs forecast 데이터 분리
+        actual = daily_df[daily_df['type'] == 'actual']
+        forecast = daily_df[daily_df['type'] == 'forecast']
+
+        overall_insights = {}
+
+        # 현재 기간 (actual) 집계
+        if not actual.empty:
+            current_period = {
+                'start_date': actual['일 구분'].min(),
+                'end_date': actual['일 구분'].max(),
+                'total_cost': round(actual['비용_예측'].sum(), 2),
+                'total_conversions': round(actual['전환수_예측'].sum(), 2),
+                'total_revenue': round(actual['전환값_예측'].sum(), 2),
+                'total_clicks': round(actual['클릭_예측'].sum(), 2) if '클릭_예측' in actual.columns else 0,
+                'total_impressions': round(actual['노출_예측'].sum(), 2) if '노출_예측' in actual.columns else 0
+            }
+
+            # ROAS, CPA 계산
+            if current_period['total_cost'] > 0:
+                current_period['roas'] = round((current_period['total_revenue'] / current_period['total_cost']) * 100, 2)
+                current_period['avg_cpa'] = round(current_period['total_cost'] / current_period['total_conversions'], 2) if current_period['total_conversions'] > 0 else 0
+            else:
+                current_period['roas'] = 0
+                current_period['avg_cpa'] = 0
+
+            # CVR, CTR 계산
+            if current_period['total_clicks'] > 0:
+                current_period['cvr'] = round((current_period['total_conversions'] / current_period['total_clicks']) * 100, 2)
+            else:
+                current_period['cvr'] = 0
+
+            if current_period['total_impressions'] > 0:
+                current_period['ctr'] = round((current_period['total_clicks'] / current_period['total_impressions']) * 100, 2)
+            else:
+                current_period['ctr'] = 0
+
+            overall_insights['current_period'] = current_period
+
+        # 예측 기간 (forecast) 집계
+        if not forecast.empty:
+            forecast_period = {
+                'start_date': forecast['일 구분'].min(),
+                'end_date': forecast['일 구분'].max(),
+                'total_cost': round(forecast['비용_예측'].sum(), 2),
+                'total_conversions': round(forecast['전환수_예측'].sum(), 2),
+                'total_revenue': round(forecast['전환값_예측'].sum(), 2),
+                'total_clicks': round(forecast['클릭_예측'].sum(), 2) if '클릭_예측' in forecast.columns else 0,
+                'total_impressions': round(forecast['노출_예측'].sum(), 2) if '노출_예측' in forecast.columns else 0
+            }
+
+            # ROAS, CPA 계산
+            if forecast_period['total_cost'] > 0:
+                forecast_period['roas'] = round((forecast_period['total_revenue'] / forecast_period['total_cost']) * 100, 2)
+                forecast_period['avg_cpa'] = round(forecast_period['total_cost'] / forecast_period['total_conversions'], 2) if forecast_period['total_conversions'] > 0 else 0
+            else:
+                forecast_period['roas'] = 0
+                forecast_period['avg_cpa'] = 0
+
+            # CVR, CTR 계산
+            if forecast_period['total_clicks'] > 0:
+                forecast_period['cvr'] = round((forecast_period['total_conversions'] / forecast_period['total_clicks']) * 100, 2)
+            else:
+                forecast_period['cvr'] = 0
+
+            if forecast_period['total_impressions'] > 0:
+                forecast_period['ctr'] = round((forecast_period['total_clicks'] / forecast_period['total_impressions']) * 100, 2)
+            else:
+                forecast_period['ctr'] = 0
+
+            overall_insights['forecast_period'] = forecast_period
+
+        # 트렌드 분석
+        if 'current_period' in overall_insights and 'forecast_period' in overall_insights:
+            current = overall_insights['current_period']
+            forecast_p = overall_insights['forecast_period']
+
+            roas_change = forecast_p['roas'] - current['roas']
+            conv_change = ((forecast_p['total_conversions'] - current['total_conversions']) / current['total_conversions'] * 100) if current['total_conversions'] > 0 else 0
+
+            trend = {
+                'roas_change': round(roas_change, 2),
+                'conversion_change': round(conv_change, 2),
+                'direction': 'improving' if roas_change > 0 else 'declining' if roas_change < -1 else 'stable'
+            }
+
+            overall_insights['trend'] = trend
+
+        # Overall alerts 생성
+        alerts = []
+        if 'current_period' in overall_insights:
+            current = overall_insights['current_period']
+
+            # 예산 소진율 계산 (가정: 월 예산 2000만원)
+            monthly_budget = 20000000
+            if current['total_cost'] > 0:
+                budget_used_pct = (current['total_cost'] / monthly_budget) * 100
+                if budget_used_pct > 90:
+                    alerts.append({
+                        'type': 'budget_alert',
+                        'severity': 'high',
+                        'message': f"월 예산 대비 {round(budget_used_pct, 1)}% 소진 ({current['end_date']} 기준)"
+                    })
+                elif budget_used_pct > 75:
+                    alerts.append({
+                        'type': 'budget_alert',
+                        'severity': 'medium',
+                        'message': f"월 예산 대비 {round(budget_used_pct, 1)}% 소진 ({current['end_date']} 기준)"
+                    })
+
+        overall_insights['alerts'] = alerts
+
+        # 오늘 데이터 비교 (최신 actual vs 해당일 forecast)
+        if not actual.empty and not forecast.empty:
+            latest_actual_date = actual['일 구분'].max()
+            latest_actual = actual[actual['일 구분'] == latest_actual_date]
+
+            if not latest_actual.empty:
+                latest_actual_row = latest_actual.iloc[0]
+                daily_comparison = {
+                    'date': latest_actual_date,
+                    'actual': {
+                        'cost': round(latest_actual_row['비용_예측'], 2),
+                        'conversions': round(latest_actual_row['전환수_예측'], 2),
+                        'revenue': round(latest_actual_row['전환값_예측'], 2)
+                    }
+                }
+
+                # 같은 날짜의 forecast 데이터 찾기 (있다면)
+                forecast_same_date = forecast[forecast['일 구분'] == latest_actual_date]
+                if not forecast_same_date.empty:
+                    forecast_row = forecast_same_date.iloc[0]
+                    daily_comparison['forecast'] = {
+                        'cost': round(forecast_row['비용_예측'], 2),
+                        'conversions': round(forecast_row['전환수_예측'], 2),
+                        'revenue': round(forecast_row['전환값_예측'], 2)
+                    }
+
+                    # 정확도 계산
+                    if daily_comparison['forecast']['conversions'] > 0:
+                        accuracy = (daily_comparison['actual']['conversions'] / daily_comparison['forecast']['conversions']) * 100
+                        daily_comparison['accuracy'] = round(accuracy, 1)
+
+                overall_insights['daily_comparison'] = daily_comparison
+
+        self.insights['overall'] = overall_insights
+
+        print(f"   Current period: {overall_insights.get('current_period', {}).get('start_date')} ~ {overall_insights.get('current_period', {}).get('end_date')}")
+        print(f"   Total conversions: {overall_insights.get('current_period', {}).get('total_conversions', 0)}")
+        print(f"   ROAS: {overall_insights.get('current_period', {}).get('roas', 0)}%")
+
     def detect_alerts(self) -> None:
         """KPI 하락 경고 감지"""
         print("\n[3/5] Detecting alerts...")
@@ -212,8 +392,8 @@ class InsightGenerator:
                         'severity': 'high' if roas_change < -20 else 'medium'
                     })
 
-        self.insights['alerts'] = alerts
-        print(f"   Detected {len(alerts)} alerts")
+        self.insights['segments']['alerts'] = alerts
+        print(f"   Detected {len(alerts)} segment alerts")
 
         for alert in alerts[:5]:  # 상위 5개만 출력
             print(f"      - {alert['segment_type']}/{alert['segment_value']}: "
@@ -226,7 +406,7 @@ class InsightGenerator:
         recommendations = []
 
         # 각 세그먼트 타입별로 권장 대상 도출
-        for segment_name in ['channel', 'product', 'brand']:
+        for segment_name in ['channel', 'product', 'brand', 'promotion']:
             if segment_name not in self.segment_stats:
                 continue
 
@@ -287,8 +467,8 @@ class InsightGenerator:
                 }
             })
 
-        self.insights['recommendations'] = recommendations
-        print(f"   Generated {len(recommendations)} recommendations")
+        self.insights['segments']['recommendations'] = recommendations
+        print(f"   Generated {len(recommendations)} segment recommendations")
 
         for rec in recommendations:
             print(f"      - {rec['target']['type']}/{rec['target']['value']}: {rec['action']}")
@@ -297,19 +477,45 @@ class InsightGenerator:
         """자연어 요약 생성"""
         print("\n[5/5] Generating natural language summary...")
 
-        alerts = self.insights['alerts']
-        recommendations = self.insights['recommendations']
+        alerts = self.insights['segments']['alerts']
+        recommendations = self.insights['segments']['recommendations']
+        overall = self.insights.get('overall', {})
 
         # 요약 텍스트 생성
         summary_parts = []
 
-        # 경고 요약
+        # Overall 성과 요약
+        if 'current_period' in overall:
+            current = overall['current_period']
+            summary_parts.append(
+                f"📊 전체 성과 ({current['start_date']} ~ {current['end_date']}): "
+                f"ROAS {current['roas']}%, 전환수 {int(current['total_conversions'])}, "
+                f"전환값 {int(current['total_revenue']):,}원"
+            )
+
+        if 'trend' in overall:
+            trend = overall['trend']
+            if trend['direction'] == 'improving':
+                summary_parts.append(f"📈 트렌드: ROAS {trend['roas_change']:+.1f}%p 개선 예상")
+            elif trend['direction'] == 'declining':
+                summary_parts.append(f"📉 트렌드: ROAS {trend['roas_change']:+.1f}%p 하락 예상")
+            else:
+                summary_parts.append(f"➡️ 트렌드: 안정적 유지")
+
+        # Overall alerts
+        if 'alerts' in overall and overall['alerts']:
+            for alert in overall['alerts']:
+                summary_parts.append(f"⚠️ {alert['message']}")
+
+        summary_parts.append("")  # 빈 줄
+
+        # 세그먼트 경고 요약
         if alerts:
             high_alerts = [a for a in alerts if a['severity'] == 'high']
             if high_alerts:
                 alert = high_alerts[0]
                 summary_parts.append(
-                    f"주의: {alert['segment_type']} '{alert['segment_value']}'의 "
+                    f"🚨 주의: {alert['segment_type']} '{alert['segment_value']}'의 "
                     f"{alert['metric']}이(가) {abs(alert['change_pct'])}% 하락할 것으로 예측됩니다."
                 )
 
@@ -318,44 +524,65 @@ class InsightGenerator:
             rec = recommendations[0]
             reasons_text = ', '.join(rec['reasons'][:2]) if rec['reasons'] else '높은 효율성'
             summary_parts.append(
-                f"권장: {rec['target']['type']} '{rec['target']['value']}'에 "
+                f"💡 권장: {rec['target']['type']} '{rec['target']['value']}'에 "
                 f"{rec['action']}을 권장합니다. ({reasons_text})"
             )
-            summary_parts.append(f"예상 효과: {rec['expected_impact']}")
+            summary_parts.append(f"   예상 효과: {rec['expected_impact']}")
 
         # 추가 인사이트
         if len(recommendations) > 1:
             other_targets = [f"{r['target']['value']}" for r in recommendations[1:3]]
             if other_targets:
                 summary_parts.append(
-                    f"추가 검토 대상: {', '.join(other_targets)}"
+                    f"🔍 추가 검토 대상: {', '.join(other_targets)}"
                 )
 
         # 요약이 없는 경우
-        if not summary_parts:
-            summary_parts.append("현재 모든 세그먼트가 안정적으로 운영되고 있습니다.")
-            summary_parts.append("지속적인 모니터링을 권장합니다.")
+        if not alerts and not recommendations:
+            summary_parts.append("✅ 현재 모든 세그먼트가 안정적으로 운영되고 있습니다.")
+            summary_parts.append("   지속적인 모니터링을 권장합니다.")
 
         self.insights['summary'] = '\n'.join(summary_parts)
         self.insights['details'] = {
-            'total_alerts': len(alerts),
+            'total_segment_alerts': len(alerts),
             'high_severity_alerts': len([a for a in alerts if a['severity'] == 'high']),
+            'total_overall_alerts': len(overall.get('alerts', [])),
             'total_recommendations': len(recommendations),
             'analyzed_segments': {
                 name: len(data) for name, data in self.forecasts.items()
-            }
+            },
+            'overall_roas': overall.get('current_period', {}).get('roas', 0),
+            'forecast_roas': overall.get('forecast_period', {}).get('roas', 0)
         }
 
         print(f"\n   Summary:")
         for line in summary_parts:
             print(f"      {line}")
 
+    def convert_to_native_types(self, obj):
+        """pandas 타입을 Python 네이티브 타입으로 변환"""
+        if isinstance(obj, dict):
+            return {key: self.convert_to_native_types(value) for key, value in obj.items()}
+        elif isinstance(obj, list):
+            return [self.convert_to_native_types(item) for item in obj]
+        elif isinstance(obj, (np.int64, np.int32)):
+            return int(obj)
+        elif isinstance(obj, (np.float64, np.float32)):
+            return float(obj)
+        elif pd.isna(obj):
+            return None
+        else:
+            return obj
+
     def save_insights(self) -> None:
         """인사이트 저장"""
         output_file = FORECAST_DIR / 'insights.json'
 
+        # pandas 타입을 Python 네이티브 타입으로 변환
+        insights_converted = self.convert_to_native_types(self.insights)
+
         with open(output_file, 'w', encoding='utf-8') as f:
-            json.dump(self.insights, f, ensure_ascii=False, indent=2)
+            json.dump(insights_converted, f, ensure_ascii=False, indent=2)
 
         print(f"\n   Saved: {output_file.name}")
 
@@ -367,6 +594,9 @@ class InsightGenerator:
 
         # 예측 분석
         self.analyze_forecasts()
+
+        # 전체 성과 분석 (predictions_*.csv)
+        self.analyze_overall()
 
         # 경고 감지
         self.detect_alerts()
@@ -385,6 +615,11 @@ class InsightGenerator:
         print("="*60)
         print("\nGenerated file:")
         print("   - data/forecast/insights.json")
+        print("\nInsight structure:")
+        print("   - overall: 전체 성과 분석 (predictions_*.csv 기반)")
+        print("   - segments: 세그먼트별 인사이트 (segment_*.csv 기반)")
+        print("   - summary: 통합 요약")
+        print("   - details: 메타데이터")
 
         return self.insights
 

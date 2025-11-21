@@ -1046,7 +1046,7 @@
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label>추가 구분</label>
+                            <label>프로모션</label>
                             <select id="filterExtra">
                                 <option value="">전체</option>
                             </select>
@@ -1450,7 +1450,7 @@
                 return true;
             });
 
-            const extras = [...new Set(filteredData.map(d => d['추가 구분']))].filter(Boolean).sort();
+            const extras = [...new Set(filteredData.map(d => d['프로모션']))].filter(Boolean).sort();
             const currentExtra = filters.extra;
             const extraSelect = document.getElementById('filterExtra');
 
@@ -1496,7 +1496,7 @@
                 if (filters.type && row['유형구분'] !== filters.type) return false;
                 if (filters.brand && row['브랜드명'] !== filters.brand) return false;
                 if (filters.product && row['상품명'] !== filters.product) return false;
-                if (filters.extra && row['추가 구분'] !== filters.extra) return false;
+                if (filters.extra && row['프로모션'] !== filters.extra) return false;
 
                 return true;
             });
@@ -1547,7 +1547,7 @@
                 if (filters.type && row['유형구분'] !== filters.type) return false;
                 if (filters.brand && row['브랜드명'] !== filters.brand) return false;
                 if (filters.product && row['상품명'] !== filters.product) return false;
-                if (filters.extra && row['추가 구분'] !== filters.extra) return false;
+                if (filters.extra && row['프로모션'] !== filters.extra) return false;
 
                 // 캠페인 조건 (세트이름은 캠페인의 하위 속성)
                 if (filters.campaign && row['캠페인'] !== filters.campaign) return false;
@@ -1613,7 +1613,7 @@
                 if (filters.type && row['유형구분'] !== filters.type) return false;
                 if (filters.brand && row['브랜드명'] !== filters.brand) return false;
                 if (filters.product && row['상품명'] !== filters.product) return false;
-                if (filters.extra && row['추가 구분'] !== filters.extra) return false;
+                if (filters.extra && row['프로모션'] !== filters.extra) return false;
 
                 // 날짜 범위 확인
                 if (filters.startDate || filters.endDate) {

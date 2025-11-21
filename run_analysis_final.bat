@@ -26,11 +26,12 @@ echo     - Memory usage: ~1-3 GB
 echo     - Processing time: 5-10 minutes
 echo     - Good for: Systems with 8GB+ RAM, detailed forecasts
 echo.
-echo [4] SEGMENT ANALYSIS - Detailed Segment Breakdown
-echo     - Segment-level forecasting (brand/channel/product)
+echo [4] SEGMENT ANALYSIS - Detailed Segment Breakdown + Business Viz
+echo     - Segment-level forecasting (brand/channel/product/promotion)
+echo     - Business visualization generation (ROAS, revenue, budget)
 echo     - Memory usage: ~2-4 GB
 echo     - Processing time: 10-20 minutes
-echo     - Good for: Systems with 16GB+ RAM, segment insights
+echo     - Good for: Systems with 16GB+ RAM, full insights + viz
 echo.
 echo [5] CHECK SYSTEM MEMORY - View system info
 echo.
@@ -102,7 +103,7 @@ set /p CONFIRM="This may use 2-4 GB of memory. Continue? (Y/N): "
 if /i not "%CONFIRM%"=="Y" goto END
 
 echo.
-echo [1/3] Processing main data...
+echo [1/4] Processing main data...
 set INPUT_CSV_PATH=raw_data.csv
 python scripts\process_marketing_data.py
 
@@ -113,7 +114,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [2/3] Processing segments...
+echo [2/4] Processing segments...
 python scripts\segment_processor.py
 
 if errorlevel 1 (
@@ -121,11 +122,19 @@ if errorlevel 1 (
 )
 
 echo.
-echo [3/3] Generating insights...
+echo [3/4] Generating insights...
 python scripts\insight_generator.py
 
 if errorlevel 1 (
     echo [WARNING] Insight generation failed
+)
+
+echo.
+echo [4/4] Creating business visualizations...
+python scripts\visualization_generator.py
+
+if errorlevel 1 (
+    echo [WARNING] Visualization generation failed
 )
 
 echo.

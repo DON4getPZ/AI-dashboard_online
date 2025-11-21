@@ -262,6 +262,13 @@
 
         .insight-content {
             display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .insight-content.recommendation-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 16px;
         }
 
@@ -282,6 +289,13 @@
 
         .insight-card.neutral {
             border-left-color: var(--warning-main);
+        }
+
+        /* Overall 성과 카드 그리드 레이아웃 */
+        .insight-content.overall-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 16px;
         }
 
         .insight-title {
@@ -522,8 +536,29 @@
             margin-bottom: 24px;
         }
 
+        .visualization-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 1200px) {
+            .visualization-grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .visualization-grid,
+            .visualization-grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .visualization-card {
             padding: 20px;
+            position: relative;
         }
 
         .visualization-title {
@@ -544,10 +579,77 @@
             border-radius: 2px;
         }
 
+        /* Image tooltip wrapper */
+        .img-tooltip-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
         .visualization-img {
             width: 100%;
             border-radius: 8px;
             border: 1px solid var(--grey-200);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: block;
+        }
+
+        .img-tooltip-wrapper:hover .visualization-img {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Tooltip styles */
+        .img-tooltip-wrapper[data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            background: rgba(33, 33, 33, 0.95);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: normal;
+            max-width: 320px;
+            width: max-content;
+            text-align: center;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+
+        .img-tooltip-wrapper[data-tooltip]:hover::after {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-12px);
+        }
+
+        .img-tooltip-wrapper[data-tooltip]::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-2px);
+            border: 6px solid transparent;
+            border-top-color: rgba(33, 33, 33, 0.95);
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            z-index: 1001;
+        }
+
+        .img-tooltip-wrapper[data-tooltip]:hover::before {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-6px);
         }
 
         /* 데이터 테이블 */
@@ -654,6 +756,97 @@
             background: var(--warning-light) !important;
         }
 
+        /* 접기/펼치기 스타일 */
+        .collapsible-section {
+            margin-bottom: 24px;
+        }
+
+        .collapsible-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 20px 24px;
+            background: var(--paper);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.2s ease;
+        }
+
+        .collapsible-header:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .collapsible-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--grey-900);
+        }
+
+        .collapsible-icon {
+            font-size: 20px;
+        }
+
+        .collapsible-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--primary-light);
+            color: var(--primary-main);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .collapsible-toggle:hover {
+            background: var(--primary-main);
+            color: white;
+        }
+
+        .collapsible-toggle-icon {
+            transition: transform 0.3s ease;
+            transform: rotate(180deg);
+        }
+
+        .collapsible-toggle-icon.collapsed {
+            transform: rotate(0deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .collapsible-content.expanded {
+            max-height: 10000px;
+            opacity: 1;
+            padding-top: 16px;
+        }
+
+        /* 컴팩트한 그리드 */
+        .compact-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 968px) {
+            .compact-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* 세그먼트 분석 스타일 */
         .segment-tabs {
             display: flex;
@@ -747,40 +940,63 @@
             color: var(--error-main);
         }
 
-        /* 추천 카드 스타일 */
+        /* 추천 카드 스타일 - 컴팩트 디자인 */
         .recommendation-card {
-            padding: 20px;
+            padding: 16px;
             background: linear-gradient(135deg, var(--success-light) 0%, var(--paper) 100%);
             border-radius: 12px;
             border-left: 4px solid var(--success-main);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recommendation-card:hover {
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .recommendation-card.expanded {
+            padding: 20px;
         }
 
         .recommendation-priority {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 4px 10px;
             background: var(--success-main);
             color: white;
             border-radius: 12px;
             font-size: 11px;
             font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .recommendation-action {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--grey-900);
             margin-bottom: 8px;
         }
 
+        .recommendation-action {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 6px;
+        }
+
         .recommendation-target {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--grey-600);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .recommendation-reasons {
             list-style: none;
+            margin: 0;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+        }
+
+        .recommendation-card.expanded .recommendation-reasons {
+            max-height: 300px;
+            opacity: 1;
             margin: 12px 0;
         }
 
@@ -801,12 +1017,28 @@
         }
 
         .recommendation-impact {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
-            color: var(--success-main);
+            color: #7b1fa2;
+            margin-top: 8px;
+        }
+
+        .recommendation-card.expanded .recommendation-impact {
             margin-top: 12px;
             padding-top: 12px;
             border-top: 1px solid var(--grey-200);
+        }
+
+        .recommendation-expand-hint {
+            font-size: 10px;
+            color: var(--grey-500);
+            text-align: right;
+            margin-top: 6px;
+            opacity: 0.7;
+        }
+
+        .recommendation-card.expanded .recommendation-expand-hint {
+            display: none;
         }
 
         /* 반응형 */
@@ -816,6 +1048,9 @@
             }
             .visualization-grid {
                 grid-template-columns: 1fr;
+            }
+            .insight-content:not(.overall-grid) {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
@@ -837,6 +1072,9 @@
             }
             .chart-container {
                 height: 300px;
+            }
+            .insight-content:not(.overall-grid) {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -899,7 +1137,7 @@
                                     <path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2.03 0v8.99H22c-.47-4.74-4.24-8.52-8.97-8.99zm0 11.01V22c4.74-.47 8.5-4.25 8.97-8.99h-8.97z"/>
                                 </svg>
                             </div>
-                            <span class="nav-item-text">채널별 비교</span>
+                            <span class="nav-item-text">유형구분별 비교</span>
                         </a>
                     </div>
 
@@ -930,116 +1168,221 @@
                     </div>
                 </div>
 
-                <!-- 인사이트 섹션 -->
-                <div class="insight-section card">
-                    <div class="insight-header">🚨 주요 경고</div>
-                    <div class="insight-content" id="insightContent">
-                        <!-- JS로 동적 생성 -->
-                    </div>
-                </div>
-
-                <!-- 투자 추천 섹션 -->
-                <div class="insight-section card">
-                    <div class="insight-header">💡 투자 추천</div>
-                    <div class="insight-content" id="recommendationContent">
-                        <!-- JS로 동적 생성 -->
-                    </div>
-                </div>
-
-                <!-- 세그먼트별 성과 분석 -->
-                <div class="insight-section card">
-                    <div class="insight-header">📊 세그먼트별 성과 분석</div>
-                    <div id="segmentAnalysisContent">
-                        <!-- JS로 동적 생성 -->
-                    </div>
-                </div>
-
-                <!-- KPI 요약 -->
+                <!-- 1. 핵심 KPI 요약 (제일 위, 펼쳐진 상태) -->
                 <div class="kpi-summary-grid" id="kpiSummaryGrid">
                     <!-- JS로 동적 생성 -->
                 </div>
 
-                <!-- 뷰 타입 선택 -->
-                <div class="view-type-section">
-                    <button class="view-btn active" data-view="daily">일별</button>
-                    <button class="view-btn" data-view="weekly">주별</button>
-                    <button class="view-btn" data-view="monthly">월별</button>
-                </div>
-
-                <!-- 예측 차트 -->
-                <div class="chart-section card">
-                    <div class="chart-header">성과 예측 추이</div>
-                    <div class="chart-controls">
-                        <div class="chart-checkbox-group">
-                            <label class="chart-checkbox cost">
-                                <input type="checkbox" id="chartCost" checked>
-                                <span>비용</span>
-                            </label>
-                            <label class="chart-checkbox impressions">
-                                <input type="checkbox" id="chartImpressions">
-                                <span>노출</span>
-                            </label>
-                            <label class="chart-checkbox clicks">
-                                <input type="checkbox" id="chartClicks">
-                                <span>클릭</span>
-                            </label>
-                            <label class="chart-checkbox conversions">
-                                <input type="checkbox" id="chartConversions" checked>
-                                <span>전환수</span>
-                            </label>
-                            <label class="chart-checkbox value">
-                                <input type="checkbox" id="chartValue">
-                                <span>전환값</span>
-                            </label>
+                <!-- 2. 주요 경고 + 투자 추천 (컴팩트, 나란히 배치) -->
+                <div class="compact-grid-2">
+                    <!-- 세그먼트별 주요 경고 -->
+                    <div class="insight-section card">
+                        <div class="insight-header">🚨 주요 경고</div>
+                        <div class="insight-content" id="insightContent">
+                            <!-- JS로 동적 생성 -->
                         </div>
                     </div>
-                    <div class="chart-container">
-                        <canvas id="forecastChart"></canvas>
+
+                    <!-- 투자 추천 -->
+                    <div class="insight-section card">
+                        <div class="insight-header">💡 투자 추천</div>
+                        <div class="insight-content recommendation-list" id="recommendationContent">
+                            <div class="insight-card neutral">
+                                <div class="insight-text">데이터를 불러오는 중...</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 시각화 이미지 -->
-                <div class="visualization-grid">
-                    <div class="visualization-card card">
-                        <div class="visualization-title">시계열 예측 분석</div>
-                        <img src="visualizations/timeseries_forecast.png" alt="시계열 예측" class="visualization-img">
+                <!-- 전체 섹션 제어 -->
+                <div style="display: flex; justify-content: flex-end; margin: 20px 0;">
+                    <button id="toggleAllBtn" onclick="toggleAllSections()" style="padding: 8px 16px; background: var(--primary-main); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s;">
+                        모두 펼치기
+                    </button>
+                </div>
+
+                <!-- 3. 성과 예측 차트 (접기 가능) -->
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <div class="collapsible-title">
+                            <span class="collapsible-icon">📊</span>
+                            <span>성과 예측 차트</span>
+                        </div>
+                        <button class="collapsible-toggle">
+                            <span>펼치기</span>
+                            <span class="collapsible-toggle-icon collapsed">▼</span>
+                        </button>
                     </div>
-                    <div class="visualization-card card">
-                        <div class="visualization-title">계절성 분해</div>
-                        <img src="visualizations/seasonal_decomposition.png" alt="계절성 분해" class="visualization-img">
-                    </div>
-                    <div class="visualization-card card">
-                        <div class="visualization-title">상관관계 히트맵</div>
-                        <img src="visualizations/correlation_heatmap.png" alt="상관관계" class="visualization-img">
-                    </div>
-                    <div class="visualization-card card">
-                        <div class="visualization-title">이상치 분석</div>
-                        <img src="visualizations/boxplot_outliers.png" alt="이상치 분석" class="visualization-img">
+                    <div class="collapsible-content">
+                        <!-- 뷰 타입 선택 -->
+                        <div class="view-type-section">
+                            <button class="view-btn active" data-view="daily">일별</button>
+                            <button class="view-btn" data-view="weekly">주별</button>
+                            <button class="view-btn" data-view="monthly">월별</button>
+                        </div>
+
+                        <!-- 예측 차트 -->
+                        <div class="chart-section card">
+                            <div class="chart-header">성과 예측 추이</div>
+                            <div class="chart-controls">
+                                <div class="chart-checkbox-group">
+                                    <label class="chart-checkbox cost">
+                                        <input type="checkbox" id="chartCost" checked>
+                                        <span>비용</span>
+                                    </label>
+                                    <label class="chart-checkbox impressions">
+                                        <input type="checkbox" id="chartImpressions">
+                                        <span>노출</span>
+                                    </label>
+                                    <label class="chart-checkbox clicks">
+                                        <input type="checkbox" id="chartClicks">
+                                        <span>클릭</span>
+                                    </label>
+                                    <label class="chart-checkbox conversions">
+                                        <input type="checkbox" id="chartConversions" checked>
+                                        <span>전환수</span>
+                                    </label>
+                                    <label class="chart-checkbox value">
+                                        <input type="checkbox" id="chartValue">
+                                        <span>전환값</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="forecastChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 데이터 테이블 -->
-                <div class="table-section card">
-                    <div class="table-header">예측 데이터</div>
-                    <div class="table-container">
-                        <table id="dataTable">
-                            <thead>
-                                <tr>
-                                    <th>기간</th>
-                                    <th>비용</th>
-                                    <th>노출</th>
-                                    <th>클릭</th>
-                                    <th>전환수</th>
-                                    <th>전환값</th>
-                                    <th>유형</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody">
-                                <tr>
-                                    <td colspan="7" class="loading">데이터를 불러오는 중...</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <!-- 4. 비즈니스 인사이트 시각화 (접기 가능) -->
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <div class="collapsible-title">
+                            <span class="collapsible-icon">💼</span>
+                            <span>비즈니스 인사이트 시각화</span>
+                        </div>
+                        <button class="collapsible-toggle">
+                            <span>펼치기</span>
+                            <span class="collapsible-toggle-icon collapsed">▼</span>
+                        </button>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="section-header" style="margin-bottom: 20px;">
+                            <p style="color: var(--grey-700); font-size: 14px;">
+                                의사결정을 위한 핵심 지표 비교 및 분석
+                            </p>
+                        </div>
+
+                        <div class="visualization-grid-3">
+                            <div class="visualization-card card">
+                                <div class="visualization-title">채널별 ROAS 비교</div>
+                                <div class="img-tooltip-wrapper" data-tooltip="각 마케팅 채널의 ROAS(광고 수익률)를 비교합니다. 100% 이상이면 수익, 이하면 손실을 의미합니다.">
+                                    <img src="visualizations/channel_roas_comparison.png" alt="채널 ROAS" class="visualization-img">
+                                </div>
+                            </div>
+                            <div class="visualization-card card">
+                                <div class="visualization-title">제품별 매출 기여도</div>
+                                <div class="img-tooltip-wrapper" data-tooltip="각 제품이 전체 매출에서 차지하는 비중을 표시합니다. 주력 제품과 개선 필요 제품을 파악할 수 있습니다.">
+                                    <img src="visualizations/product_revenue_pie.png" alt="제품 매출" class="visualization-img">
+                                </div>
+                            </div>
+                            <div class="visualization-card card">
+                                <div class="visualization-title">월 예산 소진율</div>
+                                <div class="img-tooltip-wrapper" data-tooltip="현재 월 예산 대비 실제 소진율을 게이지로 표시합니다. 100% 초과 시 예산 재조정이 필요합니다.">
+                                    <img src="visualizations/budget_gauge.png" alt="예산 게이지" class="visualization-img">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. 통계 분석 시각화 (접기 가능) -->
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <div class="collapsible-title">
+                            <span class="collapsible-icon">📈</span>
+                            <span>통계 분석 시각화</span>
+                        </div>
+                        <button class="collapsible-toggle">
+                            <span>펼치기</span>
+                            <span class="collapsible-toggle-icon collapsed">▼</span>
+                        </button>
+                    </div>
+                    <div class="collapsible-content">
+                        <!-- 시각화 이미지 -->
+                        <div class="visualization-grid">
+                            <div class="visualization-card card">
+                                <div class="visualization-title">시계열 예측 분석</div>
+                                <div class="img-tooltip-wrapper" data-tooltip="실제 데이터와 Prophet 모델을 사용한 미래 예측을 표시합니다. 신뢰구간과 함께 향후 추세를 확인할 수 있습니다.">
+                                    <img src="visualizations/timeseries_forecast.png" alt="시계열 예측" class="visualization-img">
+                                </div>
+                            </div>
+                            <div class="visualization-card card">
+                                <div class="visualization-title">계절성 분해</div>
+                                <div class="img-tooltip-wrapper" data-tooltip="시계열 데이터를 추세(Trend), 계절성(Seasonal), 잔차(Residual) 성분으로 분해하여 패턴을 분석합니다.">
+                                    <img src="visualizations/seasonal_decomposition.png" alt="계절성 분해" class="visualization-img">
+                                </div>
+                            </div>
+                            <div class="visualization-card card">
+                                <div class="visualization-title">상관관계 히트맵</div>
+                                <div class="img-tooltip-wrapper" data-tooltip="주요 마케팅 지표(비용, 전환수, 매출 등) 간의 상관관계를 색상으로 표현합니다. 진한 색일수록 강한 상관관계를 의미합니다.">
+                                    <img src="visualizations/correlation_heatmap.png" alt="상관관계" class="visualization-img">
+                                </div>
+                            </div>
+                            <div class="visualization-card card">
+                                <div class="visualization-title">이상치 분석</div>
+                                <div class="img-tooltip-wrapper" data-tooltip="데이터 분포와 이상치(Outliers)를 박스플롯으로 시각화합니다. 상자 밖의 점들이 이상치를 나타냅니다.">
+                                    <img src="visualizations/boxplot_outliers.png" alt="이상치 분석" class="visualization-img">
+                                </div>
+                            </div>
+                            <div class="visualization-card card">
+                                <div class="visualization-title">데이터 분포 분석</div>
+                                <div class="img-tooltip-wrapper" data-tooltip="주요 지표의 히스토그램과 확률 분포를 표시합니다. 데이터의 정규성과 편향을 확인할 수 있습니다.">
+                                    <img src="visualizations/distribution_analysis.png" alt="분포 분석" class="visualization-img">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. 예측 데이터 테이블 (접기 가능) -->
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <div class="collapsible-title">
+                            <span class="collapsible-icon">📋</span>
+                            <span>예측 데이터 테이블</span>
+                        </div>
+                        <button class="collapsible-toggle">
+                            <span>펼치기</span>
+                            <span class="collapsible-toggle-icon collapsed">▼</span>
+                        </button>
+                    </div>
+                    <div class="collapsible-content">
+                        <!-- 데이터 테이블 -->
+                        <div class="table-section card">
+                            <div class="table-header">예측 데이터</div>
+                            <div class="table-container">
+                                <table id="dataTable">
+                                    <thead>
+                                        <tr>
+                                            <th>기간</th>
+                                            <th>비용</th>
+                                            <th>노출</th>
+                                            <th>클릭</th>
+                                            <th>전환수</th>
+                                            <th>전환값</th>
+                                            <th>유형</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableBody">
+                                        <tr>
+                                            <td colspan="7" class="loading">데이터를 불러오는 중...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1117,18 +1460,35 @@
             try {
                 // insights.json 로드
                 const insightsResponse = await fetch('forecast/insights.json');
+                if (!insightsResponse.ok) {
+                    throw new Error(`insights.json 로드 실패: ${insightsResponse.status}`);
+                }
                 insightsData = await insightsResponse.json();
 
                 // segment_stats.json 로드
                 const segmentResponse = await fetch('forecast/segment_stats.json');
+                if (!segmentResponse.ok) {
+                    throw new Error(`segment_stats.json 로드 실패: ${segmentResponse.status}`);
+                }
                 segmentStatsData = await segmentResponse.json();
 
                 // 인사이트 업데이트
+                updateOverallInsights();
                 updateInsightsFromData();
                 updateRecommendations();
                 updateSegmentAnalysis();
             } catch (error) {
                 console.error('인사이트 데이터 로드 실패:', error);
+
+                // 에러 메시지 표시
+                const recommendationContainer = document.getElementById('recommendationContent');
+                if (recommendationContainer) {
+                    recommendationContainer.innerHTML = `
+                        <div class="insight-card neutral">
+                            <div class="insight-text">데이터 로드 실패: ${error.message}</div>
+                        </div>
+                    `;
+                }
             }
         }
 
@@ -1220,13 +1580,13 @@
             // 파생 지표 계산 (예측)
             const forecastCPM = forecastTotals.노출 > 0 ? (forecastTotals.비용 / forecastTotals.노출 * 1000) : 0;
             const forecastCPC = forecastTotals.클릭 > 0 ? (forecastTotals.비용 / forecastTotals.클릭) : 0;
-            const forecastCPA = forecastTotals.비용 > 0 ? (forecastTotals.전환수 / forecastTotals.비용) : 0;
+            const forecastCPA = forecastTotals.전환수 > 0 ? (forecastTotals.비용 / forecastTotals.전환수) : 0;
             const forecastROAS = forecastTotals.비용 > 0 ? (forecastTotals.전환값 / forecastTotals.비용 * 100) : 0;
 
             // 파생 지표 계산 (실제)
             const actualCPM = actualTotals.노출 > 0 ? (actualTotals.비용 / actualTotals.노출 * 1000) : 0;
             const actualCPC = actualTotals.클릭 > 0 ? (actualTotals.비용 / actualTotals.클릭) : 0;
-            const actualCPA = actualTotals.비용 > 0 ? (actualTotals.전환수 / actualTotals.비용) : 0;
+            const actualCPA = actualTotals.전환수 > 0 ? (actualTotals.비용 / actualTotals.전환수) : 0;
             const actualROAS = actualTotals.비용 > 0 ? (actualTotals.전환값 / actualTotals.비용 * 100) : 0;
 
             // 변화율 계산
@@ -1240,7 +1600,7 @@
                 { label: '예측 비용', value: formatNumber(forecastTotals.비용), unit: '원', change: calcChange(forecastTotals.비용, actualTotals.비용) },
                 { label: '예측 CPM', value: formatDecimal(forecastCPM), unit: '원', change: calcChange(forecastCPM, actualCPM) },
                 { label: '예측 CPC', value: formatDecimal(forecastCPC), unit: '원', change: calcChange(forecastCPC, actualCPC) },
-                { label: '예측 CPA', value: formatDecimal(forecastCPA * 1000000), unit: '건/백만원', change: calcChange(forecastCPA, actualCPA) },
+                { label: '예측 CPA', value: formatNumber(forecastCPA), unit: '원', change: calcChange(forecastCPA, actualCPA) },
                 { label: '예측 ROAS', value: formatPercent(forecastROAS), unit: '%', change: calcChange(forecastROAS, actualROAS) }
             ];
 
@@ -1281,17 +1641,130 @@
             `;
         }
 
+        // Overall 인사이트 업데이트
+        function updateOverallInsights() {
+            const overallContainer = document.getElementById('overallContent');
+            if (!overallContainer) {
+                console.log('overallContent element not found - skipping updateOverallInsights');
+                return;
+            }
+
+            if (!insightsData || !insightsData.overall) {
+                overallContainer.innerHTML = `
+                    <div class="insight-card neutral">
+                        <div class="insight-text">전체 성과 데이터를 불러올 수 없습니다.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const overall = insightsData.overall;
+            const cards = [];
+
+            // Current Period 카드
+            if (overall.current_period) {
+                const current = overall.current_period;
+                cards.push(`
+                    <div class="insight-card positive">
+                        <div class="insight-title">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                            실제 성과 (${current.start_date} ~ ${current.end_date})
+                        </div>
+                        <div class="insight-text" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px;">
+                            <div><strong>총 비용:</strong> ${formatNumber(current.total_cost)}원</div>
+                            <div><strong>총 전환수:</strong> ${formatNumber(current.total_conversions)}건</div>
+                            <div><strong>총 매출:</strong> ${formatNumber(current.total_revenue)}원</div>
+                            <div><strong>ROAS:</strong> <span style="color: ${current.roas >= 100 ? '#00c853' : '#ff1744'}; font-weight: 600;">${formatDecimal(current.roas)}%</span></div>
+                            <div><strong>평균 CPA:</strong> ${formatNumber(current.avg_cpa)}원</div>
+                            <div><strong>CVR:</strong> ${formatDecimal(current.cvr)}%</div>
+                        </div>
+                    </div>
+                `);
+            }
+
+            // Forecast Period 카드
+            if (overall.forecast_period) {
+                const forecast = overall.forecast_period;
+                cards.push(`
+                    <div class="insight-card neutral">
+                        <div class="insight-title">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z"/></svg>
+                            예측 성과 (${forecast.start_date} ~ ${forecast.end_date})
+                        </div>
+                        <div class="insight-text" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px;">
+                            <div><strong>예상 비용:</strong> ${formatNumber(forecast.total_cost)}원</div>
+                            <div><strong>예상 전환수:</strong> ${formatNumber(forecast.total_conversions)}건</div>
+                            <div><strong>예상 매출:</strong> ${formatNumber(forecast.total_revenue)}원</div>
+                            <div><strong>예상 ROAS:</strong> <span style="color: ${forecast.roas >= 100 ? '#00c853' : '#ff1744'}; font-weight: 600;">${formatDecimal(forecast.roas)}%</span></div>
+                            <div><strong>예상 CPA:</strong> ${formatNumber(forecast.avg_cpa)}원</div>
+                            <div><strong>예상 CVR:</strong> ${formatDecimal(forecast.cvr)}%</div>
+                        </div>
+                    </div>
+                `);
+            }
+
+            // Trend 카드
+            if (overall.trend) {
+                const trend = overall.trend;
+                const trendClass = trend.direction === 'improving' ? 'positive' : trend.direction === 'declining' ? 'negative' : 'neutral';
+                const trendIcon = trend.direction === 'improving'
+                    ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>'
+                    : trend.direction === 'declining'
+                    ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"/></svg>'
+                    : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>';
+
+                const trendText = trend.direction === 'improving' ? '개선 예상' : trend.direction === 'declining' ? '하락 예상' : '안정 유지';
+
+                cards.push(`
+                    <div class="insight-card ${trendClass}">
+                        <div class="insight-title">
+                            ${trendIcon}
+                            트렌드 분석: ${trendText}
+                        </div>
+                        <div class="insight-text">
+                            ROAS ${trend.roas_change >= 0 ? '+' : ''}${formatDecimal(trend.roas_change)}%p,
+                            전환수 ${trend.conversion_change >= 0 ? '+' : ''}${formatDecimal(trend.conversion_change)}% 변화 예상
+                        </div>
+                    </div>
+                `);
+            }
+
+            // Overall Alerts
+            if (overall.alerts && overall.alerts.length > 0) {
+                overall.alerts.forEach(alert => {
+                    const severityClass = alert.severity === 'high' ? 'negative' : alert.severity === 'medium' ? 'neutral' : 'positive';
+                    cards.push(`
+                        <div class="insight-card ${severityClass}">
+                            <div class="insight-title">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                                ${alert.type === 'budget_alert' ? '예산 경고' : '알림'}
+                            </div>
+                            <div class="insight-text">${alert.message}</div>
+                        </div>
+                    `);
+                });
+            }
+
+            overallContainer.innerHTML = cards.join('');
+        }
+
         // insights.json 데이터로 인사이트 업데이트
         function updateInsightsFromData() {
-            if (!insightsData || !insightsData.alerts) {
+            const insightContainer = document.getElementById('insightContent');
+            if (!insightContainer) {
+                console.log('insightContent element not found - skipping updateInsightsFromData');
+                return;
+            }
+
+            if (!insightsData || !insightsData.segments || !insightsData.segments.alerts) {
                 updateInsights(); // 폴백: 기존 로직 사용
                 return;
             }
 
-            const alerts = insightsData.alerts.slice(0, 5); // 상위 5개만 표시
+            const alerts = insightsData.segments.alerts.slice(0, 5); // 상위 5개만 표시
 
             if (alerts.length === 0) {
-                document.getElementById('insightContent').innerHTML = `
+                insightContainer.innerHTML = `
                     <div class="insight-card neutral">
                         <div class="insight-title">
                             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
@@ -1331,7 +1804,7 @@
                 return `${segmentTypeKr[alert.segment_type] || alert.segment_type} "${alert.segment_value}"의 ${alert.metric}이(가) ${Math.abs(alert.change_pct).toFixed(1)}% ${alert.change_pct < 0 ? '하락' : '상승'}할 것으로 예측됩니다.`;
             };
 
-            document.getElementById('insightContent').innerHTML = alerts.map(alert => `
+            insightContainer.innerHTML = alerts.map(alert => `
                 <div class="insight-card ${alert.severity === 'high' ? 'negative' : 'neutral'}">
                     <div class="insight-title">
                         ${getAlertIcon(alert.type)}
@@ -1344,14 +1817,28 @@
 
         // 투자 추천 업데이트
         function updateRecommendations() {
-            if (!insightsData || !insightsData.recommendations) {
+            const recommendationContainer = document.getElementById('recommendationContent');
+
+            if (!recommendationContainer) {
+                console.error('recommendationContent element not found');
                 return;
             }
 
-            const recommendations = insightsData.recommendations;
+            if (!insightsData || !insightsData.segments || !insightsData.segments.recommendations) {
+                console.log('Insights data not available yet');
+                recommendationContainer.innerHTML = `
+                    <div class="insight-card neutral">
+                        <div class="insight-text">데이터를 불러오는 중...</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const recommendations = insightsData.segments.recommendations;
+            console.log('Recommendations count:', recommendations.length);
 
             if (recommendations.length === 0) {
-                document.getElementById('recommendationContent').innerHTML = `
+                recommendationContainer.innerHTML = `
                     <div class="insight-card neutral">
                         <div class="insight-text">현재 특별한 투자 추천 사항이 없습니다.</div>
                     </div>
@@ -1363,13 +1850,14 @@
                 const types = {
                     'channel': '채널',
                     'product': '제품',
-                    'brand': '브랜드'
+                    'brand': '브랜드',
+                    'promotion': '프로모션'
                 };
                 return types[type] || type;
             };
 
-            document.getElementById('recommendationContent').innerHTML = recommendations.map(rec => `
-                <div class="recommendation-card">
+            const html = recommendations.map((rec, index) => `
+                <div class="recommendation-card" onclick="toggleRecommendationCard(this)">
                     <div class="recommendation-priority">우선순위 ${rec.priority}</div>
                     <div class="recommendation-action">${rec.action}</div>
                     <div class="recommendation-target">
@@ -1381,24 +1869,39 @@
                     <div class="recommendation-impact">
                         📈 예상 효과: ${rec.expected_impact}
                     </div>
+                    <div class="recommendation-expand-hint">클릭하여 자세히 보기</div>
                 </div>
             `).join('');
+
+            console.log('Generated HTML length:', html.length);
+            recommendationContainer.innerHTML = html;
+            console.log('Recommendations updated successfully');
+        }
+
+        // 추천 카드 토글 함수
+        function toggleRecommendationCard(card) {
+            card.classList.toggle('expanded');
         }
 
         // 세그먼트 분석 업데이트
         function updateSegmentAnalysis() {
+            const container = document.getElementById('segmentAnalysisContent');
+            if (!container) {
+                console.log('segmentAnalysisContent element not found - skipping updateSegmentAnalysis');
+                return;
+            }
+
             if (!segmentStatsData) {
                 return;
             }
 
-            const container = document.getElementById('segmentAnalysisContent');
-
             // 탭 생성
             container.innerHTML = `
                 <div class="segment-tabs">
-                    <button class="segment-tab active" data-segment="channel">채널별</button>
+                    <button class="segment-tab active" data-segment="brand">브랜드별</button>
+                    <button class="segment-tab" data-segment="channel">유형구분별</button>
                     <button class="segment-tab" data-segment="product">제품별</button>
-                    <button class="segment-tab" data-segment="brand">브랜드별</button>
+                    <button class="segment-tab" data-segment="promotion">프로모션별</button>
                 </div>
                 <div class="segment-grid" id="segmentGrid">
                     <!-- 세그먼트 카드 동적 생성 -->
@@ -1414,8 +1917,8 @@
                 });
             });
 
-            // 초기 렌더링 (채널별)
-            renderSegmentCards('channel');
+            // 초기 렌더링 (브랜드별)
+            renderSegmentCards('brand');
         }
 
         // 세그먼트 카드 렌더링
@@ -1471,6 +1974,12 @@
 
         // 기존 인사이트 업데이트 (폴백용)
         function updateInsights() {
+            const insightContainer = document.getElementById('insightContent');
+            if (!insightContainer) {
+                console.log('insightContent element not found - skipping updateInsights');
+                return;
+            }
+
             const actualData = forecastData.filter(d => d.type === 'actual');
             const forecastDataOnly = forecastData.filter(d => d.type === 'forecast');
 
@@ -1574,7 +2083,7 @@
                 });
             }
 
-            document.getElementById('insightContent').innerHTML = insights.map(insight => `
+            insightContainer.innerHTML = insights.map(insight => `
                 <div class="insight-card ${insight.type}">
                     <div class="insight-title">
                         ${insight.icon}
@@ -1857,7 +2366,61 @@
             document.querySelectorAll('.chart-checkbox input').forEach(checkbox => {
                 checkbox.addEventListener('change', updateChart);
             });
+
+            // 접기/펼치기 이벤트 초기화
+            initCollapsibles();
         });
+
+        // 접기/펼치기 기능
+        function initCollapsibles() {
+            document.querySelectorAll('.collapsible-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const section = this.parentElement;
+                    const content = section.querySelector('.collapsible-content');
+                    const toggleBtn = section.querySelector('.collapsible-toggle');
+                    const toggleIcon = section.querySelector('.collapsible-toggle-icon');
+                    const toggleText = toggleBtn.querySelector('span');
+
+                    if (content.classList.contains('expanded')) {
+                        // 접기
+                        content.classList.remove('expanded');
+                        toggleIcon.classList.add('collapsed');
+                        toggleText.textContent = '펼치기';
+                    } else {
+                        // 펼치기
+                        content.classList.add('expanded');
+                        toggleIcon.classList.remove('collapsed');
+                        toggleText.textContent = '접기';
+                    }
+                });
+            });
+        }
+
+        // 모두 펼치기/접기
+        function toggleAllSections() {
+            const toggleAllBtn = document.getElementById('toggleAllBtn');
+            const isExpanding = toggleAllBtn.textContent.trim() === '모두 펼치기';
+
+            document.querySelectorAll('.collapsible-section').forEach(section => {
+                const content = section.querySelector('.collapsible-content');
+                const toggleBtn = section.querySelector('.collapsible-toggle');
+                const toggleIcon = section.querySelector('.collapsible-toggle-icon');
+                const toggleText = toggleBtn ? toggleBtn.querySelector('span') : null;
+
+                if (isExpanding) {
+                    content.classList.add('expanded');
+                    if (toggleIcon) toggleIcon.classList.remove('collapsed');
+                    if (toggleText) toggleText.textContent = '접기';
+                } else {
+                    content.classList.remove('expanded');
+                    if (toggleIcon) toggleIcon.classList.add('collapsed');
+                    if (toggleText) toggleText.textContent = '펼치기';
+                }
+            });
+
+            // 버튼 텍스트 토글
+            toggleAllBtn.textContent = isExpanding ? '모두 접기' : '모두 펼치기';
+        }
     </script>
 </body>
 </html>

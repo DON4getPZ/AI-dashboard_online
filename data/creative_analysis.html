@@ -1114,7 +1114,7 @@
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label>추가구분</label>
+                            <label>프로모션</label>
                             <select id="filterExtra">
                                 <option value="">전체</option>
                             </select>
@@ -1681,7 +1681,7 @@
                 if (filters.product && row['상품명'] !== filters.product) return false;
                 return true;
             });
-            const extras = [...new Set(filteredData.map(d => d['추가 구분']))].filter(Boolean).sort();
+            const extras = [...new Set(filteredData.map(d => d['프로모션']))].filter(Boolean).sort();
             const extraSelect = document.getElementById('filterExtra');
             extraSelect.innerHTML = '<option value="">전체</option>';
             extras.forEach(opt => {
@@ -1703,7 +1703,7 @@
                 if (filters.type && row['유형구분'] !== filters.type) return false;
                 if (filters.brand && row['브랜드명'] !== filters.brand) return false;
                 if (filters.product && row['상품명'] !== filters.product) return false;
-                if (filters.extra && row['추가 구분'] !== filters.extra) return false;
+                if (filters.extra && row['프로모션'] !== filters.extra) return false;
                 return true;
             });
             const campaigns = [...new Set(filteredData.map(d => d['캠페인']))].filter(Boolean).sort();
@@ -1728,7 +1728,7 @@
                 if (filters.type && row['유형구분'] !== filters.type) return false;
                 if (filters.brand && row['브랜드명'] !== filters.brand) return false;
                 if (filters.product && row['상품명'] !== filters.product) return false;
-                if (filters.extra && row['추가 구분'] !== filters.extra) return false;
+                if (filters.extra && row['프로모션'] !== filters.extra) return false;
                 if (filters.campaign && row['캠페인'] !== filters.campaign) return false;
                 return true;
             });
@@ -1787,7 +1787,7 @@
                 if (filters.type && row['유형구분'] !== filters.type) return false;
                 if (filters.brand && row['브랜드명'] !== filters.brand) return false;
                 if (filters.product && row['상품명'] !== filters.product) return false;
-                if (filters.extra && row['추가 구분'] !== filters.extra) return false;
+                if (filters.extra && row['프로모션'] !== filters.extra) return false;
                 if (filters.campaign && row['캠페인'] !== filters.campaign) return false;
                 if (filters.adSet && row['광고세트'] !== filters.adSet) return false;
 

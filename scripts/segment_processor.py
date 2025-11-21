@@ -61,7 +61,8 @@ class SegmentProcessor:
         self.segment_configs = [
             {'name': 'brand', 'column': '브랜드명', 'min_days': 14},
             {'name': 'channel', 'column': '유형구분', 'min_days': 7},
-            {'name': 'product', 'column': '상품명', 'min_days': 14}
+            {'name': 'product', 'column': '상품명', 'min_days': 14},
+            {'name': 'promotion', 'column': '프로모션', 'min_days': 7}
         ]
         self.metrics = ['비용', '노출', '클릭', '전환수', '전환값']
         self.forecast_days = 14
