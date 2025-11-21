@@ -26,12 +26,13 @@ echo     - Memory usage: ~1-3 GB
 echo     - Processing time: 5-10 minutes
 echo     - Good for: Systems with 8GB+ RAM, detailed forecasts
 echo.
-echo [4] SEGMENT ANALYSIS - Detailed Segment Breakdown + Business Viz
+echo [4] SEGMENT ANALYSIS - Detailed Segment Breakdown + Business Viz + AARRR Funnel
 echo     - Segment-level forecasting (brand/channel/product/promotion)
 echo     - Business visualization generation (ROAS, revenue, budget)
+echo     - AARRR Funnel analysis with A/B testing, clustering, churn prediction
 echo     - Memory usage: ~2-4 GB
 echo     - Processing time: 10-20 minutes
-echo     - Good for: Systems with 16GB+ RAM, full insights + viz
+echo     - Good for: Systems with 16GB+ RAM, full insights + viz + advanced analytics
 echo.
 echo [5] CHECK SYSTEM MEMORY - View system info
 echo.
@@ -103,7 +104,33 @@ set /p CONFIRM="This may use 2-4 GB of memory. Continue? (Y/N): "
 if /i not "%CONFIRM%"=="Y" goto END
 
 echo.
-echo [1/4] Processing main data...
+echo [0/5] Checking required Python packages...
+
+REM Check if numpy is installed
+python -c "import numpy" 2>nul
+if errorlevel 1 (
+    echo Installing numpy...
+    pip install numpy
+)
+
+REM Check if scipy is installed
+python -c "import scipy" 2>nul
+if errorlevel 1 (
+    echo Installing scipy...
+    pip install scipy
+)
+
+REM Check if scikit-learn is installed
+python -c "import sklearn" 2>nul
+if errorlevel 1 (
+    echo Installing scikit-learn...
+    pip install scikit-learn
+)
+
+echo All required packages are installed.
+
+echo.
+echo [1/5] Processing main data...
 set INPUT_CSV_PATH=raw_data.csv
 python scripts\process_marketing_data.py
 
@@ -114,7 +141,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [2/4] Processing segments...
+echo [2/5] Processing segments...
 python scripts\segment_processor.py
 
 if errorlevel 1 (
@@ -122,7 +149,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [3/4] Generating insights...
+echo [3/5] Generating insights...
 python scripts\insight_generator.py
 
 if errorlevel 1 (
@@ -130,11 +157,21 @@ if errorlevel 1 (
 )
 
 echo.
-echo [4/4] Creating business visualizations...
+echo [4/5] Creating business visualizations...
 python scripts\visualization_generator.py
 
 if errorlevel 1 (
     echo [WARNING] Visualization generation failed
+)
+
+echo.
+echo [5/5] Generating AARRR funnel analysis with advanced analytics...
+cd scripts
+python generate_funnel_data.py
+cd ..
+
+if errorlevel 1 (
+    echo [WARNING] Funnel analysis generation failed
 )
 
 echo.

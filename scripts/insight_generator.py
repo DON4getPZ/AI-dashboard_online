@@ -348,6 +348,176 @@ class InsightGenerator:
         print(f"   Total conversions: {overall_insights.get('current_period', {}).get('total_conversions', 0)}")
         print(f"   ROAS: {overall_insights.get('current_period', {}).get('roas', 0)}%")
 
+    def analyze_performance_trends(self) -> None:
+        """성과 트렌드 분석 (7일/30일 비교)"""
+        print("\n[2.7/5] Analyzing performance trends (7d/30d)...")
+
+        if 'daily' not in self.predictions_data or self.predictions_data['daily'].empty:
+            print("   Warning: No daily predictions data for trend analysis")
+            return
+
+        daily_df = self.predictions_data['daily']
+        actual = daily_df[daily_df['type'] == 'actual'].copy()
+
+        if actual.empty or len(actual) < 14:
+            print("   Warning: Insufficient data for trend analysis (need at least 14 days)")
+            return
+
+        # 날짜 정렬
+        actual = actual.sort_values('일 구분')
+
+        improvements_7d = []
+        declines_7d = []
+        improvements_30d = []
+        declines_30d = []
+
+        metrics = {
+            '비용': '비용_예측',
+            '전환수': '전환수_예측',
+            '전환값': '전환값_예측'
+        }
+
+        # 7일 비교
+        if len(actual) >= 14:
+            recent_7d = actual.tail(7)
+            previous_7d = actual.iloc[-14:-7]
+
+            for metric_name, col_name in metrics.items():
+                if col_name not in actual.columns:
+                    continue
+
+                recent_avg = recent_7d[col_name].mean()
+                previous_avg = previous_7d[col_name].mean()
+
+                if previous_avg > 0:
+                    change_pct = ((recent_avg - previous_avg) / previous_avg) * 100
+
+                    if change_pct > 20:  # 20% 이상 증가
+                        improvements_7d.append({
+                            'metric': metric_name,
+                            'period': '7d',
+                            'improvement_level': 'high' if change_pct > 30 else 'medium',
+                            'change_pct': round(change_pct, 2),
+                            'recent_avg': round(recent_avg, 2),
+                            'previous_avg': round(previous_avg, 2),
+                            'recommendation': f'{metric_name}이(가) 개선되고 있습니다. 현재 전략을 유지하고 확대하세요.'
+                        })
+                    elif change_pct < -20:  # 20% 이상 감소
+                        declines_7d.append({
+                            'metric': metric_name,
+                            'period': '7d',
+                            'risk_level': 'high' if change_pct < -30 else 'medium',
+                            'change_pct': round(change_pct, 2),
+                            'recent_avg': round(recent_avg, 2),
+                            'previous_avg': round(previous_avg, 2),
+                            'recommendation': f'{metric_name}이(가) 하락하고 있습니다. 마케팅 전략 점검이 필요합니다.'
+                        })
+
+            # ROAS 계산 (7일)
+            recent_roas_7d = (recent_7d['전환값_예측'].sum() / recent_7d['비용_예측'].sum() * 100) if recent_7d['비용_예측'].sum() > 0 else 0
+            previous_roas_7d = (previous_7d['전환값_예측'].sum() / previous_7d['비용_예측'].sum() * 100) if previous_7d['비용_예측'].sum() > 0 else 0
+
+            if previous_roas_7d > 0:
+                roas_change = recent_roas_7d - previous_roas_7d
+                roas_change_pct = (roas_change / previous_roas_7d) * 100
+
+                if roas_change_pct > 20:
+                    improvements_7d.append({
+                        'metric': 'ROAS',
+                        'period': '7d',
+                        'improvement_level': 'high' if roas_change_pct > 30 else 'medium',
+                        'change_pct': round(roas_change_pct, 2),
+                        'recent_avg': round(recent_roas_7d, 2),
+                        'previous_avg': round(previous_roas_7d, 2),
+                        'recommendation': 'ROAS가 크게 개선되었습니다. 현재 캠페인 전략을 강화하세요.'
+                    })
+                elif roas_change_pct < -20:
+                    declines_7d.append({
+                        'metric': 'ROAS',
+                        'period': '7d',
+                        'risk_level': 'high' if roas_change_pct < -30 else 'medium',
+                        'change_pct': round(roas_change_pct, 2),
+                        'recent_avg': round(recent_roas_7d, 2),
+                        'previous_avg': round(previous_roas_7d, 2),
+                        'recommendation': 'ROAS가 하락하고 있습니다. 광고 효율성 점검이 필요합니다.'
+                    })
+
+        # 30일 비교
+        if len(actual) >= 60:
+            recent_30d = actual.tail(30)
+            previous_30d = actual.iloc[-60:-30]
+
+            for metric_name, col_name in metrics.items():
+                if col_name not in actual.columns:
+                    continue
+
+                recent_avg = recent_30d[col_name].mean()
+                previous_avg = previous_30d[col_name].mean()
+
+                if previous_avg > 0:
+                    change_pct = ((recent_avg - previous_avg) / previous_avg) * 100
+
+                    if change_pct > 20:
+                        improvements_30d.append({
+                            'metric': metric_name,
+                            'period': '30d',
+                            'improvement_level': 'high' if change_pct > 30 else 'medium',
+                            'change_pct': round(change_pct, 2),
+                            'recent_avg': round(recent_avg, 2),
+                            'previous_avg': round(previous_avg, 2),
+                            'recommendation': f'{metric_name}이(가) 지속적으로 개선되고 있습니다. 장기 전략으로 확대하세요.'
+                        })
+                    elif change_pct < -20:
+                        declines_30d.append({
+                            'metric': metric_name,
+                            'period': '30d',
+                            'risk_level': 'high' if change_pct < -30 else 'medium',
+                            'change_pct': round(change_pct, 2),
+                            'recent_avg': round(recent_avg, 2),
+                            'previous_avg': round(previous_avg, 2),
+                            'recommendation': f'{metric_name}의 장기 하락 추세가 감지되었습니다. 전략 재검토가 필요합니다.'
+                        })
+
+            # ROAS 계산 (30일)
+            recent_roas_30d = (recent_30d['전환값_예측'].sum() / recent_30d['비용_예측'].sum() * 100) if recent_30d['비용_예측'].sum() > 0 else 0
+            previous_roas_30d = (previous_30d['전환값_예측'].sum() / previous_30d['비용_예측'].sum() * 100) if previous_30d['비용_예측'].sum() > 0 else 0
+
+            if previous_roas_30d > 0:
+                roas_change = recent_roas_30d - previous_roas_30d
+                roas_change_pct = (roas_change / previous_roas_30d) * 100
+
+                if roas_change_pct > 20:
+                    improvements_30d.append({
+                        'metric': 'ROAS',
+                        'period': '30d',
+                        'improvement_level': 'high' if roas_change_pct > 30 else 'medium',
+                        'change_pct': round(roas_change_pct, 2),
+                        'recent_avg': round(recent_roas_30d, 2),
+                        'previous_avg': round(previous_roas_30d, 2),
+                        'recommendation': 'ROAS의 장기 개선 추세가 확인되었습니다. 성공 전략을 확대 적용하세요.'
+                    })
+                elif roas_change_pct < -20:
+                    declines_30d.append({
+                        'metric': 'ROAS',
+                        'period': '30d',
+                        'risk_level': 'high' if roas_change_pct < -30 else 'medium',
+                        'change_pct': round(roas_change_pct, 2),
+                        'recent_avg': round(recent_roas_30d, 2),
+                        'previous_avg': round(previous_roas_30d, 2),
+                        'recommendation': 'ROAS의 장기 하락 추세가 심각합니다. 즉시 개선 조치가 필요합니다.'
+                    })
+
+        # insights에 추가
+        self.insights['performance_trends'] = {
+            'improvements_7d': improvements_7d,
+            'improvements_30d': improvements_30d,
+            'declines_7d': declines_7d,
+            'declines_30d': declines_30d
+        }
+
+        print(f"   7-day improvements: {len(improvements_7d)}, declines: {len(declines_7d)}")
+        print(f"   30-day improvements: {len(improvements_30d)}, declines: {len(declines_30d)}")
+
     def detect_alerts(self) -> None:
         """KPI 하락 경고 감지"""
         print("\n[3/5] Detecting alerts...")
@@ -597,6 +767,9 @@ class InsightGenerator:
 
         # 전체 성과 분석 (predictions_*.csv)
         self.analyze_overall()
+
+        # 성과 트렌드 분석 (7일/30일)
+        self.analyze_performance_trends()
 
         # 경고 감지
         self.detect_alerts()

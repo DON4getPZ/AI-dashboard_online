@@ -1,0 +1,2204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AARRR 퍼널 대시보드 - GA4 분석</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        :root {
+            /* Berry Theme Colors */
+            --primary-main: #673ab7;
+            --primary-light: #ede7f6;
+            --primary-dark: #5e35b1;
+            --secondary-main: #2196f3;
+            --secondary-light: #e3f2fd;
+            --success-main: #00c853;
+            --success-light: #b9f6ca;
+            --warning-main: #ffab00;
+            --warning-light: #fff8e1;
+            --error-main: #ff1744;
+            --error-light: #ffeaea;
+            --grey-50: #fafafa;
+            --grey-100: #f5f5f5;
+            --grey-200: #eeeeee;
+            --grey-300: #e0e0e0;
+            --grey-500: #9e9e9e;
+            --grey-600: #757575;
+            --grey-700: #616161;
+            --grey-900: #212121;
+            --paper: #ffffff;
+            --background: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--grey-900);
+            line-height: 1.5;
+        }
+
+        /* 레이아웃 구조 */
+        .app-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--grey-200);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-main) 0%, var(--primary-dark) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .sidebar-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .sidebar-logo-subtitle {
+            font-size: 11px;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .simplebar-content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-thumb {
+            background: var(--grey-300);
+            border-radius: 3px;
+        }
+
+        .sidebar-content {
+            padding: 16px 12px;
+        }
+
+        .nav-group {
+            margin-bottom: 16px;
+        }
+
+        .nav-group-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 16px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: var(--grey-700);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: var(--grey-100);
+            color: var(--primary-main);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .nav-item-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .nav-item-text {
+            flex: 1;
+        }
+
+        /* 메인 컨텐츠 영역 */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* 헤더 */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin: 0;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--grey-500);
+            margin-top: 4px;
+        }
+
+        /* 카드 공통 스타일 */
+        .card {
+            background: var(--paper);
+            border-radius: 12px;
+            box-shadow: 0 2px 14px 0 rgba(32, 40, 45, 0.08);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 20px 0 rgba(32, 40, 45, 0.12);
+        }
+
+        /* KPI 요약 섹션 */
+        .kpi-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-summary-card {
+            padding: 20px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--paper) 0%, var(--grey-50) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .kpi-summary-card:nth-child(1)::before { background: #673ab7; }
+        .kpi-summary-card:nth-child(2)::before { background: #2196f3; }
+        .kpi-summary-card:nth-child(3)::before { background: #ff9800; }
+        .kpi-summary-card:nth-child(4)::before { background: #4caf50; }
+        .kpi-summary-card:nth-child(5)::before { background: #00c853; }
+
+        .kpi-summary-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .kpi-summary-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .kpi-summary-unit {
+            font-size: 11px;
+            color: var(--grey-500);
+            margin-top: 4px;
+        }
+
+        .kpi-summary-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 12px;
+            margin-top: 8px;
+        }
+
+        .kpi-summary-badge.positive {
+            background: var(--success-light);
+            color: var(--success-main);
+        }
+
+        .kpi-summary-badge.negative {
+            background: var(--error-light);
+            color: var(--error-main);
+        }
+
+        /* 차트 섹션 */
+        .chart-section {
+            margin-bottom: 24px;
+            padding: 24px;
+        }
+
+        .chart-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-header::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--secondary-main);
+            border-radius: 2px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+
+        .chart-container-small {
+            position: relative;
+            height: 300px;
+        }
+
+        /* 뷰 타입 버튼 */
+        .view-type-section {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .view-btn {
+            padding: 10px 24px;
+            border: none;
+            background: var(--paper);
+            color: var(--grey-700);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .view-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .view-btn.active {
+            background: var(--primary-main);
+            color: white;
+            box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+        }
+
+        /* 그리드 레이아웃 */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* 인사이트 섹션 */
+        .insight-section {
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .insight-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .insight-header::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--warning-main);
+            border-radius: 2px;
+        }
+
+        .insight-content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .insight-card {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--grey-50) 0%, var(--paper) 100%);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-main);
+        }
+
+        .insight-card.positive {
+            border-left-color: var(--success-main);
+        }
+
+        .insight-card.negative {
+            border-left-color: var(--error-main);
+        }
+
+        .insight-card.neutral {
+            border-left-color: var(--warning-main);
+        }
+
+        .insight-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .insight-title svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .insight-text {
+            font-size: 14px;
+            color: var(--grey-700);
+            line-height: 1.6;
+        }
+
+        /* 데이터 테이블 */
+        .table-section {
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--grey-200);
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table-header::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--success-main);
+            border-radius: 2px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: right;
+            font-size: 14px;
+        }
+
+        th {
+            background: var(--grey-50);
+            font-weight: 600;
+            color: var(--grey-700);
+            border-bottom: 2px solid var(--grey-200);
+            white-space: nowrap;
+        }
+
+        td {
+            border-bottom: 1px solid var(--grey-100);
+            color: var(--grey-900);
+        }
+
+        th:first-child,
+        td:first-child {
+            text-align: left;
+            position: sticky;
+            left: 0;
+            background: var(--paper);
+            font-weight: 500;
+        }
+
+        th:first-child {
+            background: var(--grey-50);
+            z-index: 2;
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: var(--grey-50);
+        }
+
+        tbody tr:hover td:first-child {
+            background: var(--grey-50);
+        }
+
+        /* 접기/펼치기 스타일 */
+        .collapsible-section {
+            margin-bottom: 24px;
+        }
+
+        .collapsible-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 20px 24px;
+            background: var(--paper);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.2s ease;
+        }
+
+        .collapsible-header:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .collapsible-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--grey-900);
+        }
+
+        .collapsible-icon {
+            font-size: 20px;
+        }
+
+        .collapsible-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--primary-light);
+            color: var(--primary-main);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .collapsible-toggle:hover {
+            background: var(--primary-main);
+            color: white;
+        }
+
+        .collapsible-toggle-icon {
+            transition: transform 0.3s ease;
+            transform: rotate(180deg);
+        }
+
+        .collapsible-toggle-icon.collapsed {
+            transform: rotate(0deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .collapsible-content.expanded {
+            max-height: 10000px;
+            opacity: 1;
+            padding-top: 16px;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1400px) {
+            .kpi-summary-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .insight-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 16px;
+            }
+            .kpi-summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .chart-container {
+                height: 300px;
+            }
+            .insight-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 퍼널 비율 바 */
+        .funnel-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .funnel-bar-fill {
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary-main), var(--success-main));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .funnel-bar-label {
+            font-size: 11px;
+            color: var(--grey-600);
+            min-width: 40px;
+        }
+
+        /* D3 Funnel Styles */
+        #d3FunnelChart {
+            width: 100%;
+            height: 600px;
+            position: relative;
+            overflow: visible;
+        }
+
+        .funnel-stage {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .funnel-stage:hover {
+            opacity: 1;
+            filter: brightness(1.1);
+        }
+
+        .funnel-stage path {
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+            transition: filter 0.3s ease;
+        }
+
+        .funnel-stage:hover path {
+            filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.25));
+        }
+
+        .funnel-stage-label {
+            font-size: 16px;
+            font-weight: 600;
+            fill: var(--grey-900);
+            pointer-events: none;
+        }
+
+        .funnel-stage-value {
+            font-size: 14px;
+            font-weight: 500;
+            fill: var(--grey-700);
+            pointer-events: none;
+        }
+
+        .funnel-stage-conversion {
+            font-size: 12px;
+            fill: var(--grey-600);
+            pointer-events: none;
+        }
+
+        .funnel-tooltip {
+            position: fixed;
+            background: white;
+            border: 2px solid var(--primary-main);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(103, 58, 183, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1);
+            pointer-events: none;
+            z-index: 9999;
+            max-width: 380px;
+            min-width: 300px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .funnel-tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .funnel-tooltip::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid var(--primary-main);
+        }
+
+        .funnel-tooltip-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-main);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .funnel-tooltip-title::before {
+            content: '📊';
+            font-size: 20px;
+        }
+
+        .funnel-tooltip-metric {
+            font-size: 14px;
+            color: var(--grey-700);
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 8px;
+            background: var(--grey-50);
+            border-radius: 6px;
+        }
+
+        .funnel-tooltip-metric-label {
+            font-weight: 600;
+            color: var(--grey-700);
+        }
+
+        .funnel-tooltip-metric-value {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--primary-main);
+        }
+
+        .funnel-tooltip-insight {
+            margin-top: 16px;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary-main);
+            font-size: 13px;
+            color: var(--grey-700);
+            line-height: 1.6;
+        }
+
+        .funnel-tooltip-insight::before {
+            content: '💡 ';
+            font-size: 16px;
+        }
+
+        .funnel-tooltip-recommendation {
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, var(--warning-light) 0%, #fff9e6 100%);
+            border-radius: 8px;
+            border-left: 4px solid var(--warning-main);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--grey-900);
+            line-height: 1.6;
+        }
+
+        .funnel-tooltip-recommendation::before {
+            content: '🎯 추천: ';
+            font-weight: 700;
+            color: var(--warning-main);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="sidebar-logo-text">Analytics</div>
+                        <div class="sidebar-logo-subtitle">Dashboard</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="simplebar-content-wrapper">
+                <div class="sidebar-content">
+                    <!-- 대시보드 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">대시보드</div>
+                        <a href="marketing_dashboard_v3.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">광고 성과 대시보드</span>
+                        </a>
+                        <a href="#" class="nav-item active">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">AARRR 퍼널 분석</span>
+                        </a>
+                    </div>
+
+                    <!-- 분석 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">분석</div>
+                        <a href="creative_analysis.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">광고 소재별 분석</span>
+                        </a>
+                        <a href="timeseries_analysis.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">시계열 데이터 분석</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <div class="container">
+                <!-- 헤더 -->
+                <div class="header">
+                    <div>
+                        <h1>AARRR 퍼널 분석 대시보드</h1>
+                        <div class="header-subtitle">GA4 데이터 기반 사용자 여정 및 전환율 분석 <span id="analysisPeriod" style="color: var(--primary-main); font-weight: 600;"></span></div>
+                    </div>
+                </div>
+
+                <!-- 1. 핵심 KPI 요약 -->
+                <div class="kpi-summary-grid" id="kpiSummaryGrid">
+                    <!-- JS로 동적 생성 -->
+                </div>
+
+                <!-- 2. 주요 인사이트 -->
+                <div class="insight-section card">
+                    <div class="insight-header">💡 주요 인사이트</div>
+                    <div class="insight-content" id="insightContent">
+                        <div class="insight-card neutral">
+                            <div class="insight-text">데이터를 불러오는 중...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. 인터랙티브 퍼널 시각화 (D3.js) -->
+                <div class="chart-section card">
+                    <div class="chart-header">AARRR 퍼널 시각화 (Interactive)</div>
+                    <div id="d3FunnelChart"></div>
+                </div>
+
+                <!-- 4. 고급 분석 결과 (A/B Testing, Clustering, Churn Prediction) -->
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <div class="collapsible-title">
+                            <span class="collapsible-icon">🔬</span>
+                            <span>고급 분석 결과 (A/B Testing, Clustering, Churn Prediction)</span>
+                        </div>
+                        <button class="collapsible-toggle">
+                            <span>펼치기</span>
+                            <span class="collapsible-toggle-icon collapsed">▼</span>
+                        </button>
+                    </div>
+                    <div class="collapsible-content">
+                        <!-- A/B 테스트 결과 -->
+                        <div class="chart-section card" style="margin-bottom: 16px;">
+                            <div class="chart-header">📊 A/B 테스트 결과 (채널 간 전환율 비교)</div>
+                            <div id="abTestResults" style="padding: 20px;">
+                                <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
+                            </div>
+                        </div>
+
+                        <!-- 채널 클러스터링 -->
+                        <div class="chart-section card" style="margin-bottom: 16px;">
+                            <div class="chart-header">🎯 채널 클러스터링 (성과 기반 그룹화)</div>
+                            <div id="channelClusters" style="padding: 20px;">
+                                <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
+                            </div>
+                        </div>
+
+                        <!-- 이탈 위험 경고 -->
+                        <div class="chart-section card" style="margin-bottom: 16px;">
+                            <div class="chart-header">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span>⚠️ 이탈 위험 경고 (Churn Risk)</span>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="view-btn churn-period-btn active" data-period="7d">최근 7일</button>
+                                        <button class="view-btn churn-period-btn" data-period="30d">최근 30일</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="churnPredictions" style="padding: 20px;">
+                                <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
+                            </div>
+                        </div>
+
+                        <!-- 성과 개선 분석 -->
+                        <div class="chart-section card">
+                            <div class="chart-header">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span>✨ 성과 개선 분석 (Performance Improvements)</span>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="view-btn improvement-period-btn active" data-period="7d">최근 7일</button>
+                                        <button class="view-btn improvement-period-btn" data-period="30d">최근 30일</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="improvementPredictions" style="padding: 20px;">
+                                <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. 채널별 / 캠페인별 분석 -->
+                <div class="grid-2">
+                    <div class="chart-section card">
+                        <div class="chart-header">채널별 퍼널 비교</div>
+                        <div class="chart-container-small">
+                            <canvas id="channelChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-section card">
+                        <div class="chart-header">상위 캠페인 성과</div>
+                        <div class="chart-container-small">
+                            <canvas id="campaignChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. 신규 vs 재방문 분석 (접기 가능) -->
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <div class="collapsible-title">
+                            <span class="collapsible-icon">👥</span>
+                            <span>신규 vs 재방문 사용자 분석</span>
+                        </div>
+                        <button class="collapsible-toggle">
+                            <span>펼치기</span>
+                            <span class="collapsible-toggle-icon collapsed">▼</span>
+                        </button>
+                    </div>
+                    <div class="collapsible-content">
+                        <!-- 데이터 기준 선택 -->
+                        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px; padding: 16px 0;">
+                            <span style="font-size: 14px; font-weight: 600; color: var(--grey-700);">📊 데이터 기준:</span>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="view-btn new-vs-returning-view-btn active" data-view="monthly">📆 월별</button>
+                                <button class="view-btn new-vs-returning-view-btn" data-view="weekly">📆 주별</button>
+                                <button class="view-btn new-vs-returning-view-btn" data-view="daily">📅 일별</button>
+                            </div>
+                        </div>
+                        <div class="chart-section card">
+                            <div class="chart-header">신규 사용자 비율 추이</div>
+                            <div class="chart-container-small">
+                                <canvas id="newVsReturningChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. 채널별 데이터 테이블 (접기 가능) -->
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <div class="collapsible-title">
+                            <span class="collapsible-icon">📊</span>
+                            <span>채널별 상세 데이터</span>
+                        </div>
+                        <button class="collapsible-toggle">
+                            <span>펼치기</span>
+                            <span class="collapsible-toggle-icon collapsed">▼</span>
+                        </button>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="table-section card">
+                            <div class="table-header">채널별 퍼널 데이터</div>
+                            <div class="table-container">
+                                <table id="channelTable">
+                                    <thead>
+                                        <tr>
+                                            <th>채널</th>
+                                            <th>유입</th>
+                                            <th>활동</th>
+                                            <th>관심</th>
+                                            <th>결제진행</th>
+                                            <th>구매완료</th>
+                                            <th>매출</th>
+                                            <th>CVR</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="channelTableBody">
+                                        <tr>
+                                            <td colspan="8">데이터를 불러오는 중...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. 캠페인별 데이터 테이블 (접기 가능) -->
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <div class="collapsible-title">
+                            <span class="collapsible-icon">🎯</span>
+                            <span>캠페인별 상세 데이터</span>
+                        </div>
+                        <button class="collapsible-toggle">
+                            <span>펼치기</span>
+                            <span class="collapsible-toggle-icon collapsed">▼</span>
+                        </button>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="table-section card">
+                            <div class="table-header">캠페인별 퍼널 데이터 (상위 20개)</div>
+                            <div class="table-container">
+                                <table id="campaignTable">
+                                    <thead>
+                                        <tr>
+                                            <th>캠페인</th>
+                                            <th>유입</th>
+                                            <th>활동</th>
+                                            <th>관심</th>
+                                            <th>결제진행</th>
+                                            <th>구매완료</th>
+                                            <th>매출</th>
+                                            <th>CVR</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="campaignTableBody">
+                                        <tr>
+                                            <td colspan="8">데이터를 불러오는 중...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 전역 변수
+        let dailyData = [];
+        let weeklyData = [];
+        let channelData = [];
+        let campaignData = [];
+        let newVsReturningData = [];
+        let insightsData = null;
+        let currentView = 'daily';
+        let newVsReturningView = 'monthly';
+
+        // Chart.js 인스턴스 (D3 퍼널은 재생성 방식 사용)
+        let channelChart = null;
+        let campaignChart = null;
+        let newVsReturningChart = null;
+
+        // 숫자 포맷
+        function formatNumber(num) {
+            if (num === 0 || num === null || num === undefined) return '0';
+            return Math.round(num).toLocaleString('ko-KR');
+        }
+
+        // 소수점 포맷
+        function formatDecimal(num) {
+            if (num === 0 || num === null || num === undefined || !isFinite(num)) return '0';
+            return num.toLocaleString('ko-KR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+        }
+
+        // CSV 파싱
+        function parseCSV(text) {
+            const lines = text.trim().split('\n');
+            const headers = lines[0].split(',');
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',');
+                if (values.length === headers.length) {
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header.trim()] = values[index].trim();
+                    });
+                    data.push(row);
+                }
+            }
+            return data;
+        }
+
+        // 데이터 로드
+        async function loadData() {
+            try {
+                // 일별 데이터
+                const dailyResponse = await fetch('funnel/daily_funnel.csv');
+                const dailyText = await dailyResponse.text();
+                dailyData = parseCSV(dailyText);
+
+                // 주별 데이터
+                const weeklyResponse = await fetch('funnel/weekly_funnel.csv');
+                const weeklyText = await weeklyResponse.text();
+                weeklyData = parseCSV(weeklyText);
+
+                // 채널별 데이터
+                const channelResponse = await fetch('funnel/channel_funnel.csv');
+                const channelText = await channelResponse.text();
+                channelData = parseCSV(channelText);
+
+                // 캠페인별 데이터
+                const campaignResponse = await fetch('funnel/campaign_funnel.csv');
+                const campaignText = await campaignResponse.text();
+                campaignData = parseCSV(campaignText);
+
+                // 신규 vs 재방문
+                const newVsReturningResponse = await fetch('funnel/new_vs_returning.csv');
+                const newVsReturningText = await newVsReturningResponse.text();
+                newVsReturningData = parseCSV(newVsReturningText);
+
+                // 인사이트
+                const insightsResponse = await fetch('funnel/insights.json');
+                insightsData = await insightsResponse.json();
+
+                updateDashboard();
+            } catch (error) {
+                console.error('데이터 로드 실패:', error);
+            }
+        }
+
+        // 대시보드 업데이트
+        function updateDashboard() {
+            updateAnalysisPeriod();
+            updateKPISummary();
+            updateInsights();
+            updateFunnelChart();
+            updateAdvancedAnalysis();
+            updateChannelChart();
+            updateCampaignChart();
+            updateNewVsReturningChart();
+            updateChannelTable();
+            updateCampaignTable();
+        }
+
+        // 분석 기간 업데이트
+        function updateAnalysisPeriod() {
+            if (!insightsData || !insightsData.overall) return;
+
+            const { start_date, end_date } = insightsData.overall.current_period;
+            document.getElementById('analysisPeriod').textContent = `(${start_date} ~ ${end_date})`;
+        }
+
+        // KPI 요약 업데이트 (일별/주별에 따라 동적 계산)
+        function updateKPISummary() {
+            // 현재 뷰에 따른 데이터 선택
+            const data = currentView === 'daily' ? dailyData : weeklyData;
+            if (data.length === 0) return;
+
+            // 각 퍼널 단계별 합계 계산
+            const totalAcquisition = data.reduce((sum, row) => sum + (parseFloat(row['유입']) || 0), 0);
+            const totalActivation = data.reduce((sum, row) => sum + (parseFloat(row['활동']) || 0), 0);
+            const totalConsideration = data.reduce((sum, row) => sum + (parseFloat(row['관심']) || 0), 0);
+            const totalConversion = data.reduce((sum, row) => sum + (parseFloat(row['결제진행']) || 0), 0);
+            const totalPurchase = data.reduce((sum, row) => sum + (parseFloat(row['구매완료']) || 0), 0);
+
+            const kpis = [
+                { label: '총 유입', value: formatNumber(Math.round(totalAcquisition)), unit: '명', color: '#673ab7' },
+                { label: '총 활성화', value: formatNumber(Math.round(totalActivation)), unit: '명', color: '#2196f3' },
+                { label: '장바구니 추가', value: formatNumber(Math.round(totalConsideration)), unit: '명', color: '#ff9800' },
+                { label: '결제 진행', value: formatNumber(Math.round(totalConversion)), unit: '명', color: '#4caf50' },
+                { label: '구매 완료', value: formatNumber(Math.round(totalPurchase)), unit: '명', color: '#00c853' }
+            ];
+
+            document.getElementById('kpiSummaryGrid').innerHTML = kpis.map(kpi => `
+                <div class="kpi-summary-card card">
+                    <div class="kpi-summary-label">${kpi.label} (${currentView === 'daily' ? '일별 합계' : '주별 합계'})</div>
+                    <div class="kpi-summary-value">${kpi.value}</div>
+                    <div class="kpi-summary-unit">${kpi.unit}</div>
+                </div>
+            `).join('');
+        }
+
+        // 인사이트 업데이트
+        function updateInsights() {
+            if (!insightsData) return;
+
+            const insights = [];
+
+            // 전체 CVR
+            insights.push(`
+                <div class="insight-card positive">
+                    <div class="insight-title">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                        전체 전환율
+                    </div>
+                    <div class="insight-text">
+                        전체 CVR: <strong>${formatDecimal(insightsData.summary.overall_cvr)}%</strong><br>
+                        총 매출: <strong>${formatNumber(insightsData.summary.total_revenue)}원</strong>
+                    </div>
+                </div>
+            `);
+
+            // 상위 채널
+            if (insightsData.top_channels && insightsData.top_channels.length > 0) {
+                const topChannel = insightsData.top_channels[0];
+                insights.push(`
+                    <div class="insight-card positive">
+                        <div class="insight-title">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+                            최고 성과 채널
+                        </div>
+                        <div class="insight-text">
+                            <strong>${topChannel.name}</strong><br>
+                            구매: ${formatNumber(topChannel.purchases)}건<br>
+                            매출: ${formatNumber(topChannel.revenue)}원
+                        </div>
+                    </div>
+                `);
+            }
+
+            // 경고
+            if (insightsData.alerts && insightsData.alerts.length > 0) {
+                insightsData.alerts.forEach(alert => {
+                    const severityClass = alert.severity === 'high' ? 'negative' : 'neutral';
+                    insights.push(`
+                        <div class="insight-card ${severityClass}">
+                            <div class="insight-title">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                                ${alert.type === 'low_activation' ? '활성화율 경고' : '전환율 경고'}
+                            </div>
+                            <div class="insight-text">${alert.message}</div>
+                        </div>
+                    `);
+                });
+            }
+
+            document.getElementById('insightContent').innerHTML = insights.join('');
+        }
+
+        // D3.js 인터랙티브 퍼널 차트
+        function updateFunnelChart() {
+            const data = currentView === 'daily' ? dailyData : weeklyData;
+            if (data.length === 0) return;
+
+            // 각 퍼널 단계별 총합 계산
+            const funnelStages = [
+                { name: '유입 (Acquisition)', key: '유입', color: '#673ab7', description: 'Acquisition' },
+                { name: '활동 (Activation)', key: '활동', color: '#2196f3', description: 'Activation' },
+                { name: '관심 (Consideration)', key: '관심', color: '#ff9800', description: 'Consideration' },
+                { name: '결제진행 (Conversion)', key: '결제진행', color: '#4caf50', description: 'Conversion' },
+                { name: '구매완료 (Purchase)', key: '구매완료', color: '#00c853', description: 'Purchase' }
+            ];
+
+            const funnelData = funnelStages.map((stage, index) => {
+                const total = data.reduce((sum, row) => sum + (parseFloat(row[stage.key]) || 0), 0);
+                const prevTotal = index > 0 ? data.reduce((sum, row) => sum + (parseFloat(row[funnelStages[index - 1].key]) || 0), 0) : total;
+                const conversionRate = prevTotal > 0 ? (total / prevTotal * 100) : 100;
+                const dropOffRate = prevTotal > 0 ? ((prevTotal - total) / prevTotal * 100) : 0;
+
+                return {
+                    ...stage,
+                    total: Math.round(total),
+                    conversionRate: conversionRate.toFixed(1),
+                    dropOffRate: dropOffRate.toFixed(1),
+                    index: index
+                };
+            });
+
+            // SVG 초기화
+            const container = document.getElementById('d3FunnelChart');
+            container.innerHTML = '';
+
+            const margin = { top: 20, right: 40, bottom: 20, left: 40 };
+            const width = container.clientWidth - margin.left - margin.right;
+            const height = 500 - margin.top - margin.bottom;
+
+            const svg = d3.select('#d3FunnelChart')
+                .append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom)
+                .append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+
+            // 툴팁 생성 (body에 직접 추가하여 overflow 문제 해결)
+            let tooltip = d3.select('body').select('.funnel-tooltip');
+            if (tooltip.empty()) {
+                tooltip = d3.select('body')
+                    .append('div')
+                    .attr('class', 'funnel-tooltip');
+            }
+
+            // 최대값 기준으로 스케일 계산
+            const maxValue = d3.max(funnelData, d => d.total);
+            const stageHeight = height / funnelData.length;
+            const spacing = 10;
+
+            // 각 단계 그리기
+            funnelData.forEach((stage, i) => {
+                const yPos = i * stageHeight;
+                const topWidth = (stage.total / maxValue) * width;
+                const bottomWidth = i < funnelData.length - 1
+                    ? (funnelData[i + 1].total / maxValue) * width
+                    : topWidth * 0.8;
+
+                const xOffset = (width - topWidth) / 2;
+                const xOffsetBottom = (width - bottomWidth) / 2;
+
+                // 단계 사이 화살표 추가 (첫 단계 제외)
+                if (i > 0) {
+                    const prevBottomWidth = funnelData[i - 1].total > 0
+                        ? (funnelData[i - 1].total / maxValue) * width
+                        : topWidth;
+                    const prevXOffsetBottom = (width - prevBottomWidth) / 2;
+
+                    // 화살표 그룹
+                    const arrowGroup = svg.append('g')
+                        .attr('opacity', 0.4);
+
+                    // 화살표 라인
+                    arrowGroup.append('line')
+                        .attr('x1', width / 2)
+                        .attr('y1', yPos - spacing / 2 - 15)
+                        .attr('x2', width / 2)
+                        .attr('y2', yPos - spacing / 2)
+                        .attr('stroke', stage.color)
+                        .attr('stroke-width', 3)
+                        .attr('stroke-dasharray', '5,5');
+
+                    // 화살표 헤드
+                    arrowGroup.append('polygon')
+                        .attr('points', `
+                            ${width / 2},${yPos - spacing / 2}
+                            ${width / 2 - 6},${yPos - spacing / 2 - 8}
+                            ${width / 2 + 6},${yPos - spacing / 2 - 8}
+                        `)
+                        .attr('fill', stage.color);
+                }
+
+                // 퍼널 단계 (트라페즈이드)
+                const group = svg.append('g')
+                    .attr('class', 'funnel-stage')
+                    .style('cursor', 'pointer');
+
+                // 그라데이션 정의
+                const gradientId = `gradient-${i}`;
+                const gradient = svg.append('defs')
+                    .append('linearGradient')
+                    .attr('id', gradientId)
+                    .attr('x1', '0%')
+                    .attr('y1', '0%')
+                    .attr('x2', '0%')
+                    .attr('y2', '100%');
+
+                gradient.append('stop')
+                    .attr('offset', '0%')
+                    .attr('stop-color', stage.color)
+                    .attr('stop-opacity', 1);
+
+                gradient.append('stop')
+                    .attr('offset', '50%')
+                    .attr('stop-color', stage.color)
+                    .attr('stop-opacity', 0.9);
+
+                gradient.append('stop')
+                    .attr('offset', '100%')
+                    .attr('stop-color', stage.color)
+                    .attr('stop-opacity', 0.75);
+
+                // 트라페즈이드 경로
+                const path = `
+                    M ${xOffset} ${yPos}
+                    L ${xOffset + topWidth} ${yPos}
+                    L ${xOffsetBottom + bottomWidth} ${yPos + stageHeight - spacing}
+                    L ${xOffsetBottom} ${yPos + stageHeight - spacing}
+                    Z
+                `;
+
+                group.append('path')
+                    .attr('d', path)
+                    .attr('fill', `url(#${gradientId})`)
+                    .attr('stroke', stage.color)
+                    .attr('stroke-width', 2)
+                    .attr('opacity', 0.85);
+
+                // 텍스트 배경 (가독성 향상)
+                const textBg = group.append('rect')
+                    .attr('x', width / 2 - 120)
+                    .attr('y', yPos + stageHeight / 2 - 35)
+                    .attr('width', 240)
+                    .attr('height', i > 0 ? 65 : 45)
+                    .attr('fill', 'rgba(255, 255, 255, 0.95)')
+                    .attr('rx', 8)
+                    .attr('stroke', stage.color)
+                    .attr('stroke-width', 2)
+                    .attr('filter', 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))');
+
+                // 레이블
+                group.append('text')
+                    .attr('class', 'funnel-stage-label')
+                    .attr('x', width / 2)
+                    .attr('y', yPos + stageHeight / 2 - 15)
+                    .attr('text-anchor', 'middle')
+                    .style('fill', stage.color)
+                    .text(stage.name);
+
+                // 값 표시
+                group.append('text')
+                    .attr('class', 'funnel-stage-value')
+                    .attr('x', width / 2)
+                    .attr('y', yPos + stageHeight / 2 + 5)
+                    .attr('text-anchor', 'middle')
+                    .style('fill', 'var(--grey-900)')
+                    .style('font-weight', '700')
+                    .text(stage.total.toLocaleString() + ' users');
+
+                // 전환율 표시 (첫 단계 제외)
+                if (i > 0) {
+                    group.append('text')
+                        .attr('class', 'funnel-stage-conversion')
+                        .attr('x', width / 2)
+                        .attr('y', yPos + stageHeight / 2 + 22)
+                        .attr('text-anchor', 'middle')
+                        .style('fill', 'var(--grey-600)')
+                        .text(`전환율: ${stage.conversionRate}% | 이탈: ${stage.dropOffRate}%`);
+                }
+
+                // 인사이트 및 추천사항 데이터
+                const insights = getStageInsights(stage, i);
+
+                // 마우스 이벤트
+                group.on('mouseover', function(event) {
+                    d3.select(this)
+                        .style('opacity', 1)
+                        .style('filter', 'brightness(1.1)');
+
+                    tooltip.html(`
+                        <div class="funnel-tooltip-title">${stage.name}</div>
+                        <div class="funnel-tooltip-metric">
+                            <span class="funnel-tooltip-metric-label">총 사용자</span>
+                            <span class="funnel-tooltip-metric-value">${stage.total.toLocaleString()}명</span>
+                        </div>
+                        ${i > 0 ? `
+                        <div class="funnel-tooltip-metric">
+                            <span class="funnel-tooltip-metric-label">전환율</span>
+                            <span class="funnel-tooltip-metric-value">${stage.conversionRate}%</span>
+                        </div>
+                        <div class="funnel-tooltip-metric">
+                            <span class="funnel-tooltip-metric-label">이탈률</span>
+                            <span class="funnel-tooltip-metric-value" style="color: var(--error-main);">${stage.dropOffRate}%</span>
+                        </div>
+                        ` : ''}
+                        <div class="funnel-tooltip-insight">${insights.insight}</div>
+                        <div class="funnel-tooltip-recommendation">${insights.recommendation}</div>
+                    `)
+                    .classed('visible', true);
+
+                    // 툴팁 위치 조정 (rect 박스 옆에 표시)
+                    requestAnimationFrame(() => {
+                        const tooltipNode = tooltip.node();
+                        const tooltipRect = tooltipNode.getBoundingClientRect();
+                        const padding = 15;
+
+                        // rect 박스의 위치 계산
+                        const rectX = width / 2 - 120; // rect의 x 좌표
+                        const rectY = yPos + stageHeight / 2 - 35; // rect의 y 좌표
+                        const rectWidth = 240;
+
+                        // 컨테이너의 화면상 위치
+                        const containerRect = container.getBoundingClientRect();
+
+                        // rect 오른쪽 옆에 배치 시도
+                        let left = containerRect.left + margin.left + rectX + rectWidth + padding;
+                        let top = containerRect.top + margin.top + rectY;
+
+                        // 오른쪽 경계를 넘으면 왼쪽에 배치
+                        if (left + tooltipRect.width + padding > window.innerWidth) {
+                            left = containerRect.left + margin.left + rectX - tooltipRect.width - padding;
+                        }
+
+                        // 왼쪽 경계도 넘으면 화면 안쪽으로 조정
+                        if (left < padding) {
+                            left = padding;
+                        }
+
+                        // 하단 경계를 넘으면 위로 조정
+                        if (top + tooltipRect.height + padding > window.innerHeight) {
+                            top = window.innerHeight - tooltipRect.height - padding;
+                        }
+
+                        // 상단 경계를 넘으면 아래로 조정
+                        if (top < padding) {
+                            top = padding;
+                        }
+
+                        tooltip
+                            .style('left', left + 'px')
+                            .style('top', top + 'px');
+                    });
+                })
+                .on('mouseout', function() {
+                    d3.select(this)
+                        .style('opacity', 0.85)
+                        .style('filter', 'none');
+                    tooltip.classed('visible', false);
+                });
+            });
+        }
+
+        // 단계별 인사이트 및 추천사항 생성
+        function getStageInsights(stage, index) {
+            const insights = {
+                0: {
+                    insight: '사용자 유입의 시작 단계입니다. 모든 마케팅 채널의 트래픽이 집계됩니다.',
+                    recommendation: '유료 광고, SEO, 소셜 미디어 등 다양한 채널의 유입 품질을 개선하세요.'
+                },
+                1: {
+                    insight: '첫 방문자가 활성화되는 단계입니다. 이탈률이 높다면 랜딩페이지에 문제가 있을 수 있습니다.',
+                    recommendation: parseFloat(stage.dropOffRate) > 50
+                        ? '이탈률이 매우 높습니다. 랜딩페이지 속도, 디자인, CTA를 즉시 개선하세요.'
+                        : '랜딩페이지 A/B 테스트를 통해 전환율을 지속적으로 개선하세요.'
+                },
+                2: {
+                    insight: '사용자가 제품/서비스에 관심을 보이는 단계입니다.',
+                    recommendation: parseFloat(stage.dropOffRate) > 40
+                        ? '제품 페이지의 정보 품질과 이미지를 개선하고, 리뷰를 강화하세요.'
+                        : '추천 시스템과 개인화를 통해 관심을 구매로 전환하세요.'
+                },
+                3: {
+                    insight: '결제를 시작한 단계입니다. 여기서의 이탈은 큰 기회 손실입니다.',
+                    recommendation: parseFloat(stage.dropOffRate) > 30
+                        ? '결제 프로세스를 단순화하고, 배송비/결제 수단을 명확히 표시하세요.'
+                        : '원클릭 결제, 게스트 체크아웃 등으로 마찰을 최소화하세요.'
+                },
+                4: {
+                    insight: '최종 구매 완료 단계입니다. 이 사용자들을 재구매 고객으로 전환하는 것이 중요합니다.',
+                    recommendation: '이메일 마케팅, 리타겟팅 광고, 로열티 프로그램으로 재구매를 유도하세요.'
+                }
+            };
+
+            return insights[index] || { insight: '', recommendation: '' };
+        }
+
+        // 고급 분석 결과 업데이트
+        function updateAdvancedAnalysis() {
+            if (!insightsData) return;
+
+            // 1. A/B 테스트 결과
+            const abTestContainer = document.getElementById('abTestResults');
+            if (insightsData.ab_test_results && insightsData.ab_test_results.length > 0) {
+                const significantTests = insightsData.ab_test_results.filter(t => t.significant);
+
+                abTestContainer.innerHTML = `
+                    <div style="margin-bottom: 16px;">
+                        <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 12px;">
+                            <strong>${insightsData.ab_test_results.length}개</strong>의 채널 비교 테스트 수행
+                            (통계적 유의미: <strong style="color: var(--success-main);">${significantTests.length}개</strong>)
+                        </p>
+                    </div>
+                    <div style="display: grid; gap: 12px;">
+                        ${insightsData.ab_test_results.slice(0, 5).map(test => `
+                            <div style="padding: 12px; background: ${test.significant ? 'var(--success-light)' : 'var(--grey-50)'}; border-radius: 8px; border-left: 4px solid ${test.significant ? 'var(--success-main)' : 'var(--grey-300)'};">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <span style="font-size: 14px; font-weight: 600; color: var(--grey-900);">
+                                        ${test.group_a} vs ${test.group_b}
+                                    </span>
+                                    <span style="font-size: 12px; padding: 4px 8px; background: white; border-radius: 4px; color: ${test.significant ? 'var(--success-main)' : 'var(--grey-600)'};">
+                                        ${test.significant ? '✓ 유의미' : '- 유의미하지 않음'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; gap: 16px; font-size: 13px; color: var(--grey-700);">
+                                    <span>${test.group_a}: <strong>${formatDecimal(test.cvr_a)}%</strong></span>
+                                    <span>${test.group_b}: <strong>${formatDecimal(test.cvr_b)}%</strong></span>
+                                    <span>p-value: <strong>${test.p_value.toFixed(4)}</strong></span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${insightsData.ab_test_results.length > 5 ? `
+                        <p style="font-size: 12px; color: var(--grey-500); margin-top: 12px; text-align: center;">
+                            ... 외 ${insightsData.ab_test_results.length - 5}개 추가 테스트
+                        </p>
+                    ` : ''}
+                `;
+            } else {
+                abTestContainer.innerHTML = '<p style="color: var(--grey-500);">A/B 테스트 결과가 없습니다.</p>';
+            }
+
+            // 2. 채널 클러스터링
+            const clusterContainer = document.getElementById('channelClusters');
+            if (insightsData.channel_clusters && insightsData.channel_clusters.clusters) {
+                const clusters = insightsData.channel_clusters.clusters;
+                const descriptions = insightsData.channel_clusters.description;
+
+                clusterContainer.innerHTML = `
+                    <div style="margin-bottom: 16px;">
+                        <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 12px;">
+                            K-Means 클러스터링으로 <strong>${insightsData.channel_clusters.n_clusters}개</strong> 그룹으로 분류
+                        </p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                        ${Object.entries(clusters).map(([clusterName, channels], index) => {
+                            const colors = ['var(--success-main)', 'var(--warning-main)', 'var(--error-main)'];
+                            const bgColors = ['var(--success-light)', 'var(--warning-light)', 'var(--error-light)'];
+                            return `
+                                <div style="padding: 16px; background: ${bgColors[index % 3]}; border-radius: 8px; border-left: 4px solid ${colors[index % 3]};">
+                                    <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 8px;">
+                                        ${descriptions[clusterName] || clusterName}
+                                    </div>
+                                    <div style="font-size: 13px; color: var(--grey-700);">
+                                        ${channels.map(ch => `<span style="display: inline-block; padding: 4px 8px; background: white; border-radius: 4px; margin: 2px;">${ch}</span>`).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            } else {
+                clusterContainer.innerHTML = '<p style="color: var(--grey-500);">클러스터링 결과가 없습니다.</p>';
+            }
+
+            // 3. 이탈 위험 경고 (기본 7일)
+            updateChurnPredictions('7d');
+
+            // 4. 성과 개선 분석 (기본 7일)
+            updateImprovementPredictions('7d');
+        }
+
+        // 이탈 위험 경고 업데이트 (period: '7d' or '30d')
+        function updateChurnPredictions(period) {
+            if (!insightsData) return;
+
+            const dataKey = period === '7d' ? 'churn_predictions_7d' : 'churn_predictions_30d';
+            const predictions = insightsData[dataKey] || [];
+            const periodText = period === '7d' ? '최근 7일 vs 이전 7일' : '최근 30일 vs 이전 30일';
+
+            const churnContainer = document.getElementById('churnPredictions');
+            if (predictions.length > 0) {
+                churnContainer.innerHTML = `
+                    <div style="margin-bottom: 16px;">
+                        <p style="font-size: 14px; color: var(--error-main); font-weight: 600; margin-bottom: 12px;">
+                            ⚠️ ${predictions.length}개 퍼널 단계에서 이탈 위험 감지
+                        </p>
+                    </div>
+                    <div style="display: grid; gap: 12px;">
+                        ${predictions.map(pred => `
+                            <div style="padding: 16px; background: ${pred.risk_level === 'high' ? 'var(--error-light)' : 'var(--warning-light)'}; border-radius: 8px; border-left: 4px solid ${pred.risk_level === 'high' ? 'var(--error-main)' : 'var(--warning-main)'};">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                    <div>
+                                        <div style="font-size: 16px; font-weight: 600; color: var(--grey-900); margin-bottom: 4px;">
+                                            ${pred.stage} 단계
+                                        </div>
+                                        <div style="font-size: 13px; color: var(--grey-700);">
+                                            ${periodText}: <strong style="color: var(--error-main);">${pred.change_pct}%</strong> 감소
+                                        </div>
+                                    </div>
+                                    <span style="font-size: 12px; padding: 4px 12px; background: ${pred.risk_level === 'high' ? 'var(--error-main)' : 'var(--warning-main)'}; color: white; border-radius: 12px; font-weight: 600;">
+                                        ${pred.risk_level === 'high' ? '높음' : '중간'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; gap: 16px; font-size: 13px; color: var(--grey-700); margin-bottom: 12px;">
+                                    <span>최근 평균: <strong>${formatNumber(pred.recent_avg)}</strong>명</span>
+                                    <span>이전 평균: <strong>${formatNumber(pred.previous_avg)}</strong>명</span>
+                                </div>
+                                <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: white; border-radius: 6px;">
+                                    💡 ${pred.recommendation}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                churnContainer.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: var(--success-main);">
+                        <svg viewBox="0 0 24 24" fill="currentColor" style="width: 48px; height: 48px; margin-bottom: 12px;">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">이탈 위험 없음</p>
+                        <p style="font-size: 14px; color: var(--grey-600);">모든 퍼널 단계가 안정적입니다.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 성과 개선 분석 업데이트 (period: '7d' or '30d')
+        function updateImprovementPredictions(period) {
+            if (!insightsData) return;
+
+            const dataKey = period === '7d' ? 'improvement_predictions_7d' : 'improvement_predictions_30d';
+            const predictions = insightsData[dataKey] || [];
+            const periodText = period === '7d' ? '최근 7일 vs 이전 7일' : '최근 30일 vs 이전 30일';
+
+            const improvementContainer = document.getElementById('improvementPredictions');
+            if (predictions.length > 0) {
+                improvementContainer.innerHTML = `
+                    <div style="margin-bottom: 16px;">
+                        <p style="font-size: 14px; color: var(--success-main); font-weight: 600; margin-bottom: 12px;">
+                            ✨ ${predictions.length}개 퍼널 단계에서 성과 개선 감지
+                        </p>
+                    </div>
+                    <div style="display: grid; gap: 12px;">
+                        ${predictions.map(pred => `
+                            <div style="padding: 16px; background: ${pred.improvement_level === 'high' ? 'var(--success-light)' : '#e8f5e9'}; border-radius: 8px; border-left: 4px solid ${pred.improvement_level === 'high' ? 'var(--success-main)' : '#66bb6a'};">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                    <div>
+                                        <div style="font-size: 16px; font-weight: 600; color: var(--grey-900); margin-bottom: 4px;">
+                                            ${pred.stage} 단계
+                                        </div>
+                                        <div style="font-size: 13px; color: var(--grey-700);">
+                                            ${periodText}: <strong style="color: var(--success-main);">+${pred.change_pct}%</strong> 증가
+                                        </div>
+                                    </div>
+                                    <span style="font-size: 12px; padding: 4px 12px; background: ${pred.improvement_level === 'high' ? 'var(--success-main)' : '#66bb6a'}; color: white; border-radius: 12px; font-weight: 600;">
+                                        ${pred.improvement_level === 'high' ? '높음' : '중간'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; gap: 16px; font-size: 13px; color: var(--grey-700); margin-bottom: 12px;">
+                                    <span>최근 평균: <strong>${formatNumber(pred.recent_avg)}</strong>명</span>
+                                    <span>이전 평균: <strong>${formatNumber(pred.previous_avg)}</strong>명</span>
+                                </div>
+                                <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: white; border-radius: 6px;">
+                                    💡 ${pred.recommendation}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                improvementContainer.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: var(--grey-500);">
+                        <svg viewBox="0 0 24 24" fill="currentColor" style="width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.5;">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v2h-2v-2zm0-12h2v10h-2V5z"/>
+                        </svg>
+                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--grey-700);">개선 사항 없음</p>
+                        <p style="font-size: 14px; color: var(--grey-600);">현재 기간에 유의미한 성과 개선이 감지되지 않았습니다.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 채널 차트 업데이트
+        function updateChannelChart() {
+            if (channelData.length === 0) return;
+
+            const ctx = document.getElementById('channelChart');
+            if (!ctx) return;
+
+            // CVR 기준 정렬
+            const sortedData = [...channelData].sort((a, b) =>
+                (parseFloat(b['CVR']) || 0) - (parseFloat(a['CVR']) || 0)
+            ).slice(0, 10);
+
+            const labels = sortedData.map(row => row['channel']);
+            const cvrData = sortedData.map(row => parseFloat(row['CVR']) || 0);
+
+            if (channelChart) {
+                channelChart.destroy();
+            }
+
+            channelChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'CVR (%)',
+                        data: cvrData,
+                        backgroundColor: 'rgba(103, 58, 183, 0.8)',
+                        borderColor: '#673ab7',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'CVR (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 캠페인 차트 업데이트
+        function updateCampaignChart() {
+            if (campaignData.length === 0) return;
+
+            const ctx = document.getElementById('campaignChart');
+            if (!ctx) return;
+
+            // 매출 기준 상위 10개
+            const sortedData = [...campaignData].sort((a, b) =>
+                (parseFloat(b['Revenue']) || 0) - (parseFloat(a['Revenue']) || 0)
+            ).slice(0, 10);
+
+            const labels = sortedData.map(row => {
+                const name = row['Session campaign'];
+                return name.length > 20 ? name.substring(0, 20) + '...' : name;
+            });
+            const revenueData = sortedData.map(row => parseFloat(row['Revenue']) || 0);
+
+            if (campaignChart) {
+                campaignChart.destroy();
+            }
+
+            campaignChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: '매출 (원)',
+                        data: revenueData,
+                        backgroundColor: 'rgba(0, 200, 83, 0.8)',
+                        borderColor: '#00c853',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return '매출: ' + formatNumber(context.parsed.x) + '원';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // 신규 vs 재방문 차트 업데이트
+        function updateNewVsReturningChart() {
+            if (newVsReturningData.length === 0) return;
+
+            const ctx = document.getElementById('newVsReturningChart');
+            if (!ctx) return;
+
+            // 유입 퍼널만 필터링
+            const acquisitionData = newVsReturningData.filter(row => row['funnel'] === '유입');
+
+            let labels, newUserPct;
+
+            if (newVsReturningView === 'daily') {
+                // 일별 데이터
+                labels = acquisitionData.map(row => row['Day']);
+                newUserPct = acquisitionData.map(row => parseFloat(row['New user %']) || 0);
+            } else if (newVsReturningView === 'weekly') {
+                // 주별 데이터 - 주별로 그룹화하여 평균 계산
+                const weeklyMap = new Map();
+
+                acquisitionData.forEach(row => {
+                    const date = new Date(row['Day']);
+                    // 주의 시작일 (일요일) 계산
+                    const dayOfWeek = date.getDay();
+                    const weekStart = new Date(date);
+                    weekStart.setDate(date.getDate() - dayOfWeek);
+                    const weekKey = weekStart.toISOString().split('T')[0];
+
+                    if (!weeklyMap.has(weekKey)) {
+                        weeklyMap.set(weekKey, {
+                            totalUsers: 0,
+                            newUsers: 0,
+                            count: 0
+                        });
+                    }
+
+                    const weekData = weeklyMap.get(weekKey);
+                    weekData.totalUsers += parseFloat(row['Total users']) || 0;
+                    weekData.newUsers += parseFloat(row['New users']) || 0;
+                    weekData.count += 1;
+                });
+
+                // 주별 신규 사용자 비율 계산
+                const weeklyData = Array.from(weeklyMap.entries())
+                    .sort((a, b) => a[0].localeCompare(b[0]))
+                    .map(([week, data]) => ({
+                        week,
+                        newUserPct: data.totalUsers > 0 ? (data.newUsers / data.totalUsers * 100) : 0
+                    }));
+
+                labels = weeklyData.map(d => d.week);
+                newUserPct = weeklyData.map(d => d.newUserPct);
+            } else {
+                // 월별 데이터 - 월별로 그룹화하여 평균 계산
+                const monthlyMap = new Map();
+
+                acquisitionData.forEach(row => {
+                    const date = new Date(row['Day']);
+                    // 월의 시작일 계산 (YYYY-MM 형식)
+                    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+                    if (!monthlyMap.has(monthKey)) {
+                        monthlyMap.set(monthKey, {
+                            totalUsers: 0,
+                            newUsers: 0,
+                            count: 0
+                        });
+                    }
+
+                    const monthData = monthlyMap.get(monthKey);
+                    monthData.totalUsers += parseFloat(row['Total users']) || 0;
+                    monthData.newUsers += parseFloat(row['New users']) || 0;
+                    monthData.count += 1;
+                });
+
+                // 월별 신규 사용자 비율 계산
+                const monthlyData = Array.from(monthlyMap.entries())
+                    .sort((a, b) => a[0].localeCompare(b[0]))
+                    .map(([month, data]) => ({
+                        month,
+                        newUserPct: data.totalUsers > 0 ? (data.newUsers / data.totalUsers * 100) : 0
+                    }));
+
+                labels = monthlyData.map(d => d.month);
+                newUserPct = monthlyData.map(d => d.newUserPct);
+            }
+
+            if (newVsReturningChart) {
+                newVsReturningChart.destroy();
+            }
+
+            newVsReturningChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: '신규 사용자 비율 (%)',
+                        data: newUserPct,
+                        borderColor: '#2196f3',
+                        backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: '신규 사용자 비율 (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 채널 테이블 업데이트
+        function updateChannelTable() {
+            if (channelData.length === 0) return;
+
+            const tbody = document.getElementById('channelTableBody');
+            if (!tbody) return;
+
+            // CVR 기준 정렬
+            const sortedData = [...channelData].sort((a, b) =>
+                (parseFloat(b['CVR']) || 0) - (parseFloat(a['CVR']) || 0)
+            );
+
+            tbody.innerHTML = sortedData.map(row => `
+                <tr>
+                    <td>${row['channel']}</td>
+                    <td>${formatNumber(parseFloat(row['유입']) || 0)}</td>
+                    <td>${formatNumber(parseFloat(row['활동']) || 0)}</td>
+                    <td>${formatNumber(parseFloat(row['관심']) || 0)}</td>
+                    <td>${formatNumber(parseFloat(row['결제진행']) || 0)}</td>
+                    <td>${formatNumber(parseFloat(row['구매완료']) || 0)}</td>
+                    <td>${formatNumber(parseFloat(row['Revenue']) || 0)}</td>
+                    <td>${formatDecimal(parseFloat(row['CVR']) || 0)}%</td>
+                </tr>
+            `).join('');
+        }
+
+        // 캠페인 테이블 업데이트
+        function updateCampaignTable() {
+            if (campaignData.length === 0) return;
+
+            const tbody = document.getElementById('campaignTableBody');
+            if (!tbody) return;
+
+            // 매출 기준 정렬
+            const sortedData = [...campaignData].sort((a, b) =>
+                (parseFloat(b['Revenue']) || 0) - (parseFloat(a['Revenue']) || 0)
+            );
+
+            tbody.innerHTML = sortedData.map(row => `
+                <tr>
+                    <td>${row['Session campaign']}</td>
+                    <td>${formatNumber(parseFloat(row['유입']) || 0)}</td>
+                    <td>${formatNumber(parseFloat(row['활동']) || 0)}</td>
+                    <td>${formatNumber(parseFloat(row['관심']) || 0)}</td>
+                    <td>${formatNumber(parseFloat(row['결제진행']) || 0)}</td>
+                    <td>${formatNumber(parseFloat(row['구매완료']) || 0)}</td>
+                    <td>${formatNumber(parseFloat(row['Revenue']) || 0)}</td>
+                    <td>${formatDecimal(parseFloat(row['CVR']) || 0)}%</td>
+                </tr>
+            `).join('');
+        }
+
+        // 뷰 타입 전환
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentView = this.dataset.view;
+
+                // KPI 요약과 퍼널 차트 모두 업데이트
+                updateKPISummary();
+                updateFunnelChart();
+            });
+        });
+
+        // 신규 vs 재방문 차트 뷰 타입 전환
+        document.querySelectorAll('.new-vs-returning-view-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.new-vs-returning-view-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                newVsReturningView = this.dataset.view;
+
+                // 신규 vs 재방문 차트 업데이트
+                updateNewVsReturningChart();
+            });
+        });
+
+        // 이탈 위험 기간 전환 (7일/30일)
+        document.querySelectorAll('.churn-period-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.churn-period-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const period = this.dataset.period;
+
+                // 이탈 위험 분석 업데이트
+                updateChurnPredictions(period);
+            });
+        });
+
+        // 성과 개선 기간 전환 (7일/30일)
+        document.querySelectorAll('.improvement-period-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.improvement-period-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const period = this.dataset.period;
+
+                // 성과 개선 분석 업데이트
+                updateImprovementPredictions(period);
+            });
+        });
+
+        // 접기/펼치기 기능
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                const icon = this.querySelector('.collapsible-toggle-icon');
+                const toggleText = this.querySelector('.collapsible-toggle span:first-child');
+
+                if (content.classList.contains('expanded')) {
+                    content.classList.remove('expanded');
+                    icon.classList.add('collapsed');
+                    toggleText.textContent = '펼치기';
+                } else {
+                    content.classList.add('expanded');
+                    icon.classList.remove('collapsed');
+                    toggleText.textContent = '접기';
+                }
+            });
+        });
+
+        // iframe에서 로드되었는지 확인하고 사이드바 숨기기
+        function checkIframeAndHideSidebar() {
+            if (window.self !== window.top) {
+                // iframe 내부에서 실행 중
+                const sidebar = document.querySelector('.sidebar');
+                const mainContent = document.querySelector('.main-content');
+
+                if (sidebar) {
+                    sidebar.style.display = 'none';
+                }
+
+                if (mainContent) {
+                    mainContent.style.marginLeft = '0';
+                }
+            }
+        }
+
+        // 페이지 로드시 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            checkIframeAndHideSidebar();
+        });
+
+        // 초기 데이터 로드
+        loadData();
+
+        // iframe 체크 (DOMContentLoaded 이전에도 실행)
+        checkIframeAndHideSidebar();
+    </script>
+</body>
+</html>

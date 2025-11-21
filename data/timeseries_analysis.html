@@ -503,7 +503,8 @@
             margin-bottom: 24px;
         }
 
-        .view-btn {
+        .view-btn,
+        .period-btn {
             padding: 10px 24px;
             border: none;
             background: var(--paper);
@@ -517,12 +518,14 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
-        .view-btn:hover {
+        .view-btn:hover,
+        .period-btn:hover {
             background: var(--primary-light);
             color: var(--primary-main);
         }
 
-        .view-btn.active {
+        .view-btn.active,
+        .period-btn.active {
             background: var(--primary-main);
             color: white;
             box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
@@ -1164,7 +1167,7 @@
                 <div class="header">
                     <div>
                         <h1>시계열 데이터 분석</h1>
-                        <div class="header-subtitle">AI 기반 예측 모델을 통한 광고 성과 예측 및 인사이트</div>
+                        <div class="header-subtitle">AI 기반 예측 모델을 통한 광고 성과 예측 및 인사이트 <span id="analysisPeriod" style="color: var(--primary-main); font-weight: 600;"></span></div>
                     </div>
                 </div>
 
@@ -1199,6 +1202,45 @@
                     <button id="toggleAllBtn" onclick="toggleAllSections()" style="padding: 8px 16px; background: var(--primary-main); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s;">
                         모두 펼치기
                     </button>
+                </div>
+
+                <!-- 2.5 성과 트렌드 분석 (7일/30일 비교) -->
+                <div class="compact-grid-2">
+                    <!-- 성과 개선 분석 -->
+                    <div class="insight-section card">
+                        <div class="insight-header">
+                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <span>✨ 성과 개선 (Performance Improvements)</span>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="period-btn improvement-period-btn active" data-period="7d" style="padding: 6px 12px; font-size: 12px;">최근 7일</button>
+                                    <button class="period-btn improvement-period-btn" data-period="30d" style="padding: 6px 12px; font-size: 12px;">최근 30일</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="insight-content" id="improvementTrendContent" style="display: block; max-height: 400px; overflow-y: auto;">
+                            <div class="insight-card neutral">
+                                <div class="insight-text">데이터를 불러오는 중...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 성과 하락 경고 -->
+                    <div class="insight-section card">
+                        <div class="insight-header">
+                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <span>⚠️ 성과 하락 (Performance Declines)</span>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="period-btn decline-period-btn active" data-period="7d" style="padding: 6px 12px; font-size: 12px;">최근 7일</button>
+                                    <button class="period-btn decline-period-btn" data-period="30d" style="padding: 6px 12px; font-size: 12px;">최근 30일</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="insight-content" id="declineTrendContent" style="display: block; max-height: 400px; overflow-y: auto;">
+                            <div class="insight-card neutral">
+                                <div class="insight-text">데이터를 불러오는 중...</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 3. 성과 예측 차트 (접기 가능) -->
@@ -1476,6 +1518,7 @@
                 updateOverallInsights();
                 updateInsightsFromData();
                 updateRecommendations();
+                updatePerformanceTrends();
                 updateSegmentAnalysis();
             } catch (error) {
                 console.error('인사이트 데이터 로드 실패:', error);
@@ -1881,6 +1924,130 @@
         // 추천 카드 토글 함수
         function toggleRecommendationCard(card) {
             card.classList.toggle('expanded');
+        }
+
+        // 성과 트렌드 분석 업데이트 (7일/30일)
+        function updatePerformanceTrends(improvementPeriod = '7d', declinePeriod = '7d') {
+            if (!insightsData || !insightsData.performance_trends) {
+                console.log('Performance trends data not available');
+                return;
+            }
+
+            const trends = insightsData.performance_trends;
+
+            // 개선 항목 업데이트
+            updateImprovementTrends(improvementPeriod, trends);
+
+            // 하락 항목 업데이트
+            updateDeclineTrends(declinePeriod, trends);
+        }
+
+        // 개선 트렌드 업데이트
+        function updateImprovementTrends(period, trends) {
+            const container = document.getElementById('improvementTrendContent');
+            if (!container) return;
+
+            const dataKey = period === '7d' ? 'improvements_7d' : 'improvements_30d';
+            const improvements = trends[dataKey] || [];
+            const periodText = period === '7d' ? '최근 7일 vs 이전 7일' : '최근 30일 vs 이전 30일';
+
+            if (improvements.length === 0) {
+                container.innerHTML = `
+                    <div class="insight-card neutral">
+                        <div class="insight-text" style="text-align: center; padding: 20px;">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.5; color: var(--grey-500);">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v2h-2v-2zm0-12h2v10h-2V5z"/>
+                            </svg>
+                            <p style="font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--grey-700);">개선 사항 없음</p>
+                            <p style="font-size: 14px; color: var(--grey-600);">현재 기간에 유의미한 성과 개선이 감지되지 않았습니다.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div style="display: grid; gap: 12px;">
+                    ${improvements.map(item => `
+                        <div class="insight-card positive" style="border-left: 4px solid var(--success-main);">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                <div>
+                                    <div class="insight-title" style="font-size: 15px; font-weight: 600; color: var(--grey-900); margin-bottom: 4px;">
+                                        ${item.metric}
+                                    </div>
+                                    <div style="font-size: 13px; color: var(--grey-700);">
+                                        ${periodText}: <strong style="color: var(--success-main);">+${item.change_pct}%</strong> 증가
+                                    </div>
+                                </div>
+                                <span style="font-size: 12px; padding: 4px 12px; background: var(--success-main); color: white; border-radius: 12px; font-weight: 600;">
+                                    ${item.improvement_level === 'high' ? '높음' : '중간'}
+                                </span>
+                            </div>
+                            <div style="display: flex; gap: 16px; font-size: 13px; color: var(--grey-700); margin-bottom: 12px;">
+                                <span>최근 평균: <strong>${formatNumber(item.recent_avg)}</strong></span>
+                                <span>이전 평균: <strong>${formatNumber(item.previous_avg)}</strong></span>
+                            </div>
+                            <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: var(--success-light); border-radius: 6px;">
+                                💡 ${item.recommendation}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // 하락 트렌드 업데이트
+        function updateDeclineTrends(period, trends) {
+            const container = document.getElementById('declineTrendContent');
+            if (!container) return;
+
+            const dataKey = period === '7d' ? 'declines_7d' : 'declines_30d';
+            const declines = trends[dataKey] || [];
+            const periodText = period === '7d' ? '최근 7일 vs 이전 7일' : '최근 30일 vs 이전 30일';
+
+            if (declines.length === 0) {
+                container.innerHTML = `
+                    <div class="insight-card neutral">
+                        <div class="insight-text" style="text-align: center; padding: 20px;">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="width: 48px; height: 48px; margin-bottom: 12px; color: var(--success-main);">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            <p style="font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--success-main);">하락 없음</p>
+                            <p style="font-size: 14px; color: var(--grey-600);">모든 지표가 안정적이거나 개선되고 있습니다.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div style="display: grid; gap: 12px;">
+                    ${declines.map(item => `
+                        <div class="insight-card negative" style="border-left: 4px solid var(--error-main);">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                <div>
+                                    <div class="insight-title" style="font-size: 15px; font-weight: 600; color: var(--grey-900); margin-bottom: 4px;">
+                                        ${item.metric}
+                                    </div>
+                                    <div style="font-size: 13px; color: var(--grey-700);">
+                                        ${periodText}: <strong style="color: var(--error-main);">${item.change_pct}%</strong> 감소
+                                    </div>
+                                </div>
+                                <span style="font-size: 12px; padding: 4px 12px; background: ${item.risk_level === 'high' ? 'var(--error-main)' : 'var(--warning-main)'}; color: white; border-radius: 12px; font-weight: 600;">
+                                    ${item.risk_level === 'high' ? '높음' : '중간'}
+                                </span>
+                            </div>
+                            <div style="display: flex; gap: 16px; font-size: 13px; color: var(--grey-700); margin-bottom: 12px;">
+                                <span>최근 평균: <strong>${formatNumber(item.recent_avg)}</strong></span>
+                                <span>이전 평균: <strong>${formatNumber(item.previous_avg)}</strong></span>
+                            </div>
+                            <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: var(--error-light); border-radius: 6px;">
+                                ⚠️ ${item.recommendation}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
         }
 
         // 세그먼트 분석 업데이트
@@ -2352,10 +2519,10 @@
             loadData();
             loadInsightsAndSegments();
 
-            // 뷰 타입 버튼 이벤트
-            document.querySelectorAll('.view-btn').forEach(btn => {
+            // 뷰 타입 버튼 이벤트 (일별/주별/월별)
+            document.querySelectorAll('.view-type-section .view-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.view-type-section .view-btn').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     currentView = this.dataset.view;
                     loadData();
@@ -2365,6 +2532,34 @@
             // 차트 체크박스 이벤트
             document.querySelectorAll('.chart-checkbox input').forEach(checkbox => {
                 checkbox.addEventListener('change', updateChart);
+            });
+
+            // 개선 트렌드 기간 전환 (7일/30일)
+            document.querySelectorAll('.improvement-period-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.improvement-period-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const period = this.dataset.period;
+
+                    // 개선 트렌드만 업데이트
+                    if (insightsData && insightsData.performance_trends) {
+                        updateImprovementTrends(period, insightsData.performance_trends);
+                    }
+                });
+            });
+
+            // 하락 트렌드 기간 전환 (7일/30일)
+            document.querySelectorAll('.decline-period-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.decline-period-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const period = this.dataset.period;
+
+                    // 하락 트렌드만 업데이트
+                    if (insightsData && insightsData.performance_trends) {
+                        updateDeclineTrends(period, insightsData.performance_trends);
+                    }
+                });
             });
 
             // 접기/펼치기 이벤트 초기화

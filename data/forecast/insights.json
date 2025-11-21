@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-11-21T11:27:33.837221",
+  "generated_at": "2025-11-21T17:12:16.310830",
   "overall": {
     "current_period": {
       "start_date": "2025-10-23",
@@ -190,5 +190,48 @@
     },
     "overall_roas": 159.64,
     "forecast_roas": 176.55
+  },
+  "performance_trends": {
+    "improvements_7d": [],
+    "improvements_30d": [],
+    "declines_7d": [
+      {
+        "metric": "비용",
+        "period": "7d",
+        "risk_level": "high",
+        "change_pct": -89.42,
+        "recent_avg": 70425.99,
+        "previous_avg": 665507.21,
+        "recommendation": "비용이(가) 하락하고 있습니다. 마케팅 전략 점검이 필요합니다."
+      },
+      {
+        "metric": "전환수",
+        "period": "7d",
+        "risk_level": "high",
+        "change_pct": -95.83,
+        "recent_avg": 1.29,
+        "previous_avg": 30.84,
+        "recommendation": "전환수이(가) 하락하고 있습니다. 마케팅 전략 점검이 필요합니다."
+      },
+      {
+        "metric": "전환값",
+        "period": "7d",
+        "risk_level": "high",
+        "change_pct": -97.06,
+        "recent_avg": 28128.57,
+        "previous_avg": 956682.52,
+        "recommendation": "전환값이(가) 하락하고 있습니다. 마케팅 전략 점검이 필요합니다."
+      },
+      {
+        "metric": "ROAS",
+        "period": "7d",
+        "risk_level": "high",
+        "change_pct": -72.22,
+        "recent_avg": 39.94,
+        "previous_avg": 143.75,
+        "recommendation": "ROAS가 하락하고 있습니다. 광고 효율성 점검이 필요합니다."
+      }
+    ],
+    "declines_30d": []
   }
 }
