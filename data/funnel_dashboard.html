@@ -1435,16 +1435,25 @@
                         <div class="chart-section card">
                             <div class="chart-header">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <span>✨ 좋은 소식: 개선된 부분 발견</span>
+                                    <span>✨ 좋은 소식: 어떤 부분이 좋아졌나요?</span>
                                     <div style="display: flex; gap: 8px;">
                                         <button class="view-btn improvement-period-btn active" data-period="7d">최근 7일</button>
                                         <button class="view-btn improvement-period-btn" data-period="30d">최근 30일</button>
                                     </div>
                                 </div>
                             </div>
-                            <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
-                                이전 기간보다 성과가 좋아진 부분을 알려드립니다. 이 긍정적인 변화를 계속 유지하는 것이 중요합니다.
+
+                            <!-- 설명 섹션 -->
+                            <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%); line-height: 1.7; border-radius: 8px; margin: 16px 20px 12px 20px;">
+                                <strong style="color: var(--primary-main);">📖 이 섹션은 무엇을 보여주나요?</strong><br>
+                                이전 기간과 비교하여 성과가 <strong>좋아진 단계</strong>를 자동으로 찾아드립니다.<br>
+                                <span style="color: var(--grey-600);">예시: 최근 7일간 "구매완료"가 이전 7일보다 15% 증가했다면 여기에 표시됩니다.</span><br><br>
+                                <strong style="color: var(--primary-main);">💡 왜 중요한가요?</strong><br>
+                                • 좋아진 이유를 알아야 <strong>그 성과를 계속 유지</strong>할 수 있습니다<br>
+                                • 성공 요인을 찾아 <strong>다른 채널이나 상품에도 적용</strong>할 수 있습니다<br>
+                                • 각 개선 사항마다 <strong>바로 실행할 수 있는 구체적인 액션</strong>을 제공합니다
                             </div>
+
                             <div id="improvementPredictions" style="padding: 20px;">
                                 <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
                             </div>
@@ -1467,10 +1476,30 @@
                     <div class="collapsible-content">
                         <!-- 채널별 단계별 고객 수 테이블 -->
                         <div class="table-section card" style="margin-bottom: 16px;">
-                            <div class="table-header">채널별 단계별 고객 수</div>
-                            <div style="font-size: 13px; color: var(--grey-600); padding: 12px 24px; background: var(--grey-50);">
-                                💡 <strong>표 보는 법:</strong> 각 열은 고객 여정의 한 단계를 나타냅니다. 왼쪽에서 오른쪽으로 갈수록 숫자가 줄어드는 것이 정상입니다. CVR(전환율)은 방문자 100명 중 몇 명이 구매했는지 보여주는 비율입니다.
+                            <div class="table-header">📊 채널별 고객 흐름: 각 채널에서 얼마나 많은 고객이 구매까지 도달하나요?</div>
+
+                            <!-- 설명 섹션 -->
+                            <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); line-height: 1.7;">
+                                <strong style="color: var(--primary-main);">📖 이 표는 무엇을 보여주나요?</strong><br>
+                                각 마케팅 채널(네이버, 구글, 인스타그램 등)에서 고객이 <strong>5단계 여정</strong>을 어떻게 거치는지 보여줍니다.<br>
+                                <span style="color: var(--grey-600);">예시: 유입 1,000명 → 활동 800명 → 관심 400명 → 결제진행 100명 → 구매완료 50명 (CVR 5%)</span><br><br>
+                                <strong style="color: var(--primary-main);">💡 표 보는 법:</strong><br>
+                                • <strong>왼쪽에서 오른쪽</strong>으로 갈수록 숫자가 줄어드는 것이 정상입니다 (고객이 단계를 거치며 이탈)<br>
+                                • <strong>CVR(전환율)</strong>은 방문자 100명 중 몇 명이 최종 구매했는지를 나타냅니다 (높을수록 좋음)<br>
+                                • <strong>매출</strong>이 높아도 CVR이 낮으면 개선 여지가 많다는 의미입니다<br>
+                                • <strong>열 제목을 클릭</strong>하면 해당 기준으로 정렬됩니다
                             </div>
+
+                            <!-- 자동 인사이트 박스 -->
+                            <div id="channelTableInsightSummary" style="margin: 16px 24px; padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 10px; border-left: 4px solid #4caf50;">
+                                <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 8px;">
+                                    🎯 데이터 분석 결과
+                                </div>
+                                <div id="channelTableInsightText" style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
+                                    데이터를 불러오는 중...
+                                </div>
+                            </div>
+
                             <div class="table-container">
                                 <table id="channelTable">
                                     <thead>
@@ -1541,15 +1570,89 @@
                                     </tbody>
                                 </table>
                             </div>
+
+                            <!-- 해석 가이드 -->
+                            <div style="margin-top: 20px; padding: 0 24px 20px 24px;">
+                                <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
+                                    📋 데이터 해석 가이드
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px;">
+                                    <!-- CVR이 높은 경우 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 3px solid #4caf50;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 6px;">
+                                            ✅ CVR이 높은 채널 (3% 이상)
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>의미:</strong> 효율적인 채널. 적은 방문자로도 많이 구매<br>
+                                            <strong>전략:</strong> 광고비를 더 투자하고, 이 채널의 성공 요인을 다른 채널에 적용하세요
+                                        </div>
+                                    </div>
+
+                                    <!-- 매출이 높지만 CVR이 낮은 경우 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 8px; border-left: 3px solid #ff9800;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 6px;">
+                                            ⚠️ 매출은 높은데 CVR이 낮은 채널
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>의미:</strong> 방문자가 많지만 전환율이 낮아 비효율적<br>
+                                            <strong>전략:</strong> 랜딩 페이지 개선, 타겟팅 정밀화로 CVR을 높이면 매출이 크게 증가합니다
+                                        </div>
+                                    </div>
+
+                                    <!-- 방문자가 많지만 이탈이 높은 경우 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 3px solid #2196f3;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 6px;">
+                                            🚪 유입은 많은데 활동 수가 급감하는 채널
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>의미:</strong> 첫 화면에서 대부분 이탈. 광고와 페이지 불일치 가능성<br>
+                                            <strong>전략:</strong> 광고 메시지와 랜딩 페이지의 일관성 확인, 로딩 속도 개선
+                                        </div>
+                                    </div>
+
+                                    <!-- 관심까지는 가지만 결제로 안 가는 경우 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #f3e5f5 0%, #faf5fc 100%); border-radius: 8px; border-left: 3px solid #9c27b0;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #9c27b0; margin-bottom: 6px;">
+                                            💭 관심까지는 가는데 결제 안 하는 채널
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>의미:</strong> 관심은 있지만 구매 결정을 망설임. 가격이나 신뢰 문제<br>
+                                            <strong>전략:</strong> 리뷰/후기 강화, 첫 구매 할인 제공, 결제 과정 간소화
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 실행 체크리스트 -->
+                                <div style="padding: 16px; background: linear-gradient(135deg, #fff9e6 0%, #fffcf5 100%); border-radius: 8px; border-left: 3px solid #ffc107;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #f57c00; margin-bottom: 10px;">
+                                        ✅ 이 표를 보고 바로 실행할 수 있는 것들
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.8;">
+                                        1. <strong>CVR 1위 채널</strong>을 찾아 광고 예산을 20% 더 배정하세요<br>
+                                        2. <strong>유입은 많지만 CVR이 낮은 채널</strong>의 광고 소재와 랜딩 페이지를 점검하세요<br>
+                                        3. <strong>단계별 이탈률이 가장 높은 구간</strong>을 찾아 집중 개선하세요 (예: 유입→활동 50% 이상 이탈)<br>
+                                        4. <strong>매출 상위 3개 채널</strong>의 공통점을 찾아 성공 패턴을 문서화하세요<br>
+                                        5. <strong>CVR 0.5% 이하 채널</strong>은 일시 중단하고 예산을 재배분하세요
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- KPI 차트 -->
                         <div class="chart-section card" style="margin-bottom: 16px;">
-                            <div class="chart-header">📈 원하는 지표로 채널 비교하기</div>
-                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px;">
-                                버튼을 눌러 보고 싶은 지표를 선택하세요. <strong>차트 위에 마우스를 올리면</strong> 해당 지표에 대한 설명과 개선 전략을 볼 수 있습니다.
+                            <div class="chart-header">📈 각 지표별로 어떤 채널이 1등인가요?</div>
+
+                            <!-- 설명 섹션 -->
+                            <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); margin-bottom: 16px; line-height: 1.7;">
+                                <strong style="color: var(--primary-main);">📖 이 차트는 무엇을 보여주나요?</strong><br>
+                                원하는 지표(전환율, 방문자 수, 매출 등)별로 각 채널의 성과를 한눈에 비교할 수 있습니다.<br><br>
+                                <strong style="color: var(--primary-main);">💡 사용 방법:</strong><br>
+                                • 아래 버튼을 클릭하여 보고 싶은 지표를 선택하세요<br>
+                                • <strong>전환율</strong>은 효율성을, <strong>매출</strong>은 실제 수익을, <strong>방문자 수</strong>는 트래픽 규모를 나타냅니다<br>
+                                • <strong>차트 위에 마우스를 올리면</strong> 해당 지표에 대한 자세한 설명과 개선 전략을 볼 수 있습니다
                             </div>
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; padding: 0 24px;">
                                 <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 보고 싶은 지표:</span>
                                 <button class="view-btn channel-kpi-btn active" data-kpi="cvr" data-chart="kpi">전환율 (%)</button>
                                 <button class="view-btn channel-kpi-btn" data-kpi="acquisition" data-chart="kpi">방문자 수</button>
@@ -1559,37 +1662,273 @@
                                 <button class="view-btn channel-kpi-btn" data-kpi="purchase" data-chart="kpi">구매 건수</button>
                                 <button class="view-btn channel-kpi-btn" data-kpi="revenue" data-chart="kpi">매출액</button>
                             </div>
+
+                            <!-- 자동 인사이트 박스 -->
+                            <div id="kpiChartInsightSummary" style="margin: 16px 24px; padding: 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 10px; border-left: 4px solid #2196f3;">
+                                <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 8px;">
+                                    💡 지표 분석 인사이트
+                                </div>
+                                <div id="kpiChartInsightText" style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
+                                    버튼을 클릭하여 지표를 선택하면 자동 분석 결과가 여기에 표시됩니다.
+                                </div>
+                            </div>
+
                             <div class="chart-container-small" style="position: relative;">
                                 <canvas id="channelKpiChart"></canvas>
+                            </div>
+
+                            <!-- 해석 가이드 -->
+                            <div style="margin-top: 20px; padding: 0 24px 20px 24px;">
+                                <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
+                                    📋 각 지표를 볼 때 주의할 점
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                                    <!-- 전환율 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 3px solid #4caf50;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 6px;">
+                                            📊 전환율 (CVR)을 볼 때
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>높을수록 좋음:</strong> 효율성을 나타냅니다<br>
+                                            <strong>주의:</strong> 방문자가 너무 적으면 통계적으로 불안정할 수 있어요
+                                        </div>
+                                    </div>
+
+                                    <!-- 방문자/매출 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 8px; border-left: 3px solid #ff9800;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 6px;">
+                                            👥 방문자 수 / 💰 매출을 볼 때
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>높을수록 좋음:</strong> 규모를 나타냅니다<br>
+                                            <strong>주의:</strong> 방문자만 많고 전환율이 낮으면 비효율적이에요
+                                        </div>
+                                    </div>
+
+                                    <!-- 활성 사용자 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 3px solid #2196f3;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 6px;">
+                                            ⚡ 활성 사용자를 볼 때
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>의미:</strong> 실제로 사이트를 사용한 방문자 수<br>
+                                            <strong>활용:</strong> 방문자 수와 비교해 첫 이탈률을 파악하세요
+                                        </div>
+                                    </div>
+
+                                    <!-- 관심/결제/구매 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #f3e5f5 0%, #faf5fc 100%); border-radius: 8px; border-left: 3px solid #9c27b0;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #9c27b0; margin-bottom: 6px;">
+                                            🛒 관심/결제/구매를 볼 때
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>의미:</strong> 구매 여정의 각 단계별 고객 수<br>
+                                            <strong>활용:</strong> 단계별로 급감하는 구간을 찾아 개선하세요
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <!-- 비교 차트 -->
                         <div class="chart-section card" style="margin-bottom: 16px;">
-                            <div class="chart-header">🔄 어떤 채널이 가장 균형잡혀 있나요?</div>
-                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px;">
-                                전환율, 방문자, 구매, 매출을 모두 100점 만점으로 환산하여 비교합니다. 모든 막대가 고르게 높은 채널이 가장 효율적입니다. <strong>차트 위에 마우스를 올리면</strong> 해석 방법을 자세히 알려드립니다.
+                            <div class="chart-header">🔄 어떤 채널이 효율성과 규모를 모두 갖췄나요?</div>
+
+                            <!-- 설명 섹션 -->
+                            <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); margin-bottom: 16px; line-height: 1.7;">
+                                <strong style="color: var(--primary-main);">📖 이 차트는 무엇을 보여주나요?</strong><br>
+                                전환율, 방문자 수, 구매 건수, 매출을 모두 <strong>100점 만점</strong>으로 환산하여 비교합니다.<br>
+                                <span style="color: var(--grey-600);">예시: CVR이 가장 높은 채널을 100점으로 했을 때, 다른 채널들은 몇 점인지 보여줍니다.</span><br><br>
+                                <strong style="color: var(--primary-main);">💡 차트 보는 법:</strong><br>
+                                • <strong>모든 막대가 고르게 높은 채널</strong> = 효율도 좋고 규모도 큰 최고의 채널<br>
+                                • <strong>CVR만 높고 다른 막대가 낮은 채널</strong> = 효율은 좋지만 규모가 작은 채널 (투자 확대 필요)<br>
+                                • <strong>방문자/매출만 높고 CVR이 낮은 채널</strong> = 규모는 크지만 비효율적인 채널 (개선 필요)<br>
+                                • <strong>차트 위에 마우스를 올리면</strong> 더 자세한 해석 방법을 볼 수 있습니다
                             </div>
+
+                            <!-- 자동 인사이트 박스 -->
+                            <div id="compareChartInsightSummary" style="margin: 16px 24px; padding: 16px; background: linear-gradient(135deg, #f3e5f5 0%, #faf5fc 100%); border-radius: 10px; border-left: 4px solid #9c27b0;">
+                                <div style="font-size: 13px; font-weight: 600; color: #9c27b0; margin-bottom: 8px;">
+                                    💎 균형 분석 결과
+                                </div>
+                                <div id="compareChartInsightText" style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
+                                    데이터를 불러오는 중...
+                                </div>
+                            </div>
+
                             <div style="position: relative; height: 450px;">
                                 <canvas id="channelCompareChart"></canvas>
+                            </div>
+
+                            <!-- 해석 가이드 -->
+                            <div style="margin-top: 20px; padding: 0 24px 20px 24px;">
+                                <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
+                                    📋 채널 유형별 전략
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                                    <!-- 완벽한 채널 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 3px solid #4caf50;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 6px;">
+                                            🌟 모든 막대가 고르게 높은 채널
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>유형:</strong> 완벽한 채널 (효율↑ + 규모↑)<br>
+                                            <strong>전략:</strong> 최우선 투자 대상. 광고비를 적극 늘리세요
+                                        </div>
+                                    </div>
+
+                                    <!-- 효율은 좋은데 규모가 작은 채널 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 3px solid #2196f3;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 6px;">
+                                            💎 CVR은 높은데 방문자가 적은 채널
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>유형:</strong> 숨겨진 보석 (효율↑ + 규모↓)<br>
+                                            <strong>전략:</strong> 광고 예산을 늘려 방문자를 확대하세요
+                                        </div>
+                                    </div>
+
+                                    <!-- 규모는 큰데 효율이 낮은 채널 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 8px; border-left: 3px solid #ff9800;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 6px;">
+                                            ⚠️ 방문자/매출은 높은데 CVR이 낮은 채널
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>유형:</strong> 개선 필요 채널 (효율↓ + 규모↑)<br>
+                                            <strong>전략:</strong> 랜딩 페이지 개선으로 CVR을 높이면 매출 급증
+                                        </div>
+                                    </div>
+
+                                    <!-- 모든 게 낮은 채널 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 8px; border-left: 3px solid #f44336;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #f44336; margin-bottom: 6px;">
+                                            ❌ 모든 막대가 낮은 채널
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>유형:</strong> 저성과 채널 (효율↓ + 규모↓)<br>
+                                            <strong>전략:</strong> 일시 중단하고 예산을 상위 채널로 이동
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 실행 팁 -->
+                                <div style="margin-top: 12px; padding: 16px; background: linear-gradient(135deg, #fff9e6 0%, #fffcf5 100%); border-radius: 8px; border-left: 3px solid #ffc107;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #f57c00; margin-bottom: 10px;">
+                                        ✅ 이 차트로 바로 실행할 수 있는 것
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.8;">
+                                        1. <strong>모든 막대가 높은 채널</strong>을 찾아 광고비를 30-50% 증액하세요<br>
+                                        2. <strong>CVR만 높고 규모가 작은 채널</strong>은 타겟을 확대하여 방문자를 늘리세요<br>
+                                        3. <strong>규모는 크지만 CVR이 낮은 채널</strong>은 랜딩 페이지 A/B 테스트를 시작하세요<br>
+                                        4. <strong>모든 지표가 낮은 채널</strong>은 일시 중단하고 원인 분석을 먼저 하세요
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <!-- TOP 10 전환율 차트 -->
                         <div class="chart-section card">
-                            <div class="chart-header">🎯 전환율이 가장 높은 채널 TOP 10</div>
-                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px;">
-                                어떤 채널이 가장 효과적인지 확인하세요. 전환율(%)은 시작 단계 대비 해당 단계까지 도달한 사람의 비율입니다.
+                            <div class="chart-header">🎯 각 단계별 전환율 TOP 10: 어떤 채널이 가장 효율적인가요?</div>
+
+                            <!-- 설명 섹션 -->
+                            <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); margin-bottom: 16px; line-height: 1.7;">
+                                <strong style="color: var(--primary-main);">📖 이 차트는 무엇을 보여주나요?</strong><br>
+                                각 고객 여정 단계별로 전환율이 높은 상위 10개 채널을 보여줍니다.<br>
+                                <span style="color: var(--grey-600);">예시: "활동" 단계를 선택하면, 유입한 고객 중 실제로 활동까지 이어진 비율이 높은 채널 순위를 볼 수 있습니다.</span><br><br>
+                                <strong style="color: var(--primary-main);">💡 전환율이란?</strong><br>
+                                • <strong>활동 전환율</strong> = (활동 고객 ÷ 유입 고객) × 100<br>
+                                • <strong>관심 전환율</strong> = (관심 고객 ÷ 유입 고객) × 100<br>
+                                • <strong>결제진행 전환율</strong> = (결제진행 ÷ 유입 고객) × 100<br>
+                                • <strong>구매완료 전환율(CVR)</strong> = (구매 고객 ÷ 유입 고객) × 100 ← 가장 중요!<br><br>
+                                <strong>높을수록</strong> 효율적인 채널입니다 (적은 방문자로도 많은 전환 달성)
                             </div>
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; padding: 0 24px;">
                                 <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 전환율 기준:</span>
                                 <button class="view-btn channel-funnel-btn" data-funnel="activation">활동</button>
                                 <button class="view-btn channel-funnel-btn" data-funnel="consideration">관심</button>
                                 <button class="view-btn channel-funnel-btn" data-funnel="conversion">결제진행</button>
                                 <button class="view-btn channel-funnel-btn active" data-funnel="purchase">구매완료</button>
                             </div>
+
+                            <!-- 자동 인사이트 박스 -->
+                            <div id="top10ChartInsightSummary" style="margin: 16px 24px; padding: 16px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 10px; border-left: 4px solid #ff9800;">
+                                <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 8px;">
+                                    🏆 TOP 10 분석 결과
+                                </div>
+                                <div id="top10ChartInsightText" style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
+                                    버튼을 클릭하여 단계를 선택하면 자동 분석 결과가 여기에 표시됩니다.
+                                </div>
+                            </div>
+
                             <div class="chart-container-small">
                                 <canvas id="campaignChart"></canvas>
+                            </div>
+
+                            <!-- 해석 가이드 -->
+                            <div style="margin-top: 20px; padding: 0 24px 20px 24px;">
+                                <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
+                                    📋 전환율 순위를 볼 때 주의할 점
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px;">
+                                    <!-- 전환율 높지만 규모 작은 경우 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 3px solid #2196f3;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 6px;">
+                                            ⚠️ 전환율은 높은데 방문자가 적다면?
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>의미:</strong> 효율은 우수하지만 규모가 작음<br>
+                                            <strong>전략:</strong> 광고 예산을 늘려 방문자 확대 (큰 성과 기대)
+                                        </div>
+                                    </div>
+
+                                    <!-- 전환율 낮지만 규모 큰 경우 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 8px; border-left: 3px solid #ff9800;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 6px;">
+                                            ⚠️ 전환율은 낮은데 매출이 높다면?
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>의미:</strong> 규모는 크지만 비효율적<br>
+                                            <strong>전략:</strong> 랜딩 페이지 개선으로 CVR 상승 → 매출 폭발적 증가
+                                        </div>
+                                    </div>
+
+                                    <!-- 초기 단계 전환율이 낮은 경우 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 8px; border-left: 3px solid #f44336;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #f44336; margin-bottom: 6px;">
+                                            🚨 활동 전환율이 50% 이하라면?
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>의미:</strong> 첫 화면에서 절반 이상이 이탈<br>
+                                            <strong>전략:</strong> 광고 메시지와 랜딩 페이지 일치 확인, 로딩 속도 개선
+                                        </div>
+                                    </div>
+
+                                    <!-- 최종 전환율이 높은 경우 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 3px solid #4caf50;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 6px;">
+                                            ✅ 구매완료 전환율이 3% 이상이라면?
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>의미:</strong> 매우 우수한 채널!<br>
+                                            <strong>전략:</strong> 최우선 투자 대상. 광고비를 30-50% 증액하세요
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 실행 팁 -->
+                                <div style="padding: 16px; background: linear-gradient(135deg, #fff9e6 0%, #fffcf5 100%); border-radius: 8px; border-left: 3px solid #ffc107;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #f57c00; margin-bottom: 10px;">
+                                        ✅ 이 순위표로 바로 실행할 수 있는 것
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.8;">
+                                        1. <strong>구매완료 TOP 3 채널</strong>의 공통점을 찾아 다른 채널에 적용하세요<br>
+                                        2. <strong>활동 전환율이 높은 채널</strong>은 첫 화면이 효과적. 랜딩 페이지를 벤치마킹하세요<br>
+                                        3. <strong>결제진행까지는 가지만 구매는 안 하는 채널</strong>은 결제 과정을 간소화하세요<br>
+                                        4. <strong>전환율 1%  미만 채널</strong>은 일시 중단하고 원인 분석을 먼저 하세요<br>
+                                        5. 각 단계별 탭을 클릭하며 어느 구간에서 이탈이 많은지 파악하세요
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1697,10 +2036,28 @@
 
                         <!-- 이탈률 차트 -->
                         <div class="chart-section card" style="margin-bottom: 16px;">
-                            <div class="chart-header">📉 어디서 고객을 가장 많이 잃나요?</div>
-                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
-                                각 퍼널 단계별로 이탈률이 높은 채널을 확인하세요. 이탈률이 높은 채널일수록 개선 여지가 크다는 뜻입니다. <strong>차트 위에 마우스를 올리면</strong> 이탈을 줄이는 방법을 확인할 수 있습니다.
+                            <div class="chart-header">📉 채널별 고객 이탈 분석: 어느 단계에서 가장 많이 떠나나요?</div>
+
+                            <!-- 설명 -->
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px; padding: 0 24px; line-height: 1.7;">
+                                <strong>이탈률이란?</strong><br>
+                                각 퍼널 단계에서 다음 단계로 넘어가지 못하고 떠나는 고객의 비율입니다.
+                                예를 들어, "유입→활동" 이탈률 80%는 방문자 100명 중 80명이 아무 행동도 하지 않고 떠났다는 뜻입니다.
+                                <strong>이탈률이 높은 단계를 찾아 집중 개선</strong>하면 전체 전환율을 크게 향상시킬 수 있습니다.
+                                <strong>차트 위에 마우스를 올리면</strong> 더 자세한 분석을 확인할 수 있습니다.
                             </div>
+
+                            <!-- 이탈률 자동 인사이트 -->
+                            <div id="churnInsightSummary" style="margin: 0 24px 16px 24px; padding: 16px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 10px; border-left: 4px solid #ff5722;">
+                                <div style="font-size: 13px; font-weight: 600; color: #ff5722; margin-bottom: 8px;">
+                                    ⚠️ 이탈률 분석 결과
+                                </div>
+                                <div id="churnInsightText" style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
+                                    데이터를 불러오는 중...
+                                </div>
+                            </div>
+
+                            <!-- 필터 버튼 -->
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; padding: 0 24px;">
                                 <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 퍼널 단계:</span>
                                 <button class="view-btn channel-churn-stage-btn" data-stage="activation">유입→활동</button>
@@ -1714,8 +2071,90 @@
                                 <button class="view-btn channel-churn-sort-btn active" data-sort="desc">📉 높은순</button>
                                 <button class="view-btn channel-churn-sort-btn" data-sort="asc">📈 낮은순</button>
                             </div>
+
                             <div class="chart-container-small" style="position: relative;">
                                 <canvas id="channelChurnChart"></canvas>
+                            </div>
+
+                            <!-- 이탈률 해석 가이드 -->
+                            <div style="margin-top: 20px; padding: 0 24px;">
+                                <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
+                                    📋 단계별 이탈 원인과 개선 방법
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px;">
+                                    <!-- 유입→활동 이탈 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 3px solid #2196f3;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 6px;">
+                                            🚪 유입→활동 이탈이 높다면
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>원인:</strong> 랜딩 페이지가 느리거나, 광고 내용과 실제 페이지가 다르거나, 첫 화면이 복잡함<br>
+                                            <strong>해결:</strong> 로딩 속도 개선(3초 이내), 광고와 랜딩 페이지 메시지 일치, 명확한 헤드라인 배치
+                                        </div>
+                                    </div>
+
+                                    <!-- 활동→관심 이탈 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff9e6 100%); border-radius: 8px; border-left: 3px solid #ff9800;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #f57c00; margin-bottom: 6px;">
+                                            👀 활동→관심 이탈이 높다면
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>원인:</strong> 제품/서비스 정보 부족, 신뢰 요소 부족, 가격 정보 숨김<br>
+                                            <strong>해결:</strong> 상세한 제품 설명, 고객 후기/리뷰 강조, 가격 투명하게 공개, 비교표 제공
+                                        </div>
+                                    </div>
+
+                                    <!-- 관심→결제진행 이탈 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #f3e5f5 0%, #fce4ec 100%); border-radius: 8px; border-left: 3px solid #9c27b0;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #9c27b0; margin-bottom: 6px;">
+                                            🛒 관심→결제진행 이탈이 높다면
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>원인:</strong> 가격이 예상보다 높음, 배송비 추가 비용 발견, 회원가입 강요<br>
+                                            <strong>해결:</strong> 첫 구매 할인 제공, 무료 배송 임계값 낮추기, 게스트 체크아웃 허용
+                                        </div>
+                                    </div>
+
+                                    <!-- 결제진행→구매완료 이탈 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 8px; border-left: 3px solid #ff5722;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #ff5722; margin-bottom: 6px;">
+                                            💳 결제진행→구매완료 이탈이 높다면
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>원인:</strong> 결제 과정 복잡, 보안 불안, 결제 수단 부족, 시스템 오류<br>
+                                            <strong>해결:</strong> 간편 결제 도입(카카오페이, 네이버페이), SSL 인증 표시, 다양한 결제 옵션, 장바구니 복원 이메일
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 이탈률 벤치마크 -->
+                                <div style="padding: 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 3px solid #00c853; margin-bottom: 12px;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #00c853; margin-bottom: 6px;">
+                                        📊 업계 평균 이탈률 벤치마크
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6;">
+                                        <strong>유입→활동:</strong> 평균 40-60% (낮을수록 좋음)<br>
+                                        <strong>활동→관심:</strong> 평균 50-70%<br>
+                                        <strong>관심→결제진행:</strong> 평균 60-80%<br>
+                                        <strong>결제진행→구매완료:</strong> 평균 20-40% (이 단계는 특히 낮아야 함)<br><br>
+                                        <strong>💡 팁:</strong> 업계 평균보다 10%p 이상 높다면 즉시 개선이 필요합니다.
+                                    </div>
+                                </div>
+
+                                <!-- 실행 체크리스트 -->
+                                <div style="padding: 14px; background: var(--primary-light); border-radius: 8px; border-left: 3px solid var(--primary-main);">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--primary-main); margin-bottom: 8px;">
+                                        ✅ 이탈률 개선 우선순위 체크리스트
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6;">
+                                        <strong>1단계:</strong> 차트에서 <strong>이탈률이 가장 높은 단계</strong>를 찾기 (예: 유입→활동 80%)<br>
+                                        <strong>2단계:</strong> 해당 단계에서 <strong>이탈률이 가장 높은 채널 TOP 3</strong> 확인<br>
+                                        <strong>3단계:</strong> 위 가이드에서 해당 단계의 <strong>원인과 해결책</strong> 확인<br>
+                                        <strong>4단계:</strong> 가장 이탈률이 높은 1-2개 채널에 대해 <strong>즉시 개선 작업 시작</strong><br>
+                                        <strong>5단계:</strong> 2주 후 다시 측정하여 이탈률이 10%p 이상 감소했는지 확인<br><br>
+                                        <strong>⚡ 빠른 개선 팁:</strong> 한 번에 모든 채널을 고치려 하지 마세요. 이탈률이 가장 높은 1-2개 채널에만 집중하면 전체 전환율이 극적으로 개선됩니다.
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -3027,42 +3466,56 @@
         // 단계별 맞춤 개선 유지 추천 생성
         function getImprovementRecommendation(stage, changePercent, improvementLevel) {
             const absChange = Math.abs(parseFloat(changePercent));
-            const emphasis = improvementLevel === 'high' ? '탁월한' : '좋은';
 
-            // 단계별 맞춤 추천
+            // 단계별 맞춤 추천 - 구체적이고 즉시 실행 가능한 액션
             const stageRecommendations = {
                 '유입': [
-                    `${emphasis} 성과입니다! 현재 마케팅 캠페인의 전략과 예산 배분을 그대로 유지하세요. 성공 요인을 분석해 다른 채널에도 적용하세요.`,
-                    `유입이 증가한 이유를 분석하고 문서화하세요. 계절성, 프로모션, 광고 메시지 변경 등 어떤 요인이 효과적이었는지 기록하세요.`,
-                    `이 성과를 발판 삼아 추가 투자를 고려하세요. 효과가 검증된 채널에 예산을 10-20% 늘려보세요.`
+                    // 높은 증가율 (15% 이상)
+                    `<strong>지금 바로:</strong> 1) 성과가 좋은 광고 캠페인의 예산을 20-30% 증액하세요 2) 광고 소재(이미지, 문구)를 스크린샷으로 저장하여 성공 템플릿을 만드세요 3) 같은 방식을 다른 채널에도 테스트하세요`,
+                    // 중간 증가율 (10-15%)
+                    `<strong>성공 요인 분석:</strong> 1) 최근 7일간 어떤 광고/채널에서 유입이 늘었는지 Google Analytics에서 확인하세요 2) 프로모션이나 할인 이벤트를 진행했다면 날짜와 효과를 엑셀에 기록하세요 3) 계절성 요인(명절, 휴가철 등)이 있는지 체크하세요`,
+                    // 낮은 증가율 (10% 미만)
+                    `<strong>현상 유지 + 추가 성장:</strong> 1) 현재 광고비 배분을 그대로 유지하세요 2) 신규 키워드나 타겟 오디언스를 1-2개 추가로 테스트하세요 (전체 예산의 10% 이내) 3) 주간 단위로 성과를 모니터링하세요`
                 ],
                 '활동': [
-                    `첫 화면 개선이 효과를 보고 있습니다! 최근 변경한 UI/UX 요소를 분석하여 성공 패턴을 찾아내세요.`,
-                    `활성 사용자가 늘었다면 콘텐츠나 기능이 매력적이라는 뜻입니다. 유사한 콘텐츠를 더 만들어 관심을 유지하세요.`,
-                    `사용자 행동 데이터를 깊이 분석하세요. 어떤 기능을 가장 많이 사용하는지 파악하여 더 강화하세요.`
+                    // 높은 증가율
+                    `<strong>즉시 실행:</strong> 1) 최근 변경한 랜딩 페이지 디자인이나 문구가 있다면 절대 되돌리지 마세요 2) 페이지 로딩 속도를 PageSpeed Insights로 측정하여 3초 이내 유지하세요 3) 모바일 화면에서 첫 화면이 잘 보이는지 직접 확인하세요`,
+                    // 중간 증가율
+                    `<strong>효과 검증:</strong> 1) Google Analytics에서 '참여 세션' 지표를 확인하세요 (행동 > 사이트 콘텐츠) 2) 사용자가 가장 많이 클릭하는 버튼이나 링크를 Hotjar 같은 도구로 확인하세요 3) 스크롤 깊이를 측정하여 콘텐츠가 잘 읽히는지 체크하세요`,
+                    // 낮은 증가율
+                    `<strong>개선 유지:</strong> 1) 첫 화면에 표시되는 핵심 메시지를 변경하지 마세요 2) CTA 버튼(가입하기, 더 알아보기 등)의 색상과 위치를 고정하세요 3) 주 1회 이탈률을 체크하여 갑작스러운 변화가 없는지 확인하세요`
                 ],
                 '관심': [
-                    `제품/서비스에 대한 관심이 높아지고 있습니다! 최근 추가한 설명이나 이미지가 효과적이었는지 확인하세요.`,
-                    `고객 후기나 리뷰 배치가 좋은 결과를 만들었다면, 더 많은 고객의 목소리를 추가하세요.`,
-                    `관심 증가를 구매로 연결하세요. 관심 단계에서 할인 쿠폰이나 무료 배송 혜택을 강조하세요.`
+                    // 높은 증가율
+                    `<strong>지금 당장:</strong> 1) 상품 상세 페이지에 추가한 이미지나 설명이 있다면 다른 상품에도 동일하게 적용하세요 2) 고객 후기를 최소 10개 이상 노출하세요 (없으면 구매 고객에게 리뷰 작성 요청 이메일 발송) 3) FAQ 섹션을 추가하여 자주 묻는 질문 5가지를 답변하세요`,
+                    // 중간 증가율
+                    `<strong>관심 강화:</strong> 1) 제품 사진을 다양한 각도에서 최소 5장 이상 제공하세요 2) 사용 전/후 비교 이미지나 영상을 추가하세요 3) "이 상품을 본 고객이 함께 본 상품" 추천 섹션을 만드세요`,
+                    // 낮은 증가율
+                    `<strong>트렌드 유지:</strong> 1) 상품명과 설명의 키워드를 변경하지 마세요 2) 가격 정책을 안정적으로 유지하세요 (잦은 가격 변동은 신뢰 저하) 3) 재고 부족 메시지가 뜨는 상품이 있는지 확인하고 보충하세요`
                 ],
                 '결제진행': [
-                    `결제 프로세스 개선이 성공했습니다! 최근 간소화한 단계나 추가한 결제 수단이 효과를 발휘하고 있습니다.`,
-                    `결제 진행률이 올라갔다면 신뢰가 높아진 것입니다. 보안 인증 마크나 안전 결제 강조를 더욱 부각하세요.`,
-                    `이탈률을 더 낮추기 위해 실시간 채팅 지원을 추가하세요. 결제 중 궁금한 점을 즉시 해결할 수 있습니다.`
+                    // 높은 증가율
+                    `<strong>핵심 유지 + 확장:</strong> 1) 최근 추가한 간편결제(카카오페이, 네이버페이 등)를 더 눈에 띄게 강조하세요 2) 결제 페이지를 절대 변경하지 마세요 3) 배송비 무료 기준이나 할인 정책을 그대로 유지하세요`,
+                    // 중간 증가율
+                    `<strong>신뢰 강화:</strong> 1) SSL 인증서(자물쇠 아이콘)가 브라우저에 제대로 표시되는지 확인하세요 2) 결제 페이지에 "안전한 결제" 문구와 보안 마크를 추가하세요 3) 개인정보 처리방침 링크가 명확히 보이게 하세요`,
+                    // 낮은 증가율
+                    `<strong>안정성 유지:</strong> 1) 결제 프로세스의 단계 수를 유지하세요 (현재 3-4단계 권장) 2) 필수 입력 항목을 줄이지도 늘리지도 마세요 3) 모바일에서 결제가 잘 되는지 직접 테스트하세요`
                 ],
                 '구매완료': [
-                    `${emphasis} 성과입니다! 구매 완료가 증가하면 직접적으로 매출이 오릅니다. 현재 전략을 철저히 유지하세요.`,
-                    `구매 고객에게 리뷰 작성을 요청하세요. 긍정적인 경험을 공유하도록 하여 신뢰도를 더 높이세요.`,
-                    `재구매를 유도하세요. 구매 후 7-14일 뒤 이메일로 관련 상품 추천이나 재구매 쿠폰을 보내세요.`
+                    // 높은 증가율
+                    `<strong>매출 극대화:</strong> 1) 구매 확인 페이지에서 관련 상품 3개를 추천하세요 ("이 상품도 함께 구매하세요") 2) 구매 고객에게 "첫 리뷰 작성 시 500원 할인" 같은 인센티브를 제공하세요 3) 구매 후 3일 뒤 만족도 조사 이메일을 자동 발송하세요`,
+                    // 중간 증가율
+                    `<strong>재구매 유도:</strong> 1) 구매 완료 후 10일 뒤 "재구매 시 10% 할인 쿠폰" 이메일을 자동 발송하세요 2) 카카오톡 채널 추가 시 추가 혜택을 제공하세요 3) 배송 알림 문자에 다음 구매를 유도하는 링크를 넣으세요`,
+                    // 낮은 증가율
+                    `<strong>고객 관계 유지:</strong> 1) 구매 감사 이메일을 발송하세요 (개인화된 메시지 권장) 2) 배송 조회 링크를 명확히 제공하세요 3) 고객 센터 연락처를 구매 확인 페이지에 눈에 띄게 표시하세요`
                 ]
             };
 
             // 해당 단계의 추천 목록
             const recommendations = stageRecommendations[stage] || [
-                `${stage} 단계의 긍정적인 변화를 계속 유지하세요.`,
-                `성공 요인을 분석하고 다른 영역에도 적용하세요.`,
-                `추가 개선 여지를 찾아 A/B 테스트를 진행하세요.`
+                `${stage} 단계의 성과가 좋아지고 있습니다. 현재 전략을 유지하면서 추가 개선 기회를 찾아보세요.`,
+                `최근 변경 사항을 문서화하고, 성공 요인을 다른 채널이나 상품에도 적용하세요.`,
+                `A/B 테스트를 통해 추가 최적화 여지를 확인하고, 데이터 기반으로 의사결정하세요.`
             ];
 
             // 개선율에 따라 추천 선택 (높을수록 더 적극적인 추천)
@@ -3081,35 +3534,42 @@
             const improvementContainer = document.getElementById('improvementPredictions');
             if (predictions.length > 0) {
                 improvementContainer.innerHTML = `
-                    <div style="margin-bottom: 16px;">
-                        <p style="font-size: 14px; color: var(--success-main); font-weight: 600; margin-bottom: 12px;">
-                            ✨ ${predictions.length}개 퍼널 단계에서 성과 개선 감지
+                    <div style="margin-bottom: 16px; padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid var(--success-main);">
+                        <p style="font-size: 15px; color: var(--success-main); font-weight: 600; margin-bottom: 6px;">
+                            🎉 축하합니다! ${predictions.length}개 단계에서 성과가 좋아졌습니다
+                        </p>
+                        <p style="font-size: 13px; color: var(--grey-700);">
+                            각 개선 사항마다 구체적인 실행 방법을 확인하여 이 성과를 계속 유지하세요.
                         </p>
                     </div>
                     <div style="display: grid; gap: 12px;">
                         ${predictions.map(pred => {
                             const customRecommendation = getImprovementRecommendation(pred.stage, pred.change_pct, pred.improvement_level);
+                            const improvementPercent = Math.abs(parseFloat(pred.change_pct));
+                            const improvementLabel = improvementPercent > 15 ? '탁월한 개선!' : improvementPercent > 10 ? '좋은 개선!' : '긍정적 변화';
+
                             return `
                             <div style="padding: 16px; background: ${pred.improvement_level === 'high' ? 'var(--success-light)' : '#e8f5e9'}; border-radius: 8px; border-left: 4px solid ${pred.improvement_level === 'high' ? 'var(--success-main)' : '#66bb6a'};">
                                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                                    <div>
+                                    <div style="flex: 1;">
                                         <div style="font-size: 16px; font-weight: 600; color: var(--grey-900); margin-bottom: 4px;">
-                                            ${pred.stage} 단계
+                                            📈 ${pred.stage} 단계 고객 수 증가
                                         </div>
                                         <div style="font-size: 13px; color: var(--grey-700);">
-                                            ${periodText}: <strong style="color: var(--success-main);">+${pred.change_pct}%</strong> 증가
+                                            ${periodText} 비교: <strong style="color: var(--success-main);">+${pred.change_pct}%</strong> 증가 (${formatNumber(pred.previous_avg)}명 → ${formatNumber(pred.recent_avg)}명)
                                         </div>
                                     </div>
-                                    <span style="font-size: 12px; padding: 4px 12px; background: ${pred.improvement_level === 'high' ? 'var(--success-main)' : '#66bb6a'}; color: white; border-radius: 12px; font-weight: 600;">
-                                        ${pred.improvement_level === 'high' ? '높음' : '중간'}
+                                    <span style="font-size: 11px; padding: 6px 12px; background: ${pred.improvement_level === 'high' ? 'var(--success-main)' : '#66bb6a'}; color: white; border-radius: 12px; font-weight: 600; white-space: nowrap;">
+                                        ${improvementLabel}
                                     </span>
                                 </div>
-                                <div style="display: flex; gap: 16px; font-size: 13px; color: var(--grey-700); margin-bottom: 12px;">
-                                    <span>최근 평균: <strong>${formatNumber(pred.recent_avg)}</strong>명</span>
-                                    <span>이전 평균: <strong>${formatNumber(pred.previous_avg)}</strong>명</span>
-                                </div>
-                                <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: white; border-radius: 6px; line-height: 1.6;">
-                                    ✅ <strong>성과 유지 전략:</strong> ${customRecommendation}
+                                <div style="font-size: 13px; color: var(--grey-900); padding: 14px; background: white; border-radius: 6px; line-height: 1.8; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                    <div style="font-weight: 600; color: var(--success-main); margin-bottom: 8px;">
+                                        ✅ 이 성과를 유지하려면 지금 바로 실행하세요:
+                                    </div>
+                                    <div style="color: var(--grey-800);">
+                                        ${customRecommendation}
+                                    </div>
                                 </div>
                             </div>
                         `;
@@ -3118,12 +3578,23 @@
                 `;
             } else {
                 improvementContainer.innerHTML = `
-                    <div style="padding: 20px; text-align: center; color: var(--grey-500);">
-                        <svg viewBox="0 0 24 24" fill="currentColor" style="width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.5;">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v2h-2v-2zm0-12h2v10h-2V5z"/>
-                        </svg>
-                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--grey-700);">개선 사항 없음</p>
-                        <p style="font-size: 14px; color: var(--grey-600);">현재 기간에 유의미한 성과 개선이 감지되지 않았습니다.</p>
+                    <div style="padding: 30px 20px; text-align: center;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--grey-800);">현재 기간에는 개선된 단계가 없습니다</p>
+                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 20px; line-height: 1.6;">
+                            이전 기간과 비교하여 유의미한 성과 향상이 감지되지 않았습니다.<br>
+                            이는 성과가 나쁘다는 뜻이 아니라, <strong>비슷한 수준을 유지</strong>하고 있다는 의미입니다.
+                        </p>
+                        <div style="background: linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%); padding: 16px; border-radius: 8px; text-align: left; max-width: 500px; margin: 0 auto;">
+                            <div style="font-size: 13px; font-weight: 600; color: var(--grey-800); margin-bottom: 8px;">
+                                💡 이럴 때 확인할 점:
+                            </div>
+                            <div style="font-size: 13px; color: var(--grey-700); line-height: 1.7;">
+                                1. <strong>"경고: 이탈 위험 증가"</strong> 섹션을 확인하여 악화된 부분이 있는지 체크하세요<br>
+                                2. 위 버튼에서 <strong>"최근 30일"</strong>로 기간을 변경하여 장기 트렌드를 확인하세요<br>
+                                3. 성과를 더 높이려면 새로운 마케팅 전략이나 A/B 테스트를 시도하세요
+                            </div>
+                        </div>
                     </div>
                 `;
             }
@@ -3161,6 +3632,129 @@
                 conversion: conversionChurn,
                 purchase: purchaseChurn
             };
+        }
+
+        // KPI 차트 자동 분석 함수
+        function analyzeKpiChartData(data, kpiType) {
+            if (data.length === 0) return;
+
+            const kpiNames = {
+                cvr: '전환율',
+                acquisition: '방문자 수',
+                activation: '활성 사용자',
+                consideration: '관심 고객',
+                conversion: '결제 시도',
+                purchase: '구매 건수',
+                revenue: '매출'
+            };
+
+            const kpiKeys = {
+                cvr: 'CVR',
+                acquisition: '유입',
+                activation: '활동',
+                consideration: '관심',
+                conversion: '결제진행',
+                purchase: '구매완료',
+                revenue: 'Revenue'
+            };
+
+            const currentKpiName = kpiNames[kpiType];
+            const currentKpiKey = kpiKeys[kpiType];
+
+            // 데이터 추출 및 정렬
+            const sortedData = [...data].map(row => ({
+                channel: row['channel'],
+                value: kpiType === 'cvr' ? parseFloat(row[currentKpiKey]) || 0 : parseFloat(row[currentKpiKey]) || 0
+            })).sort((a, b) => b.value - a.value);
+
+            const top1 = sortedData[0];
+            const top2 = sortedData[1];
+            const top3 = sortedData[2];
+            const bottom = sortedData[sortedData.length - 1];
+
+            // 평균 계산
+            const avgValue = sortedData.reduce((sum, item) => sum + item.value, 0) / sortedData.length;
+
+            // 표준편차 계산 (데이터 편차 파악)
+            const variance = sortedData.reduce((sum, item) => sum + Math.pow(item.value - avgValue, 2), 0) / sortedData.length;
+            const stdDev = Math.sqrt(variance);
+
+            // 인사이트 HTML 생성
+            let insightHTML = '';
+
+            // 1. 1등 채널 정보
+            insightHTML += `<strong style="color: #2196f3;">🥇 1위 채널:</strong> `;
+            insightHTML += `<strong>${top1.channel}</strong>이 ${currentKpiName}에서 1등입니다 `;
+            if (kpiType === 'cvr') {
+                insightHTML += `(${top1.value.toFixed(2)}%). `;
+                if (top1.value > 3) {
+                    insightHTML += `매우 우수한 전환율이므로 광고 예산을 더 투자하세요! `;
+                } else if (top1.value > 1.5) {
+                    insightHTML += `양호한 전환율입니다. `;
+                } else {
+                    insightHTML += `전환율이 낮은 편입니다. 전반적인 개선이 필요합니다. `;
+                }
+            } else if (kpiType === 'revenue') {
+                insightHTML += `(₩${formatNumber(top1.value)}). `;
+                insightHTML += `이 채널의 성공 요인을 분석하여 다른 채널에 적용하세요. `;
+            } else {
+                insightHTML += `(${formatNumber(top1.value)}명). `;
+            }
+
+            // 2. 1등과 2등의 격차
+            const gap = top1.value - top2.value;
+            const gapPercent = (gap / top1.value * 100);
+            if (gapPercent > 30) {
+                insightHTML += `<br><br><strong style="color: #ff9800;">⚠️ 주의:</strong> `;
+                insightHTML += `1위와 2위의 격차가 ${gapPercent.toFixed(0)}%로 매우 큽니다. `;
+                insightHTML += `<strong>${top1.channel}</strong>에 과도하게 의존하고 있으므로, 다른 채널도 육성하여 리스크를 분산하세요. `;
+            } else {
+                insightHTML += `2위는 <strong>${top2.channel}</strong>이며, 1위와의 격차는 ${gapPercent.toFixed(0)}%입니다. `;
+            }
+
+            // 3. 상위 vs 하위 비교
+            insightHTML += `<br><br><strong style="color: var(--primary-main);">📊 전체 분석:</strong> `;
+            const topBottomRatio = top1.value / (bottom.value || 1);
+            if (topBottomRatio > 10) {
+                insightHTML += `최고와 최저의 차이가 ${topBottomRatio.toFixed(1)}배로 매우 큽니다. `;
+                insightHTML += `<strong>${bottom.channel}</strong> 같은 저성과 채널은 일시 중단을 검토하고, `;
+                insightHTML += `예산을 상위 채널로 재배분하세요. `;
+            } else if (topBottomRatio > 3) {
+                insightHTML += `채널 간 성과 차이가 ${topBottomRatio.toFixed(1)}배로 존재합니다. `;
+                insightHTML += `저성과 채널의 원인을 분석하고 개선하세요. `;
+            } else {
+                insightHTML += `채널 간 성과가 비교적 고르게 분포되어 있습니다. `;
+            }
+
+            // 4. 지표별 맞춤 추천
+            insightHTML += `<br><br><strong style="color: var(--primary-main);">💡 ${currentKpiName} 개선 전략:</strong> `;
+            switch(kpiType) {
+                case 'cvr':
+                    if (avgValue < 1.5) {
+                        insightHTML += `전체 평균 CVR이 ${avgValue.toFixed(2)}%로 낮습니다. 랜딩 페이지 개선과 타겟팅 정밀화가 시급합니다. `;
+                    } else if (avgValue > 3) {
+                        insightHTML += `전체 평균 CVR이 ${avgValue.toFixed(2)}%로 우수합니다! 현재 전략을 유지하세요. `;
+                    } else {
+                        insightHTML += `전체 평균 CVR은 ${avgValue.toFixed(2)}%입니다. A/B 테스트로 추가 개선을 시도하세요. `;
+                    }
+                    break;
+                case 'revenue':
+                    insightHTML += `<strong>${top1.channel}</strong>이 전체 매출의 핵심입니다. `;
+                    insightHTML += `이 채널의 광고 소재, 타겟팅, 랜딩 페이지를 분석하여 다른 채널에 적용하세요. `;
+                    break;
+                case 'acquisition':
+                    insightHTML += `방문자가 많다고 좋은 것은 아닙니다. `;
+                    insightHTML += `CVR과 함께 비교하여 효율적인 채널에 집중 투자하세요. `;
+                    break;
+                default:
+                    insightHTML += `상위 3개 채널(<strong>${top1.channel}, ${top2.channel}, ${top3.channel}</strong>)에 집중하여 최적화하세요. `;
+            }
+
+            // 인사이트 표시
+            const insightElement = document.getElementById('kpiChartInsightText');
+            if (insightElement) {
+                insightElement.innerHTML = insightHTML;
+            }
         }
 
         // KPI 차트 업데이트 (CVR, 유입, 활동, 관심, 결제진행, 구매완료, 매출)
@@ -3283,6 +3877,9 @@
                 }
             });
 
+            // KPI 데이터 분석 및 인사이트 생성
+            analyzeKpiChartData(channelData, kpiType);
+
             // 툴팁 이벤트 설정
             setupKpiChartTooltip();
         }
@@ -3313,6 +3910,149 @@
                 container.addEventListener('mouseleave', function() {
                     hideChartInsightTooltip('kpiChartTooltip');
                 });
+            }
+        }
+
+        // 이탈률 자동 분석 함수
+        function analyzeChurnRates(allData, currentStage) {
+            if (allData.length === 0) return;
+
+            // 각 단계별 평균 이탈률 계산
+            let totalActivation = 0, totalConsideration = 0, totalConversion = 0, totalPurchase = 0;
+
+            allData.forEach(row => {
+                const churnRates = calculateChurnRates(row);
+                totalActivation += churnRates.activation;
+                totalConsideration += churnRates.consideration;
+                totalConversion += churnRates.conversion;
+                totalPurchase += churnRates.purchase;
+            });
+
+            const avgActivation = totalActivation / allData.length;
+            const avgConsideration = totalConsideration / allData.length;
+            const avgConversion = totalConversion / allData.length;
+            const avgPurchase = totalPurchase / allData.length;
+
+            // 산업 평균 벤치마크 (일반적인 범위의 중간값)
+            const benchmarks = {
+                activation: { min: 40, max: 60, avg: 50, label: '유입→활동' },
+                consideration: { min: 50, max: 70, avg: 60, label: '활동→관심' },
+                conversion: { min: 60, max: 80, avg: 70, label: '관심→결제진행' },
+                purchase: { min: 20, max: 30, avg: 25, label: '결제진행→구매완료' }
+            };
+
+            // 가장 높은 이탈률을 보이는 단계 찾기
+            const stageAverages = [
+                { stage: 'activation', avg: avgActivation, label: '유입→활동' },
+                { stage: 'consideration', avg: avgConsideration, label: '활동→관심' },
+                { stage: 'conversion', avg: avgConversion, label: '관심→결제진행' },
+                { stage: 'purchase', avg: avgPurchase, label: '결제진행→구매완료' }
+            ];
+
+            const highestChurnStage = stageAverages.reduce((max, item) =>
+                item.avg > max.avg ? item : max, stageAverages[0]
+            );
+
+            // 해당 단계에서 이탈률이 가장 높은 채널들 찾기
+            const channelsWithHighChurn = allData.map(row => {
+                const churnRates = calculateChurnRates(row);
+                return {
+                    channel: row['channel'],
+                    churnRate: churnRates[highestChurnStage.stage]
+                };
+            }).sort((a, b) => b.churnRate - a.churnRate).slice(0, 3);
+
+            // 인사이트 HTML 생성
+            let insightHTML = '';
+
+            // 전체 상황 요약
+            insightHTML += `가장 많은 고객이 이탈하는 구간은 <strong style="color: #ff5722;">${highestChurnStage.label}</strong> 단계로, `;
+            insightHTML += `평균 <strong style="color: #ff5722;">${highestChurnStage.avg.toFixed(1)}%</strong>의 고객이 이 단계에서 떠납니다. `;
+
+            // 산업 평균과 비교
+            const benchmark = benchmarks[highestChurnStage.stage];
+            if (highestChurnStage.avg > benchmark.max) {
+                insightHTML += `<strong style="color: var(--error-main);">⚠️ 산업 평균(${benchmark.min}-${benchmark.max}%)보다 높아 즉시 개선이 필요합니다!</strong> `;
+            } else if (highestChurnStage.avg < benchmark.min) {
+                insightHTML += `<strong style="color: var(--success-main);">✅ 산업 평균(${benchmark.min}-${benchmark.max}%)보다 낮아 양호합니다!</strong> `;
+            } else {
+                insightHTML += `산업 평균(${benchmark.min}-${benchmark.max}%) 범위 내입니다. `;
+            }
+
+            // 문제 채널 강조
+            insightHTML += `<br><br><strong style="color: var(--primary-main);">🎯 집중 개선 대상 채널:</strong><br>`;
+            channelsWithHighChurn.forEach((item, index) => {
+                insightHTML += `${index + 1}. <strong>${item.channel}</strong>: ${item.churnRate.toFixed(1)}% 이탈`;
+                if (index < channelsWithHighChurn.length - 1) insightHTML += '<br>';
+            });
+
+            // 단계별 구체적인 추천사항
+            insightHTML += `<br><br><strong style="color: var(--primary-main);">💡 ${highestChurnStage.label} 이탈률 개선 방법:</strong><br>`;
+
+            switch(highestChurnStage.stage) {
+                case 'activation':
+                    if (highestChurnStage.avg > 60) {
+                        insightHTML += `• <strong>랜딩 페이지 로딩 속도</strong>를 3초 이내로 최적화하세요 (현재 이탈률이 매우 높음)<br>`;
+                        insightHTML += `• 광고 문구와 랜딩 페이지의 <strong>메시지가 일치</strong>하는지 즉시 확인하세요<br>`;
+                        insightHTML += `• 모바일 사용자 경험을 우선적으로 개선하세요`;
+                    } else {
+                        insightHTML += `• 첫 화면에 너무 많은 정보가 있는지 확인하고 <strong>핵심 메시지만 강조</strong>하세요<br>`;
+                        insightHTML += `• 랜딩 페이지 디자인이 신뢰감을 주는지 점검하세요<br>`;
+                        insightHTML += `• CTA(행동 유도) 버튼이 눈에 잘 띄는지 확인하세요`;
+                    }
+                    break;
+                case 'consideration':
+                    if (highestChurnStage.avg > 70) {
+                        insightHTML += `• <strong>상세 페이지에 정보가 부족</strong>합니다. 제품 설명, 사양, 사용법을 보강하세요<br>`;
+                        insightHTML += `• <strong>고객 리뷰와 평점</strong>을 눈에 띄게 배치하세요 (신뢰도 향상)<br>`;
+                        insightHTML += `• 경쟁사 대비 차별화 포인트를 명확히 전달하세요`;
+                    } else {
+                        insightHTML += `• 제품 이미지의 품질을 높이고 다양한 각도로 제공하세요<br>`;
+                        insightHTML += `• FAQ나 챗봇을 추가하여 즉시 궁금증을 해결하세요<br>`;
+                        insightHTML += `• 사용 사례나 후기 영상을 추가하세요`;
+                    }
+                    break;
+                case 'conversion':
+                    if (highestChurnStage.avg > 75) {
+                        insightHTML += `• <strong>가격이 너무 높거나</strong> 할인/프로모션이 부족합니다. 첫 구매 할인을 제공하세요<br>`;
+                        insightHTML += `• <strong>회원가입 없이</strong> 게스트로 결제할 수 있게 하세요 (이탈률 크게 감소)<br>`;
+                        insightHTML += `• 배송비가 높거나 배송 기간이 길면 명확히 안내하세요`;
+                    } else {
+                        insightHTML += `• "장바구니 담기" 버튼을 더 눈에 띄게 만드세요<br>`;
+                        insightHTML += `• 재고 부족 시 알림 받기 기능을 제공하세요<br>`;
+                        insightHTML += `• 위시리스트 기능으로 나중에 구매를 유도하세요`;
+                    }
+                    break;
+                case 'purchase':
+                    if (highestChurnStage.avg > 30) {
+                        insightHTML += `• <strong>결제 과정이 너무 복잡</strong>합니다. 단계를 3단계 이하로 줄이세요<br>`;
+                        insightHTML += `• <strong>카카오페이, 네이버페이</strong> 등 간편결제 옵션을 추가하세요 (이탈률 급감)<br>`;
+                        insightHTML += `• 보안 인증서 표시로 결제 안전성을 강조하세요`;
+                    } else {
+                        insightHTML += `• 결제 단계마다 진행 상황 표시줄을 보여주세요<br>`;
+                        insightHTML += `• 예상치 못한 추가 비용(배송비, 수수료)이 없는지 확인하세요<br>`;
+                        insightHTML += `• 결제 실패 시 명확한 오류 메시지와 해결 방법을 제공하세요`;
+                    }
+                    break;
+            }
+
+            // 전체적인 이탈률 패턴 분석
+            const allChurns = [avgActivation, avgConsideration, avgConversion, avgPurchase];
+            const overallAvg = allChurns.reduce((sum, val) => sum + val, 0) / 4;
+
+            insightHTML += `<br><br><strong style="color: var(--primary-main);">📊 전체 퍼널 상태:</strong> `;
+            if (overallAvg > 60) {
+                insightHTML += `전반적으로 이탈률이 높습니다. <strong>전체 고객 여정을 재검토</strong>하고, 각 단계마다 A/B 테스트를 진행하세요.`;
+            } else if (overallAvg < 40) {
+                insightHTML += `전반적으로 우수한 상태입니다! 현재 전략을 유지하면서 세부적인 최적화에 집중하세요.`;
+            } else {
+                insightHTML += `평균적인 수준입니다. 위의 개선 방법을 우선순위에 따라 하나씩 적용해보세요.`;
+            }
+
+            // 인사이트 표시
+            const insightElement = document.getElementById('churnInsightText');
+            if (insightElement) {
+                insightElement.innerHTML = insightHTML;
             }
         }
 
@@ -3421,6 +4161,9 @@
                 }
             });
 
+            // 이탈률 자동 분석 실행
+            analyzeChurnRates(channelData, currentChurnStage);
+
             // 툴팁 이벤트 설정
             setupChurnChartTooltip();
         }
@@ -3453,6 +4196,132 @@
             }
         }
 
+        // 비교 차트 자동 분석 함수
+        function analyzeCompareChartData(data) {
+            if (data.length === 0) return;
+
+            // 데이터 파싱 (상위 8개만, 차트와 동일)
+            const sortedData = [...data].sort((a, b) =>
+                (parseFloat(b['CVR']) || 0) - (parseFloat(a['CVR']) || 0)
+            ).slice(0, 8).map(row => ({
+                channel: row['channel'],
+                cvr: parseFloat(row['CVR']) || 0,
+                acquisition: parseFloat(row['유입']) || 0,
+                purchase: parseFloat(row['구매완료']) || 0,
+                revenue: parseFloat(row['Revenue']) || 0
+            }));
+
+            // 정규화 (100점 만점으로 환산)
+            const maxCVR = Math.max(...sortedData.map(ch => ch.cvr));
+            const maxAcquisition = Math.max(...sortedData.map(ch => ch.acquisition));
+            const maxPurchase = Math.max(...sortedData.map(ch => ch.purchase));
+            const maxRevenue = Math.max(...sortedData.map(ch => ch.revenue));
+
+            const normalizedData = sortedData.map(ch => {
+                const normCVR = maxCVR > 0 ? (ch.cvr / maxCVR * 100) : 0;
+                const normAcquisition = maxAcquisition > 0 ? (ch.acquisition / maxAcquisition * 100) : 0;
+                const normPurchase = maxPurchase > 0 ? (ch.purchase / maxPurchase * 100) : 0;
+                const normRevenue = maxRevenue > 0 ? (ch.revenue / maxRevenue * 100) : 0;
+
+                // 균형도 계산 (표준편차 기반)
+                const values = [normCVR, normAcquisition, normPurchase, normRevenue];
+                const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
+                const variance = values.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / values.length;
+                const balance = 100 - Math.sqrt(variance); // 높을수록 균형잡힘
+
+                return {
+                    ...ch,
+                    normCVR,
+                    normAcquisition,
+                    normPurchase,
+                    normRevenue,
+                    avg,
+                    balance
+                };
+            });
+
+            // 채널 유형 분류
+            const perfectChannels = normalizedData.filter(ch => ch.avg >= 60 && ch.balance >= 50); // 모든 지표 고르게 높음
+            const efficientSmallChannels = normalizedData.filter(ch => ch.normCVR >= 70 && ch.normAcquisition < 50); // CVR 높지만 규모 작음
+            const inefficientLargeChannels = normalizedData.filter(ch => ch.normAcquisition >= 70 && ch.normCVR < 50); // 규모 크지만 효율 낮음
+            const lowPerformers = normalizedData.filter(ch => ch.avg < 40); // 모든 지표 낮음
+
+            // 최고 균형 채널
+            const mostBalanced = normalizedData.reduce((max, ch) => ch.balance > max.balance ? ch : max, normalizedData[0]);
+
+            // 인사이트 HTML 생성
+            let insightHTML = '';
+
+            // 1. 최고 균형 채널
+            if (perfectChannels.length > 0) {
+                insightHTML += `<strong style="color: #4caf50;">🌟 완벽한 채널:</strong> `;
+                insightHTML += `<strong>${perfectChannels[0].channel}</strong>이 효율과 규모를 모두 갖춘 최고의 채널입니다. `;
+                insightHTML += `모든 지표(CVR, 방문자, 구매, 매출)가 균형있게 높습니다. 최우선 투자 대상입니다! `;
+            } else {
+                insightHTML += `<strong style="color: #9c27b0;">💎 가장 균형잡힌 채널:</strong> `;
+                insightHTML += `<strong>${mostBalanced.channel}</strong>이 상대적으로 가장 균형잡혀 있습니다 (균형도: ${mostBalanced.balance.toFixed(0)}점). `;
+            }
+
+            // 2. 숨겨진 보석 (효율은 좋은데 규모가 작음)
+            if (efficientSmallChannels.length > 0) {
+                insightHTML += `<br><br><strong style="color: #2196f3;">💎 숨겨진 보석:</strong> `;
+                const gems = efficientSmallChannels.slice(0, 2).map(ch => ch.channel).join(', ');
+                insightHTML += `<strong>${gems}</strong>은 전환율이 우수하지만 방문자가 적습니다. `;
+                insightHTML += `<strong>광고 예산을 늘려 규모를 키우면 큰 효과</strong>를 볼 수 있습니다! `;
+            }
+
+            // 3. 개선 필요 채널 (규모는 큰데 효율 낮음)
+            if (inefficientLargeChannels.length > 0) {
+                insightHTML += `<br><br><strong style="color: #ff9800;">⚠️ 개선 기회:</strong> `;
+                insightHTML += `<strong>${inefficientLargeChannels[0].channel}</strong>은 방문자는 많지만 (${formatNumber(inefficientLargeChannels[0].acquisition)}명) `;
+                insightHTML += `전환율이 ${inefficientLargeChannels[0].cvr.toFixed(2)}%로 낮습니다. `;
+                insightHTML += `<strong>랜딩 페이지와 타겟팅을 개선하면 매출이 크게 증가</strong>할 수 있습니다! `;
+            }
+
+            // 4. 저성과 채널
+            if (lowPerformers.length > 0) {
+                insightHTML += `<br><br><strong style="color: #f44336;">❌ 저성과 채널:</strong> `;
+                const lowChannels = lowPerformers.map(ch => ch.channel).join(', ');
+                insightHTML += `<strong>${lowChannels}</strong>은 모든 지표가 낮습니다. `;
+                insightHTML += `일시 중단을 검토하고 예산을 상위 채널로 재배분하세요. `;
+            }
+
+            // 5. 전체적인 포트폴리오 평가
+            insightHTML += `<br><br><strong style="color: var(--primary-main);">📊 채널 포트폴리오:</strong> `;
+            insightHTML += `상위 8개 채널 중 `;
+            if (perfectChannels.length > 0) {
+                insightHTML += `<strong>${perfectChannels.length}개가 완벽</strong>, `;
+            }
+            if (efficientSmallChannels.length > 0) {
+                insightHTML += `<strong>${efficientSmallChannels.length}개가 확장 가능</strong>, `;
+            }
+            if (inefficientLargeChannels.length > 0) {
+                insightHTML += `<strong>${inefficientLargeChannels.length}개가 개선 필요</strong>, `;
+            }
+            if (lowPerformers.length > 0) {
+                insightHTML += `<strong>${lowPerformers.length}개가 저성과</strong> `;
+            }
+            insightHTML += `상태입니다.`;
+
+            // 6. 실행 가능한 추천
+            insightHTML += `<br><br><strong style="color: var(--primary-main);">💡 우선순위 액션:</strong> `;
+            if (perfectChannels.length > 0) {
+                insightHTML += `1) <strong>${perfectChannels[0].channel}</strong> 예산 30-50% 증액, `;
+            }
+            if (efficientSmallChannels.length > 0) {
+                insightHTML += `2) <strong>${efficientSmallChannels[0].channel}</strong> 타겟 확대로 방문자 늘리기, `;
+            }
+            if (inefficientLargeChannels.length > 0) {
+                insightHTML += `3) <strong>${inefficientLargeChannels[0].channel}</strong> 랜딩 페이지 A/B 테스트 시작`;
+            }
+
+            // 인사이트 표시
+            const insightElement = document.getElementById('compareChartInsightText');
+            if (insightElement) {
+                insightElement.innerHTML = insightHTML;
+            }
+        }
+
         // 비교 차트 업데이트 (채널별 종합 성과)
         function updateCompareChart() {
             if (channelData.length === 0) return;
@@ -3466,6 +4335,9 @@
 
             // 그룹화된 차트 표시
             updateGroupedChart(ctx);
+
+            // 비교 차트 데이터 분석 및 인사이트 생성
+            analyzeCompareChartData(channelData);
 
             // 툴팁 이벤트 설정
             setupCompareChartTooltip();
@@ -3925,6 +4797,127 @@
         */
 
         // 채널 테이블 업데이트
+        // 채널 테이블 데이터 자동 분석 함수
+        function analyzeChannelTableData(data) {
+            if (data.length === 0) return;
+
+            // 데이터 파싱 및 계산
+            const channelStats = data.map(row => {
+                const acquisition = parseFloat(row['유입']) || 0;
+                const activation = parseFloat(row['활동']) || 0;
+                const consideration = parseFloat(row['관심']) || 0;
+                const conversion = parseFloat(row['결제진행']) || 0;
+                const purchase = parseFloat(row['구매완료']) || 0;
+                const revenue = parseFloat(row['Revenue']) || 0;
+                const cvr = parseFloat(row['CVR']) || 0;
+
+                // 단계별 이탈률 계산
+                const activationChurn = acquisition > 0 ? ((acquisition - activation) / acquisition * 100) : 0;
+                const considerationChurn = activation > 0 ? ((activation - consideration) / activation * 100) : 0;
+                const conversionChurn = consideration > 0 ? ((consideration - conversion) / consideration * 100) : 0;
+                const purchaseChurn = conversion > 0 ? ((conversion - purchase) / conversion * 100) : 0;
+
+                return {
+                    channel: row['channel'],
+                    acquisition,
+                    activation,
+                    consideration,
+                    conversion,
+                    purchase,
+                    revenue,
+                    cvr,
+                    activationChurn,
+                    considerationChurn,
+                    conversionChurn,
+                    purchaseChurn
+                };
+            });
+
+            // CVR 상위 3개 채널
+            const topCVRChannels = [...channelStats]
+                .sort((a, b) => b.cvr - a.cvr)
+                .slice(0, 3);
+
+            // 매출 상위 채널
+            const topRevenueChannels = [...channelStats]
+                .sort((a, b) => b.revenue - a.revenue)
+                .slice(0, 3);
+
+            // CVR 평균
+            const avgCVR = channelStats.reduce((sum, ch) => sum + ch.cvr, 0) / channelStats.length;
+
+            // 매출 높지만 CVR 낮은 채널 찾기 (매출 상위 50%, CVR 평균 이하)
+            const revenueMedian = channelStats.sort((a, b) => b.revenue - a.revenue)[Math.floor(channelStats.length / 2)].revenue;
+            const highRevenueLowCVR = channelStats.filter(ch => ch.revenue >= revenueMedian && ch.cvr < avgCVR);
+
+            // 유입→활동 이탈률이 높은 채널 (50% 이상)
+            const highEarlyChurn = channelStats.filter(ch => ch.activationChurn >= 50);
+
+            // 전체 평균 이탈률
+            const avgActivationChurn = channelStats.reduce((sum, ch) => sum + ch.activationChurn, 0) / channelStats.length;
+            const avgConsiderationChurn = channelStats.reduce((sum, ch) => sum + ch.considerationChurn, 0) / channelStats.length;
+            const avgConversionChurn = channelStats.reduce((sum, ch) => sum + ch.conversionChurn, 0) / channelStats.length;
+            const avgPurchaseChurn = channelStats.reduce((sum, ch) => sum + ch.purchaseChurn, 0) / channelStats.length;
+
+            // 가장 이탈률이 높은 단계 찾기
+            const churnStages = [
+                { stage: '유입→활동', avg: avgActivationChurn },
+                { stage: '활동→관심', avg: avgConsiderationChurn },
+                { stage: '관심→결제진행', avg: avgConversionChurn },
+                { stage: '결제진행→구매완료', avg: avgPurchaseChurn }
+            ];
+            const highestChurnStage = churnStages.reduce((max, item) => item.avg > max.avg ? item : max, churnStages[0]);
+
+            // 인사이트 HTML 생성
+            let insightHTML = '';
+
+            // 1. 최고 성과 채널
+            insightHTML += `<strong style="color: #4caf50;">🏆 최고 성과 채널:</strong> `;
+            insightHTML += `<strong>${topCVRChannels[0].channel}</strong> (CVR ${topCVRChannels[0].cvr.toFixed(2)}%)이 가장 효율적입니다. `;
+            if (topCVRChannels[0].cvr > 3) {
+                insightHTML += `매우 우수한 전환율입니다! 이 채널의 광고 예산을 늘리세요. `;
+            } else if (topCVRChannels[0].cvr > 1.5) {
+                insightHTML += `양호한 전환율입니다. 추가 투자를 고려하세요. `;
+            }
+
+            // 2. 매출 vs CVR 불균형
+            if (highRevenueLowCVR.length > 0) {
+                insightHTML += `<br><br><strong style="color: #ff9800;">⚠️ 개선 기회:</strong> `;
+                insightHTML += `<strong>${highRevenueLowCVR[0].channel}</strong>은 매출은 높지만 (₩${formatNumber(highRevenueLowCVR[0].revenue)}) `;
+                insightHTML += `CVR이 ${highRevenueLowCVR[0].cvr.toFixed(2)}%로 평균(${avgCVR.toFixed(2)}%)보다 낮습니다. `;
+                insightHTML += `<strong>랜딩 페이지를 개선하면 매출을 크게 늘릴 수 있습니다!</strong> `;
+            }
+
+            // 3. 초기 이탈 문제
+            if (highEarlyChurn.length > 0) {
+                insightHTML += `<br><br><strong style="color: #f44336;">🚨 긴급 조치 필요:</strong> `;
+                const worstChannel = highEarlyChurn.sort((a, b) => b.activationChurn - a.activationChurn)[0];
+                insightHTML += `<strong>${worstChannel.channel}</strong>은 첫 단계(유입→활동)에서 ${worstChannel.activationChurn.toFixed(1)}%가 이탈합니다. `;
+                insightHTML += `광고 메시지와 랜딩 페이지의 일치 여부, 로딩 속도를 즉시 점검하세요. `;
+            } else {
+                // 가장 이탈률 높은 단계 안내
+                insightHTML += `<br><br><strong style="color: #2196f3;">📊 전체 분석:</strong> `;
+                insightHTML += `전체 채널에서 <strong>${highestChurnStage.stage}</strong> 단계의 평균 이탈률이 ${highestChurnStage.avg.toFixed(1)}%로 가장 높습니다. `;
+                insightHTML += `이 구간에 집중적으로 개선 노력을 기울이세요. `;
+            }
+
+            // 4. 실행 가능한 추천
+            insightHTML += `<br><br><strong style="color: var(--primary-main);">💡 오늘 바로 실행:</strong> `;
+            if (topCVRChannels[0].cvr > avgCVR * 1.5) {
+                insightHTML += `1) <strong>${topCVRChannels[0].channel}</strong> 광고비를 20-30% 증액하고, `;
+            }
+            if (highRevenueLowCVR.length > 0) {
+                insightHTML += `2) <strong>${highRevenueLowCVR[0].channel}</strong>의 랜딩 페이지 A/B 테스트를 시작하고, `;
+            }
+            insightHTML += `3) CVR ${(avgCVR * 0.5).toFixed(2)}% 이하 채널은 일시 중단을 검토하세요.`;
+
+            // 인사이트 표시
+            const insightElement = document.getElementById('channelTableInsightText');
+            if (insightElement) {
+                insightElement.innerHTML = insightHTML;
+            }
+        }
+
         function updateChannelTable() {
             if (channelData.length === 0) return;
 
@@ -4003,6 +4996,9 @@
                 </tr>
                 `;
             }).join('');
+
+            // 데이터 분석 및 인사이트 생성
+            analyzeChannelTableData(channelData);
 
             // 정렬 아이콘 업데이트
             updateSortIcons();

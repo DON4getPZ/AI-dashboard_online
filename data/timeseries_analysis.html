@@ -1210,13 +1210,25 @@
                     <div class="insight-section card">
                         <div class="insight-header">
                             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                                <span>✨ 성과 개선 (Performance Improvements)</span>
+                                <span>✨ 좋은 소식: 어떤 부분이 좋아졌나요?</span>
                                 <div style="display: flex; gap: 8px;">
                                     <button class="period-btn improvement-period-btn active" data-period="7d" style="padding: 6px 12px; font-size: 12px;">최근 7일</button>
                                     <button class="period-btn improvement-period-btn" data-period="30d" style="padding: 6px 12px; font-size: 12px;">최근 30일</button>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- 설명 섹션 -->
+                        <div style="font-size: 13px; color: var(--grey-700); padding: 16px; background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%); line-height: 1.7; border-radius: 8px; margin: 16px 16px 12px 16px;">
+                            <strong style="color: var(--primary-main);">📖 이 섹션은 무엇을 보여주나요?</strong><br>
+                            이전 기간과 비교하여 성과가 <strong>좋아진 지표</strong>를 자동으로 찾아드립니다.<br>
+                            <span style="color: var(--grey-600);">예시: 최근 7일간 "전환수"가 이전 7일보다 20% 증가했다면 여기에 표시됩니다.</span><br><br>
+                            <strong style="color: var(--primary-main);">💡 왜 중요한가요?</strong><br>
+                            • 좋아진 이유를 알아야 <strong>그 성과를 계속 유지</strong>할 수 있습니다<br>
+                            • 성공 요인을 찾아 <strong>다른 채널이나 상품에도 적용</strong>할 수 있습니다<br>
+                            • 각 개선 사항마다 <strong>바로 실행할 수 있는 구체적인 액션</strong>을 제공합니다
+                        </div>
+
                         <div class="insight-content" id="improvementTrendContent" style="display: block; max-height: 400px; overflow-y: auto;">
                             <div class="insight-card neutral">
                                 <div class="insight-text">데이터를 불러오는 중...</div>
@@ -1228,13 +1240,25 @@
                     <div class="insight-section card">
                         <div class="insight-header">
                             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                                <span>⚠️ 성과 하락 (Performance Declines)</span>
+                                <span>⚠️ 주의 필요: 성과 하락 감지</span>
                                 <div style="display: flex; gap: 8px;">
                                     <button class="period-btn decline-period-btn active" data-period="7d" style="padding: 6px 12px; font-size: 12px;">최근 7일</button>
                                     <button class="period-btn decline-period-btn" data-period="30d" style="padding: 6px 12px; font-size: 12px;">최근 30일</button>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- 설명 섹션 -->
+                        <div style="font-size: 13px; color: var(--grey-700); padding: 16px; background: linear-gradient(135deg, #fff4f0 0%, #ffebe8 100%); line-height: 1.7; border-radius: 8px; margin: 16px 16px 12px 16px;">
+                            <strong style="color: var(--error-main);">📖 이 섹션은 무엇을 보여주나요?</strong><br>
+                            이전 기간과 비교하여 성과가 <strong>하락한 지표</strong>를 자동으로 찾아드립니다.<br>
+                            <span style="color: var(--grey-600);">예시: 최근 7일간 "ROAS"가 이전 7일보다 15% 감소했다면 여기에 표시됩니다.</span><br><br>
+                            <strong style="color: var(--error-main);">💡 왜 중요한가요?</strong><br>
+                            • 빠르게 대응하면 <strong>매출 손실을 최소화</strong>할 수 있습니다<br>
+                            • 하락 원인을 파악하여 <strong>문제를 조기에 해결</strong>할 수 있습니다<br>
+                            • 각 하락 사항마다 <strong>즉시 실행 가능한 개선 방법</strong>을 제공합니다
+                        </div>
+
                         <div class="insight-content" id="declineTrendContent" style="display: block; max-height: 400px; overflow-y: auto;">
                             <div class="insight-card neutral">
                                 <div class="insight-text">데이터를 불러오는 중...</div>
@@ -1243,12 +1267,12 @@
                     </div>
                 </div>
 
-                <!-- 3. 성과 예측 차트 (접기 가능) -->
+                <!-- 3. 성과 분석 대시보드 (접기 가능) -->
                 <div class="collapsible-section">
                     <div class="collapsible-header">
                         <div class="collapsible-title">
                             <span class="collapsible-icon">📊</span>
-                            <span>성과 예측 차트</span>
+                            <span>성과 분석 대시보드</span>
                         </div>
                         <button class="collapsible-toggle">
                             <span>펼치기</span>
@@ -1256,42 +1280,135 @@
                         </button>
                     </div>
                     <div class="collapsible-content">
-                        <!-- 뷰 타입 선택 -->
-                        <div class="view-type-section">
-                            <button class="view-btn active" data-view="daily">일별</button>
-                            <button class="view-btn" data-view="weekly">주별</button>
-                            <button class="view-btn" data-view="monthly">월별</button>
+                        <!-- 분석 타입 탭 -->
+                        <div class="view-type-section" style="margin-bottom: 24px;">
+                            <button class="view-btn analysis-tab-btn active" data-tab="forecast">전체 성과 예측</button>
+                            <button class="view-btn analysis-tab-btn" data-tab="segment-compare">세그먼트 비교</button>
+                            <button class="view-btn analysis-tab-btn" data-tab="segment-trend">세그먼트 트렌드</button>
                         </div>
 
-                        <!-- 예측 차트 -->
-                        <div class="chart-section card">
-                            <div class="chart-header">성과 예측 추이</div>
-                            <div class="chart-controls">
-                                <div class="chart-checkbox-group">
-                                    <label class="chart-checkbox cost">
-                                        <input type="checkbox" id="chartCost" checked>
-                                        <span>비용</span>
-                                    </label>
-                                    <label class="chart-checkbox impressions">
-                                        <input type="checkbox" id="chartImpressions">
-                                        <span>노출</span>
-                                    </label>
-                                    <label class="chart-checkbox clicks">
-                                        <input type="checkbox" id="chartClicks">
-                                        <span>클릭</span>
-                                    </label>
-                                    <label class="chart-checkbox conversions">
-                                        <input type="checkbox" id="chartConversions" checked>
-                                        <span>전환수</span>
-                                    </label>
-                                    <label class="chart-checkbox value">
-                                        <input type="checkbox" id="chartValue">
-                                        <span>전환값</span>
-                                    </label>
+                        <!-- 탭 1: 전체 성과 예측 -->
+                        <div id="forecastTab" class="analysis-tab-content active">
+                            <!-- 뷰 타입 선택 -->
+                            <div class="view-type-section">
+                                <button class="view-btn active" data-view="daily">일별</button>
+                                <button class="view-btn" data-view="weekly">주별</button>
+                                <button class="view-btn" data-view="monthly">월별</button>
+                            </div>
+
+                            <!-- 예측 차트 -->
+                            <div class="chart-section card">
+                                <div class="chart-header">성과 예측 추이</div>
+                                <div class="chart-controls">
+                                    <div class="chart-checkbox-group">
+                                        <label class="chart-checkbox cost">
+                                            <input type="checkbox" id="chartCost" checked>
+                                            <span>비용</span>
+                                        </label>
+                                        <label class="chart-checkbox impressions">
+                                            <input type="checkbox" id="chartImpressions">
+                                            <span>노출</span>
+                                        </label>
+                                        <label class="chart-checkbox clicks">
+                                            <input type="checkbox" id="chartClicks">
+                                            <span>클릭</span>
+                                        </label>
+                                        <label class="chart-checkbox conversions">
+                                            <input type="checkbox" id="chartConversions" checked>
+                                            <span>전환수</span>
+                                        </label>
+                                        <label class="chart-checkbox value">
+                                            <input type="checkbox" id="chartValue">
+                                            <span>전환값</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="forecastChart"></canvas>
                                 </div>
                             </div>
-                            <div class="chart-container">
-                                <canvas id="forecastChart"></canvas>
+                        </div>
+
+                        <!-- 탭 2: 세그먼트별 비교 -->
+                        <div id="segmentCompareTab" class="analysis-tab-content" style="display: none;">
+                            <!-- 세그먼트 탭 및 차트 -->
+                            <div class="chart-section card">
+                                <div style="margin-bottom: 20px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                        <div class="chart-header" style="margin-bottom: 0;">세그먼트별 성과 비교</div>
+                                        <div class="view-type-section" style="margin-bottom: 0;">
+                                            <button class="view-btn segment-type-btn active" data-segment="channel">채널별</button>
+                                            <button class="view-btn segment-type-btn" data-segment="product">제품별</button>
+                                            <button class="view-btn segment-type-btn" data-segment="brand">브랜드별</button>
+                                            <button class="view-btn segment-type-btn" data-segment="promotion">프로모션별</button>
+                                        </div>
+                                    </div>
+                                    <p style="color: var(--grey-600); font-size: 13px; margin-bottom: 16px;">
+                                        각 세그먼트별로 실제 성과와 예측 성과를 비교하여 투자 우선순위를 파악할 수 있습니다.
+                                    </p>
+                                </div>
+
+                                <!-- 메트릭 선택 -->
+                                <div style="margin-bottom: 20px;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📊 비교 지표 선택</div>
+                                    <div class="view-type-section" style="margin-bottom: 0;">
+                                        <button class="view-btn segment-metric-btn active" data-metric="roas">ROAS</button>
+                                        <button class="view-btn segment-metric-btn" data-metric="conversions">전환수</button>
+                                        <button class="view-btn segment-metric-btn" data-metric="revenue">매출</button>
+                                        <button class="view-btn segment-metric-btn" data-metric="cost">비용</button>
+                                        <button class="view-btn segment-metric-btn" data-metric="cvr">전환율</button>
+                                    </div>
+                                </div>
+
+                                <!-- 세그먼트 비교 차트 -->
+                                <div class="chart-container">
+                                    <canvas id="segmentCompareChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- 세그먼트별 상세 정보 카드 -->
+                            <div style="margin-top: 24px;">
+                                <div class="insight-header">📈 세그먼트 상세 분석</div>
+                                <div class="insight-content" id="segmentDetailCards" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                                    <div class="insight-card neutral">
+                                        <div class="insight-text">데이터를 불러오는 중...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 탭 3: 세그먼트 트렌드 -->
+                        <div id="segmentTrendTab" class="analysis-tab-content" style="display: none;">
+                            <div class="chart-section card">
+                                <div style="margin-bottom: 20px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                        <div class="chart-header" style="margin-bottom: 0;">시간에 따른 세그먼트 성과 추이</div>
+                                        <div class="view-type-section" style="margin-bottom: 0;">
+                                            <button class="view-btn segment-trend-type-btn active" data-segment="channel">채널별</button>
+                                            <button class="view-btn segment-trend-type-btn" data-segment="product">제품별</button>
+                                            <button class="view-btn segment-trend-type-btn" data-segment="brand">브랜드별</button>
+                                            <button class="view-btn segment-trend-type-btn" data-segment="promotion">프로모션별</button>
+                                        </div>
+                                    </div>
+                                    <p style="color: var(--grey-600); font-size: 13px; margin-bottom: 16px;">
+                                        시간에 따른 각 세그먼트의 성과 변화를 추적하여 트렌드를 파악할 수 있습니다.
+                                    </p>
+                                </div>
+
+                                <!-- 항목 선택 (체크박스) -->
+                                <div style="margin-bottom: 20px;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">🎯 항목 선택 (최대 5개)</div>
+                                    <div class="chart-checkbox-group" id="segmentTrendCheckboxes" style="flex-wrap: wrap;">
+                                        <div class="insight-card neutral" style="padding: 12px; width: 100%;">
+                                            <div class="insight-text" style="text-align: center;">세그먼트 타입을 선택하면 항목이 표시됩니다.</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 트렌드 차트 -->
+                                <div class="chart-container">
+                                    <canvas id="segmentTrendChart"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1331,7 +1448,7 @@
                             </div>
                             <div class="visualization-card card">
                                 <div class="visualization-title">월 예산 소진율</div>
-                                <div class="img-tooltip-wrapper" data-tooltip="현재 월 예산 대비 실제 소진율을 게이지로 표시합니다. 100% 초과 시 예산 재조정이 필요합니다.">
+                                <div class="img-tooltip-wrapper" data-tooltip="현재 월 예산 대비 실제 소진율을 게이지로 표시합니다. 100% 초과 시 예산을 다시 살펴보시는 것을 추천드려요.">
                                     <img src="visualizations/budget_gauge.png" alt="예산 게이지" class="visualization-img">
                                 </div>
                             </div>
@@ -1387,46 +1504,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- 6. 예측 데이터 테이블 (접기 가능) -->
-                <div class="collapsible-section">
-                    <div class="collapsible-header">
-                        <div class="collapsible-title">
-                            <span class="collapsible-icon">📋</span>
-                            <span>예측 데이터 테이블</span>
-                        </div>
-                        <button class="collapsible-toggle">
-                            <span>펼치기</span>
-                            <span class="collapsible-toggle-icon collapsed">▼</span>
-                        </button>
-                    </div>
-                    <div class="collapsible-content">
-                        <!-- 데이터 테이블 -->
-                        <div class="table-section card">
-                            <div class="table-header">예측 데이터</div>
-                            <div class="table-container">
-                                <table id="dataTable">
-                                    <thead>
-                                        <tr>
-                                            <th>기간</th>
-                                            <th>비용</th>
-                                            <th>노출</th>
-                                            <th>클릭</th>
-                                            <th>전환수</th>
-                                            <th>전환값</th>
-                                            <th>유형</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tableBody">
-                                        <tr>
-                                            <td colspan="7" class="loading">데이터를 불러오는 중...</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </main>
     </div>
@@ -1438,6 +1515,19 @@
         let forecastChart = null;
         let insightsData = null;
         let segmentStatsData = null;
+
+        // 세그먼트 관련 전역 변수
+        let segmentData = {
+            channel: [],
+            product: [],
+            brand: [],
+            promotion: []
+        };
+        let currentSegmentType = 'channel';
+        let currentSegmentMetric = 'roas';
+        let segmentCompareChart = null;
+        let segmentTrendChart = null;
+        let currentTrendSegmentType = 'channel';
 
         // 숫자 포맷
         function formatNumber(num) {
@@ -1533,6 +1623,497 @@
                     `;
                 }
             }
+        }
+
+        // 세그먼트 CSV 데이터 로드
+        async function loadSegmentData() {
+            try {
+                const segmentTypes = ['channel', 'product', 'brand', 'promotion'];
+
+                for (const type of segmentTypes) {
+                    const response = await fetch(`forecast/segment_${type}.csv`);
+                    if (!response.ok) {
+                        console.warn(`segment_${type}.csv 로드 실패`);
+                        continue;
+                    }
+                    const text = await response.text();
+                    segmentData[type] = parseCSV(text);
+                }
+
+                // 세그먼트 분석 초기화
+                initSegmentAnalysis();
+            } catch (error) {
+                console.error('세그먼트 데이터 로드 실패:', error);
+            }
+        }
+
+        // 세그먼트 분석 초기화
+        function initSegmentAnalysis() {
+            updateSegmentCompareChart();
+            updateSegmentDetailCards();
+            updateSegmentTrendCheckboxes();
+        }
+
+        // 세그먼트 비교 차트 업데이트
+        function updateSegmentCompareChart() {
+            const data = segmentData[currentSegmentType];
+            if (!data || data.length === 0) {
+                console.warn(`${currentSegmentType} 데이터가 없습니다.`);
+                return;
+            }
+
+            // 세그먼트별로 그룹화
+            const segments = {};
+            data.forEach(row => {
+                const segmentName = row[currentSegmentType] || row.channel || row.product || row.brand || row.promotion;
+                if (!segmentName) return;
+
+                if (!segments[segmentName]) {
+                    segments[segmentName] = {
+                        actual: { cost: 0, conversions: 0, revenue: 0, clicks: 0, impressions: 0 },
+                        forecast: { cost: 0, conversions: 0, revenue: 0, clicks: 0, impressions: 0 }
+                    };
+                }
+
+                const type = row.type === 'actual' ? 'actual' : 'forecast';
+                segments[segmentName][type].cost += parseFloat(row['비용_예측']) || 0;
+                segments[segmentName][type].conversions += parseFloat(row['전환수_예측']) || 0;
+                segments[segmentName][type].revenue += parseFloat(row['전환값_예측']) || 0;
+                segments[segmentName][type].clicks += parseFloat(row['클릭_예측']) || 0;
+                segments[segmentName][type].impressions += parseFloat(row['노출_예측']) || 0;
+            });
+
+            // 차트 데이터 준비
+            const labels = Object.keys(segments);
+            const actualValues = [];
+            const forecastValues = [];
+
+            labels.forEach(label => {
+                const seg = segments[label];
+                let actualValue, forecastValue;
+
+                switch (currentSegmentMetric) {
+                    case 'roas':
+                        actualValue = seg.actual.cost > 0 ? (seg.actual.revenue / seg.actual.cost * 100) : 0;
+                        forecastValue = seg.forecast.cost > 0 ? (seg.forecast.revenue / seg.forecast.cost * 100) : 0;
+                        break;
+                    case 'conversions':
+                        actualValue = seg.actual.conversions;
+                        forecastValue = seg.forecast.conversions;
+                        break;
+                    case 'revenue':
+                        actualValue = seg.actual.revenue;
+                        forecastValue = seg.forecast.revenue;
+                        break;
+                    case 'cost':
+                        actualValue = seg.actual.cost;
+                        forecastValue = seg.forecast.cost;
+                        break;
+                    case 'cvr':
+                        actualValue = seg.actual.clicks > 0 ? (seg.actual.conversions / seg.actual.clicks * 100) : 0;
+                        forecastValue = seg.forecast.clicks > 0 ? (seg.forecast.conversions / seg.forecast.clicks * 100) : 0;
+                        break;
+                    default:
+                        actualValue = 0;
+                        forecastValue = 0;
+                }
+
+                actualValues.push(actualValue);
+                forecastValues.push(forecastValue);
+            });
+
+            // 차트 그리기
+            const ctx = document.getElementById('segmentCompareChart');
+            if (!ctx) return;
+
+            if (segmentCompareChart) {
+                segmentCompareChart.destroy();
+            }
+
+            const metricLabels = {
+                roas: 'ROAS (%)',
+                conversions: '전환수',
+                revenue: '매출 (원)',
+                cost: '비용 (원)',
+                cvr: '전환율 (%)'
+            };
+
+            segmentCompareChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '실제 성과',
+                            data: actualValues,
+                            backgroundColor: 'rgba(103, 58, 183, 0.8)',
+                            borderColor: 'rgba(103, 58, 183, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '예측 성과',
+                            data: forecastValues,
+                            backgroundColor: 'rgba(33, 150, 243, 0.8)',
+                            borderColor: 'rgba(33, 150, 243, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            align: 'end'
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(33, 33, 33, 0.9)',
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += formatNumber(context.parsed.y);
+                                    if (currentSegmentMetric === 'roas' || currentSegmentMetric === 'cvr') {
+                                        label += '%';
+                                    } else if (currentSegmentMetric === 'revenue' || currentSegmentMetric === 'cost') {
+                                        label += '원';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: metricLabels[currentSegmentMetric]
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    if (currentSegmentMetric === 'revenue' || currentSegmentMetric === 'cost') {
+                                        if (value >= 1000000) {
+                                            return (value / 1000000).toFixed(1) + 'M';
+                                        } else if (value >= 1000) {
+                                            return (value / 1000).toFixed(0) + 'K';
+                                        }
+                                    }
+                                    return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 세그먼트 데이터를 segments 변수에 저장 (상세 카드 업데이트용)
+            window.currentSegments = segments;
+        }
+
+        // 세그먼트 상세 카드 업데이트
+        function updateSegmentDetailCards() {
+            const container = document.getElementById('segmentDetailCards');
+            if (!container || !window.currentSegments) return;
+
+            const segments = window.currentSegments;
+            const segmentArray = Object.entries(segments);
+
+            // ROAS 기준 내림차순 정렬
+            segmentArray.sort((a, b) => {
+                const roasA = a[1].actual.cost > 0 ? (a[1].actual.revenue / a[1].actual.cost * 100) : 0;
+                const roasB = b[1].actual.cost > 0 ? (b[1].actual.revenue / b[1].actual.cost * 100) : 0;
+                return roasB - roasA;
+            });
+
+            const html = segmentArray.map(([name, seg]) => {
+                const actualROAS = seg.actual.cost > 0 ? (seg.actual.revenue / seg.actual.cost * 100) : 0;
+                const forecastROAS = seg.forecast.cost > 0 ? (seg.forecast.revenue / seg.forecast.cost * 100) : 0;
+                const roasChange = actualROAS > 0 ? ((forecastROAS - actualROAS) / actualROAS * 100) : 0;
+
+                const actualCVR = seg.actual.clicks > 0 ? (seg.actual.conversions / seg.actual.clicks * 100) : 0;
+                const forecastCVR = seg.forecast.clicks > 0 ? (seg.forecast.conversions / seg.forecast.clicks * 100) : 0;
+
+                const cardClass = actualROAS >= 150 ? 'positive' : actualROAS < 100 ? 'negative' : 'neutral';
+
+                return `
+                    <div class="insight-card ${cardClass}">
+                        <div class="insight-title">${name}</div>
+                        <div class="insight-text" style="display: grid; gap: 8px; margin-top: 12px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--grey-600);">실제 ROAS:</span>
+                                <strong>${formatDecimal(actualROAS)}%</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--grey-600);">예측 ROAS:</span>
+                                <strong style="color: ${roasChange >= 0 ? 'var(--success-main)' : 'var(--error-main)'};">${formatDecimal(forecastROAS)}% (${roasChange >= 0 ? '+' : ''}${formatDecimal(roasChange)}%)</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid var(--grey-200);">
+                                <span style="color: var(--grey-600);">실제 전환수:</span>
+                                <strong>${formatNumber(seg.actual.conversions)}건</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--grey-600);">예측 전환수:</span>
+                                <strong>${formatNumber(seg.forecast.conversions)}건</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid var(--grey-200);">
+                                <span style="color: var(--grey-600);">실제 CVR:</span>
+                                <strong>${formatDecimal(actualCVR)}%</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--grey-600);">예측 CVR:</span>
+                                <strong>${formatDecimal(forecastCVR)}%</strong>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        // 세그먼트 트렌드 체크박스 업데이트
+        function updateSegmentTrendCheckboxes() {
+            const container = document.getElementById('segmentTrendCheckboxes');
+            if (!container) return;
+
+            const data = segmentData[currentTrendSegmentType];
+            if (!data || data.length === 0) {
+                container.innerHTML = `
+                    <div class="insight-card neutral" style="padding: 12px; width: 100%;">
+                        <div class="insight-text" style="text-align: center;">해당 세그먼트 데이터가 없습니다.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            // 세그먼트 이름 추출
+            const segmentNames = [...new Set(data.map(row =>
+                row[currentTrendSegmentType] || row.channel || row.product || row.brand || row.promotion
+            ))].filter(Boolean);
+
+            // 체크박스 생성 (최대 5개 선택 가능)
+            const colors = ['#673ab7', '#2196f3', '#ff9800', '#4caf50', '#00c853', '#9c27b0', '#03a9f4', '#8bc34a', '#ff5722'];
+
+            const html = segmentNames.map((name, index) => `
+                <label class="chart-checkbox" style="border-left: 3px solid ${colors[index % colors.length]};">
+                    <input type="checkbox" class="segment-trend-checkbox" data-segment="${name}" ${index < 3 ? 'checked' : ''}>
+                    <span>${name}</span>
+                </label>
+            `).join('');
+
+            container.innerHTML = html;
+
+            // 체크박스 이벤트 추가
+            document.querySelectorAll('.segment-trend-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    // 최대 5개만 선택 가능
+                    const checkedCount = document.querySelectorAll('.segment-trend-checkbox:checked').length;
+                    if (checkedCount > 5) {
+                        this.checked = false;
+                        alert('최대 5개 항목까지만 선택할 수 있습니다.');
+                        return;
+                    }
+                    updateSegmentTrendChart();
+                });
+            });
+
+            // 초기 차트 그리기
+            updateSegmentTrendChart();
+        }
+
+        // 세그먼트 트렌드 차트 업데이트
+        function updateSegmentTrendChart() {
+            const data = segmentData[currentTrendSegmentType];
+            if (!data || data.length === 0) return;
+
+            // 선택된 세그먼트 가져오기
+            const selectedSegments = Array.from(document.querySelectorAll('.segment-trend-checkbox:checked'))
+                .map(cb => cb.dataset.segment);
+
+            if (selectedSegments.length === 0) {
+                // 차트 초기화
+                if (segmentTrendChart) {
+                    segmentTrendChart.destroy();
+                    segmentTrendChart = null;
+                }
+                return;
+            }
+
+            // 날짜별로 데이터 그룹화
+            const dateGroups = {};
+            data.forEach(row => {
+                const date = row['일 구분'];
+                const segmentName = row[currentTrendSegmentType] || row.channel || row.product || row.brand || row.promotion;
+
+                if (!selectedSegments.includes(segmentName)) return;
+
+                if (!dateGroups[date]) {
+                    dateGroups[date] = {};
+                }
+                if (!dateGroups[date][segmentName]) {
+                    dateGroups[date][segmentName] = {
+                        cost: 0,
+                        conversions: 0,
+                        revenue: 0,
+                        type: row.type
+                    };
+                }
+
+                dateGroups[date][segmentName].cost += parseFloat(row['비용_예측']) || 0;
+                dateGroups[date][segmentName].conversions += parseFloat(row['전환수_예측']) || 0;
+                dateGroups[date][segmentName].revenue += parseFloat(row['전환값_예측']) || 0;
+            });
+
+            // 날짜 정렬
+            const dates = Object.keys(dateGroups).sort();
+
+            // 데이터셋 생성
+            const colors = ['#673ab7', '#2196f3', '#ff9800', '#4caf50', '#00c853', '#9c27b0', '#03a9f4', '#8bc34a', '#ff5722'];
+            const datasets = selectedSegments.map((segmentName, index) => {
+                const values = dates.map(date => {
+                    const seg = dateGroups[date][segmentName];
+                    if (!seg) return 0;
+                    // ROAS 계산
+                    return seg.cost > 0 ? (seg.revenue / seg.cost * 100) : 0;
+                });
+
+                // 실제/예측 구분
+                const actualValues = values.map((val, idx) => {
+                    const seg = dateGroups[dates[idx]][segmentName];
+                    return (seg && seg.type === 'actual') ? val : null;
+                });
+                const forecastValues = values.map((val, idx) => {
+                    const seg = dateGroups[dates[idx]][segmentName];
+                    return (seg && seg.type === 'forecast') ? val : null;
+                });
+
+                // 연결을 위해 마지막 실제값을 예측 시작점에 추가
+                const lastActualIdx = actualValues.findLastIndex(v => v !== null);
+                if (lastActualIdx >= 0 && lastActualIdx < forecastValues.length - 1) {
+                    forecastValues[lastActualIdx] = actualValues[lastActualIdx];
+                }
+
+                const color = colors[index % colors.length];
+
+                return [
+                    {
+                        label: segmentName,
+                        data: actualValues,
+                        borderColor: color,
+                        backgroundColor: color.replace(')', ', 0.1)').replace('rgb', 'rgba'),
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        fill: false,
+                        tension: 0.4,
+                        spanGaps: false
+                    },
+                    {
+                        label: segmentName + ' (예측)',
+                        data: forecastValues,
+                        borderColor: color,
+                        backgroundColor: color.replace(')', ', 0.05)').replace('rgb', 'rgba'),
+                        borderWidth: 2,
+                        borderDash: [6, 4],
+                        pointRadius: 4,
+                        pointStyle: 'triangle',
+                        fill: false,
+                        tension: 0.4,
+                        spanGaps: false
+                    }
+                ];
+            }).flat();
+
+            // 차트 그리기
+            const ctx = document.getElementById('segmentTrendChart');
+            if (!ctx) return;
+
+            if (segmentTrendChart) {
+                segmentTrendChart.destroy();
+            }
+
+            segmentTrendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            align: 'end',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                filter: function(item) {
+                                    // 예측 데이터셋은 범례에서 숨김
+                                    return !item.text.includes('(예측)');
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(33, 33, 33, 0.9)',
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    label = label.replace(' (예측)', '');
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += formatDecimal(context.parsed.y) + '%';
+
+                                    // 예측값 여부 표시
+                                    if (context.dataset.borderDash) {
+                                        label += ' (예측)';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'ROAS (%)'
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         // 데이터 집계 (주별/월별)
@@ -1942,6 +2523,38 @@
             updateDeclineTrends(declinePeriod, trends);
         }
 
+        // 일반적인 추천 텍스트를 구체적인 액션으로 변환
+        function transformRecommendationText(recommendation, metric) {
+            // 일반적인 패턴들을 구체적인 액션으로 변환
+            const transformations = {
+                '비용': {
+                    pattern: /마케팅 전략 점검이 필요합니다/,
+                    replacement: '광고 예산 재분배를 고려해보세요. 성과가 낮은 채널의 예산을 줄이고, 효율이 좋은 채널로 예산을 이동시키는 것을 추천드립니다.'
+                },
+                '전환수': {
+                    pattern: /마케팅 전략 점검이 필요합니다/,
+                    replacement: '광고 소재나 타겟 세그먼트 조정이 필요합니다. 전환율이 낮은 캠페인의 타겟팅 설정을 검토하고, 잠재고객을 다시 정의해보시는 것을 추천드립니다.'
+                },
+                '전환값': {
+                    pattern: /마케팅 전략 점검이 필요합니다/,
+                    replacement: '고객 단가를 높이는 전략이 필요합니다. 프리미엄 제품 노출을 늘리거나, 교차 판매/업셀 전략을 강화해보시는 것을 추천드립니다.'
+                },
+                'ROAS': {
+                    pattern: /광고 효율성 점검이 필요합니다/,
+                    replacement: '광고 효율을 개선하기 위해 입찰 전략을 재검토하고, ROI가 낮은 키워드나 소재를 일시 중지하거나 최적화하는 것을 추천드립니다.'
+                }
+            };
+
+            // 메트릭에 맞는 변환 규칙 찾기
+            for (const [key, transform] of Object.entries(transformations)) {
+                if (metric.includes(key) && transform.pattern.test(recommendation)) {
+                    return recommendation.replace(transform.pattern, transform.replacement);
+                }
+            }
+
+            return recommendation;
+        }
+
         // 개선 트렌드 업데이트
         function updateImprovementTrends(period, trends) {
             const container = document.getElementById('improvementTrendContent');
@@ -1988,7 +2601,7 @@
                                 <span>이전 평균: <strong>${formatNumber(item.previous_avg)}</strong></span>
                             </div>
                             <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: var(--success-light); border-radius: 6px;">
-                                💡 ${item.recommendation}
+                                💡 ${transformRecommendationText(item.recommendation, item.metric)}
                             </div>
                         </div>
                     `).join('')}
@@ -2042,7 +2655,7 @@
                                 <span>이전 평균: <strong>${formatNumber(item.previous_avg)}</strong></span>
                             </div>
                             <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: var(--error-light); border-radius: 6px;">
-                                ⚠️ ${item.recommendation}
+                                ⚠️ ${transformRecommendationText(item.recommendation, item.metric)}
                             </div>
                         </div>
                     `).join('')}
@@ -2200,7 +2813,7 @@
                     type: 'negative',
                     title: '전환수 감소 예상',
                     icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"/></svg>',
-                    text: `전환수가 약 ${Math.abs(convChange).toFixed(1)}% 감소할 것으로 예측됩니다. 캠페인 최적화가 필요합니다.`
+                    text: `전환수가 약 ${Math.abs(convChange).toFixed(1)}% 감소할 것으로 예측됩니다. 성과가 낮은 광고 소재나 타겟 세그먼트를 조정해보시는 것을 추천드려요.`
                 });
             }
 
@@ -2216,9 +2829,9 @@
             } else if (roasChange < -10) {
                 insights.push({
                     type: 'neutral',
-                    title: 'ROAS 하락 주의',
+                    title: 'ROAS 하락 예상',
                     icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>',
-                    text: `ROAS가 ${actualROAS.toFixed(0)}%에서 ${forecastROAS.toFixed(0)}%로 하락할 것으로 예상됩니다. 타겟팅 또는 크리에이티브 개선을 검토하세요.`
+                    text: `ROAS가 ${actualROAS.toFixed(0)}%에서 ${forecastROAS.toFixed(0)}%로 하락할 것으로 예상됩니다. 타겟팅이나 크리에이티브를 개선해보시는 것을 추천드려요.`
                 });
             }
 
@@ -2236,7 +2849,7 @@
                     type: 'negative',
                     title: 'CPA 상승 경고',
                     icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>',
-                    text: `전환당 비용(CPA)이 ${formatNumber(actualCPA)}원에서 ${formatNumber(forecastCPA)}원으로 약 ${cpaChange.toFixed(1)}% 상승할 것으로 예상됩니다. 비용 효율 개선이 필요합니다.`
+                    text: `전환당 비용(CPA)이 ${formatNumber(actualCPA)}원에서 ${formatNumber(forecastCPA)}원으로 약 ${cpaChange.toFixed(1)}% 상승할 것으로 예상됩니다. 입찰 전략을 조정하거나 예산 배분을 재검토해보시면 좋을 것 같아요.`
                 });
             }
 
@@ -2518,14 +3131,20 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadData();
             loadInsightsAndSegments();
+            loadSegmentData();
 
             // 뷰 타입 버튼 이벤트 (일별/주별/월별)
             document.querySelectorAll('.view-type-section .view-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    document.querySelectorAll('.view-type-section .view-btn').forEach(b => b.classList.remove('active'));
+                    // 부모의 view-btn만 토글
+                    const parent = this.closest('.view-type-section');
+                    parent.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
-                    currentView = this.dataset.view;
-                    loadData();
+
+                    if (this.dataset.view) {
+                        currentView = this.dataset.view;
+                        loadData();
+                    }
                 });
             });
 
@@ -2559,6 +3178,61 @@
                     if (insightsData && insightsData.performance_trends) {
                         updateDeclineTrends(period, insightsData.performance_trends);
                     }
+                });
+            });
+
+            // 분석 탭 전환 이벤트 (성과 분석 대시보드)
+            document.querySelectorAll('.analysis-tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 버튼 활성화 상태 전환
+                    document.querySelectorAll('.analysis-tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // 탭 컨텐츠 표시/숨김
+                    const targetTab = this.dataset.tab;
+                    document.querySelectorAll('.analysis-tab-content').forEach(content => {
+                        content.style.display = 'none';
+                    });
+
+                    // 선택된 탭 표시
+                    if (targetTab === 'forecast') {
+                        document.getElementById('forecastTab').style.display = 'block';
+                    } else if (targetTab === 'segment-compare') {
+                        document.getElementById('segmentCompareTab').style.display = 'block';
+                    } else if (targetTab === 'segment-trend') {
+                        document.getElementById('segmentTrendTab').style.display = 'block';
+                    }
+                });
+            });
+
+            // 세그먼트 타입 버튼 이벤트 (채널별/제품별/브랜드별/프로모션별)
+            document.querySelectorAll('.segment-type-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.segment-type-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSegmentType = this.dataset.segment;
+                    updateSegmentCompareChart();
+                    updateSegmentDetailCards();
+                });
+            });
+
+            // 세그먼트 메트릭 버튼 이벤트 (ROAS/전환수/매출/비용/CVR)
+            document.querySelectorAll('.segment-metric-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.segment-metric-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSegmentMetric = this.dataset.metric;
+                    updateSegmentCompareChart();
+                });
+            });
+
+            // 세그먼트 트렌드 타입 버튼 이벤트
+            document.querySelectorAll('.segment-trend-type-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.segment-trend-type-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentTrendSegmentType = this.dataset.segment;
+                    updateSegmentTrendCheckboxes();
                 });
             });
 
