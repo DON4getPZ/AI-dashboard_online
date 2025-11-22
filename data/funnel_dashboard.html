@@ -236,6 +236,7 @@
             transition: box-shadow 0.3s ease;
             position: relative;
             z-index: 1;
+            overflow: visible;
         }
 
         .card:hover {
@@ -319,6 +320,7 @@
         .chart-section {
             margin-bottom: 24px;
             padding: 24px;
+            overflow: visible;
         }
 
         .chart-header {
@@ -342,11 +344,13 @@
         .chart-container {
             position: relative;
             height: 400px;
+            overflow: visible;
         }
 
         .chart-container-small {
             position: relative;
             height: 300px;
+            overflow: visible;
         }
 
         /* 뷰 타입 버튼 */
@@ -632,13 +636,13 @@
 
         /* 차트 인사이트 툴팁 */
         .chart-insight-tooltip {
-            position: absolute;
+            position: fixed;
             background: white;
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             padding: 0;
             display: none;
-            z-index: 1000;
+            z-index: 99999;
             max-width: 320px;
             min-width: 280px;
             pointer-events: none;
@@ -1461,6 +1465,84 @@
                         </button>
                     </div>
                     <div class="collapsible-content">
+                        <!-- 채널별 단계별 고객 수 테이블 -->
+                        <div class="table-section card" style="margin-bottom: 16px;">
+                            <div class="table-header">채널별 단계별 고객 수</div>
+                            <div style="font-size: 13px; color: var(--grey-600); padding: 12px 24px; background: var(--grey-50);">
+                                💡 <strong>표 보는 법:</strong> 각 열은 고객 여정의 한 단계를 나타냅니다. 왼쪽에서 오른쪽으로 갈수록 숫자가 줄어드는 것이 정상입니다. CVR(전환율)은 방문자 100명 중 몇 명이 구매했는지 보여주는 비율입니다.
+                            </div>
+                            <div class="table-container">
+                                <table id="channelTable">
+                                    <thead>
+                                        <tr>
+                                            <th>채널</th>
+                                            <th class="sortable-header" data-column="유입" data-type="number">
+                                                유입
+                                                <div class="sort-icon active">
+                                                    <div class="sort-arrow up"></div>
+                                                    <div class="sort-arrow down active"></div>
+                                                </div>
+                                                <div class="sort-tooltip">클릭하여 유입 기준으로 정렬</div>
+                                            </th>
+                                            <th class="sortable-header" data-column="활동" data-type="number">
+                                                활동
+                                                <div class="sort-icon">
+                                                    <div class="sort-arrow up"></div>
+                                                    <div class="sort-arrow down"></div>
+                                                </div>
+                                                <div class="sort-tooltip">클릭하여 활동 기준으로 정렬</div>
+                                            </th>
+                                            <th class="sortable-header" data-column="관심" data-type="number">
+                                                관심
+                                                <div class="sort-icon">
+                                                    <div class="sort-arrow up"></div>
+                                                    <div class="sort-arrow down"></div>
+                                                </div>
+                                                <div class="sort-tooltip">클릭하여 관심 기준으로 정렬</div>
+                                            </th>
+                                            <th class="sortable-header" data-column="결제진행" data-type="number">
+                                                결제진행
+                                                <div class="sort-icon">
+                                                    <div class="sort-arrow up"></div>
+                                                    <div class="sort-arrow down"></div>
+                                                </div>
+                                                <div class="sort-tooltip">클릭하여 결제진행 기준으로 정렬</div>
+                                            </th>
+                                            <th class="sortable-header" data-column="구매완료" data-type="number">
+                                                구매완료
+                                                <div class="sort-icon">
+                                                    <div class="sort-arrow up"></div>
+                                                    <div class="sort-arrow down"></div>
+                                                </div>
+                                                <div class="sort-tooltip">클릭하여 구매완료 기준으로 정렬</div>
+                                            </th>
+                                            <th class="sortable-header" data-column="Revenue" data-type="number">
+                                                매출
+                                                <div class="sort-icon">
+                                                    <div class="sort-arrow up"></div>
+                                                    <div class="sort-arrow down"></div>
+                                                </div>
+                                                <div class="sort-tooltip">클릭하여 매출 기준으로 정렬</div>
+                                            </th>
+                                            <th class="sortable-header" data-column="CVR" data-type="number">
+                                                CVR
+                                                <div class="sort-icon">
+                                                    <div class="sort-arrow up"></div>
+                                                    <div class="sort-arrow down"></div>
+                                                </div>
+                                                <div class="sort-tooltip">클릭하여 CVR 기준으로 정렬</div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="channelTableBody">
+                                        <tr>
+                                            <td colspan="8">데이터를 불러오는 중...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
                         <!-- KPI 차트 -->
                         <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">📈 원하는 지표로 채널 비교하기</div>
@@ -1479,39 +1561,37 @@
                             </div>
                             <div class="chart-container-small" style="position: relative;">
                                 <canvas id="channelKpiChart"></canvas>
-                                <div id="kpiChartTooltip" class="chart-insight-tooltip"></div>
                             </div>
                         </div>
 
                         <!-- 비교 차트 -->
-                        <div class="chart-section card">
+                        <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">🔄 어떤 채널이 가장 균형잡혀 있나요?</div>
                             <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px;">
                                 전환율, 방문자, 구매, 매출을 모두 100점 만점으로 환산하여 비교합니다. 모든 막대가 고르게 높은 채널이 가장 효율적입니다. <strong>차트 위에 마우스를 올리면</strong> 해석 방법을 자세히 알려드립니다.
                             </div>
                             <div style="position: relative; height: 450px;">
                                 <canvas id="channelCompareChart"></canvas>
-                                <div id="compareChartTooltip" class="chart-insight-tooltip"></div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- 6. 상위 채널 성과 -->
-                <div class="chart-section card" style="margin-bottom: 24px;">
-                    <div class="chart-header">🎯 전환율이 가장 높은 채널 TOP 10</div>
-                    <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
-                        어떤 채널이 가장 효과적인지 확인하세요. 전환율(%)은 시작 단계 대비 해당 단계까지 도달한 사람의 비율입니다.
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding: 0 24px; flex-wrap: wrap;">
-                        <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 전환율 기준:</span>
-                        <button class="view-btn channel-funnel-btn" data-funnel="activation">활동</button>
-                        <button class="view-btn channel-funnel-btn" data-funnel="consideration">관심</button>
-                        <button class="view-btn channel-funnel-btn" data-funnel="conversion">결제진행</button>
-                        <button class="view-btn channel-funnel-btn active" data-funnel="purchase">구매완료</button>
-                    </div>
-                    <div class="chart-container-small">
-                        <canvas id="campaignChart"></canvas>
+                        <!-- TOP 10 전환율 차트 -->
+                        <div class="chart-section card">
+                            <div class="chart-header">🎯 전환율이 가장 높은 채널 TOP 10</div>
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px;">
+                                어떤 채널이 가장 효과적인지 확인하세요. 전환율(%)은 시작 단계 대비 해당 단계까지 도달한 사람의 비율입니다.
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+                                <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 전환율 기준:</span>
+                                <button class="view-btn channel-funnel-btn" data-funnel="activation">활동</button>
+                                <button class="view-btn channel-funnel-btn" data-funnel="consideration">관심</button>
+                                <button class="view-btn channel-funnel-btn" data-funnel="conversion">결제진행</button>
+                                <button class="view-btn channel-funnel-btn active" data-funnel="purchase">구매완료</button>
+                            </div>
+                            <div class="chart-container-small">
+                                <canvas id="campaignChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1537,52 +1617,105 @@
                                 <button class="view-btn new-vs-returning-view-btn" data-view="daily">📅 일별</button>
                             </div>
                         </div>
+                        <!-- 통합 신규/재방문 고객 추세 차트 -->
                         <div class="chart-section card" style="margin-bottom: 16px;">
-                            <div class="chart-header">처음 방문한 고객 비율 변화</div>
+                            <div class="chart-header">📊 신규 vs 재방문 고객 추세 분석</div>
                             <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
-                                처음 방문한 고객과 이전에 방문한 적 있는 고객의 비율을 시간별로 보여줍니다. 처음 방문 비율이 늘면 신규 고객 유입이 증가하는 것이고, 줄면 단골 고객 비중이 높아지는 것입니다.
+                                시간에 따른 신규 고객 비율과 재방문율의 변화를 추적합니다. 신규 고객 비율이 높으면 새로운 고객 유입이 활발한 것이고, 재방문율이 높으면 고객 충성도가 높다는 뜻입니다. <strong>차트 위에 마우스를 올리면</strong> 추가 인사이트를 확인할 수 있습니다.
                             </div>
-                            <div class="chart-container-small">
-                                <canvas id="newVsReturningChart"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- 시계열 재방문 추세 차트 -->
-                        <div class="chart-section card" style="margin-bottom: 16px;">
-                            <div class="chart-header">📈 재방문율 추세 분석</div>
-                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
-                                시간에 따른 재방문율 변화를 추적합니다. 재방문율이 높을수록 고객이 다시 돌아온다는 뜻이며, 이탈 가능성이 낮습니다.
-                            </div>
-                            <div class="chart-container-small">
-                                <canvas id="returnRateTrendChart"></canvas>
+                            <div class="chart-container-small" style="position: relative;">
+                                <canvas id="customerTrendChart"></canvas>
                             </div>
                         </div>
 
                         <!-- 신규 vs 재방문 고객 전환율 비교 -->
                         <div class="chart-section card" style="margin-bottom: 16px;">
-                            <div class="chart-header">🔄 신규 vs 재방문 고객 전환율 비교</div>
-                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
-                                신규 고객과 재방문 고객의 각 퍼널 단계별 전환율을 비교합니다. 일반적으로 재방문 고객이 더 높은 전환율을 보입니다.
+                            <div class="chart-header">🔄 첫 방문 고객 vs 재방문 고객: 구매 전환율 차이 분석</div>
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px; padding: 0 24px; line-height: 1.7;">
+                                <strong>이 차트는 무엇을 보여주나요?</strong><br>
+                                처음 우리 사이트에 온 사람(신규)과 이미 왔던 적이 있는 사람(재방문)의 행동을 비교합니다.
+                                각 단계별로 얼마나 많은 사람이 다음 단계로 넘어가는지 전환율(%)로 표시됩니다.
+                                <strong>차트 위에 마우스를 올리면</strong> 더 자세한 분석과 개선 방법을 확인할 수 있습니다.
                             </div>
-                            <div class="chart-container-small">
+
+                            <!-- 주요 인사이트 요약 -->
+                            <div id="conversionInsightSummary" style="margin: 0 24px 16px 24px; padding: 16px; background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%); border-radius: 10px; border-left: 4px solid var(--primary-main);">
+                                <div style="font-size: 13px; font-weight: 600; color: var(--primary-main); margin-bottom: 8px;">
+                                    💡 핵심 인사이트
+                                </div>
+                                <div id="conversionInsightText" style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
+                                    데이터를 불러오는 중...
+                                </div>
+                            </div>
+
+                            <div class="chart-container-small" style="position: relative;">
                                 <canvas id="newVsReturningConversionChart"></canvas>
+                            </div>
+
+                            <!-- 해석 가이드 -->
+                            <div style="margin-top: 20px; padding: 0 24px;">
+                                <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
+                                    📋 차트 해석 가이드
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff9e6 100%); border-radius: 8px; border-left: 3px solid #ff9800;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #f57c00; margin-bottom: 6px;">
+                                            🆕 신규 고객 (주황색 막대)
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            처음 방문한 고객들의 전환율입니다. 신규 고객은 우리 사이트를 처음 경험하기 때문에 일반적으로 전환율이 낮습니다.
+                                            <strong>첫인상이 중요</strong>하므로 랜딩페이지와 첫 화면 최적화가 핵심입니다.
+                                        </div>
+                                    </div>
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #ede7f6 0%, #f3f0ff 100%); border-radius: 8px; border-left: 3px solid #673ab7;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #673ab7; margin-bottom: 6px;">
+                                            🔄 재방문 고객 (보라색 막대)
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            이미 방문한 적이 있는 고객들의 전환율입니다. 재방문 고객은 우리 브랜드를 알고 있어 <strong>신뢰도가 높고 구매 가능성이 큽니다</strong>.
+                                            이메일 마케팅이나 리타겟팅으로 재방문을 유도하세요.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 실행 가능한 팁 -->
+                                <div style="margin-top: 12px; padding: 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 3px solid var(--success-main);">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--success-main); margin-bottom: 6px;">
+                                        ✅ 실행 가능한 개선 방법
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6;">
+                                        <strong>신규 고객 전환율이 낮다면:</strong>
+                                        첫 화면 로딩 속도 개선, 명확한 가치 제안 표시, 신뢰 요소 강화(리뷰, 보안 인증 등), 회원가입 없이 둘러보기 가능하게<br>
+                                        <strong>재방문 고객 전환율이 낮다면:</strong>
+                                        개인화된 추천 시스템 도입, 재방문 쿠폰 제공, 이메일로 신상품 알림, 로그인 시 이전 장바구니 자동 복원<br>
+                                        <strong>두 그룹 모두 낮다면:</strong>
+                                        전체적인 사용자 경험(UX) 점검 필요, 가격 경쟁력 확인, 결제 옵션 다양화
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <!-- 이탈률 차트 -->
                         <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">📉 어디서 고객을 가장 많이 잃나요?</div>
-                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px;">
-                                이탈률이 높은 채널일수록 개선 여지가 크다는 뜻입니다. <strong>차트 위에 마우스를 올리면</strong> 이탈을 줄이는 방법을 확인할 수 있습니다.
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
+                                각 퍼널 단계별로 이탈률이 높은 채널을 확인하세요. 이탈률이 높은 채널일수록 개선 여지가 크다는 뜻입니다. <strong>차트 위에 마우스를 올리면</strong> 이탈을 줄이는 방법을 확인할 수 있습니다.
                             </div>
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
-                                <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 보고 싶은 이탈률:</span>
-                                <button class="view-btn channel-churn-btn active" data-kpi="churn_total" data-chart="churn">전체 이탈률</button>
-                                <button class="view-btn channel-churn-btn" data-kpi="churn_avg" data-chart="churn">평균 이탈률</button>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; padding: 0 24px;">
+                                <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 퍼널 단계:</span>
+                                <button class="view-btn channel-churn-stage-btn" data-stage="activation">유입→활동</button>
+                                <button class="view-btn channel-churn-stage-btn" data-stage="consideration">활동→관심</button>
+                                <button class="view-btn channel-churn-stage-btn" data-stage="conversion">관심→결제진행</button>
+                                <button class="view-btn channel-churn-stage-btn" data-stage="purchase">결제진행→구매완료</button>
+                                <button class="view-btn channel-churn-stage-btn active" data-stage="avg">평균 이탈률</button>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; padding: 0 24px;">
+                                <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">🔢 정렬:</span>
+                                <button class="view-btn channel-churn-sort-btn active" data-sort="desc">📉 높은순</button>
+                                <button class="view-btn channel-churn-sort-btn" data-sort="asc">📈 낮은순</button>
                             </div>
                             <div class="chart-container-small" style="position: relative;">
                                 <canvas id="channelChurnChart"></canvas>
-                                <div id="churnChartTooltip" class="chart-insight-tooltip"></div>
                             </div>
                         </div>
 
@@ -1686,104 +1819,95 @@
 
                         <!-- 채널별 참여도 분석 -->
                         <div class="chart-section card">
-                            <div class="chart-header">💎 채널별 참여도 분석</div>
-                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
-                                참여도(Engagement Rate)는 전체 세션 중 사용자가 적극적으로 활동한 세션의 비율입니다. 참여도가 높을수록 고객 품질이 좋고 이탈 가능성이 낮습니다.
+                            <div class="chart-header">💎 채널별 고객 참여도: 어떤 채널이 진짜 관심 있는 고객을 데려오나요?</div>
+
+                            <!-- 설명 -->
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px; padding: 0 24px; line-height: 1.7;">
+                                <strong>참여도(Engagement Rate)란?</strong><br>
+                                방문자 중 실제로 웹사이트를 적극적으로 사용한 비율입니다. 단순 클릭 실수나 즉시 이탈한 방문이 아니라,
+                                <strong>페이지를 여러 개 보거나 일정 시간 이상 머문 "진짜 관심 있는" 고객의 비율</strong>입니다.
+                                <strong>차트 위에 마우스를 올리면</strong> 더 자세한 분석을 확인할 수 있습니다.
                             </div>
-                            <div class="chart-container-small">
+
+                            <!-- 참여도 자동 인사이트 -->
+                            <div id="engagementInsightSummary" style="margin: 0 24px 16px 24px; padding: 16px; background: linear-gradient(135deg, #f3e5f5 0%, #fce4ec 100%); border-radius: 10px; border-left: 4px solid #9c27b0;">
+                                <div style="font-size: 13px; font-weight: 600; color: #9c27b0; margin-bottom: 8px;">
+                                    💡 참여도 분석 결과
+                                </div>
+                                <div id="engagementInsightText" style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
+                                    데이터를 불러오는 중...
+                                </div>
+                            </div>
+
+                            <div class="chart-container-small" style="position: relative;">
                                 <canvas id="channelEngagementChart"></canvas>
                             </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- 7. 채널별 데이터 테이블 (접기 가능) -->
-                <div class="collapsible-section">
-                    <div class="collapsible-header">
-                        <div class="collapsible-title">
-                            <span class="collapsible-icon">📊</span>
-                            <span>채널별 상세 숫자 데이터 (표)</span>
-                        </div>
-                        <button class="collapsible-toggle">
-                            <span>펼치기</span>
-                            <span class="collapsible-toggle-icon collapsed">▼</span>
-                        </button>
-                    </div>
-                    <div class="collapsible-content">
-                        <div class="table-section card">
-                            <div class="table-header">채널별 단계별 고객 수</div>
-                            <div style="font-size: 13px; color: var(--grey-600); padding: 12px 24px; background: var(--grey-50);">
-                                💡 <strong>표 보는 법:</strong> 각 열은 고객 여정의 한 단계를 나타냅니다. 왼쪽에서 오른쪽으로 갈수록 숫자가 줄어드는 것이 정상입니다. CVR(전환율)은 방문자 100명 중 몇 명이 구매했는지 보여주는 비율입니다.
-                            </div>
-                            <div class="table-container">
-                                <table id="channelTable">
-                                    <thead>
-                                        <tr>
-                                            <th>채널</th>
-                                            <th class="sortable-header" data-column="유입" data-type="number">
-                                                유입
-                                                <div class="sort-icon active">
-                                                    <div class="sort-arrow up"></div>
-                                                    <div class="sort-arrow down active"></div>
-                                                </div>
-                                                <div class="sort-tooltip">클릭하여 유입 기준으로 정렬</div>
-                                            </th>
-                                            <th class="sortable-header" data-column="활동" data-type="number">
-                                                활동
-                                                <div class="sort-icon">
-                                                    <div class="sort-arrow up"></div>
-                                                    <div class="sort-arrow down"></div>
-                                                </div>
-                                                <div class="sort-tooltip">클릭하여 활동 기준으로 정렬</div>
-                                            </th>
-                                            <th class="sortable-header" data-column="관심" data-type="number">
-                                                관심
-                                                <div class="sort-icon">
-                                                    <div class="sort-arrow up"></div>
-                                                    <div class="sort-arrow down"></div>
-                                                </div>
-                                                <div class="sort-tooltip">클릭하여 관심 기준으로 정렬</div>
-                                            </th>
-                                            <th class="sortable-header" data-column="결제진행" data-type="number">
-                                                결제진행
-                                                <div class="sort-icon">
-                                                    <div class="sort-arrow up"></div>
-                                                    <div class="sort-arrow down"></div>
-                                                </div>
-                                                <div class="sort-tooltip">클릭하여 결제진행 기준으로 정렬</div>
-                                            </th>
-                                            <th class="sortable-header" data-column="구매완료" data-type="number">
-                                                구매완료
-                                                <div class="sort-icon">
-                                                    <div class="sort-arrow up"></div>
-                                                    <div class="sort-arrow down"></div>
-                                                </div>
-                                                <div class="sort-tooltip">클릭하여 구매완료 기준으로 정렬</div>
-                                            </th>
-                                            <th class="sortable-header" data-column="Revenue" data-type="number">
-                                                매출
-                                                <div class="sort-icon">
-                                                    <div class="sort-arrow up"></div>
-                                                    <div class="sort-arrow down"></div>
-                                                </div>
-                                                <div class="sort-tooltip">클릭하여 매출 기준으로 정렬</div>
-                                            </th>
-                                            <th class="sortable-header" data-column="CVR" data-type="number">
-                                                CVR
-                                                <div class="sort-icon">
-                                                    <div class="sort-arrow up"></div>
-                                                    <div class="sort-arrow down"></div>
-                                                </div>
-                                                <div class="sort-tooltip">클릭하여 CVR 기준으로 정렬</div>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="channelTableBody">
-                                        <tr>
-                                            <td colspan="8">데이터를 불러오는 중...</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <!-- 참여도 해석 가이드 -->
+                            <div style="margin-top: 20px; padding: 0 24px;">
+                                <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
+                                    📋 참여도 수치 해석 가이드
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
+                                    <!-- 높은 참여도 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 3px solid #00c853;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #00c853; margin-bottom: 6px;">
+                                            🌟 높음 (60% 이상)
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>의미:</strong> 매우 질 좋은 트래픽. 관심도 높은 고객을 데려오고 있습니다.<br>
+                                            <strong>행동:</strong> 이 채널에 예산을 더 투자하세요. 성공 요인을 분석하여 다른 채널에도 적용하세요.
+                                        </div>
+                                    </div>
+
+                                    <!-- 중간 참여도 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff9e6 100%); border-radius: 8px; border-left: 3px solid #ff9800;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #f57c00; margin-bottom: 6px;">
+                                            ⚖️ 보통 (40-60%)
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>의미:</strong> 평균적인 트래픽. 개선 여지가 있습니다.<br>
+                                            <strong>행동:</strong> 랜딩 페이지를 최적화하거나 타겟팅을 조정하세요. A/B 테스트로 참여도 향상을 시도하세요.
+                                        </div>
+                                    </div>
+
+                                    <!-- 낮은 참여도 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 8px; border-left: 3px solid #ff5722;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #ff5722; margin-bottom: 6px;">
+                                            ⚠️ 낮음 (40% 미만)
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>의미:</strong> 품질이 낮은 트래픽. 잘못된 고객층이 유입되고 있을 수 있습니다.<br>
+                                            <strong>행동:</strong> 광고 타겟팅을 재검토하거나 예산을 줄이세요. 광고 메시지와 랜딩 페이지의 일치 여부를 확인하세요.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 추가 팁 -->
+                                <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 3px solid #2196f3;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 6px;">
+                                        💡 참여도와 전환율의 관계
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6;">
+                                        <strong>핵심:</strong> 참여도가 높으면 전환율도 높아집니다. 참여도가 낮은 채널은 방문자 수가 많아도 실제 매출은 적을 수 있습니다.
+                                        따라서 단순히 클릭 수만 보지 말고, <strong>참여도와 전환율을 함께 고려</strong>하여 예산을 배분하세요.<br><br>
+                                        <strong>예시:</strong> A채널은 방문자 1,000명에 참여도 30%, B채널은 방문자 500명에 참여도 70%라면,
+                                        실제로 B채널이 더 많은 매출을 가져올 가능성이 큽니다.
+                                    </div>
+                                </div>
+
+                                <!-- 실행 체크리스트 -->
+                                <div style="margin-top: 12px; padding: 14px; background: var(--primary-light); border-radius: 8px; border-left: 3px solid var(--primary-main);">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--primary-main); margin-bottom: 8px;">
+                                        ✅ 지금 바로 실행할 체크리스트
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6;">
+                                        1. <strong>참여도 상위 3개 채널</strong>의 공통점을 찾아 다른 채널에 적용<br>
+                                        2. <strong>참여도 하위 3개 채널</strong>의 광고 타겟팅 또는 랜딩 페이지 점검<br>
+                                        3. 참여도가 높지만 전환율이 낮은 채널이 있다면 <strong>결제 프로세스나 가격 정책</strong> 개선<br>
+                                        4. 참여도가 낮은 채널은 예산을 줄이고, 참여도가 높은 채널에 재투자
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1792,6 +1916,12 @@
             </div>
         </main>
     </div>
+
+    <!-- 전역 툴팁 (모든 차트에서 사용) -->
+    <div id="kpiChartTooltip" class="chart-insight-tooltip"></div>
+    <div id="compareChartTooltip" class="chart-insight-tooltip"></div>
+    <div id="customerTrendTooltip" class="chart-insight-tooltip"></div>
+    <div id="churnChartTooltip" class="chart-insight-tooltip"></div>
 
     <script>
         // 전역 변수
@@ -1807,6 +1937,8 @@
         let selectedChannelKPI = 'cvr';
         let currentKpiType = 'cvr';
         let currentChurnType = 'churn_total';
+        let currentChurnStage = 'avg';
+        let currentChurnSort = 'desc';
         let currentChannelFunnel = 'purchase';
 
         // 테이블 정렬 상태
@@ -1822,6 +1954,7 @@
         let campaignChart = null;
         let newVsReturningChart = null;
         let returnRateTrendChart = null;
+        let customerTrendChart = null; // 통합 신규/재방문 추세 차트
         let newVsReturningConversionChart = null;
         let channelMatrixChart = null;
         let channelEngagementChart = null;
@@ -1989,11 +2122,10 @@
             updateFunnelChart();
             updateAdvancedAnalysis();
             updateKpiChart('cvr');
-            updateChurnChart('churn_total');
+            updateChurnChart();
             updateCompareChart();
             updateCampaignChart('purchase');
-            updateNewVsReturningChart();
-            updateReturnRateTrendChart();
+            updateCustomerTrendChart();
             updateNewVsReturningConversionChart();
             updateChannelMatrixChart();
             updateChannelEngagementChart();
@@ -2787,6 +2919,52 @@
             updateImprovementPredictions('7d');
         }
 
+        // 단계별 맞춤 이탈 대응 추천 생성
+        function getChurnRecommendation(stage, changePercent, riskLevel) {
+            const absChange = Math.abs(parseFloat(changePercent));
+            const urgency = riskLevel === 'high' ? '즉시' : '빠르게';
+
+            // 단계별 맞춤 추천
+            const stageRecommendations = {
+                '유입': [
+                    `광고 캠페인의 타겟팅을 ${urgency} 재검토하세요. 잘못된 고객층에게 광고가 노출되고 있을 수 있습니다.`,
+                    `광고 소재(이미지, 문구)를 점검하세요. 클릭은 많지만 이탈이 늘었다면 광고 내용과 실제 페이지가 다를 수 있습니다.`,
+                    `경쟁사의 프로모션이나 시장 변화를 확인하세요. 외부 요인이 유입에 영향을 줄 수 있습니다.`
+                ],
+                '활동': [
+                    `랜딩페이지 로딩 속도를 ${urgency} 개선하세요. 느린 페이지는 방문자를 즉시 떠나게 만듭니다.`,
+                    `첫 화면의 메시지가 명확한지 확인하세요. 방문자가 5초 안에 "여기서 뭘 할 수 있는지" 이해해야 합니다.`,
+                    `모바일 화면에서도 제대로 보이는지 테스트하세요. 많은 사용자가 모바일로 접속합니다.`
+                ],
+                '관심': [
+                    `제품/서비스 설명을 더 구체적으로 작성하세요. 고객이 관심을 잃는 이유는 정보 부족일 수 있습니다.`,
+                    `고객 후기와 리뷰를 더 눈에 띄게 배치하세요. 신뢰가 부족하면 관심이 떨어집니다.`,
+                    `가격이나 혜택 정보를 더 일찍 보여주세요. 숨겨진 비용은 고객을 이탈시킵니다.`
+                ],
+                '결제진행': [
+                    `결제 단계를 단순화하세요. 불필요한 정보 입력을 제거하고 필수 항목만 남기세요.`,
+                    `배송비와 총 금액을 결제 전에 미리 보여주세요. 마지막에 예상보다 비싸면 이탈합니다.`,
+                    `다양한 결제 수단을 제공하세요. 선호하는 결제 방법이 없으면 포기할 수 있습니다.`
+                ],
+                '구매완료': [
+                    `결제 오류나 시스템 문제를 ${urgency} 점검하세요. 기술적 문제로 구매가 실패할 수 있습니다.`,
+                    `마지막 단계의 보안 인증이 너무 복잡하지 않은지 확인하세요. 간편 결제 도입을 고려하세요.`,
+                    `재고 부족 알림을 확인하세요. 품절로 인해 구매를 완료하지 못했을 수 있습니다.`
+                ]
+            };
+
+            // 해당 단계의 추천 목록
+            const recommendations = stageRecommendations[stage] || [
+                `${stage} 단계의 고객 경험을 전반적으로 재검토하세요.`,
+                `데이터를 분석하여 이탈의 근본 원인을 파악하세요.`,
+                `A/B 테스트를 통해 다양한 개선안을 실험해보세요.`
+            ];
+
+            // 이탈률에 따라 추천 선택 (높을수록 더 긴급한 추천)
+            const index = absChange > 15 ? 0 : absChange > 10 ? 1 : 2;
+            return recommendations[index];
+        }
+
         // 이탈 위험 경고 업데이트 (period: '7d' or '30d')
         function updateChurnPredictions(period) {
             if (!insightsData) return;
@@ -2804,7 +2982,9 @@
                         </p>
                     </div>
                     <div style="display: grid; gap: 12px;">
-                        ${predictions.map(pred => `
+                        ${predictions.map(pred => {
+                            const customRecommendation = getChurnRecommendation(pred.stage, pred.change_pct, pred.risk_level);
+                            return `
                             <div style="padding: 16px; background: ${pred.risk_level === 'high' ? 'var(--error-light)' : 'var(--warning-light)'}; border-radius: 8px; border-left: 4px solid ${pred.risk_level === 'high' ? 'var(--error-main)' : 'var(--warning-main)'};">
                                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
                                     <div>
@@ -2823,11 +3003,12 @@
                                     <span>최근 평균: <strong>${formatNumber(pred.recent_avg)}</strong>명</span>
                                     <span>이전 평균: <strong>${formatNumber(pred.previous_avg)}</strong>명</span>
                                 </div>
-                                <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: white; border-radius: 6px;">
-                                    💡 ${pred.recommendation}
+                                <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: white; border-radius: 6px; line-height: 1.6;">
+                                    💡 <strong>우선 조치:</strong> ${customRecommendation}
                                 </div>
                             </div>
-                        `).join('')}
+                        `;
+                        }).join('')}
                     </div>
                 `;
             } else {
@@ -2841,6 +3022,52 @@
                     </div>
                 `;
             }
+        }
+
+        // 단계별 맞춤 개선 유지 추천 생성
+        function getImprovementRecommendation(stage, changePercent, improvementLevel) {
+            const absChange = Math.abs(parseFloat(changePercent));
+            const emphasis = improvementLevel === 'high' ? '탁월한' : '좋은';
+
+            // 단계별 맞춤 추천
+            const stageRecommendations = {
+                '유입': [
+                    `${emphasis} 성과입니다! 현재 마케팅 캠페인의 전략과 예산 배분을 그대로 유지하세요. 성공 요인을 분석해 다른 채널에도 적용하세요.`,
+                    `유입이 증가한 이유를 분석하고 문서화하세요. 계절성, 프로모션, 광고 메시지 변경 등 어떤 요인이 효과적이었는지 기록하세요.`,
+                    `이 성과를 발판 삼아 추가 투자를 고려하세요. 효과가 검증된 채널에 예산을 10-20% 늘려보세요.`
+                ],
+                '활동': [
+                    `첫 화면 개선이 효과를 보고 있습니다! 최근 변경한 UI/UX 요소를 분석하여 성공 패턴을 찾아내세요.`,
+                    `활성 사용자가 늘었다면 콘텐츠나 기능이 매력적이라는 뜻입니다. 유사한 콘텐츠를 더 만들어 관심을 유지하세요.`,
+                    `사용자 행동 데이터를 깊이 분석하세요. 어떤 기능을 가장 많이 사용하는지 파악하여 더 강화하세요.`
+                ],
+                '관심': [
+                    `제품/서비스에 대한 관심이 높아지고 있습니다! 최근 추가한 설명이나 이미지가 효과적이었는지 확인하세요.`,
+                    `고객 후기나 리뷰 배치가 좋은 결과를 만들었다면, 더 많은 고객의 목소리를 추가하세요.`,
+                    `관심 증가를 구매로 연결하세요. 관심 단계에서 할인 쿠폰이나 무료 배송 혜택을 강조하세요.`
+                ],
+                '결제진행': [
+                    `결제 프로세스 개선이 성공했습니다! 최근 간소화한 단계나 추가한 결제 수단이 효과를 발휘하고 있습니다.`,
+                    `결제 진행률이 올라갔다면 신뢰가 높아진 것입니다. 보안 인증 마크나 안전 결제 강조를 더욱 부각하세요.`,
+                    `이탈률을 더 낮추기 위해 실시간 채팅 지원을 추가하세요. 결제 중 궁금한 점을 즉시 해결할 수 있습니다.`
+                ],
+                '구매완료': [
+                    `${emphasis} 성과입니다! 구매 완료가 증가하면 직접적으로 매출이 오릅니다. 현재 전략을 철저히 유지하세요.`,
+                    `구매 고객에게 리뷰 작성을 요청하세요. 긍정적인 경험을 공유하도록 하여 신뢰도를 더 높이세요.`,
+                    `재구매를 유도하세요. 구매 후 7-14일 뒤 이메일로 관련 상품 추천이나 재구매 쿠폰을 보내세요.`
+                ]
+            };
+
+            // 해당 단계의 추천 목록
+            const recommendations = stageRecommendations[stage] || [
+                `${stage} 단계의 긍정적인 변화를 계속 유지하세요.`,
+                `성공 요인을 분석하고 다른 영역에도 적용하세요.`,
+                `추가 개선 여지를 찾아 A/B 테스트를 진행하세요.`
+            ];
+
+            // 개선율에 따라 추천 선택 (높을수록 더 적극적인 추천)
+            const index = absChange > 15 ? 0 : absChange > 10 ? 1 : 2;
+            return recommendations[index];
         }
 
         // 성과 개선 분석 업데이트 (period: '7d' or '30d')
@@ -2860,7 +3087,9 @@
                         </p>
                     </div>
                     <div style="display: grid; gap: 12px;">
-                        ${predictions.map(pred => `
+                        ${predictions.map(pred => {
+                            const customRecommendation = getImprovementRecommendation(pred.stage, pred.change_pct, pred.improvement_level);
+                            return `
                             <div style="padding: 16px; background: ${pred.improvement_level === 'high' ? 'var(--success-light)' : '#e8f5e9'}; border-radius: 8px; border-left: 4px solid ${pred.improvement_level === 'high' ? 'var(--success-main)' : '#66bb6a'};">
                                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
                                     <div>
@@ -2879,11 +3108,12 @@
                                     <span>최근 평균: <strong>${formatNumber(pred.recent_avg)}</strong>명</span>
                                     <span>이전 평균: <strong>${formatNumber(pred.previous_avg)}</strong>명</span>
                                 </div>
-                                <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: white; border-radius: 6px;">
-                                    💡 ${pred.recommendation}
+                                <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: white; border-radius: 6px; line-height: 1.6;">
+                                    ✅ <strong>성과 유지 전략:</strong> ${customRecommendation}
                                 </div>
                             </div>
-                        `).join('')}
+                        `;
+                        }).join('')}
                     </div>
                 `;
             } else {
@@ -2925,7 +3155,11 @@
             return {
                 total: totalChurn,
                 max: maxChurn,
-                avg: avgChurn
+                avg: avgChurn,
+                activation: activationChurn,
+                consideration: considerationChurn,
+                conversion: conversionChurn,
+                purchase: purchaseChurn
             };
         }
 
@@ -3071,11 +3305,8 @@
                 container.addEventListener('mousemove', function(event) {
                     const tooltip = document.getElementById('kpiChartTooltip');
                     if (tooltip && tooltip.classList.contains('show')) {
-                        const containerRect = container.getBoundingClientRect();
-                        const x = event.clientX - containerRect.left;
-                        const y = event.clientY - containerRect.top;
-                        tooltip.style.left = (x + 15) + 'px';
-                        tooltip.style.top = (y + 15) + 'px';
+                        tooltip.style.left = (event.clientX + 15) + 'px';
+                        tooltip.style.top = (event.clientY + 15) + 'px';
                     }
                 });
 
@@ -3085,8 +3316,8 @@
             }
         }
 
-        // 이탈률 차트 업데이트 (전체 이탈률, 최대 이탈률, 평균 이탈률)
-        function updateChurnChart(churnType = 'churn_total') {
+        // 이탈률 차트 업데이트 (퍼널 단계별 이탈률)
+        function updateChurnChart(stage = null, sort = null) {
             if (channelData.length === 0) return;
 
             const ctx = document.getElementById('channelChurnChart');
@@ -3096,37 +3327,52 @@
                 channelChurnChart.destroy();
             }
 
-            // 현재 이탈률 타입 저장
-            currentChurnType = churnType;
+            // 파라미터가 제공되면 전역 변수 업데이트
+            if (stage !== null) currentChurnStage = stage;
+            if (sort !== null) currentChurnSort = sort;
 
-            // 이탈률별 설정
-            const churnConfig = {
-                churn_total: {
-                    label: '전체 이탈률 (%)',
-                    key: 'churn_total',
-                    color: '#e91e63',
-                    format: (val) => formatDecimal(val) + '%',
-                    getValue: (row) => calculateChurnRates(row).total,
-                    tooltip: '(유입 - 구매완료) / 유입 × 100'
+            // 퍼널 단계별 설정
+            const stageConfig = {
+                activation: {
+                    label: '유입→활동 이탈률 (%)',
+                    color: '#673ab7',
+                    getValue: (row) => calculateChurnRates(row).activation,
+                    tooltip: '(유입 - 활동) / 유입 × 100'
                 },
-                churn_avg: {
+                consideration: {
+                    label: '활동→관심 이탈률 (%)',
+                    color: '#2196f3',
+                    getValue: (row) => calculateChurnRates(row).consideration,
+                    tooltip: '(활동 - 관심) / 활동 × 100'
+                },
+                conversion: {
+                    label: '관심→결제진행 이탈률 (%)',
+                    color: '#ff9800',
+                    getValue: (row) => calculateChurnRates(row).conversion,
+                    tooltip: '(관심 - 결제진행) / 관심 × 100'
+                },
+                purchase: {
+                    label: '결제진행→구매완료 이탈률 (%)',
+                    color: '#4caf50',
+                    getValue: (row) => calculateChurnRates(row).purchase,
+                    tooltip: '(결제진행 - 구매완료) / 결제진행 × 100'
+                },
+                avg: {
                     label: '평균 이탈률 (%)',
-                    key: 'churn_avg',
-                    color: '#3f51b5',
-                    format: (val) => formatDecimal(val) + '%',
+                    color: '#e91e63',
                     getValue: (row) => calculateChurnRates(row).avg,
-                    tooltip: '단계별 이탈률의 평균'
+                    tooltip: '모든 단계 이탈률의 평균'
                 }
             };
 
-            const config = churnConfig[churnType];
+            const config = stageConfig[currentChurnStage];
             if (!config) return;
 
-            // 선택된 이탈률 기준으로 정렬 (DESC)
+            // 데이터 정렬
             const sortedData = [...channelData].sort((a, b) => {
                 const aVal = config.getValue(a);
                 const bVal = config.getValue(b);
-                return bVal - aVal;
+                return currentChurnSort === 'desc' ? (bVal - aVal) : (aVal - bVal);
             }).slice(0, 10);
 
             const labels = sortedData.map(row => row['channel']);
@@ -3155,7 +3401,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return config.label + ': ' + config.format(context.parsed.x);
+                                    return config.label + ': ' + formatDecimal(context.parsed.x) + '%';
                                 },
                                 afterLabel: function(context) {
                                     return '계산식: ' + config.tooltip;
@@ -3189,18 +3435,15 @@
                 container.dataset.tooltipSetup = 'true';
 
                 container.addEventListener('mouseenter', function(event) {
-                    const insight = generateChurnInsight(currentChurnType);
+                    const insight = generateChurnInsight();
                     showChartInsightTooltip('churnChartTooltip', insight.insight, insight.recommendation, event);
                 });
 
                 container.addEventListener('mousemove', function(event) {
                     const tooltip = document.getElementById('churnChartTooltip');
                     if (tooltip && tooltip.classList.contains('show')) {
-                        const containerRect = container.getBoundingClientRect();
-                        const x = event.clientX - containerRect.left;
-                        const y = event.clientY - containerRect.top;
-                        tooltip.style.left = (x + 15) + 'px';
-                        tooltip.style.top = (y + 15) + 'px';
+                        tooltip.style.left = (event.clientX + 15) + 'px';
+                        tooltip.style.top = (event.clientY + 15) + 'px';
                     }
                 });
 
@@ -3245,11 +3488,8 @@
                 container.addEventListener('mousemove', function(event) {
                     const tooltip = document.getElementById('compareChartTooltip');
                     if (tooltip && tooltip.classList.contains('show')) {
-                        const containerRect = container.getBoundingClientRect();
-                        const x = event.clientX - containerRect.left;
-                        const y = event.clientY - containerRect.top;
-                        tooltip.style.left = (x + 15) + 'px';
-                        tooltip.style.top = (y + 15) + 'px';
+                        tooltip.style.left = (event.clientX + 15) + 'px';
+                        tooltip.style.top = (event.clientY + 15) + 'px';
                     }
                 });
 
@@ -3555,7 +3795,9 @@
             });
         }
 
-        // 신규 vs 재방문 차트 업데이트
+        // [DEPRECATED] 신규 vs 재방문 차트 업데이트
+        // 이 함수는 더 이상 사용되지 않습니다. updateCustomerTrendChart()로 통합되었습니다.
+        /*
         function updateNewVsReturningChart() {
             if (newVsReturningData.length === 0) return;
 
@@ -3680,6 +3922,7 @@
                 }
             });
         }
+        */
 
         // 채널 테이블 업데이트
         function updateChannelTable() {
@@ -3855,13 +4098,9 @@
                 </div>
             `;
 
-            // 마우스 위치에 따라 툴팁 위치 조정
-            const containerRect = tooltip.parentElement.getBoundingClientRect();
-            const x = event.clientX - containerRect.left;
-            const y = event.clientY - containerRect.top;
-
-            tooltip.style.left = (x + 15) + 'px';
-            tooltip.style.top = (y + 15) + 'px';
+            // position: fixed 사용 - 화면 기준 절대 좌표
+            tooltip.style.left = (event.clientX + 15) + 'px';
+            tooltip.style.top = (event.clientY + 15) + 'px';
             tooltip.classList.add('show');
         }
 
@@ -3908,19 +4147,11 @@
         }
 
         // 이탈률 차트 인사이트 생성
-        function generateChurnInsight(churnType) {
-            const insights = {
-                churn_total: {
-                    insight: '전체 이탈률은 처음 방문부터 구매까지 전 과정에서 떠난 사람의 비율입니다. 예를 들어 100명이 방문해서 95명이 구매 안 하고 떠나면 95%입니다. 이탈률이 높을수록 개선할 부분이 많다는 뜻입니다.',
-                    recommendation: '이탈률이 높은 채널을 클릭해서 어느 단계에서 가장 많이 떠나는지 확인하세요. 그 단계를 집중적으로 개선하면 효과가 큽니다.'
-                },
-                churn_avg: {
-                    insight: '평균 이탈률은 각 단계에서 떠난 사람들의 평균값입니다. 이 값이 높으면 전반적으로 고객 경험이 좋지 않다는 신호입니다.',
-                    recommendation: '전체적으로 고객 경험을 점검해야 합니다. 웹사이트 속도, 디자인, 설명 문구, 결제 과정 등을 하나씩 개선해나가세요. 두 가지 버전을 만들어 테스트해보는 것도 좋습니다.'
-                }
+        function generateChurnInsight() {
+            return {
+                insight: '채널 이탈률을 개선하면 전환율이 높아지고 매출이 증가합니다.',
+                recommendation: '이탈률이 높은 채널일수록 개선 여지가 크다는 뜻입니다. 그 단계를 집중적으로 개선하면 효과가 큽니다.'
             };
-
-            return insights[churnType] || { insight: '데이터 분석 중입니다.', recommendation: '지속적으로 성과를 모니터링하세요.' };
         }
 
         // 비교 차트 인사이트 생성
@@ -3960,8 +4191,8 @@
 
                 newVsReturningView = view;
 
-                // 신규 vs 재방문 차트만 업데이트 (다른 섹션에 영향 없음)
-                updateNewVsReturningChart();
+                // 신규 vs 재방문 관련 차트들 업데이트 (다른 섹션에 영향 없음)
+                updateCustomerTrendChart();
             });
         });
 
@@ -4004,16 +4235,29 @@
             });
         });
 
-        // 이탈률 차트 버튼 전환 - 독립적
-        document.querySelectorAll('.channel-churn-btn').forEach(btn => {
+        // 이탈률 차트 퍼널 단계 버튼 전환
+        document.querySelectorAll('.channel-churn-stage-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                const churnType = this.dataset.kpi;
-                console.log(`[이탈률 차트] 타입 전환: ${churnType}`);
+                const stage = this.dataset.stage;
+                console.log(`[이탈률 차트] 퍼널 단계 전환: ${stage}`);
 
-                document.querySelectorAll('.channel-churn-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.channel-churn-stage-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
 
-                updateChurnChart(churnType);
+                updateChurnChart(stage, null);
+            });
+        });
+
+        // 이탈률 차트 정렬 순서 버튼 전환
+        document.querySelectorAll('.channel-churn-sort-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const sort = this.dataset.sort;
+                console.log(`[이탈률 차트] 정렬 순서 전환: ${sort}`);
+
+                document.querySelectorAll('.channel-churn-sort-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                updateChurnChart(null, sort);
             });
         });
 
@@ -4582,7 +4826,8 @@
                 { name: '이탈 위험 버튼', selector: '.churn-period-btn' },
                 { name: '성과 개선 버튼', selector: '.improvement-period-btn' },
                 { name: 'KPI 차트 버튼', selector: '.channel-kpi-btn' },
-                { name: '이탈률 차트 버튼', selector: '.channel-churn-btn' },
+                { name: '이탈률 퍼널 단계 버튼', selector: '.channel-churn-stage-btn' },
+                { name: '이탈률 정렬 버튼', selector: '.channel-churn-sort-btn' },
                 { name: '채널 퍼널 버튼', selector: '.channel-funnel-btn' }
             ];
 
@@ -4609,7 +4854,9 @@
         // 새로운 차트 렌더링 함수들
         // ========================================
 
-        // 1. 재방문율 추세 차트
+        // [DEPRECATED] 1. 재방문율 추세 차트
+        // 이 함수는 더 이상 사용되지 않습니다. updateCustomerTrendChart()로 통합되었습니다.
+        /*
         function updateReturnRateTrendChart() {
             if (newVsReturningData.length === 0) return;
 
@@ -4730,6 +4977,210 @@
                 }
             });
         }
+        */
+
+        // 통합 신규/재방문 추세 차트
+        function updateCustomerTrendChart() {
+            if (newVsReturningData.length === 0) return;
+
+            const canvas = document.getElementById('customerTrendChart');
+            if (!canvas) return;
+
+            // 유입 단계만 필터링
+            const acquisitionData = newVsReturningData.filter(row => row['funnel'] === '유입');
+
+            // 날짜별로 정렬
+            const sortedData = acquisitionData.sort((a, b) => {
+                const dateA = new Date(a['Day']);
+                const dateB = new Date(b['Day']);
+                return dateA - dateB;
+            });
+
+            // 현재 선택된 뷰에 따라 데이터 집계
+            let aggregatedData = [];
+
+            if (newVsReturningView === 'monthly') {
+                // 월별 집계
+                const monthlyMap = {};
+                sortedData.forEach(row => {
+                    const date = new Date(row['Day']);
+                    const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+                    if (!monthlyMap[month]) {
+                        monthlyMap[month] = {
+                            totalUsers: 0,
+                            newUsers: 0,
+                            returningUsers: 0
+                        };
+                    }
+
+                    monthlyMap[month].totalUsers += parseFloat(row['Total users']) || 0;
+                    monthlyMap[month].newUsers += parseFloat(row['New users']) || 0;
+                    monthlyMap[month].returningUsers += parseFloat(row['Returning users']) || 0;
+                });
+
+                aggregatedData = Object.entries(monthlyMap).map(([month, data]) => ({
+                    label: month,
+                    newUserPct: ((data.newUsers / data.totalUsers) * 100).toFixed(2),
+                    returnRate: ((data.returningUsers / data.totalUsers) * 100).toFixed(2)
+                }));
+            } else if (newVsReturningView === 'weekly') {
+                // 주별 집계
+                const weeklyMap = new Map();
+
+                sortedData.forEach(row => {
+                    const date = new Date(row['Day']);
+                    const dayOfWeek = date.getDay();
+                    const weekStart = new Date(date);
+                    weekStart.setDate(date.getDate() - dayOfWeek);
+                    const weekKey = weekStart.toISOString().split('T')[0];
+
+                    if (!weeklyMap.has(weekKey)) {
+                        weeklyMap.set(weekKey, {
+                            totalUsers: 0,
+                            newUsers: 0,
+                            returningUsers: 0
+                        });
+                    }
+
+                    const weekData = weeklyMap.get(weekKey);
+                    weekData.totalUsers += parseFloat(row['Total users']) || 0;
+                    weekData.newUsers += parseFloat(row['New users']) || 0;
+                    weekData.returningUsers += parseFloat(row['Returning users']) || 0;
+                });
+
+                aggregatedData = Array.from(weeklyMap.entries())
+                    .sort((a, b) => a[0].localeCompare(b[0]))
+                    .map(([week, data]) => ({
+                        label: week,
+                        newUserPct: data.totalUsers > 0 ? ((data.newUsers / data.totalUsers) * 100).toFixed(2) : 0,
+                        returnRate: data.totalUsers > 0 ? ((data.returningUsers / data.totalUsers) * 100).toFixed(2) : 0
+                    }));
+            } else {
+                // 일별 (기본)
+                aggregatedData = sortedData.map(row => ({
+                    label: row['Day'],
+                    newUserPct: parseFloat(row['New user %']).toFixed(2),
+                    returnRate: (100 - parseFloat(row['New user %'])).toFixed(2)
+                }));
+            }
+
+            if (customerTrendChart) {
+                customerTrendChart.destroy();
+            }
+
+            customerTrendChart = new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels: aggregatedData.map(d => d.label),
+                    datasets: [
+                        {
+                            label: '신규 고객 비율 (%)',
+                            data: aggregatedData.map(d => d.newUserPct),
+                            borderColor: '#2196f3',
+                            backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                            tension: 0.3,
+                            fill: true,
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: '재방문율 (%)',
+                            data: aggregatedData.map(d => d.returnRate),
+                            borderColor: '#673ab7',
+                            backgroundColor: 'rgba(103, 58, 183, 0.1)',
+                            tension: 0.3,
+                            fill: true,
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            yAxisID: 'y'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: '비율 (%)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 툴팁 설정
+            setupCustomerTrendTooltip();
+        }
+
+        // 통합 고객 추세 차트 인사이트 생성
+        function generateCustomerTrendInsight() {
+            return {
+                insight: '신규 고객 비율과 재방문율의 균형을 확인하세요. 신규 비율이 높으면 성장 중이며, 재방문율이 높으면 충성도가 높습니다.',
+                recommendation: '이상적으로는 꾸준한 신규 유입(30-40%)과 높은 재방문율(60-70%)을 유지하는 것이 좋습니다. 두 지표가 함께 성장하는 것이 건강한 비즈니스의 신호입니다.'
+            };
+        }
+
+        // 통합 고객 추세 차트 툴팁 설정
+        function setupCustomerTrendTooltip() {
+            const canvas = document.getElementById('customerTrendChart');
+            const container = canvas ? canvas.parentElement : null;
+            if (!container) return;
+
+            if (!container.dataset.tooltipSetup) {
+                container.dataset.tooltipSetup = 'true';
+
+                container.addEventListener('mouseenter', function(event) {
+                    const insight = generateCustomerTrendInsight();
+                    showChartInsightTooltip('customerTrendTooltip', insight.insight, insight.recommendation, event);
+                });
+
+                container.addEventListener('mousemove', function(event) {
+                    const tooltip = document.getElementById('customerTrendTooltip');
+                    if (tooltip && tooltip.classList.contains('show')) {
+                        tooltip.style.left = (event.clientX + 15) + 'px';
+                        tooltip.style.top = (event.clientY + 15) + 'px';
+                    }
+                });
+
+                container.addEventListener('mouseleave', function() {
+                    hideChartInsightTooltip('customerTrendTooltip');
+                });
+            }
+        }
 
         // 2. 신규 vs 재방문 고객 전환율 비교 차트
         function updateNewVsReturningConversionChart() {
@@ -4741,6 +5192,9 @@
             const labels = newVsReturningConversionData.map(row => row['funnel_stage']);
             const newUserCVR = newVsReturningConversionData.map(row => parseFloat(row['New user CVR']) || 0);
             const returningUserCVR = newVsReturningConversionData.map(row => parseFloat(row['Returning user CVR']) || 0);
+
+            // 인사이트 분석 및 표시
+            analyzeConversionGap(labels, newUserCVR, returningUserCVR);
 
             if (newVsReturningConversionChart) {
                 newVsReturningConversionChart.destroy();
@@ -4754,32 +5208,94 @@
                         {
                             label: '신규 고객 전환율 (%)',
                             data: newUserCVR,
-                            backgroundColor: 'rgba(255, 152, 0, 0.6)',
+                            backgroundColor: 'rgba(255, 152, 0, 0.7)',
                             borderColor: '#ff9800',
-                            borderWidth: 2
+                            borderWidth: 2,
+                            borderRadius: 6,
+                            barThickness: 'flex',
+                            maxBarThickness: 60
                         },
                         {
                             label: '재방문 고객 전환율 (%)',
                             data: returningUserCVR,
-                            backgroundColor: 'rgba(103, 58, 183, 0.6)',
+                            backgroundColor: 'rgba(103, 58, 183, 0.7)',
                             borderColor: '#673ab7',
-                            borderWidth: 2
+                            borderWidth: 2,
+                            borderRadius: 6,
+                            barThickness: 'flex',
+                            maxBarThickness: 60
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
                     plugins: {
                         legend: {
                             display: true,
-                            position: 'top'
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 13,
+                                    weight: '600'
+                                },
+                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'rectRounded'
+                            }
                         },
                         tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
                             callbacks: {
+                                title: function(context) {
+                                    return context[0].label + ' 단계';
+                                },
                                 label: function(context) {
-                                    return `${context.dataset.label}: ${context.parsed.y.toFixed(2)}%`;
+                                    const value = context.parsed.y.toFixed(2);
+                                    return `${context.dataset.label}: ${value}%`;
+                                },
+                                afterBody: function(context) {
+                                    if (context.length === 2) {
+                                        const newValue = context[0].parsed.y;
+                                        const returningValue = context[1].parsed.y;
+                                        const gap = Math.abs(returningValue - newValue);
+                                        const higherGroup = returningValue > newValue ? '재방문 고객' : '신규 고객';
+                                        return [
+                                            '',
+                                            `📊 전환율 차이: ${gap.toFixed(2)}%p`,
+                                            `${higherGroup}이 더 높음`
+                                        ];
+                                    }
+                                    return '';
                                 }
+                            }
+                        },
+                        datalabels: {
+                            display: true,
+                            anchor: 'end',
+                            align: 'top',
+                            offset: 4,
+                            formatter: function(value, context) {
+                                return value.toFixed(1) + '%';
+                            },
+                            font: {
+                                size: 11,
+                                weight: 'bold'
+                            },
+                            color: function(context) {
+                                return context.datasetIndex === 0 ? '#f57c00' : '#673ab7';
                             }
                         }
                     },
@@ -4789,12 +5305,144 @@
                             ticks: {
                                 callback: function(value) {
                                     return value + '%';
+                                },
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: '전환율 (%)',
+                                font: {
+                                    size: 13,
+                                    weight: '600'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12,
+                                    weight: '500'
                                 }
                             }
                         }
                     }
-                }
+                },
+                plugins: [ChartDataLabels]
             });
+
+            // 인사이트 툴팁 설정
+            setupConversionChartTooltip();
+        }
+
+        // 전환율 차이 분석 함수
+        function analyzeConversionGap(labels, newUserCVR, returningUserCVR) {
+            if (labels.length === 0 || newUserCVR.length === 0 || returningUserCVR.length === 0) {
+                return;
+            }
+
+            // 각 단계별 차이 계산
+            const gaps = labels.map((label, i) => ({
+                stage: label,
+                newCVR: newUserCVR[i],
+                returningCVR: returningUserCVR[i],
+                gap: returningUserCVR[i] - newUserCVR[i],
+                gapPercent: ((returningUserCVR[i] - newUserCVR[i]) / newUserCVR[i] * 100)
+            }));
+
+            // 가장 차이가 큰 단계 찾기
+            const maxGap = gaps.reduce((max, item) => item.gap > max.gap ? item : max, gaps[0]);
+            const minGap = gaps.reduce((min, item) => item.gap < min.gap ? item : min, gaps[0]);
+
+            // 평균 신규/재방문 전환율
+            const avgNew = newUserCVR.reduce((sum, val) => sum + val, 0) / newUserCVR.length;
+            const avgReturning = returningUserCVR.reduce((sum, val) => sum + val, 0) / returningUserCVR.length;
+            const avgGap = avgReturning - avgNew;
+
+            // 인사이트 텍스트 생성
+            let insightHTML = '';
+
+            if (avgReturning > avgNew) {
+                const ratio = (avgReturning / avgNew).toFixed(1);
+                insightHTML += `재방문 고객의 평균 전환율은 <strong style="color: #673ab7;">${avgReturning.toFixed(1)}%</strong>로, `;
+                insightHTML += `신규 고객(<strong style="color: #ff9800;">${avgNew.toFixed(1)}%</strong>)보다 <strong style="color: var(--success-main);">${ratio}배 높습니다</strong>. `;
+            } else {
+                insightHTML += `신규 고객과 재방문 고객의 전환율이 비슷합니다. `;
+            }
+
+            if (maxGap.gap > 5) {
+                insightHTML += `<br><strong>특히 "${maxGap.stage}" 단계</strong>에서 재방문 고객이 ${maxGap.gap.toFixed(1)}%p 더 높습니다. `;
+
+                // 단계별 맞춤 추천
+                if (maxGap.stage.includes('유입') || maxGap.stage.includes('활동')) {
+                    insightHTML += `신규 고객이 이 단계에서 이탈하지 않도록 <strong>첫 화면을 간결하게</strong> 만들고 <strong>로딩 속도를 개선</strong>하세요.`;
+                } else if (maxGap.stage.includes('관심')) {
+                    insightHTML += `신규 고객에게 <strong>제품 리뷰와 고객 후기</strong>를 강조하여 신뢰를 구축하세요.`;
+                } else if (maxGap.stage.includes('결제') || maxGap.stage.includes('구매')) {
+                    insightHTML += `신규 고객도 쉽게 구매할 수 있도록 <strong>게스트 체크아웃</strong>과 <strong>간편 결제</strong>를 도입하세요.`;
+                }
+            } else {
+                insightHTML += `모든 단계에서 비슷한 패턴을 보입니다. 신규 고객과 재방문 고객 모두에게 효과적인 전략을 유지하세요.`;
+            }
+
+            // 핵심 추천사항
+            insightHTML += `<br><br><strong style="color: var(--primary-main);">💡 핵심 전략:</strong> `;
+            if (avgGap > 10) {
+                insightHTML += `재방문율을 높이는 것이 가장 효과적입니다. 이메일 마케팅, 리타겟팅 광고, 쿠폰 제공으로 재방문을 유도하세요.`;
+            } else if (avgNew < 3) {
+                insightHTML += `신규 고객 전환율이 낮습니다. 랜딩페이지 개선과 첫 구매 할인 혜택 제공을 고려하세요.`;
+            } else {
+                insightHTML += `균형잡힌 성과를 보이고 있습니다. 지속적인 A/B 테스트로 두 그룹 모두의 전환율을 개선하세요.`;
+            }
+
+            // 인사이트 표시
+            const insightElement = document.getElementById('conversionInsightText');
+            if (insightElement) {
+                insightElement.innerHTML = insightHTML;
+            }
+        }
+
+        // 전환율 비교 차트 인사이트 생성
+        function generateConversionInsight() {
+            return {
+                insight: '신규 고객과 재방문 고객의 전환율 차이는 고객 경험의 질을 보여주는 중요한 지표입니다. 재방문 고객이 높다면 브랜드 충성도가 좋다는 뜻이고, 신규 고객이 낮다면 첫인상 개선이 필요합니다.',
+                recommendation: '차이가 큰 단계를 집중 개선하세요. 예를 들어, 재방문 고객만 구매율이 높다면 신규 고객을 위한 "첫 구매 10% 할인" 같은 인센티브를 제공하거나, 재방문 고객에게는 VIP 혜택을 제공하여 충성도를 더 높이세요.'
+            };
+        }
+
+        // 전환율 비교 차트 툴팁 설정
+        function setupConversionChartTooltip() {
+            const canvas = document.getElementById('newVsReturningConversionChart');
+            const container = canvas ? canvas.parentElement : null;
+            if (!container) return;
+
+            if (!container.dataset.tooltipSetup) {
+                container.dataset.tooltipSetup = 'true';
+
+                container.addEventListener('mouseenter', function(event) {
+                    const insight = generateConversionInsight();
+                    showChartInsightTooltip('customerTrendTooltip', insight.insight, insight.recommendation, event);
+                });
+
+                container.addEventListener('mousemove', function(event) {
+                    const tooltip = document.getElementById('customerTrendTooltip');
+                    if (tooltip && tooltip.classList.contains('show')) {
+                        tooltip.style.left = (event.clientX + 15) + 'px';
+                        tooltip.style.top = (event.clientY + 15) + 'px';
+                    }
+                });
+
+                container.addEventListener('mouseleave', function() {
+                    hideChartInsightTooltip('customerTrendTooltip');
+                });
+            }
         }
 
         // 3. 채널 품질 매트릭스 차트 (Scatter)
@@ -4978,6 +5626,88 @@
             });
         }
 
+        // 참여도 분석 함수
+        function analyzeEngagementRates(allData, top10Data, top10Rates) {
+            if (allData.length === 0) return;
+
+            // 전체 평균 참여도
+            const avgEngagement = allData.reduce((sum, row) => sum + (parseFloat(row['Engagement rate']) || 0), 0) / allData.length;
+
+            // 최고/최저 참여도 채널
+            const highest = allData[0];
+            const lowest = allData[allData.length - 1];
+
+            // 참여도 범위 분류
+            const highEngagement = allData.filter(row => parseFloat(row['Engagement rate']) >= 60);
+            const mediumEngagement = allData.filter(row => {
+                const rate = parseFloat(row['Engagement rate']);
+                return rate >= 40 && rate < 60;
+            });
+            const lowEngagement = allData.filter(row => parseFloat(row['Engagement rate']) < 40);
+
+            // TOP 10의 평균 참여도
+            const top10Avg = top10Rates.reduce((sum, rate) => sum + rate, 0) / top10Rates.length;
+
+            // 인사이트 텍스트 생성
+            let insightHTML = '';
+
+            // 전체 상황 요약
+            insightHTML += `전체 채널의 평균 참여도는 <strong style="color: #9c27b0;">${avgEngagement.toFixed(1)}%</strong>입니다. `;
+
+            if (avgEngagement >= 60) {
+                insightHTML += `<strong style="color: var(--success-main);">매우 우수한</strong> 수준입니다! `;
+            } else if (avgEngagement >= 40) {
+                insightHTML += `평균적인 수준이며 개선 여지가 있습니다. `;
+            } else {
+                insightHTML += `<strong style="color: var(--error-main);">주의가 필요한</strong> 수준입니다. `;
+            }
+
+            // 최고/최저 채널 정보
+            insightHTML += `<br>가장 높은 참여도는 <strong>${highest['channel']}</strong> (${parseFloat(highest['Engagement rate']).toFixed(1)}%)이고, `;
+            insightHTML += `가장 낮은 참여도는 <strong>${lowest['channel']}</strong> (${parseFloat(lowest['Engagement rate']).toFixed(1)}%)입니다. `;
+
+            // 범위별 분포
+            insightHTML += `<br><br><strong style="color: var(--primary-main);">📊 채널 분포:</strong> `;
+            if (highEngagement.length > 0) {
+                insightHTML += `<strong style="color: var(--success-main);">${highEngagement.length}개 채널</strong>이 우수(60% 이상), `;
+            }
+            if (mediumEngagement.length > 0) {
+                insightHTML += `<strong style="color: #ff9800;">${mediumEngagement.length}개 채널</strong>이 보통(40-60%), `;
+            }
+            if (lowEngagement.length > 0) {
+                insightHTML += `<strong style="color: var(--error-main);">${lowEngagement.length}개 채널</strong>이 저조(40% 미만)입니다. `;
+            }
+
+            // 핵심 추천사항
+            insightHTML += `<br><br><strong style="color: var(--primary-main);">💡 핵심 전략:</strong> `;
+
+            if (highEngagement.length >= allData.length * 0.3) {
+                // 30% 이상이 고참여도
+                insightHTML += `우수한 채널이 많습니다! 이들 채널의 공통점을 분석하여 다른 채널에도 적용하세요. `;
+                insightHTML += `특히 <strong>${highest['channel']}</strong>의 성공 요인을 자세히 연구하세요.`;
+            } else if (lowEngagement.length >= allData.length * 0.3) {
+                // 30% 이상이 저참여도
+                insightHTML += `참여도가 낮은 채널이 많습니다. <strong>즉시 광고 타겟팅과 랜딩 페이지를 재검토</strong>하세요. `;
+                insightHTML += `저참여도 채널의 예산을 고참여도 채널로 재배분하는 것을 고려하세요.`;
+            } else {
+                // 중간 수준 많음
+                insightHTML += `대부분 채널이 개선 가능한 상태입니다. `;
+                insightHTML += `<strong>A/B 테스트를 통해 랜딩 페이지를 최적화</strong>하고, 타겟 오디언스를 세분화하여 참여도를 높이세요.`;
+            }
+
+            // 구체적 예시
+            if (top10Avg - avgEngagement > 10) {
+                insightHTML += `<br><br><strong>⚠️ 주의:</strong> 상위 10개 채널의 평균 참여도(${top10Avg.toFixed(1)}%)가 전체 평균보다 ${(top10Avg - avgEngagement).toFixed(1)}%p 높습니다. `;
+                insightHTML += `나머지 채널들의 품질이 낮으므로, 저성과 채널을 정리하거나 개선하는 것이 시급합니다.`;
+            }
+
+            // 인사이트 표시
+            const insightElement = document.getElementById('engagementInsightText');
+            if (insightElement) {
+                insightElement.innerHTML = insightHTML;
+            }
+        }
+
         // 4. 채널별 참여도 분석 차트
         function updateChannelEngagementChart() {
             if (channelEngagementData.length === 0) return;
@@ -4995,6 +5725,9 @@
 
             const labels = top10.map(row => row['channel']);
             const engagementRates = top10.map(row => parseFloat(row['Engagement rate']) || 0);
+
+            // 참여도 인사이트 분석 및 표시
+            analyzeEngagementRates(sortedData, top10, engagementRates);
 
             // 색상 그라데이션 (높을수록 진한 색)
             const colors = engagementRates.map(rate => {
@@ -5047,6 +5780,45 @@
                     }
                 }
             });
+
+            // 참여도 차트 인사이트 툴팁 설정
+            setupEngagementChartTooltip();
+        }
+
+        // 참여도 차트 인사이트 생성
+        function generateEngagementInsight() {
+            return {
+                insight: '참여도는 채널의 품질을 평가하는 가장 중요한 지표입니다. 높은 참여도는 타겟팅이 정확하고 랜딩 페이지가 매력적이라는 뜻이며, 전환율 향상으로 이어집니다.',
+                recommendation: '참여도 상위 채널에 예산을 집중하세요. 참여도 60% 이상은 우수, 40-60%는 보통, 40% 미만은 개선 필요입니다. 참여도가 낮은 채널은 광고 타겟팅과 랜딩 페이지를 즉시 재검토하거나 예산을 줄이는 것을 고려하세요.'
+            };
+        }
+
+        // 참여도 차트 툴팁 설정
+        function setupEngagementChartTooltip() {
+            const canvas = document.getElementById('channelEngagementChart');
+            const container = canvas ? canvas.parentElement : null;
+            if (!container) return;
+
+            if (!container.dataset.tooltipSetup) {
+                container.dataset.tooltipSetup = 'true';
+
+                container.addEventListener('mouseenter', function(event) {
+                    const insight = generateEngagementInsight();
+                    showChartInsightTooltip('churnChartTooltip', insight.insight, insight.recommendation, event);
+                });
+
+                container.addEventListener('mousemove', function(event) {
+                    const tooltip = document.getElementById('churnChartTooltip');
+                    if (tooltip && tooltip.classList.contains('show')) {
+                        tooltip.style.left = (event.clientX + 15) + 'px';
+                        tooltip.style.top = (event.clientY + 15) + 'px';
+                    }
+                });
+
+                container.addEventListener('mouseleave', function() {
+                    hideChartInsightTooltip('churnChartTooltip');
+                });
+            }
         }
 
         // ========================================
