@@ -234,6 +234,8 @@
             border-radius: 12px;
             box-shadow: 0 2px 14px 0 rgba(32, 40, 45, 0.08);
             transition: box-shadow 0.3s ease;
+            position: relative;
+            z-index: 1;
         }
 
         .card:hover {
@@ -466,7 +468,8 @@
 
         /* 데이터 테이블 */
         .table-section {
-            overflow: hidden;
+            overflow: visible;
+            position: relative;
         }
 
         .table-header {
@@ -497,6 +500,11 @@
             border-collapse: collapse;
         }
 
+        thead {
+            position: relative;
+            z-index: 50;
+        }
+
         th, td {
             padding: 14px 16px;
             text-align: right;
@@ -509,6 +517,8 @@
             color: var(--grey-700);
             border-bottom: 2px solid var(--grey-200);
             white-space: nowrap;
+            overflow: visible;
+            position: relative;
         }
 
         td {
@@ -527,7 +537,7 @@
 
         th:first-child {
             background: var(--grey-50);
-            z-index: 2;
+            z-index: 51;
         }
 
         tbody tr {
@@ -617,6 +627,7 @@
             max-height: 10000px;
             opacity: 1;
             padding-top: 16px;
+            overflow: visible;
         }
 
         /* 차트 인사이트 툴팁 */
@@ -1018,6 +1029,133 @@
             display: block;
             margin: 0 auto;
         }
+
+        /* 테이블 정렬 기능 */
+        .sortable-header {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-right: 24px !important;
+            transition: background 0.2s ease;
+            z-index: 100;
+        }
+
+        .sortable-header:hover {
+            background: var(--grey-100);
+        }
+
+        .sort-icon {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            opacity: 0.3;
+            transition: opacity 0.2s ease;
+        }
+
+        .sortable-header:hover .sort-icon {
+            opacity: 0.6;
+        }
+
+        .sort-icon.active {
+            opacity: 1;
+        }
+
+        .sort-arrow {
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+        }
+
+        .sort-arrow.up {
+            border-bottom: 5px solid var(--grey-700);
+        }
+
+        .sort-arrow.down {
+            border-top: 5px solid var(--grey-700);
+        }
+
+        .sort-arrow.active {
+            border-bottom-color: var(--primary-main);
+            border-top-color: var(--primary-main);
+        }
+
+        /* 정렬 툴팁 */
+        .sort-tooltip {
+            position: fixed;
+            transform: translate(-50%, -100%);
+            background: var(--grey-900);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 9999;
+            margin-top: -8px;
+        }
+
+        .sort-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid var(--grey-900);
+        }
+
+        .sortable-header:hover .sort-tooltip {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        /* 테이블 셀 색상 스케일 */
+        .cell-value {
+            position: relative;
+            font-weight: 500;
+        }
+
+        .cell-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            opacity: 0.15;
+            transition: opacity 0.3s ease;
+            border-radius: 4px;
+        }
+
+        tr:hover .cell-bg {
+            opacity: 0.25;
+        }
+
+        /* 색상 스케일 - 각 메트릭별 */
+        .scale-acquisition { background: linear-gradient(90deg, transparent, #673ab7); }
+        .scale-activation { background: linear-gradient(90deg, transparent, #2196f3); }
+        .scale-consideration { background: linear-gradient(90deg, transparent, #ff9800); }
+        .scale-conversion { background: linear-gradient(90deg, transparent, #4caf50); }
+        .scale-purchase { background: linear-gradient(90deg, transparent, #00c853); }
+        .scale-revenue { background: linear-gradient(90deg, transparent, #f44336); }
+        .scale-cvr { background: linear-gradient(90deg, transparent, #9c27b0); }
+
+        /* 테이블 셀 패딩 조정 */
+        td.has-bg {
+            position: relative;
+            padding: 14px 16px;
+        }
+
+        td.has-bg > span {
+            position: relative;
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
@@ -1321,7 +1459,6 @@
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
                                 <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 보고 싶은 이탈률:</span>
                                 <button class="view-btn channel-churn-btn active" data-kpi="churn_total" data-chart="churn">전체 이탈률</button>
-                                <button class="view-btn channel-churn-btn" data-kpi="churn_max" data-chart="churn">최대 이탈률</button>
                                 <button class="view-btn channel-churn-btn" data-kpi="churn_avg" data-chart="churn">평균 이탈률</button>
                             </div>
                             <div class="chart-container-small" style="position: relative;">
@@ -1419,13 +1556,62 @@
                                     <thead>
                                         <tr>
                                             <th>채널</th>
-                                            <th>유입</th>
-                                            <th>활동</th>
-                                            <th>관심</th>
-                                            <th>결제진행</th>
-                                            <th>구매완료</th>
-                                            <th>매출</th>
-                                            <th>CVR</th>
+                                            <th class="sortable-header" data-column="유입" data-type="number">
+                                                유입
+                                                <div class="sort-icon active">
+                                                    <div class="sort-arrow up"></div>
+                                                    <div class="sort-arrow down active"></div>
+                                                </div>
+                                                <div class="sort-tooltip">클릭하여 유입 기준으로 정렬</div>
+                                            </th>
+                                            <th class="sortable-header" data-column="활동" data-type="number">
+                                                활동
+                                                <div class="sort-icon">
+                                                    <div class="sort-arrow up"></div>
+                                                    <div class="sort-arrow down"></div>
+                                                </div>
+                                                <div class="sort-tooltip">클릭하여 활동 기준으로 정렬</div>
+                                            </th>
+                                            <th class="sortable-header" data-column="관심" data-type="number">
+                                                관심
+                                                <div class="sort-icon">
+                                                    <div class="sort-arrow up"></div>
+                                                    <div class="sort-arrow down"></div>
+                                                </div>
+                                                <div class="sort-tooltip">클릭하여 관심 기준으로 정렬</div>
+                                            </th>
+                                            <th class="sortable-header" data-column="결제진행" data-type="number">
+                                                결제진행
+                                                <div class="sort-icon">
+                                                    <div class="sort-arrow up"></div>
+                                                    <div class="sort-arrow down"></div>
+                                                </div>
+                                                <div class="sort-tooltip">클릭하여 결제진행 기준으로 정렬</div>
+                                            </th>
+                                            <th class="sortable-header" data-column="구매완료" data-type="number">
+                                                구매완료
+                                                <div class="sort-icon">
+                                                    <div class="sort-arrow up"></div>
+                                                    <div class="sort-arrow down"></div>
+                                                </div>
+                                                <div class="sort-tooltip">클릭하여 구매완료 기준으로 정렬</div>
+                                            </th>
+                                            <th class="sortable-header" data-column="Revenue" data-type="number">
+                                                매출
+                                                <div class="sort-icon">
+                                                    <div class="sort-arrow up"></div>
+                                                    <div class="sort-arrow down"></div>
+                                                </div>
+                                                <div class="sort-tooltip">클릭하여 매출 기준으로 정렬</div>
+                                            </th>
+                                            <th class="sortable-header" data-column="CVR" data-type="number">
+                                                CVR
+                                                <div class="sort-icon">
+                                                    <div class="sort-arrow up"></div>
+                                                    <div class="sort-arrow down"></div>
+                                                </div>
+                                                <div class="sort-tooltip">클릭하여 CVR 기준으로 정렬</div>
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody id="channelTableBody">
@@ -1499,6 +1685,12 @@
         let currentKpiType = 'cvr';
         let currentChurnType = 'churn_total';
         let currentChannelFunnel = 'purchase';
+
+        // 테이블 정렬 상태
+        let channelTableSort = {
+            column: '유입',
+            direction: 'desc'  // 'asc' 또는 'desc'
+        };
 
         // Chart.js 인스턴스 (D3 퍼널은 재생성 방식 사용)
         let channelKpiChart = null;
@@ -2536,14 +2728,6 @@
                     getValue: (row) => calculateChurnRates(row).total,
                     tooltip: '(유입 - 구매완료) / 유입 × 100'
                 },
-                churn_max: {
-                    label: '최대 이탈률 (%)',
-                    key: 'churn_max',
-                    color: '#9c27b0',
-                    format: (val) => formatDecimal(val) + '%',
-                    getValue: (row) => calculateChurnRates(row).max,
-                    tooltip: '단계별 이탈률 중 최대값'
-                },
                 churn_avg: {
                     label: '평균 이탈률 (%)',
                     key: 'churn_avg',
@@ -3123,23 +3307,151 @@
             const tbody = document.getElementById('channelTableBody');
             if (!tbody) return;
 
-            // CVR 기준 정렬
-            const sortedData = [...channelData].sort((a, b) =>
-                (parseFloat(b['CVR']) || 0) - (parseFloat(a['CVR']) || 0)
-            );
+            // 현재 정렬 기준으로 데이터 정렬
+            const sortedData = [...channelData].sort((a, b) => {
+                const aVal = parseFloat(a[channelTableSort.column]) || 0;
+                const bVal = parseFloat(b[channelTableSort.column]) || 0;
 
-            tbody.innerHTML = sortedData.map(row => `
+                if (channelTableSort.direction === 'desc') {
+                    return bVal - aVal;
+                } else {
+                    return aVal - bVal;
+                }
+            });
+
+            // 각 열의 최대값 계산 (색상 스케일용)
+            const maxValues = {
+                '유입': Math.max(...channelData.map(r => parseFloat(r['유입']) || 0)),
+                '활동': Math.max(...channelData.map(r => parseFloat(r['활동']) || 0)),
+                '관심': Math.max(...channelData.map(r => parseFloat(r['관심']) || 0)),
+                '결제진행': Math.max(...channelData.map(r => parseFloat(r['결제진행']) || 0)),
+                '구매완료': Math.max(...channelData.map(r => parseFloat(r['구매완료']) || 0)),
+                'Revenue': Math.max(...channelData.map(r => parseFloat(r['Revenue']) || 0)),
+                'CVR': Math.max(...channelData.map(r => parseFloat(r['CVR']) || 0))
+            };
+
+            // 색상 스케일 계산 함수
+            function getScaleWidth(value, maxValue) {
+                if (maxValue === 0) return 0;
+                return (value / maxValue) * 100;
+            }
+
+            tbody.innerHTML = sortedData.map(row => {
+                const acqVal = parseFloat(row['유입']) || 0;
+                const actVal = parseFloat(row['활동']) || 0;
+                const conVal = parseFloat(row['관심']) || 0;
+                const convVal = parseFloat(row['결제진행']) || 0;
+                const purVal = parseFloat(row['구매완료']) || 0;
+                const revVal = parseFloat(row['Revenue']) || 0;
+                const cvrVal = parseFloat(row['CVR']) || 0;
+
+                return `
                 <tr>
                     <td>${row['channel']}</td>
-                    <td>${formatNumber(parseFloat(row['유입']) || 0)}</td>
-                    <td>${formatNumber(parseFloat(row['활동']) || 0)}</td>
-                    <td>${formatNumber(parseFloat(row['관심']) || 0)}</td>
-                    <td>${formatNumber(parseFloat(row['결제진행']) || 0)}</td>
-                    <td>${formatNumber(parseFloat(row['구매완료']) || 0)}</td>
-                    <td>${formatNumber(parseFloat(row['Revenue']) || 0)}</td>
-                    <td>${formatDecimal(parseFloat(row['CVR']) || 0)}%</td>
+                    <td class="has-bg">
+                        <div class="cell-bg scale-acquisition" style="width: ${getScaleWidth(acqVal, maxValues['유입'])}%"></div>
+                        <span>${formatNumber(acqVal)}</span>
+                    </td>
+                    <td class="has-bg">
+                        <div class="cell-bg scale-activation" style="width: ${getScaleWidth(actVal, maxValues['활동'])}%"></div>
+                        <span>${formatNumber(actVal)}</span>
+                    </td>
+                    <td class="has-bg">
+                        <div class="cell-bg scale-consideration" style="width: ${getScaleWidth(conVal, maxValues['관심'])}%"></div>
+                        <span>${formatNumber(conVal)}</span>
+                    </td>
+                    <td class="has-bg">
+                        <div class="cell-bg scale-conversion" style="width: ${getScaleWidth(convVal, maxValues['결제진행'])}%"></div>
+                        <span>${formatNumber(convVal)}</span>
+                    </td>
+                    <td class="has-bg">
+                        <div class="cell-bg scale-purchase" style="width: ${getScaleWidth(purVal, maxValues['구매완료'])}%"></div>
+                        <span>${formatNumber(purVal)}</span>
+                    </td>
+                    <td class="has-bg">
+                        <div class="cell-bg scale-revenue" style="width: ${getScaleWidth(revVal, maxValues['Revenue'])}%"></div>
+                        <span>${formatNumber(revVal)}</span>
+                    </td>
+                    <td class="has-bg">
+                        <div class="cell-bg scale-cvr" style="width: ${getScaleWidth(cvrVal, maxValues['CVR'])}%"></div>
+                        <span>${formatDecimal(cvrVal)}%</span>
+                    </td>
                 </tr>
-            `).join('');
+                `;
+            }).join('');
+
+            // 정렬 아이콘 업데이트
+            updateSortIcons();
+        }
+
+        // 정렬 아이콘 상태 업데이트
+        function updateSortIcons() {
+            const headers = document.querySelectorAll('#channelTable .sortable-header');
+            headers.forEach(th => {
+                const column = th.getAttribute('data-column');
+                const sortIcon = th.querySelector('.sort-icon');
+                const upArrow = th.querySelector('.sort-arrow.up');
+                const downArrow = th.querySelector('.sort-arrow.down');
+
+                if (!sortIcon || !upArrow || !downArrow) return;
+
+                if (column === channelTableSort.column) {
+                    sortIcon.classList.add('active');
+                    if (channelTableSort.direction === 'asc') {
+                        upArrow.classList.add('active');
+                        downArrow.classList.remove('active');
+                    } else {
+                        upArrow.classList.remove('active');
+                        downArrow.classList.add('active');
+                    }
+                } else {
+                    sortIcon.classList.remove('active');
+                    upArrow.classList.remove('active');
+                    downArrow.classList.remove('active');
+                }
+            });
+        }
+
+        // 테이블 정렬 이벤트 초기화
+        function setupTableSorting() {
+            const headers = document.querySelectorAll('#channelTable .sortable-header');
+
+            headers.forEach(th => {
+                // 기존 이벤트 리스너 제거 (중복 방지)
+                const newTh = th.cloneNode(true);
+                th.parentNode.replaceChild(newTh, th);
+            });
+
+            // 새로운 이벤트 리스너 추가
+            document.querySelectorAll('#channelTable .sortable-header').forEach(th => {
+                // 클릭 이벤트 (정렬)
+                th.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const column = this.getAttribute('data-column');
+
+                    // 같은 열을 클릭하면 방향 토글, 다른 열이면 desc로 시작
+                    if (channelTableSort.column === column) {
+                        channelTableSort.direction = channelTableSort.direction === 'desc' ? 'asc' : 'desc';
+                    } else {
+                        channelTableSort.column = column;
+                        channelTableSort.direction = 'desc';
+                    }
+
+                    updateChannelTable();
+                });
+
+                // 마우스 호버 이벤트 (툴팁 위치 계산)
+                const tooltip = th.querySelector('.sort-tooltip');
+                if (tooltip) {
+                    th.addEventListener('mouseenter', function() {
+                        const rect = this.getBoundingClientRect();
+                        tooltip.style.left = rect.left + (rect.width / 2) + 'px';
+                        tooltip.style.top = (rect.top - 8) + 'px';
+                    });
+                }
+            });
         }
 
         // 캠페인 테이블 업데이트
@@ -3246,10 +3558,6 @@
                 churn_total: {
                     insight: '전체 이탈률은 처음 방문부터 구매까지 전 과정에서 떠난 사람의 비율입니다. 예를 들어 100명이 방문해서 95명이 구매 안 하고 떠나면 95%입니다. 이탈률이 높을수록 개선할 부분이 많다는 뜻입니다.',
                     recommendation: '이탈률이 높은 채널을 클릭해서 어느 단계에서 가장 많이 떠나는지 확인하세요. 그 단계를 집중적으로 개선하면 효과가 큽니다.'
-                },
-                churn_max: {
-                    insight: '최대 이탈률은 5단계 중 어느 한 단계에서 가장 많은 사람이 떠난 비율입니다. 여기가 가장 큰 문제 구간입니다.',
-                    recommendation: '최대 이탈이 일어나는 단계를 먼저 개선하세요. 예를 들어 결제 단계에서 이탈이 크다면 결제 과정을 간소화하고, 첫 화면에서 이탈이 크다면 페이지 로딩 속도와 디자인을 개선하세요.'
                 },
                 churn_avg: {
                     insight: '평균 이탈률은 각 단계에서 떠난 사람들의 평균값입니다. 이 값이 높으면 전반적으로 고객 경험이 좋지 않다는 신호입니다.',
@@ -3944,6 +4252,9 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             checkIframeAndHideSidebar();
+
+            // 테이블 정렬 기능 초기화
+            setupTableSorting();
 
             // 페이지 로드 후 2초 뒤 버튼 상태 확인
             setTimeout(() => {
