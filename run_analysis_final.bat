@@ -29,6 +29,7 @@ echo.
 echo [4] SEGMENT ANALYSIS - Detailed Segment Breakdown + Business Viz + AARRR Funnel
 echo     - Segment-level forecasting (brand/channel/product/promotion)
 echo     - Business visualization generation (ROAS, revenue, budget)
+echo     - Channel engagement and return rate analysis
 echo     - AARRR Funnel analysis with A/B testing, clustering, churn prediction
 echo     - Memory usage: ~2-4 GB
 echo     - Processing time: 10-20 minutes
@@ -165,7 +166,17 @@ if errorlevel 1 (
 )
 
 echo.
-echo [5/5] Generating AARRR funnel analysis with advanced analytics...
+echo [5/6] Generating channel engagement and return rate data...
+cd scripts
+python generate_engagement_data.py
+cd ..
+
+if errorlevel 1 (
+    echo [WARNING] Channel engagement data generation failed
+)
+
+echo.
+echo [6/6] Generating AARRR funnel analysis with advanced analytics...
 cd scripts
 python generate_funnel_data.py
 cd ..

@@ -1156,6 +1156,35 @@
             position: relative;
             z-index: 1;
         }
+
+        /* 더 보기/접기 기능 */
+        .hidden-row {
+            display: none;
+        }
+
+        .show-more-container {
+            padding: 16px 24px;
+            text-align: center;
+        }
+
+        .show-more-btn {
+            padding: 10px 32px;
+            background: var(--grey-100);
+            color: var(--grey-700);
+            border: 1px solid var(--grey-300);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .show-more-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary-main);
+            border-color: var(--primary-main);
+        }
     </style>
 </head>
 <body>
@@ -1345,7 +1374,7 @@
                     <div class="collapsible-header">
                         <div class="collapsible-title">
                             <span class="collapsible-icon">🔬</span>
-                            <span>심화 분석 (채널 성과 비교, 위험 감지)</span>
+                            <span>데이터 기반 의사결정 도구 (예산 투자, 성과 비교, 위험 감지)</span>
                         </div>
                         <button class="collapsible-toggle">
                             <span>펼치기</span>
@@ -1353,17 +1382,6 @@
                         </button>
                     </div>
                     <div class="collapsible-content">
-                        <!-- A/B 테스트 결과 -->
-                        <div class="chart-section card" style="margin-bottom: 16px;">
-                            <div class="chart-header">📊 채널별 성과 비교 (통계적 분석)</div>
-                            <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
-                                어떤 채널이 더 효과적인지 통계적으로 검증된 결과를 보여드립니다. "유의미" 표시가 있는 항목은 우연이 아닌 실제 차이가 있다는 의미입니다.
-                            </div>
-                            <div id="abTestResults" style="padding: 20px;">
-                                <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
-                            </div>
-                        </div>
-
                         <!-- 채널 클러스터링 -->
                         <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">🎯 채널 그룹별 특성 분석</div>
@@ -1371,6 +1389,21 @@
                                 비슷한 성과를 보이는 채널들을 그룹으로 묶어 보여드립니다. 같은 그룹 내 채널들은 비슷한 전략으로 관리하면 효율적입니다.
                             </div>
                             <div id="channelClusters" style="padding: 20px;">
+                                <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
+                            </div>
+                        </div>
+
+                        <!-- 예산 투자 가이드 -->
+                        <div class="chart-section card" style="margin-bottom: 16px;">
+                            <div class="chart-header">💰 예산 투자 가이드: 채널별 투자 효율성 분석</div>
+                            <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
+                                각 채널의 전환율, 객단가, 실제 성과 데이터를 종합하여 <strong>100만원 투자 시 예상되는 구체적인 성과</strong>를 시뮬레이션했습니다.
+                                <strong>"신뢰도"</strong>는 데이터 양에 기반한 분석의 정확도를 나타내며, 채널 타입별로 다른 투자 전략을 제시합니다.
+                                <div style="margin-top: 8px; padding: 8px; background: var(--grey-50); border-radius: 6px; font-size: 12px;">
+                                    <strong>📌 분석 기준:</strong> 광고 채널(1,500원/방문자), 오가닉 최적화(300원/방문자), 레퍼럴(500원/방문자) 등 업계 평균 CPA 적용
+                                </div>
+                            </div>
+                            <div id="abTestResults" style="padding: 20px;">
                                 <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
                             </div>
                         </div>
@@ -1450,23 +1483,6 @@
                             </div>
                         </div>
 
-                        <!-- 이탈률 차트 -->
-                        <div class="chart-section card" style="margin-bottom: 16px;">
-                            <div class="chart-header">📉 어디서 고객을 가장 많이 잃나요?</div>
-                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px;">
-                                이탈률이 높은 채널일수록 개선 여지가 크다는 뜻입니다. <strong>차트 위에 마우스를 올리면</strong> 이탈을 줄이는 방법을 확인할 수 있습니다.
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
-                                <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 보고 싶은 이탈률:</span>
-                                <button class="view-btn channel-churn-btn active" data-kpi="churn_total" data-chart="churn">전체 이탈률</button>
-                                <button class="view-btn channel-churn-btn" data-kpi="churn_avg" data-chart="churn">평균 이탈률</button>
-                            </div>
-                            <div class="chart-container-small" style="position: relative;">
-                                <canvas id="channelChurnChart"></canvas>
-                                <div id="churnChartTooltip" class="chart-insight-tooltip"></div>
-                            </div>
-                        </div>
-
                         <!-- 비교 차트 -->
                         <div class="chart-section card">
                             <div class="chart-header">🔄 어떤 채널이 가장 균형잡혀 있나요?</div>
@@ -1499,12 +1515,12 @@
                     </div>
                 </div>
 
-                <!-- 6. 신규 vs 재방문 분석 (접기 가능) -->
+                <!-- 6. 신규 vs 재방문 및 이탈 분석 (접기 가능) -->
                 <div class="collapsible-section">
                     <div class="collapsible-header">
                         <div class="collapsible-title">
                             <span class="collapsible-icon">👥</span>
-                            <span>처음 방문 vs 재방문 고객 비율</span>
+                            <span>고객 재방문 및 이탈 분석</span>
                         </div>
                         <button class="collapsible-toggle">
                             <span>펼치기</span>
@@ -1521,13 +1537,161 @@
                                 <button class="view-btn new-vs-returning-view-btn" data-view="daily">📅 일별</button>
                             </div>
                         </div>
-                        <div class="chart-section card">
+                        <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">처음 방문한 고객 비율 변화</div>
                             <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
                                 처음 방문한 고객과 이전에 방문한 적 있는 고객의 비율을 시간별로 보여줍니다. 처음 방문 비율이 늘면 신규 고객 유입이 증가하는 것이고, 줄면 단골 고객 비중이 높아지는 것입니다.
                             </div>
                             <div class="chart-container-small">
                                 <canvas id="newVsReturningChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- 시계열 재방문 추세 차트 -->
+                        <div class="chart-section card" style="margin-bottom: 16px;">
+                            <div class="chart-header">📈 재방문율 추세 분석</div>
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
+                                시간에 따른 재방문율 변화를 추적합니다. 재방문율이 높을수록 고객이 다시 돌아온다는 뜻이며, 이탈 가능성이 낮습니다.
+                            </div>
+                            <div class="chart-container-small">
+                                <canvas id="returnRateTrendChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- 신규 vs 재방문 고객 전환율 비교 -->
+                        <div class="chart-section card" style="margin-bottom: 16px;">
+                            <div class="chart-header">🔄 신규 vs 재방문 고객 전환율 비교</div>
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
+                                신규 고객과 재방문 고객의 각 퍼널 단계별 전환율을 비교합니다. 일반적으로 재방문 고객이 더 높은 전환율을 보입니다.
+                            </div>
+                            <div class="chart-container-small">
+                                <canvas id="newVsReturningConversionChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- 이탈률 차트 -->
+                        <div class="chart-section card" style="margin-bottom: 16px;">
+                            <div class="chart-header">📉 어디서 고객을 가장 많이 잃나요?</div>
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px;">
+                                이탈률이 높은 채널일수록 개선 여지가 크다는 뜻입니다. <strong>차트 위에 마우스를 올리면</strong> 이탈을 줄이는 방법을 확인할 수 있습니다.
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+                                <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 보고 싶은 이탈률:</span>
+                                <button class="view-btn channel-churn-btn active" data-kpi="churn_total" data-chart="churn">전체 이탈률</button>
+                                <button class="view-btn channel-churn-btn" data-kpi="churn_avg" data-chart="churn">평균 이탈률</button>
+                            </div>
+                            <div class="chart-container-small" style="position: relative;">
+                                <canvas id="channelChurnChart"></canvas>
+                                <div id="churnChartTooltip" class="chart-insight-tooltip"></div>
+                            </div>
+                        </div>
+
+                        <!-- 채널별 재방문율 vs 이탈률 매트릭스 -->
+                        <div class="chart-section card" style="margin-bottom: 16px;">
+                            <div class="chart-header">🎯 채널 품질 매트릭스: 재방문율 vs 이탈률</div>
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
+                                채널을 재방문율(Y축)과 이탈률(X축)로 분류합니다. 평균 기준선을 중심으로 4개 분면으로 자동 구분되며, 각 채널 유형에 맞는 액션 플랜을 아래에서 확인하세요.
+                            </div>
+                            <div style="position: relative; height: 450px;">
+                                <canvas id="channelMatrixChart"></canvas>
+                            </div>
+
+                            <!-- 채널 유형별 액션 가이드 -->
+                            <div style="margin-top: 24px; padding: 0 24px;">
+                                <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 16px;">
+                                    📋 채널 유형별 액션 가이드
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                                    <!-- 스타 채널 -->
+                                    <div style="padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 10px; border-left: 4px solid #00c853;">
+                                        <div style="font-size: 14px; font-weight: 700; color: #00c853; margin-bottom: 8px;">
+                                            ⭐ 스타 채널 (낮은 이탈 + 높은 재방문)
+                                        </div>
+                                        <div style="font-size: 13px; color: var(--grey-700); line-height: 1.6;">
+                                            <strong>💡 해야 할 일:</strong> 투자 확대 및 현재 전략 유지<br>
+                                            <strong>✨ 기대 효과:</strong> 안정적인 매출 증대, ROI 극대화<br>
+                                            <strong>🎯 구체적 행동:</strong>
+                                            <ul style="margin: 8px 0 0 20px; padding: 0;">
+                                                <li>마케팅 예산을 20-30% 증액</li>
+                                                <li>유사한 타겟 오디언스로 확장</li>
+                                                <li>성공 요인 분석 후 다른 채널에 적용</li>
+                                                <li>고객 추천 프로그램 운영</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <!-- 성장 채널 -->
+                                    <div style="padding: 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 10px; border-left: 4px solid #2196f3;">
+                                        <div style="font-size: 14px; font-weight: 700; color: #2196f3; margin-bottom: 8px;">
+                                            📈 성장 채널 (높은 이탈 + 높은 재방문)
+                                        </div>
+                                        <div style="font-size: 13px; color: var(--grey-700); line-height: 1.6;">
+                                            <strong>💡 해야 할 일:</strong> 이탈률 개선에 집중<br>
+                                            <strong>✨ 기대 효과:</strong> 전환율 상승, 신규 고객 확보<br>
+                                            <strong>🎯 구체적 행동:</strong>
+                                            <ul style="margin: 8px 0 0 20px; padding: 0;">
+                                                <li>랜딩 페이지 개선 (로딩 속도, 디자인)</li>
+                                                <li>첫 방문 고객 경험 최적화</li>
+                                                <li>명확한 CTA(행동 유도) 버튼 배치</li>
+                                                <li>신뢰 요소 강화 (리뷰, 보안 인증)</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <!-- 안정 채널 -->
+                                    <div style="padding: 16px; background: linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%); border-radius: 10px; border-left: 4px solid #9e9e9e;">
+                                        <div style="font-size: 14px; font-weight: 700; color: #757575; margin-bottom: 8px;">
+                                            🔒 안정 채널 (낮은 이탈 + 낮은 재방문)
+                                        </div>
+                                        <div style="font-size: 13px; color: var(--grey-700); line-height: 1.6;">
+                                            <strong>💡 해야 할 일:</strong> 재방문 유도 전략 구축<br>
+                                            <strong>✨ 기대 효과:</strong> 고객 생애가치(LTV) 증가<br>
+                                            <strong>🎯 구체적 행동:</strong>
+                                            <ul style="margin: 8px 0 0 20px; padding: 0;">
+                                                <li>리타겟팅 광고 캠페인 운영</li>
+                                                <li>이메일/SMS 마케팅 자동화</li>
+                                                <li>쿠폰/할인 프로모션 제공</li>
+                                                <li>회원 등급제 및 포인트 적립 도입</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <!-- 문제 채널 -->
+                                    <div style="padding: 16px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 10px; border-left: 4px solid #ff5722;">
+                                        <div style="font-size: 14px; font-weight: 700; color: #ff5722; margin-bottom: 8px;">
+                                            ⚠️ 문제 채널 (높은 이탈 + 낮은 재방문)
+                                        </div>
+                                        <div style="font-size: 13px; color: var(--grey-700); line-height: 1.6;">
+                                            <strong>💡 해야 할 일:</strong> 전면 재검토 또는 중단<br>
+                                            <strong>✨ 기대 효과:</strong> 비용 절감, 효율적 자원 배분<br>
+                                            <strong>🎯 구체적 행동:</strong>
+                                            <ul style="margin: 8px 0 0 20px; padding: 0;">
+                                                <li>타겟 오디언스 재설정</li>
+                                                <li>광고 크리에이티브 전면 교체</li>
+                                                <li>예산 축소 또는 일시 중단</li>
+                                                <li>A/B 테스트로 개선 가능성 검증</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 추가 팁 -->
+                                <div style="margin-top: 16px; padding: 12px 16px; background: var(--primary-light); border-radius: 8px; border-left: 4px solid var(--primary-main);">
+                                    <div style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
+                                        <strong>💡 프로 팁:</strong> 모든 채널을 한 번에 변경하지 마세요. 한 번에 1-2개 채널에 집중하여 개선하고, 2-4주 후 결과를 측정한 뒤 다음 채널로 넘어가는 것이 효과적입니다.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 채널별 참여도 분석 -->
+                        <div class="chart-section card">
+                            <div class="chart-header">💎 채널별 참여도 분석</div>
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
+                                참여도(Engagement Rate)는 전체 세션 중 사용자가 적극적으로 활동한 세션의 비율입니다. 참여도가 높을수록 고객 품질이 좋고 이탈 가능성이 낮습니다.
+                            </div>
+                            <div class="chart-container-small">
+                                <canvas id="channelEngagementChart"></canvas>
                             </div>
                         </div>
                     </div>
@@ -1625,48 +1789,6 @@
                     </div>
                 </div>
 
-                <!-- 8. 캠페인별 데이터 테이블 (접기 가능) -->
-                <div class="collapsible-section">
-                    <div class="collapsible-header">
-                        <div class="collapsible-title">
-                            <span class="collapsible-icon">🎯</span>
-                            <span>광고 캠페인별 상세 숫자 데이터 (표)</span>
-                        </div>
-                        <button class="collapsible-toggle">
-                            <span>펼치기</span>
-                            <span class="collapsible-toggle-icon collapsed">▼</span>
-                        </button>
-                    </div>
-                    <div class="collapsible-content">
-                        <div class="table-section card">
-                            <div class="table-header">캠페인별 단계별 고객 수 (상위 20개)</div>
-                            <div style="font-size: 13px; color: var(--grey-600); padding: 12px 24px; background: var(--grey-50);">
-                                💡 <strong>표 보는 법:</strong> 여러분이 운영 중인 광고 캠페인별로 성과를 보여줍니다. CVR이 높은 캠페인에 예산을 더 투자하고, 낮은 캠페인은 개선하거나 중단하는 것이 좋습니다.
-                            </div>
-                            <div class="table-container">
-                                <table id="campaignTable">
-                                    <thead>
-                                        <tr>
-                                            <th>캠페인</th>
-                                            <th>유입</th>
-                                            <th>활동</th>
-                                            <th>관심</th>
-                                            <th>결제진행</th>
-                                            <th>구매완료</th>
-                                            <th>매출</th>
-                                            <th>CVR</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="campaignTableBody">
-                                        <tr>
-                                            <td colspan="8">데이터를 불러오는 중...</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </main>
     </div>
@@ -1676,8 +1798,9 @@
         let dailyData = [];
         let weeklyData = [];
         let channelData = [];
-        let campaignData = [];
         let newVsReturningData = [];
+        let channelEngagementData = [];
+        let newVsReturningConversionData = [];
         let insightsData = null;
         let currentView = 'daily';
         let newVsReturningView = 'monthly';
@@ -1698,6 +1821,10 @@
         let channelCompareChart = null;
         let campaignChart = null;
         let newVsReturningChart = null;
+        let returnRateTrendChart = null;
+        let newVsReturningConversionChart = null;
+        let channelMatrixChart = null;
+        let channelEngagementChart = null;
 
         // 숫자 포맷
         function formatNumber(num) {
@@ -1815,15 +1942,20 @@
                 const channelText = await channelResponse.text();
                 channelData = parseCSV(channelText, 'channel_funnel.csv');
 
-                // 캠페인별 데이터
-                const campaignResponse = await fetch('funnel/campaign_funnel.csv');
-                const campaignText = await campaignResponse.text();
-                campaignData = parseCSV(campaignText, 'campaign_funnel.csv');
-
                 // 신규 vs 재방문
                 const newVsReturningResponse = await fetch('funnel/new_vs_returning.csv');
                 const newVsReturningText = await newVsReturningResponse.text();
                 newVsReturningData = parseCSV(newVsReturningText, 'new_vs_returning.csv');
+
+                // 채널 참여도 데이터
+                const channelEngagementResponse = await fetch('funnel/channel_engagement.csv');
+                const channelEngagementText = await channelEngagementResponse.text();
+                channelEngagementData = parseCSV(channelEngagementText, 'channel_engagement.csv');
+
+                // 신규 vs 재방문 전환율 데이터
+                const newVsReturningConversionResponse = await fetch('funnel/new_vs_returning_conversion.csv');
+                const newVsReturningConversionText = await newVsReturningConversionResponse.text();
+                newVsReturningConversionData = parseCSV(newVsReturningConversionText, 'new_vs_returning_conversion.csv');
 
                 // 인사이트
                 const insightsResponse = await fetch('funnel/insights.json');
@@ -1833,6 +1965,8 @@
                 console.log('=== 모든 데이터 로드 완료 ===');
                 console.log(`일별 데이터: ${dailyData.length}개`);
                 console.log(`주별 데이터: ${weeklyData.length}개`);
+                console.log(`채널 참여도 데이터: ${channelEngagementData.length}개`);
+                console.log(`신규 vs 재방문 전환율 데이터: ${newVsReturningConversionData.length}개`);
                 console.log('========================================\n');
 
                 updateDashboard();
@@ -1859,8 +1993,11 @@
             updateCompareChart();
             updateCampaignChart('purchase');
             updateNewVsReturningChart();
+            updateReturnRateTrendChart();
+            updateNewVsReturningConversionChart();
+            updateChannelMatrixChart();
+            updateChannelEngagementChart();
             updateChannelTable();
-            updateCampaignTable();
         }
 
         // 분석 기간 업데이트
@@ -2325,45 +2462,289 @@
         function updateAdvancedAnalysis() {
             if (!insightsData) return;
 
-            // 1. A/B 테스트 결과
+            // 1. 예산 투자 가이드 (투자 대비 기대 성과 분석)
             const abTestContainer = document.getElementById('abTestResults');
-            if (insightsData.ab_test_results && insightsData.ab_test_results.length > 0) {
-                const significantTests = insightsData.ab_test_results.filter(t => t.significant);
 
-                abTestContainer.innerHTML = `
-                    <div style="margin-bottom: 16px;">
-                        <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 12px;">
-                            <strong>${insightsData.ab_test_results.length}개</strong>의 채널 비교 테스트 수행
-                            (통계적 유의미: <strong style="color: var(--success-main);">${significantTests.length}개</strong>)
-                        </p>
-                    </div>
-                    <div style="display: grid; gap: 12px;">
-                        ${insightsData.ab_test_results.slice(0, 5).map(test => `
-                            <div style="padding: 12px; background: ${test.significant ? 'var(--success-light)' : 'var(--grey-50)'}; border-radius: 8px; border-left: 4px solid ${test.significant ? 'var(--success-main)' : 'var(--grey-300)'};">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                    <span style="font-size: 14px; font-weight: 600; color: var(--grey-900);">
-                                        ${test.group_a} vs ${test.group_b}
-                                    </span>
-                                    <span style="font-size: 12px; padding: 4px 8px; background: white; border-radius: 4px; color: ${test.significant ? 'var(--success-main)' : 'var(--grey-600)'};">
-                                        ${test.significant ? '✓ 유의미' : '- 유의미하지 않음'}
-                                    </span>
+            // 채널 데이터가 있는 경우
+            if (channelData && channelData.length > 0) {
+                // 각 채널의 투자 효율성 계산
+                const channelInvestmentScores = channelData.map(channel => {
+                    const acquisition = parseFloat(channel['유입']) || 0;
+                    const purchase = parseFloat(channel['구매완료']) || 0;
+                    const revenue = parseFloat(channel['Revenue']) || 0;
+                    const cvr = parseFloat(channel['CVR']) || 0;
+
+                    // 신뢰도: 데이터 샘플 수 기반 (유입 수가 많을수록 높음)
+                    let confidence = '낮음';
+                    let confidenceScore = 0;
+                    if (acquisition >= 100000) {
+                        confidence = '매우 높음';
+                        confidenceScore = 4;
+                    } else if (acquisition >= 10000) {
+                        confidence = '높음';
+                        confidenceScore = 3;
+                    } else if (acquisition >= 1000) {
+                        confidence = '보통';
+                        confidenceScore = 2;
+                    } else if (acquisition >= 100) {
+                        confidence = '낮음';
+                        confidenceScore = 1;
+                    }
+
+                    // 평균 객단가 (ARPU)
+                    const arpu = purchase > 0 ? revenue / purchase : 0;
+
+                    // 채널 타입 분류 (광고 vs 오가닉)
+                    const channelName = channel['channel'].toLowerCase();
+                    let channelType = 'organic';
+                    let estimatedCPA = 0; // 방문자 1명당 유입 비용
+
+                    if (channelName.includes('광고') || channelName.includes('ad') || channelName.includes('paid')) {
+                        channelType = 'paid';
+                        estimatedCPA = 1500; // 유료 광고 평균 CPA (원/방문자)
+                    } else if (channelName.includes('direct') || channelName === 'direct') {
+                        channelType = 'direct';
+                        estimatedCPA = 0; // Direct는 자연 유입, 투자 불가
+                    } else if (channelName.includes('organic') || channelName.includes('쇼핑') || channelName.includes('블로그')) {
+                        channelType = 'organic_optimizable';
+                        estimatedCPA = 300; // 오가닉 최적화 비용 (SEO, 콘텐츠 등)
+                    } else {
+                        channelType = 'referral';
+                        estimatedCPA = 500; // 레퍼럴/기타 채널
+                    }
+
+                    // 투자 효율성 점수 = CVR × ARPU × 신뢰도 가중치
+                    const investmentScore = cvr * arpu * (1 + confidenceScore * 0.1);
+
+                    // 100만원 투자 시 예상 성과 계산
+                    let estimatedVisitors = 0;
+                    let expectedPurchases = 0;
+                    let expectedRevenue = 0;
+                    let roi = -100;
+                    let isInvestable = true;
+
+                    if (channelType === 'direct') {
+                        // Direct는 자연 유입이므로 광고 투자 불가
+                        isInvestable = false;
+                    } else if (estimatedCPA > 0) {
+                        estimatedVisitors = 1000000 / estimatedCPA; // 100만원으로 확보 가능한 방문자 수
+                        expectedPurchases = estimatedVisitors * (cvr / 100); // 예상 구매 건수
+                        expectedRevenue = expectedPurchases * arpu; // 예상 매출액
+                        roi = expectedRevenue > 0 ? ((expectedRevenue - 1000000) / 1000000 * 100) : -100;
+                    }
+
+                    return {
+                        channel: channel['channel'],
+                        cvr: cvr,
+                        revenue: revenue,
+                        purchase: purchase,
+                        acquisition: acquisition,
+                        arpu: arpu,
+                        confidence: confidence,
+                        confidenceScore: confidenceScore,
+                        investmentScore: investmentScore,
+                        channelType: channelType,
+                        estimatedCPA: estimatedCPA,
+                        isInvestable: isInvestable,
+                        estimatedVisitors: estimatedVisitors,
+                        expectedPurchases: expectedPurchases,
+                        expectedRevenue: expectedRevenue,
+                        roi: roi
+                    };
+                }).filter(item => item.acquisition > 0 && item.cvr > 0)
+                  .sort((a, b) => b.roi - a.roi)
+                  .slice(0, 8);
+
+                if (channelInvestmentScores.length > 0) {
+                    abTestContainer.innerHTML = `
+                        <div style="margin-bottom: 16px;">
+                            <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 8px;">
+                                <strong>${channelInvestmentScores.length}개</strong> 채널의 투자 효율성 분석 완료
+                            </p>
+                            <p style="font-size: 12px; color: var(--grey-600);">
+                                💡 전환율, 평균 객단가, 데이터 신뢰도를 종합하여 투자 시 기대 성과가 높은 순으로 정렬했습니다.
+                            </p>
+                        </div>
+                        <div id="investmentItemsContainer" style="display: grid; gap: 12px;">
+                            ${channelInvestmentScores.map((channel, index) => {
+                                const rankEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}위`;
+                                const confidenceColor = channel.confidenceScore >= 3 ? 'var(--success-main)' :
+                                                       channel.confidenceScore === 2 ? 'var(--warning-main)' : 'var(--grey-400)';
+                                const bgColor = channel.confidenceScore >= 3 ? 'linear-gradient(135deg, var(--success-light) 0%, #f0fff4 100%)' :
+                                               channel.confidenceScore === 2 ? 'linear-gradient(135deg, var(--warning-light) 0%, #fff9e6 100%)' : 'var(--grey-50)';
+                                const borderColor = channel.confidenceScore >= 3 ? 'var(--success-main)' :
+                                                   channel.confidenceScore === 2 ? 'var(--warning-main)' : 'var(--grey-300)';
+                                const hiddenClass = index >= 3 ? ' hidden-row' : '';
+
+                                return `
+                                <div class="investment-item${hiddenClass}" style="padding: 16px; background: ${bgColor}; border-radius: 8px; border-left: 4px solid ${borderColor};">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                        <div style="flex: 1;">
+                                            <div style="font-size: 16px; font-weight: 700; color: var(--grey-900); margin-bottom: 8px;">
+                                                ${rankEmoji} ${channel.channel}
+                                            </div>
+                                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px;">
+                                                <div style="padding: 8px; background: white; border-radius: 6px;">
+                                                    <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 2px;">전환율</div>
+                                                    <div style="font-size: 16px; font-weight: 700; color: var(--primary-main);">
+                                                        ${formatDecimal(channel.cvr)}%
+                                                    </div>
+                                                </div>
+                                                <div style="padding: 8px; background: white; border-radius: 6px;">
+                                                    <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 2px;">평균 객단가</div>
+                                                    <div style="font-size: 16px; font-weight: 700; color: var(--success-main);">
+                                                        ${formatNumber(Math.round(channel.arpu))}원
+                                                    </div>
+                                                </div>
+                                                <div style="padding: 8px; background: white; border-radius: 6px;">
+                                                    <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 2px;">데이터 신뢰도</div>
+                                                    <div style="font-size: 13px; font-weight: 700; color: ${confidenceColor};">
+                                                        ${channel.confidence}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    ${channel.confidenceScore >= 2 ? (
+                                        channel.isInvestable ? `
+                                        <div style="padding: 14px; background: white; border-radius: 8px; border-left: 3px solid var(--primary-main); margin-bottom: 8px;">
+                                            <div style="font-size: 13px; color: var(--grey-900); font-weight: 700; margin-bottom: 10px;">
+                                                💰 100만원 투자 시 예상 성과
+                                                <span style="font-size: 11px; font-weight: 500; color: var(--grey-600); margin-left: 8px;">
+                                                    (예상 CPA: ${formatNumber(channel.estimatedCPA)}원/방문자)
+                                                </span>
+                                            </div>
+                                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px;">
+                                                <div>
+                                                    <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">예상 유입</div>
+                                                    <div style="font-size: 16px; font-weight: 700; color: var(--secondary-main);">
+                                                        약 ${formatNumber(Math.round(channel.estimatedVisitors))}명
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">예상 구매</div>
+                                                    <div style="font-size: 16px; font-weight: 700; color: var(--primary-main);">
+                                                        약 ${formatNumber(Math.round(channel.expectedPurchases))}건
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">예상 매출</div>
+                                                    <div style="font-size: 16px; font-weight: 700; color: var(--success-main);">
+                                                        약 ${formatNumber(Math.round(channel.expectedRevenue))}원
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div style="padding: 10px; background: ${channel.roi > 100 ? '#e8f5e9' : channel.roi > 0 ? '#fff3e0' : '#ffebee'}; border-radius: 6px;">
+                                                <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">예상 ROI (투자수익률)</div>
+                                                <div style="font-size: 22px; font-weight: 700; color: ${channel.roi > 0 ? 'var(--success-main)' : 'var(--error-main)'};">
+                                                    ${channel.roi > 0 ? '+' : ''}${formatDecimal(channel.roi)}%
+                                                    <span style="font-size: 12px; font-weight: 500; margin-left: 8px;">
+                                                        (순이익: ${channel.roi > 0 ? '+' : ''}${formatNumber(Math.round(channel.expectedRevenue - 1000000))}원)
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div style="padding: 14px; background: linear-gradient(135deg, #e8eaf6 0%, #f3f4f9 100%); border-radius: 6px;">
+                                            <div style="font-size: 12px; color: var(--grey-800); line-height: 1.7;">
+                                                💡 <strong>투자 전략:</strong><br>
+                                                ${channel.channelType === 'paid' ?
+                                                    (channel.roi > 200 ?
+                                                        `이 광고 채널은 <strong style="color: var(--success-main);">매우 높은 수익률(+${formatDecimal(channel.roi)}%)</strong>을 보입니다. 100만원 투자 시 약 <strong>${formatNumber(Math.round(channel.expectedRevenue))}원</strong>의 매출이 예상되며, <strong>추가 예산 투입</strong>을 적극 권장합니다.` :
+                                                    channel.roi > 100 ?
+                                                        `이 광고 채널은 <strong style="color: var(--success-main);">양호한 수익률(+${formatDecimal(channel.roi)}%)</strong>을 보입니다. 100만원 투자로 약 ${formatNumber(Math.round(channel.estimatedVisitors))}명 유입, ${formatNumber(Math.round(channel.expectedPurchases))}건 구매가 예상됩니다. <strong>예산 증액 고려</strong>를 추천합니다.` :
+                                                    channel.roi > 0 ?
+                                                        `이 광고 채널은 수익성이 있으나(+${formatDecimal(channel.roi)}%), 다른 채널 대비 효율이 낮습니다. 광고 소재와 타겟팅을 개선하면 더 나은 성과를 기대할 수 있습니다.` :
+                                                        `현재 이 광고 채널은 손실(${formatDecimal(channel.roi)}%)이 예상됩니다. <strong>캠페인 최적화 또는 예산 재분배</strong>가 필요합니다.`) :
+                                                channel.channelType === 'organic_optimizable' ?
+                                                    (channel.roi > 200 ?
+                                                        `SEO/콘텐츠 최적화에 <strong>100만원 투자 시 약 ${formatNumber(Math.round(channel.estimatedVisitors))}명의 추가 유입</strong>과 <strong>${formatNumber(Math.round(channel.expectedRevenue))}원의 매출</strong>이 예상됩니다. 전환율이 ${formatDecimal(channel.cvr)}%로 높아 <strong style="color: var(--success-main);">매우 효율적인 투자처</strong>입니다.` :
+                                                    channel.roi > 0 ?
+                                                        `이 채널은 오가닉 트래픽 최적화를 통해 수익을 창출할 수 있습니다. SEO, 블로그 콘텐츠, 쇼핑몰 최적화 등에 투자하면 지속 가능한 성장이 가능합니다.` :
+                                                        `현재 전환율(${formatDecimal(channel.cvr)}%)과 객단가(${formatNumber(Math.round(channel.arpu))}원)를 고려할 때, 투자 전 콘텐츠 품질과 사용자 경험 개선이 우선입니다.`) :
+                                                    `이 채널은 전환율 ${formatDecimal(channel.cvr)}%, 객단가 ${formatNumber(Math.round(channel.arpu))}원으로 투자 효율성이 확인되었습니다. 파트너십 강화나 제휴 확대를 고려해보세요.`
+                                                }
+                                            </div>
+                                        </div>
+                                        ` : `
+                                        <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff9e6 100%); border-radius: 8px; border-left: 3px solid var(--warning-main);">
+                                            <div style="font-size: 13px; color: var(--grey-900); font-weight: 700; margin-bottom: 8px;">
+                                                ℹ️ Direct 자연 유입 채널
+                                            </div>
+                                            <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6;">
+                                                이 채널은 <strong>자연 유입(Direct Traffic)</strong>으로, 직접적인 광고 투자 대상이 아닙니다.<br><br>
+                                                <strong>현재 성과:</strong><br>
+                                                • 전환율: ${formatDecimal(channel.cvr)}%<br>
+                                                • 평균 객단가: ${formatNumber(Math.round(channel.arpu))}원<br>
+                                                • 총 매출: ${formatNumber(channel.revenue)}원<br><br>
+                                                💡 <strong>개선 방안:</strong> 브랜드 인지도 향상, 이메일 마케팅, 리마케팅 등을 통해 Direct 유입을 늘릴 수 있습니다. 현재 높은 전환율(${formatDecimal(channel.cvr)}%)을 유지하면서 유입량을 증가시키는 것이 핵심입니다.
+                                            </div>
+                                        </div>
+                                        `
+                                    ) : `
+                                        <div style="padding: 12px; background: white; border-radius: 6px; border-left: 3px solid var(--grey-300);">
+                                            <div style="font-size: 12px; color: var(--grey-700);">
+                                                ⚠️ 데이터가 충분하지 않아 정확한 투자 성과 예측이 어렵습니다. 더 많은 데이터를 수집한 후 재평가하세요. (현재 유입: ${formatNumber(channel.acquisition)}명)
+                                            </div>
+                                        </div>
+                                    `}
                                 </div>
-                                <div style="display: flex; gap: 16px; font-size: 13px; color: var(--grey-700);">
-                                    <span>${test.group_a}: <strong>${formatDecimal(test.cvr_a)}%</strong></span>
-                                    <span>${test.group_b}: <strong>${formatDecimal(test.cvr_b)}%</strong></span>
-                                    <span>p-value: <strong>${test.p_value.toFixed(4)}</strong></span>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    ${insightsData.ab_test_results.length > 5 ? `
-                        <p style="font-size: 12px; color: var(--grey-500); margin-top: 12px; text-align: center;">
-                            ... 외 ${insightsData.ab_test_results.length - 5}개 추가 테스트
-                        </p>
-                    ` : ''}
-                `;
+                            `;
+                            }).join('')}
+                        </div>
+                        ${channelInvestmentScores.length > 3 ? `
+                        <div class="show-more-container" id="investmentShowMoreContainer" style="margin-top: 12px;">
+                            <button class="show-more-btn" id="investmentShowMoreBtn">더 보기 (<span id="investmentHiddenCount">${channelInvestmentScores.length - 3}</span>개)</button>
+                        </div>
+                        <div class="show-more-container" id="investmentCollapseContainer" style="display: none; margin-top: 12px;">
+                            <button class="show-more-btn" id="investmentCollapseBtn">접기</button>
+                        </div>
+                        ` : ''}
+                    `;
+
+                    // 더보기/접기 버튼 이벤트 리스너 등록
+                    if (channelInvestmentScores.length > 3) {
+                        const showMoreBtn = document.getElementById('investmentShowMoreBtn');
+                        const collapseBtn = document.getElementById('investmentCollapseBtn');
+
+                        if (showMoreBtn) {
+                            showMoreBtn.addEventListener('click', function() {
+                                const hiddenItems = document.querySelectorAll('.investment-item.hidden-row');
+                                const showMoreContainer = document.getElementById('investmentShowMoreContainer');
+                                const collapseContainer = document.getElementById('investmentCollapseContainer');
+
+                                hiddenItems.forEach(item => {
+                                    item.classList.remove('hidden-row');
+                                });
+
+                                showMoreContainer.style.display = 'none';
+                                collapseContainer.style.display = 'block';
+                            });
+                        }
+
+                        if (collapseBtn) {
+                            collapseBtn.addEventListener('click', function() {
+                                const allItems = document.querySelectorAll('.investment-item');
+                                const showMoreContainer = document.getElementById('investmentShowMoreContainer');
+                                const collapseContainer = document.getElementById('investmentCollapseContainer');
+
+                                allItems.forEach((item, index) => {
+                                    if (index >= 3) {
+                                        item.classList.add('hidden-row');
+                                    }
+                                });
+
+                                showMoreContainer.style.display = 'block';
+                                collapseContainer.style.display = 'none';
+                            });
+                        }
+                    }
+                } else {
+                    abTestContainer.innerHTML = '<p style="color: var(--grey-500);">분석 가능한 채널 데이터가 없습니다.</p>';
+                }
             } else {
-                abTestContainer.innerHTML = '<p style="color: var(--grey-500);">A/B 테스트 결과가 없습니다.</p>';
+                abTestContainer.innerHTML = '<p style="color: var(--grey-500);">채널 데이터를 불러오는 중...</p>';
             }
 
             // 2. 채널 클러스터링
@@ -3454,32 +3835,6 @@
             });
         }
 
-        // 캠페인 테이블 업데이트
-        function updateCampaignTable() {
-            if (campaignData.length === 0) return;
-
-            const tbody = document.getElementById('campaignTableBody');
-            if (!tbody) return;
-
-            // 매출 기준 정렬
-            const sortedData = [...campaignData].sort((a, b) =>
-                (parseFloat(b['Revenue']) || 0) - (parseFloat(a['Revenue']) || 0)
-            );
-
-            tbody.innerHTML = sortedData.map(row => `
-                <tr>
-                    <td>${row['Session campaign']}</td>
-                    <td>${formatNumber(parseFloat(row['유입']) || 0)}</td>
-                    <td>${formatNumber(parseFloat(row['활동']) || 0)}</td>
-                    <td>${formatNumber(parseFloat(row['관심']) || 0)}</td>
-                    <td>${formatNumber(parseFloat(row['결제진행']) || 0)}</td>
-                    <td>${formatNumber(parseFloat(row['구매완료']) || 0)}</td>
-                    <td>${formatNumber(parseFloat(row['Revenue']) || 0)}</td>
-                    <td>${formatDecimal(parseFloat(row['CVR']) || 0)}%</td>
-                </tr>
-            `).join('');
-        }
-
         // 차트 인사이트 툴팁 표시 함수
         function showChartInsightTooltip(tooltipId, insight, recommendation, event) {
             const tooltip = document.getElementById(tooltipId);
@@ -4249,6 +4604,454 @@
 
             console.log('\n========================================\n');
         }
+
+        // ========================================
+        // 새로운 차트 렌더링 함수들
+        // ========================================
+
+        // 1. 재방문율 추세 차트
+        function updateReturnRateTrendChart() {
+            if (newVsReturningData.length === 0) return;
+
+            const canvas = document.getElementById('returnRateTrendChart');
+            if (!canvas) return;
+
+            // 유입 단계만 필터링
+            const acquisitionData = newVsReturningData.filter(row => row['funnel'] === '유입');
+
+            // 날짜별로 정렬
+            const sortedData = acquisitionData.sort((a, b) => {
+                const dateA = new Date(a['Day']);
+                const dateB = new Date(b['Day']);
+                return dateA - dateB;
+            });
+
+            // 현재 선택된 뷰에 따라 데이터 집계
+            let aggregatedData = [];
+
+            if (newVsReturningView === 'monthly') {
+                // 월별 집계
+                const monthlyMap = {};
+                sortedData.forEach(row => {
+                    const date = new Date(row['Day']);
+                    const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+                    if (!monthlyMap[month]) {
+                        monthlyMap[month] = {
+                            totalUsers: 0,
+                            newUsers: 0,
+                            returningUsers: 0
+                        };
+                    }
+
+                    monthlyMap[month].totalUsers += parseFloat(row['Total users']) || 0;
+                    monthlyMap[month].newUsers += parseFloat(row['New users']) || 0;
+                    monthlyMap[month].returningUsers += parseFloat(row['Returning users']) || 0;
+                });
+
+                aggregatedData = Object.entries(monthlyMap).map(([month, data]) => ({
+                    label: month,
+                    returnRate: ((data.returningUsers / data.totalUsers) * 100).toFixed(2)
+                }));
+            } else if (newVsReturningView === 'weekly') {
+                // 주별 집계 (간단하게 7일씩 묶음)
+                for (let i = 0; i < sortedData.length; i += 7) {
+                    const weekData = sortedData.slice(i, i + 7);
+                    const totalUsers = weekData.reduce((sum, row) => sum + (parseFloat(row['Total users']) || 0), 0);
+                    const returningUsers = weekData.reduce((sum, row) => sum + (parseFloat(row['Returning users']) || 0), 0);
+                    const firstDate = new Date(weekData[0]['Day']);
+                    const weekLabel = `${firstDate.getFullYear()}-${String(firstDate.getMonth() + 1).padStart(2, '0')}-${String(firstDate.getDate()).padStart(2, '0')}`;
+
+                    aggregatedData.push({
+                        label: weekLabel,
+                        returnRate: ((returningUsers / totalUsers) * 100).toFixed(2)
+                    });
+                }
+            } else {
+                // 일별 (기본)
+                aggregatedData = sortedData.map(row => ({
+                    label: row['Day'],
+                    returnRate: (100 - parseFloat(row['New user %'])).toFixed(2)
+                }));
+            }
+
+            if (returnRateTrendChart) {
+                returnRateTrendChart.destroy();
+            }
+
+            returnRateTrendChart = new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels: aggregatedData.map(d => d.label),
+                    datasets: [{
+                        label: '재방문율 (%)',
+                        data: aggregatedData.map(d => d.returnRate),
+                        borderColor: '#673ab7',
+                        backgroundColor: 'rgba(103, 58, 183, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 3,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `재방문율: ${context.parsed.y}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 2. 신규 vs 재방문 고객 전환율 비교 차트
+        function updateNewVsReturningConversionChart() {
+            if (newVsReturningConversionData.length === 0) return;
+
+            const canvas = document.getElementById('newVsReturningConversionChart');
+            if (!canvas) return;
+
+            const labels = newVsReturningConversionData.map(row => row['funnel_stage']);
+            const newUserCVR = newVsReturningConversionData.map(row => parseFloat(row['New user CVR']) || 0);
+            const returningUserCVR = newVsReturningConversionData.map(row => parseFloat(row['Returning user CVR']) || 0);
+
+            if (newVsReturningConversionChart) {
+                newVsReturningConversionChart.destroy();
+            }
+
+            newVsReturningConversionChart = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '신규 고객 전환율 (%)',
+                            data: newUserCVR,
+                            backgroundColor: 'rgba(255, 152, 0, 0.6)',
+                            borderColor: '#ff9800',
+                            borderWidth: 2
+                        },
+                        {
+                            label: '재방문 고객 전환율 (%)',
+                            data: returningUserCVR,
+                            backgroundColor: 'rgba(103, 58, 183, 0.6)',
+                            borderColor: '#673ab7',
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y.toFixed(2)}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 3. 채널 품질 매트릭스 차트 (Scatter)
+        function updateChannelMatrixChart() {
+            if (channelEngagementData.length === 0) return;
+
+            const canvas = document.getElementById('channelMatrixChart');
+            if (!canvas) return;
+
+            // 데이터 준비
+            const data = channelEngagementData.map(row => ({
+                x: parseFloat(row['Bounce rate']) || 0,
+                y: parseFloat(row['Return rate']) || 0,
+                channel: row['channel']
+            }));
+
+            // 평균값 계산 (기준선용)
+            const avgBounceRate = data.reduce((sum, d) => sum + d.x, 0) / data.length;
+            const avgReturnRate = data.reduce((sum, d) => sum + d.y, 0) / data.length;
+
+            // 사분면별로 데이터 분리
+            const starChannels = [];
+            const growthChannels = [];
+            const stableChannels = [];
+            const problemChannels = [];
+
+            data.forEach(d => {
+                if (d.x < avgBounceRate && d.y > avgReturnRate) {
+                    starChannels.push(d);
+                } else if (d.x >= avgBounceRate && d.y > avgReturnRate) {
+                    growthChannels.push(d);
+                } else if (d.x < avgBounceRate && d.y <= avgReturnRate) {
+                    stableChannels.push(d);
+                } else {
+                    problemChannels.push(d);
+                }
+            });
+
+            if (channelMatrixChart) {
+                channelMatrixChart.destroy();
+            }
+
+            channelMatrixChart = new Chart(canvas, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: '⭐ 스타 채널',
+                            data: starChannels,
+                            backgroundColor: '#00c853',
+                            borderColor: '#00a344',
+                            borderWidth: 2,
+                            pointRadius: 10,
+                            pointHoverRadius: 14
+                        },
+                        {
+                            label: '📈 성장 채널',
+                            data: growthChannels,
+                            backgroundColor: '#2196f3',
+                            borderColor: '#1976d2',
+                            borderWidth: 2,
+                            pointRadius: 10,
+                            pointHoverRadius: 14
+                        },
+                        {
+                            label: '🔒 안정 채널',
+                            data: stableChannels,
+                            backgroundColor: '#9e9e9e',
+                            borderColor: '#757575',
+                            borderWidth: 2,
+                            pointRadius: 10,
+                            pointHoverRadius: 14
+                        },
+                        {
+                            label: '⚠️ 문제 채널',
+                            data: problemChannels,
+                            backgroundColor: '#ff5722',
+                            borderColor: '#e64a19',
+                            borderWidth: 2,
+                            pointRadius: 10,
+                            pointHoverRadius: 14
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                },
+                                padding: 15,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    return item.raw.channel;
+                                },
+                                label: function(context) {
+                                    return [
+                                        `이탈률: ${context.raw.x.toFixed(2)}%`,
+                                        `재방문율: ${context.raw.y.toFixed(2)}%`,
+                                        `분류: ${context.dataset.label}`
+                                    ];
+                                }
+                            }
+                        },
+                        annotation: {
+                            annotations: {
+                                // 평균 기준선
+                                vline: {
+                                    type: 'line',
+                                    xMin: avgBounceRate,
+                                    xMax: avgBounceRate,
+                                    borderColor: 'rgba(0, 0, 0, 0.3)',
+                                    borderWidth: 2,
+                                    borderDash: [5, 5],
+                                    label: {
+                                        content: '평균 이탈률',
+                                        enabled: true,
+                                        position: 'start'
+                                    }
+                                },
+                                hline: {
+                                    type: 'line',
+                                    yMin: avgReturnRate,
+                                    yMax: avgReturnRate,
+                                    borderColor: 'rgba(0, 0, 0, 0.3)',
+                                    borderWidth: 2,
+                                    borderDash: [5, 5],
+                                    label: {
+                                        content: '평균 재방문율',
+                                        enabled: true,
+                                        position: 'start'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: '이탈률 (%) →',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: '← 재방문율 (%)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 4. 채널별 참여도 분석 차트
+        function updateChannelEngagementChart() {
+            if (channelEngagementData.length === 0) return;
+
+            const canvas = document.getElementById('channelEngagementChart');
+            if (!canvas) return;
+
+            // 참여율 기준으로 정렬
+            const sortedData = [...channelEngagementData].sort((a, b) => {
+                return parseFloat(b['Engagement rate']) - parseFloat(a['Engagement rate']);
+            });
+
+            // 상위 10개 채널만 표시
+            const top10 = sortedData.slice(0, 10);
+
+            const labels = top10.map(row => row['channel']);
+            const engagementRates = top10.map(row => parseFloat(row['Engagement rate']) || 0);
+
+            // 색상 그라데이션 (높을수록 진한 색)
+            const colors = engagementRates.map(rate => {
+                const intensity = Math.min(rate / 100, 1);
+                return `rgba(103, 58, 183, ${0.3 + intensity * 0.5})`;
+            });
+
+            if (channelEngagementChart) {
+                channelEngagementChart.destroy();
+            }
+
+            channelEngagementChart = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '참여율 (%)',
+                        data: engagementRates,
+                        backgroundColor: colors,
+                        borderColor: '#673ab7',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `참여율: ${context.parsed.x.toFixed(2)}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ========================================
+        // 이벤트 리스너 및 초기화
+        // ========================================
 
         document.addEventListener('DOMContentLoaded', function() {
             checkIframeAndHideSidebar();
