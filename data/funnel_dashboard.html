@@ -385,6 +385,19 @@
             box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
         }
 
+        /* 탭 컨텐츠 스타일 */
+        .decision-tool-tab-content,
+        .channel-analysis-tab-content,
+        .customer-analysis-tab-content {
+            display: none;
+        }
+
+        .decision-tool-tab-content.active,
+        .channel-analysis-tab-content.active,
+        .customer-analysis-tab-content.active {
+            display: block;
+        }
+
         /* 그리드 레이아웃 */
         .grid-2 {
             display: grid;
@@ -1386,7 +1399,16 @@
                         </button>
                     </div>
                     <div class="collapsible-content">
-                        <!-- 채널 클러스터링 -->
+                        <!-- 탭 버튼 -->
+                        <div class="view-type-section" style="margin-bottom: 24px;">
+                            <button class="view-btn decision-tool-tab-btn active" data-tab="clustering">채널 그룹별 특성</button>
+                            <button class="view-btn decision-tool-tab-btn" data-tab="budget">예산 투자 가이드</button>
+                            <button class="view-btn decision-tool-tab-btn" data-tab="churn-alert">이탈 위험 경고</button>
+                            <button class="view-btn decision-tool-tab-btn" data-tab="improvement">성과 개선 분석</button>
+                        </div>
+
+                        <!-- 탭 1: 채널 클러스터링 -->
+                        <div class="decision-tool-tab-content active" id="clusteringTab">
                         <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">🎯 채널 그룹별 특성 분석</div>
                             <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
@@ -1396,8 +1418,10 @@
                                 <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
                             </div>
                         </div>
+                        </div>
 
-                        <!-- 예산 투자 가이드 -->
+                        <!-- 탭 2: 예산 투자 가이드 -->
+                        <div class="decision-tool-tab-content" id="budgetTab" style="display: none;">
                         <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">💰 예산 투자 가이드: 채널별 투자 효율성 분석</div>
                             <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
@@ -1411,8 +1435,10 @@
                                 <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
                             </div>
                         </div>
+                        </div>
 
-                        <!-- 이탈 위험 경고 -->
+                        <!-- 탭 3: 이탈 위험 경고 -->
+                        <div class="decision-tool-tab-content" id="churnAlertTab" style="display: none;">
                         <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -1430,8 +1456,10 @@
                                 <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
                             </div>
                         </div>
+                        </div>
 
-                        <!-- 성과 개선 분석 -->
+                        <!-- 탭 4: 성과 개선 분석 -->
+                        <div class="decision-tool-tab-content" id="improvementTab" style="display: none;">
                         <div class="chart-section card">
                             <div class="chart-header">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -1458,6 +1486,7 @@
                                 <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
                             </div>
                         </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1474,7 +1503,16 @@
                         </button>
                     </div>
                     <div class="collapsible-content">
-                        <!-- 채널별 단계별 고객 수 테이블 -->
+                        <!-- 탭 버튼 -->
+                        <div class="view-type-section" style="margin-bottom: 24px;">
+                            <button class="view-btn channel-analysis-tab-btn active" data-tab="table">채널별 고객 흐름</button>
+                            <button class="view-btn channel-analysis-tab-btn" data-tab="kpi">지표별 비교</button>
+                            <button class="view-btn channel-analysis-tab-btn" data-tab="balance">효율성과 규모</button>
+                            <button class="view-btn channel-analysis-tab-btn" data-tab="top10">전환율 TOP 10</button>
+                        </div>
+
+                        <!-- 탭 1: 채널별 단계별 고객 수 테이블 -->
+                        <div class="channel-analysis-tab-content active" id="tableTab">
                         <div class="table-section card" style="margin-bottom: 16px;">
                             <div class="table-header">📊 채널별 고객 흐름: 각 채널에서 얼마나 많은 고객이 구매까지 도달하나요?</div>
 
@@ -1637,8 +1675,10 @@
                                 </div>
                             </div>
                         </div>
+                        </div>
 
-                        <!-- KPI 차트 -->
+                        <!-- 탭 2: KPI 차트 -->
+                        <div class="channel-analysis-tab-content" id="kpiTab" style="display: none;">
                         <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">📈 각 지표별로 어떤 채널이 1등인가요?</div>
 
@@ -1729,8 +1769,10 @@
                                 </div>
                             </div>
                         </div>
+                        </div>
 
-                        <!-- 비교 차트 -->
+                        <!-- 탭 3: 비교 차트 -->
+                        <div class="channel-analysis-tab-content" id="balanceTab" style="display: none;">
                         <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">🔄 어떤 채널이 효율성과 규모를 모두 갖췄나요?</div>
 
@@ -1825,8 +1867,10 @@
                                 </div>
                             </div>
                         </div>
+                        </div>
 
-                        <!-- TOP 10 전환율 차트 -->
+                        <!-- 탭 4: TOP 10 전환율 차트 -->
+                        <div class="channel-analysis-tab-content" id="top10Tab" style="display: none;">
                         <div class="chart-section card">
                             <div class="chart-header">🎯 각 단계별 전환율 TOP 10: 어떤 채널이 가장 효율적인가요?</div>
 
@@ -1931,6 +1975,7 @@
                                 </div>
                             </div>
                         </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1947,6 +1992,17 @@
                         </button>
                     </div>
                     <div class="collapsible-content">
+                        <!-- 탭 버튼 -->
+                        <div class="view-type-section" style="margin-bottom: 24px;">
+                            <button class="view-btn customer-analysis-tab-btn active" data-tab="trend">신규 vs 재방문 추세</button>
+                            <button class="view-btn customer-analysis-tab-btn" data-tab="conversion">전환율 비교</button>
+                            <button class="view-btn customer-analysis-tab-btn" data-tab="churn">이탈률 분석</button>
+                            <button class="view-btn customer-analysis-tab-btn" data-tab="matrix">채널 품질 매트릭스</button>
+                            <button class="view-btn customer-analysis-tab-btn" data-tab="engagement">고객 참여도</button>
+                        </div>
+
+                        <!-- 탭 1: 통합 신규/재방문 고객 추세 차트 -->
+                        <div class="customer-analysis-tab-content active" id="trendTab">
                         <!-- 데이터 기준 선택 -->
                         <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px; padding: 16px 0;">
                             <span style="font-size: 14px; font-weight: 600; color: var(--grey-700);">📊 데이터 기준:</span>
@@ -1956,7 +2012,6 @@
                                 <button class="view-btn new-vs-returning-view-btn" data-view="daily">📅 일별</button>
                             </div>
                         </div>
-                        <!-- 통합 신규/재방문 고객 추세 차트 -->
                         <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">📊 신규 vs 재방문 고객 추세 분석</div>
                             <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
@@ -1966,8 +2021,10 @@
                                 <canvas id="customerTrendChart"></canvas>
                             </div>
                         </div>
+                        </div>
 
-                        <!-- 신규 vs 재방문 고객 전환율 비교 -->
+                        <!-- 탭 2: 신규 vs 재방문 고객 전환율 비교 -->
+                        <div class="customer-analysis-tab-content" id="conversionTab" style="display: none;">
                         <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">🔄 첫 방문 고객 vs 재방문 고객: 구매 전환율 차이 분석</div>
                             <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px; padding: 0 24px; line-height: 1.7;">
@@ -2033,8 +2090,10 @@
                                 </div>
                             </div>
                         </div>
+                        </div>
 
-                        <!-- 이탈률 차트 -->
+                        <!-- 탭 3: 이탈률 차트 -->
+                        <div class="customer-analysis-tab-content" id="churnTab" style="display: none;">
                         <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">📉 채널별 고객 이탈 분석: 어느 단계에서 가장 많이 떠나나요?</div>
 
@@ -2157,8 +2216,10 @@
                                 </div>
                             </div>
                         </div>
+                        </div>
 
-                        <!-- 채널별 재방문율 vs 이탈률 매트릭스 -->
+                        <!-- 탭 4: 채널별 재방문율 vs 이탈률 매트릭스 -->
+                        <div class="customer-analysis-tab-content" id="matrixTab" style="display: none;">
                         <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">🎯 채널 품질 매트릭스: 재방문율 vs 이탈률</div>
                             <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
@@ -2255,8 +2316,10 @@
                                 </div>
                             </div>
                         </div>
+                        </div>
 
-                        <!-- 채널별 참여도 분석 -->
+                        <!-- 탭 5: 채널별 참여도 분석 -->
+                        <div class="customer-analysis-tab-content" id="engagementTab" style="display: none;">
                         <div class="chart-section card">
                             <div class="chart-header">💎 채널별 고객 참여도: 어떤 채널이 진짜 관심 있는 고객을 데려오나요?</div>
 
@@ -2348,6 +2411,7 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -6818,6 +6882,88 @@
         }
 
         // ========================================
+        // 탭 전환 기능
+        // ========================================
+
+        function initTabSwitching() {
+            // 1. 데이터 기반 의사결정 도구 탭
+            document.querySelectorAll('.decision-tool-tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.decision-tool-tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const targetTab = this.dataset.tab;
+                    document.querySelectorAll('.decision-tool-tab-content').forEach(content => {
+                        content.style.display = 'none';
+                        content.classList.remove('active');
+                    });
+
+                    let selectedTab = null;
+                    if (targetTab === 'clustering') selectedTab = document.getElementById('clusteringTab');
+                    else if (targetTab === 'budget') selectedTab = document.getElementById('budgetTab');
+                    else if (targetTab === 'churn-alert') selectedTab = document.getElementById('churnAlertTab');
+                    else if (targetTab === 'improvement') selectedTab = document.getElementById('improvementTab');
+
+                    if (selectedTab) {
+                        selectedTab.style.display = 'block';
+                        selectedTab.classList.add('active');
+                    }
+                });
+            });
+
+            // 2. 채널별 분석 탭
+            document.querySelectorAll('.channel-analysis-tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.channel-analysis-tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const targetTab = this.dataset.tab;
+                    document.querySelectorAll('.channel-analysis-tab-content').forEach(content => {
+                        content.style.display = 'none';
+                        content.classList.remove('active');
+                    });
+
+                    let selectedTab = null;
+                    if (targetTab === 'table') selectedTab = document.getElementById('tableTab');
+                    else if (targetTab === 'kpi') selectedTab = document.getElementById('kpiTab');
+                    else if (targetTab === 'balance') selectedTab = document.getElementById('balanceTab');
+                    else if (targetTab === 'top10') selectedTab = document.getElementById('top10Tab');
+
+                    if (selectedTab) {
+                        selectedTab.style.display = 'block';
+                        selectedTab.classList.add('active');
+                    }
+                });
+            });
+
+            // 3. 고객 재방문 및 이탈 분석 탭
+            document.querySelectorAll('.customer-analysis-tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.customer-analysis-tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const targetTab = this.dataset.tab;
+                    document.querySelectorAll('.customer-analysis-tab-content').forEach(content => {
+                        content.style.display = 'none';
+                        content.classList.remove('active');
+                    });
+
+                    let selectedTab = null;
+                    if (targetTab === 'trend') selectedTab = document.getElementById('trendTab');
+                    else if (targetTab === 'conversion') selectedTab = document.getElementById('conversionTab');
+                    else if (targetTab === 'churn') selectedTab = document.getElementById('churnTab');
+                    else if (targetTab === 'matrix') selectedTab = document.getElementById('matrixTab');
+                    else if (targetTab === 'engagement') selectedTab = document.getElementById('engagementTab');
+
+                    if (selectedTab) {
+                        selectedTab.style.display = 'block';
+                        selectedTab.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        // ========================================
         // 이벤트 리스너 및 초기화
         // ========================================
 
@@ -6826,6 +6972,9 @@
 
             // 테이블 정렬 기능 초기화
             setupTableSorting();
+
+            // 탭 전환 기능 초기화
+            initTabSwitching();
 
             // 페이지 로드 후 2초 뒤 버튼 상태 확인
             setTimeout(() => {
