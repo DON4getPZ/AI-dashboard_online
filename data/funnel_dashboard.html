@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <!-- D3.js -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
@@ -966,8 +967,11 @@
                 <!-- 헤더 -->
                 <div class="header">
                     <div>
-                        <h1>AARRR 퍼널 분석 대시보드</h1>
-                        <div class="header-subtitle">GA4 데이터 기반 사용자 여정 및 전환율 분석 <span id="analysisPeriod" style="color: var(--primary-main); font-weight: 600;"></span></div>
+                        <h1>고객 구매 여정 분석 대시보드</h1>
+                        <div class="header-subtitle">방문자가 고객이 되기까지의 전 과정을 한눈에 분석 <span id="analysisPeriod" style="color: var(--primary-main); font-weight: 600;"></span></div>
+                        <div style="margin-top: 8px; font-size: 13px; color: var(--grey-600); line-height: 1.6;">
+                            💡 <strong>이 대시보드는</strong> 웹사이트 방문자가 실제 구매까지 이르는 과정을 5단계로 나누어 보여줍니다. 각 단계에서 얼마나 많은 고객을 잃는지, 어떤 채널이 효과적인지 파악할 수 있습니다.
+                        </div>
                     </div>
                 </div>
 
@@ -978,7 +982,10 @@
 
                 <!-- 2. 주요 인사이트 -->
                 <div class="insight-section card">
-                    <div class="insight-header">💡 주요 인사이트</div>
+                    <div class="insight-header">💡 지금 집중해야 할 포인트</div>
+                    <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px; padding: 0 24px;">
+                        현재 데이터에서 발견된 핵심 개선 기회와 잘하고 있는 부분을 보여드립니다.
+                    </div>
                     <div class="insight-content" id="insightContent">
                         <div class="insight-card neutral">
                             <div class="insight-text">데이터를 불러오는 중...</div>
@@ -988,7 +995,10 @@
 
                 <!-- 3. 인터랙티브 퍼널 시각화 (D3.js) -->
                 <div class="chart-section card">
-                    <div class="chart-header">AARRR 퍼널 시각화 (Interactive)</div>
+                    <div class="chart-header">📊 고객 구매 여정 5단계</div>
+                    <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px;">
+                        <strong>각 단계를 마우스로 가리키면</strong> 해당 단계의 전환율과 개선 방법을 확인할 수 있습니다.
+                    </div>
                     <div id="d3FunnelChart"></div>
                 </div>
 
@@ -997,7 +1007,7 @@
                     <div class="collapsible-header">
                         <div class="collapsible-title">
                             <span class="collapsible-icon">🔬</span>
-                            <span>고급 분석 결과 (A/B Testing, Clustering, Churn Prediction)</span>
+                            <span>심화 분석 (채널 성과 비교, 위험 감지)</span>
                         </div>
                         <button class="collapsible-toggle">
                             <span>펼치기</span>
@@ -1007,7 +1017,10 @@
                     <div class="collapsible-content">
                         <!-- A/B 테스트 결과 -->
                         <div class="chart-section card" style="margin-bottom: 16px;">
-                            <div class="chart-header">📊 A/B 테스트 결과 (채널 간 전환율 비교)</div>
+                            <div class="chart-header">📊 채널별 성과 비교 (통계적 분석)</div>
+                            <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
+                                어떤 채널이 더 효과적인지 통계적으로 검증된 결과를 보여드립니다. "유의미" 표시가 있는 항목은 우연이 아닌 실제 차이가 있다는 의미입니다.
+                            </div>
                             <div id="abTestResults" style="padding: 20px;">
                                 <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
                             </div>
@@ -1015,7 +1028,10 @@
 
                         <!-- 채널 클러스터링 -->
                         <div class="chart-section card" style="margin-bottom: 16px;">
-                            <div class="chart-header">🎯 채널 클러스터링 (성과 기반 그룹화)</div>
+                            <div class="chart-header">🎯 채널 그룹별 특성 분석</div>
+                            <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
+                                비슷한 성과를 보이는 채널들을 그룹으로 묶어 보여드립니다. 같은 그룹 내 채널들은 비슷한 전략으로 관리하면 효율적입니다.
+                            </div>
                             <div id="channelClusters" style="padding: 20px;">
                                 <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
                             </div>
@@ -1025,12 +1041,15 @@
                         <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <span>⚠️ 이탈 위험 경고 (Churn Risk)</span>
+                                    <span>⚠️ 주의 필요: 고객 이탈 증가 감지</span>
                                     <div style="display: flex; gap: 8px;">
                                         <button class="view-btn churn-period-btn active" data-period="7d">최근 7일</button>
                                         <button class="view-btn churn-period-btn" data-period="30d">최근 30일</button>
                                     </div>
                                 </div>
+                            </div>
+                            <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
+                                이전 기간 대비 고객 이탈이 늘어난 단계를 알려드립니다. 빠르게 대응하면 매출 손실을 막을 수 있습니다.
                             </div>
                             <div id="churnPredictions" style="padding: 20px;">
                                 <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
@@ -1041,12 +1060,15 @@
                         <div class="chart-section card">
                             <div class="chart-header">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <span>✨ 성과 개선 분석 (Performance Improvements)</span>
+                                    <span>✨ 좋은 소식: 개선된 부분 발견</span>
                                     <div style="display: flex; gap: 8px;">
                                         <button class="view-btn improvement-period-btn active" data-period="7d">최근 7일</button>
                                         <button class="view-btn improvement-period-btn" data-period="30d">최근 30일</button>
                                     </div>
                                 </div>
+                            </div>
+                            <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
+                                이전 기간보다 성과가 좋아진 부분을 알려드립니다. 이 긍정적인 변화를 계속 유지하는 것이 중요합니다.
                             </div>
                             <div id="improvementPredictions" style="padding: 20px;">
                                 <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
@@ -1060,7 +1082,7 @@
                     <div class="collapsible-header">
                         <div class="collapsible-title">
                             <span class="collapsible-icon">📊</span>
-                            <span>채널별 퍼널 비교 분석</span>
+                            <span>유입 채널별 상세 분석 (네이버, 구글, 인스타그램 등)</span>
                         </div>
                         <button class="collapsible-toggle">
                             <span>펼치기</span>
@@ -1070,16 +1092,19 @@
                     <div class="collapsible-content">
                         <!-- KPI 차트 -->
                         <div class="chart-section card" style="margin-bottom: 16px;">
-                            <div class="chart-header">📈 KPI 차트</div>
+                            <div class="chart-header">📈 원하는 지표로 채널 비교하기</div>
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px;">
+                                버튼을 눌러 보고 싶은 지표를 선택하세요. <strong>차트 위에 마우스를 올리면</strong> 해당 지표에 대한 설명과 개선 전략을 볼 수 있습니다.
+                            </div>
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
-                                <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">지표 선택:</span>
-                                <button class="view-btn channel-kpi-btn active" data-kpi="cvr" data-chart="kpi">CVR</button>
-                                <button class="view-btn channel-kpi-btn" data-kpi="acquisition" data-chart="kpi">유입</button>
-                                <button class="view-btn channel-kpi-btn" data-kpi="activation" data-chart="kpi">활동</button>
-                                <button class="view-btn channel-kpi-btn" data-kpi="consideration" data-chart="kpi">관심</button>
-                                <button class="view-btn channel-kpi-btn" data-kpi="conversion" data-chart="kpi">결제진행</button>
-                                <button class="view-btn channel-kpi-btn" data-kpi="purchase" data-chart="kpi">구매완료</button>
-                                <button class="view-btn channel-kpi-btn" data-kpi="revenue" data-chart="kpi">매출</button>
+                                <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 보고 싶은 지표:</span>
+                                <button class="view-btn channel-kpi-btn active" data-kpi="cvr" data-chart="kpi">전환율 (%)</button>
+                                <button class="view-btn channel-kpi-btn" data-kpi="acquisition" data-chart="kpi">방문자 수</button>
+                                <button class="view-btn channel-kpi-btn" data-kpi="activation" data-chart="kpi">활성 사용자</button>
+                                <button class="view-btn channel-kpi-btn" data-kpi="consideration" data-chart="kpi">관심 고객</button>
+                                <button class="view-btn channel-kpi-btn" data-kpi="conversion" data-chart="kpi">결제 시도</button>
+                                <button class="view-btn channel-kpi-btn" data-kpi="purchase" data-chart="kpi">구매 건수</button>
+                                <button class="view-btn channel-kpi-btn" data-kpi="revenue" data-chart="kpi">매출액</button>
                             </div>
                             <div class="chart-container-small" style="position: relative;">
                                 <canvas id="channelKpiChart"></canvas>
@@ -1089,9 +1114,12 @@
 
                         <!-- 이탈률 차트 -->
                         <div class="chart-section card" style="margin-bottom: 16px;">
-                            <div class="chart-header">📉 이탈률 차트</div>
+                            <div class="chart-header">📉 어디서 고객을 가장 많이 잃나요?</div>
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px;">
+                                이탈률이 높은 채널일수록 개선 여지가 크다는 뜻입니다. <strong>차트 위에 마우스를 올리면</strong> 이탈을 줄이는 방법을 확인할 수 있습니다.
+                            </div>
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
-                                <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">이탈률 선택:</span>
+                                <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 보고 싶은 이탈률:</span>
                                 <button class="view-btn channel-churn-btn active" data-kpi="churn_total" data-chart="churn">전체 이탈률</button>
                                 <button class="view-btn channel-churn-btn" data-kpi="churn_max" data-chart="churn">최대 이탈률</button>
                                 <button class="view-btn channel-churn-btn" data-kpi="churn_avg" data-chart="churn">평균 이탈률</button>
@@ -1104,13 +1132,11 @@
 
                         <!-- 비교 차트 -->
                         <div class="chart-section card">
-                            <div class="chart-header">🔄 비교 차트</div>
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
-                                <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">비교 유형:</span>
-                                <button class="view-btn channel-compare-btn active" data-kpi="multi" data-chart="compare">다중 KPI</button>
-                                <button class="view-btn channel-compare-btn" data-kpi="grouped" data-chart="compare">그룹 비교</button>
+                            <div class="chart-header">🔄 어떤 채널이 가장 균형잡혀 있나요?</div>
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px;">
+                                전환율, 방문자, 구매, 매출을 모두 100점 만점으로 환산하여 비교합니다. 모든 막대가 고르게 높은 채널이 가장 효율적입니다. <strong>차트 위에 마우스를 올리면</strong> 해석 방법을 자세히 알려드립니다.
                             </div>
-                            <div class="chart-container-small" style="position: relative;">
+                            <div style="position: relative; height: 450px;">
                                 <canvas id="channelCompareChart"></canvas>
                                 <div id="compareChartTooltip" class="chart-insight-tooltip"></div>
                             </div>
@@ -1118,9 +1144,19 @@
                     </div>
                 </div>
 
-                <!-- 6. 상위 캠페인 성과 -->
+                <!-- 6. 상위 채널 성과 -->
                 <div class="chart-section card" style="margin-bottom: 24px;">
-                    <div class="chart-header">상위 캠페인 성과</div>
+                    <div class="chart-header">🎯 전환율이 가장 높은 채널 TOP 10</div>
+                    <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
+                        어떤 채널이 가장 효과적인지 확인하세요. 전환율(%)은 시작 단계 대비 해당 단계까지 도달한 사람의 비율입니다.
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding: 0 24px; flex-wrap: wrap;">
+                        <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 전환율 기준:</span>
+                        <button class="view-btn channel-funnel-btn" data-funnel="activation">활동</button>
+                        <button class="view-btn channel-funnel-btn" data-funnel="consideration">관심</button>
+                        <button class="view-btn channel-funnel-btn" data-funnel="conversion">결제진행</button>
+                        <button class="view-btn channel-funnel-btn active" data-funnel="purchase">구매완료</button>
+                    </div>
                     <div class="chart-container-small">
                         <canvas id="campaignChart"></canvas>
                     </div>
@@ -1131,7 +1167,7 @@
                     <div class="collapsible-header">
                         <div class="collapsible-title">
                             <span class="collapsible-icon">👥</span>
-                            <span>신규 vs 재방문 사용자 분석</span>
+                            <span>처음 방문 vs 재방문 고객 비율</span>
                         </div>
                         <button class="collapsible-toggle">
                             <span>펼치기</span>
@@ -1149,7 +1185,10 @@
                             </div>
                         </div>
                         <div class="chart-section card">
-                            <div class="chart-header">신규 사용자 비율 추이</div>
+                            <div class="chart-header">처음 방문한 고객 비율 변화</div>
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 12px; padding: 0 24px;">
+                                처음 방문한 고객과 이전에 방문한 적 있는 고객의 비율을 시간별로 보여줍니다. 처음 방문 비율이 늘면 신규 고객 유입이 증가하는 것이고, 줄면 단골 고객 비중이 높아지는 것입니다.
+                            </div>
                             <div class="chart-container-small">
                                 <canvas id="newVsReturningChart"></canvas>
                             </div>
@@ -1162,7 +1201,7 @@
                     <div class="collapsible-header">
                         <div class="collapsible-title">
                             <span class="collapsible-icon">📊</span>
-                            <span>채널별 상세 데이터</span>
+                            <span>채널별 상세 숫자 데이터 (표)</span>
                         </div>
                         <button class="collapsible-toggle">
                             <span>펼치기</span>
@@ -1171,7 +1210,10 @@
                     </div>
                     <div class="collapsible-content">
                         <div class="table-section card">
-                            <div class="table-header">채널별 퍼널 데이터</div>
+                            <div class="table-header">채널별 단계별 고객 수</div>
+                            <div style="font-size: 13px; color: var(--grey-600); padding: 12px 24px; background: var(--grey-50);">
+                                💡 <strong>표 보는 법:</strong> 각 열은 고객 여정의 한 단계를 나타냅니다. 왼쪽에서 오른쪽으로 갈수록 숫자가 줄어드는 것이 정상입니다. CVR(전환율)은 방문자 100명 중 몇 명이 구매했는지 보여주는 비율입니다.
+                            </div>
                             <div class="table-container">
                                 <table id="channelTable">
                                     <thead>
@@ -1202,7 +1244,7 @@
                     <div class="collapsible-header">
                         <div class="collapsible-title">
                             <span class="collapsible-icon">🎯</span>
-                            <span>캠페인별 상세 데이터</span>
+                            <span>광고 캠페인별 상세 숫자 데이터 (표)</span>
                         </div>
                         <button class="collapsible-toggle">
                             <span>펼치기</span>
@@ -1211,7 +1253,10 @@
                     </div>
                     <div class="collapsible-content">
                         <div class="table-section card">
-                            <div class="table-header">캠페인별 퍼널 데이터 (상위 20개)</div>
+                            <div class="table-header">캠페인별 단계별 고객 수 (상위 20개)</div>
+                            <div style="font-size: 13px; color: var(--grey-600); padding: 12px 24px; background: var(--grey-50);">
+                                💡 <strong>표 보는 법:</strong> 여러분이 운영 중인 광고 캠페인별로 성과를 보여줍니다. CVR이 높은 캠페인에 예산을 더 투자하고, 낮은 캠페인은 개선하거나 중단하는 것이 좋습니다.
+                            </div>
                             <div class="table-container">
                                 <table id="campaignTable">
                                     <thead>
@@ -1253,7 +1298,7 @@
         let selectedChannelKPI = 'cvr';
         let currentKpiType = 'cvr';
         let currentChurnType = 'churn_total';
-        let currentCompareType = 'multi';
+        let currentChannelFunnel = 'purchase';
 
         // Chart.js 인스턴스 (D3 퍼널은 재생성 방식 사용)
         let channelKpiChart = null;
@@ -1340,8 +1385,8 @@
             updateAdvancedAnalysis();
             updateKpiChart('cvr');
             updateChurnChart('churn_total');
-            updateCompareChart('multi');
-            updateCampaignChart();
+            updateCompareChart();
+            updateCampaignChart('purchase');
             updateNewVsReturningChart();
             updateChannelTable();
             updateCampaignTable();
@@ -2261,8 +2306,8 @@
             }
         }
 
-        // 비교 차트 업데이트 (다중 KPI, 그룹 비교)
-        function updateCompareChart(compareType = 'multi') {
+        // 비교 차트 업데이트 (채널별 종합 성과)
+        function updateCompareChart() {
             if (channelData.length === 0) return;
 
             const ctx = document.getElementById('channelCompareChart');
@@ -2272,14 +2317,8 @@
                 channelCompareChart.destroy();
             }
 
-            // 현재 비교 타입 저장
-            currentCompareType = compareType;
-
-            if (compareType === 'multi') {
-                updateMultiKPIChart(ctx);
-            } else if (compareType === 'grouped') {
-                updateGroupedChart(ctx);
-            }
+            // 그룹화된 차트 표시
+            updateGroupedChart(ctx);
 
             // 툴팁 이벤트 설정
             setupCompareChartTooltip();
@@ -2295,7 +2334,7 @@
                 container.dataset.tooltipSetup = 'true';
 
                 container.addEventListener('mouseenter', function(event) {
-                    const insight = generateCompareInsight(currentCompareType);
+                    const insight = generateCompareInsight();
                     showChartInsightTooltip('compareChartTooltip', insight.insight, insight.recommendation, event);
                 });
 
@@ -2316,204 +2355,6 @@
             }
         }
 
-        // 다중 KPI 차트 (콤보 차트: 바 + 라인)
-        function updateMultiKPIChart(ctx) {
-            // CVR 기준으로 정렬
-            const sortedData = [...channelData].sort((a, b) =>
-                (parseFloat(b['CVR']) || 0) - (parseFloat(a['CVR']) || 0)
-            ).slice(0, 10);
-
-            const labels = sortedData.map(row => row['channel']);
-            const cvrData = sortedData.map(row => parseFloat(row['CVR']) || 0);
-            const purchaseData = sortedData.map(row => parseFloat(row['구매완료']) || 0);
-            const revenueData = sortedData.map(row => parseFloat(row['Revenue']) || 0);
-
-            channelCompareChart = new Chart(ctx, {
-                data: {
-                    labels,
-                    datasets: [
-                        {
-                            type: 'bar',
-                            label: 'CVR (%)',
-                            data: cvrData,
-                            backgroundColor: 'rgba(103, 58, 183, 0.7)',
-                            borderColor: '#673ab7',
-                            borderWidth: 2,
-                            yAxisID: 'y',
-                            order: 2
-                        },
-                        {
-                            type: 'line',
-                            label: '구매완료 (명)',
-                            data: purchaseData,
-                            backgroundColor: 'rgba(0, 200, 83, 0.1)',
-                            borderColor: '#00c853',
-                            borderWidth: 3,
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
-                            pointBackgroundColor: '#00c853',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            fill: false,
-                            tension: 0.3,
-                            yAxisID: 'y1',
-                            order: 1
-                        },
-                        {
-                            type: 'line',
-                            label: '매출 (원)',
-                            data: revenueData,
-                            backgroundColor: 'rgba(244, 67, 54, 0.1)',
-                            borderColor: '#f44336',
-                            borderWidth: 3,
-                            borderDash: [5, 5],
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
-                            pointBackgroundColor: '#f44336',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointStyle: 'rect',
-                            fill: false,
-                            tension: 0.3,
-                            yAxisID: 'y2',
-                            order: 0
-                        }
-                    ]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    },
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                            labels: {
-                                usePointStyle: true,
-                                padding: 15,
-                                font: {
-                                    size: 12,
-                                    weight: '600'
-                                }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.dataset.label === 'CVR (%)') {
-                                        label += formatDecimal(context.parsed.x) + '%';
-                                    } else if (context.dataset.label === '구매완료 (명)') {
-                                        label += formatNumber(context.parsed.x) + '명';
-                                    } else {
-                                        label += formatNumber(context.parsed.x) + '원';
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            type: 'linear',
-                            display: true,
-                            position: 'bottom',
-                            title: {
-                                display: true,
-                                text: 'CVR (%)',
-                                font: {
-                                    size: 13,
-                                    weight: '600'
-                                },
-                                color: '#673ab7'
-                            },
-                            ticks: {
-                                color: '#673ab7',
-                                font: {
-                                    weight: '600'
-                                }
-                            },
-                            grid: {
-                                color: 'rgba(103, 58, 183, 0.1)'
-                            }
-                        },
-                        x1: {
-                            type: 'linear',
-                            display: true,
-                            position: 'top',
-                            title: {
-                                display: true,
-                                text: '구매완료 (명)',
-                                font: {
-                                    size: 13,
-                                    weight: '600'
-                                },
-                                color: '#00c853'
-                            },
-                            ticks: {
-                                color: '#00c853',
-                                font: {
-                                    weight: '600'
-                                }
-                            },
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        },
-                        x2: {
-                            type: 'linear',
-                            display: true,
-                            position: 'top',
-                            title: {
-                                display: true,
-                                text: '매출 (원)',
-                                font: {
-                                    size: 13,
-                                    weight: '600'
-                                },
-                                color: '#f44336',
-                                padding: {
-                                    top: 35
-                                }
-                            },
-                            ticks: {
-                                color: '#f44336',
-                                font: {
-                                    weight: '600'
-                                },
-                                padding: 35
-                            },
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                font: {
-                                    size: 11
-                                }
-                            }
-                        },
-                        y1: {
-                            display: false,
-                            beginAtZero: true
-                        },
-                        y2: {
-                            display: false,
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
 
         // 그룹화된 막대 차트
         function updateGroupedChart(ctx) {
@@ -2529,6 +2370,17 @@
             const maxPurchase = Math.max(...sortedData.map(row => parseFloat(row['구매완료']) || 0));
             const maxRevenue = Math.max(...sortedData.map(row => parseFloat(row['Revenue']) || 0));
 
+            // 원본 데이터 저장
+            const originalData = sortedData.map(row => ({
+                cvr: parseFloat(row['CVR']) || 0,
+                acquisition: parseFloat(row['유입']) || 0,
+                purchase: parseFloat(row['구매완료']) || 0,
+                revenue: parseFloat(row['Revenue']) || 0
+            }));
+
+            // 호버 상태 추적
+            let hoveredIndex = null;
+
             channelCompareChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -2539,28 +2391,32 @@
                             data: sortedData.map(row => parseFloat(row['CVR']) || 0),
                             backgroundColor: 'rgba(103, 58, 183, 0.8)',
                             borderColor: '#673ab7',
-                            borderWidth: 1
+                            borderWidth: 1,
+                            originalData: originalData.map(d => d.cvr)
                         },
                         {
                             label: '유입 (정규화)',
                             data: sortedData.map(row => ((parseFloat(row['유입']) || 0) / maxAcquisition * 100)),
                             backgroundColor: 'rgba(33, 150, 243, 0.8)',
                             borderColor: '#2196f3',
-                            borderWidth: 1
+                            borderWidth: 1,
+                            originalData: originalData.map(d => d.acquisition)
                         },
                         {
                             label: '구매완료 (정규화)',
                             data: sortedData.map(row => ((parseFloat(row['구매완료']) || 0) / maxPurchase * 100)),
                             backgroundColor: 'rgba(0, 200, 83, 0.8)',
                             borderColor: '#00c853',
-                            borderWidth: 1
+                            borderWidth: 1,
+                            originalData: originalData.map(d => d.purchase)
                         },
                         {
                             label: '매출 (정규화)',
                             data: sortedData.map(row => ((parseFloat(row['Revenue']) || 0) / maxRevenue * 100)),
                             backgroundColor: 'rgba(244, 67, 54, 0.8)',
                             borderColor: '#f44336',
-                            borderWidth: 1
+                            borderWidth: 1,
+                            originalData: originalData.map(d => d.revenue)
                         }
                     ]
                 },
@@ -2569,8 +2425,21 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     interaction: {
-                        mode: 'index',
+                        mode: 'y',
                         intersect: false
+                    },
+                    onHover: function(event, activeElements) {
+                        if (activeElements.length > 0) {
+                            hoveredIndex = activeElements[0].index;
+                        } else {
+                            hoveredIndex = null;
+                        }
+                        this.update('none');
+                    },
+                    layout: {
+                        padding: {
+                            right: 100
+                        }
                     },
                     plugins: {
                         legend: {
@@ -2580,22 +2449,86 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
+                                    const datasetIndex = context.datasetIndex;
                                     const dataIndex = context.dataIndex;
-                                    const row = sortedData[dataIndex];
+                                    const originalValue = context.dataset.originalData[dataIndex];
                                     let label = context.dataset.label || '';
 
                                     if (label.includes('CVR')) {
-                                        return label + ': ' + formatDecimal(parseFloat(row['CVR']) || 0) + '%';
+                                        return label + ': ' + formatDecimal(originalValue) + '%';
                                     } else if (label.includes('유입')) {
-                                        return '유입: ' + formatNumber(parseFloat(row['유입']) || 0) + '명';
+                                        return '유입: ' + formatNumber(originalValue) + '명';
                                     } else if (label.includes('구매완료')) {
-                                        return '구매완료: ' + formatNumber(parseFloat(row['구매완료']) || 0) + '명';
+                                        return '구매완료: ' + formatNumber(originalValue) + '명';
                                     } else if (label.includes('매출')) {
-                                        return '매출: ' + formatNumber(parseFloat(row['Revenue']) || 0) + '원';
+                                        return '매출: ' + formatNumber(originalValue) + '원';
                                     }
                                     return label;
                                 }
                             }
+                        },
+                        datalabels: {
+                            display: function(context) {
+                                // 호버된 채널(index)인 경우에만 표시
+                                return context.dataIndex === hoveredIndex;
+                            },
+                            anchor: function(context) {
+                                const dataIndex = context.dataIndex;
+                                // 해당 채널의 모든 데이터셋 값 가져오기
+                                const values = context.chart.data.datasets.map(ds => ds.data[dataIndex]);
+                                const maxValue = Math.max(...values);
+                                const currentValue = context.dataset.data[dataIndex];
+
+                                // 최댓값인 경우에만 'end', 아니면 표시하지 않음
+                                return currentValue === maxValue ? 'end' : 'center';
+                            },
+                            align: 'end',
+                            offset: 4,
+                            clamp: true,
+                            formatter: function(value, context) {
+                                const dataIndex = context.dataIndex;
+                                const datasetIndex = context.datasetIndex;
+
+                                // 해당 채널의 모든 데이터셋 값 가져오기
+                                const values = context.chart.data.datasets.map(ds => ds.data[dataIndex]);
+                                const maxValue = Math.max(...values);
+                                const currentValue = context.dataset.data[dataIndex];
+
+                                // 최댓값인 데이터셋만 레이블 표시
+                                if (currentValue !== maxValue) {
+                                    return null;
+                                }
+
+                                const originalValue = context.dataset.originalData[dataIndex];
+                                const label = context.dataset.label || '';
+
+                                if (label.includes('CVR')) {
+                                    return formatDecimal(originalValue) + '%';
+                                } else if (label.includes('유입')) {
+                                    return formatNumber(originalValue) + '명';
+                                } else if (label.includes('구매완료')) {
+                                    return formatNumber(originalValue) + '명';
+                                } else if (label.includes('매출')) {
+                                    return formatNumber(originalValue) + '원';
+                                }
+                                return '';
+                            },
+                            font: {
+                                size: 11,
+                                weight: 'bold'
+                            },
+                            color: function(context) {
+                                return context.dataset.borderColor;
+                            },
+                            backgroundColor: function(context) {
+                                return 'rgba(255, 255, 255, 0.9)';
+                            },
+                            borderColor: function(context) {
+                                return context.dataset.borderColor;
+                            },
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            padding: 4
                         }
                     },
                     scales: {
@@ -2613,36 +2546,79 @@
         }
 
         // 캠페인 차트 업데이트
-        function updateCampaignChart() {
-            if (campaignData.length === 0) return;
+        function updateCampaignChart(funnelType = 'purchase') {
+            if (channelData.length === 0) return;
 
             const ctx = document.getElementById('campaignChart');
             if (!ctx) return;
 
-            // 매출 기준 상위 10개
-            const sortedData = [...campaignData].sort((a, b) =>
-                (parseFloat(b['Revenue']) || 0) - (parseFloat(a['Revenue']) || 0)
-            ).slice(0, 10);
+            // 현재 퍼널 타입 저장
+            currentChannelFunnel = funnelType;
+
+            // 퍼널별 키 매핑
+            const funnelKeyMap = {
+                'activation': '활동',
+                'consideration': '관심',
+                'conversion': '결제진행',
+                'purchase': '구매완료'
+            };
+
+            const funnelKey = funnelKeyMap[funnelType];
+
+            // 각 채널의 전환율 계산 (유입 대비 해당 단계)
+            const channelConversionData = channelData.map(row => {
+                const acquisition = parseFloat(row['유입']) || 0;
+                const funnelValue = parseFloat(row[funnelKey]) || 0;
+                const conversionRate = acquisition > 0 ? (funnelValue / acquisition * 100) : 0;
+
+                return {
+                    channel: row['channel'],
+                    conversionRate: conversionRate
+                };
+            });
+
+            // 전환율 기준 상위 10개 정렬
+            const sortedData = channelConversionData
+                .sort((a, b) => b.conversionRate - a.conversionRate)
+                .slice(0, 10);
 
             const labels = sortedData.map(row => {
-                const name = row['Session campaign'];
+                const name = row.channel;
                 return name.length > 20 ? name.substring(0, 20) + '...' : name;
             });
-            const revenueData = sortedData.map(row => parseFloat(row['Revenue']) || 0);
+            const conversionData = sortedData.map(row => row.conversionRate);
 
             if (campaignChart) {
                 campaignChart.destroy();
             }
+
+            // 퍼널별 색상 설정
+            const colorMap = {
+                'activation': { bg: 'rgba(33, 150, 243, 0.8)', border: '#2196f3' },
+                'consideration': { bg: 'rgba(255, 152, 0, 0.8)', border: '#ff9800' },
+                'conversion': { bg: 'rgba(76, 175, 80, 0.8)', border: '#4caf50' },
+                'purchase': { bg: 'rgba(0, 200, 83, 0.8)', border: '#00c853' }
+            };
+
+            const colors = colorMap[funnelType];
+
+            // 퍼널별 레이블
+            const labelMap = {
+                'activation': '활동 전환율 (%)',
+                'consideration': '관심 전환율 (%)',
+                'conversion': '결제진행 전환율 (%)',
+                'purchase': '구매완료 전환율 (%)'
+            };
 
             campaignChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels,
                     datasets: [{
-                        label: '매출 (원)',
-                        data: revenueData,
-                        backgroundColor: 'rgba(0, 200, 83, 0.8)',
-                        borderColor: '#00c853',
+                        label: labelMap[funnelType],
+                        data: conversionData,
+                        backgroundColor: colors.bg,
+                        borderColor: colors.border,
                         borderWidth: 1
                     }]
                 },
@@ -2657,14 +2633,18 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return '매출: ' + formatNumber(context.parsed.x) + '원';
+                                    return labelMap[funnelType] + ': ' + formatDecimal(context.parsed.x) + '%';
                                 }
                             }
                         }
                     },
                     scales: {
                         x: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '전환율 (%)'
+                            }
                         }
                     }
                 }
@@ -2889,32 +2869,32 @@
         function generateKpiInsight(kpiType, data) {
             const insights = {
                 cvr: {
-                    insight: 'CVR이 높은 채널은 전환 효율이 우수한 고품질 트래픽을 유입시키고 있습니다.',
-                    recommendation: 'CVR이 높은 상위 채널에 마케팅 예산을 집중 배분하고, CVR이 낮은 채널은 랜딩 페이지 최적화를 진행하세요.'
+                    insight: '전환율(CVR)이 높은 채널은 방문자를 실제 고객으로 만드는 능력이 뛰어난 채널입니다. 예를 들어 100명이 방문해서 5명이 구매하면 5%입니다.',
+                    recommendation: '전환율이 높은 채널에 광고비를 더 투자하세요. 반대로 전환율이 낮은 채널은 웹사이트 첫 화면을 고객 입장에서 개선해보세요. (예: 구매 버튼을 더 눈에 띄게 만들기)'
                 },
                 acquisition: {
-                    insight: '유입이 많은 채널은 브랜드 인지도와 도달 범위가 넓은 주요 고객 접점입니다.',
-                    recommendation: '유입량이 많은 채널의 CVR을 함께 확인하여 양과 질의 균형을 맞추세요. 필요시 타겟팅을 정교화하세요.'
+                    insight: '방문자가 많은 채널은 많은 사람들이 우리 웹사이트를 찾아오는 경로입니다. 하지만 많다고 무조건 좋은 것은 아닙니다.',
+                    recommendation: '방문자가 많은 채널의 전환율도 함께 확인하세요. 방문자는 많은데 구매는 적다면, 엉뚱한 사람들이 들어오고 있다는 뜻일 수 있습니다. 그럴 땐 광고 타겟을 더 정확하게 설정하세요.'
                 },
                 activation: {
-                    insight: '활동 단계 진입률이 높은 채널은 관심도 높은 사용자를 유입시키고 있습니다.',
-                    recommendation: '활동률이 높은 채널의 특성을 분석하여 다른 채널에 적용하고, 초기 사용자 경험을 개선하세요.'
+                    insight: '활성 사용자가 많은 채널은 단순 방문이 아니라 실제로 우리 사이트를 이용하는 사람들을 많이 보내고 있습니다.',
+                    recommendation: '활성 사용자가 많은 채널이 어떤 특징이 있는지 살펴보세요. 예를 들어 특정 연령대나 관심사를 가진 사람들이라면, 다른 채널에서도 그런 사람들을 타겟팅하세요.'
                 },
                 consideration: {
-                    insight: '관심 단계까지 도달한 사용자는 구매 의향이 높은 잠재 고객입니다.',
-                    recommendation: '관심 단계 사용자를 대상으로 리타겟팅 캠페인을 실행하고, 제품 상세 정보를 강화하세요.'
+                    insight: '관심 고객(장바구니 추가 등)이 많은 채널은 구매 의향이 높은 좋은 품질의 방문자를 보내고 있습니다.',
+                    recommendation: '관심은 보였지만 구매하지 않은 사람들에게 재방문 광고를 하면 효과적입니다. 또한 제품 사진과 설명을 더 자세하게 개선하세요.'
                 },
                 conversion: {
-                    insight: '결제를 시작한 사용자는 구매 직전 단계의 고가치 잠재 고객입니다.',
-                    recommendation: '결제 프로세스를 간소화하고, 이탈 사용자에게 장바구니 리마인더를 발송하세요.'
+                    insight: '결제를 시도한 사람이 많다는 것은 거의 구매 직전까지 갔다는 의미입니다. 이들을 놓치는 것은 큰 손실입니다.',
+                    recommendation: '결제 과정을 최대한 간단하게 만드세요. (예: 회원가입 없이 구매 가능, 배송비 조기 안내) 장바구니에 물건을 담고 떠난 사람에게 "아직 장바구니에 물건이 남아있어요" 같은 알림을 보내세요.'
                 },
                 purchase: {
-                    insight: '구매 완료 수가 많은 채널은 실제 매출을 창출하는 핵심 채널입니다.',
-                    recommendation: '구매 완료가 많은 채널에 우선 투자하고, LTV 분석을 통해 장기 수익성을 평가하세요.'
+                    insight: '실제 구매 건수가 많은 채널이 진짜 돈을 벌어다 주는 채널입니다. 이 채널들이 가장 중요합니다.',
+                    recommendation: '구매가 많은 채널에 광고비를 우선적으로 투자하세요. 또한 이 채널을 통해 구매한 고객들이 재구매를 얼마나 하는지도 추적하면 더 좋습니다.'
                 },
                 revenue: {
-                    insight: '매출이 높은 채널은 ROI가 우수한 핵심 수익 채널입니다.',
-                    recommendation: '매출 상위 채널의 성공 요인을 분석하고, 유사한 채널을 발굴하여 확장하세요.'
+                    insight: '매출이 높은 채널은 투자 대비 수익이 가장 좋은 채널입니다. 여기서 번 돈으로 다른 채널 실험도 할 수 있습니다.',
+                    recommendation: '이 채널이 왜 성공했는지 분석하세요. (어떤 상품? 어떤 광고 문구? 어떤 고객층?) 그리고 비슷한 방식으로 새로운 채널을 시도해보세요.'
                 }
             };
 
@@ -2925,16 +2905,16 @@
         function generateChurnInsight(churnType) {
             const insights = {
                 churn_total: {
-                    insight: '전체 이탈률은 퍼널 전체의 효율성을 나타냅니다. 이탈률이 높을수록 개선 여지가 큽니다.',
-                    recommendation: '이탈률이 높은 채널의 전 단계를 분석하여 병목 구간을 찾아 집중 개선하세요.'
+                    insight: '전체 이탈률은 처음 방문부터 구매까지 전 과정에서 떠난 사람의 비율입니다. 예를 들어 100명이 방문해서 95명이 구매 안 하고 떠나면 95%입니다. 이탈률이 높을수록 개선할 부분이 많다는 뜻입니다.',
+                    recommendation: '이탈률이 높은 채널을 클릭해서 어느 단계에서 가장 많이 떠나는지 확인하세요. 그 단계를 집중적으로 개선하면 효과가 큽니다.'
                 },
                 churn_max: {
-                    insight: '최대 이탈률은 퍼널에서 가장 큰 이탈이 발생하는 단계를 보여줍니다.',
-                    recommendation: '최대 이탈이 발생하는 단계를 우선 개선하면 전체 전환율 향상에 가장 큰 효과를 볼 수 있습니다.'
+                    insight: '최대 이탈률은 5단계 중 어느 한 단계에서 가장 많은 사람이 떠난 비율입니다. 여기가 가장 큰 문제 구간입니다.',
+                    recommendation: '최대 이탈이 일어나는 단계를 먼저 개선하세요. 예를 들어 결제 단계에서 이탈이 크다면 결제 과정을 간소화하고, 첫 화면에서 이탈이 크다면 페이지 로딩 속도와 디자인을 개선하세요.'
                 },
                 churn_avg: {
-                    insight: '평균 이탈률은 퍼널 단계별 균형도를 나타냅니다. 평균이 높으면 전반적인 최적화가 필요합니다.',
-                    recommendation: '평균 이탈률이 높은 채널은 전체 사용자 경험을 개선하고, A/B 테스트를 통해 단계별 최적화를 진행하세요.'
+                    insight: '평균 이탈률은 각 단계에서 떠난 사람들의 평균값입니다. 이 값이 높으면 전반적으로 고객 경험이 좋지 않다는 신호입니다.',
+                    recommendation: '전체적으로 고객 경험을 점검해야 합니다. 웹사이트 속도, 디자인, 설명 문구, 결제 과정 등을 하나씩 개선해나가세요. 두 가지 버전을 만들어 테스트해보는 것도 좋습니다.'
                 }
             };
 
@@ -2942,19 +2922,11 @@
         }
 
         // 비교 차트 인사이트 생성
-        function generateCompareInsight(compareType) {
-            const insights = {
-                multi: {
-                    insight: '다중 KPI 비교를 통해 채널별 CVR, 구매완료, 매출의 상관관계를 한눈에 파악할 수 있습니다.',
-                    recommendation: 'CVR은 높지만 매출이 낮은 채널은 객단가 향상이 필요하고, 매출은 높지만 CVR이 낮은 채널은 전환율 개선이 필요합니다.'
-                },
-                grouped: {
-                    insight: '정규화된 그룹 비교는 서로 다른 단위의 지표를 0-100 스케일로 변환하여 공정하게 비교합니다.',
-                    recommendation: '모든 지표에서 고르게 높은 점수를 받는 채널이 가장 균형 잡힌 성과를 내고 있습니다. 이런 채널을 벤치마크하세요.'
-                }
+        function generateCompareInsight() {
+            return {
+                insight: '각 채널의 전환율(CVR), 고객 유입, 구매 건수, 매출을 100점 만점으로 환산하여 비교합니다. 모든 지표가 골고루 높은 채널이 가장 균형있는 성과를 내고 있습니다.',
+                recommendation: '한 가지 지표만 좋은 채널은 개선 여지가 있습니다. 예를 들어, 유입은 많은데 전환율이 낮다면 고객 타게팅을 개선해야 합니다. 전환율은 높은데 매출이 낮다면 고가 상품 판매를 늘려야 합니다.'
             };
-
-            return insights[compareType] || { insight: '데이터 분석 중입니다.', recommendation: '지속적으로 성과를 모니터링하세요.' };
         }
 
         // 차트에 호버 이벤트 추가
@@ -3045,15 +3017,15 @@
             });
         });
 
-        // 비교 차트 버튼 전환
-        document.querySelectorAll('.channel-compare-btn').forEach(btn => {
+        // 채널 퍼널 차트 버튼 전환
+        document.querySelectorAll('.channel-funnel-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                document.querySelectorAll('.channel-compare-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.channel-funnel-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-                const compareType = this.dataset.kpi;
+                const funnelType = this.dataset.funnel;
 
-                // 비교 차트 업데이트
-                updateCompareChart(compareType);
+                // 채널 차트 업데이트
+                updateCampaignChart(funnelType);
             });
         });
 
