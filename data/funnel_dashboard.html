@@ -618,6 +618,71 @@
             padding-top: 16px;
         }
 
+        /* 차트 인사이트 툴팁 */
+        .chart-insight-tooltip {
+            position: absolute;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 0;
+            display: none;
+            z-index: 1000;
+            max-width: 320px;
+            min-width: 280px;
+            pointer-events: none;
+        }
+
+        .chart-insight-tooltip.show {
+            display: block;
+        }
+
+        .tooltip-insight-section {
+            padding: 16px;
+            background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+            border-radius: 12px 12px 0 0;
+            border-bottom: 2px solid #ffd54f;
+        }
+
+        .tooltip-insight-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #f57c00;
+            margin-bottom: 8px;
+        }
+
+        .tooltip-insight-text {
+            font-size: 13px;
+            color: var(--grey-800);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .tooltip-recommendation-section {
+            padding: 16px;
+            background: white;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .tooltip-recommendation-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary-main);
+            margin-bottom: 8px;
+        }
+
+        .tooltip-recommendation-text {
+            font-size: 13px;
+            color: var(--grey-700);
+            line-height: 1.5;
+            margin: 0;
+        }
+
         /* 반응형 */
         @media (max-width: 1400px) {
             .kpi-summary-grid {
@@ -990,19 +1055,74 @@
                     </div>
                 </div>
 
-                <!-- 5. 채널별 / 캠페인별 분석 -->
-                <div class="grid-2">
-                    <div class="chart-section card">
-                        <div class="chart-header">채널별 퍼널 비교</div>
-                        <div class="chart-container-small">
-                            <canvas id="channelChart"></canvas>
+                <!-- 5. 채널별 분석 (접기 가능) -->
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <div class="collapsible-title">
+                            <span class="collapsible-icon">📊</span>
+                            <span>채널별 퍼널 비교 분석</span>
+                        </div>
+                        <button class="collapsible-toggle">
+                            <span>펼치기</span>
+                            <span class="collapsible-toggle-icon collapsed">▼</span>
+                        </button>
+                    </div>
+                    <div class="collapsible-content">
+                        <!-- KPI 차트 -->
+                        <div class="chart-section card" style="margin-bottom: 16px;">
+                            <div class="chart-header">📈 KPI 차트</div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+                                <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">지표 선택:</span>
+                                <button class="view-btn channel-kpi-btn active" data-kpi="cvr" data-chart="kpi">CVR</button>
+                                <button class="view-btn channel-kpi-btn" data-kpi="acquisition" data-chart="kpi">유입</button>
+                                <button class="view-btn channel-kpi-btn" data-kpi="activation" data-chart="kpi">활동</button>
+                                <button class="view-btn channel-kpi-btn" data-kpi="consideration" data-chart="kpi">관심</button>
+                                <button class="view-btn channel-kpi-btn" data-kpi="conversion" data-chart="kpi">결제진행</button>
+                                <button class="view-btn channel-kpi-btn" data-kpi="purchase" data-chart="kpi">구매완료</button>
+                                <button class="view-btn channel-kpi-btn" data-kpi="revenue" data-chart="kpi">매출</button>
+                            </div>
+                            <div class="chart-container-small" style="position: relative;">
+                                <canvas id="channelKpiChart"></canvas>
+                                <div id="kpiChartTooltip" class="chart-insight-tooltip"></div>
+                            </div>
+                        </div>
+
+                        <!-- 이탈률 차트 -->
+                        <div class="chart-section card" style="margin-bottom: 16px;">
+                            <div class="chart-header">📉 이탈률 차트</div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+                                <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">이탈률 선택:</span>
+                                <button class="view-btn channel-churn-btn active" data-kpi="churn_total" data-chart="churn">전체 이탈률</button>
+                                <button class="view-btn channel-churn-btn" data-kpi="churn_max" data-chart="churn">최대 이탈률</button>
+                                <button class="view-btn channel-churn-btn" data-kpi="churn_avg" data-chart="churn">평균 이탈률</button>
+                            </div>
+                            <div class="chart-container-small" style="position: relative;">
+                                <canvas id="channelChurnChart"></canvas>
+                                <div id="churnChartTooltip" class="chart-insight-tooltip"></div>
+                            </div>
+                        </div>
+
+                        <!-- 비교 차트 -->
+                        <div class="chart-section card">
+                            <div class="chart-header">🔄 비교 차트</div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+                                <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">비교 유형:</span>
+                                <button class="view-btn channel-compare-btn active" data-kpi="multi" data-chart="compare">다중 KPI</button>
+                                <button class="view-btn channel-compare-btn" data-kpi="grouped" data-chart="compare">그룹 비교</button>
+                            </div>
+                            <div class="chart-container-small" style="position: relative;">
+                                <canvas id="channelCompareChart"></canvas>
+                                <div id="compareChartTooltip" class="chart-insight-tooltip"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="chart-section card">
-                        <div class="chart-header">상위 캠페인 성과</div>
-                        <div class="chart-container-small">
-                            <canvas id="campaignChart"></canvas>
-                        </div>
+                </div>
+
+                <!-- 6. 상위 캠페인 성과 -->
+                <div class="chart-section card" style="margin-bottom: 24px;">
+                    <div class="chart-header">상위 캠페인 성과</div>
+                    <div class="chart-container-small">
+                        <canvas id="campaignChart"></canvas>
                     </div>
                 </div>
 
@@ -1130,9 +1250,15 @@
         let insightsData = null;
         let currentView = 'daily';
         let newVsReturningView = 'monthly';
+        let selectedChannelKPI = 'cvr';
+        let currentKpiType = 'cvr';
+        let currentChurnType = 'churn_total';
+        let currentCompareType = 'multi';
 
         // Chart.js 인스턴스 (D3 퍼널은 재생성 방식 사용)
-        let channelChart = null;
+        let channelKpiChart = null;
+        let channelChurnChart = null;
+        let channelCompareChart = null;
         let campaignChart = null;
         let newVsReturningChart = null;
 
@@ -1212,7 +1338,9 @@
             updateInsights();
             updateFunnelChart();
             updateAdvancedAnalysis();
-            updateChannelChart();
+            updateKpiChart('cvr');
+            updateChurnChart('churn_total');
+            updateCompareChart('multi');
             updateCampaignChart();
             updateNewVsReturningChart();
             updateChannelTable();
@@ -1814,34 +1942,125 @@
             }
         }
 
-        // 채널 차트 업데이트
-        function updateChannelChart() {
+        // 이탈률 계산 함수
+        function calculateChurnRates(row) {
+            const acquisition = parseFloat(row['유입']) || 0;
+            const activation = parseFloat(row['활동']) || 0;
+            const consideration = parseFloat(row['관심']) || 0;
+            const conversion = parseFloat(row['결제진행']) || 0;
+            const purchase = parseFloat(row['구매완료']) || 0;
+
+            // 전체 이탈률 = (유입 - 구매완료) / 유입 × 100
+            const totalChurn = acquisition > 0 ? ((acquisition - purchase) / acquisition * 100) : 0;
+
+            // 단계별 이탈률
+            const activationChurn = acquisition > 0 ? ((acquisition - activation) / acquisition * 100) : 0;
+            const considerationChurn = activation > 0 ? ((activation - consideration) / activation * 100) : 0;
+            const conversionChurn = consideration > 0 ? ((consideration - conversion) / consideration * 100) : 0;
+            const purchaseChurn = conversion > 0 ? ((conversion - purchase) / conversion * 100) : 0;
+
+            // 단계별 최대 이탈률
+            const maxChurn = Math.max(activationChurn, considerationChurn, conversionChurn, purchaseChurn);
+
+            // 평균 이탈률
+            const avgChurn = (activationChurn + considerationChurn + conversionChurn + purchaseChurn) / 4;
+
+            return {
+                total: totalChurn,
+                max: maxChurn,
+                avg: avgChurn
+            };
+        }
+
+        // KPI 차트 업데이트 (CVR, 유입, 활동, 관심, 결제진행, 구매완료, 매출)
+        function updateKpiChart(kpiType = 'cvr') {
             if (channelData.length === 0) return;
 
-            const ctx = document.getElementById('channelChart');
+            const ctx = document.getElementById('channelKpiChart');
             if (!ctx) return;
 
-            // CVR 기준 정렬
-            const sortedData = [...channelData].sort((a, b) =>
-                (parseFloat(b['CVR']) || 0) - (parseFloat(a['CVR']) || 0)
-            ).slice(0, 10);
-
-            const labels = sortedData.map(row => row['channel']);
-            const cvrData = sortedData.map(row => parseFloat(row['CVR']) || 0);
-
-            if (channelChart) {
-                channelChart.destroy();
+            if (channelKpiChart) {
+                channelKpiChart.destroy();
             }
 
-            channelChart = new Chart(ctx, {
+            // 현재 KPI 타입 저장
+            currentKpiType = kpiType;
+
+            // KPI별 설정
+            const kpiConfig = {
+                cvr: {
+                    label: 'CVR (%)',
+                    key: 'CVR',
+                    color: '#673ab7',
+                    format: (val) => formatDecimal(val) + '%',
+                    getValue: (row) => parseFloat(row['CVR']) || 0
+                },
+                acquisition: {
+                    label: '유입 (명)',
+                    key: '유입',
+                    color: '#2196f3',
+                    format: (val) => formatNumber(val) + '명',
+                    getValue: (row) => parseFloat(row['유입']) || 0
+                },
+                activation: {
+                    label: '활동 (명)',
+                    key: '활동',
+                    color: '#00bcd4',
+                    format: (val) => formatNumber(val) + '명',
+                    getValue: (row) => parseFloat(row['활동']) || 0
+                },
+                consideration: {
+                    label: '관심 (명)',
+                    key: '관심',
+                    color: '#ff9800',
+                    format: (val) => formatNumber(val) + '명',
+                    getValue: (row) => parseFloat(row['관심']) || 0
+                },
+                conversion: {
+                    label: '결제진행 (명)',
+                    key: '결제진행',
+                    color: '#4caf50',
+                    format: (val) => formatNumber(val) + '명',
+                    getValue: (row) => parseFloat(row['결제진행']) || 0
+                },
+                purchase: {
+                    label: '구매완료 (명)',
+                    key: '구매완료',
+                    color: '#00c853',
+                    format: (val) => formatNumber(val) + '명',
+                    getValue: (row) => parseFloat(row['구매완료']) || 0
+                },
+                revenue: {
+                    label: '매출 (원)',
+                    key: 'Revenue',
+                    color: '#f44336',
+                    format: (val) => formatNumber(val) + '원',
+                    getValue: (row) => parseFloat(row['Revenue']) || 0
+                }
+            };
+
+            const config = kpiConfig[kpiType];
+            if (!config) return;
+
+            // 선택된 KPI 기준으로 정렬 (DESC)
+            const sortedData = [...channelData].sort((a, b) => {
+                const aVal = config.getValue(a);
+                const bVal = config.getValue(b);
+                return bVal - aVal;
+            }).slice(0, 10);
+
+            const labels = sortedData.map(row => row['channel']);
+            const values = sortedData.map(row => config.getValue(row));
+
+            channelKpiChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels,
                     datasets: [{
-                        label: 'CVR (%)',
-                        data: cvrData,
-                        backgroundColor: 'rgba(103, 58, 183, 0.8)',
-                        borderColor: '#673ab7',
+                        label: config.label,
+                        data: values,
+                        backgroundColor: config.color.replace(')', ', 0.8)').replace('rgb', 'rgba'),
+                        borderColor: config.color,
                         borderWidth: 1
                     }]
                 },
@@ -1852,6 +2071,13 @@
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return config.label + ': ' + config.format(context.parsed.x);
+                                }
+                            }
                         }
                     },
                     scales: {
@@ -1859,7 +2085,526 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'CVR (%)'
+                                text: config.label
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 툴팁 이벤트 설정
+            setupKpiChartTooltip();
+        }
+
+        // KPI 차트 툴팁 설정
+        function setupKpiChartTooltip() {
+            const canvas = document.getElementById('channelKpiChart');
+            const container = canvas ? canvas.parentElement : null;
+            if (!container) return;
+
+            // Remove existing listeners by cloning container
+            if (!container.dataset.tooltipSetup) {
+                container.dataset.tooltipSetup = 'true';
+
+                container.addEventListener('mouseenter', function(event) {
+                    const insight = generateKpiInsight(currentKpiType);
+                    showChartInsightTooltip('kpiChartTooltip', insight.insight, insight.recommendation, event);
+                });
+
+                container.addEventListener('mousemove', function(event) {
+                    const tooltip = document.getElementById('kpiChartTooltip');
+                    if (tooltip && tooltip.classList.contains('show')) {
+                        const containerRect = container.getBoundingClientRect();
+                        const x = event.clientX - containerRect.left;
+                        const y = event.clientY - containerRect.top;
+                        tooltip.style.left = (x + 15) + 'px';
+                        tooltip.style.top = (y + 15) + 'px';
+                    }
+                });
+
+                container.addEventListener('mouseleave', function() {
+                    hideChartInsightTooltip('kpiChartTooltip');
+                });
+            }
+        }
+
+        // 이탈률 차트 업데이트 (전체 이탈률, 최대 이탈률, 평균 이탈률)
+        function updateChurnChart(churnType = 'churn_total') {
+            if (channelData.length === 0) return;
+
+            const ctx = document.getElementById('channelChurnChart');
+            if (!ctx) return;
+
+            if (channelChurnChart) {
+                channelChurnChart.destroy();
+            }
+
+            // 현재 이탈률 타입 저장
+            currentChurnType = churnType;
+
+            // 이탈률별 설정
+            const churnConfig = {
+                churn_total: {
+                    label: '전체 이탈률 (%)',
+                    key: 'churn_total',
+                    color: '#e91e63',
+                    format: (val) => formatDecimal(val) + '%',
+                    getValue: (row) => calculateChurnRates(row).total,
+                    tooltip: '(유입 - 구매완료) / 유입 × 100'
+                },
+                churn_max: {
+                    label: '최대 이탈률 (%)',
+                    key: 'churn_max',
+                    color: '#9c27b0',
+                    format: (val) => formatDecimal(val) + '%',
+                    getValue: (row) => calculateChurnRates(row).max,
+                    tooltip: '단계별 이탈률 중 최대값'
+                },
+                churn_avg: {
+                    label: '평균 이탈률 (%)',
+                    key: 'churn_avg',
+                    color: '#3f51b5',
+                    format: (val) => formatDecimal(val) + '%',
+                    getValue: (row) => calculateChurnRates(row).avg,
+                    tooltip: '단계별 이탈률의 평균'
+                }
+            };
+
+            const config = churnConfig[churnType];
+            if (!config) return;
+
+            // 선택된 이탈률 기준으로 정렬 (DESC)
+            const sortedData = [...channelData].sort((a, b) => {
+                const aVal = config.getValue(a);
+                const bVal = config.getValue(b);
+                return bVal - aVal;
+            }).slice(0, 10);
+
+            const labels = sortedData.map(row => row['channel']);
+            const values = sortedData.map(row => config.getValue(row));
+
+            channelChurnChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: config.label,
+                        data: values,
+                        backgroundColor: config.color.replace(')', ', 0.8)').replace('rgb', 'rgba'),
+                        borderColor: config.color,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return config.label + ': ' + config.format(context.parsed.x);
+                                },
+                                afterLabel: function(context) {
+                                    return '계산식: ' + config.tooltip;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: config.label
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 툴팁 이벤트 설정
+            setupChurnChartTooltip();
+        }
+
+        // 이탈률 차트 툴팁 설정
+        function setupChurnChartTooltip() {
+            const canvas = document.getElementById('channelChurnChart');
+            const container = canvas ? canvas.parentElement : null;
+            if (!container) return;
+
+            if (!container.dataset.tooltipSetup) {
+                container.dataset.tooltipSetup = 'true';
+
+                container.addEventListener('mouseenter', function(event) {
+                    const insight = generateChurnInsight(currentChurnType);
+                    showChartInsightTooltip('churnChartTooltip', insight.insight, insight.recommendation, event);
+                });
+
+                container.addEventListener('mousemove', function(event) {
+                    const tooltip = document.getElementById('churnChartTooltip');
+                    if (tooltip && tooltip.classList.contains('show')) {
+                        const containerRect = container.getBoundingClientRect();
+                        const x = event.clientX - containerRect.left;
+                        const y = event.clientY - containerRect.top;
+                        tooltip.style.left = (x + 15) + 'px';
+                        tooltip.style.top = (y + 15) + 'px';
+                    }
+                });
+
+                container.addEventListener('mouseleave', function() {
+                    hideChartInsightTooltip('churnChartTooltip');
+                });
+            }
+        }
+
+        // 비교 차트 업데이트 (다중 KPI, 그룹 비교)
+        function updateCompareChart(compareType = 'multi') {
+            if (channelData.length === 0) return;
+
+            const ctx = document.getElementById('channelCompareChart');
+            if (!ctx) return;
+
+            if (channelCompareChart) {
+                channelCompareChart.destroy();
+            }
+
+            // 현재 비교 타입 저장
+            currentCompareType = compareType;
+
+            if (compareType === 'multi') {
+                updateMultiKPIChart(ctx);
+            } else if (compareType === 'grouped') {
+                updateGroupedChart(ctx);
+            }
+
+            // 툴팁 이벤트 설정
+            setupCompareChartTooltip();
+        }
+
+        // 비교 차트 툴팁 설정
+        function setupCompareChartTooltip() {
+            const canvas = document.getElementById('channelCompareChart');
+            const container = canvas ? canvas.parentElement : null;
+            if (!container) return;
+
+            if (!container.dataset.tooltipSetup) {
+                container.dataset.tooltipSetup = 'true';
+
+                container.addEventListener('mouseenter', function(event) {
+                    const insight = generateCompareInsight(currentCompareType);
+                    showChartInsightTooltip('compareChartTooltip', insight.insight, insight.recommendation, event);
+                });
+
+                container.addEventListener('mousemove', function(event) {
+                    const tooltip = document.getElementById('compareChartTooltip');
+                    if (tooltip && tooltip.classList.contains('show')) {
+                        const containerRect = container.getBoundingClientRect();
+                        const x = event.clientX - containerRect.left;
+                        const y = event.clientY - containerRect.top;
+                        tooltip.style.left = (x + 15) + 'px';
+                        tooltip.style.top = (y + 15) + 'px';
+                    }
+                });
+
+                container.addEventListener('mouseleave', function() {
+                    hideChartInsightTooltip('compareChartTooltip');
+                });
+            }
+        }
+
+        // 다중 KPI 차트 (콤보 차트: 바 + 라인)
+        function updateMultiKPIChart(ctx) {
+            // CVR 기준으로 정렬
+            const sortedData = [...channelData].sort((a, b) =>
+                (parseFloat(b['CVR']) || 0) - (parseFloat(a['CVR']) || 0)
+            ).slice(0, 10);
+
+            const labels = sortedData.map(row => row['channel']);
+            const cvrData = sortedData.map(row => parseFloat(row['CVR']) || 0);
+            const purchaseData = sortedData.map(row => parseFloat(row['구매완료']) || 0);
+            const revenueData = sortedData.map(row => parseFloat(row['Revenue']) || 0);
+
+            channelCompareChart = new Chart(ctx, {
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            type: 'bar',
+                            label: 'CVR (%)',
+                            data: cvrData,
+                            backgroundColor: 'rgba(103, 58, 183, 0.7)',
+                            borderColor: '#673ab7',
+                            borderWidth: 2,
+                            yAxisID: 'y',
+                            order: 2
+                        },
+                        {
+                            type: 'line',
+                            label: '구매완료 (명)',
+                            data: purchaseData,
+                            backgroundColor: 'rgba(0, 200, 83, 0.1)',
+                            borderColor: '#00c853',
+                            borderWidth: 3,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#00c853',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            fill: false,
+                            tension: 0.3,
+                            yAxisID: 'y1',
+                            order: 1
+                        },
+                        {
+                            type: 'line',
+                            label: '매출 (원)',
+                            data: revenueData,
+                            backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                            borderColor: '#f44336',
+                            borderWidth: 3,
+                            borderDash: [5, 5],
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#f44336',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointStyle: 'rect',
+                            fill: false,
+                            tension: 0.3,
+                            yAxisID: 'y2',
+                            order: 0
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: {
+                                    size: 12,
+                                    weight: '600'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.dataset.label === 'CVR (%)') {
+                                        label += formatDecimal(context.parsed.x) + '%';
+                                    } else if (context.dataset.label === '구매완료 (명)') {
+                                        label += formatNumber(context.parsed.x) + '명';
+                                    } else {
+                                        label += formatNumber(context.parsed.x) + '원';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            display: true,
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'CVR (%)',
+                                font: {
+                                    size: 13,
+                                    weight: '600'
+                                },
+                                color: '#673ab7'
+                            },
+                            ticks: {
+                                color: '#673ab7',
+                                font: {
+                                    weight: '600'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(103, 58, 183, 0.1)'
+                            }
+                        },
+                        x1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'top',
+                            title: {
+                                display: true,
+                                text: '구매완료 (명)',
+                                font: {
+                                    size: 13,
+                                    weight: '600'
+                                },
+                                color: '#00c853'
+                            },
+                            ticks: {
+                                color: '#00c853',
+                                font: {
+                                    weight: '600'
+                                }
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        },
+                        x2: {
+                            type: 'linear',
+                            display: true,
+                            position: 'top',
+                            title: {
+                                display: true,
+                                text: '매출 (원)',
+                                font: {
+                                    size: 13,
+                                    weight: '600'
+                                },
+                                color: '#f44336',
+                                padding: {
+                                    top: 35
+                                }
+                            },
+                            ticks: {
+                                color: '#f44336',
+                                font: {
+                                    weight: '600'
+                                },
+                                padding: 35
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        y1: {
+                            display: false,
+                            beginAtZero: true
+                        },
+                        y2: {
+                            display: false,
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // 그룹화된 막대 차트
+        function updateGroupedChart(ctx) {
+            // CVR 기준으로 정렬
+            const sortedData = [...channelData].sort((a, b) =>
+                (parseFloat(b['CVR']) || 0) - (parseFloat(a['CVR']) || 0)
+            ).slice(0, 8);
+
+            const labels = sortedData.map(row => row['channel']);
+
+            // 정규화를 위한 최대값 계산
+            const maxAcquisition = Math.max(...sortedData.map(row => parseFloat(row['유입']) || 0));
+            const maxPurchase = Math.max(...sortedData.map(row => parseFloat(row['구매완료']) || 0));
+            const maxRevenue = Math.max(...sortedData.map(row => parseFloat(row['Revenue']) || 0));
+
+            channelCompareChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: 'CVR (%)',
+                            data: sortedData.map(row => parseFloat(row['CVR']) || 0),
+                            backgroundColor: 'rgba(103, 58, 183, 0.8)',
+                            borderColor: '#673ab7',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '유입 (정규화)',
+                            data: sortedData.map(row => ((parseFloat(row['유입']) || 0) / maxAcquisition * 100)),
+                            backgroundColor: 'rgba(33, 150, 243, 0.8)',
+                            borderColor: '#2196f3',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '구매완료 (정규화)',
+                            data: sortedData.map(row => ((parseFloat(row['구매완료']) || 0) / maxPurchase * 100)),
+                            backgroundColor: 'rgba(0, 200, 83, 0.8)',
+                            borderColor: '#00c853',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '매출 (정규화)',
+                            data: sortedData.map(row => ((parseFloat(row['Revenue']) || 0) / maxRevenue * 100)),
+                            backgroundColor: 'rgba(244, 67, 54, 0.8)',
+                            borderColor: '#f44336',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const dataIndex = context.dataIndex;
+                                    const row = sortedData[dataIndex];
+                                    let label = context.dataset.label || '';
+
+                                    if (label.includes('CVR')) {
+                                        return label + ': ' + formatDecimal(parseFloat(row['CVR']) || 0) + '%';
+                                    } else if (label.includes('유입')) {
+                                        return '유입: ' + formatNumber(parseFloat(row['유입']) || 0) + '명';
+                                    } else if (label.includes('구매완료')) {
+                                        return '구매완료: ' + formatNumber(parseFloat(row['구매완료']) || 0) + '명';
+                                    } else if (label.includes('매출')) {
+                                        return '매출: ' + formatNumber(parseFloat(row['Revenue']) || 0) + '원';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: '정규화된 값 (0-100)'
                             }
                         }
                     }
@@ -2104,6 +2849,129 @@
             `).join('');
         }
 
+        // 차트 인사이트 툴팁 표시 함수
+        function showChartInsightTooltip(tooltipId, insight, recommendation, event) {
+            const tooltip = document.getElementById(tooltipId);
+            if (!tooltip) return;
+
+            tooltip.innerHTML = `
+                <div class="tooltip-insight-section">
+                    <div class="tooltip-insight-header">
+                        💡 인사이트
+                    </div>
+                    <p class="tooltip-insight-text">${insight}</p>
+                </div>
+                <div class="tooltip-recommendation-section">
+                    <div class="tooltip-recommendation-header">
+                        🎯 추천 사항
+                    </div>
+                    <p class="tooltip-recommendation-text">${recommendation}</p>
+                </div>
+            `;
+
+            // 마우스 위치에 따라 툴팁 위치 조정
+            const containerRect = tooltip.parentElement.getBoundingClientRect();
+            const x = event.clientX - containerRect.left;
+            const y = event.clientY - containerRect.top;
+
+            tooltip.style.left = (x + 15) + 'px';
+            tooltip.style.top = (y + 15) + 'px';
+            tooltip.classList.add('show');
+        }
+
+        function hideChartInsightTooltip(tooltipId) {
+            const tooltip = document.getElementById(tooltipId);
+            if (!tooltip) return;
+            tooltip.classList.remove('show');
+        }
+
+        // KPI 차트 인사이트 생성
+        function generateKpiInsight(kpiType, data) {
+            const insights = {
+                cvr: {
+                    insight: 'CVR이 높은 채널은 전환 효율이 우수한 고품질 트래픽을 유입시키고 있습니다.',
+                    recommendation: 'CVR이 높은 상위 채널에 마케팅 예산을 집중 배분하고, CVR이 낮은 채널은 랜딩 페이지 최적화를 진행하세요.'
+                },
+                acquisition: {
+                    insight: '유입이 많은 채널은 브랜드 인지도와 도달 범위가 넓은 주요 고객 접점입니다.',
+                    recommendation: '유입량이 많은 채널의 CVR을 함께 확인하여 양과 질의 균형을 맞추세요. 필요시 타겟팅을 정교화하세요.'
+                },
+                activation: {
+                    insight: '활동 단계 진입률이 높은 채널은 관심도 높은 사용자를 유입시키고 있습니다.',
+                    recommendation: '활동률이 높은 채널의 특성을 분석하여 다른 채널에 적용하고, 초기 사용자 경험을 개선하세요.'
+                },
+                consideration: {
+                    insight: '관심 단계까지 도달한 사용자는 구매 의향이 높은 잠재 고객입니다.',
+                    recommendation: '관심 단계 사용자를 대상으로 리타겟팅 캠페인을 실행하고, 제품 상세 정보를 강화하세요.'
+                },
+                conversion: {
+                    insight: '결제를 시작한 사용자는 구매 직전 단계의 고가치 잠재 고객입니다.',
+                    recommendation: '결제 프로세스를 간소화하고, 이탈 사용자에게 장바구니 리마인더를 발송하세요.'
+                },
+                purchase: {
+                    insight: '구매 완료 수가 많은 채널은 실제 매출을 창출하는 핵심 채널입니다.',
+                    recommendation: '구매 완료가 많은 채널에 우선 투자하고, LTV 분석을 통해 장기 수익성을 평가하세요.'
+                },
+                revenue: {
+                    insight: '매출이 높은 채널은 ROI가 우수한 핵심 수익 채널입니다.',
+                    recommendation: '매출 상위 채널의 성공 요인을 분석하고, 유사한 채널을 발굴하여 확장하세요.'
+                }
+            };
+
+            return insights[kpiType] || { insight: '데이터 분석 중입니다.', recommendation: '지속적으로 성과를 모니터링하세요.' };
+        }
+
+        // 이탈률 차트 인사이트 생성
+        function generateChurnInsight(churnType) {
+            const insights = {
+                churn_total: {
+                    insight: '전체 이탈률은 퍼널 전체의 효율성을 나타냅니다. 이탈률이 높을수록 개선 여지가 큽니다.',
+                    recommendation: '이탈률이 높은 채널의 전 단계를 분석하여 병목 구간을 찾아 집중 개선하세요.'
+                },
+                churn_max: {
+                    insight: '최대 이탈률은 퍼널에서 가장 큰 이탈이 발생하는 단계를 보여줍니다.',
+                    recommendation: '최대 이탈이 발생하는 단계를 우선 개선하면 전체 전환율 향상에 가장 큰 효과를 볼 수 있습니다.'
+                },
+                churn_avg: {
+                    insight: '평균 이탈률은 퍼널 단계별 균형도를 나타냅니다. 평균이 높으면 전반적인 최적화가 필요합니다.',
+                    recommendation: '평균 이탈률이 높은 채널은 전체 사용자 경험을 개선하고, A/B 테스트를 통해 단계별 최적화를 진행하세요.'
+                }
+            };
+
+            return insights[churnType] || { insight: '데이터 분석 중입니다.', recommendation: '지속적으로 성과를 모니터링하세요.' };
+        }
+
+        // 비교 차트 인사이트 생성
+        function generateCompareInsight(compareType) {
+            const insights = {
+                multi: {
+                    insight: '다중 KPI 비교를 통해 채널별 CVR, 구매완료, 매출의 상관관계를 한눈에 파악할 수 있습니다.',
+                    recommendation: 'CVR은 높지만 매출이 낮은 채널은 객단가 향상이 필요하고, 매출은 높지만 CVR이 낮은 채널은 전환율 개선이 필요합니다.'
+                },
+                grouped: {
+                    insight: '정규화된 그룹 비교는 서로 다른 단위의 지표를 0-100 스케일로 변환하여 공정하게 비교합니다.',
+                    recommendation: '모든 지표에서 고르게 높은 점수를 받는 채널이 가장 균형 잡힌 성과를 내고 있습니다. 이런 채널을 벤치마크하세요.'
+                }
+            };
+
+            return insights[compareType] || { insight: '데이터 분석 중입니다.', recommendation: '지속적으로 성과를 모니터링하세요.' };
+        }
+
+        // 차트에 호버 이벤트 추가
+        function addChartHoverTooltip(canvasId, tooltipId, insightGenerator) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+
+            canvas.addEventListener('mousemove', function(event) {
+                const insight = insightGenerator();
+                showChartInsightTooltip(tooltipId, insight.insight, insight.recommendation, event);
+            });
+
+            canvas.addEventListener('mouseleave', function() {
+                hideChartInsightTooltip(tooltipId);
+            });
+        }
+
         // 뷰 타입 전환
         document.querySelectorAll('.view-btn').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -2150,6 +3018,42 @@
 
                 // 성과 개선 분석 업데이트
                 updateImprovementPredictions(period);
+            });
+        });
+
+        // KPI 차트 버튼 전환
+        document.querySelectorAll('.channel-kpi-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.channel-kpi-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const kpiType = this.dataset.kpi;
+
+                // KPI 차트 업데이트
+                updateKpiChart(kpiType);
+            });
+        });
+
+        // 이탈률 차트 버튼 전환
+        document.querySelectorAll('.channel-churn-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.channel-churn-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const churnType = this.dataset.kpi;
+
+                // 이탈률 차트 업데이트
+                updateChurnChart(churnType);
+            });
+        });
+
+        // 비교 차트 버튼 전환
+        document.querySelectorAll('.channel-compare-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.channel-compare-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const compareType = this.dataset.kpi;
+
+                // 비교 차트 업데이트
+                updateCompareChart(compareType);
             });
         });
 
