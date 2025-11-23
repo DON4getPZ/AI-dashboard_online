@@ -1,0 +1,2089 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채널별 분석 대시보드 - 브랜드/상품/프로모션 인사이트</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        :root {
+            /* Berry Theme Colors */
+            --primary-main: #673ab7;
+            --primary-light: #ede7f6;
+            --primary-dark: #5e35b1;
+            --secondary-main: #2196f3;
+            --secondary-light: #e3f2fd;
+            --success-main: #00c853;
+            --success-light: #b9f6ca;
+            --warning-main: #ffab00;
+            --warning-light: #fff8e1;
+            --error-main: #ff1744;
+            --error-light: #ffeaea;
+            --grey-50: #fafafa;
+            --grey-100: #f5f5f5;
+            --grey-200: #eeeeee;
+            --grey-300: #e0e0e0;
+            --grey-500: #9e9e9e;
+            --grey-600: #757575;
+            --grey-700: #616161;
+            --grey-900: #212121;
+            --paper: #ffffff;
+            --background: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--grey-900);
+            line-height: 1.5;
+        }
+
+        /* 레이아웃 구조 */
+        .app-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--grey-200);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-main) 0%, var(--primary-dark) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .sidebar-logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-logo-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--grey-900);
+            line-height: 1;
+        }
+
+        .sidebar-logo-subtitle {
+            font-size: 11px;
+            color: var(--grey-500);
+            margin-top: 4px;
+        }
+
+        .simplebar-content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-thumb {
+            background: var(--grey-300);
+            border-radius: 3px;
+        }
+
+        .sidebar-content {
+            padding: 16px 12px;
+        }
+
+        .nav-group {
+            margin-bottom: 16px;
+        }
+
+        .nav-group-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 8px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            color: var(--grey-700);
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-bottom: 2px;
+        }
+
+        .nav-item:hover {
+            background-color: var(--grey-100);
+            color: var(--primary-main);
+        }
+
+        .nav-item.active {
+            background-color: var(--primary-light);
+            color: var(--primary-main);
+            font-weight: 500;
+        }
+
+        .nav-item-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .nav-item-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: currentColor;
+        }
+
+        .nav-item-text {
+            font-size: 14px;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 12px;
+            margin-bottom: 8px;
+        }
+
+        /* 접기/펼치기 섹션 스타일 */
+        .collapsible-section {
+            margin-bottom: 24px;
+        }
+
+        .collapsible-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: var(--paper);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--grey-200);
+        }
+
+        .collapsible-header:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .collapsible-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--grey-900);
+        }
+
+        .collapsible-icon {
+            font-size: 24px;
+        }
+
+        .collapsible-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--primary-light);
+            color: var(--primary-main);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .collapsible-toggle:hover {
+            background: var(--primary-main);
+            color: white;
+        }
+
+        .collapsible-toggle-icon {
+            transition: transform 0.3s ease;
+            transform: rotate(180deg);
+        }
+
+        .collapsible-toggle-icon.collapsed {
+            transform: rotate(0deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            padding: 0 24px;
+        }
+
+        .collapsible-content.expanded {
+            max-height: 10000px;
+            padding: 24px;
+        }
+
+        /* 뷰 타입 선택 섹션 */
+        .view-type-section {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .view-btn {
+            padding: 10px 20px;
+            background: var(--grey-100);
+            color: var(--grey-700);
+            border: 1px solid var(--grey-300);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-btn:hover {
+            background: var(--grey-200);
+            border-color: var(--grey-400);
+        }
+
+        .view-btn.active {
+            background: var(--primary-main);
+            color: white;
+            border-color: var(--primary-main);
+        }
+
+        /* 메인 컨텐츠 */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 24px;
+        }
+
+        .dashboard-header {
+            margin-bottom: 32px;
+        }
+
+        .dashboard-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin-bottom: 8px;
+        }
+
+        .dashboard-subtitle {
+            font-size: 14px;
+            color: var(--grey-600);
+        }
+
+        /* 카드 스타일 */
+        .card {
+            background: var(--paper);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--grey-200);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--grey-900);
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: var(--grey-500);
+            margin-top: 4px;
+        }
+
+        /* KPI 카드 */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: var(--paper);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--grey-200);
+            transition: all 0.3s;
+        }
+
+        .kpi-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .kpi-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .kpi-title {
+            font-size: 13px;
+            color: var(--grey-600);
+            font-weight: 500;
+        }
+
+        .kpi-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .kpi-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin-bottom: 8px;
+        }
+
+        .kpi-change {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .kpi-change.positive {
+            color: var(--success-main);
+        }
+
+        .kpi-change.negative {
+            color: var(--error-main);
+        }
+
+        .kpi-change.neutral {
+            color: var(--grey-500);
+        }
+
+        /* 인사이트 카드 */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .insight-card {
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .insight-card.high {
+            background: var(--error-light);
+            border-left-color: var(--error-main);
+        }
+
+        .insight-card.medium {
+            background: var(--warning-light);
+            border-left-color: var(--warning-main);
+        }
+
+        .insight-card.low {
+            background: var(--success-light);
+            border-left-color: var(--success-main);
+        }
+
+        .insight-card.opportunity {
+            background: var(--secondary-light);
+            border-left-color: var(--secondary-main);
+        }
+
+        .insight-type {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            color: var(--grey-600);
+        }
+
+        .insight-message {
+            font-size: 14px;
+            color: var(--grey-900);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .insight-value {
+            font-size: 12px;
+            color: var(--grey-600);
+        }
+
+        /* 차트 컨테이너 */
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-top: 20px;
+        }
+
+        .chart-container.small {
+            height: 300px;
+        }
+
+        /* 테이블 스타일 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--grey-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--grey-200);
+            background: var(--grey-50);
+        }
+
+        .data-table td {
+            padding: 12px;
+            font-size: 14px;
+            color: var(--grey-900);
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .data-table tr:hover {
+            background: var(--grey-50);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.high {
+            background: var(--error-light);
+            color: var(--error-main);
+        }
+
+        .badge.medium {
+            background: var(--warning-light);
+            color: var(--warning-main);
+        }
+
+        .badge.low {
+            background: var(--success-light);
+            color: var(--success-main);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .tooltip-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .tooltip-content {
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .tooltip-value {
+            font-weight: 600;
+            color: var(--success-light);
+        }
+
+        /* 그리드 레이아웃 */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1400px) {
+            .grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 16px;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 로딩 상태 */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            color: var(--grey-500);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--grey-200);
+            border-top-color: var(--primary-main);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 탭 스타일 */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--grey-200);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: var(--grey-600);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--primary-main);
+        }
+
+        .tab.active {
+            color: var(--primary-main);
+            border-bottom-color: var(--primary-main);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 3h7v7H3V3z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M14 3h7v7h-7V3z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M14 14h7v7h-7v-7z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M3 14h7v7H3v-7z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div class="sidebar-logo-text">
+                        <span class="sidebar-logo-title">채널별 분석</span>
+                        <span class="sidebar-logo-subtitle">Brand · Product · Promotion</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="simplebar-content-wrapper">
+                <div class="sidebar-content">
+                    <!-- 대시보드 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">대시보드</div>
+                        <a href="marketing_dashboard_v3.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">광고 성과 대시보드</span>
+                        </a>
+                        <a href="funnel_dashboard.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">AARRR 퍼널 분석</span>
+                        </a>
+                    </div>
+
+                    <!-- 분석 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">분석</div>
+                        <a href="#" class="nav-item active">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">채널별 분석</span>
+                        </a>
+                        <a href="creative_analysis.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">광고 소재별 분석</span>
+                        </a>
+                        <a href="timeseries_analysis.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">시계열 데이터 분석</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <!-- 대시보드 헤더 -->
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">채널별 분석 대시보드</h1>
+                <p class="dashboard-subtitle" id="period-info">데이터 로딩 중...</p>
+            </div>
+
+            <!-- 전체 개요 섹션 (항상 표시) -->
+            <div>
+                <!-- KPI 카드 -->
+                <div class="kpi-grid" id="kpi-grid">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </div>
+
+                <!-- 인사이트 알림 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">주요 인사이트</h2>
+                            <p class="card-subtitle">실시간 성과 분석 및 알림</p>
+                        </div>
+                    </div>
+                    <div class="insights-grid" id="insights-grid">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 상위 유형구분 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">상위 유형구분 (Top 5)</h2>
+                            <p class="card-subtitle">ROAS 기준</p>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="topCategoriesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 성별 성과 -->
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h2 class="card-title">성별 성과</h2>
+                                <p class="card-subtitle">ROAS 비교</p>
+                            </div>
+                        </div>
+                        <div class="chart-container small">
+                            <canvas id="genderChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h2 class="card-title">플랫폼 성과</h2>
+                                <p class="card-subtitle">전환값 기준</p>
+                            </div>
+                        </div>
+                        <div class="chart-container small">
+                            <canvas id="platformChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1. 성과 분석 (브랜드/상품/프로모션) -->
+            <div class="collapsible-section">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">🏆</span>
+                        <span>성과 분석 - 무엇이 가장 잘 팔리고 있나요?</span>
+                    </div>
+                    <button class="collapsible-toggle">
+                        <span>펼치기</span>
+                        <span class="collapsible-toggle-icon collapsed">▼</span>
+                    </button>
+                </div>
+                <div class="collapsible-content">
+                    <!-- 필터 버튼 -->
+                    <div class="view-type-section" style="margin-bottom: 24px;">
+                        <button class="view-btn performance-filter-btn active" data-filter="brand">브랜드명</button>
+                        <button class="view-btn performance-filter-btn" data-filter="product">상품명</button>
+                        <button class="view-btn performance-filter-btn" data-filter="promotion">프로모션</button>
+                        <button class="view-btn performance-filter-btn" data-filter="targeting">타겟팅</button>
+                    </div>
+
+                    <!-- 브랜드 뷰 -->
+                    <div class="performance-filter-content active" id="brandView">
+                        <!-- 설명 섹션 -->
+                        <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); margin-bottom: 16px; border-radius: 10px; line-height: 1.7;">
+                            <strong style="color: var(--primary-main);">📖 이 분석은 무엇을 보여주나요?</strong><br>
+                            브랜드별로 광고 성과를 비교하여 어떤 브랜드가 가장 높은 수익을 내고 있는지 확인할 수 있습니다.<br><br>
+                            <strong style="color: var(--primary-main);">💡 사용 방법:</strong><br>
+                            • 왼쪽 차트에서 <strong>ROAS가 높은 브랜드</strong>를 확인하세요<br>
+                            • 오른쪽 테이블에서 각 브랜드의 <strong>상세 지표</strong>(비용, 전환수, 전환값)를 비교하세요<br>
+                            • <strong>차트 위에 마우스를 올리면</strong> 상세한 성과 데이터를 볼 수 있습니다
+                        </div>
+
+                        <!-- 자동 인사이트 박스 -->
+                        <div style="margin: 16px 24px; padding: 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 10px; border-left: 4px solid #2196f3;">
+                            <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 8px;">
+                                💡 브랜드 분석 인사이트
+                            </div>
+                            <div style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
+                                ROAS가 높은 브랜드는 예산을 늘려 투자를 확대하고, ROAS가 낮은 브랜드는 타겟팅이나 소재를 개선하세요.
+                            </div>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div>
+                                        <h2 class="card-title">브랜드 성과</h2>
+                                        <p class="card-subtitle">ROAS 기준 상위 브랜드</p>
+                                    </div>
+                                </div>
+                                <div class="chart-container small">
+                                    <canvas id="brandPerformanceChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <div>
+                                        <h2 class="card-title">브랜드별 상세 데이터</h2>
+                                        <p class="card-subtitle">전체 브랜드 분석</p>
+                                    </div>
+                                </div>
+                                <table class="data-table" id="brand-detail-table">
+                                    <thead>
+                                        <tr>
+                                            <th>순위</th>
+                                            <th>브랜드</th>
+                                            <th>비용</th>
+                                            <th>전환수</th>
+                                            <th>전환값</th>
+                                            <th>ROAS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="6" class="loading">데이터 로딩 중...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 해석 가이드 -->
+                        <div style="margin-top: 20px; padding: 0 24px 20px 24px;">
+                            <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
+                                📋 브랜드 성과 해석 가이드
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                                <!-- ROAS가 높은 브랜드 -->
+                                <div style="padding: 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 3px solid #4caf50;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 6px;">
+                                        🌟 ROAS가 높은 브랜드
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                        <strong>의미:</strong> 투자 대비 수익이 우수한 브랜드<br>
+                                        <strong>전략:</strong> 광고 예산을 적극 확대하여 매출 극대화
+                                    </div>
+                                </div>
+
+                                <!-- ROAS가 낮은 브랜드 -->
+                                <div style="padding: 14px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 8px; border-left: 3px solid #f44336;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #f44336; margin-bottom: 6px;">
+                                        ⚠️ ROAS가 낮은 브랜드
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                        <strong>원인:</strong> 타겟팅 미스매치 또는 소재 문제<br>
+                                        <strong>전략:</strong> 타겟 고객층 재설정 또는 광고 소재 교체
+                                    </div>
+                                </div>
+
+                                <!-- 전환수가 많은 브랜드 -->
+                                <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 3px solid #2196f3;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 6px;">
+                                        💎 전환수가 많은 브랜드
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                        <strong>의미:</strong> 고객 반응이 좋은 인기 브랜드<br>
+                                        <strong>전략:</strong> 재고 확보 및 프로모션 강화로 판매 확대
+                                    </div>
+                                </div>
+
+                                <!-- 비용이 높은 브랜드 -->
+                                <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 8px; border-left: 3px solid #ff9800;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 6px;">
+                                        💰 비용이 높은 브랜드
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                        <strong>확인사항:</strong> ROAS와 전환수를 함께 확인<br>
+                                        <strong>주의:</strong> ROAS가 낮다면 예산 축소 검토 필요
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 상품 뷰 -->
+                    <div class="performance-filter-content" id="productView" style="display: none;">
+                        <!-- 설명 섹션 -->
+                        <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); margin-bottom: 16px; border-radius: 10px; line-height: 1.7;">
+                            <strong style="color: var(--primary-main);">📖 이 분석은 무엇을 보여주나요?</strong><br>
+                            상품별로 광고 성과를 비교하여 어떤 상품이 실제 매출을 가장 많이 만들어내는지 확인할 수 있습니다.<br><br>
+                            <strong style="color: var(--primary-main);">💡 사용 방법:</strong><br>
+                            • 왼쪽 차트에서 <strong>상위 5개 상품</strong>의 ROAS를 비교하세요<br>
+                            • 오른쪽 테이블에서 <strong>모든 상품</strong>의 성과를 순위별로 확인하세요<br>
+                            • <strong>전환수가 많으면서 ROAS도 높은 상품</strong>이 가장 우수한 상품입니다
+                        </div>
+
+                        <!-- 자동 인사이트 박스 -->
+                        <div style="margin: 16px 24px; padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 10px; border-left: 4px solid #4caf50;">
+                            <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 8px;">
+                                💡 상품 분석 인사이트
+                            </div>
+                            <div style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
+                                성과가 좋은 상품은 재고와 광고 예산을 충분히 확보하고, 성과가 낮은 상품은 프로모션이나 타겟팅을 변경해보세요.
+                            </div>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div>
+                                        <h2 class="card-title">상품 성과</h2>
+                                        <p class="card-subtitle">ROAS 기준 상위 상품 (Top 5)</p>
+                                    </div>
+                                </div>
+                                <div class="chart-container small">
+                                    <canvas id="productPerformanceChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <div>
+                                        <h2 class="card-title">상품별 상세 데이터</h2>
+                                        <p class="card-subtitle">전체 상품 분석</p>
+                                    </div>
+                                </div>
+                                <table class="data-table" id="product-detail-table">
+                                    <thead>
+                                        <tr>
+                                            <th>순위</th>
+                                            <th>상품</th>
+                                            <th>비용</th>
+                                            <th>전환수</th>
+                                            <th>전환값</th>
+                                            <th>ROAS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="6" class="loading">데이터 로딩 중...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 해석 가이드 -->
+                        <div style="margin-top: 20px; padding: 0 24px 20px 24px;">
+                            <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
+                                📋 상품 성과 해석 가이드
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                                <!-- 스타 상품 -->
+                                <div style="padding: 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 3px solid #4caf50;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 6px;">
+                                        ⭐ 스타 상품 (ROAS↑ + 전환수↑)
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                        <strong>유형:</strong> 효율과 규모 모두 우수<br>
+                                        <strong>전략:</strong> 최우선 투자 대상. 재고와 예산을 충분히 확보하세요
+                                    </div>
+                                </div>
+
+                                <!-- 숨은 보석 -->
+                                <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 3px solid #2196f3;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 6px;">
+                                        💎 숨은 보석 (ROAS↑ + 전환수↓)
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                        <strong>유형:</strong> 효율은 좋지만 규모가 작음<br>
+                                        <strong>전략:</strong> 광고 예산 확대로 노출 증대 필요
+                                    </div>
+                                </div>
+
+                                <!-- 개선 필요 -->
+                                <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 8px; border-left: 3px solid #ff9800;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 6px;">
+                                        🔧 개선 필요 (ROAS↓ + 전환수↑)
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                        <strong>유형:</strong> 규모는 크지만 비효율적<br>
+                                        <strong>전략:</strong> 타겟팅 정교화 또는 가격 전략 재검토
+                                    </div>
+                                </div>
+
+                                <!-- 중단 검토 -->
+                                <div style="padding: 14px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 8px; border-left: 3px solid #f44336;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #f44336; margin-bottom: 6px;">
+                                        ⛔ 중단 검토 (ROAS↓ + 전환수↓)
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                        <strong>유형:</strong> 효율과 규모 모두 부족<br>
+                                        <strong>전략:</strong> 광고 중단 또는 전면 개편 필요
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 프로모션 뷰 -->
+                    <div class="performance-filter-content" id="promotionView" style="display: none;">
+                        <!-- 설명 섹션 -->
+                        <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); margin-bottom: 16px; border-radius: 10px; line-height: 1.7;">
+                            <strong style="color: var(--primary-main);">📖 이 분석은 무엇을 보여주나요?</strong><br>
+                            프로모션(할인, 이벤트 등)별로 광고 성과를 비교하여 어떤 프로모션이 가장 효과적인지 확인할 수 있습니다.<br><br>
+                            <strong style="color: var(--primary-main);">💡 사용 방법:</strong><br>
+                            • 각 프로모션의 <strong>ROAS와 전환수</strong>를 비교하세요<br>
+                            • <strong>비용 대비 전환값</strong>이 높은 프로모션을 찾아 유사한 프로모션을 기획하세요<br>
+                            • 성과가 낮은 프로모션은 혜택을 조정하거나 중단을 고려하세요
+                        </div>
+
+                        <!-- 자동 인사이트 박스 -->
+                        <div style="margin: 16px 24px; padding: 16px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 10px; border-left: 4px solid #ff9800;">
+                            <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 8px;">
+                                💡 프로모션 분석 인사이트
+                            </div>
+                            <div style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
+                                효과적인 프로모션을 찾아내어 반복 실행하고, 성과가 낮은 프로모션은 혜택이나 타겟 고객을 조정해보세요.
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h2 class="card-title">프로모션별 상세 성과</h2>
+                                    <p class="card-subtitle">전체 프로모션 분석</p>
+                                </div>
+                            </div>
+                            <table class="data-table" id="promotion-detail-table">
+                                <thead>
+                                    <tr>
+                                        <th>순위</th>
+                                        <th>프로모션</th>
+                                        <th>비용</th>
+                                        <th>전환수</th>
+                                        <th>전환값</th>
+                                        <th>ROAS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="6" class="loading">데이터 로딩 중...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- 해석 가이드 -->
+                            <div style="margin-top: 20px; padding: 0 24px 20px 24px;">
+                                <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
+                                    📋 프로모션 성과 해석 가이드
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                                    <!-- 성공 프로모션 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 3px solid #4caf50;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 6px;">
+                                            🎉 성공 프로모션 (ROAS 200% 이상)
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>의미:</strong> 고객 반응이 매우 좋은 프로모션<br>
+                                            <strong>전략:</strong> 유사한 프로모션 반복 실행 및 확대
+                                        </div>
+                                    </div>
+
+                                    <!-- 기간 연장 검토 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 3px solid #2196f3;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 6px;">
+                                            📅 기간 연장 검토 (ROAS 100-200%)
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>의미:</strong> 수익이 나는 적정 프로모션<br>
+                                            <strong>전략:</strong> 프로모션 기간 연장 또는 혜택 강화
+                                        </div>
+                                    </div>
+
+                                    <!-- 개선 필요 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 8px; border-left: 3px solid #ff9800;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 6px;">
+                                            🔧 개선 필요 (ROAS 50-100%)
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>원인:</strong> 혜택이 약하거나 타겟이 부정확<br>
+                                            <strong>전략:</strong> 할인율 조정 또는 타겟 고객 재설정
+                                        </div>
+                                    </div>
+
+                                    <!-- 중단 검토 -->
+                                    <div style="padding: 14px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 8px; border-left: 3px solid #f44336;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #f44336; margin-bottom: 6px;">
+                                            ⛔ 중단 검토 (ROAS 50% 미만)
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                            <strong>문제:</strong> 비용 대비 수익이 매우 낮음<br>
+                                            <strong>전략:</strong> 프로모션 즉시 중단 및 원인 분석
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 타겟팅 뷰 -->
+                    <div class="performance-filter-content" id="targetingView" style="display: none;">
+                        <!-- 설명 섹션 -->
+                        <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); margin-bottom: 16px; border-radius: 10px; line-height: 1.7;">
+                            <strong style="color: var(--primary-main);">📖 이 분석은 무엇을 보여주나요?</strong><br>
+                            연령과 성별 조합별로 어떤 타겟 고객층이 가장 높은 성과를 내는지 확인할 수 있습니다.<br><br>
+                            <strong style="color: var(--primary-main);">💡 사용 방법:</strong><br>
+                            • 첫 번째 테이블에서 <strong>최고 성과 연령 x 성별 조합</strong>을 확인하세요<br>
+                            • 두 번째 테이블에서 <strong>최고 성과 광고세트 Top 10</strong>을 확인하세요<br>
+                            • ROAS가 높은 타겟 조합에 <strong>예산을 집중</strong>하고, 낮은 조합은 예산을 줄이세요
+                        </div>
+
+                        <!-- 자동 인사이트 박스 -->
+                        <div style="margin: 16px 24px; padding: 16px; background: linear-gradient(135deg, #f3e5f5 0%, #faf5fc 100%); border-radius: 10px; border-left: 4px solid #9c27b0;">
+                            <div style="font-size: 13px; font-weight: 600; color: #9c27b0; margin-bottom: 8px;">
+                                💡 타겟팅 분석 인사이트
+                            </div>
+                            <div style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
+                                성과가 좋은 타겟 조합을 발견했다면, 해당 조합으로 신규 광고세트를 만들어 확장하세요. 성과가 낮은 타겟은 과감히 제외하는 것이 효율적입니다.
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h2 class="card-title">연령 x 성별 조합</h2>
+                                    <p class="card-subtitle">최고 성과 타겟 조합</p>
+                                </div>
+                            </div>
+                            <table class="data-table" id="age-gender-table">
+                                <thead>
+                                    <tr>
+                                        <th>순위</th>
+                                        <th>광고세트</th>
+                                        <th>연령</th>
+                                        <th>성별</th>
+                                        <th>ROAS</th>
+                                        <th>전환수</th>
+                                        <th>추천사항</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="7" class="loading">데이터 로딩 중...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 최고 성과 광고세트 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h2 class="card-title">최고 성과 광고세트 (Top 10)</h2>
+                                    <p class="card-subtitle">ROAS 기준</p>
+                                </div>
+                            </div>
+                            <table class="data-table" id="top-adsets-table">
+                                <thead>
+                                    <tr>
+                                        <th>순위</th>
+                                        <th>캠페인</th>
+                                        <th>광고세트</th>
+                                        <th>유형구분</th>
+                                        <th>비용</th>
+                                        <th>전환수</th>
+                                        <th>전환값</th>
+                                        <th>ROAS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="8" class="loading">데이터 로딩 중...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 해석 가이드 -->
+                        <div style="margin-top: 20px; padding: 0 24px 20px 24px;">
+                            <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
+                                📋 타겟팅 성과 해석 가이드
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                                <!-- 황금 타겟 -->
+                                <div style="padding: 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 3px solid #4caf50;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 6px;">
+                                        🎯 황금 타겟 (ROAS 300% 이상)
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                        <strong>의미:</strong> 가장 수익성이 높은 타겟 조합<br>
+                                        <strong>전략:</strong> 동일 조합으로 광고세트 추가 생성하여 확장
+                                    </div>
+                                </div>
+
+                                <!-- 우수 타겟 -->
+                                <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 3px solid #2196f3;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 6px;">
+                                        ⭐ 우수 타겟 (ROAS 150-300%)
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                        <strong>의미:</strong> 안정적인 수익을 내는 타겟<br>
+                                        <strong>전략:</strong> 예산 유지 및 점진적 확대
+                                    </div>
+                                </div>
+
+                                <!-- 재검토 필요 -->
+                                <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 8px; border-left: 3px solid #ff9800;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 6px;">
+                                        🔍 재검토 필요 (ROAS 50-150%)
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                        <strong>원인:</strong> 타겟 범위가 너무 넓거나 좁음<br>
+                                        <strong>전략:</strong> 연령대 조정 또는 성별 타겟 재설정
+                                    </div>
+                                </div>
+
+                                <!-- 제외 권장 -->
+                                <div style="padding: 14px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 8px; border-left: 3px solid #f44336;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #f44336; margin-bottom: 6px;">
+                                        🚫 제외 권장 (ROAS 50% 미만)
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
+                                        <strong>문제:</strong> 해당 타겟에 제품 수요 없음<br>
+                                        <strong>전략:</strong> 타겟에서 제외하고 예산을 다른 곳에 투자
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 인사이트 및 액션 플랜 -->
+            <div class="collapsible-section">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">💡</span>
+                        <span>인사이트 및 액션 플랜 - 지금 무엇을 해야 하나요?</span>
+                    </div>
+                    <button class="collapsible-toggle">
+                        <span>펼치기</span>
+                        <span class="collapsible-toggle-icon collapsed">▼</span>
+                    </button>
+                </div>
+                <div class="collapsible-content">
+                    <!-- 필터 버튼 -->
+                    <div class="view-type-section" style="margin-bottom: 24px;">
+                        <button class="view-btn insight-filter-btn active" data-filter="alerts">알림 및 경고</button>
+                        <button class="view-btn insight-filter-btn" data-filter="recommendations">최적화 추천</button>
+                    </div>
+
+                    <!-- 알림 뷰 -->
+                    <div class="insight-filter-content active" id="alertsView">
+                        <!-- 설명 섹션 -->
+                        <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); margin-bottom: 16px; border-radius: 10px; line-height: 1.7;">
+                            <strong style="color: var(--primary-main);">📖 이 섹션은 무엇을 보여주나요?</strong><br>
+                            현재 광고 캠페인에서 <strong>주의가 필요한 항목</strong>과 <strong>놓치지 말아야 할 기회</strong>를 한눈에 확인할 수 있습니다.<br><br>
+                            <strong style="color: var(--primary-main);">💡 알림 유형:</strong><br>
+                            • <span style="color: #d32f2f; font-weight: 600;">높음</span>: 즉시 조치가 필요한 중요 경고<br>
+                            • <span style="color: #f57c00; font-weight: 600;">경고</span>: 주의 깊게 살펴볼 필요가 있는 항목<br>
+                            • <span style="color: #1976d2; font-weight: 600;">기회</span>: 성과 개선 기회가 있는 항목
+                        </div>
+
+                        <!-- 자동 인사이트 박스 -->
+                        <div style="margin: 16px 24px; padding: 16px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 10px; border-left: 4px solid #ff9800;">
+                            <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 8px;">
+                                ⚡ 빠른 대응 가이드
+                            </div>
+                            <div style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
+                                <strong>'높음'</strong> 알림은 가장 먼저 확인하고, <strong>'기회'</strong> 항목은 예산 확대를 고려하세요.
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h2 class="card-title">⚠️ 주의가 필요한 항목</h2>
+                                    <p class="card-subtitle">성과 경고 및 기회 포착</p>
+                                </div>
+                            </div>
+                            <div id="all-alerts">
+                                <div class="loading">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 추천사항 뷰 -->
+                    <div class="insight-filter-content" id="recommendationsView" style="display: none;">
+                        <!-- 설명 섹션 -->
+                        <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); margin-bottom: 16px; border-radius: 10px; line-height: 1.7;">
+                            <strong style="color: var(--primary-main);">📖 이 섹션은 무엇을 보여주나요?</strong><br>
+                            현재 광고 성과 데이터를 바탕으로 <strong>바로 실행할 수 있는 최적화 전략</strong>을 제안합니다.<br><br>
+                            <strong style="color: var(--primary-main);">💡 우선순위 가이드:</strong><br>
+                            • <span style="color: #d32f2f; font-weight: 600;">High Priority</span>: 가장 먼저 실행해야 할 핵심 전략<br>
+                            • <span style="color: #f57c00; font-weight: 600;">Medium Priority</span>: 효과가 기대되는 중요 전략<br>
+                            • <span style="color: #388e3c; font-weight: 600;">Low Priority</span>: 여유가 있을 때 시도할 전략
+                        </div>
+
+                        <!-- 자동 인사이트 박스 -->
+                        <div style="margin: 16px 24px; padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 10px; border-left: 4px solid #4caf50;">
+                            <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 8px;">
+                                🎯 실행 팁
+                            </div>
+                            <div style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
+                                각 추천사항의 <strong>'예상 효과'</strong>를 확인하고, High Priority부터 순차적으로 실행하면 가장 효율적으로 성과를 개선할 수 있습니다.
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h2 class="card-title">🎯 실행 가능한 액션 플랜</h2>
+                                    <p class="card-subtitle">바로 적용할 수 있는 최적화 전략</p>
+                                </div>
+                            </div>
+                            <div id="all-recommendations">
+                                <div class="loading">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 전역 변수
+        let insightsData = null;
+
+        // 데이터 로딩
+        async function loadData() {
+            try {
+                const response = await fetch('type/insights.json');
+                insightsData = await response.json();
+
+                // 대시보드 초기화
+                initDashboard();
+            } catch (error) {
+                console.error('데이터 로딩 실패:', error);
+                alert('데이터를 불러오는데 실패했습니다.');
+            }
+        }
+
+        // 대시보드 초기화
+        function initDashboard() {
+            updatePeriodInfo();
+            renderKPICards();
+            renderInsights();
+            renderTopCategoriesChart();
+            renderGenderChart();
+            renderPlatformChart();
+            renderBrandPerformanceChart();
+            renderProductPerformanceChart();
+            renderTopAdsetsTable();
+            renderAgeGenderTable();
+            renderBrandDetailTable();
+            renderProductDetailTable();
+            renderPromotionDetailTable();
+            renderAllAlerts();
+            renderAllRecommendations();
+        }
+
+        // 기간 정보 업데이트
+        function updatePeriodInfo() {
+            const period = insightsData.summary.analysis_period;
+            document.getElementById('period-info').textContent =
+                `분석 기간: ${period.start_date} ~ ${period.end_date} (${period.total_days}일)`;
+        }
+
+        // KPI 카드 렌더링
+        function renderKPICards() {
+            const summary = insightsData.summary;
+            const overall = insightsData.overall;
+
+            const kpis = [
+                {
+                    title: '총 비용',
+                    value: formatCurrency(summary.total_cost),
+                    icon: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z',
+                    color: '--primary-main',
+                    bgColor: '--primary-light'
+                },
+                {
+                    title: '총 전환수',
+                    value: formatNumber(summary.total_conversions),
+                    icon: 'M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z',
+                    color: '--success-main',
+                    bgColor: '--success-light'
+                },
+                {
+                    title: '총 전환값',
+                    value: formatCurrency(summary.total_revenue),
+                    icon: 'M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z',
+                    color: '--secondary-main',
+                    bgColor: '--secondary-light'
+                },
+                {
+                    title: 'Overall ROAS',
+                    value: formatPercent(summary.overall_roas),
+                    change: overall.trend.change_percent,
+                    changeLabel: overall.trend.direction === 'growing' ? '성장' : overall.trend.direction === 'declining' ? '감소' : '안정',
+                    icon: 'M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z',
+                    color: overall.trend.direction === 'growing' ? '--success-main' : overall.trend.direction === 'declining' ? '--error-main' : '--grey-500',
+                    bgColor: overall.trend.direction === 'growing' ? '--success-light' : overall.trend.direction === 'declining' ? '--error-light' : '--grey-100'
+                },
+                {
+                    title: 'Overall CPA',
+                    value: formatCurrency(summary.overall_cpa),
+                    icon: 'M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z',
+                    color: '--warning-main',
+                    bgColor: '--warning-light'
+                }
+            ];
+
+            const html = kpis.map(kpi => `
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">${kpi.title}</span>
+                        <div class="kpi-icon" style="background-color: var(${kpi.bgColor})">
+                            <svg viewBox="0 0 24 24" fill="var(${kpi.color})" xmlns="http://www.w3.org/2000/svg">
+                                <path d="${kpi.icon}"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="kpi-value">${kpi.value}</div>
+                    ${kpi.change !== undefined ? `
+                        <div class="kpi-change ${kpi.change > 0 ? 'positive' : kpi.change < 0 ? 'negative' : 'neutral'}">
+                            <span>${kpi.change > 0 ? '▲' : kpi.change < 0 ? '▼' : '•'} ${Math.abs(kpi.change).toFixed(1)}%</span>
+                            <span>${kpi.changeLabel}</span>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+
+            document.getElementById('kpi-grid').innerHTML = html;
+        }
+
+        // 인사이트 렌더링
+        function renderInsights() {
+            const alerts = insightsData.alerts.slice(0, 6); // 상위 6개만 표시
+
+            const html = alerts.map(alert => {
+                const severityClass = alert.severity === 'opportunity' ? 'opportunity' :
+                                     alert.severity === 'high' ? 'high' :
+                                     alert.severity === 'warning' ? 'medium' : 'low';
+
+                return `
+                    <div class="insight-card ${severityClass}">
+                        <div class="insight-type">${getSeverityLabel(alert.severity)}</div>
+                        <div class="insight-message">${alert.message}</div>
+                        ${alert.value !== undefined ? `
+                            <div class="insight-value">지표: ${formatValue(alert.value)}${alert.type.includes('roas') || alert.type.includes('revenue') || alert.type.includes('change') ? '%' : ''}</div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('insights-grid').innerHTML = html || '<p style="color: var(--grey-500);">인사이트가 없습니다.</p>';
+        }
+
+        // 상위 유형구분 차트
+        function renderTopCategoriesChart() {
+            const categories = insightsData.top_categories;
+
+            const ctx = document.getElementById('topCategoriesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: categories.map(c => c.name),
+                    datasets: [{
+                        label: 'ROAS (%)',
+                        data: categories.map(c => c.roas),
+                        backgroundColor: 'rgba(103, 58, 183, 0.8)',
+                        borderColor: 'rgba(103, 58, 183, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const item = categories[context.dataIndex];
+                                    return [
+                                        `ROAS: ${formatPercent(item.roas)}`,
+                                        `비용: ${formatCurrency(item.cost)}`,
+                                        `전환수: ${formatNumber(item.conversions)}`,
+                                        `전환값: ${formatCurrency(item.revenue)}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'ROAS (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 성별 차트
+        function renderGenderChart() {
+            const genders = insightsData.gender_performance.filter(g => g.cost > 0);
+
+            const ctx = document.getElementById('genderChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: genders.map(g => g.gender),
+                    datasets: [{
+                        data: genders.map(g => g.roas),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 206, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(153, 102, 255, 0.8)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const item = genders[context.dataIndex];
+                                    return [
+                                        `${item.gender}`,
+                                        `ROAS: ${formatPercent(item.roas)}`,
+                                        `전환수: ${formatNumber(item.conversions)}`,
+                                        `성과: ${item.performance_level}`
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 플랫폼 차트
+        function renderPlatformChart() {
+            const platforms = insightsData.platform_performance;
+
+            const ctx = document.getElementById('platformChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: platforms.map(p => p.platform),
+                    datasets: [{
+                        data: platforms.map(p => p.revenue),
+                        backgroundColor: [
+                            'rgba(103, 58, 183, 0.8)',
+                            'rgba(33, 150, 243, 0.8)',
+                            'rgba(0, 200, 83, 0.8)',
+                            'rgba(255, 171, 0, 0.8)',
+                            'rgba(255, 23, 68, 0.8)',
+                            'rgba(156, 39, 176, 0.8)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const item = platforms[context.dataIndex];
+                                    return [
+                                        `${item.platform}`,
+                                        `전환값: ${formatCurrency(item.revenue)}`,
+                                        `ROAS: ${formatPercent(item.roas)}`,
+                                        `전환수: ${formatNumber(item.conversions)}`
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 브랜드 성과 차트
+        function renderBrandPerformanceChart() {
+            const brands = insightsData.brand_performance;
+
+            const ctx = document.getElementById('brandPerformanceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: brands.map(b => b.brand),
+                    datasets: [{
+                        label: 'ROAS (%)',
+                        data: brands.map(b => b.roas),
+                        backgroundColor: 'rgba(0, 200, 83, 0.8)',
+                        borderColor: 'rgba(0, 200, 83, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const item = brands[context.dataIndex];
+                                    return [
+                                        `ROAS: ${formatPercent(item.roas)}`,
+                                        `비용: ${formatCurrency(item.cost)}`,
+                                        `전환수: ${formatNumber(item.conversions)}`,
+                                        `전환값: ${formatCurrency(item.revenue)}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'ROAS (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 상품 성과 차트
+        function renderProductPerformanceChart() {
+            const products = insightsData.product_performance.slice(0, 5);
+
+            const ctx = document.getElementById('productPerformanceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: products.map(p => p.product),
+                    datasets: [{
+                        label: 'ROAS (%)',
+                        data: products.map(p => p.roas),
+                        backgroundColor: 'rgba(33, 150, 243, 0.8)',
+                        borderColor: 'rgba(33, 150, 243, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const item = products[context.dataIndex];
+                                    return [
+                                        `ROAS: ${formatPercent(item.roas)}`,
+                                        `비용: ${formatCurrency(item.cost)}`,
+                                        `전환수: ${formatNumber(item.conversions)}`,
+                                        `전환값: ${formatCurrency(item.revenue)}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'ROAS (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 최고 성과 광고세트 테이블
+        function renderTopAdsetsTable() {
+            const adsets = insightsData.top_adsets;
+
+            const tbody = document.querySelector('#top-adsets-table tbody');
+            tbody.innerHTML = adsets.map((adset, index) => `
+                <tr>
+                    <td><strong>#${index + 1}</strong></td>
+                    <td>${adset.campaign}</td>
+                    <td>${adset.adset}</td>
+                    <td><span class="badge low">${adset.category}</span></td>
+                    <td>${formatCurrency(adset.cost)}</td>
+                    <td>${formatNumber(adset.conversions)}</td>
+                    <td>${formatCurrency(adset.revenue)}</td>
+                    <td><strong style="color: var(--success-main)">${formatPercent(adset.roas)}</strong></td>
+                </tr>
+            `).join('');
+        }
+
+        // 연령 x 성별 테이블
+        function renderAgeGenderTable() {
+            const combinations = insightsData.age_gender_combinations;
+
+            const tbody = document.querySelector('#age-gender-table tbody');
+            tbody.innerHTML = combinations.map((combo, index) => `
+                <tr>
+                    <td><strong>#${index + 1}</strong></td>
+                    <td>${combo.adset}</td>
+                    <td>${combo.age}</td>
+                    <td>${combo.gender}</td>
+                    <td><strong style="color: var(--success-main)">${formatPercent(combo.roas)}</strong></td>
+                    <td>${formatNumber(combo.conversions)}</td>
+                    <td>${combo.recommendation}</td>
+                </tr>
+            `).join('');
+        }
+
+        // 브랜드 상세 테이블
+        function renderBrandDetailTable() {
+            const brands = insightsData.brand_performance;
+
+            const tbody = document.querySelector('#brand-detail-table tbody');
+            tbody.innerHTML = brands.map((brand, index) => `
+                <tr>
+                    <td><strong>#${index + 1}</strong></td>
+                    <td>${brand.brand}</td>
+                    <td>${formatCurrency(brand.cost)}</td>
+                    <td>${formatNumber(brand.conversions)}</td>
+                    <td>${formatCurrency(brand.revenue)}</td>
+                    <td><strong style="color: var(--success-main)">${formatPercent(brand.roas)}</strong></td>
+                </tr>
+            `).join('');
+        }
+
+        // 상품 상세 테이블
+        function renderProductDetailTable() {
+            const products = insightsData.product_performance;
+
+            const tbody = document.querySelector('#product-detail-table tbody');
+            tbody.innerHTML = products.map((product, index) => `
+                <tr>
+                    <td><strong>#${index + 1}</strong></td>
+                    <td>${product.product}</td>
+                    <td>${formatCurrency(product.cost)}</td>
+                    <td>${formatNumber(product.conversions)}</td>
+                    <td>${formatCurrency(product.revenue)}</td>
+                    <td><strong style="color: var(--success-main)">${formatPercent(product.roas)}</strong></td>
+                </tr>
+            `).join('');
+        }
+
+        // 프로모션 상세 테이블
+        function renderPromotionDetailTable() {
+            const promotions = insightsData.promotion_performance;
+
+            const tbody = document.querySelector('#promotion-detail-table tbody');
+            tbody.innerHTML = promotions.map((promo, index) => `
+                <tr>
+                    <td><strong>#${index + 1}</strong></td>
+                    <td>${promo.promotion}</td>
+                    <td>${formatCurrency(promo.cost)}</td>
+                    <td>${formatNumber(promo.conversions)}</td>
+                    <td>${formatCurrency(promo.revenue)}</td>
+                    <td><strong style="color: var(--success-main)">${formatPercent(promo.roas)}</strong></td>
+                </tr>
+            `).join('');
+        }
+
+        // 전체 알림 렌더링
+        function renderAllAlerts() {
+            const alerts = insightsData.alerts;
+
+            const html = alerts.map(alert => {
+                const severityClass = alert.severity === 'opportunity' ? 'opportunity' :
+                                     alert.severity === 'high' ? 'high' :
+                                     alert.severity === 'warning' ? 'medium' : 'low';
+
+                return `
+                    <div class="insight-card ${severityClass}" style="margin-bottom: 16px;">
+                        <div class="insight-type">${getSeverityLabel(alert.severity)} - ${alert.type}</div>
+                        <div class="insight-message">${alert.message}</div>
+                        ${alert.value !== undefined ? `
+                            <div class="insight-value">지표: ${formatValue(alert.value)}${alert.type.includes('roas') || alert.type.includes('revenue') || alert.type.includes('change') ? '%' : ''}</div>
+                        ` : ''}
+                        ${alert.category ? `<div class="insight-value">카테고리: ${alert.category}</div>` : ''}
+                        ${alert.gender ? `<div class="insight-value">성별: ${alert.gender}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('all-alerts').innerHTML = html || '<p style="color: var(--grey-500);">알림이 없습니다.</p>';
+        }
+
+        // 전체 추천사항 렌더링
+        function renderAllRecommendations() {
+            const recommendations = insightsData.recommendations;
+
+            const html = recommendations.map((rec, index) => {
+                const priorityClass = rec.priority === 'high' ? 'high' : rec.priority === 'medium' ? 'medium' : 'low';
+
+                return `
+                    <div class="card" style="margin-bottom: 16px;">
+                        <div style="display: flex; align-items: start; justify-content: space-between; margin-bottom: 12px;">
+                            <div>
+                                <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">
+                                    ${index + 1}. ${rec.title}
+                                </h3>
+                                <span class="badge ${priorityClass}">${rec.priority} priority</span>
+                            </div>
+                        </div>
+                        <p style="color: var(--grey-700); margin-bottom: 12px; line-height: 1.6;">
+                            ${rec.description}
+                        </p>
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 12px; background: var(--grey-50); border-radius: 8px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success-main)" stroke-width="2">
+                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                            </svg>
+                            <span style="font-size: 13px; color: var(--grey-700); font-weight: 500;">
+                                예상 효과: ${rec.expected_impact}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('all-recommendations').innerHTML = html || '<p style="color: var(--grey-500);">추천사항이 없습니다.</p>';
+        }
+
+        // 유틸리티 함수들
+        function formatCurrency(value) {
+            if (value === null || value === undefined) return '₩0';
+            return '₩' + Math.round(value).toLocaleString('ko-KR');
+        }
+
+        function formatNumber(value) {
+            if (value === null || value === undefined) return '0';
+            return Math.round(value).toLocaleString('ko-KR');
+        }
+
+        function formatPercent(value) {
+            if (value === null || value === undefined) return '0%';
+            return value.toFixed(1) + '%';
+        }
+
+        function formatValue(value) {
+            if (value === null || value === undefined) return '0';
+            return value.toFixed(1);
+        }
+
+        function getSeverityLabel(severity) {
+            const labels = {
+                'high': '높음',
+                'warning': '경고',
+                'opportunity': '기회',
+                'positive': '긍정',
+                'low': '낮음'
+            };
+            return labels[severity] || severity;
+        }
+
+        // 접기/펼치기 기능
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                const icon = this.querySelector('.collapsible-toggle-icon');
+                const toggleText = this.querySelector('.collapsible-toggle span:first-child');
+
+                if (content.classList.contains('expanded')) {
+                    // 접기
+                    content.classList.remove('expanded');
+                    icon.classList.add('collapsed');
+                    toggleText.textContent = '펼치기';
+                } else {
+                    // 펼치기
+                    content.classList.add('expanded');
+                    icon.classList.remove('collapsed');
+                    toggleText.textContent = '접기';
+                }
+            });
+        });
+
+        // 성과 분석 필터 버튼
+        document.querySelectorAll('.performance-filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const filter = this.dataset.filter;
+
+                // 버튼 활성화 상태 변경
+                document.querySelectorAll('.performance-filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // 컨텐츠 표시
+                document.querySelectorAll('.performance-filter-content').forEach(content => {
+                    content.style.display = 'none';
+                    content.classList.remove('active');
+                });
+
+                const viewMap = {
+                    'brand': 'brandView',
+                    'product': 'productView',
+                    'promotion': 'promotionView',
+                    'targeting': 'targetingView'
+                };
+
+                const targetView = document.getElementById(viewMap[filter]);
+                if (targetView) {
+                    targetView.style.display = 'block';
+                    targetView.classList.add('active');
+                }
+            });
+        });
+
+        // 인사이트 필터 버튼
+        document.querySelectorAll('.insight-filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const filter = this.dataset.filter;
+
+                // 버튼 활성화 상태 변경
+                document.querySelectorAll('.insight-filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // 컨텐츠 표시
+                document.querySelectorAll('.insight-filter-content').forEach(content => {
+                    content.style.display = 'none';
+                    content.classList.remove('active');
+                });
+
+                const viewMap = {
+                    'alerts': 'alertsView',
+                    'recommendations': 'recommendationsView'
+                };
+
+                const targetView = document.getElementById(viewMap[filter]);
+                if (targetView) {
+                    targetView.style.display = 'block';
+                    targetView.classList.add('active');
+                }
+            });
+        });
+
+        // 페이지 로드 시 데이터 로딩
+        window.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>
