@@ -26,11 +26,12 @@ echo     - Memory usage: ~1-3 GB
 echo     - Processing time: 5-10 minutes
 echo     - Good for: Systems with 8GB+ RAM, detailed forecasts
 echo.
-echo [4] SEGMENT ANALYSIS - Detailed Segment Breakdown + Business Viz + AARRR Funnel
+echo [4] SEGMENT ANALYSIS - Detailed Segment Breakdown + Business Viz + Dimension Analysis
 echo     - Segment-level forecasting (brand/channel/product/promotion)
 echo     - Business visualization generation (ROAS, revenue, budget)
-echo     - Channel engagement and return rate analysis
-echo     - AARRR Funnel analysis with A/B testing, clustering, churn prediction
+echo     - AARRR Funnel analysis with advanced analytics
+echo     - Type-based dimension detail analysis (7 dimension CSVs)
+echo     - Prophet time-series forecasting by category
 echo     - Memory usage: ~2-4 GB
 echo     - Processing time: 10-20 minutes
 echo     - Good for: Systems with 16GB+ RAM, full insights + viz + advanced analytics
@@ -105,32 +106,6 @@ set /p CONFIRM="This may use 2-4 GB of memory. Continue? (Y/N): "
 if /i not "%CONFIRM%"=="Y" goto END
 
 echo.
-echo [0/5] Checking required Python packages...
-
-REM Check if numpy is installed
-python -c "import numpy" 2>nul
-if errorlevel 1 (
-    echo Installing numpy...
-    pip install numpy
-)
-
-REM Check if scipy is installed
-python -c "import scipy" 2>nul
-if errorlevel 1 (
-    echo Installing scipy...
-    pip install scipy
-)
-
-REM Check if scikit-learn is installed
-python -c "import sklearn" 2>nul
-if errorlevel 1 (
-    echo Installing scikit-learn...
-    pip install scikit-learn
-)
-
-echo All required packages are installed.
-
-echo.
 echo [1/5] Processing main data...
 set INPUT_CSV_PATH=raw_data.csv
 python scripts\process_marketing_data.py
@@ -166,23 +141,37 @@ if errorlevel 1 (
 )
 
 echo.
-echo [5/6] Generating channel engagement and return rate data...
-cd scripts
-python generate_engagement_data.py
-cd ..
-
-if errorlevel 1 (
-    echo [WARNING] Channel engagement data generation failed
-)
-
-echo.
-echo [6/6] Generating AARRR funnel analysis with advanced analytics...
+echo [5/8] Generating AARRR funnel analysis with advanced analytics...
 cd scripts
 python generate_funnel_data.py
 cd ..
 
 if errorlevel 1 (
     echo [WARNING] Funnel analysis generation failed
+)
+
+echo.
+echo [6/8] Running category and daily summary analysis...
+python scripts\run_multi_analysis.py
+
+if errorlevel 1 (
+    echo [WARNING] Multi analysis failed
+)
+
+echo.
+echo [7/8] Generating dimension-level detail analysis...
+python scripts\multi_analysis_dimension_detail.py
+
+if errorlevel 1 (
+    echo [WARNING] Dimension detail analysis failed
+)
+
+echo.
+echo [8/8] Running Prophet time-series forecasting...
+python scripts\multi_analysis_prophet_forecast.py
+
+if errorlevel 1 (
+    echo [WARNING] Prophet forecasting failed
 )
 
 echo.
