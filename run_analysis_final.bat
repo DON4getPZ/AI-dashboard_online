@@ -32,6 +32,7 @@ echo     - Business visualization generation (ROAS, revenue, budget)
 echo     - AARRR Funnel analysis with advanced analytics
 echo     - Type-based dimension detail analysis (7 dimension CSVs)
 echo     - Prophet time-series forecasting by category
+echo     - Type insights generation (brand/product/promotion performance)
 echo     - Memory usage: ~2-4 GB
 echo     - Processing time: 10-20 minutes
 echo     - Good for: Systems with 16GB+ RAM, full insights + viz + advanced analytics
@@ -106,7 +107,7 @@ set /p CONFIRM="This may use 2-4 GB of memory. Continue? (Y/N): "
 if /i not "%CONFIRM%"=="Y" goto END
 
 echo.
-echo [1/5] Processing main data...
+echo [1/9] Processing main data...
 set INPUT_CSV_PATH=raw_data.csv
 python scripts\process_marketing_data.py
 
@@ -117,7 +118,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [2/5] Processing segments...
+echo [2/9] Processing segments...
 python scripts\segment_processor.py
 
 if errorlevel 1 (
@@ -125,7 +126,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [3/5] Generating insights...
+echo [3/9] Generating insights...
 python scripts\insight_generator.py
 
 if errorlevel 1 (
@@ -133,7 +134,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [4/5] Creating business visualizations...
+echo [4/9] Creating business visualizations...
 python scripts\visualization_generator.py
 
 if errorlevel 1 (
@@ -141,7 +142,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [5/8] Generating AARRR funnel analysis with advanced analytics...
+echo [5/9] Generating AARRR funnel analysis with advanced analytics...
 cd scripts
 python generate_funnel_data.py
 cd ..
@@ -151,7 +152,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [6/8] Running category and daily summary analysis...
+echo [6/9] Running category and daily summary analysis...
 python scripts\run_multi_analysis.py
 
 if errorlevel 1 (
@@ -159,7 +160,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [7/8] Generating dimension-level detail analysis...
+echo [7/9] Generating dimension-level detail analysis...
 python scripts\multi_analysis_dimension_detail.py
 
 if errorlevel 1 (
@@ -167,11 +168,19 @@ if errorlevel 1 (
 )
 
 echo.
-echo [8/8] Running Prophet time-series forecasting...
+echo [8/9] Running Prophet time-series forecasting...
 python scripts\multi_analysis_prophet_forecast.py
 
 if errorlevel 1 (
     echo [WARNING] Prophet forecasting failed
+)
+
+echo.
+echo [9/9] Generating type insights (brand/product/promotion)...
+python scripts\generate_type_insights.py
+
+if errorlevel 1 (
+    echo [WARNING] Type insights generation failed
 )
 
 echo.

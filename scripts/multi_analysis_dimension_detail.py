@@ -73,7 +73,7 @@ print("=" * 100)
 
 type1_data = df[df['data_type'] == 'Type1_캠페인+광고세트']
 if len(type1_data) > 0:
-    type1_analysis = type1_data.groupby(['캠페인이름', '광고세트', '유형구분', '타겟팅']).agg({
+    type1_analysis = type1_data.groupby(['캠페인이름', '광고세트', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
         '비용': 'sum',
         '노출': 'sum',
         '링크클릭': 'sum',
@@ -100,7 +100,7 @@ print("=" * 100)
 
 type2_data = df[df['data_type'] == 'Type2_광고세트+연령+성별']
 if len(type2_data) > 0:
-    type2_analysis = type2_data.groupby(['광고세트', '연령', '성별', '유형구분', '타겟팅']).agg({
+    type2_analysis = type2_data.groupby(['광고세트', '연령', '성별', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
         '비용': 'sum',
         '노출': 'sum',
         '링크클릭': 'sum',
@@ -141,7 +141,7 @@ print("=" * 100)
 
 type3_data = df[df['data_type'] == 'Type3_광고세트+연령']
 if len(type3_data) > 0:
-    type3_analysis = type3_data.groupby(['광고세트', '연령', '유형구분', '타겟팅']).agg({
+    type3_analysis = type3_data.groupby(['광고세트', '연령', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
         '비용': 'sum',
         '노출': 'sum',
         '링크클릭': 'sum',
@@ -168,7 +168,7 @@ print("=" * 100)
 
 type4_data = df[df['data_type'] == 'Type4_광고세트+성별']
 if len(type4_data) > 0:
-    type4_analysis = type4_data.groupby(['광고세트', '성별', '유형구분', '타겟팅']).agg({
+    type4_analysis = type4_data.groupby(['광고세트', '성별', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
         '비용': 'sum',
         '노출': 'sum',
         '링크클릭': 'sum',
@@ -205,7 +205,7 @@ print("=" * 100)
 
 type5_data = df[df['data_type'] == 'Type5_광고세트+기기유형']
 if len(type5_data) > 0:
-    type5_analysis = type5_data.groupby(['광고세트', '기기유형', '유형구분', '타겟팅']).agg({
+    type5_analysis = type5_data.groupby(['광고세트', '기기유형', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
         '비용': 'sum',
         '노출': 'sum',
         '링크클릭': 'sum',
@@ -232,7 +232,7 @@ print("=" * 100)
 
 type6_data = df[df['data_type'] == 'Type6_광고세트+플랫폼']
 if len(type6_data) > 0:
-    type6_analysis = type6_data.groupby(['광고세트', '플랫폼', '유형구분', '타겟팅']).agg({
+    type6_analysis = type6_data.groupby(['광고세트', '플랫폼', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
         '비용': 'sum',
         '노출': 'sum',
         '링크클릭': 'sum',
@@ -259,7 +259,7 @@ print("=" * 100)
 
 type7_data = df[df['data_type'] == 'Type7_광고세트+기기플랫폼']
 if len(type7_data) > 0:
-    type7_analysis = type7_data.groupby(['광고세트', '기기플랫폼', '유형구분', '타겟팅']).agg({
+    type7_analysis = type7_data.groupby(['광고세트', '기기플랫폼', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
         '비용': 'sum',
         '노출': 'sum',
         '링크클릭': 'sum',
