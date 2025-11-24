@@ -2474,7 +2474,7 @@
             return num.toLocaleString('ko-KR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
         }
 
-        // CSV 파싱
+        // CSV 파싱 (RFC 4180 호환)
         function parseCSV(text, filename = 'unknown') {
             console.log(`=== parseCSV 시작: ${filename} ===`);
 
@@ -2489,7 +2489,40 @@
             const lines = text.trim().split('\n');
             console.log(`총 라인 수: ${lines.length}`);
 
-            const headers = lines[0].split(',');
+            // RFC 4180 호환 CSV 파싱
+            function parseLine(line) {
+                const result = [];
+                let current = '';
+                let inQuotes = false;
+
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    const nextChar = line[i + 1];
+
+                    if (char === '"') {
+                        if (inQuotes && nextChar === '"') {
+                            // 연속된 따옴표는 이스케이프된 따옴표
+                            current += '"';
+                            i++; // 다음 따옴표 건너뛰기
+                        } else {
+                            // 따옴표 시작/종료
+                            inQuotes = !inQuotes;
+                        }
+                    } else if (char === ',' && !inQuotes) {
+                        // 따옴표 밖의 쉼표는 구분자
+                        result.push(current);
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+
+                // 마지막 필드 추가
+                result.push(current);
+                return result;
+            }
+
+            const headers = parseLine(lines[0]);
             console.log('원본 헤더:', headers);
 
             const cleanHeaders = headers.map(h => h.replace(/^\uFEFF/, '').trim());
@@ -2498,7 +2531,7 @@
             const data = [];
 
             for (let i = 1; i < lines.length; i++) {
-                const values = lines[i].split(',');
+                const values = parseLine(lines[i]);
                 if (values.length === cleanHeaders.length) {
                     const row = {};
                     cleanHeaders.forEach((header, index) => {

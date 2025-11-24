@@ -109,6 +109,13 @@ if PROPHET_AVAILABLE:
     print(f"  향후 30일 예상 총 전환값: {forecast_future['yhat'].sum():,.0f}원")
     print(f"  일평균 예상 전환값: {forecast_future['yhat'].mean():,.0f}원")
 
+    # 전체 예측 결과 저장
+    forecast_output = forecast_future[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].copy()
+    forecast_output.columns = ['일자', '예측값', '하한값', '상한값']
+    forecast_output.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_overall.csv',
+                          index=False, encoding='utf-8-sig')
+    print("\n✓ 전체 예측 결과 저장: data/type/prophet_forecast_overall.csv")
+
     print("\n" + "=" * 100)
     print("2. 주요 유형구분별 예측 (향후 30일)")
     print("=" * 100)
@@ -158,6 +165,21 @@ if PROPHET_AVAILABLE:
         print(f"향후 30일 예상 총 전환값: {forecast_cat_future['yhat'].sum():,.0f}원")
         print(f"일평균 예상 전환값: {forecast_cat_future['yhat'].mean():,.0f}원")
 
+    # 유형구분별 예측 결과 통합 저장
+    if category_forecasts:
+        all_category_forecasts = []
+        for category, forecast_data in category_forecasts.items():
+            cat_output = forecast_data[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].copy()
+            cat_output['유형구분'] = category
+            all_category_forecasts.append(cat_output)
+
+        combined_forecasts = pd.concat(all_category_forecasts, ignore_index=True)
+        combined_forecasts.columns = ['일자', '예측값', '하한값', '상한값', '유형구분']
+        combined_forecasts = combined_forecasts[['유형구분', '일자', '예측값', '하한값', '상한값']]
+        combined_forecasts.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_category.csv',
+                                  index=False, encoding='utf-8-sig')
+        print("\n✓ 유형구분별 예측 결과 저장: data/type/prophet_forecast_by_category.csv")
+
     print("\n" + "=" * 100)
     print("3. 유형구분별 트렌드 분석")
     print("=" * 100)
@@ -169,6 +191,7 @@ if PROPHET_AVAILABLE:
 
     print("\n최근 30일 vs 이전 30일 비교 (유형구분별):")
 
+    trend_analysis_list = []
     for category in category_summary.head(5)['유형구분']:
         recent_cat = recent_data[recent_data['유형구분'] == category]
         previous_cat = previous_data[previous_data['유형구분'] == category]
@@ -182,8 +205,22 @@ if PROPHET_AVAILABLE:
             print(f"  최근 30일: {recent_value:,.0f}원")
             print(f"  이전 30일: {previous_value:,.0f}원")
             print(f"  변화율: {change:+.1f}%")
+
+            trend_analysis_list.append({
+                '유형구분': category,
+                '최근_30일': recent_value,
+                '이전_30일': previous_value,
+                '변화율': change
+            })
         else:
             print(f"\n[{category}]: 이전 기간 데이터 없음")
+
+    # 트렌드 분석 결과 저장
+    if trend_analysis_list:
+        trend_df = pd.DataFrame(trend_analysis_list)
+        trend_df.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_trend_analysis.csv',
+                       index=False, encoding='utf-8-sig')
+        print("\n✓ 트렌드 분석 결과 저장: data/type/prophet_trend_analysis.csv")
 
     print("\n" + "=" * 100)
     print("4. 계절성 분석 (유형구분별)")
@@ -204,8 +241,15 @@ if PROPHET_AVAILABLE:
     for _, row in dow_performance.iterrows():
         print(f"  {row['요일명']}: {row['전환값']:,.0f}원")
 
+    # 전체 요일별 패턴 저장
+    dow_output = dow_performance[['요일명', '전환값']].copy()
+    dow_output['유형구분'] = '전체'
+    dow_output.columns = ['요일', '평균_전환값', '유형구분']
+
     # 주요 유형구분별 요일 패턴
     print("\n주요 유형구분별 요일 패턴:")
+    all_seasonality_data = [dow_output]
+
     for category in ['메타_전환', '네이버_쇼핑검색']:
         cat_data = df[df['유형구분'] == category].copy()
         cat_data['요일번호'] = cat_data['일'].dt.dayofweek
@@ -217,12 +261,26 @@ if PROPHET_AVAILABLE:
         for _, row in cat_dow.iterrows():
             print(f"  {row['요일명']}: {row['전환값']:,.0f}원")
 
+        # 유형구분별 요일 패턴 저장용
+        cat_dow_output = cat_dow[['요일명', '전환값']].copy()
+        cat_dow_output['유형구분'] = category
+        cat_dow_output.columns = ['요일', '평균_전환값', '유형구분']
+        all_seasonality_data.append(cat_dow_output)
+
+    # 계절성 분석 결과 통합 저장
+    seasonality_df = pd.concat(all_seasonality_data, ignore_index=True)
+    seasonality_df = seasonality_df[['유형구분', '요일', '평균_전환값']]
+    seasonality_df.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_seasonality.csv',
+                         index=False, encoding='utf-8-sig')
+    print("\n✓ 계절성 분석 결과 저장: data/type/prophet_seasonality.csv")
+
     print("\n" + "=" * 100)
     print("5. 이상치 탐지 (유형구분별)")
     print("=" * 100)
 
     from scipy import stats
 
+    all_outliers = []
     for category in ['메타_전환', '네이버_쇼핑검색']:
         cat_daily = df[df['유형구분'] == category].groupby('일').agg({'전환값': 'sum'}).reset_index()
 
@@ -237,8 +295,22 @@ if PROPHET_AVAILABLE:
             print(f"\n[{category}] 이상치 탐지 (상위 5개):")
             for _, row in outliers.head(5).iterrows():
                 print(f"  {row['일'].date()}: 전환값 {row['전환값']:,.0f}원 (Z-score: {row['zscore']:.2f})")
+
+            # 이상치 저장용
+            outliers_output = outliers[['일', '전환값', 'zscore']].copy()
+            outliers_output['유형구분'] = category
+            all_outliers.append(outliers_output)
         else:
             print(f"\n[{category}]: 이상치 없음")
+
+    # 이상치 탐지 결과 저장
+    if all_outliers:
+        outliers_df = pd.concat(all_outliers, ignore_index=True)
+        outliers_df = outliers_df[['유형구분', '일', '전환값', 'zscore']]
+        outliers_df.columns = ['유형구분', '일자', '전환값', 'Z_Score']
+        outliers_df.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_outliers.csv',
+                          index=False, encoding='utf-8-sig')
+        print("\n✓ 이상치 탐지 결과 저장: data/type/prophet_outliers.csv")
 
 else:
     print("\n" + "=" * 100)

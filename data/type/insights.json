@@ -1,198 +1,198 @@
 {
   "summary": {
-    "total_cost": 1086438690.0,
-    "total_conversions": 70134.725138,
-    "total_revenue": 2384432094.7864,
-    "overall_roas": 219.47231047031286,
-    "overall_cpa": 15490.738544455377,
+    "total_cost": 1279557780.82,
+    "total_conversions": 71008.67,
+    "total_revenue": 2422107542.91,
+    "overall_roas": 189.29254928666066,
+    "overall_cpa": 18019.7401362397,
     "analysis_period": {
       "start_date": "2024-09-25",
-      "end_date": "2025-11-23",
-      "total_days": 425
+      "end_date": "2025-11-24",
+      "total_days": 426
     }
   },
   "top_categories": [
     {
-      "name": "네이버_쇼핑검색",
-      "cost": 629156.0,
-      "conversions": 784.0,
-      "revenue": 77559960.0,
-      "roas": 12327.619858985689,
-      "cpa": 802.4948979591836
+      "name": "네이버_신제품검색광고",
+      "cost": 714994.0,
+      "conversions": 656.0,
+      "revenue": 99741800.0,
+      "roas": 13950.019160999953,
+      "cpa": 1089.9298780487804
     },
     {
       "name": "네이버_파워링크",
-      "cost": 460669.0,
+      "cost": 9530444.0,
       "conversions": 266.0,
       "revenue": 27648840.0,
-      "roas": 6001.888557728,
-      "cpa": 1731.8383458646615
+      "roas": 290.11072306809626,
+      "cpa": 35828.73684210526
+    },
+    {
+      "name": "구분필요",
+      "cost": 94434611.2,
+      "conversions": 6413.09,
+      "revenue": 181395877.55,
+      "roas": 192.08622267298537,
+      "cpa": 14725.290179928865
     },
     {
       "name": "메타_전환",
-      "cost": 1035812080.0,
-      "conversions": 60857.0,
-      "revenue": 1969077044.0,
-      "roas": 190.09983393899017,
-      "cpa": 17020.426245132032
+      "cost": 1055684930.0,
+      "conversions": 61760.0,
+      "revenue": 2007451692.0,
+      "roas": 190.15632741863615,
+      "cpa": 17093.344073834196
     },
     {
-      "name": "메타_트래픽",
-      "cost": 48357500.0,
-      "conversions": 670.0,
-      "revenue": 15778700.0,
-      "roas": 32.629271571111,
-      "cpa": 72175.37313432836
-    },
-    {
-      "name": "메타_도달",
-      "cost": 1179285.0,
-      "conversions": 0.0,
-      "revenue": 0.0,
-      "roas": 0.0,
-      "cpa": 0.0
+      "name": "네이버_쇼핑검색",
+      "cost": 41023818.0,
+      "conversions": 784.0,
+      "revenue": 77559960.0,
+      "roas": 189.06080365313636,
+      "cpa": 52326.29846938775
     }
   ],
   "gender_performance": [
     {
       "gender": "FEMALE",
-      "cost": 0.0,
-      "conversions": 79.143528,
-      "revenue": 2350022.9798000003,
-      "roas": 0.0,
+      "cost": 1605900.96,
+      "conversions": 79.13,
+      "revenue": 2350022.96,
+      "roas": 83.10326672458649,
       "performance_level": "개선 필요"
     },
     {
       "gender": "MALE",
-      "cost": 0.0,
-      "conversions": 71.070355,
-      "revenue": 1730468.1428,
-      "roas": 0.0,
+      "cost": 1224915.2,
+      "conversions": 71.07,
+      "revenue": 1730468.14,
+      "roas": 37.81183197684868,
       "performance_level": "개선 필요"
     },
     {
       "gender": "UNDETERMINED",
-      "cost": 0.0,
+      "cost": 99374.96999999999,
       "conversions": 3.0,
       "revenue": 96400.0,
-      "roas": 0.0,
+      "roas": 29.8423112461431,
       "performance_level": "개선 필요"
     },
     {
       "gender": "남성",
-      "cost": 35233.0,
+      "cost": 827783.0,
       "conversions": 42.0,
       "revenue": 1506970.0,
-      "roas": 1645.8346054062208,
-      "performance_level": "우수"
-    },
-    {
-      "gender": "알 수 없음",
-      "cost": 10527.0,
-      "conversions": 2.0,
-      "revenue": 57000.0,
-      "roas": 834.5752608047688,
+      "roas": 557.1596434581852,
       "performance_level": "양호"
     },
     {
+      "gender": "알 수 없음",
+      "cost": 685718.0,
+      "conversions": 2.0,
+      "revenue": 57000.0,
+      "roas": 17.628495428353386,
+      "performance_level": "개선 필요"
+    },
+    {
       "gender": "여성",
-      "cost": 62161.0,
+      "cost": 3711422.0,
       "conversions": 201.0,
       "revenue": 5972330.0,
-      "roas": 5234.5322137295,
-      "performance_level": "매우 우수"
+      "roas": 427.8415400143206,
+      "performance_level": "양호"
     }
   ],
   "top_adsets": [
     {
-      "campaign": "쇼핑검색-낮잠이불",
-      "adset": "1. 어린이집낮잠이불-메인",
+      "campaign": "파워링크-듀엘백",
+      "adset": "01.브랜드-듀엘백-PC",
+      "category": "네이버_파워링크",
+      "cost": 3872.0,
+      "conversions": 2.0,
+      "revenue": 437000.0,
+      "roas": 11286.157024793389
+    },
+    {
+      "campaign": "파워링크-듀엘백",
+      "adset": "01.브랜드-듀엘백-MO",
+      "category": "네이버_파워링크",
+      "cost": 5940.0,
+      "conversions": 2.0,
+      "revenue": 385500.0,
+      "roas": 6489.898989898989
+    },
+    {
+      "campaign": "파워링크-브랜드",
+      "adset": "브랜드/백팩PC",
+      "category": "네이버_파워링크",
+      "cost": 57343.0,
+      "conversions": 12.0,
+      "revenue": 2017200.0,
+      "roas": 3517.7789791256123
+    },
+    {
+      "campaign": "쇼검-01.미카백",
+      "adset": "01.미카백-브랜디드-스스-PC 1위 1000",
       "category": "네이버_쇼핑검색",
-      "cost": 110.0,
-      "conversions": 15.0,
-      "revenue": 3276200.0,
-      "roas": 2978363.636363636
+      "cost": 5478.0,
+      "conversions": 1.0,
+      "revenue": 179000.0,
+      "roas": 3267.615918218328
+    },
+    {
+      "campaign": "쇼검-03.낮잠이불",
+      "adset": "03.낮잠이불-어린이이불세트-스스-PC 1위 1800",
+      "category": "네이버_쇼핑검색",
+      "cost": 7656.0,
+      "conversions": 1.0,
+      "revenue": 176000.0,
+      "roas": 2298.850574712644
+    },
+    {
+      "campaign": "쇼핑검색-듀엘백",
+      "adset": "듀엘백-브랜디드-MO-1순위",
+      "category": "네이버_쇼핑검색",
+      "cost": 32989.0,
+      "conversions": 4.0,
+      "revenue": 743000.0,
+      "roas": 2252.265906817424
     },
     {
       "campaign": "쇼검-02.듀엘백",
       "adset": "02.듀엘백-브랜디드-스스-MO 1위 1200\t",
       "category": "네이버_쇼핑검색",
-      "cost": 55.0,
+      "cost": 56078.0,
       "conversions": 5.0,
       "revenue": 955500.0,
-      "roas": 1737272.7272727273
-    },
-    {
-      "campaign": "쇼핑검색-기저귀가방",
-      "adset": "1. 기저귀가방백팩-메인",
-      "category": "네이버_쇼핑검색",
-      "cost": 1463.0,
-      "conversions": 17.0,
-      "revenue": 2871000.0,
-      "roas": 196240.6015037594
-    },
-    {
-      "campaign": "쇼핑검색-기저귀가방",
-      "adset": "2. 국민기저귀가방-메인",
-      "category": "네이버_쇼핑검색",
-      "cost": 1683.0,
-      "conversions": 6.0,
-      "revenue": 1093300.0,
-      "roas": 64961.37849079025
-    },
-    {
-      "campaign": "쇼핑검색-기저귀가방",
-      "adset": "0. 브랜드명-메인",
-      "category": "네이버_쇼핑검색",
-      "cost": 23573.0,
-      "conversions": 62.0,
-      "revenue": 9118000.0,
-      "roas": 38679.84558605184
-    },
-    {
-      "campaign": "쇼핑검색-기저귀가방",
-      "adset": "2. 국민기저귀가방-플러스",
-      "category": "네이버_쇼핑검색",
-      "cost": 1848.0,
-      "conversions": 3.0,
-      "revenue": 486300.0,
-      "roas": 26314.935064935064
-    },
-    {
-      "campaign": "쇼핑검색-기저귀가방",
-      "adset": "3. 가벼운기저귀가방-메인",
-      "category": "네이버_쇼핑검색",
-      "cost": 1408.0,
-      "conversions": 2.0,
-      "revenue": 370200.0,
-      "roas": 26292.61363636364
-    },
-    {
-      "campaign": "쇼핑검색-기타",
-      "adset": "001.외출용품",
-      "category": "네이버_쇼핑검색",
-      "cost": 22242.0,
-      "conversions": 32.0,
-      "revenue": 4340200.0,
-      "roas": 19513.53295566945
+      "roas": 1703.8767431078145
     },
     {
       "campaign": "파워링크-브랜드",
       "adset": "브랜드/백팩M",
       "category": "네이버_파워링크",
-      "cost": 21285.0,
+      "cost": 226765.0,
       "conversions": 23.0,
       "revenue": 3259900.0,
-      "roas": 15315.480385247827
+      "roas": 1437.5675258527551
     },
     {
-      "campaign": "쇼핑검색-기저귀가방",
-      "adset": "4. 보냉기저귀가방-메인",
+      "campaign": "쇼핑검색-기타",
+      "adset": "001.외출용품",
       "category": "네이버_쇼핑검색",
-      "cost": 6820.0,
-      "conversions": 5.0,
-      "revenue": 1015400.0,
-      "roas": 14888.563049853372
+      "cost": 565488.0,
+      "conversions": 32.0,
+      "revenue": 4340200.0,
+      "roas": 767.5140763376057
+    },
+    {
+      "campaign": "파워링크-듀엘백",
+      "adset": "02.메인-듀엘백-기저귀가방백팩-PC",
+      "category": "네이버_파워링크",
+      "cost": 31856.0,
+      "conversions": 1.0,
+      "revenue": 197500.0,
+      "roas": 619.9773982923153
     }
   ],
   "age_gender_combinations": [
@@ -200,25 +200,9 @@
       "adset": "발매트-데이지-2554-여성",
       "age": "55-64",
       "gender": "Unknown",
-      "roas": 32920.35398230088,
+      "roas": 28615.384615384613,
       "conversions": 1.0,
       "recommendation": "55-64세 Unknown 타겟팅이 효과적입니다"
-    },
-    {
-      "adset": "호랑이러그-2554",
-      "age": "55-64",
-      "gender": "Male",
-      "roas": 16549.707602339182,
-      "conversions": 1.0,
-      "recommendation": "55-64세 Male 타겟팅이 효과적입니다"
-    },
-    {
-      "adset": "전제품-어드밴티지-2554",
-      "age": "35-44",
-      "gender": "Unknown",
-      "roas": 12032.520325203252,
-      "conversions": 1.0,
-      "recommendation": "35-44세 Unknown 타겟팅이 효과적입니다"
     },
     {
       "adset": "보냉백-패드하우스-1865",
@@ -235,36 +219,52 @@
       "roas": 2868.5258964143427,
       "conversions": 2.0,
       "recommendation": "25-34세 Unknown 타겟팅이 효과적입니다"
+    },
+    {
+      "adset": "전제품-어드밴티지-2554",
+      "age": "35-44",
+      "gender": "Unknown",
+      "roas": 2781.9548872180453,
+      "conversions": 1.0,
+      "recommendation": "35-44세 Unknown 타겟팅이 효과적입니다"
+    },
+    {
+      "adset": "사라음성",
+      "age": "55-64",
+      "gender": "Unknown",
+      "roas": 2256.3251762754044,
+      "conversions": 1.0,
+      "recommendation": "55-64세 Unknown 타겟팅이 효과적입니다"
     }
   ],
   "platform_performance": [
     {
       "platform": "Desktop",
-      "cost": 260069.0,
-      "conversions": 31.0,
-      "revenue": 939600.0,
-      "roas": 361.2887349126578
+      "cost": 272806.0,
+      "conversions": 32.0,
+      "revenue": 996200.0,
+      "roas": 365.16792152665266
     },
     {
       "platform": "Mobile app",
-      "cost": 180650735.0,
-      "conversions": 10348.0,
-      "revenue": 334190227.0,
-      "roas": 184.99245353194937
+      "cost": 185403166.0,
+      "conversions": 10565.0,
+      "revenue": 343396289.0,
+      "roas": 185.2159789978991
     },
     {
       "platform": "Mobile web",
-      "cost": 68625.0,
+      "cost": 72291.0,
       "conversions": 1.0,
       "revenue": 23900.0,
-      "roas": 34.82695810564663
+      "roas": 33.06082361566447
     },
     {
       "platform": "PC",
-      "cost": 206811.0,
+      "cost": 1169058.0,
       "conversions": 32.0,
       "revenue": 5349900.0,
-      "roas": 2586.854664403731
+      "roas": 457.6248569360972
     },
     {
       "platform": "Uncategorized",
@@ -275,70 +275,70 @@
     },
     {
       "platform": "모바일",
-      "cost": 169587.0,
+      "cost": 18883150.0,
       "conversions": 576.0,
       "revenue": 89589100.0,
-      "roas": 52827.81109401074
+      "roas": 474.43938114138797
     }
   ],
   "brand_performance": [
     {
       "brand": "기존제품",
-      "cost": 356422572.0,
-      "conversions": 23719.149626,
-      "revenue": 822162066.1211,
-      "roas": 230.67059460002434
+      "cost": 436287871.03999996,
+      "conversions": 23742.11,
+      "revenue": 822966066.2,
+      "roas": 188.62914163491573
     },
     {
       "brand": "신제품",
-      "cost": 5384698.0,
-      "conversions": 241.0,
-      "revenue": 10562562.0,
-      "roas": 196.15885607697962
+      "cost": 6348329.0,
+      "conversions": 250.0,
+      "revenue": 11129162.0,
+      "roas": 175.30852607040373
     }
   ],
   "product_performance": [
     {
       "product": "목욕가운",
-      "cost": 638560.0,
-      "conversions": 24.0,
-      "revenue": 1696800.0,
-      "roas": 265.7228764720621
-    },
-    {
-      "product": "기타",
-      "cost": 258204132.0,
-      "conversions": 18004.149626,
-      "revenue": 635378708.1211,
-      "roas": 246.07611938646278
+      "cost": 707573.0,
+      "conversions": 29.0,
+      "revenue": 2080400.0,
+      "roas": 294.0191330081843
     },
     {
       "product": "파자마",
-      "cost": 749597.0,
+      "cost": 779902.0,
       "conversions": 26.0,
       "revenue": 1800800.0,
-      "roas": 240.23575334479727
+      "roas": 230.90080548581744
     },
     {
       "product": "룸슈즈",
-      "cost": 29874919.0,
-      "conversions": 1697.0,
-      "revenue": 61356178.0,
-      "roas": 205.37688487121923
+      "cost": 30251679.97,
+      "conversions": 1706.0,
+      "revenue": 61669178.0,
+      "roas": 203.85372997848754
     },
     {
       "product": "발매트",
-      "cost": 65019043.0,
-      "conversions": 3998.0,
-      "revenue": 126567220.0,
-      "roas": 194.66177009095625
+      "cost": 65169946.0,
+      "conversions": 4002.0,
+      "revenue": 126722120.0,
+      "roas": 194.44871106690803
+    },
+    {
+      "product": "기타",
+      "cost": 338270786.07,
+      "conversions": 18015.11,
+      "revenue": 635802408.2,
+      "roas": 187.95664136022387
     },
     {
       "product": "파우치",
-      "cost": 3107868.0,
-      "conversions": 142.0,
-      "revenue": 3645462.0,
-      "roas": 117.29783890435502
+      "cost": 3200522.0,
+      "conversions": 143.0,
+      "revenue": 3675262.0,
+      "roas": 114.83320533338
     },
     {
       "product": "앞치마",
@@ -349,10 +349,10 @@
     },
     {
       "product": "호랑이러그",
-      "cost": 2760949.0,
-      "conversions": 44.0,
-      "revenue": 1469600.0,
-      "roas": 53.22807483948454
+      "cost": 2803589.0,
+      "conversions": 46.0,
+      "revenue": 1535200.0,
+      "roas": 54.75838291561281
     },
     {
       "product": "잠옷",
@@ -365,18 +365,25 @@
   "promotion_performance": [
     {
       "promotion": "기타",
-      "cost": 361807270.0,
-      "conversions": 23960.149626,
-      "revenue": 832724628.1211,
-      "roas": 230.1569639883411
+      "cost": 442636200.03999996,
+      "conversions": 23992.11,
+      "revenue": 834095228.2,
+      "roas": 188.4380961441077
     }
   ],
   "alerts": [
     {
       "type": "high_roas_opportunity",
-      "message": "네이버_쇼핑검색의 ROAS가 12327.6%로 매우 높습니다. 예산 증액을 고려하세요.",
+      "message": "네이버_신제품검색광고의 ROAS가 13950.0%로 매우 높습니다. 예산 증액을 고려하세요.",
       "severity": "opportunity",
-      "value": 12327.619858985689
+      "value": 13950.019160999953
+    },
+    {
+      "type": "low_roas_warning",
+      "message": "네이버_브랜드검색광고의 ROAS가 0.0%로 낮습니다. 캠페인 최적화가 필요합니다.",
+      "severity": "warning",
+      "category": "네이버_브랜드검색광고",
+      "value": 0.0
     },
     {
       "type": "low_roas_warning",
@@ -393,29 +400,22 @@
       "value": 32.629271571111
     },
     {
-      "type": "gender_targeting_opportunity",
-      "message": "여성 타겟팅의 ROAS가 5234.5%로 우수합니다. 해당 성별 집중 광고를 추천합니다.",
-      "severity": "opportunity",
-      "gender": "여성",
-      "value": 5234.5322137295
-    },
-    {
       "type": "revenue_decline",
-      "message": "최근 30일 매출이 이전 대비 -34.2% 감소했습니다. 캠페인 점검이 필요합니다.",
+      "message": "최근 30일 매출이 이전 대비 -24.9% 감소했습니다. 캠페인 점검이 필요합니다.",
       "severity": "high",
-      "value": -34.17964784182811
+      "value": -24.911142506946206
     }
   ],
   "recommendations": [
     {
       "title": "예산 재배분 제안",
-      "description": "네이버_쇼핑검색 (ROAS 12327.6%)의 예산을 늘리고, 네이버_파워링크 (ROAS 6001.9%)의 예산을 유지하세요.",
+      "description": "네이버_신제품검색광고 (ROAS 13950.0%)의 예산을 늘리고, 네이버_파워링크 (ROAS 290.1%)의 예산을 유지하세요.",
       "priority": "high",
       "expected_impact": "ROAS 10-20% 개선 예상"
     },
     {
       "title": "성별 타겟팅 최적화",
-      "description": "여성 타겟 광고의 비중을 높이세요. 현재 ROAS 5234.5%로 가장 높습니다.",
+      "description": "남성 타겟 광고의 비중을 높이세요. 현재 ROAS 557.2%로 가장 높습니다.",
       "priority": "medium",
       "expected_impact": "CPA 15-25% 절감 가능"
     },
@@ -427,44 +427,44 @@
     },
     {
       "title": "브랜드 집중 전략",
-      "description": "기존제품 브랜드의 ROAS가 230.7%로 가장 높습니다. 해당 브랜드 광고 비중을 확대하세요.",
+      "description": "기존제품 브랜드의 ROAS가 188.6%로 가장 높습니다. 해당 브랜드 광고 비중을 확대하세요.",
       "priority": "high",
       "expected_impact": "ROAS 15-30% 개선 가능"
     },
     {
       "title": "상품 포트폴리오 최적화",
-      "description": "목욕가운 상품의 ROAS가 265.7%로 가장 효율적입니다. 주력 상품으로 설정하세요.",
+      "description": "목욕가운 상품의 ROAS가 294.0%로 가장 효율적입니다. 주력 상품으로 설정하세요.",
       "priority": "high",
       "expected_impact": "매출 20-35% 증가 예상"
     },
     {
       "title": "프로모션 전략 강화",
-      "description": "기타 프로모션의 ROAS가 230.2%입니다. 유사한 프로모션 기획을 추천합니다.",
+      "description": "기타 프로모션의 ROAS가 188.4%입니다. 유사한 프로모션 기획을 추천합니다.",
       "priority": "medium",
       "expected_impact": "전환율 10-20% 개선 예상"
     }
   ],
-  "generated_at": "2025-11-23T23:14:37.531403",
+  "generated_at": "2025-11-24T10:57:58.940695",
   "overall": {
     "current_period": {
       "start_date": "2024-09-25",
-      "end_date": "2025-11-23",
-      "total_cost": 1086438690.0,
-      "total_conversions": 70134.725138,
-      "total_revenue": 2384432094.7864,
-      "overall_roas": 219.47231047031286,
-      "overall_cpa": 15490.738544455377
+      "end_date": "2025-11-24",
+      "total_cost": 1279557780.82,
+      "total_conversions": 71008.67,
+      "total_revenue": 2422107542.91,
+      "overall_roas": 189.29254928666066,
+      "overall_cpa": 18019.7401362397
     },
     "trend": {
       "direction": "declining",
-      "change_percent": -34.17964784182811
+      "change_percent": -24.911142506946206
     }
   },
   "details": {
     "total_categories": 9,
-    "paid_categories": 5,
-    "top_roas_category": "네이버_쇼핑검색",
-    "analysis_period_days": 425,
+    "paid_categories": 9,
+    "top_roas_category": "네이버_신제품검색광고",
+    "analysis_period_days": 426,
     "alerts_count": 5,
     "recommendations_count": 6
   }
