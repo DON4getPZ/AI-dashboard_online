@@ -3866,47 +3866,212 @@
             if (!dimensionData) return;
 
             const filterMap = {
+                'channel': { column: '유형구분', listId: 'genderFilterChannelList', label: '채널' },
+                'product': { column: '상품명', listId: 'genderFilterProductList', label: '제품' },
+                'brand': { column: '브랜드명', listId: 'genderFilterBrandList', label: '브랜드' },
+                'promotion': { column: '프로모션', listId: 'genderFilterPromotionList', label: '프로모션' }
+            };
+
+            // 각 필터에 대한 체크박스 리스트 생성
+            Object.keys(filterMap).forEach(filterKey => {
+                const { column, listId } = filterMap[filterKey];
+                const list = document.getElementById(listId);
+                if (!list) return;
+
+                const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                items.sort();
+
+                list.innerHTML = items.map(item => `
+                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-size: 12px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='var(--grey-100)'" onmouseout="this.style.background='transparent'">
+                        <input type="checkbox" class="gender-filter-item-checkbox" data-filter="${filterKey}" value="${item}" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                        ${item}
+                    </label>
+                `).join('');
+
+                // 개별 체크박스 이벤트
+                list.querySelectorAll('.gender-filter-item-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        // 전체 선택 체크박스 상태 업데이트
+                        const selectAllCheckbox = document.querySelector(`.gender-filter-select-all[data-filter="${filterKey}"]`);
+                        if (selectAllCheckbox) {
+                            const allCheckboxes = list.querySelectorAll('.gender-filter-item-checkbox');
+                            const checkedCheckboxes = list.querySelectorAll('.gender-filter-item-checkbox:checked');
+                            selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length && allCheckboxes.length > 0;
+                        }
+
+                        updateGenderFilters();
+                        updateGenderFilterButtonText(filterKey);
+                    });
+                });
+            });
+
+            // 드롭다운 버튼 클릭 이벤트
+            document.querySelectorAll('.gender-filter-dropdown-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const filterType = this.dataset.filter;
+                    const dropdown = document.querySelector(`.gender-filter-dropdown-list[data-filter="${filterType}"]`);
+
+                    // 다른 드롭다운 닫기
+                    document.querySelectorAll('.gender-filter-dropdown-list').forEach(dd => {
+                        if (dd !== dropdown) dd.style.display = 'none';
+                    });
+
+                    // 현재 드롭다운 토글
+                    if (dropdown) {
+                        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+                    }
+                });
+            });
+
+            // 전체 선택 체크박스 이벤트
+            document.querySelectorAll('.gender-filter-select-all').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const filterType = this.dataset.filter;
+                    const list = document.getElementById(`genderFilter${filterType.charAt(0).toUpperCase() + filterType.slice(1)}List`);
+                    if (!list) return;
+
+                    const itemCheckboxes = list.querySelectorAll('.gender-filter-item-checkbox');
+                    itemCheckboxes.forEach(cb => {
+                        cb.checked = this.checked;
+                    });
+
+                    updateGenderFilters();
+                    updateGenderFilterButtonText(filterType);
+                });
+            });
+
+            // 외부 클릭 시 드롭다운 닫기
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.gender-filter-dropdown-btn') && !e.target.closest('.gender-filter-dropdown-list')) {
+                    document.querySelectorAll('.gender-filter-dropdown-list').forEach(dd => {
+                        dd.style.display = 'none';
+                    });
+                }
+            });
+        }
+
+        function updateGenderFilterButtonText(filterKey) {
+            const filterMap = {
+                'channel': '채널',
+                'product': '제품',
+                'brand': '브랜드',
+                'promotion': '프로모션'
+            };
+
+            const btn = document.querySelector(`.gender-filter-dropdown-btn[data-filter="${filterKey}"]`);
+            const list = document.getElementById(`genderFilter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}List`);
+
+            if (!btn || !list) return;
+
+            const checkedBoxes = list.querySelectorAll('.gender-filter-item-checkbox:checked');
+            const totalBoxes = list.querySelectorAll('.gender-filter-item-checkbox');
+            const btnText = btn.querySelector('span:first-child');
+            const countText = btn.querySelector('.gender-selected-count');
+
+            if (checkedBoxes.length === 0) {
+                btnText.textContent = `${filterMap[filterKey]}_전체`;
+                countText.textContent = '';
+            } else if (checkedBoxes.length === totalBoxes.length) {
+                btnText.textContent = `${filterMap[filterKey]}_전체`;
+                countText.textContent = `(${checkedBoxes.length})`;
+            } else if (checkedBoxes.length === 1) {
+                btnText.textContent = checkedBoxes[0].value;
+                countText.textContent = '';
+            } else {
+                btnText.textContent = `${checkedBoxes[0].value} 외`;
+                countText.textContent = `(${checkedBoxes.length})`;
+            }
+        }
+
+        // 전역 필터 상태 저장
+        let currentGenderFilters = {
+            channel: [],
+            product: [],
+            brand: [],
+            promotion: []
+        };
+
+        function updateGenderFilters() {
+            if (!dimensionData) return;
+
+            const filterMap = {
+                'channel': { column: '유형구분', listId: 'genderFilterChannelList' },
+                'product': { column: '상품명', listId: 'genderFilterProductList' },
+                'brand': { column: '브랜드명', listId: 'genderFilterBrandList' },
+                'promotion': { column: '프로모션', listId: 'genderFilterPromotionList' }
+            };
+
+            // 선택된 필터 값 수집
+            Object.keys(filterMap).forEach(filterKey => {
+                const { listId } = filterMap[filterKey];
+                const list = document.getElementById(listId);
+
+                if (list) {
+                    const checkedBoxes = list.querySelectorAll('.gender-filter-item-checkbox:checked');
+                    currentGenderFilters[filterKey] = Array.from(checkedBoxes).map(cb => cb.value);
+                } else {
+                    currentGenderFilters[filterKey] = [];
+                }
+            });
+
+            // 모든 필터가 비어있는지 확인
+            const allFiltersEmpty = Object.values(currentGenderFilters).every(arr => arr.length === 0);
+
+            if (allFiltersEmpty) {
+                // 모든 필터가 해제되면 필터 상태 초기화
+                currentGenderFilters = {
+                    channel: [],
+                    product: [],
+                    brand: [],
+                    promotion: []
+                };
+            }
+
+            // 필터링된 성별 데이터 계산
+            updateFilteredGenderCount(currentGenderFilters);
+
+            // 차트 업데이트
+            renderGenderTrendChart();
+        }
+
+        function updateFilteredGenderCount(filters) {
+            if (!dimensionData) return;
+
+            const filterMap = {
                 'channel': '유형구분',
                 'product': '상품명',
                 'brand': '브랜드명',
                 'promotion': '프로모션'
             };
 
-            const column = filterMap[currentGenderFilter];
-            const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
-            items.sort();
+            const gendersToShow = new Set();
 
-            const container = document.getElementById('genderDropdownContainer');
-            if (!container) return;
+            dimensionData.forEach(row => {
+                const gender = row['성별'];
+                if (!gender || gender === '' || gender === '-') return;
 
-            container.innerHTML = '';
-            const wrapper = document.createElement('div');
-            wrapper.id = 'genderDropdown0';
-            wrapper.className = 'gender-dropdown-wrapper';
-            wrapper.style.position = 'relative';
+                let matchesAllFilters = true;
 
-            const dropdown = document.createElement('select');
-            dropdown.className = 'gender-dropdown';
-            dropdown.style.cssText = 'min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;';
+                // AND 연산으로 모든 필터 확인
+                Object.keys(filterMap).forEach(filterKey => {
+                    const column = filterMap[filterKey];
+                    const selectedValues = filters[filterKey];
 
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = '항목을 선택하세요';
-            dropdown.appendChild(defaultOption);
+                    if (selectedValues && selectedValues.length > 0) {
+                        const rowValue = row[column];
+                        if (!selectedValues.includes(rowValue)) {
+                            matchesAllFilters = false;
+                        }
+                    }
+                });
 
-            items.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item;
-                option.textContent = item;
-                dropdown.appendChild(option);
+                if (matchesAllFilters) {
+                    gendersToShow.add(gender);
+                }
             });
 
-            dropdown.addEventListener('change', function() {
-                handleGenderDropdownChange(this, 0);
-            });
-
-            wrapper.appendChild(dropdown);
-            container.appendChild(wrapper);
+            document.getElementById('filteredGenderCount').textContent = gendersToShow.size;
         }
 
         function handleGenderDropdownChange(dropdown, index) {
@@ -3997,47 +4162,203 @@
             if (!dimensionData) return;
 
             const filterMap = {
+                'channel': { column: '유형구분', listId: 'ageFilterChannelList', label: '채널' },
+                'product': { column: '상품명', listId: 'ageFilterProductList', label: '제품' },
+                'brand': { column: '브랜드명', listId: 'ageFilterBrandList', label: '브랜드' },
+                'promotion': { column: '프로모션', listId: 'ageFilterPromotionList', label: '프로모션' }
+            };
+
+            // 각 필터에 대한 체크박스 리스트 생성
+            Object.keys(filterMap).forEach(filterKey => {
+                const { column, listId } = filterMap[filterKey];
+                const list = document.getElementById(listId);
+                if (!list) return;
+
+                const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                items.sort();
+
+                list.innerHTML = items.map(item => `
+                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-size: 12px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='var(--grey-100)'" onmouseout="this.style.background='transparent'">
+                        <input type="checkbox" class="age-filter-item-checkbox" data-filter="${filterKey}" value="${item}" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                        ${item}
+                    </label>
+                `).join('');
+
+                // 개별 체크박스 이벤트
+                list.querySelectorAll('.age-filter-item-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        // 전체 선택 체크박스 상태 업데이트
+                        const selectAllCheckbox = document.querySelector(`.age-filter-select-all[data-filter="${filterKey}"]`);
+                        if (selectAllCheckbox) {
+                            const allCheckboxes = list.querySelectorAll('.age-filter-item-checkbox');
+                            const checkedCheckboxes = list.querySelectorAll('.age-filter-item-checkbox:checked');
+                            selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length && allCheckboxes.length > 0;
+                        }
+
+                        updateAgeFilters();
+                        updateAgeFilterButtonText(filterKey);
+                    });
+                });
+            });
+
+            // 드롭다운 버튼 클릭 이벤트
+            document.querySelectorAll('.age-filter-dropdown-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const filterType = this.dataset.filter;
+                    const dropdown = document.querySelector(`.age-filter-dropdown-list[data-filter="${filterType}"]`);
+
+                    // 다른 드롭다운 닫기
+                    document.querySelectorAll('.age-filter-dropdown-list').forEach(dd => {
+                        if (dd !== dropdown) dd.style.display = 'none';
+                    });
+
+                    // 현재 드롭다운 토글
+                    if (dropdown) {
+                        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+                    }
+                });
+            });
+
+            // 전체 선택 체크박스 이벤트
+            document.querySelectorAll('.age-filter-select-all').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const filterType = this.dataset.filter;
+                    const list = document.getElementById(`ageFilter${filterType.charAt(0).toUpperCase() + filterType.slice(1)}List`);
+                    if (!list) return;
+
+                    const itemCheckboxes = list.querySelectorAll('.age-filter-item-checkbox');
+                    itemCheckboxes.forEach(cb => {
+                        cb.checked = this.checked;
+                    });
+
+                    updateAgeFilters();
+                    updateAgeFilterButtonText(filterType);
+                });
+            });
+        }
+
+        function updateAgeFilterButtonText(filterKey) {
+            const filterMap = {
+                'channel': '채널',
+                'product': '제품',
+                'brand': '브랜드',
+                'promotion': '프로모션'
+            };
+
+            const btn = document.querySelector(`.age-filter-dropdown-btn[data-filter="${filterKey}"]`);
+            const list = document.getElementById(`ageFilter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}List`);
+
+            if (!btn || !list) return;
+
+            const checkedBoxes = list.querySelectorAll('.age-filter-item-checkbox:checked');
+            const totalBoxes = list.querySelectorAll('.age-filter-item-checkbox');
+            const btnText = btn.querySelector('span:first-child');
+            const countText = btn.querySelector('.age-selected-count');
+
+            if (checkedBoxes.length === 0) {
+                btnText.textContent = `${filterMap[filterKey]}_전체`;
+                countText.textContent = '';
+            } else if (checkedBoxes.length === totalBoxes.length) {
+                btnText.textContent = `${filterMap[filterKey]}_전체`;
+                countText.textContent = `(${checkedBoxes.length})`;
+            } else if (checkedBoxes.length === 1) {
+                btnText.textContent = checkedBoxes[0].value;
+                countText.textContent = '';
+            } else {
+                btnText.textContent = `${checkedBoxes[0].value} 외`;
+                countText.textContent = `(${checkedBoxes.length})`;
+            }
+        }
+
+        // 전역 필터 상태 저장
+        let currentAgeFilters = {
+            channel: [],
+            product: [],
+            brand: [],
+            promotion: []
+        };
+
+        function updateAgeFilters() {
+            if (!dimensionData) return;
+
+            const filterMap = {
+                'channel': { column: '유형구분', listId: 'ageFilterChannelList' },
+                'product': { column: '상품명', listId: 'ageFilterProductList' },
+                'brand': { column: '브랜드명', listId: 'ageFilterBrandList' },
+                'promotion': { column: '프로모션', listId: 'ageFilterPromotionList' }
+            };
+
+            // 선택된 필터 값 수집
+            Object.keys(filterMap).forEach(filterKey => {
+                const { listId } = filterMap[filterKey];
+                const list = document.getElementById(listId);
+
+                if (list) {
+                    const checkedBoxes = list.querySelectorAll('.age-filter-item-checkbox:checked');
+                    currentAgeFilters[filterKey] = Array.from(checkedBoxes).map(cb => cb.value);
+                } else {
+                    currentAgeFilters[filterKey] = [];
+                }
+            });
+
+            // 모든 필터가 비어있는지 확인
+            const allFiltersEmpty = Object.values(currentAgeFilters).every(arr => arr.length === 0);
+
+            if (allFiltersEmpty) {
+                // 모든 필터가 해제되면 필터 상태 초기화
+                currentAgeFilters = {
+                    channel: [],
+                    product: [],
+                    brand: [],
+                    promotion: []
+                };
+            }
+
+            // 필터링된 연령 데이터 계산
+            updateFilteredAgeCount(currentAgeFilters);
+
+            // 차트 업데이트
+            renderAgeTrendChart();
+        }
+
+        function updateFilteredAgeCount(filters) {
+            if (!dimensionData) return;
+
+            const filterMap = {
                 'channel': '유형구분',
                 'product': '상품명',
                 'brand': '브랜드명',
                 'promotion': '프로모션'
             };
 
-            const column = filterMap[currentAgeFilter];
-            const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
-            items.sort();
+            const agesToShow = new Set();
 
-            const container = document.getElementById('ageDropdownContainer');
-            if (!container) return;
+            dimensionData.forEach(row => {
+                const age = row['연령'];
+                if (!age || age === '' || age === '-') return;
 
-            container.innerHTML = '';
-            const wrapper = document.createElement('div');
-            wrapper.id = 'ageDropdown0';
-            wrapper.className = 'age-dropdown-wrapper';
-            wrapper.style.position = 'relative';
+                let matchesAllFilters = true;
 
-            const dropdown = document.createElement('select');
-            dropdown.className = 'age-dropdown';
-            dropdown.style.cssText = 'min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;';
+                // AND 연산으로 모든 필터 확인
+                Object.keys(filterMap).forEach(filterKey => {
+                    const column = filterMap[filterKey];
+                    const selectedValues = filters[filterKey];
 
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = '항목을 선택하세요';
-            dropdown.appendChild(defaultOption);
+                    if (selectedValues && selectedValues.length > 0) {
+                        const rowValue = row[column];
+                        if (!selectedValues.includes(rowValue)) {
+                            matchesAllFilters = false;
+                        }
+                    }
+                });
 
-            items.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item;
-                option.textContent = item;
-                dropdown.appendChild(option);
+                if (matchesAllFilters) {
+                    agesToShow.add(age);
+                }
             });
 
-            dropdown.addEventListener('change', function() {
-                handleAgeDropdownChange(this, 0);
-            });
-
-            wrapper.appendChild(dropdown);
-            container.appendChild(wrapper);
+            document.getElementById('filteredAgeCount').textContent = agesToShow.size;
         }
 
         function handleAgeDropdownChange(dropdown, index) {
@@ -4128,63 +4449,176 @@
             if (!dimensionData) return;
 
             const filterMap = {
-                'channel': '유형구분',
-                'product': '상품명',
-                'brand': '브랜드명',
+                'channel': { column: '유형구분', listId: 'platformFilterChannelList', label: '채널' },
+                'product': { column: '상품명', listId: 'platformFilterProductList', label: '제품' },
+                'brand': { column: '브랜드명', listId: 'platformFilterBrandList', label: '브랜드' },
+                'promotion': { column: '프로모션', listId: 'platformFilterPromotionList', label: '프로모션' }
+            };
+
+            // 각 필터에 대한 체크박스 리스트 생성
+            Object.keys(filterMap).forEach(filterKey => {
+                const { column, listId } = filterMap[filterKey];
+                const list = document.getElementById(listId);
+                if (!list) return;
+
+                const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                items.sort();
+
+                list.innerHTML = items.map(item => `
+                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-size: 12px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='var(--grey-100)'" onmouseout="this.style.background='transparent'">
+                        <input type="checkbox" class="platform-filter-item-checkbox" data-filter="${filterKey}" value="${item}" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                        ${item}
+                    </label>
+                `).join('');
+
+                // 개별 체크박스 이벤트
+                list.querySelectorAll('.platform-filter-item-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        // 전체 선택 체크박스 상태 업데이트
+                        const selectAllCheckbox = document.querySelector(`.platform-filter-select-all[data-filter="${filterKey}"]`);
+                        if (selectAllCheckbox) {
+                            const allCheckboxes = list.querySelectorAll('.platform-filter-item-checkbox');
+                            const checkedCheckboxes = list.querySelectorAll('.platform-filter-item-checkbox:checked');
+                            selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length && allCheckboxes.length > 0;
+                        }
+
+                        updatePlatformFilters();
+                        updatePlatformFilterButtonText(filterKey);
+                    });
+                });
+            });
+
+            // 드롭다운 버튼 클릭 이벤트
+            document.querySelectorAll('.platform-filter-dropdown-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const filterType = this.dataset.filter;
+                    const dropdown = document.querySelector(`.platform-filter-dropdown-list[data-filter="${filterType}"]`);
+
+                    // 다른 드롭다운 닫기
+                    document.querySelectorAll('.platform-filter-dropdown-list').forEach(dd => {
+                        if (dd !== dropdown) dd.style.display = 'none';
+                    });
+
+                    // 현재 드롭다운 토글
+                    if (dropdown) {
+                        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+                    }
+                });
+            });
+
+            // 전체 선택 체크박스 이벤트
+            document.querySelectorAll('.platform-filter-select-all').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const filterType = this.dataset.filter;
+                    const list = document.getElementById(`platformFilter${filterType.charAt(0).toUpperCase() + filterType.slice(1)}List`);
+                    if (!list) return;
+
+                    const itemCheckboxes = list.querySelectorAll('.platform-filter-item-checkbox');
+                    itemCheckboxes.forEach(cb => {
+                        cb.checked = this.checked;
+                    });
+
+                    updatePlatformFilters();
+                    updatePlatformFilterButtonText(filterType);
+                });
+            });
+
+            // 외부 클릭 시 드롭다운 닫기
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.platform-filter-dropdown-btn') && !e.target.closest('.platform-filter-dropdown-list')) {
+                    document.querySelectorAll('.platform-filter-dropdown-list').forEach(dd => {
+                        dd.style.display = 'none';
+                    });
+                }
+            });
+        }
+
+        function updatePlatformFilterButtonText(filterKey) {
+            const filterMap = {
+                'channel': '채널',
+                'product': '제품',
+                'brand': '브랜드',
                 'promotion': '프로모션'
             };
 
-            const column = filterMap[currentPlatformFilter];
-            const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
-            items.sort();
+            const btn = document.querySelector(`.platform-filter-dropdown-btn[data-filter="${filterKey}"]`);
+            const list = document.getElementById(`platformFilter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}List`);
 
-            const container = document.getElementById('platformDropdownContainer');
-            if (!container) return;
+            if (!btn || !list) return;
 
-            container.innerHTML = '';
-            const wrapper = document.createElement('div');
-            wrapper.id = 'platformDropdown0';
-            wrapper.className = 'platform-dropdown-wrapper';
-            wrapper.style.position = 'relative';
+            const checkedBoxes = list.querySelectorAll('.platform-filter-item-checkbox:checked');
+            const totalBoxes = list.querySelectorAll('.platform-filter-item-checkbox');
+            const btnText = btn.querySelector('span:first-child');
+            const countText = btn.querySelector('.platform-selected-count');
 
-            const dropdown = document.createElement('select');
-            dropdown.className = 'platform-dropdown';
-            dropdown.style.cssText = 'min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;';
-
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = '항목을 선택하세요';
-            dropdown.appendChild(defaultOption);
-
-            items.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item;
-                option.textContent = item;
-                dropdown.appendChild(option);
-            });
-
-            dropdown.addEventListener('change', function() {
-                handlePlatformDropdownChange(this, 0);
-            });
-
-            wrapper.appendChild(dropdown);
-            container.appendChild(wrapper);
-        }
-
-        function handlePlatformDropdownChange(dropdown, index) {
-            if (dropdown.value && selectedPlatformItems.length < 5) {
-                const nextIndex = index + 1;
-                const nextDropdown = document.getElementById(`platformDropdown${nextIndex}`);
-                if (!nextDropdown && nextIndex < 5) {
-                    addPlatformDropdown(nextIndex);
-                }
-            } else if (!dropdown.value) {
-                removePlatformDropdownsAfter(index);
+            if (checkedBoxes.length === 0) {
+                btnText.textContent = `${filterMap[filterKey]}_전체`;
+                countText.textContent = '';
+            } else if (checkedBoxes.length === totalBoxes.length) {
+                btnText.textContent = `${filterMap[filterKey]}_전체`;
+                countText.textContent = `(${checkedBoxes.length})`;
+            } else if (checkedBoxes.length === 1) {
+                btnText.textContent = checkedBoxes[0].value;
+                countText.textContent = '';
+            } else {
+                btnText.textContent = `${checkedBoxes[0].value} 외`;
+                countText.textContent = `(${checkedBoxes.length})`;
             }
-            updateSelectedPlatformItems();
         }
 
-        function addPlatformDropdown(index) {
+        // 전역 필터 상태 저장
+        let currentPlatformFilters = {
+            channel: [],
+            product: [],
+            brand: [],
+            promotion: []
+        };
+
+        function updatePlatformFilters() {
+            if (!dimensionData) return;
+
+            const filterMap = {
+                'channel': { column: '유형구분', listId: 'platformFilterChannelList' },
+                'product': { column: '상품명', listId: 'platformFilterProductList' },
+                'brand': { column: '브랜드명', listId: 'platformFilterBrandList' },
+                'promotion': { column: '프로모션', listId: 'platformFilterPromotionList' }
+            };
+
+            // 선택된 필터 값 수집
+            Object.keys(filterMap).forEach(filterKey => {
+                const { listId } = filterMap[filterKey];
+                const list = document.getElementById(listId);
+
+                if (list) {
+                    const checkedBoxes = list.querySelectorAll('.platform-filter-item-checkbox:checked');
+                    currentPlatformFilters[filterKey] = Array.from(checkedBoxes).map(cb => cb.value);
+                } else {
+                    currentPlatformFilters[filterKey] = [];
+                }
+            });
+
+            // 모든 필터가 비어있는지 확인
+            const allFiltersEmpty = Object.values(currentPlatformFilters).every(arr => arr.length === 0);
+
+            if (allFiltersEmpty) {
+                // 모든 필터가 해제되면 필터 상태 초기화
+                currentPlatformFilters = {
+                    channel: [],
+                    product: [],
+                    brand: [],
+                    promotion: []
+                };
+            }
+
+            // 필터링된 플랫폼 데이터 계산
+            updateFilteredPlatformCount(currentPlatformFilters);
+
+            // 차트 업데이트
+            renderPlatformTrendChart();
+        }
+
+        function updateFilteredPlatformCount(filters) {
             if (!dimensionData) return;
 
             const filterMap = {
@@ -4194,64 +4628,33 @@
                 'promotion': '프로모션'
             };
 
-            const column = filterMap[currentPlatformFilter];
-            const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
-            items.sort();
+            const platformsToShow = new Set();
 
-            const container = document.getElementById('platformDropdownContainer');
-            if (!container) return;
+            dimensionData.forEach(row => {
+                const platform = row['플랫폼'];
+                if (!platform || platform === '' || platform === '-') return;
 
-            const wrapper = document.createElement('div');
-            wrapper.id = `platformDropdown${index}`;
-            wrapper.className = 'platform-dropdown-wrapper';
-            wrapper.style.position = 'relative';
+                let matchesAllFilters = true;
 
-            const dropdown = document.createElement('select');
-            dropdown.className = 'platform-dropdown';
-            dropdown.style.cssText = 'min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;';
+                // AND 연산으로 모든 필터 확인
+                Object.keys(filterMap).forEach(filterKey => {
+                    const column = filterMap[filterKey];
+                    const selectedValues = filters[filterKey];
 
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = '항목을 선택하세요';
-            dropdown.appendChild(defaultOption);
+                    if (selectedValues && selectedValues.length > 0) {
+                        const rowValue = row[column];
+                        if (!selectedValues.includes(rowValue)) {
+                            matchesAllFilters = false;
+                        }
+                    }
+                });
 
-            items.forEach(item => {
-                if (!selectedPlatformItems.includes(item)) {
-                    const option = document.createElement('option');
-                    option.value = item;
-                    option.textContent = item;
-                    dropdown.appendChild(option);
+                if (matchesAllFilters) {
+                    platformsToShow.add(platform);
                 }
             });
 
-            dropdown.addEventListener('change', function() {
-                handlePlatformDropdownChange(this, index);
-            });
-
-            wrapper.appendChild(dropdown);
-            container.appendChild(wrapper);
-        }
-
-        function removePlatformDropdownsAfter(index) {
-            for (let i = index + 1; i <= 5; i++) {
-                const dropdown = document.getElementById(`platformDropdown${i}`);
-                if (dropdown) dropdown.remove();
-            }
-        }
-
-        function updateSelectedPlatformItems() {
-            const container = document.getElementById('platformDropdownContainer');
-            if (!container) return;
-
-            selectedPlatformItems = [];
-            container.querySelectorAll('.platform-dropdown').forEach(dropdown => {
-                if (dropdown.value) {
-                    selectedPlatformItems.push(dropdown.value);
-                }
-            });
-
-            document.getElementById('selectedPlatformCount').textContent = selectedPlatformItems.length;
-            renderPlatformTrendChart();
+            document.getElementById('filteredPlatformCount').textContent = platformsToShow.size;
         }
 
         // PIVOT 드롭다운 초기화
@@ -4656,7 +5059,7 @@
                 genderTrendChart.destroy();
             }
 
-            if (selectedGenderItems.length === 0 || !dimensionData) {
+            if (!dimensionData) {
                 const ctx = canvas.getContext('2d');
                 genderTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -4666,7 +5069,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: { display: true, position: 'top' },
-                            title: { display: true, text: '성별을 선택하면 차트가 표시됩니다' }
+                            title: { display: true, text: '데이터 로딩 중...' }
                         }
                     }
                 });
@@ -4680,16 +5083,40 @@
                 'promotion': '프로모션'
             };
 
-            const column = filterMap[currentGenderFilter];
+            // 필터 조건을 만족하는 행만 필터링하는 헬퍼 함수
+            const rowMatchesFilters = (row) => {
+                // 모든 필터가 비어있는지 확인
+                const allFiltersEmpty = Object.values(currentGenderFilters).every(arr => !arr || arr.length === 0);
+
+                // 모든 필터가 비어있으면 false 반환 (데이터 표시 안 함)
+                if (allFiltersEmpty) {
+                    return false;
+                }
+
+                // 모든 필터를 AND 조건으로 확인
+                for (const filterKey of Object.keys(filterMap)) {
+                    const column = filterMap[filterKey];
+                    const selectedValues = currentGenderFilters[filterKey];
+
+                    if (selectedValues && selectedValues.length > 0) {
+                        const rowValue = row[column];
+                        if (!selectedValues.includes(rowValue)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            };
 
             // 성별 목록 가져오기
             const gendersToShow = new Set();
             dimensionData.forEach(row => {
-                const filterValue = row[column];
-                const rawGender = row['성별'];
-                const normalizedGender = normalizeGender(rawGender);
-                if (selectedGenderItems.includes(filterValue) && normalizedGender) {
-                    gendersToShow.add(normalizedGender);
+                if (rowMatchesFilters(row)) {
+                    const rawGender = row['성별'];
+                    const normalizedGender = normalizeGender(rawGender);
+                    if (normalizedGender) {
+                        gendersToShow.add(normalizedGender);
+                    }
                 }
             });
 
@@ -4703,7 +5130,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: { display: true, position: 'top' },
-                            title: { display: true, text: '데이터가 없습니다' }
+                            title: { display: true, text: '필터 조건에 맞는 데이터가 없습니다' }
                         }
                     }
                 });
@@ -4717,11 +5144,12 @@
             });
 
             dimensionData.forEach(row => {
-                const filterValue = row[column];
+                if (!rowMatchesFilters(row)) return;
+
                 const rawGender = row['성별'];
                 const normalizedGender = normalizeGender(rawGender);
 
-                if (selectedGenderItems.includes(filterValue) && normalizedGender && gendersToShow.has(normalizedGender) && row['일']) {
+                if (normalizedGender && gendersToShow.has(normalizedGender) && row['일']) {
                     const date = row['일'];
                     const cost = parseFloat(row['비용']?.replace(/,/g, '') || row['비용']) || 0;
                     const revenue = parseFloat(row['전환값']?.replace(/,/g, '') || row['전환값']) || 0;
@@ -4979,7 +5407,7 @@
                 ageTrendChart.destroy();
             }
 
-            if (selectedAgeItems.length === 0 || !dimensionData) {
+            if (!dimensionData) {
                 const ctx = canvas.getContext('2d');
                 ageTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -4989,7 +5417,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: { display: true, position: 'top' },
-                            title: { display: true, text: '연령대를 선택하면 차트가 표시됩니다' }
+                            title: { display: true, text: '데이터 로딩 중...' }
                         }
                     }
                 });
@@ -5003,15 +5431,39 @@
                 'promotion': '프로모션'
             };
 
-            const column = filterMap[currentAgeFilter];
+            // 필터 조건을 만족하는 행만 필터링하는 헬퍼 함수
+            const rowMatchesFilters = (row) => {
+                // 모든 필터가 비어있는지 확인
+                const allFiltersEmpty = Object.values(currentAgeFilters).every(arr => !arr || arr.length === 0);
+
+                // 모든 필터가 비어있으면 false 반환 (데이터 표시 안 함)
+                if (allFiltersEmpty) {
+                    return false;
+                }
+
+                // 모든 필터를 AND 조건으로 확인
+                for (const filterKey of Object.keys(filterMap)) {
+                    const column = filterMap[filterKey];
+                    const selectedValues = currentAgeFilters[filterKey];
+
+                    if (selectedValues && selectedValues.length > 0) {
+                        const rowValue = row[column];
+                        if (!selectedValues.includes(rowValue)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            };
 
             // 연령 목록 가져오기
             const agesToShow = new Set();
             dimensionData.forEach(row => {
-                const filterValue = row[column];
-                const age = row['연령'];
-                if (selectedAgeItems.includes(filterValue) && age && age !== '' && age !== '-') {
-                    agesToShow.add(age);
+                if (rowMatchesFilters(row)) {
+                    const age = row['연령'];
+                    if (age && age !== '' && age !== '-') {
+                        agesToShow.add(age);
+                    }
                 }
             });
 
@@ -5025,7 +5477,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: { display: true, position: 'top' },
-                            title: { display: true, text: '데이터가 없습니다' }
+                            title: { display: true, text: '필터 조건에 맞는 데이터가 없습니다' }
                         }
                     }
                 });
@@ -5039,10 +5491,11 @@
             });
 
             dimensionData.forEach(row => {
-                const filterValue = row[column];
+                if (!rowMatchesFilters(row)) return;
+
                 const age = row['연령'];
 
-                if (selectedAgeItems.includes(filterValue) && agesToShow.has(age) && row['일']) {
+                if (agesToShow.has(age) && row['일']) {
                     const date = row['일'];
                     const cost = parseFloat(row['비용']?.replace(/,/g, '') || row['비용']) || 0;
                     const revenue = parseFloat(row['전환값']?.replace(/,/g, '') || row['전환값']) || 0;
@@ -5300,7 +5753,7 @@
                 platformTrendChart.destroy();
             }
 
-            if (selectedPlatformItems.length === 0 || !dimensionData) {
+            if (!dimensionData) {
                 const ctx = canvas.getContext('2d');
                 platformTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -5310,7 +5763,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: { display: true, position: 'top' },
-                            title: { display: true, text: '플랫폼을 선택하면 차트가 표시됩니다' }
+                            title: { display: true, text: '데이터 로딩 중...' }
                         }
                     }
                 });
@@ -5324,15 +5777,39 @@
                 'promotion': '프로모션'
             };
 
-            const column = filterMap[currentPlatformFilter];
+            // 필터 조건을 만족하는 행만 필터링하는 헬퍼 함수
+            const rowMatchesFilters = (row) => {
+                // 모든 필터가 비어있는지 확인
+                const allFiltersEmpty = Object.values(currentPlatformFilters).every(arr => !arr || arr.length === 0);
+
+                // 모든 필터가 비어있으면 false 반환 (데이터 표시 안 함)
+                if (allFiltersEmpty) {
+                    return false;
+                }
+
+                // 모든 필터를 AND 조건으로 확인
+                for (const filterKey of Object.keys(filterMap)) {
+                    const column = filterMap[filterKey];
+                    const selectedValues = currentPlatformFilters[filterKey];
+
+                    if (selectedValues && selectedValues.length > 0) {
+                        const rowValue = row[column];
+                        if (!selectedValues.includes(rowValue)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            };
 
             // 플랫폼 목록 가져오기
             const platformsToShow = new Set();
             dimensionData.forEach(row => {
-                const filterValue = row[column];
-                const platform = row['플랫폼'];
-                if (selectedPlatformItems.includes(filterValue) && platform && platform !== '' && platform !== '-') {
-                    platformsToShow.add(platform);
+                if (rowMatchesFilters(row)) {
+                    const platform = row['플랫폼'];
+                    if (platform && platform !== '' && platform !== '-') {
+                        platformsToShow.add(platform);
+                    }
                 }
             });
 
@@ -5346,7 +5823,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: { display: true, position: 'top' },
-                            title: { display: true, text: '데이터가 없습니다' }
+                            title: { display: true, text: '필터 조건에 맞는 데이터가 없습니다' }
                         }
                     }
                 });
@@ -5360,9 +5837,10 @@
             });
 
             dimensionData.forEach(row => {
-                const filterValue = row[column];
+                if (!rowMatchesFilters(row)) return;
+
                 const platform = row['플랫폼'];
-                if (selectedPlatformItems.includes(filterValue) && platformsToShow.has(platform) && row['일']) {
+                if (platformsToShow.has(platform) && row['일']) {
                     const date = row['일'];
                     const cost = parseFloat(row['비용']?.replace(/,/g, '') || row['비용']) || 0;
                     const revenue = parseFloat(row['전환값']?.replace(/,/g, '') || row['전환값']) || 0;
@@ -5613,67 +6091,181 @@
         }
 
         // 기기플랫폼 드롭다운 초기화
+        let devicePlatformDropdownsInitialized = false;
+
         function initDevicePlatformDropdowns() {
             if (!dimensionData) return;
 
             const filterMap = {
-                'channel': '유형구분',
-                'product': '상품명',
-                'brand': '브랜드명',
+                'channel': { column: '유형구분', listId: 'deviceplatformFilterChannelList', label: '채널' },
+                'product': { column: '상품명', listId: 'deviceplatformFilterProductList', label: '제품' },
+                'brand': { column: '브랜드명', listId: 'deviceplatformFilterBrandList', label: '브랜드' },
+                'promotion': { column: '프로모션', listId: 'deviceplatformFilterPromotionList', label: '프로모션' }
+            };
+
+            // 각 필터에 대한 체크박스 리스트 생성
+            Object.keys(filterMap).forEach(filterKey => {
+                const { column, listId } = filterMap[filterKey];
+                const list = document.getElementById(listId);
+                if (!list) return;
+
+                const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                items.sort();
+
+                list.innerHTML = items.map(item => `
+                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-size: 12px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='var(--grey-100)'" onmouseout="this.style.background='transparent'">
+                        <input type="checkbox" class="device-platform-filter-item-checkbox" data-filter="${filterKey}" value="${item}" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                        ${item}
+                    </label>
+                `).join('');
+
+                // 개별 체크박스 이벤트
+                list.querySelectorAll('.device-platform-filter-item-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        // 전체 선택 체크박스 상태 업데이트
+                        const selectAllCheckbox = document.querySelector(`.deviceplatform-filter-select-all[data-filter="${filterKey}"]`);
+                        if (selectAllCheckbox) {
+                            const allCheckboxes = list.querySelectorAll('.device-platform-filter-item-checkbox');
+                            const checkedCheckboxes = list.querySelectorAll('.device-platform-filter-item-checkbox:checked');
+                            selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length && allCheckboxes.length > 0;
+                        }
+
+                        updateDevicePlatformFilters();
+                        updateDevicePlatformFilterButtonText(filterKey);
+                    });
+                });
+            });
+
+            // 이벤트 리스너는 한 번만 등록
+            if (!devicePlatformDropdownsInitialized) {
+                // 드롭다운 버튼 클릭 이벤트
+                document.querySelectorAll('.deviceplatform-filter-dropdown-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const filterType = this.dataset.filter;
+                        const dropdown = document.querySelector(`.deviceplatform-filter-dropdown-list[data-filter="${filterType}"]`);
+
+                        // 다른 드롭다운 닫기
+                        document.querySelectorAll('.deviceplatform-filter-dropdown-list').forEach(dd => {
+                            if (dd !== dropdown) dd.style.display = 'none';
+                        });
+
+                        // 현재 드롭다운 토글
+                        if (dropdown) {
+                            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+                        }
+                    });
+                });
+
+                // 전체 선택 체크박스 이벤트
+                document.querySelectorAll('.deviceplatform-filter-select-all').forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        const filterType = this.dataset.filter;
+                        const list = document.getElementById(`deviceplatformFilter${filterType.charAt(0).toUpperCase() + filterType.slice(1)}List`);
+                        if (!list) return;
+
+                        const itemCheckboxes = list.querySelectorAll('.device-platform-filter-item-checkbox');
+                        itemCheckboxes.forEach(cb => {
+                            cb.checked = this.checked;
+                        });
+
+                        updateDevicePlatformFilters();
+                        updateDevicePlatformFilterButtonText(filterType);
+                    });
+                });
+
+                devicePlatformDropdownsInitialized = true;
+            }
+
+            // 초기 차트 렌더링
+            updateDevicePlatformFilters();
+        }
+
+        function updateDevicePlatformFilterButtonText(filterKey) {
+            const filterMap = {
+                'channel': '채널',
+                'product': '제품',
+                'brand': '브랜드',
                 'promotion': '프로모션'
             };
 
-            const column = filterMap[currentDevicePlatformFilter];
-            const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
-            items.sort();
+            const btn = document.querySelector(`.deviceplatform-filter-dropdown-btn[data-filter="${filterKey}"]`);
+            const list = document.getElementById(`deviceplatformFilter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}List`);
 
-            const container = document.getElementById('devicePlatformDropdownContainer');
-            if (!container) return;
+            if (!btn || !list) return;
 
-            container.innerHTML = '';
-            const wrapper = document.createElement('div');
-            wrapper.id = 'devicePlatformDropdown0';
-            wrapper.className = 'device-platform-dropdown-wrapper';
-            wrapper.style.position = 'relative';
+            const checkedBoxes = list.querySelectorAll('.device-platform-filter-item-checkbox:checked');
+            const totalBoxes = list.querySelectorAll('.device-platform-filter-item-checkbox');
+            const btnText = btn.querySelector('span:first-child');
+            const countText = btn.querySelector('.deviceplatform-selected-count');
 
-            const dropdown = document.createElement('select');
-            dropdown.className = 'device-platform-dropdown';
-            dropdown.style.cssText = 'min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;';
-
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = '항목을 선택하세요';
-            dropdown.appendChild(defaultOption);
-
-            items.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item;
-                option.textContent = item;
-                dropdown.appendChild(option);
-            });
-
-            dropdown.addEventListener('change', () => handleDevicePlatformDropdownChange(dropdown, 0));
-            wrapper.appendChild(dropdown);
-            container.appendChild(wrapper);
-
-            document.getElementById('selectedDevicePlatformCount').textContent = '0';
-        }
-
-        function handleDevicePlatformDropdownChange(dropdown, index) {
-            if (dropdown.value && selectedDevicePlatformItems.length < 5) {
-                updateSelectedDevicePlatformItems();
-                if (selectedDevicePlatformItems.length < 5 && index === selectedDevicePlatformItems.length - 1) {
-                    addDevicePlatformDropdown(selectedDevicePlatformItems.length);
-                }
-                renderDevicePlatformTrendChart();
-            } else if (!dropdown.value) {
-                removeDevicePlatformDropdownsAfter(index);
-                updateSelectedDevicePlatformItems();
-                renderDevicePlatformTrendChart();
+            if (checkedBoxes.length === 0) {
+                btnText.textContent = `${filterMap[filterKey]}_전체`;
+                countText.textContent = '';
+            } else if (checkedBoxes.length === totalBoxes.length) {
+                btnText.textContent = `${filterMap[filterKey]}_전체`;
+                countText.textContent = `(${checkedBoxes.length})`;
+            } else if (checkedBoxes.length === 1) {
+                btnText.textContent = checkedBoxes[0].value;
+                countText.textContent = '';
+            } else {
+                btnText.textContent = `${checkedBoxes[0].value} 외`;
+                countText.textContent = `(${checkedBoxes.length})`;
             }
         }
 
-        function addDevicePlatformDropdown(index) {
+        // 전역 필터 상태 저장
+        let currentDevicePlatformFilters = {
+            channel: [],
+            product: [],
+            brand: [],
+            promotion: []
+        };
+
+        function updateDevicePlatformFilters() {
+            if (!dimensionData) return;
+
+            const filterMap = {
+                'channel': { column: '유형구분', listId: 'deviceplatformFilterChannelList' },
+                'product': { column: '상품명', listId: 'deviceplatformFilterProductList' },
+                'brand': { column: '브랜드명', listId: 'deviceplatformFilterBrandList' },
+                'promotion': { column: '프로모션', listId: 'deviceplatformFilterPromotionList' }
+            };
+
+            // 선택된 필터 값 수집
+            Object.keys(filterMap).forEach(filterKey => {
+                const { listId } = filterMap[filterKey];
+                const list = document.getElementById(listId);
+
+                if (list) {
+                    const checkedBoxes = list.querySelectorAll('.device-platform-filter-item-checkbox:checked');
+                    currentDevicePlatformFilters[filterKey] = Array.from(checkedBoxes).map(cb => cb.value);
+                } else {
+                    currentDevicePlatformFilters[filterKey] = [];
+                }
+            });
+
+            // 모든 필터가 비어있는지 확인
+            const allFiltersEmpty = Object.values(currentDevicePlatformFilters).every(arr => arr.length === 0);
+
+            if (allFiltersEmpty) {
+                // 모든 필터가 해제되면 필터 상태 초기화
+                currentDevicePlatformFilters = {
+                    channel: [],
+                    product: [],
+                    brand: [],
+                    promotion: []
+                };
+            }
+
+            // 필터링된 기기플랫폼 데이터 계산
+            updateFilteredDevicePlatformCount(currentDevicePlatformFilters);
+
+            // 차트 업데이트
+            renderDevicePlatformTrendChart();
+        }
+
+        function updateFilteredDevicePlatformCount(filters) {
             if (!dimensionData) return;
 
             const filterMap = {
@@ -5683,123 +6275,211 @@
                 'promotion': '프로모션'
             };
 
-            const column = filterMap[currentDevicePlatformFilter];
-            const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
-            items.sort();
+            const devicePlatformsToShow = new Set();
 
-            const container = document.getElementById('devicePlatformDropdownContainer');
-            if (!container) return;
+            dimensionData.forEach(row => {
+                const devicePlatform = row['기기플랫폼'];
+                if (!devicePlatform || devicePlatform === '' || devicePlatform === '-') return;
 
-            const wrapper = document.createElement('div');
-            wrapper.id = `devicePlatformDropdown${index}`;
-            wrapper.className = 'device-platform-dropdown-wrapper';
-            wrapper.style.position = 'relative';
+                let matchesAllFilters = true;
 
-            const dropdown = document.createElement('select');
-            dropdown.className = 'device-platform-dropdown';
-            dropdown.style.cssText = 'min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;';
+                // AND 연산으로 모든 필터 확인
+                Object.keys(filterMap).forEach(filterKey => {
+                    const column = filterMap[filterKey];
+                    const selectedValues = filters[filterKey];
 
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = '항목을 선택하세요';
-            dropdown.appendChild(defaultOption);
+                    if (selectedValues && selectedValues.length > 0) {
+                        const rowValue = row[column];
+                        if (!selectedValues.includes(rowValue)) {
+                            matchesAllFilters = false;
+                        }
+                    }
+                });
 
-            items.forEach(item => {
-                if (!selectedDevicePlatformItems.includes(item)) {
-                    const option = document.createElement('option');
-                    option.value = item;
-                    option.textContent = item;
-                    dropdown.appendChild(option);
+                if (matchesAllFilters) {
+                    devicePlatformsToShow.add(devicePlatform);
                 }
             });
 
-            dropdown.addEventListener('change', () => handleDevicePlatformDropdownChange(dropdown, index));
-            wrapper.appendChild(dropdown);
-            container.appendChild(wrapper);
-        }
-
-        function removeDevicePlatformDropdownsAfter(index) {
-            for (let i = index + 1; i <= 5; i++) {
-                const dropdown = document.getElementById(`devicePlatformDropdown${i}`);
-                if (dropdown) dropdown.remove();
-            }
-        }
-
-        function updateSelectedDevicePlatformItems() {
-            const container = document.getElementById('devicePlatformDropdownContainer');
-            if (!container) return;
-
-            selectedDevicePlatformItems = [];
-            const dropdowns = container.querySelectorAll('.device-platform-dropdown');
-            dropdowns.forEach(dropdown => {
-                if (dropdown.value) selectedDevicePlatformItems.push(dropdown.value);
-            });
-
-            document.getElementById('selectedDevicePlatformCount').textContent = selectedDevicePlatformItems.length;
+            document.getElementById('filteredDevicePlatformCount').textContent = devicePlatformsToShow.size;
         }
 
         // 기기유형 드롭다운 초기화
+        let deviceTypeDropdownsInitialized = false;
+
         function initDeviceTypeDropdowns() {
             if (!dimensionData) return;
 
             const filterMap = {
-                'channel': '유형구분',
-                'product': '상품명',
-                'brand': '브랜드명',
+                'channel': { column: '유형구분', listId: 'devicetypeFilterChannelList', label: '채널' },
+                'product': { column: '상품명', listId: 'devicetypeFilterProductList', label: '제품' },
+                'brand': { column: '브랜드명', listId: 'devicetypeFilterBrandList', label: '브랜드' },
+                'promotion': { column: '프로모션', listId: 'devicetypeFilterPromotionList', label: '프로모션' }
+            };
+
+            // 각 필터에 대한 체크박스 리스트 생성
+            Object.keys(filterMap).forEach(filterKey => {
+                const { column, listId } = filterMap[filterKey];
+                const list = document.getElementById(listId);
+                if (!list) return;
+
+                const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                items.sort();
+
+                list.innerHTML = items.map(item => `
+                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-size: 12px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='var(--grey-100)'" onmouseout="this.style.background='transparent'">
+                        <input type="checkbox" class="device-type-filter-item-checkbox" data-filter="${filterKey}" value="${item}" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                        ${item}
+                    </label>
+                `).join('');
+
+                // 개별 체크박스 이벤트
+                list.querySelectorAll('.device-type-filter-item-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        // 전체 선택 체크박스 상태 업데이트
+                        const selectAllCheckbox = document.querySelector(`.devicetype-filter-select-all[data-filter="${filterKey}"]`);
+                        if (selectAllCheckbox) {
+                            const allCheckboxes = list.querySelectorAll('.device-type-filter-item-checkbox');
+                            const checkedCheckboxes = list.querySelectorAll('.device-type-filter-item-checkbox:checked');
+                            selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length && allCheckboxes.length > 0;
+                        }
+
+                        updateDeviceTypeFilters();
+                        updateDeviceTypeFilterButtonText(filterKey);
+                    });
+                });
+            });
+
+            // 이벤트 리스너는 한 번만 등록
+            if (!deviceTypeDropdownsInitialized) {
+                // 드롭다운 버튼 클릭 이벤트
+                document.querySelectorAll('.devicetype-filter-dropdown-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const filterType = this.dataset.filter;
+                        const dropdown = document.querySelector(`.devicetype-filter-dropdown-list[data-filter="${filterType}"]`);
+
+                        // 다른 드롭다운 닫기
+                        document.querySelectorAll('.devicetype-filter-dropdown-list').forEach(dd => {
+                            if (dd !== dropdown) dd.style.display = 'none';
+                        });
+
+                        // 현재 드롭다운 토글
+                        if (dropdown) {
+                            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+                        }
+                    });
+                });
+
+                // 전체 선택 체크박스 이벤트
+                document.querySelectorAll('.devicetype-filter-select-all').forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        const filterType = this.dataset.filter;
+                        const list = document.getElementById(`devicetypeFilter${filterType.charAt(0).toUpperCase() + filterType.slice(1)}List`);
+                        if (!list) return;
+
+                        const itemCheckboxes = list.querySelectorAll('.device-type-filter-item-checkbox');
+                        itemCheckboxes.forEach(cb => {
+                            cb.checked = this.checked;
+                        });
+
+                        updateDeviceTypeFilters();
+                        updateDeviceTypeFilterButtonText(filterType);
+                    });
+                });
+
+                deviceTypeDropdownsInitialized = true;
+            }
+
+            // 초기 차트 렌더링
+            updateDeviceTypeFilters();
+        }
+
+        function updateDeviceTypeFilterButtonText(filterKey) {
+            const filterMap = {
+                'channel': '채널',
+                'product': '제품',
+                'brand': '브랜드',
                 'promotion': '프로모션'
             };
 
-            const column = filterMap[currentDeviceTypeFilter];
-            const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
-            items.sort();
+            const btn = document.querySelector(`.devicetype-filter-dropdown-btn[data-filter="${filterKey}"]`);
+            const list = document.getElementById(`devicetypeFilter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}List`);
 
-            const container = document.getElementById('deviceTypeDropdownContainer');
-            if (!container) return;
+            if (!btn || !list) return;
 
-            container.innerHTML = '';
-            const wrapper = document.createElement('div');
-            wrapper.id = 'deviceTypeDropdown0';
-            wrapper.className = 'device-type-dropdown-wrapper';
-            wrapper.style.position = 'relative';
+            const checkedBoxes = list.querySelectorAll('.device-type-filter-item-checkbox:checked');
+            const totalBoxes = list.querySelectorAll('.device-type-filter-item-checkbox');
+            const btnText = btn.querySelector('span:first-child');
+            const countText = btn.querySelector('.devicetype-selected-count');
 
-            const dropdown = document.createElement('select');
-            dropdown.className = 'device-type-dropdown';
-            dropdown.style.cssText = 'min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;';
-
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = '항목을 선택하세요';
-            dropdown.appendChild(defaultOption);
-
-            items.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item;
-                option.textContent = item;
-                dropdown.appendChild(option);
-            });
-
-            dropdown.addEventListener('change', () => handleDeviceTypeDropdownChange(dropdown, 0));
-            wrapper.appendChild(dropdown);
-            container.appendChild(wrapper);
-
-            document.getElementById('selectedDeviceTypeCount').textContent = '0';
-        }
-
-        function handleDeviceTypeDropdownChange(dropdown, index) {
-            if (dropdown.value && selectedDeviceTypeItems.length < 5) {
-                updateSelectedDeviceTypeItems();
-                if (selectedDeviceTypeItems.length < 5 && index === selectedDeviceTypeItems.length - 1) {
-                    addDeviceTypeDropdown(selectedDeviceTypeItems.length);
-                }
-                renderDeviceTypeTrendChart();
-            } else if (!dropdown.value) {
-                removeDeviceTypeDropdownsAfter(index);
-                updateSelectedDeviceTypeItems();
-                renderDeviceTypeTrendChart();
+            if (checkedBoxes.length === 0) {
+                btnText.textContent = `${filterMap[filterKey]}_전체`;
+                countText.textContent = '';
+            } else if (checkedBoxes.length === totalBoxes.length) {
+                btnText.textContent = `${filterMap[filterKey]}_전체`;
+                countText.textContent = `(${checkedBoxes.length})`;
+            } else if (checkedBoxes.length === 1) {
+                btnText.textContent = checkedBoxes[0].value;
+                countText.textContent = '';
+            } else {
+                btnText.textContent = `${checkedBoxes[0].value} 외`;
+                countText.textContent = `(${checkedBoxes.length})`;
             }
         }
 
-        function addDeviceTypeDropdown(index) {
+        // 전역 필터 상태 저장
+        let currentDeviceTypeFilters = {
+            channel: [],
+            product: [],
+            brand: [],
+            promotion: []
+        };
+
+        function updateDeviceTypeFilters() {
+            if (!dimensionData) return;
+
+            const filterMap = {
+                'channel': { column: '유형구분', listId: 'devicetypeFilterChannelList' },
+                'product': { column: '상품명', listId: 'devicetypeFilterProductList' },
+                'brand': { column: '브랜드명', listId: 'devicetypeFilterBrandList' },
+                'promotion': { column: '프로모션', listId: 'devicetypeFilterPromotionList' }
+            };
+
+            // 선택된 필터 값 수집
+            Object.keys(filterMap).forEach(filterKey => {
+                const { listId } = filterMap[filterKey];
+                const list = document.getElementById(listId);
+
+                if (list) {
+                    const checkedBoxes = list.querySelectorAll('.device-type-filter-item-checkbox:checked');
+                    currentDeviceTypeFilters[filterKey] = Array.from(checkedBoxes).map(cb => cb.value);
+                } else {
+                    currentDeviceTypeFilters[filterKey] = [];
+                }
+            });
+
+            // 모든 필터가 비어있는지 확인
+            const allFiltersEmpty = Object.values(currentDeviceTypeFilters).every(arr => arr.length === 0);
+
+            if (allFiltersEmpty) {
+                // 모든 필터가 해제되면 필터 상태 초기화
+                currentDeviceTypeFilters = {
+                    channel: [],
+                    product: [],
+                    brand: [],
+                    promotion: []
+                };
+            }
+
+            // 필터링된 기기유형 데이터 계산
+            updateFilteredDeviceTypeCount(currentDeviceTypeFilters);
+
+            // 차트 업데이트
+            renderDeviceTypeTrendChart();
+        }
+
+        function updateFilteredDeviceTypeCount(filters) {
             if (!dimensionData) return;
 
             const filterMap = {
@@ -5809,59 +6489,33 @@
                 'promotion': '프로모션'
             };
 
-            const column = filterMap[currentDeviceTypeFilter];
-            const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
-            items.sort();
+            const deviceTypesToShow = new Set();
 
-            const container = document.getElementById('deviceTypeDropdownContainer');
-            if (!container) return;
+            dimensionData.forEach(row => {
+                const deviceType = row['기기유형'];
+                if (!deviceType || deviceType === '' || deviceType === '-') return;
 
-            const wrapper = document.createElement('div');
-            wrapper.id = `deviceTypeDropdown${index}`;
-            wrapper.className = 'device-type-dropdown-wrapper';
-            wrapper.style.position = 'relative';
+                let matchesAllFilters = true;
 
-            const dropdown = document.createElement('select');
-            dropdown.className = 'device-type-dropdown';
-            dropdown.style.cssText = 'min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;';
+                // AND 연산으로 모든 필터 확인
+                Object.keys(filterMap).forEach(filterKey => {
+                    const column = filterMap[filterKey];
+                    const selectedValues = filters[filterKey];
 
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = '항목을 선택하세요';
-            dropdown.appendChild(defaultOption);
+                    if (selectedValues && selectedValues.length > 0) {
+                        const rowValue = row[column];
+                        if (!selectedValues.includes(rowValue)) {
+                            matchesAllFilters = false;
+                        }
+                    }
+                });
 
-            items.forEach(item => {
-                if (!selectedDeviceTypeItems.includes(item)) {
-                    const option = document.createElement('option');
-                    option.value = item;
-                    option.textContent = item;
-                    dropdown.appendChild(option);
+                if (matchesAllFilters) {
+                    deviceTypesToShow.add(deviceType);
                 }
             });
 
-            dropdown.addEventListener('change', () => handleDeviceTypeDropdownChange(dropdown, index));
-            wrapper.appendChild(dropdown);
-            container.appendChild(wrapper);
-        }
-
-        function removeDeviceTypeDropdownsAfter(index) {
-            for (let i = index + 1; i <= 5; i++) {
-                const dropdown = document.getElementById(`deviceTypeDropdown${i}`);
-                if (dropdown) dropdown.remove();
-            }
-        }
-
-        function updateSelectedDeviceTypeItems() {
-            const container = document.getElementById('deviceTypeDropdownContainer');
-            if (!container) return;
-
-            selectedDeviceTypeItems = [];
-            const dropdowns = container.querySelectorAll('.device-type-dropdown');
-            dropdowns.forEach(dropdown => {
-                if (dropdown.value) selectedDeviceTypeItems.push(dropdown.value);
-            });
-
-            document.getElementById('selectedDeviceTypeCount').textContent = selectedDeviceTypeItems.length;
+            document.getElementById('filteredDeviceTypeCount').textContent = deviceTypesToShow.size;
         }
 
         // 기기플랫폼 추이 차트 렌더링
@@ -5873,7 +6527,7 @@
                 devicePlatformTrendChart.destroy();
             }
 
-            if (selectedDevicePlatformItems.length === 0 || !dimensionData) {
+            if (!dimensionData) {
                 const ctx = canvas.getContext('2d');
                 devicePlatformTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -5883,7 +6537,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: { display: true, position: 'top' },
-                            title: { display: true, text: '기기플랫폼을 선택하면 차트가 표시됩니다' }
+                            title: { display: true, text: '데이터 로딩 중...' }
                         }
                     }
                 });
@@ -5897,15 +6551,39 @@
                 'promotion': '프로모션'
             };
 
-            const column = filterMap[currentDevicePlatformFilter];
+            // 필터 조건을 만족하는 행만 필터링하는 헬퍼 함수
+            const rowMatchesFilters = (row) => {
+                // 모든 필터가 비어있는지 확인
+                const allFiltersEmpty = Object.values(currentDevicePlatformFilters).every(arr => !arr || arr.length === 0);
+
+                // 모든 필터가 비어있으면 false 반환 (데이터 표시 안 함)
+                if (allFiltersEmpty) {
+                    return false;
+                }
+
+                // 모든 필터를 AND 조건으로 확인
+                for (const filterKey of Object.keys(filterMap)) {
+                    const column = filterMap[filterKey];
+                    const selectedValues = currentDevicePlatformFilters[filterKey];
+
+                    if (selectedValues && selectedValues.length > 0) {
+                        const rowValue = row[column];
+                        if (!selectedValues.includes(rowValue)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            };
 
             // 기기플랫폼 목록 가져오기
             const devicePlatformsToShow = new Set();
             dimensionData.forEach(row => {
-                const filterValue = row[column];
-                const devicePlatform = row['기기플랫폼'];
-                if (selectedDevicePlatformItems.includes(filterValue) && devicePlatform && devicePlatform !== '' && devicePlatform !== '-') {
-                    devicePlatformsToShow.add(devicePlatform);
+                if (rowMatchesFilters(row)) {
+                    const devicePlatform = row['기기플랫폼'];
+                    if (devicePlatform && devicePlatform !== '' && devicePlatform !== '-') {
+                        devicePlatformsToShow.add(devicePlatform);
+                    }
                 }
             });
 
@@ -5919,7 +6597,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: { display: true, position: 'top' },
-                            title: { display: true, text: '데이터가 없습니다' }
+                            title: { display: true, text: '필터 조건에 맞는 데이터가 없습니다' }
                         }
                     }
                 });
@@ -5933,9 +6611,10 @@
             });
 
             dimensionData.forEach(row => {
-                const filterValue = row[column];
+                if (!rowMatchesFilters(row)) return;
+
                 const devicePlatform = row['기기플랫폼'];
-                if (selectedDevicePlatformItems.includes(filterValue) && devicePlatformsToShow.has(devicePlatform) && row['일']) {
+                if (devicePlatformsToShow.has(devicePlatform) && row['일']) {
                     const date = row['일'];
                     const cost = parseFloat(row['비용']?.replace(/,/g, '') || row['비용']) || 0;
                     const revenue = parseFloat(row['전환값']?.replace(/,/g, '') || row['전환값']) || 0;
@@ -6194,7 +6873,7 @@
                 deviceTypeTrendChart.destroy();
             }
 
-            if (selectedDeviceTypeItems.length === 0 || !dimensionData) {
+            if (!dimensionData) {
                 const ctx = canvas.getContext('2d');
                 deviceTypeTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -6204,7 +6883,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: { display: true, position: 'top' },
-                            title: { display: true, text: '기기유형을 선택하면 차트가 표시됩니다' }
+                            title: { display: true, text: '데이터 로딩 중...' }
                         }
                     }
                 });
@@ -6218,15 +6897,39 @@
                 'promotion': '프로모션'
             };
 
-            const column = filterMap[currentDeviceTypeFilter];
+            // 필터 조건을 만족하는 행만 필터링하는 헬퍼 함수
+            const rowMatchesFilters = (row) => {
+                // 모든 필터가 비어있는지 확인
+                const allFiltersEmpty = Object.values(currentDeviceTypeFilters).every(arr => !arr || arr.length === 0);
+
+                // 모든 필터가 비어있으면 false 반환 (데이터 표시 안 함)
+                if (allFiltersEmpty) {
+                    return false;
+                }
+
+                // 모든 필터를 AND 조건으로 확인
+                for (const filterKey of Object.keys(filterMap)) {
+                    const column = filterMap[filterKey];
+                    const selectedValues = currentDeviceTypeFilters[filterKey];
+
+                    if (selectedValues && selectedValues.length > 0) {
+                        const rowValue = row[column];
+                        if (!selectedValues.includes(rowValue)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            };
 
             // 기기유형 목록 가져오기
             const deviceTypesToShow = new Set();
             dimensionData.forEach(row => {
-                const filterValue = row[column];
-                const deviceType = row['기기유형'];
-                if (selectedDeviceTypeItems.includes(filterValue) && deviceType && deviceType !== '' && deviceType !== '-') {
-                    deviceTypesToShow.add(deviceType);
+                if (rowMatchesFilters(row)) {
+                    const deviceType = row['기기유형'];
+                    if (deviceType && deviceType !== '' && deviceType !== '-') {
+                        deviceTypesToShow.add(deviceType);
+                    }
                 }
             });
 
@@ -6240,7 +6943,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: { display: true, position: 'top' },
-                            title: { display: true, text: '데이터가 없습니다' }
+                            title: { display: true, text: '필터 조건에 맞는 데이터가 없습니다' }
                         }
                     }
                 });
@@ -6254,9 +6957,10 @@
             });
 
             dimensionData.forEach(row => {
-                const filterValue = row[column];
+                if (!rowMatchesFilters(row)) return;
+
                 const deviceType = row['기기유형'];
-                if (selectedDeviceTypeItems.includes(filterValue) && deviceTypesToShow.has(deviceType) && row['일']) {
+                if (deviceTypesToShow.has(deviceType) && row['일']) {
                     const date = row['일'];
                     const cost = parseFloat(row['비용']?.replace(/,/g, '') || row['비용']) || 0;
                     const revenue = parseFloat(row['전환값']?.replace(/,/g, '') || row['전환값']) || 0;
