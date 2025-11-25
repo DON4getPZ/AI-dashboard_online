@@ -8,8 +8,55 @@ analysis_*.csv와 dimension_type*.csv 파일들을 분석하여
 import pandas as pd
 import numpy as np
 import json
+import re
 from datetime import datetime
 from pathlib import Path
+
+# ============================================================================
+# 성별/연령 데이터 정규화 및 필터링 함수
+# ============================================================================
+def normalize_gender(gender_value):
+    """성별 값을 정규화하고 알수없음은 None 반환"""
+    if pd.isna(gender_value) or gender_value == '-':
+        return None
+
+    gender_str = str(gender_value).strip().lower()
+
+    # 알수없음 패턴 (제외 대상)
+    unknown_pattern = r'^(구분없음|알\s?수\s?없음|un.*|unknown)$'
+    if re.match(unknown_pattern, gender_str, re.IGNORECASE):
+        return None
+
+    # 남자 패턴
+    male_pattern = r'^(남자|남성|male|m)$'
+    if re.match(male_pattern, gender_str, re.IGNORECASE):
+        return '남성'
+
+    # 여자 패턴
+    female_pattern = r'^(여자|여성|female|f)$'
+    if re.match(female_pattern, gender_str, re.IGNORECASE):
+        return '여성'
+
+    # 그 외는 원본 반환 (필요시 추가 처리)
+    return gender_value
+
+def is_valid_gender(gender_value):
+    """유효한 성별 데이터인지 확인 (알수없음 제외)"""
+    return normalize_gender(gender_value) is not None
+
+def is_valid_age(age_value):
+    """유효한 연령 데이터인지 확인 (알수없음 제외)"""
+    if pd.isna(age_value) or age_value == '-':
+        return False
+
+    age_str = str(age_value).strip().lower()
+
+    # 알수없음 패턴 (제외 대상)
+    unknown_pattern = r'^(구분없음|알\s?수\s?없음|un.*|unknown)$'
+    if re.match(unknown_pattern, age_str, re.IGNORECASE):
+        return False
+
+    return True
 
 # 경로 설정
 data_dir = Path(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type')
@@ -121,10 +168,14 @@ print("성별 인사이트 생성 중...")
 
 gender_insights = []
 if 'type4' in dimensions:
-    type4_df = dimensions['type4']
+    type4_df = dimensions['type4'].copy()
+
+    # 성별 정규화 및 알수없음 필터링
+    type4_df['성별_정규화'] = type4_df['성별'].apply(normalize_gender)
+    type4_df = type4_df[type4_df['성별_정규화'].notna()]
 
     # 성별별 집계
-    gender_summary = type4_df.groupby('성별').agg({
+    gender_summary = type4_df.groupby('성별_정규화').agg({
         '비용': 'sum',
         '전환수': 'sum',
         '전환값': 'sum',
@@ -135,7 +186,7 @@ if 'type4' in dimensions:
     gender_summary = gender_summary[gender_summary['전환수'] > 0]
 
     for _, row in gender_summary.iterrows():
-        gender_name = row['성별']
+        gender_name = row['성별_정규화']
         roas_val = float(row['ROAS']) if pd.notna(row['ROAS']) else 0
 
         # 성과 레벨 판단
@@ -188,7 +239,14 @@ print("연령x성별 인사이트 생성 중...")
 
 age_gender_insights = []
 if 'type2' in dimensions:
-    type2_df = dimensions['type2']
+    type2_df = dimensions['type2'].copy()
+
+    # 성별 정규화 및 알수없음 필터링
+    type2_df['성별_정규화'] = type2_df['성별'].apply(normalize_gender)
+    type2_df = type2_df[type2_df['성별_정규화'].notna()]
+
+    # 연령 알수없음 필터링
+    type2_df = type2_df[type2_df['연령'].apply(is_valid_age)]
 
     # 광고세트별 최고 성과 연령x성별 조합 찾기
     top_combinations = type2_df.nlargest(5, 'ROAS')
@@ -197,10 +255,10 @@ if 'type2' in dimensions:
         age_gender_insights.append({
             "adset": row['광고세트'],
             "age": row['연령'],
-            "gender": row['성별'],
+            "gender": row['성별_정규화'],
             "roas": float(row['ROAS']),
             "conversions": float(row['전환수']),
-            "recommendation": f"{row['연령']}세 {row['성별']} 타겟팅이 효과적입니다"
+            "recommendation": f"{row['연령']} {row['성별_정규화']} 타겟팅이 효과적입니다"
         })
 
 # ============================================================================
@@ -510,10 +568,14 @@ print("성별 주별 트렌드 분석 중...")
 
 gender_weekly_trend = []
 if 'type4' in dimensions:
-    type4_df = dimensions['type4']
+    type4_df = dimensions['type4'].copy()
+
+    # 성별 정규화 및 알수없음 필터링
+    type4_df['성별_정규화'] = type4_df['성별'].apply(normalize_gender)
+    type4_df = type4_df[type4_df['성별_정규화'].notna()]
 
     if '주' in type4_df.columns:
-        gender_weekly = type4_df.groupby(['성별', '주']).agg({
+        gender_weekly = type4_df.groupby(['성별_정규화', '주']).agg({
             '비용': 'sum',
             '전환수': 'sum',
             '전환값': 'sum'
@@ -521,10 +583,8 @@ if 'type4' in dimensions:
 
         gender_weekly['ROAS'] = (gender_weekly['전환값'] / gender_weekly['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
 
-        for gender in gender_weekly['성별'].unique():
-            if gender == '-':
-                continue
-            gender_data = gender_weekly[gender_weekly['성별'] == gender].sort_values('주')
+        for gender in gender_weekly['성별_정규화'].unique():
+            gender_data = gender_weekly[gender_weekly['성별_정규화'] == gender].sort_values('주')
             gender_data_recent = gender_data.tail(8)
 
             gender_weekly_trend.append({
@@ -539,7 +599,10 @@ print("연령별 주별 트렌드 분석 중...")
 
 age_weekly_trend = []
 if 'type3' in dimensions:
-    type3_df = dimensions['type3']
+    type3_df = dimensions['type3'].copy()
+
+    # 연령 알수없음 필터링
+    type3_df = type3_df[type3_df['연령'].apply(is_valid_age)]
 
     if '주' in type3_df.columns:
         age_weekly = type3_df.groupby(['연령', '주']).agg({
@@ -551,8 +614,6 @@ if 'type3' in dimensions:
         age_weekly['ROAS'] = (age_weekly['전환값'] / age_weekly['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
 
         for age in age_weekly['연령'].unique():
-            if age == '-':
-                continue
             age_data = age_weekly[age_weekly['연령'] == age].sort_values('주')
             age_data_recent = age_data.tail(8)
 
@@ -642,10 +703,14 @@ print("성별 월별 트렌드 분석 중...")
 
 gender_monthly_trend = []
 if 'type4' in dimensions:
-    type4_df = dimensions['type4']
+    type4_df = dimensions['type4'].copy()
+
+    # 성별 정규화 및 알수없음 필터링
+    type4_df['성별_정규화'] = type4_df['성별'].apply(normalize_gender)
+    type4_df = type4_df[type4_df['성별_정규화'].notna()]
 
     if '월' in type4_df.columns:
-        gender_monthly = type4_df.groupby(['성별', '월']).agg({
+        gender_monthly = type4_df.groupby(['성별_정규화', '월']).agg({
             '비용': 'sum',
             '전환수': 'sum',
             '전환값': 'sum'
@@ -653,10 +718,8 @@ if 'type4' in dimensions:
 
         gender_monthly['ROAS'] = (gender_monthly['전환값'] / gender_monthly['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
 
-        for gender in gender_monthly['성별'].unique():
-            if gender == '-':
-                continue
-            gender_data = gender_monthly[gender_monthly['성별'] == gender].sort_values('월')
+        for gender in gender_monthly['성별_정규화'].unique():
+            gender_data = gender_monthly[gender_monthly['성별_정규화'] == gender].sort_values('월')
 
             gender_monthly_trend.append({
                 "gender": gender,
@@ -670,7 +733,10 @@ print("연령별 월별 트렌드 분석 중...")
 
 age_monthly_trend = []
 if 'type3' in dimensions:
-    type3_df = dimensions['type3']
+    type3_df = dimensions['type3'].copy()
+
+    # 연령 알수없음 필터링
+    type3_df = type3_df[type3_df['연령'].apply(is_valid_age)]
 
     if '월' in type3_df.columns:
         age_monthly = type3_df.groupby(['연령', '월']).agg({
@@ -682,8 +748,6 @@ if 'type3' in dimensions:
         age_monthly['ROAS'] = (age_monthly['전환값'] / age_monthly['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
 
         for age in age_monthly['연령'].unique():
-            if age == '-':
-                continue
             age_data = age_monthly[age_monthly['연령'] == age].sort_values('월')
 
             age_monthly_trend.append({
@@ -784,9 +848,14 @@ if 'product' in prophet_forecasts:
 # 성별 예측
 gender_forecast_insights = []
 if 'gender' in prophet_forecasts:
-    gender_df = prophet_forecasts['gender']
-    for gender in gender_df['성별'].unique():
-        gender_data = gender_df[gender_df['성별'] == gender]
+    gender_df = prophet_forecasts['gender'].copy()
+
+    # 성별 정규화 및 알수없음 필터링
+    gender_df['성별_정규화'] = gender_df['성별'].apply(normalize_gender)
+    gender_df = gender_df[gender_df['성별_정규화'].notna()]
+
+    for gender in gender_df['성별_정규화'].unique():
+        gender_data = gender_df[gender_df['성별_정규화'] == gender]
         total_forecast = gender_data['예측값'].sum()
         avg_forecast = gender_data['예측값'].mean()
 
@@ -803,7 +872,11 @@ if 'gender' in prophet_forecasts:
 # 연령별 예측
 age_forecast_insights = []
 if 'age' in prophet_forecasts:
-    age_df = prophet_forecasts['age']
+    age_df = prophet_forecasts['age'].copy()
+
+    # 연령 알수없음 필터링
+    age_df = age_df[age_df['연령'].apply(is_valid_age)]
+
     for age in age_df['연령'].unique():
         age_data = age_df[age_df['연령'] == age]
         total_forecast = age_data['예측값'].sum()
