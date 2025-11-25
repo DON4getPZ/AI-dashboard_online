@@ -538,34 +538,26 @@ if PROPHET_AVAILABLE:
         print("\n✓ 상품별 예측 결과 저장: data/type/prophet_forecast_by_product.csv")
 
     # ============================================================================
-    # 8. 성별 다중 지표 예측 (Type4 + Type2 데이터 기반 - 메타_* 유형구분 포함)
+    # 8. 성별 다중 지표 예측 (dimension_type4 CSV 활용 - 이미 매핑된 데이터)
     # ============================================================================
     print("\n" + "=" * 100)
-    print("8. 성별 다중 지표 예측 (향후 30일) - Type2 데이터 포함")
+    print("8. 성별 다중 지표 예측 (향후 30일) - dimension_type4 CSV 활용")
     print("=" * 100)
 
-    # Type4 + Type2 데이터 결합 (메타_* 유형구분 누락 방지)
-    type4_data = df[(df['data_type'] == 'Type4_광고세트+성별') | (df['data_type'] == 'Type2_광고세트+연령+성별')].copy()
+    # dimension_type4 CSV 파일 로드 (이미 성별_통합 컬럼 포함)
+    type4_csv_path = r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\dimension_type4_adset_gender.csv'
     gender_forecast_results = []
 
-    if len(type4_data) > 0:
-        # 성별 통합 매핑 (다양한 표기 → 한글 통합)
-        gender_map = {
-            # 남성 통합
-            'MALE': '남성',
-            'male': '남성',
-            '남자': '남성',
-            # 여성 통합
-            'FEMALE': '여성',
-            'female': '여성',
-            '여자': '여성',
-            # 알 수 없음 통합
-            'UNDETERMINED': '알 수 없음'
-        }
-        type4_data['성별_통합'] = type4_data['성별'].replace(gender_map)
-        print("성별 데이터 통합: 남자/MALE/male→남성, 여자/FEMALE/female→여성")
+    try:
+        type4_data = pd.read_csv(type4_csv_path, thousands=',', low_memory=False)
+        type4_data['일'] = pd.to_datetime(type4_data['일'])
+        for col in numeric_cols:
+            if col in type4_data.columns:
+                type4_data[col] = pd.to_numeric(type4_data[col], errors='coerce').fillna(0)
+        print(f"dimension_type4 CSV 로드 완료: {len(type4_data):,}행")
+        print("성별_통합 컬럼 활용 (이미 매핑 완료)")
 
-        # 통합된 성별 목록
+        # 통합된 성별 목록 (성별_통합 컬럼 사용)
         genders = type4_data[type4_data['성별_통합'] != '-']['성별_통합'].unique()
 
         for gender in genders:
@@ -586,7 +578,7 @@ if PROPHET_AVAILABLE:
             print(f"학습 데이터: {len(daily_gender)}일")
 
             gender_forecasts = forecast_multiple_metrics(daily_gender)
-            gender_result = combine_metric_forecasts(gender_forecasts, '성별', gender)
+            gender_result = combine_metric_forecasts(gender_forecasts, '성별_통합', gender)
 
             if gender_result is not None:
                 gender_forecast_results.append(gender_result)
@@ -595,54 +587,44 @@ if PROPHET_AVAILABLE:
                 if '예측_ROAS' in gender_result.columns:
                     print(f"평균 예측 ROAS: {gender_result['예측_ROAS'].mean():.1f}%")
 
-    # 성별 예측 결과 저장
-    if gender_forecast_results:
-        combined_gender = pd.concat(gender_forecast_results, ignore_index=True)
-        cols = ['성별', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_gender.columns]
-        if '예측_ROAS' in combined_gender.columns:
-            cols.append('예측_ROAS')
-        if '예측_CPA' in combined_gender.columns:
-            cols.append('예측_CPA')
-        combined_gender = combined_gender[cols]
-        combined_gender.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_gender.csv',
-                                 index=False, encoding='utf-8-sig')
-        print("\n✓ 성별 예측 결과 저장: data/type/prophet_forecast_by_gender.csv")
+        # 성별 예측 결과 저장
+        if gender_forecast_results:
+            combined_gender = pd.concat(gender_forecast_results, ignore_index=True)
+            cols = ['성별_통합', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_gender.columns]
+            if '예측_ROAS' in combined_gender.columns:
+                cols.append('예측_ROAS')
+            if '예측_CPA' in combined_gender.columns:
+                cols.append('예측_CPA')
+            combined_gender = combined_gender[cols]
+            combined_gender.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_gender.csv',
+                                     index=False, encoding='utf-8-sig')
+            print("\n✓ 성별 예측 결과 저장: data/type/prophet_forecast_by_gender.csv")
+
+    except Exception as e:
+        print(f"\n성별 예측 오류: {e}")
+        print("dimension_type4 CSV 파일을 확인해주세요.")
 
     # ============================================================================
-    # 9. 연령별 다중 지표 예측 (Type3 + Type2 데이터 기반 - 메타_* 유형구분 포함)
+    # 9. 연령별 다중 지표 예측 (dimension_type3 CSV 활용 - 이미 매핑된 데이터)
     # ============================================================================
     print("\n" + "=" * 100)
-    print("9. 연령별 다중 지표 예측 (향후 30일) - Type2 데이터 포함")
+    print("9. 연령별 다중 지표 예측 (향후 30일) - dimension_type3 CSV 활용")
     print("=" * 100)
 
-    # Type3 + Type2 데이터 결합 (메타_* 유형구분 누락 방지)
-    type3_data = df[(df['data_type'] == 'Type3_광고세트+연령') | (df['data_type'] == 'Type2_광고세트+연령+성별')].copy()
+    # dimension_type3 CSV 파일 로드 (이미 연령_통합 컬럼 포함)
+    type3_csv_path = r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\dimension_type3_adset_age.csv'
     age_forecast_results = []
 
-    if len(type3_data) > 0:
-        # 연령 통합 매핑 (영문 → 한글, 세부 연령대 → 통합 연령대)
-        age_map = {
-            'AGE_RANGE_18_24': '19세 ~ 24세',
-            'AGE_RANGE_25_34': '25세 ~ 34세',
-            'AGE_RANGE_35_44': '35세 ~ 44세',
-            'AGE_RANGE_45_54': '45세 ~ 54세',
-            'AGE_RANGE_55_64': '55세 ~ 64세',
-            'AGE_RANGE_65_UP': '65세 이상',
-            'AGE_RANGE_UNDETERMINED': '알 수 없음',
-            # 한글 세부 연령대 통합
-            '25세 ~ 29세': '25세 ~ 34세',
-            '30세 ~ 34세': '25세 ~ 34세',
-            '35세 ~ 39세': '35세 ~ 44세',
-            '40세 ~ 44세': '35세 ~ 44세',
-            '45세 ~ 49세': '45세 ~ 54세',
-            '50세 ~ 54세': '45세 ~ 54세',
-            '55세 ~ 59세': '55세 ~ 64세',
-            '60세 ~ 99세': '65세 이상'
-        }
-        type3_data['연령_통합'] = type3_data['연령'].replace(age_map)
-        print("연령 데이터 통합: 영문→한글, 세부 연령대→10세 단위 통합")
+    try:
+        type3_data = pd.read_csv(type3_csv_path, thousands=',', low_memory=False)
+        type3_data['일'] = pd.to_datetime(type3_data['일'])
+        for col in numeric_cols:
+            if col in type3_data.columns:
+                type3_data[col] = pd.to_numeric(type3_data[col], errors='coerce').fillna(0)
+        print(f"dimension_type3 CSV 로드 완료: {len(type3_data):,}행")
+        print("연령_통합 컬럼 활용 (이미 매핑 완료)")
 
-        # 통합된 연령 목록
+        # 통합된 연령 목록 (연령_통합 컬럼 사용)
         ages = type3_data[type3_data['연령_통합'] != '-']['연령_통합'].unique()
 
         for age in ages:
@@ -663,7 +645,7 @@ if PROPHET_AVAILABLE:
             print(f"학습 데이터: {len(daily_age)}일")
 
             age_forecasts = forecast_multiple_metrics(daily_age)
-            age_result = combine_metric_forecasts(age_forecasts, '연령', age)
+            age_result = combine_metric_forecasts(age_forecasts, '연령_통합', age)
 
             if age_result is not None:
                 age_forecast_results.append(age_result)
@@ -672,18 +654,22 @@ if PROPHET_AVAILABLE:
                 if '예측_ROAS' in age_result.columns:
                     print(f"평균 예측 ROAS: {age_result['예측_ROAS'].mean():.1f}%")
 
-    # 연령별 예측 결과 저장
-    if age_forecast_results:
-        combined_age = pd.concat(age_forecast_results, ignore_index=True)
-        cols = ['연령', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_age.columns]
-        if '예측_ROAS' in combined_age.columns:
-            cols.append('예측_ROAS')
-        if '예측_CPA' in combined_age.columns:
-            cols.append('예측_CPA')
-        combined_age = combined_age[cols]
-        combined_age.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_age.csv',
-                              index=False, encoding='utf-8-sig')
-        print("\n✓ 연령별 예측 결과 저장: data/type/prophet_forecast_by_age.csv")
+        # 연령별 예측 결과 저장
+        if age_forecast_results:
+            combined_age = pd.concat(age_forecast_results, ignore_index=True)
+            cols = ['연령_통합', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_age.columns]
+            if '예측_ROAS' in combined_age.columns:
+                cols.append('예측_ROAS')
+            if '예측_CPA' in combined_age.columns:
+                cols.append('예측_CPA')
+            combined_age = combined_age[cols]
+            combined_age.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_age.csv',
+                                  index=False, encoding='utf-8-sig')
+            print("\n✓ 연령별 예측 결과 저장: data/type/prophet_forecast_by_age.csv")
+
+    except Exception as e:
+        print(f"\n연령 예측 오류: {e}")
+        print("dimension_type3 CSV 파일을 확인해주세요.")
 
     # ============================================================================
     # 10. 기기플랫폼별 다중 지표 예측 (Type7 데이터 기반)
@@ -794,47 +780,24 @@ if PROPHET_AVAILABLE:
         print("\n✓ 프로모션별 예측 결과 저장: data/type/prophet_forecast_by_promotion.csv")
 
     # ============================================================================
-    # 12. 연령+성별 조합별 다중 지표 예측 (Type2 데이터 기반)
+    # 12. 연령+성별 조합별 다중 지표 예측 (dimension_type2 CSV 활용 - 이미 매핑된 데이터)
     # ============================================================================
     print("\n" + "=" * 100)
-    print("12. 연령+성별 조합별 다중 지표 예측 (향후 30일)")
+    print("12. 연령+성별 조합별 다중 지표 예측 (향후 30일) - dimension_type2 CSV 활용")
     print("=" * 100)
 
-    type2_data = df[df['data_type'] == 'Type2_광고세트+연령+성별'].copy()
+    # dimension_type2 CSV 파일 로드 (이미 연령_통합, 성별_통합 컬럼 포함)
+    type2_csv_path = r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\dimension_type2_adset_age_gender.csv'
     age_gender_forecast_results = []
 
-    if len(type2_data) > 0:
-        # 성별 통합 매핑
-        gender_map = {
-            'MALE': '남성', 'male': '남성', '남자': '남성',
-            'FEMALE': '여성', 'female': '여성', '여자': '여성',
-            'UNDETERMINED': '알 수 없음'
-        }
-        type2_data['성별_통합'] = type2_data['성별'].replace(gender_map)
-
-        # 연령 통합 매핑
-        age_map = {
-            'AGE_RANGE_18_24': '19세 ~ 24세',
-            'AGE_RANGE_25_34': '25세 ~ 34세',
-            'AGE_RANGE_35_44': '35세 ~ 44세',
-            'AGE_RANGE_45_54': '45세 ~ 54세',
-            'AGE_RANGE_55_64': '55세 ~ 64세',
-            'AGE_RANGE_65_UP': '65세 이상',
-            'AGE_RANGE_UNDETERMINED': '알 수 없음',
-            '25세 ~ 29세': '25세 ~ 34세',
-            '30세 ~ 34세': '25세 ~ 34세',
-            '35세 ~ 39세': '35세 ~ 44세',
-            '40세 ~ 44세': '35세 ~ 44세',
-            '45세 ~ 49세': '45세 ~ 54세',
-            '50세 ~ 54세': '45세 ~ 54세',
-            '55세 ~ 59세': '55세 ~ 64세',
-            '60세 ~ 99세': '65세 이상'
-        }
-        type2_data['연령_통합'] = type2_data['연령'].replace(age_map)
-
-        # 연령+성별 조합 컬럼 생성
-        type2_data['연령_성별'] = type2_data['연령_통합'] + '_' + type2_data['성별_통합']
-        print("연령+성별 조합 데이터 생성 완료")
+    try:
+        type2_data = pd.read_csv(type2_csv_path, thousands=',', low_memory=False)
+        type2_data['일'] = pd.to_datetime(type2_data['일'])
+        for col in numeric_cols:
+            if col in type2_data.columns:
+                type2_data[col] = pd.to_numeric(type2_data[col], errors='coerce').fillna(0)
+        print(f"dimension_type2 CSV 로드 완료: {len(type2_data):,}행")
+        print("연령_통합, 성별_통합 컬럼 활용 (이미 매핑 완료)")
 
         # 유효한 조합만 필터링 (-, 알 수 없음 제외)
         valid_data = type2_data[
@@ -844,12 +807,15 @@ if PROPHET_AVAILABLE:
             (type2_data['성별_통합'] != '알 수 없음')
         ]
 
-        # 상위 조합 추출 (전환값 기준)
-        combo_summary = valid_data.groupby('연령_성별').agg({'전환값': 'sum'}).reset_index()
-        top_combos = combo_summary.nlargest(10, '전환값')['연령_성별'].tolist()
+        # 상위 조합 추출 (전환값 기준) - 연령_통합 + 성별_통합 조합
+        valid_data = valid_data.copy()
+        valid_data['연령_성별_조합'] = valid_data['연령_통합'] + '_' + valid_data['성별_통합']
+        combo_summary = valid_data.groupby(['연령_통합', '성별_통합']).agg({'전환값': 'sum'}).reset_index()
+        combo_summary['연령_성별_조합'] = combo_summary['연령_통합'] + '_' + combo_summary['성별_통합']
+        top_combos = combo_summary.nlargest(10, '전환값')[['연령_통합', '성별_통합']].values.tolist()
 
-        for combo in top_combos:
-            combo_data = valid_data[valid_data['연령_성별'] == combo]
+        for age, gender in top_combos:
+            combo_data = valid_data[(valid_data['연령_통합'] == age) & (valid_data['성별_통합'] == gender)]
             daily_combo = combo_data.groupby('일').agg({
                 '비용': 'sum',
                 '노출': 'sum',
@@ -858,37 +824,43 @@ if PROPHET_AVAILABLE:
                 '전환값': 'sum'
             }).reset_index()
 
+            combo_label = f"{age}_{gender}"
             if len(daily_combo) < 10:
-                print(f"\n[{combo}]: 데이터 부족 ({len(daily_combo)}일)")
+                print(f"\n[{combo_label}]: 데이터 부족 ({len(daily_combo)}일)")
                 continue
 
-            print(f"\n[{combo}] 다중 지표 예측")
+            print(f"\n[{combo_label}] 다중 지표 예측")
             print(f"학습 데이터: {len(daily_combo)}일")
 
             combo_forecasts = forecast_multiple_metrics(daily_combo)
-            combo_result = combine_metric_forecasts(combo_forecasts, '연령_성별', combo)
+            combo_result = combine_metric_forecasts(combo_forecasts)
 
             if combo_result is not None:
+                # 연령_통합, 성별_통합 컬럼 개별 추가
+                combo_result['연령_통합'] = age
+                combo_result['성별_통합'] = gender
                 age_gender_forecast_results.append(combo_result)
                 if '예측_전환값' in combo_result.columns:
                     print(f"향후 30일 예상 총 전환값: {combo_result['예측_전환값'].sum():,.0f}원")
                 if '예측_ROAS' in combo_result.columns:
                     print(f"평균 예측 ROAS: {combo_result['예측_ROAS'].mean():.1f}%")
-    else:
-        print("\nType2 데이터 없음 (광고세트+연령+성별)")
 
-    # 연령+성별 조합별 예측 결과 저장
-    if age_gender_forecast_results:
-        combined_age_gender = pd.concat(age_gender_forecast_results, ignore_index=True)
-        cols = ['연령_성별', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_age_gender.columns]
-        if '예측_ROAS' in combined_age_gender.columns:
-            cols.append('예측_ROAS')
-        if '예측_CPA' in combined_age_gender.columns:
-            cols.append('예측_CPA')
-        combined_age_gender = combined_age_gender[cols]
-        combined_age_gender.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_age_gender.csv',
-                                     index=False, encoding='utf-8-sig')
-        print("\n✓ 연령+성별 조합별 예측 결과 저장: data/type/prophet_forecast_by_age_gender.csv")
+        # 연령+성별 조합별 예측 결과 저장
+        if age_gender_forecast_results:
+            combined_age_gender = pd.concat(age_gender_forecast_results, ignore_index=True)
+            cols = ['연령_통합', '성별_통합', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_age_gender.columns]
+            if '예측_ROAS' in combined_age_gender.columns:
+                cols.append('예측_ROAS')
+            if '예측_CPA' in combined_age_gender.columns:
+                cols.append('예측_CPA')
+            combined_age_gender = combined_age_gender[cols]
+            combined_age_gender.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_age_gender.csv',
+                                         index=False, encoding='utf-8-sig')
+            print("\n✓ 연령+성별 조합별 예측 결과 저장: data/type/prophet_forecast_by_age_gender.csv")
+
+    except Exception as e:
+        print(f"\n연령+성별 조합 예측 오류: {e}")
+        print("dimension_type2 CSV 파일을 확인해주세요.")
 
 else:
     print("\n" + "=" * 100)

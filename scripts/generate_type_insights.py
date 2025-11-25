@@ -14,7 +14,20 @@ from pathlib import Path
 
 # ============================================================================
 # 성별/연령 데이터 정규화 및 필터링 함수
+# (CSV에 성별_통합, 연령_통합 컬럼이 있으면 해당 컬럼 사용)
 # ============================================================================
+def get_gender_column(df):
+    """성별 컬럼명 반환 (성별_통합 우선)"""
+    if '성별_통합' in df.columns:
+        return '성별_통합'
+    return '성별'
+
+def get_age_column(df):
+    """연령 컬럼명 반환 (연령_통합 우선)"""
+    if '연령_통합' in df.columns:
+        return '연령_통합'
+    return '연령'
+
 def normalize_gender(gender_value):
     """성별 값을 정규화하고 알수없음은 None 반환"""
     if pd.isna(gender_value) or gender_value == '-':
@@ -194,9 +207,16 @@ gender_insights = []
 if 'type4' in dimensions:
     type4_df = dimensions['type4'].copy()
 
-    # 성별 정규화 및 알수없음 필터링
-    type4_df['성별_정규화'] = type4_df['성별'].apply(normalize_gender)
-    type4_df = type4_df[type4_df['성별_정규화'].notna()]
+    # 성별_통합 컬럼 사용 (없으면 기존 방식으로 정규화)
+    gender_col = get_gender_column(type4_df)
+    if gender_col == '성별_통합':
+        # 이미 통합된 컬럼 사용 - 알수없음만 필터링
+        type4_df = type4_df[type4_df[gender_col].apply(is_valid_gender)]
+        type4_df['성별_정규화'] = type4_df[gender_col]
+    else:
+        # 기존 방식: 정규화 후 필터링
+        type4_df['성별_정규화'] = type4_df['성별'].apply(normalize_gender)
+        type4_df = type4_df[type4_df['성별_정규화'].notna()]
 
     # 성별별 집계
     gender_summary = type4_df.groupby('성별_정규화').agg({
@@ -265,12 +285,20 @@ age_gender_insights = []
 if 'type2' in dimensions:
     type2_df = dimensions['type2'].copy()
 
-    # 성별 정규화 및 알수없음 필터링
-    type2_df['성별_정규화'] = type2_df['성별'].apply(normalize_gender)
-    type2_df = type2_df[type2_df['성별_정규화'].notna()]
+    # 성별_통합/연령_통합 컬럼 사용
+    gender_col = get_gender_column(type2_df)
+    age_col = get_age_column(type2_df)
+
+    if gender_col == '성별_통합':
+        type2_df = type2_df[type2_df[gender_col].apply(is_valid_gender)]
+        type2_df['성별_정규화'] = type2_df[gender_col]
+    else:
+        type2_df['성별_정규화'] = type2_df['성별'].apply(normalize_gender)
+        type2_df = type2_df[type2_df['성별_정규화'].notna()]
 
     # 연령 알수없음 필터링
-    type2_df = type2_df[type2_df['연령'].apply(is_valid_age)]
+    type2_df = type2_df[type2_df[age_col].apply(is_valid_age)]
+    type2_df['연령_정규화'] = type2_df[age_col]
 
     # 광고세트별 최고 성과 연령x성별 조합 찾기
     top_combinations = type2_df.nlargest(5, 'ROAS')
@@ -278,11 +306,11 @@ if 'type2' in dimensions:
     for _, row in top_combinations.iterrows():
         age_gender_insights.append({
             "adset": row['광고세트'],
-            "age": row['연령'],
+            "age": row['연령_정규화'],
             "gender": row['성별_정규화'],
             "roas": float(row['ROAS']),
             "conversions": float(row['전환수']),
-            "recommendation": f"{row['연령']} {row['성별_정규화']} 타겟팅이 효과적입니다"
+            "recommendation": f"{row['연령_정규화']} {row['성별_정규화']} 타겟팅이 효과적입니다"
         })
 
 # ============================================================================
@@ -594,9 +622,14 @@ gender_weekly_trend = []
 if 'type4' in dimensions:
     type4_df = dimensions['type4'].copy()
 
-    # 성별 정규화 및 알수없음 필터링
-    type4_df['성별_정규화'] = type4_df['성별'].apply(normalize_gender)
-    type4_df = type4_df[type4_df['성별_정규화'].notna()]
+    # 성별_통합 컬럼 사용
+    gender_col = get_gender_column(type4_df)
+    if gender_col == '성별_통합':
+        type4_df = type4_df[type4_df[gender_col].apply(is_valid_gender)]
+        type4_df['성별_정규화'] = type4_df[gender_col]
+    else:
+        type4_df['성별_정규화'] = type4_df['성별'].apply(normalize_gender)
+        type4_df = type4_df[type4_df['성별_정규화'].notna()]
 
     if '주' in type4_df.columns:
         gender_weekly = type4_df.groupby(['성별_정규화', '주']).agg({
@@ -625,11 +658,13 @@ age_weekly_trend = []
 if 'type3' in dimensions:
     type3_df = dimensions['type3'].copy()
 
-    # 연령 알수없음 필터링
-    type3_df = type3_df[type3_df['연령'].apply(is_valid_age)]
+    # 연령_통합 컬럼 사용
+    age_col = get_age_column(type3_df)
+    type3_df = type3_df[type3_df[age_col].apply(is_valid_age)]
+    type3_df['연령_정규화'] = type3_df[age_col]
 
     if '주' in type3_df.columns:
-        age_weekly = type3_df.groupby(['연령', '주']).agg({
+        age_weekly = type3_df.groupby(['연령_정규화', '주']).agg({
             '비용': 'sum',
             '전환수': 'sum',
             '전환값': 'sum'
@@ -637,8 +672,8 @@ if 'type3' in dimensions:
 
         age_weekly['ROAS'] = (age_weekly['전환값'] / age_weekly['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
 
-        for age in age_weekly['연령'].unique():
-            age_data = age_weekly[age_weekly['연령'] == age].sort_values('주')
+        for age in age_weekly['연령_정규화'].unique():
+            age_data = age_weekly[age_weekly['연령_정규화'] == age].sort_values('주')
             age_data_recent = age_data.tail(8)
 
             age_weekly_trend.append({
@@ -729,9 +764,14 @@ gender_monthly_trend = []
 if 'type4' in dimensions:
     type4_df = dimensions['type4'].copy()
 
-    # 성별 정규화 및 알수없음 필터링
-    type4_df['성별_정규화'] = type4_df['성별'].apply(normalize_gender)
-    type4_df = type4_df[type4_df['성별_정규화'].notna()]
+    # 성별_통합 컬럼 사용
+    gender_col = get_gender_column(type4_df)
+    if gender_col == '성별_통합':
+        type4_df = type4_df[type4_df[gender_col].apply(is_valid_gender)]
+        type4_df['성별_정규화'] = type4_df[gender_col]
+    else:
+        type4_df['성별_정규화'] = type4_df['성별'].apply(normalize_gender)
+        type4_df = type4_df[type4_df['성별_정규화'].notna()]
 
     if '월' in type4_df.columns:
         gender_monthly = type4_df.groupby(['성별_정규화', '월']).agg({
@@ -759,11 +799,13 @@ age_monthly_trend = []
 if 'type3' in dimensions:
     type3_df = dimensions['type3'].copy()
 
-    # 연령 알수없음 필터링
-    type3_df = type3_df[type3_df['연령'].apply(is_valid_age)]
+    # 연령_통합 컬럼 사용
+    age_col = get_age_column(type3_df)
+    type3_df = type3_df[type3_df[age_col].apply(is_valid_age)]
+    type3_df['연령_정규화'] = type3_df[age_col]
 
     if '월' in type3_df.columns:
-        age_monthly = type3_df.groupby(['연령', '월']).agg({
+        age_monthly = type3_df.groupby(['연령_정규화', '월']).agg({
             '비용': 'sum',
             '전환수': 'sum',
             '전환값': 'sum'
@@ -771,8 +813,8 @@ if 'type3' in dimensions:
 
         age_monthly['ROAS'] = (age_monthly['전환값'] / age_monthly['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
 
-        for age in age_monthly['연령'].unique():
-            age_data = age_monthly[age_monthly['연령'] == age].sort_values('월')
+        for age in age_monthly['연령_정규화'].unique():
+            age_data = age_monthly[age_monthly['연령_정규화'] == age].sort_values('월')
 
             age_monthly_trend.append({
                 "age": age,
@@ -873,8 +915,11 @@ gender_forecast_insights = []
 if 'gender' in prophet_forecasts:
     gender_df = prophet_forecasts['gender'].copy()
 
+    # 성별 컬럼 확인 (성별_통합 우선)
+    gender_col = '성별_통합' if '성별_통합' in gender_df.columns else '성별'
+
     # 성별 정규화 및 알수없음 필터링
-    gender_df['성별_정규화'] = gender_df['성별'].apply(normalize_gender)
+    gender_df['성별_정규화'] = gender_df[gender_col].apply(normalize_gender)
     gender_df = gender_df[gender_df['성별_정규화'].notna()]
 
     for gender in gender_df['성별_정규화'].unique():
@@ -898,11 +943,14 @@ age_forecast_insights = []
 if 'age' in prophet_forecasts:
     age_df = prophet_forecasts['age'].copy()
 
-    # 연령 알수없음 필터링
-    age_df = age_df[age_df['연령'].apply(is_valid_age)]
+    # 연령 컬럼 확인 (연령_통합 우선)
+    age_col = '연령_통합' if '연령_통합' in age_df.columns else '연령'
 
-    for age in age_df['연령'].unique():
-        age_data = age_df[age_df['연령'] == age]
+    # 연령 알수없음 필터링
+    age_df = age_df[age_df[age_col].apply(is_valid_age)]
+
+    for age in age_df[age_col].unique():
+        age_data = age_df[age_df[age_col] == age]
         total_forecast = age_data['예측_전환값'].sum()
         avg_forecast = age_data['예측_전환값'].mean()
 
@@ -961,27 +1009,49 @@ if 'promotion' in prophet_forecasts:
 age_gender_forecast_insights = []
 if 'age_gender' in prophet_forecasts:
     age_gender_df = prophet_forecasts['age_gender']
-    for age_gender in age_gender_df['연령_성별'].unique():
-        age_gender_data = age_gender_df[age_gender_df['연령_성별'] == age_gender]
-        total_forecast = age_gender_data['예측_전환값'].sum()
-        avg_forecast = age_gender_data['예측_전환값'].mean()
 
-        # 연령과 성별 분리
-        parts = age_gender.split('_')
-        age_part = parts[0] if len(parts) >= 1 else age_gender
-        gender_part = parts[1] if len(parts) >= 2 else ''
+    # 새로운 컬럼 구조 확인 (연령_통합, 성별_통합 개별 컬럼)
+    if '연령_통합' in age_gender_df.columns and '성별_통합' in age_gender_df.columns:
+        # 연령_통합 + 성별_통합 조합으로 그룹화
+        for (age, gender), group_data in age_gender_df.groupby(['연령_통합', '성별_통합']):
+            total_forecast = group_data['예측_전환값'].sum()
+            avg_forecast = group_data['예측_전환값'].mean()
 
-        age_gender_forecast_insights.append({
-            "age_gender": age_gender,
-            "age": age_part,
-            "gender": gender_part,
-            "total_30day_forecast": float(total_forecast),
-            "avg_daily_forecast": float(avg_forecast),
-            "avg_forecast_roas": float(age_gender_data['예측_ROAS'].mean()) if '예측_ROAS' in age_gender_data.columns else 0,
-            "avg_forecast_cpa": float(age_gender_data['예측_CPA'].mean()) if '예측_CPA' in age_gender_data.columns else 0,
-            "total_forecast_cost": float(age_gender_data['예측_비용'].sum()) if '예측_비용' in age_gender_data.columns else 0,
-            "total_forecast_conversions": float(age_gender_data['예측_전환수'].sum()) if '예측_전환수' in age_gender_data.columns else 0
-        })
+            age_gender_forecast_insights.append({
+                "age_gender": f"{age}_{gender}",
+                "age": age,
+                "gender": gender,
+                "total_30day_forecast": float(total_forecast),
+                "avg_daily_forecast": float(avg_forecast),
+                "avg_forecast_roas": float(group_data['예측_ROAS'].mean()) if '예측_ROAS' in group_data.columns else 0,
+                "avg_forecast_cpa": float(group_data['예측_CPA'].mean()) if '예측_CPA' in group_data.columns else 0,
+                "total_forecast_cost": float(group_data['예측_비용'].sum()) if '예측_비용' in group_data.columns else 0,
+                "total_forecast_conversions": float(group_data['예측_전환수'].sum()) if '예측_전환수' in group_data.columns else 0
+            })
+    else:
+        # 기존 컬럼 구조 (연령_성별_통합 또는 연령_성별)
+        age_gender_col = '연령_성별_통합' if '연령_성별_통합' in age_gender_df.columns else '연령_성별'
+        for age_gender in age_gender_df[age_gender_col].unique():
+            age_gender_data = age_gender_df[age_gender_df[age_gender_col] == age_gender]
+            total_forecast = age_gender_data['예측_전환값'].sum()
+            avg_forecast = age_gender_data['예측_전환값'].mean()
+
+            # 연령과 성별 분리
+            parts = age_gender.split('_')
+            age_part = parts[0] if len(parts) >= 1 else age_gender
+            gender_part = parts[1] if len(parts) >= 2 else ''
+
+            age_gender_forecast_insights.append({
+                "age_gender": age_gender,
+                "age": age_part,
+                "gender": gender_part,
+                "total_30day_forecast": float(total_forecast),
+                "avg_daily_forecast": float(avg_forecast),
+                "avg_forecast_roas": float(age_gender_data['예측_ROAS'].mean()) if '예측_ROAS' in age_gender_data.columns else 0,
+                "avg_forecast_cpa": float(age_gender_data['예측_CPA'].mean()) if '예측_CPA' in age_gender_data.columns else 0,
+                "total_forecast_cost": float(age_gender_data['예측_비용'].sum()) if '예측_비용' in age_gender_data.columns else 0,
+                "total_forecast_conversions": float(age_gender_data['예측_전환수'].sum()) if '예측_전환수' in age_gender_data.columns else 0
+            })
 
     age_gender_forecast_insights = sorted(age_gender_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
 

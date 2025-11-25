@@ -5517,7 +5517,8 @@
             const gendersToShow = new Set();
 
             genderDimensionData.forEach(row => {
-                const rawGender = row['성별'];
+                // 성별_통합 컬럼 우선 사용 (없으면 성별 컬럼 사용)
+                const rawGender = row['성별_통합'] || row['성별'];
                 // 알수없음 필터링 및 정규화 적용
                 const normalizedGender = normalizeGender(rawGender);
                 if (!normalizedGender) return;
@@ -5841,7 +5842,8 @@
             const agesToShow = new Set();
 
             ageDimensionData.forEach(row => {
-                const age = row['연령'];
+                // 연령_통합 컬럼 우선 사용
+                const age = row['연령_통합'] || row['연령'];
                 if (!age || age === '' || age === '-') return;
 
                 let matchesAllFilters = true;
@@ -6790,11 +6792,11 @@
                 return true;
             };
 
-            // 성별 목록 가져오기
+            // 성별 목록 가져오기 (성별_통합 컬럼 우선 사용)
             const gendersToShow = new Set();
             genderDimensionData.forEach(row => {
                 if (rowMatchesFilters(row)) {
-                    const rawGender = row['성별'];
+                    const rawGender = row['성별_통합'] || row['성별'];
                     const normalizedGender = normalizeGender(rawGender);
                     if (normalizedGender) {
                         gendersToShow.add(normalizedGender);
@@ -6828,7 +6830,8 @@
             genderDimensionData.forEach(row => {
                 if (!rowMatchesFilters(row)) return;
 
-                const rawGender = row['성별'];
+                // 성별_통합 컬럼 우선 사용
+                const rawGender = row['성별_통합'] || row['성별'];
                 const normalizedGender = normalizeGender(rawGender);
 
                 if (normalizedGender && gendersToShow.has(normalizedGender) && row['일']) {
@@ -7152,7 +7155,7 @@
             const agesToShow = new Set();
             ageDimensionData.forEach(row => {
                 if (rowMatchesFilters(row)) {
-                    const age = row['연령'];
+                    const age = row['연령_통합'] || row['연령'];
                     if (age && age !== '' && age !== '-') {
                         agesToShow.add(age);
                     }
@@ -7185,7 +7188,7 @@
             ageDimensionData.forEach(row => {
                 if (!rowMatchesFilters(row)) return;
 
-                const age = row['연령'];
+                const age = row['연령_통합'] || row['연령'];
 
                 if (agesToShow.has(age) && row['일']) {
                     const date = row['일'];
@@ -9095,9 +9098,10 @@
             pivotDimensionData.forEach(row => {
                 if (!rowMatchesFilters(row)) return;
 
-                const rawGender = row['성별'];
+                // 성별_통합, 연령_통합 컬럼 우선 사용
+                const rawGender = row['성별_통합'] || row['성별'];
                 const normalizedGender = normalizeGender(rawGender);
-                const age = row['연령'];
+                const age = row['연령_통합'] || row['연령'];
 
                 if (!normalizedGender || !age || age === '' || age === '-') return;
 

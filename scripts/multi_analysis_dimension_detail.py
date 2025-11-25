@@ -17,6 +17,70 @@ from datetime import datetime
 import warnings
 warnings.filterwarnings('ignore')
 
+# ============================================================================
+# 성별/연령 통합 매핑 (data_mapping_guide.md 기준)
+# ============================================================================
+GENDER_MAP = {
+    # 남성 통합
+    'MALE': '남성',
+    'male': '남성',
+    'Male': '남성',
+    '남자': '남성',
+    # 여성 통합
+    'FEMALE': '여성',
+    'female': '여성',
+    'Female': '여성',
+    '여자': '여성',
+    # 알 수 없음 통합
+    'UNDETERMINED': '알 수 없음',
+    'Unknown': '알 수 없음'
+}
+
+AGE_MAP = {
+    # 영문 → 한글 변환
+    'AGE_RANGE_18_24': '19세 ~ 24세',
+    '18-24': '19세 ~ 24세',
+    'AGE_RANGE_25_34': '25세 ~ 34세',
+    '25-34': '25세 ~ 34세',
+    'AGE_RANGE_35_44': '35세 ~ 44세',
+    '35-44': '35세 ~ 44세',
+    'AGE_RANGE_45_54': '45세 ~ 54세',
+    '45-54': '45세 ~ 54세',
+    'AGE_RANGE_55_64': '55세 ~ 64세',
+    '55-64': '55세 ~ 64세',
+    'AGE_RANGE_65_UP': '65세 이상',
+    '65+': '65세 이상',
+    'AGE_RANGE_UNDETERMINED': '알 수 없음',
+    'Unknown': '알 수 없음',
+    # 한글 세부 연령대 → 10세 단위 통합
+    '25세 ~ 29세': '25세 ~ 34세',
+    '30세 ~ 34세': '25세 ~ 34세',
+    '35세 ~ 39세': '35세 ~ 44세',
+    '40세 ~ 44세': '35세 ~ 44세',
+    '45세 ~ 49세': '45세 ~ 54세',
+    '50세 ~ 54세': '45세 ~ 54세',
+    '55세 ~ 59세': '55세 ~ 64세',
+    '60세 ~ 99세': '65세 이상'
+}
+
+def apply_gender_mapping(df):
+    """성별 통합 컬럼 추가"""
+    if '성별' in df.columns:
+        df['성별_통합'] = df['성별'].replace(GENDER_MAP)
+        # 매핑되지 않은 값은 원본 유지
+        df['성별_통합'] = df.apply(
+            lambda row: row['성별_통합'] if row['성별_통합'] != row['성별'] or row['성별'] in ['남성', '여성', '알 수 없음', '-'] else row['성별'],
+            axis=1
+        )
+    return df
+
+def apply_age_mapping(df):
+    """연령 통합 컬럼 추가"""
+    if '연령' in df.columns:
+        df['연령_통합'] = df['연령'].replace(AGE_MAP)
+        # 매핑되지 않은 값은 원본 유지 (이미 통합 형식인 경우)
+    return df
+
 # CSV 파일 읽기
 file_path = r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\merged_data.csv'
 output_dir = r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type'
@@ -115,6 +179,10 @@ if len(type2_data) > 0:
     type2_analysis['ROAS'] = (type2_analysis['전환값'] / type2_analysis['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     type2_analysis['CPA'] = (type2_analysis['비용'] / type2_analysis['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
 
+    # 성별_통합, 연령_통합 컬럼 추가
+    type2_analysis = apply_gender_mapping(type2_analysis)
+    type2_analysis = apply_age_mapping(type2_analysis)
+
     output_file = f"{output_dir}/dimension_type2_adset_age_gender.csv"
     type2_analysis.to_csv(output_file, index=False, encoding='utf-8-sig')
     print(f"✓ 저장: {output_file}")
@@ -157,6 +225,9 @@ if len(type3_data) > 0:
     type3_analysis['ROAS'] = (type3_analysis['전환값'] / type3_analysis['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     type3_analysis['CPA'] = (type3_analysis['비용'] / type3_analysis['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
 
+    # 연령_통합 컬럼 추가
+    type3_analysis = apply_age_mapping(type3_analysis)
+
     output_file = f"{output_dir}/dimension_type3_adset_age.csv"
     type3_analysis.to_csv(output_file, index=False, encoding='utf-8-sig')
     print(f"✓ 저장: {output_file}")
@@ -184,6 +255,9 @@ if len(type4_data) > 0:
 
     type4_analysis['ROAS'] = (type4_analysis['전환값'] / type4_analysis['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     type4_analysis['CPA'] = (type4_analysis['비용'] / type4_analysis['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+
+    # 성별_통합 컬럼 추가
+    type4_analysis = apply_gender_mapping(type4_analysis)
 
     output_file = f"{output_dir}/dimension_type4_adset_gender.csv"
     type4_analysis.to_csv(output_file, index=False, encoding='utf-8-sig')
