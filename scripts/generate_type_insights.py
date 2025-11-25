@@ -297,6 +297,471 @@ if 'type1' in dimensions:
             })
 
 # ============================================================================
+# 시계열 분석 - 월별 트렌드
+# ============================================================================
+print("월별 트렌드 분석 중...")
+
+monthly_trend = []
+monthly_growth = []
+if 'type1' in dimensions:
+    type1_df = dimensions['type1']
+
+    if '월' in type1_df.columns:
+        monthly_summary = type1_df.groupby('월').agg({
+            '비용': 'sum',
+            '클릭': 'sum',
+            '전환수': 'sum',
+            '전환값': 'sum'
+        }).reset_index()
+
+        monthly_summary['ROAS'] = (monthly_summary['전환값'] / monthly_summary['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+        monthly_summary['CPA'] = (monthly_summary['비용'] / monthly_summary['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+        monthly_summary = monthly_summary.sort_values('월')
+
+        for _, row in monthly_summary.iterrows():
+            monthly_trend.append({
+                "month": row['월'],
+                "cost": float(row['비용']),
+                "clicks": float(row['클릭']),
+                "conversions": float(row['전환수']),
+                "revenue": float(row['전환값']),
+                "roas": float(row['ROAS']),
+                "cpa": float(row['CPA'])
+            })
+
+        # 월별 성장률 계산
+        if len(monthly_summary) >= 2:
+            for i in range(1, len(monthly_summary)):
+                prev = monthly_summary.iloc[i-1]
+                curr = monthly_summary.iloc[i]
+
+                revenue_growth = ((curr['전환값'] - prev['전환값']) / prev['전환값'] * 100) if prev['전환값'] > 0 else 0
+                cost_growth = ((curr['비용'] - prev['비용']) / prev['비용'] * 100) if prev['비용'] > 0 else 0
+                roas_change = curr['ROAS'] - prev['ROAS']
+
+                monthly_growth.append({
+                    "month": curr['월'],
+                    "prev_month": prev['월'],
+                    "revenue_growth_pct": float(revenue_growth),
+                    "cost_growth_pct": float(cost_growth),
+                    "roas_change": float(roas_change),
+                    "trend": "상승" if revenue_growth > 10 else "하락" if revenue_growth < -10 else "유지"
+                })
+
+# ============================================================================
+# 시계열 분석 - 주별 트렌드
+# ============================================================================
+print("주별 트렌드 분석 중...")
+
+weekly_trend = []
+weekly_growth = []
+if 'type1' in dimensions:
+    type1_df = dimensions['type1']
+
+    if '주' in type1_df.columns:
+        weekly_summary = type1_df.groupby('주').agg({
+            '비용': 'sum',
+            '클릭': 'sum',
+            '전환수': 'sum',
+            '전환값': 'sum'
+        }).reset_index()
+
+        weekly_summary['ROAS'] = (weekly_summary['전환값'] / weekly_summary['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+        weekly_summary['CPA'] = (weekly_summary['비용'] / weekly_summary['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+        weekly_summary = weekly_summary.sort_values('주')
+
+        # 최근 12주 저장
+        recent_weeks = weekly_summary.tail(12)
+        for _, row in recent_weeks.iterrows():
+            weekly_trend.append({
+                "week": row['주'],
+                "cost": float(row['비용']),
+                "clicks": float(row['클릭']),
+                "conversions": float(row['전환수']),
+                "revenue": float(row['전환값']),
+                "roas": float(row['ROAS']),
+                "cpa": float(row['CPA'])
+            })
+
+        # 주별 성장률 계산
+        if len(weekly_summary) >= 2:
+            for i in range(1, len(weekly_summary)):
+                prev = weekly_summary.iloc[i-1]
+                curr = weekly_summary.iloc[i]
+
+                revenue_growth = ((curr['전환값'] - prev['전환값']) / prev['전환값'] * 100) if prev['전환값'] > 0 else 0
+                cost_growth = ((curr['비용'] - prev['비용']) / prev['비용'] * 100) if prev['비용'] > 0 else 0
+                roas_change = curr['ROAS'] - prev['ROAS']
+
+                weekly_growth.append({
+                    "week": curr['주'],
+                    "prev_week": prev['주'],
+                    "revenue_growth_pct": float(revenue_growth),
+                    "cost_growth_pct": float(cost_growth),
+                    "roas_change": float(roas_change),
+                    "trend": "상승" if revenue_growth > 10 else "하락" if revenue_growth < -10 else "유지"
+                })
+
+# ============================================================================
+# 시계열 분석 - 브랜드별 주별 트렌드
+# ============================================================================
+print("브랜드별 주별 트렌드 분석 중...")
+
+brand_weekly_trend = []
+if 'type1' in dimensions:
+    type1_df = dimensions['type1']
+
+    if '주' in type1_df.columns and '브랜드명' in type1_df.columns:
+        brand_weekly = type1_df.groupby(['브랜드명', '주']).agg({
+            '비용': 'sum',
+            '전환수': 'sum',
+            '전환값': 'sum'
+        }).reset_index()
+
+        brand_weekly['ROAS'] = (brand_weekly['전환값'] / brand_weekly['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+
+        # 브랜드별로 주별 데이터 정리
+        for brand in brand_weekly['브랜드명'].unique():
+            if brand == '-':
+                continue
+            brand_data = brand_weekly[brand_weekly['브랜드명'] == brand].sort_values('주')
+
+            # 최근 8주만
+            brand_data_recent = brand_data.tail(8)
+
+            if len(brand_data_recent) >= 2:
+                first_week = brand_data_recent.iloc[0]
+                last_week = brand_data_recent.iloc[-1]
+
+                total_growth = ((last_week['전환값'] - first_week['전환값']) / first_week['전환값'] * 100) if first_week['전환값'] > 0 else 0
+
+                brand_weekly_trend.append({
+                    "brand": brand,
+                    "weeks_data": brand_data_recent[['주', '비용', '전환수', '전환값', 'ROAS']].to_dict('records'),
+                    "total_growth_pct": float(total_growth),
+                    "trend": "성장" if total_growth > 20 else "하락" if total_growth < -20 else "안정"
+                })
+
+# ============================================================================
+# 시계열 분석 - 상품별 주별 트렌드
+# ============================================================================
+print("상품별 주별 트렌드 분석 중...")
+
+product_weekly_trend = []
+if 'type1' in dimensions:
+    type1_df = dimensions['type1']
+
+    if '주' in type1_df.columns and '상품명' in type1_df.columns:
+        product_weekly = type1_df.groupby(['상품명', '주']).agg({
+            '비용': 'sum',
+            '전환수': 'sum',
+            '전환값': 'sum'
+        }).reset_index()
+
+        product_weekly['ROAS'] = (product_weekly['전환값'] / product_weekly['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+
+        # 상품별로 주별 데이터 정리
+        for product in product_weekly['상품명'].unique():
+            if product == '-':
+                continue
+            product_data = product_weekly[product_weekly['상품명'] == product].sort_values('주')
+
+            # 최근 8주만
+            product_data_recent = product_data.tail(8)
+
+            if len(product_data_recent) >= 2:
+                first_week = product_data_recent.iloc[0]
+                last_week = product_data_recent.iloc[-1]
+
+                total_growth = ((last_week['전환값'] - first_week['전환값']) / first_week['전환값'] * 100) if first_week['전환값'] > 0 else 0
+
+                product_weekly_trend.append({
+                    "product": product,
+                    "weeks_data": product_data_recent[['주', '비용', '전환수', '전환값', 'ROAS']].to_dict('records'),
+                    "total_growth_pct": float(total_growth),
+                    "trend": "성장" if total_growth > 20 else "하락" if total_growth < -20 else "안정"
+                })
+
+# ============================================================================
+# 시계열 분석 - 성별 주별 트렌드
+# ============================================================================
+print("성별 주별 트렌드 분석 중...")
+
+gender_weekly_trend = []
+if 'type4' in dimensions:
+    type4_df = dimensions['type4']
+
+    if '주' in type4_df.columns:
+        gender_weekly = type4_df.groupby(['성별', '주']).agg({
+            '비용': 'sum',
+            '전환수': 'sum',
+            '전환값': 'sum'
+        }).reset_index()
+
+        gender_weekly['ROAS'] = (gender_weekly['전환값'] / gender_weekly['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+
+        for gender in gender_weekly['성별'].unique():
+            if gender == '-':
+                continue
+            gender_data = gender_weekly[gender_weekly['성별'] == gender].sort_values('주')
+            gender_data_recent = gender_data.tail(8)
+
+            gender_weekly_trend.append({
+                "gender": gender,
+                "weeks_data": gender_data_recent[['주', '비용', '전환수', '전환값', 'ROAS']].to_dict('records')
+            })
+
+# ============================================================================
+# 시계열 분석 - 연령별 주별 트렌드
+# ============================================================================
+print("연령별 주별 트렌드 분석 중...")
+
+age_weekly_trend = []
+if 'type3' in dimensions:
+    type3_df = dimensions['type3']
+
+    if '주' in type3_df.columns:
+        age_weekly = type3_df.groupby(['연령', '주']).agg({
+            '비용': 'sum',
+            '전환수': 'sum',
+            '전환값': 'sum'
+        }).reset_index()
+
+        age_weekly['ROAS'] = (age_weekly['전환값'] / age_weekly['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+
+        for age in age_weekly['연령'].unique():
+            if age == '-':
+                continue
+            age_data = age_weekly[age_weekly['연령'] == age].sort_values('주')
+            age_data_recent = age_data.tail(8)
+
+            age_weekly_trend.append({
+                "age": age,
+                "weeks_data": age_data_recent[['주', '비용', '전환수', '전환값', 'ROAS']].to_dict('records')
+            })
+
+# ============================================================================
+# 시계열 분석 - 브랜드별 월별 트렌드
+# ============================================================================
+print("브랜드별 월별 트렌드 분석 중...")
+
+brand_monthly_trend = []
+if 'type1' in dimensions:
+    type1_df = dimensions['type1']
+
+    if '월' in type1_df.columns and '브랜드명' in type1_df.columns:
+        brand_monthly = type1_df.groupby(['브랜드명', '월']).agg({
+            '비용': 'sum',
+            '전환수': 'sum',
+            '전환값': 'sum'
+        }).reset_index()
+
+        brand_monthly['ROAS'] = (brand_monthly['전환값'] / brand_monthly['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+
+        # 브랜드별로 월별 데이터 정리
+        for brand in brand_monthly['브랜드명'].unique():
+            if brand == '-':
+                continue
+            brand_data = brand_monthly[brand_monthly['브랜드명'] == brand].sort_values('월')
+
+            if len(brand_data) >= 2:
+                first_month = brand_data.iloc[0]
+                last_month = brand_data.iloc[-1]
+
+                total_growth = ((last_month['전환값'] - first_month['전환값']) / first_month['전환값'] * 100) if first_month['전환값'] > 0 else 0
+
+                brand_monthly_trend.append({
+                    "brand": brand,
+                    "months_data": brand_data[['월', '비용', '전환수', '전환값', 'ROAS']].to_dict('records'),
+                    "total_growth_pct": float(total_growth),
+                    "trend": "성장" if total_growth > 20 else "하락" if total_growth < -20 else "안정"
+                })
+
+# ============================================================================
+# 시계열 분석 - 상품별 월별 트렌드
+# ============================================================================
+print("상품별 월별 트렌드 분석 중...")
+
+product_monthly_trend = []
+if 'type1' in dimensions:
+    type1_df = dimensions['type1']
+
+    if '월' in type1_df.columns and '상품명' in type1_df.columns:
+        product_monthly = type1_df.groupby(['상품명', '월']).agg({
+            '비용': 'sum',
+            '전환수': 'sum',
+            '전환값': 'sum'
+        }).reset_index()
+
+        product_monthly['ROAS'] = (product_monthly['전환값'] / product_monthly['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+
+        # 상품별로 월별 데이터 정리
+        for product in product_monthly['상품명'].unique():
+            if product == '-':
+                continue
+            product_data = product_monthly[product_monthly['상품명'] == product].sort_values('월')
+
+            if len(product_data) >= 2:
+                first_month = product_data.iloc[0]
+                last_month = product_data.iloc[-1]
+
+                total_growth = ((last_month['전환값'] - first_month['전환값']) / first_month['전환값'] * 100) if first_month['전환값'] > 0 else 0
+
+                product_monthly_trend.append({
+                    "product": product,
+                    "months_data": product_data[['월', '비용', '전환수', '전환값', 'ROAS']].to_dict('records'),
+                    "total_growth_pct": float(total_growth),
+                    "trend": "성장" if total_growth > 20 else "하락" if total_growth < -20 else "안정"
+                })
+
+# ============================================================================
+# 시계열 분석 - 성별 월별 트렌드
+# ============================================================================
+print("성별 월별 트렌드 분석 중...")
+
+gender_monthly_trend = []
+if 'type4' in dimensions:
+    type4_df = dimensions['type4']
+
+    if '월' in type4_df.columns:
+        gender_monthly = type4_df.groupby(['성별', '월']).agg({
+            '비용': 'sum',
+            '전환수': 'sum',
+            '전환값': 'sum'
+        }).reset_index()
+
+        gender_monthly['ROAS'] = (gender_monthly['전환값'] / gender_monthly['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+
+        for gender in gender_monthly['성별'].unique():
+            if gender == '-':
+                continue
+            gender_data = gender_monthly[gender_monthly['성별'] == gender].sort_values('월')
+
+            gender_monthly_trend.append({
+                "gender": gender,
+                "months_data": gender_data[['월', '비용', '전환수', '전환값', 'ROAS']].to_dict('records')
+            })
+
+# ============================================================================
+# 시계열 분석 - 연령별 월별 트렌드
+# ============================================================================
+print("연령별 월별 트렌드 분석 중...")
+
+age_monthly_trend = []
+if 'type3' in dimensions:
+    type3_df = dimensions['type3']
+
+    if '월' in type3_df.columns:
+        age_monthly = type3_df.groupby(['연령', '월']).agg({
+            '비용': 'sum',
+            '전환수': 'sum',
+            '전환값': 'sum'
+        }).reset_index()
+
+        age_monthly['ROAS'] = (age_monthly['전환값'] / age_monthly['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+
+        for age in age_monthly['연령'].unique():
+            if age == '-':
+                continue
+            age_data = age_monthly[age_monthly['연령'] == age].sort_values('월')
+
+            age_monthly_trend.append({
+                "age": age,
+                "months_data": age_data[['월', '비용', '전환수', '전환값', 'ROAS']].to_dict('records')
+            })
+
+# ============================================================================
+# 시계열 인사이트 생성
+# ============================================================================
+print("시계열 인사이트 생성 중...")
+
+timeseries_insights = []
+
+# 최근 월 성장률 기반 인사이트
+if len(monthly_growth) > 0:
+    latest_growth = monthly_growth[-1]
+    if latest_growth['revenue_growth_pct'] > 20:
+        timeseries_insights.append({
+            "type": "revenue_surge",
+            "message": f"{latest_growth['month']} 매출이 전월 대비 {latest_growth['revenue_growth_pct']:.1f}% 급증했습니다!",
+            "severity": "positive",
+            "value": latest_growth['revenue_growth_pct']
+        })
+    elif latest_growth['revenue_growth_pct'] < -20:
+        timeseries_insights.append({
+            "type": "revenue_drop",
+            "message": f"{latest_growth['month']} 매출이 전월 대비 {abs(latest_growth['revenue_growth_pct']):.1f}% 감소했습니다. 원인 분석이 필요합니다.",
+            "severity": "warning",
+            "value": latest_growth['revenue_growth_pct']
+        })
+
+# 브랜드 성장 인사이트
+growing_brands = [b for b in brand_monthly_trend if b['trend'] == '성장']
+if len(growing_brands) > 0:
+    best_growing = max(growing_brands, key=lambda x: x['total_growth_pct'])
+    timeseries_insights.append({
+        "type": "brand_growth",
+        "message": f"{best_growing['brand']} 브랜드가 {best_growing['total_growth_pct']:.1f}% 성장하여 가장 높은 성장률을 보이고 있습니다.",
+        "severity": "opportunity",
+        "brand": best_growing['brand'],
+        "value": best_growing['total_growth_pct']
+    })
+
+# 상품 성장 인사이트
+growing_products = [p for p in product_monthly_trend if p['trend'] == '성장']
+if len(growing_products) > 0:
+    best_growing_product = max(growing_products, key=lambda x: x['total_growth_pct'])
+    timeseries_insights.append({
+        "type": "product_growth",
+        "message": f"{best_growing_product['product']} 상품이 {best_growing_product['total_growth_pct']:.1f}% 성장 중입니다. 마케팅 강화를 추천합니다.",
+        "severity": "opportunity",
+        "product": best_growing_product['product'],
+        "value": best_growing_product['total_growth_pct']
+    })
+
+# 최근 주 성장률 기반 인사이트
+if len(weekly_growth) > 0:
+    latest_weekly = weekly_growth[-1]
+    if latest_weekly['revenue_growth_pct'] > 30:
+        timeseries_insights.append({
+            "type": "weekly_revenue_surge",
+            "message": f"{latest_weekly['week']} 주간 매출이 전주 대비 {latest_weekly['revenue_growth_pct']:.1f}% 급증했습니다!",
+            "severity": "positive",
+            "value": latest_weekly['revenue_growth_pct']
+        })
+    elif latest_weekly['revenue_growth_pct'] < -30:
+        timeseries_insights.append({
+            "type": "weekly_revenue_drop",
+            "message": f"{latest_weekly['week']} 주간 매출이 전주 대비 {abs(latest_weekly['revenue_growth_pct']):.1f}% 감소했습니다. 즉각적인 점검이 필요합니다.",
+            "severity": "warning",
+            "value": latest_weekly['revenue_growth_pct']
+        })
+
+# 주별 브랜드 성장 인사이트
+growing_brands_weekly = [b for b in brand_weekly_trend if b['trend'] == '성장']
+if len(growing_brands_weekly) > 0:
+    best_growing_weekly = max(growing_brands_weekly, key=lambda x: x['total_growth_pct'])
+    timeseries_insights.append({
+        "type": "brand_weekly_growth",
+        "message": f"{best_growing_weekly['brand']} 브랜드가 최근 8주간 {best_growing_weekly['total_growth_pct']:.1f}% 성장 중입니다.",
+        "severity": "opportunity",
+        "brand": best_growing_weekly['brand'],
+        "value": best_growing_weekly['total_growth_pct']
+    })
+
+# 주별 상품 성장 인사이트
+growing_products_weekly = [p for p in product_weekly_trend if p['trend'] == '성장']
+if len(growing_products_weekly) > 0:
+    best_growing_product_weekly = max(growing_products_weekly, key=lambda x: x['total_growth_pct'])
+    timeseries_insights.append({
+        "type": "product_weekly_growth",
+        "message": f"{best_growing_product_weekly['product']} 상품이 최근 8주간 {best_growing_product_weekly['total_growth_pct']:.1f}% 성장 중입니다.",
+        "severity": "opportunity",
+        "product": best_growing_product_weekly['product'],
+        "value": best_growing_product_weekly['total_growth_pct']
+    })
+
+# ============================================================================
 # 알림 및 추천사항
 # ============================================================================
 print("알림 및 추천사항 생성 중...")
@@ -452,6 +917,21 @@ insights = {
     "brand_performance": brand_insights[:10] if len(brand_insights) > 0 else [],
     "product_performance": product_insights[:10] if len(product_insights) > 0 else [],
     "promotion_performance": promotion_insights[:10] if len(promotion_insights) > 0 else [],
+    "timeseries": {
+        "monthly_trend": monthly_trend,
+        "monthly_growth": monthly_growth,
+        "weekly_trend": weekly_trend,
+        "weekly_growth": weekly_growth,
+        "brand_monthly_trend": brand_monthly_trend[:10] if len(brand_monthly_trend) > 0 else [],
+        "brand_weekly_trend": brand_weekly_trend[:10] if len(brand_weekly_trend) > 0 else [],
+        "product_monthly_trend": product_monthly_trend[:10] if len(product_monthly_trend) > 0 else [],
+        "product_weekly_trend": product_weekly_trend[:10] if len(product_weekly_trend) > 0 else [],
+        "gender_monthly_trend": gender_monthly_trend,
+        "gender_weekly_trend": gender_weekly_trend,
+        "age_monthly_trend": age_monthly_trend,
+        "age_weekly_trend": age_weekly_trend
+    },
+    "timeseries_insights": timeseries_insights,
     "alerts": alerts,
     "recommendations": recommendations,
     "generated_at": datetime.now().isoformat(),
@@ -476,7 +956,8 @@ insights = {
         "top_roas_category": top_categories_list[0]['name'] if len(top_categories_list) > 0 else None,
         "analysis_period_days": summary["analysis_period"]["total_days"],
         "alerts_count": len(alerts),
-        "recommendations_count": len(recommendations)
+        "recommendations_count": len(recommendations),
+        "timeseries_insights_count": len(timeseries_insights)
     }
 }
 
@@ -496,6 +977,24 @@ print(f"전체 CPA: {summary['overall_cpa']:,.0f}원")
 print(f"\n상위 유형구분: {len(top_categories_list)}개")
 print(f"알림: {len(alerts)}개")
 print(f"추천사항: {len(recommendations)}개")
+
+print("\n[시계열 분석 - 월별]")
+print(f"  - 월별 트렌드: {len(monthly_trend)}개월")
+print(f"  - 월별 성장률: {len(monthly_growth)}개")
+print(f"  - 브랜드별 월별 트렌드: {len(brand_monthly_trend)}개")
+print(f"  - 상품별 월별 트렌드: {len(product_monthly_trend)}개")
+print(f"  - 성별 월별 트렌드: {len(gender_monthly_trend)}개")
+print(f"  - 연령별 월별 트렌드: {len(age_monthly_trend)}개")
+
+print("\n[시계열 분석 - 주별]")
+print(f"  - 주별 트렌드: {len(weekly_trend)}주")
+print(f"  - 주별 성장률: {len(weekly_growth)}개")
+print(f"  - 브랜드별 주별 트렌드: {len(brand_weekly_trend)}개")
+print(f"  - 상품별 주별 트렌드: {len(product_weekly_trend)}개")
+print(f"  - 성별 주별 트렌드: {len(gender_weekly_trend)}개")
+print(f"  - 연령별 주별 트렌드: {len(age_weekly_trend)}개")
+
+print(f"\n[시계열 인사이트: {len(timeseries_insights)}개]")
 
 print("\n" + "=" * 100)
 print("인사이트 생성 완료!")
