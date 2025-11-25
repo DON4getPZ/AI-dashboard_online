@@ -467,35 +467,12 @@
             font-weight: 500;
         }
 
-        .kpi-card .trend {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 20px;
-            margin-top: 10px;
+        /* 의사결정 도구 탭 */
+        .decision-tool-tab-content {
+            display: none;
         }
-
-        .kpi-card .trend.up {
-            color: var(--success-main);
-            background: var(--success-light);
-        }
-
-        .kpi-card .trend.down {
-            color: var(--error-main);
-            background: var(--error-light);
-        }
-
-        .kpi-card .trend.neutral {
-            color: var(--grey-600);
-            background: var(--grey-100);
-        }
-
-        .kpi-card .trend svg {
-            width: 12px;
-            height: 12px;
+        .decision-tool-tab-content.active {
+            display: block;
         }
 
         /* 인사이트 카드 */
@@ -879,17 +856,88 @@
                     </div>
                 </div>
 
-                <!-- 인사이트 알림 -->
-                <div class="card">
-                    <div class="card-header">
-                        <div>
-                            <h2 class="card-title">주요 인사이트</h2>
-                            <p class="card-subtitle">실시간 성과 분석 및 알림</p>
+                <!-- 데이터 기반 의사결정 도구 -->
+                <div class="collapsible-section" style="margin-bottom: 24px;">
+                    <div class="collapsible-header">
+                        <div class="collapsible-title">
+                            <span class="collapsible-icon">🔬</span>
+                            <span>데이터 기반 의사결정 도구 (성과 기회, 예산 투자, 경고, 타겟팅)</span>
                         </div>
+                        <button class="collapsible-toggle expanded">
+                            <span>접기</span>
+                            <span class="collapsible-toggle-icon">▲</span>
+                        </button>
                     </div>
-                    <div class="insights-grid" id="insights-grid">
-                        <div class="loading">
-                            <div class="loading-spinner"></div>
+                    <div class="collapsible-content" style="display: block;">
+                        <!-- 탭 버튼 -->
+                        <div class="view-type-section" style="margin-bottom: 24px;">
+                            <button class="view-btn decision-tool-tab-btn active" data-tab="opportunity">성과 기회 분석</button>
+                            <button class="view-btn decision-tool-tab-btn" data-tab="budget">예산 투자 가이드</button>
+                            <button class="view-btn decision-tool-tab-btn" data-tab="warning">성과 개선 경고</button>
+                            <button class="view-btn decision-tool-tab-btn" data-tab="targeting">타겟팅 최적화</button>
+                        </div>
+
+                        <!-- 탭 1: 성과 기회 분석 -->
+                        <div class="decision-tool-tab-content active" id="opportunityTab">
+                            <div class="chart-section card" style="margin-bottom: 16px;">
+                                <div class="chart-header">🎯 성과 기회 분석: 지금 확대해야 할 캠페인</div>
+                                <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
+                                    ROAS가 높고 효율적인 캠페인을 자동으로 찾아 <strong>예산 증액 기회</strong>를 제안합니다.
+                                </div>
+                                <div id="opportunityContent" style="padding: 20px;">
+                                    <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 탭 2: 예산 투자 가이드 -->
+                        <div class="decision-tool-tab-content" id="budgetGuideTab" style="display: none;">
+                            <div class="chart-section card" style="margin-bottom: 16px;">
+                                <div class="chart-header">💰 예산 투자 가이드: 어디에 투자해야 할까요?</div>
+                                <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
+                                    각 유형별 성과 데이터를 종합하여 <strong>구체적인 투자 전략</strong>을 제안합니다.
+                                    <div style="margin-top: 8px; padding: 8px; background: var(--grey-50); border-radius: 6px; font-size: 12px;">
+                                        <strong>📌 분석 기준:</strong> ROAS, CPA, 전환수를 종합하여 투자 우선순위를 산정합니다.
+                                    </div>
+                                </div>
+                                <div id="budgetGuideContent" style="padding: 20px;">
+                                    <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 탭 3: 성과 개선 경고 -->
+                        <div class="decision-tool-tab-content" id="warningTab" style="display: none;">
+                            <div class="chart-section card" style="margin-bottom: 16px;">
+                                <div class="chart-header">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span>⚠️ 성과 개선 경고: 주의가 필요한 캠페인</span>
+                                    </div>
+                                </div>
+                                <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
+                                    ROAS가 낮거나 성과가 하락하는 캠페인을 알려드립니다. 빠르게 대응하면 손실을 줄일 수 있습니다.
+                                </div>
+                                <div id="warningContent" style="padding: 20px;">
+                                    <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 탭 4: 타겟팅 최적화 -->
+                        <div class="decision-tool-tab-content" id="targetingTab" style="display: none;">
+                            <div class="chart-section card" style="margin-bottom: 16px;">
+                                <div class="chart-header">🎯 타겟팅 최적화: 어떤 고객에게 집중할까요?</div>
+                                <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%); line-height: 1.7; border-radius: 8px; margin: 0 20px 12px 20px;">
+                                    <strong style="color: var(--primary-main);">📖 이 섹션은 무엇을 보여주나요?</strong><br>
+                                    성별, 연령, 플랫폼별 성과를 분석하여 <strong>가장 효율적인 타겟 그룹</strong>을 찾아드립니다.<br><br>
+                                    <strong style="color: var(--primary-main);">💡 왜 중요한가요?</strong><br>
+                                    • 효율적인 타겟에 예산을 집중하면 <strong>ROAS를 크게 개선</strong>할 수 있습니다<br>
+                                    • 비효율적인 타겟의 예산을 줄여 <strong>낭비를 방지</strong>할 수 있습니다
+                                </div>
+                                <div id="targetingContent" style="padding: 20px;">
+                                    <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -3029,6 +3077,7 @@
         let timeseriesStartDate = '';
         let timeseriesEndDate = '';
         let timeseriesTrendChart = null;
+        let adsetDimensionData = null;  // 광고세트 추이 전용 데이터
 
         // 성별 추이 관련 변수
         let currentGenderFilter = 'channel';
@@ -3038,6 +3087,7 @@
         let genderEndDate = '';
         let selectedGenderItems = [];
         let genderTrendChart = null;
+        let genderDimensionData = null;  // 성별 추이 전용 데이터
 
         // 연령 추이 관련 변수
         let currentAgeFilter = 'channel';
@@ -3047,6 +3097,7 @@
         let ageEndDate = '';
         let selectedAgeItems = [];
         let ageTrendChart = null;
+        let ageDimensionData = null;  // 연령 추이 전용 데이터
 
         // 플랫폼 추이 관련 변수
         let currentPlatformFilter = 'channel';
@@ -3056,6 +3107,7 @@
         let platformEndDate = '';
         let selectedPlatformItems = [];
         let platformTrendChart = null;
+        let platformDimensionData = null;  // 플랫폼 추이 전용 데이터
 
         // 기기플랫폼 추이 관련 변수
         let currentDevicePlatformFilter = 'channel';
@@ -3065,6 +3117,7 @@
         let devicePlatformEndDate = '';
         let selectedDevicePlatformItems = [];
         let devicePlatformTrendChart = null;
+        let devicePlatformDimensionData = null;  // 기기플랫폼 추이 전용 데이터
 
         // 기기유형 추이 관련 변수
         let currentDeviceTypeFilter = 'channel';
@@ -3074,6 +3127,7 @@
         let deviceTypeEndDate = '';
         let selectedDeviceTypeItems = [];
         let deviceTypeTrendChart = null;
+        let deviceTypeDimensionData = null;  // 기기유형 추이 전용 데이터
 
         // 성별 연령 PIVOT 관련 변수
         let currentPivotFilters = {
@@ -3086,6 +3140,7 @@
         let pivotStartDate = '';
         let pivotEndDate = '';
         let pivotDropdownsInitialized = false;
+        let pivotDimensionData = null;  // 성별연령 PIVOT 전용 데이터
 
         // 데이터 로딩
         async function loadData() {
@@ -3100,6 +3155,69 @@
                     dimensionData = parseCSV(dimensionText);
                 } catch (err) {
                     console.warn('차원 데이터 로딩 실패:', err);
+                }
+
+                // 광고세트 추이 전용 데이터 로딩 (dimension_type1_campaign_adset.csv)
+                try {
+                    const adsetResponse = await fetch('type/dimension_type1_campaign_adset.csv');
+                    const adsetText = await adsetResponse.text();
+                    adsetDimensionData = parseCSV(adsetText);
+                } catch (err) {
+                    console.warn('광고세트 차원 데이터 로딩 실패:', err);
+                }
+
+                // 성별 추이 전용 데이터 로딩 (dimension_type4_adset_gender.csv)
+                try {
+                    const genderResponse = await fetch('type/dimension_type4_adset_gender.csv');
+                    const genderText = await genderResponse.text();
+                    genderDimensionData = parseCSV(genderText);
+                } catch (err) {
+                    console.warn('성별 차원 데이터 로딩 실패:', err);
+                }
+
+                // 연령 추이 전용 데이터 로딩 (dimension_type3_adset_age.csv)
+                try {
+                    const ageResponse = await fetch('type/dimension_type3_adset_age.csv');
+                    const ageText = await ageResponse.text();
+                    ageDimensionData = parseCSV(ageText);
+                } catch (err) {
+                    console.warn('연령 차원 데이터 로딩 실패:', err);
+                }
+
+                // 플랫폼 추이 전용 데이터 로딩 (dimension_type6_adset_platform.csv)
+                try {
+                    const platformResponse = await fetch('type/dimension_type6_adset_platform.csv');
+                    const platformText = await platformResponse.text();
+                    platformDimensionData = parseCSV(platformText);
+                } catch (err) {
+                    console.warn('플랫폼 차원 데이터 로딩 실패:', err);
+                }
+
+                // 기기플랫폼 추이 전용 데이터 로딩 (dimension_type7_adset_deviceplatform.csv)
+                try {
+                    const devicePlatformResponse = await fetch('type/dimension_type7_adset_deviceplatform.csv');
+                    const devicePlatformText = await devicePlatformResponse.text();
+                    devicePlatformDimensionData = parseCSV(devicePlatformText);
+                } catch (err) {
+                    console.warn('기기플랫폼 차원 데이터 로딩 실패:', err);
+                }
+
+                // 기기유형 추이 전용 데이터 로딩 (dimension_type5_adset_device.csv)
+                try {
+                    const deviceTypeResponse = await fetch('type/dimension_type5_adset_device.csv');
+                    const deviceTypeText = await deviceTypeResponse.text();
+                    deviceTypeDimensionData = parseCSV(deviceTypeText);
+                } catch (err) {
+                    console.warn('기기유형 차원 데이터 로딩 실패:', err);
+                }
+
+                // 성별연령 PIVOT 전용 데이터 로딩 (dimension_type2_adset_age_gender.csv)
+                try {
+                    const pivotResponse = await fetch('type/dimension_type2_adset_age_gender.csv');
+                    const pivotText = await pivotResponse.text();
+                    pivotDimensionData = parseCSV(pivotText);
+                } catch (err) {
+                    console.warn('성별연령 PIVOT 차원 데이터 로딩 실패:', err);
                 }
 
                 // 대시보드 초기화
@@ -3176,7 +3294,7 @@
         function initDashboard() {
             updatePeriodInfo();
             renderKPICards();
-            renderInsights();
+            renderDecisionTools();
             renderTopCategoriesChart();
             initTimeseriesDropdowns();
             initGenderDropdowns();
@@ -3207,26 +3325,20 @@
         function renderKPICards() {
             const overall = insightsData.overall;
 
-            // dimensionData(CSV)에서 KPI 합계 계산
-            // 조건: 캠페인이름, 광고세트는 존재하고, 기기유형~성별은 '-'인 데이터만
+            // adsetDimensionData(dimension_type1_campaign_adset.csv)에서 KPI 합계 계산
             let totalCost = 0;
             let totalImpressions = 0;
             let totalClicks = 0;
             let totalConversions = 0;
             let totalRevenue = 0;
 
-            if (dimensionData && dimensionData.length > 0) {
-                dimensionData.forEach(row => {
-                    // 필터 조건: 캠페인이름, 광고세트는 값이 있고, 기기유형~성별은 '-'
+            if (adsetDimensionData && adsetDimensionData.length > 0) {
+                adsetDimensionData.forEach(row => {
+                    // 캠페인이름, 광고세트가 존재하는 데이터만
                     const hasCampaign = row['캠페인이름'] && row['캠페인이름'] !== '-';
                     const hasAdset = row['광고세트'] && row['광고세트'] !== '-';
-                    const isDeviceTypeDash = row['기기유형'] === '-';
-                    const isPlatformDash = row['플랫폼'] === '-';
-                    const isDevicePlatformDash = row['기기플랫폼'] === '-';
-                    const isAgeDash = row['연령'] === '-';
-                    const isGenderDash = row['성별'] === '-';
 
-                    if (hasCampaign && hasAdset && isDeviceTypeDash && isPlatformDash && isDevicePlatformDash && isAgeDash && isGenderDash) {
+                    if (hasCampaign && hasAdset) {
                         totalCost += parseFloat(row['비용']) || 0;
                         totalImpressions += parseFloat(row['노출']) || 0;
                         totalClicks += parseFloat(row['클릭']) || 0;
@@ -3241,11 +3353,6 @@
             const cpc = totalClicks > 0 ? (totalCost / totalClicks) : 0;
             const cpa = totalConversions > 0 ? (totalCost / totalConversions) : 0;
             const roas = totalCost > 0 ? (totalRevenue / totalCost * 100) : 0;
-
-            const trendDirection = overall.trend.direction;
-            const trendChange = overall.trend.change_percent || 0;
-            const trendClass = trendDirection === 'growing' ? 'up' : trendDirection === 'declining' ? 'down' : 'neutral';
-            const trendLabel = trendDirection === 'growing' ? '성장' : trendDirection === 'declining' ? '감소' : '안정';
 
             const html = `
                 <div class="kpi-row kpi-row-primary">
@@ -3273,12 +3380,6 @@
                         <h3>ROAS</h3>
                         <div class="value">${formatPercent(roas)}</div>
                         <div class="unit"></div>
-                        <div class="trend ${trendClass}">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="${trendClass === 'up' ? 'M7 14l5-5 5 5z' : trendClass === 'down' ? 'M7 10l5 5 5-5z' : 'M7 12h10v2H7z'}"/>
-                            </svg>
-                            <span>${Math.abs(trendChange).toFixed(1)}% ${trendLabel}</span>
-                        </div>
                     </div>
                 </div>
                 <div class="kpi-row kpi-row-secondary">
@@ -3308,27 +3409,368 @@
             document.getElementById('kpi-wrapper').innerHTML = html;
         }
 
-        // 인사이트 렌더링
-        function renderInsights() {
-            const alerts = insightsData.alerts.slice(0, 6); // 상위 6개만 표시
+        // 데이터 기반 의사결정 도구 렌더링
+        function renderDecisionTools() {
+            renderOpportunityTab();
+            renderBudgetGuideTab();
+            renderWarningTab();
+            renderTargetingTab();
+            initDecisionToolTabs();
+        }
 
-            const html = alerts.map(alert => {
-                const severityClass = alert.severity === 'opportunity' ? 'opportunity' :
-                                     alert.severity === 'high' ? 'high' :
-                                     alert.severity === 'warning' ? 'medium' : 'low';
+        // 탭 1: 성과 기회 분석
+        function renderOpportunityTab() {
+            const opportunities = insightsData.alerts.filter(a => a.severity === 'opportunity');
+            const topCategories = insightsData.top_categories.slice(0, 5);
 
-                return `
-                    <div class="insight-card ${severityClass}">
-                        <div class="insight-type">${getSeverityLabel(alert.severity)}</div>
-                        <div class="insight-message">${alert.message}</div>
-                        ${alert.value !== undefined ? `
-                            <div class="insight-value">지표: ${formatValue(alert.value)}${alert.type.includes('roas') || alert.type.includes('revenue') || alert.type.includes('change') ? '%' : ''}</div>
-                        ` : ''}
+            let html = '';
+
+            // 기회 알림 카드들
+            if (opportunities.length > 0) {
+                html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px;">';
+                opportunities.forEach(opp => {
+                    html += `
+                        <div style="padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 10px; border-left: 4px solid #4caf50;">
+                            <div style="font-size: 12px; font-weight: 600; color: #4caf50; margin-bottom: 8px; text-transform: uppercase;">
+                                🚀 기회 발견
+                            </div>
+                            <div style="font-size: 14px; color: var(--grey-900); font-weight: 500; line-height: 1.5;">
+                                ${opp.message}
+                            </div>
+                            ${opp.value !== undefined ? `
+                                <div style="font-size: 20px; font-weight: 700; color: #2e7d32; margin-top: 12px;">
+                                    ROAS ${formatPercent(opp.value)}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+
+            // Top 유형구분 테이블
+            html += `
+                <div style="margin-top: 16px;">
+                    <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
+                        📊 ROAS 상위 유형구분
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                            <thead>
+                                <tr style="background: var(--grey-50);">
+                                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--grey-200);">유형구분</th>
+                                    <th style="padding: 12px; text-align: right; border-bottom: 2px solid var(--grey-200);">ROAS</th>
+                                    <th style="padding: 12px; text-align: right; border-bottom: 2px solid var(--grey-200);">비용</th>
+                                    <th style="padding: 12px; text-align: right; border-bottom: 2px solid var(--grey-200);">전환수</th>
+                                    <th style="padding: 12px; text-align: right; border-bottom: 2px solid var(--grey-200);">CPA</th>
+                                    <th style="padding: 12px; text-align: center; border-bottom: 2px solid var(--grey-200);">투자 제안</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            topCategories.forEach((cat, idx) => {
+                const roasLevel = cat.roas > 300 ? 'excellent' : cat.roas > 200 ? 'good' : 'normal';
+                const badge = roasLevel === 'excellent' ? '🔥 적극 확대' : roasLevel === 'good' ? '✅ 확대 권장' : '➡️ 유지';
+                const badgeColor = roasLevel === 'excellent' ? '#2e7d32' : roasLevel === 'good' ? '#1976d2' : '#757575';
+
+                html += `
+                    <tr style="border-bottom: 1px solid var(--grey-100);">
+                        <td style="padding: 12px; font-weight: 500;">${idx + 1}. ${cat.name}</td>
+                        <td style="padding: 12px; text-align: right; font-weight: 600; color: ${roasLevel === 'excellent' ? '#2e7d32' : roasLevel === 'good' ? '#1976d2' : 'var(--grey-900)'};">
+                            ${formatPercent(cat.roas)}
+                        </td>
+                        <td style="padding: 12px; text-align: right;">${formatCurrency(cat.cost)}</td>
+                        <td style="padding: 12px; text-align: right;">${formatNumber(cat.conversions)}</td>
+                        <td style="padding: 12px; text-align: right;">${formatCurrency(cat.cpa)}</td>
+                        <td style="padding: 12px; text-align: center;">
+                            <span style="padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; background: ${badgeColor}15; color: ${badgeColor};">
+                                ${badge}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('opportunityContent').innerHTML = html;
+        }
+
+        // 탭 2: 예산 투자 가이드
+        function renderBudgetGuideTab() {
+            const recommendations = insightsData.recommendations || [];
+
+            let html = '<div style="display: grid; gap: 16px;">';
+
+            if (recommendations.length === 0) {
+                html += '<p style="color: var(--grey-500);">추천 데이터가 없습니다.</p>';
+            } else {
+                recommendations.forEach((rec, idx) => {
+                    const priorityColor = rec.priority === 'high' ? '#d32f2f' : rec.priority === 'medium' ? '#f57c00' : '#388e3c';
+                    const priorityLabel = rec.priority === 'high' ? '높음' : rec.priority === 'medium' ? '보통' : '낮음';
+                    const priorityIcon = rec.priority === 'high' ? '🔴' : rec.priority === 'medium' ? '🟡' : '🟢';
+
+                    html += `
+                        <div style="padding: 20px; background: white; border-radius: 12px; border: 1px solid var(--grey-200); box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                <div style="font-size: 15px; font-weight: 600; color: var(--grey-900);">
+                                    ${rec.title}
+                                </div>
+                                <span style="padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; background: ${priorityColor}15; color: ${priorityColor};">
+                                    ${priorityIcon} 우선순위 ${priorityLabel}
+                                </span>
+                            </div>
+                            <div style="font-size: 13px; color: var(--grey-700); line-height: 1.6; margin-bottom: 12px;">
+                                ${rec.description}
+                            </div>
+                            <div style="padding: 10px 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; font-size: 12px; color: #1565c0;">
+                                <strong>💡 예상 효과:</strong> ${rec.expected_impact}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            html += '</div>';
+
+            // 실행 체크리스트
+            html += `
+                <div style="margin-top: 24px; padding: 16px; background: linear-gradient(135deg, #fff9e6 0%, #fffcf5 100%); border-radius: 8px; border-left: 3px solid #ffc107;">
+                    <div style="font-size: 13px; font-weight: 600; color: #f57c00; margin-bottom: 10px;">
+                        ✅ 이번 주 바로 실행할 수 있는 것들
+                    </div>
+                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.8;">
+                        1. <strong>ROAS 상위 3개 유형구분</strong>의 예산을 10-20% 증액하세요<br>
+                        2. <strong>ROAS가 100% 미만인 캠페인</strong>은 크리에이티브 교체를 고려하세요<br>
+                        3. <strong>CPA가 평균보다 높은 캠페인</strong>의 타겟팅을 재검토하세요<br>
+                        4. <strong>전환수가 높고 ROAS도 높은 캠페인</strong>은 예산 상한을 확대하세요
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('budgetGuideContent').innerHTML = html;
+        }
+
+        // 탭 3: 성과 개선 경고
+        function renderWarningTab() {
+            const warnings = insightsData.alerts.filter(a => a.severity === 'warning' || a.severity === 'high');
+
+            let html = '';
+
+            if (warnings.length === 0) {
+                html = `
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">✨</div>
+                        <div style="font-size: 16px; font-weight: 600; color: var(--grey-900); margin-bottom: 8px;">
+                            현재 주의가 필요한 캠페인이 없습니다
+                        </div>
+                        <div style="font-size: 13px; color: var(--grey-600);">
+                            모든 캠페인이 정상적으로 운영되고 있습니다.
+                        </div>
                     </div>
                 `;
-            }).join('');
+            } else {
+                html += '<div style="display: grid; gap: 16px;">';
+                warnings.forEach(warning => {
+                    const isHigh = warning.severity === 'high';
+                    const bgColor = isHigh ? 'linear-gradient(135deg, #ffebee 0%, #fff5f5 100%)' : 'linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%)';
+                    const borderColor = isHigh ? '#d32f2f' : '#f57c00';
+                    const iconColor = isHigh ? '#d32f2f' : '#f57c00';
+                    const icon = isHigh ? '🚨' : '⚠️';
+                    const label = isHigh ? '긴급' : '주의';
 
-            document.getElementById('insights-grid').innerHTML = html || '<p style="color: var(--grey-500);">인사이트가 없습니다.</p>';
+                    html += `
+                        <div style="padding: 16px 20px; background: ${bgColor}; border-radius: 10px; border-left: 4px solid ${borderColor};">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 16px;">${icon}</span>
+                                <span style="font-size: 11px; font-weight: 600; color: ${iconColor}; text-transform: uppercase;">
+                                    ${label}
+                                </span>
+                            </div>
+                            <div style="font-size: 14px; color: var(--grey-900); font-weight: 500; line-height: 1.5;">
+                                ${warning.message}
+                            </div>
+                            ${warning.value !== undefined ? `
+                                <div style="font-size: 13px; color: var(--grey-600); margin-top: 8px;">
+                                    현재 ROAS: <strong style="color: ${borderColor};">${formatPercent(warning.value)}</strong>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+
+                // 해결 가이드
+                html += `
+                    <div style="margin-top: 24px; padding: 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 3px solid #2196f3;">
+                        <div style="font-size: 13px; font-weight: 600; color: #1565c0; margin-bottom: 10px;">
+                            🔧 문제 해결 가이드
+                        </div>
+                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.8;">
+                            1. <strong>ROAS가 낮은 캠페인:</strong> 타겟 오디언스 재검토, 크리에이티브 A/B 테스트 진행<br>
+                            2. <strong>매출이 감소한 캠페인:</strong> 시즌성 확인, 경쟁사 활동 모니터링, 프로모션 검토<br>
+                            3. <strong>CPA가 높은 캠페인:</strong> 랜딩 페이지 최적화, 입찰 전략 조정<br>
+                            4. <strong>즉시 조치:</strong> 심각한 손실이 예상되면 일시 중단 후 분석
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('warningContent').innerHTML = html;
+        }
+
+        // 탭 4: 타겟팅 최적화
+        function renderTargetingTab() {
+            const genderData = insightsData.gender_performance || [];
+            const platformData = insightsData.platform_performance || [];
+            const ageGenderData = insightsData.age_gender_combinations || [];
+
+            let html = '';
+
+            // 성별 성과
+            html += `
+                <div style="margin-bottom: 24px;">
+                    <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
+                        👥 성별 성과 분석
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+            `;
+
+            const sortedGender = [...genderData].sort((a, b) => b.roas - a.roas);
+            sortedGender.forEach((g, idx) => {
+                const level = g.performance_level === '양호' ? 'good' : 'warning';
+                const bgColor = level === 'good' ? 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)' : 'linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%)';
+                const textColor = level === 'good' ? '#2e7d32' : '#f57c00';
+                const badge = idx === 0 ? '🏆 1위' : '';
+
+                html += `
+                    <div style="padding: 16px; background: ${bgColor}; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 8px;">
+                            ${g.gender} ${badge}
+                        </div>
+                        <div style="font-size: 22px; font-weight: 700; color: ${textColor};">
+                            ${formatPercent(g.roas)}
+                        </div>
+                        <div style="font-size: 11px; color: var(--grey-500); margin-top: 4px;">
+                            비용 ${formatCurrency(g.cost)} | 전환 ${formatNumber(g.conversions)}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div></div>';
+
+            // 플랫폼 성과
+            html += `
+                <div style="margin-bottom: 24px;">
+                    <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
+                        📱 플랫폼 성과 분석
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+            `;
+
+            const sortedPlatform = [...platformData].sort((a, b) => b.roas - a.roas);
+            sortedPlatform.slice(0, 6).forEach((p, idx) => {
+                const bgColor = idx === 0 ? 'linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%)' : 'white';
+                const borderStyle = idx === 0 ? 'border: 2px solid #1976d2;' : 'border: 1px solid var(--grey-200);';
+                const badge = idx === 0 ? '🏆 1위' : '';
+
+                html += `
+                    <div style="padding: 14px; background: ${bgColor}; border-radius: 10px; text-align: center; ${borderStyle}">
+                        <div style="font-size: 12px; font-weight: 600; color: var(--grey-700); margin-bottom: 6px;">
+                            ${p.platform} ${badge}
+                        </div>
+                        <div style="font-size: 18px; font-weight: 700; color: ${idx === 0 ? '#1565c0' : 'var(--grey-900)'};">
+                            ${formatPercent(p.roas)}
+                        </div>
+                        <div style="font-size: 10px; color: var(--grey-500); margin-top: 4px;">
+                            전환 ${formatNumber(p.conversions)}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div></div>';
+
+            // 연령+성별 조합 TOP 5
+            if (ageGenderData.length > 0) {
+                html += `
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
+                            🎯 효율적인 연령×성별 타겟 TOP 5
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                                <thead>
+                                    <tr style="background: var(--grey-50);">
+                                        <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--grey-200);">광고세트</th>
+                                        <th style="padding: 10px; text-align: center; border-bottom: 2px solid var(--grey-200);">연령</th>
+                                        <th style="padding: 10px; text-align: center; border-bottom: 2px solid var(--grey-200);">성별</th>
+                                        <th style="padding: 10px; text-align: right; border-bottom: 2px solid var(--grey-200);">ROAS</th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--grey-200);">추천</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+
+                ageGenderData.slice(0, 5).forEach((item, idx) => {
+                    html += `
+                        <tr style="border-bottom: 1px solid var(--grey-100);">
+                            <td style="padding: 10px; font-weight: 500;">${item.adset}</td>
+                            <td style="padding: 10px; text-align: center;">${item.age}</td>
+                            <td style="padding: 10px; text-align: center;">${item.gender}</td>
+                            <td style="padding: 10px; text-align: right; font-weight: 600; color: #2e7d32;">
+                                ${formatPercent(item.roas)}
+                            </td>
+                            <td style="padding: 10px; font-size: 12px; color: var(--grey-600);">
+                                ${item.recommendation}
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('targetingContent').innerHTML = html;
+        }
+
+        // 의사결정 도구 탭 전환 초기화
+        function initDecisionToolTabs() {
+            document.querySelectorAll('.decision-tool-tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.decision-tool-tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const targetTab = this.dataset.tab;
+                    document.querySelectorAll('.decision-tool-tab-content').forEach(content => {
+                        content.style.display = 'none';
+                        content.classList.remove('active');
+                    });
+
+                    let selectedTab = null;
+                    if (targetTab === 'opportunity') selectedTab = document.getElementById('opportunityTab');
+                    else if (targetTab === 'budget') selectedTab = document.getElementById('budgetGuideTab');
+                    else if (targetTab === 'warning') selectedTab = document.getElementById('warningTab');
+                    else if (targetTab === 'targeting') selectedTab = document.getElementById('targetingTab');
+
+                    if (selectedTab) {
+                        selectedTab.style.display = 'block';
+                        selectedTab.classList.add('active');
+                    }
+                });
+            });
         }
 
         // 상위 유형구분 차트
@@ -4169,7 +4611,7 @@
 
         // 시계열 드롭다운 초기화
         function initTimeseriesDropdowns() {
-            if (!dimensionData) return;
+            if (!adsetDimensionData) return;
 
             const filterMap = {
                 'channel': { column: '유형구분', listId: 'filterChannelList', label: '채널' },
@@ -4184,7 +4626,7 @@
                 const list = document.getElementById(listId);
                 if (!list) return;
 
-                const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                const items = [...new Set(adsetDimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
                 items.sort();
 
                 list.innerHTML = items.map(item => `
@@ -4312,7 +4754,7 @@
         }
 
         function updateTimeseriesFilters() {
-            if (!dimensionData) return;
+            if (!adsetDimensionData) return;
 
             const filterMap = {
                 'channel': { column: '유형구분', listId: 'filterChannelList' },
@@ -4342,7 +4784,7 @@
         }
 
         function updateFilteredAdsets() {
-            if (!dimensionData) return;
+            if (!adsetDimensionData) return;
 
             const filterMap = {
                 'channel': '유형구분',
@@ -4354,17 +4796,9 @@
             // AND 연산으로 광고세트 필터링
             const filteredAdsets = new Set();
 
-            dimensionData.forEach(row => {
+            adsetDimensionData.forEach(row => {
                 const adset = row['광고세트'];
                 if (!adset || adset === '' || adset === '-') return;
-
-                // 광고세트 추이는 기기유형~성별이 '-'인 데이터만 사용
-                const isDeviceTypeDash = row['기기유형'] === '-';
-                const isPlatformDash = row['플랫폼'] === '-';
-                const isDevicePlatformDash = row['기기플랫폼'] === '-';
-                const isAgeDash = row['연령'] === '-';
-                const isGenderDash = row['성별'] === '-';
-                if (!isDeviceTypeDash || !isPlatformDash || !isDevicePlatformDash || !isAgeDash || !isGenderDash) return;
 
                 let matchesAllFilters = true;
 
@@ -4408,7 +4842,7 @@
 
         // 성별 드롭다운 초기화
         function initGenderDropdowns() {
-            if (!dimensionData) return;
+            if (!genderDimensionData) return;
 
             const filterMap = {
                 'channel': { column: '유형구분', listId: 'genderFilterChannelList', label: '채널' },
@@ -4424,7 +4858,7 @@
                 const list = document.getElementById(listId);
                 if (!list) return;
 
-                const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                const items = [...new Set(genderDimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
                 items.sort();
 
                 list.innerHTML = items.map(item => `
@@ -4570,7 +5004,7 @@
         };
 
         function updateGenderFilters() {
-            if (!dimensionData) return;
+            if (!genderDimensionData) return;
 
             const filterMap = {
                 'channel': { column: '유형구분', listId: 'genderFilterChannelList' },
@@ -4615,7 +5049,7 @@
         }
 
         function updateFilteredGenderCount(filters) {
-            if (!dimensionData) return;
+            if (!genderDimensionData) return;
 
             const filterMap = {
                 'channel': '유형구분',
@@ -4627,7 +5061,7 @@
 
             const gendersToShow = new Set();
 
-            dimensionData.forEach(row => {
+            genderDimensionData.forEach(row => {
                 const gender = row['성별'];
                 if (!gender || gender === '' || gender === '-') return;
 
@@ -4739,7 +5173,7 @@
 
         // 연령 드롭다운 초기화
         function initAgeDropdowns() {
-            if (!dimensionData) return;
+            if (!ageDimensionData) return;
 
             const filterMap = {
                 'channel': { column: '유형구분', listId: 'ageFilterChannelList', label: '채널' },
@@ -4755,7 +5189,7 @@
                 const list = document.getElementById(listId);
                 if (!list) return;
 
-                const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                const items = [...new Set(ageDimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
                 items.sort();
 
                 list.innerHTML = items.map(item => `
@@ -4892,7 +5326,7 @@
         };
 
         function updateAgeFilters() {
-            if (!dimensionData) return;
+            if (!ageDimensionData) return;
 
             const filterMap = {
                 'channel': { column: '유형구분', listId: 'ageFilterChannelList' },
@@ -4937,7 +5371,7 @@
         }
 
         function updateFilteredAgeCount(filters) {
-            if (!dimensionData) return;
+            if (!ageDimensionData) return;
 
             const filterMap = {
                 'channel': '유형구분',
@@ -4949,7 +5383,7 @@
 
             const agesToShow = new Set();
 
-            dimensionData.forEach(row => {
+            ageDimensionData.forEach(row => {
                 const age = row['연령'];
                 if (!age || age === '' || age === '-') return;
 
@@ -5061,7 +5495,7 @@
 
         // 플랫폼 드롭다운 초기화
         function initPlatformDropdowns() {
-            if (!dimensionData) return;
+            if (!platformDimensionData) return;
 
             const filterMap = {
                 'channel': { column: '유형구분', listId: 'platformFilterChannelList', label: '채널' },
@@ -5077,7 +5511,7 @@
                 const list = document.getElementById(listId);
                 if (!list) return;
 
-                const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                const items = [...new Set(platformDimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
                 items.sort();
 
                 list.innerHTML = items.map(item => `
@@ -5223,7 +5657,7 @@
         };
 
         function updatePlatformFilters() {
-            if (!dimensionData) return;
+            if (!platformDimensionData) return;
 
             const filterMap = {
                 'channel': { column: '유형구분', listId: 'platformFilterChannelList' },
@@ -5268,7 +5702,7 @@
         }
 
         function updateFilteredPlatformCount(filters) {
-            if (!dimensionData) return;
+            if (!platformDimensionData) return;
 
             const filterMap = {
                 'channel': '유형구분',
@@ -5280,7 +5714,7 @@
 
             const platformsToShow = new Set();
 
-            dimensionData.forEach(row => {
+            platformDimensionData.forEach(row => {
                 const platform = row['플랫폼'];
                 if (!platform || platform === '' || platform === '-') return;
 
@@ -5309,7 +5743,7 @@
 
         // PIVOT 드롭다운 초기화
         function initPivotDropdowns() {
-            if (!dimensionData) return;
+            if (!pivotDimensionData) return;
 
             const filterMap = {
                 'channel': { column: '유형구분', listId: 'pivotFilterChannelList', label: '채널' },
@@ -5325,7 +5759,7 @@
                 const list = document.getElementById(listId);
                 if (!list) return;
 
-                const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                const items = [...new Set(pivotDimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
                 items.sort();
 
                 list.innerHTML = items.map(item => `
@@ -5486,7 +5920,7 @@
                 timeseriesTrendChart.destroy();
             }
 
-            if (!dimensionData) {
+            if (!adsetDimensionData) {
                 const ctx = canvas.getContext('2d');
                 timeseriesTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -5516,17 +5950,9 @@
             // 필터가 하나도 선택되지 않은 경우 체크
             const hasActiveFilters = Object.values(timeseriesFilters).some(arr => arr.length > 0);
 
-            dimensionData.forEach(row => {
+            adsetDimensionData.forEach(row => {
                 const adset = row['광고세트'];
                 if (!adset || adset === '' || adset === '-') return;
-
-                // 광고세트 추이는 기기유형~성별이 '-'인 데이터만 사용
-                const isDeviceTypeDash = row['기기유형'] === '-';
-                const isPlatformDash = row['플랫폼'] === '-';
-                const isDevicePlatformDash = row['기기플랫폼'] === '-';
-                const isAgeDash = row['연령'] === '-';
-                const isGenderDash = row['성별'] === '-';
-                if (!isDeviceTypeDash || !isPlatformDash || !isDevicePlatformDash || !isAgeDash || !isGenderDash) return;
 
                 let matchesAllFilters = true;
 
@@ -5573,17 +5999,9 @@
                 timeSeriesData[adset] = {};
             });
 
-            dimensionData.forEach(row => {
+            adsetDimensionData.forEach(row => {
                 const adset = row['광고세트'];
                 if (!adsetsToShow.has(adset) || !row['일']) return;
-
-                // 광고세트 추이는 기기유형~성별이 '-'인 데이터만 사용
-                const isDeviceTypeDash = row['기기유형'] === '-';
-                const isPlatformDash = row['플랫폼'] === '-';
-                const isDevicePlatformDash = row['기기플랫폼'] === '-';
-                const isAgeDash = row['연령'] === '-';
-                const isGenderDash = row['성별'] === '-';
-                if (!isDeviceTypeDash || !isPlatformDash || !isDevicePlatformDash || !isAgeDash || !isGenderDash) return;
 
                 // AND 연산으로 필터 체크
                 let matchesAllFilters = true;
@@ -5865,7 +6283,7 @@
                 genderTrendChart.destroy();
             }
 
-            if (!dimensionData) {
+            if (!genderDimensionData) {
                 const ctx = canvas.getContext('2d');
                 genderTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -5917,7 +6335,7 @@
 
             // 성별 목록 가져오기
             const gendersToShow = new Set();
-            dimensionData.forEach(row => {
+            genderDimensionData.forEach(row => {
                 if (rowMatchesFilters(row)) {
                     const rawGender = row['성별'];
                     const normalizedGender = normalizeGender(rawGender);
@@ -5950,7 +6368,7 @@
                 timeSeriesData[gender] = {};
             });
 
-            dimensionData.forEach(row => {
+            genderDimensionData.forEach(row => {
                 if (!rowMatchesFilters(row)) return;
 
                 const rawGender = row['성별'];
@@ -6223,7 +6641,7 @@
                 ageTrendChart.destroy();
             }
 
-            if (!dimensionData) {
+            if (!ageDimensionData) {
                 const ctx = canvas.getContext('2d');
                 ageTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -6275,7 +6693,7 @@
 
             // 연령 목록 가져오기
             const agesToShow = new Set();
-            dimensionData.forEach(row => {
+            ageDimensionData.forEach(row => {
                 if (rowMatchesFilters(row)) {
                     const age = row['연령'];
                     if (age && age !== '' && age !== '-') {
@@ -6307,7 +6725,7 @@
                 timeSeriesData[age] = {};
             });
 
-            dimensionData.forEach(row => {
+            ageDimensionData.forEach(row => {
                 if (!rowMatchesFilters(row)) return;
 
                 const age = row['연령'];
@@ -6579,7 +6997,7 @@
                 platformTrendChart.destroy();
             }
 
-            if (!dimensionData) {
+            if (!platformDimensionData) {
                 const ctx = canvas.getContext('2d');
                 platformTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -6631,7 +7049,7 @@
 
             // 플랫폼 목록 가져오기
             const platformsToShow = new Set();
-            dimensionData.forEach(row => {
+            platformDimensionData.forEach(row => {
                 if (rowMatchesFilters(row)) {
                     const platform = row['플랫폼'];
                     if (platform && platform !== '' && platform !== '-') {
@@ -6663,7 +7081,7 @@
                 timeSeriesData[platform] = {};
             });
 
-            dimensionData.forEach(row => {
+            platformDimensionData.forEach(row => {
                 if (!rowMatchesFilters(row)) return;
 
                 const platform = row['플랫폼'];
@@ -6930,7 +7348,7 @@
         let devicePlatformDropdownsInitialized = false;
 
         function initDevicePlatformDropdowns() {
-            if (!dimensionData) return;
+            if (!devicePlatformDimensionData) return;
 
             const filterMap = {
                 'channel': { column: '유형구분', listId: 'deviceplatformFilterChannelList', label: '채널' },
@@ -6946,7 +7364,7 @@
                 const list = document.getElementById(listId);
                 if (!list) return;
 
-                const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                const items = [...new Set(devicePlatformDimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
                 items.sort();
 
                 list.innerHTML = items.map(item => `
@@ -7091,7 +7509,7 @@
         };
 
         function updateDevicePlatformFilters() {
-            if (!dimensionData) return;
+            if (!devicePlatformDimensionData) return;
 
             const filterMap = {
                 'channel': { column: '유형구분', listId: 'deviceplatformFilterChannelList' },
@@ -7136,7 +7554,7 @@
         }
 
         function updateFilteredDevicePlatformCount(filters) {
-            if (!dimensionData) return;
+            if (!devicePlatformDimensionData) return;
 
             const filterMap = {
                 'channel': '유형구분',
@@ -7148,7 +7566,7 @@
 
             const devicePlatformsToShow = new Set();
 
-            dimensionData.forEach(row => {
+            devicePlatformDimensionData.forEach(row => {
                 const devicePlatform = row['기기플랫폼'];
                 if (!devicePlatform || devicePlatform === '' || devicePlatform === '-') return;
 
@@ -7179,7 +7597,7 @@
         let deviceTypeDropdownsInitialized = false;
 
         function initDeviceTypeDropdowns() {
-            if (!dimensionData) return;
+            if (!deviceTypeDimensionData) return;
 
             const filterMap = {
                 'channel': { column: '유형구분', listId: 'devicetypeFilterChannelList', label: '채널' },
@@ -7195,7 +7613,7 @@
                 const list = document.getElementById(listId);
                 if (!list) return;
 
-                const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                const items = [...new Set(deviceTypeDimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
                 items.sort();
 
                 list.innerHTML = items.map(item => `
@@ -7340,7 +7758,7 @@
         };
 
         function updateDeviceTypeFilters() {
-            if (!dimensionData) return;
+            if (!deviceTypeDimensionData) return;
 
             const filterMap = {
                 'channel': { column: '유형구분', listId: 'devicetypeFilterChannelList' },
@@ -7385,7 +7803,7 @@
         }
 
         function updateFilteredDeviceTypeCount(filters) {
-            if (!dimensionData) return;
+            if (!deviceTypeDimensionData) return;
 
             const filterMap = {
                 'channel': '유형구분',
@@ -7397,7 +7815,7 @@
 
             const deviceTypesToShow = new Set();
 
-            dimensionData.forEach(row => {
+            deviceTypeDimensionData.forEach(row => {
                 const deviceType = row['기기유형'];
                 if (!deviceType || deviceType === '' || deviceType === '-') return;
 
@@ -7433,7 +7851,7 @@
                 devicePlatformTrendChart.destroy();
             }
 
-            if (!dimensionData) {
+            if (!devicePlatformDimensionData) {
                 const ctx = canvas.getContext('2d');
                 devicePlatformTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -7485,7 +7903,7 @@
 
             // 기기플랫폼 목록 가져오기
             const devicePlatformsToShow = new Set();
-            dimensionData.forEach(row => {
+            devicePlatformDimensionData.forEach(row => {
                 if (rowMatchesFilters(row)) {
                     const devicePlatform = row['기기플랫폼'];
                     if (devicePlatform && devicePlatform !== '' && devicePlatform !== '-') {
@@ -7517,7 +7935,7 @@
                 timeSeriesData[devicePlatform] = {};
             });
 
-            dimensionData.forEach(row => {
+            devicePlatformDimensionData.forEach(row => {
                 if (!rowMatchesFilters(row)) return;
 
                 const devicePlatform = row['기기플랫폼'];
@@ -7789,7 +8207,7 @@
                 deviceTypeTrendChart.destroy();
             }
 
-            if (!dimensionData) {
+            if (!deviceTypeDimensionData) {
                 const ctx = canvas.getContext('2d');
                 deviceTypeTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -7841,7 +8259,7 @@
 
             // 기기유형 목록 가져오기
             const deviceTypesToShow = new Set();
-            dimensionData.forEach(row => {
+            deviceTypeDimensionData.forEach(row => {
                 if (rowMatchesFilters(row)) {
                     const deviceType = row['기기유형'];
                     if (deviceType && deviceType !== '' && deviceType !== '-') {
@@ -7873,7 +8291,7 @@
                 timeSeriesData[deviceType] = {};
             });
 
-            dimensionData.forEach(row => {
+            deviceTypeDimensionData.forEach(row => {
                 if (!rowMatchesFilters(row)) return;
 
                 const deviceType = row['기기유형'];
@@ -8209,7 +8627,7 @@
         // 성별 연령 PIVOT 테이블 렌더링
         function renderAgeGenderPivotTable() {
             const container = document.getElementById('ageGenderPivotTableContainer');
-            if (!container || !dimensionData) return;
+            if (!container || !pivotDimensionData) return;
 
             const filterMap = {
                 'channel': '유형구분',
@@ -8247,7 +8665,7 @@
             // 성별과 연령대별 데이터 집계
             const pivotData = {};
 
-            dimensionData.forEach(row => {
+            pivotDimensionData.forEach(row => {
                 if (!rowMatchesFilters(row)) return;
 
                 const rawGender = row['성별'];

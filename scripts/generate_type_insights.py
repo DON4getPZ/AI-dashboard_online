@@ -49,6 +49,27 @@ for key, filename in dimension_files.items():
         dimensions[key] = pd.read_csv(file_path)
         print(f"✓ {filename} 로드 완료")
 
+# Prophet 예측 파일들 로드
+print("\nProphet 예측 데이터 로딩 중...")
+prophet_files = {
+    'overall': 'prophet_forecast_overall.csv',
+    'category': 'prophet_forecast_by_category.csv',
+    'brand': 'prophet_forecast_by_brand.csv',
+    'product': 'prophet_forecast_by_product.csv',
+    'gender': 'prophet_forecast_by_gender.csv',
+    'age': 'prophet_forecast_by_age.csv',
+    'platform': 'prophet_forecast_by_platform.csv',
+    'promotion': 'prophet_forecast_by_promotion.csv'
+}
+
+prophet_forecasts = {}
+for key, filename in prophet_files.items():
+    file_path = data_dir / filename
+    if file_path.exists():
+        prophet_forecasts[key] = pd.read_csv(file_path)
+        prophet_forecasts[key]['일자'] = pd.to_datetime(prophet_forecasts[key]['일자'])
+        print(f"✓ {filename} 로드 완료")
+
 # ============================================================================
 # 전체 요약
 # ============================================================================
@@ -671,6 +692,291 @@ if 'type3' in dimensions:
             })
 
 # ============================================================================
+# Prophet 예측 기반 인사이트
+# ============================================================================
+print("\nProphet 예측 인사이트 생성 중...")
+
+# 전체 예측 요약
+forecast_summary = {}
+if 'overall' in prophet_forecasts:
+    overall_df = prophet_forecasts['overall']
+    forecast_summary['overall'] = {
+        "forecast_period": {
+            "start_date": overall_df['일자'].min().strftime('%Y-%m-%d'),
+            "end_date": overall_df['일자'].max().strftime('%Y-%m-%d'),
+            "total_days": len(overall_df)
+        },
+        "total_forecast_revenue": float(overall_df['예측값'].sum()),
+        "avg_daily_forecast": float(overall_df['예측값'].mean()),
+        "forecast_range": {
+            "lower_bound": float(overall_df['하한값'].sum()),
+            "upper_bound": float(overall_df['상한값'].sum())
+        }
+    }
+
+# 유형구분별 예측
+category_forecast_insights = []
+if 'category' in prophet_forecasts:
+    cat_df = prophet_forecasts['category']
+    for category in cat_df['유형구분'].unique():
+        cat_data = cat_df[cat_df['유형구분'] == category]
+        total_forecast = cat_data['예측값'].sum()
+        avg_forecast = cat_data['예측값'].mean()
+
+        # 첫 주 vs 마지막 주 비교로 트렌드 파악
+        first_week = cat_data.head(7)['예측값'].mean()
+        last_week = cat_data.tail(7)['예측값'].mean()
+        trend_direction = "상승" if last_week > first_week * 1.1 else "하락" if last_week < first_week * 0.9 else "유지"
+
+        category_forecast_insights.append({
+            "category": category,
+            "total_30day_forecast": float(total_forecast),
+            "avg_daily_forecast": float(avg_forecast),
+            "trend_direction": trend_direction,
+            "first_week_avg": float(first_week),
+            "last_week_avg": float(last_week)
+        })
+
+# 브랜드별 예측
+brand_forecast_insights = []
+if 'brand' in prophet_forecasts:
+    brand_df = prophet_forecasts['brand']
+    for brand in brand_df['브랜드명'].unique():
+        brand_data = brand_df[brand_df['브랜드명'] == brand]
+        total_forecast = brand_data['예측값'].sum()
+        avg_forecast = brand_data['예측값'].mean()
+
+        # 신뢰구간 분석
+        confidence_range = brand_data['상한값'].mean() - brand_data['하한값'].mean()
+        confidence_level = "높음" if confidence_range < avg_forecast * 0.5 else "중간" if confidence_range < avg_forecast else "낮음"
+
+        brand_forecast_insights.append({
+            "brand": brand,
+            "total_30day_forecast": float(total_forecast),
+            "avg_daily_forecast": float(avg_forecast),
+            "confidence_level": confidence_level,
+            "forecast_lower": float(brand_data['하한값'].sum()),
+            "forecast_upper": float(brand_data['상한값'].sum())
+        })
+
+    # 예측 매출 기준 정렬
+    brand_forecast_insights = sorted(brand_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
+
+# 상품별 예측
+product_forecast_insights = []
+if 'product' in prophet_forecasts:
+    product_df = prophet_forecasts['product']
+    for product in product_df['상품명'].unique():
+        product_data = product_df[product_df['상품명'] == product]
+        total_forecast = product_data['예측값'].sum()
+        avg_forecast = product_data['예측값'].mean()
+
+        product_forecast_insights.append({
+            "product": product,
+            "total_30day_forecast": float(total_forecast),
+            "avg_daily_forecast": float(avg_forecast),
+            "forecast_lower": float(product_data['하한값'].sum()),
+            "forecast_upper": float(product_data['상한값'].sum())
+        })
+
+    product_forecast_insights = sorted(product_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
+
+# 성별 예측
+gender_forecast_insights = []
+if 'gender' in prophet_forecasts:
+    gender_df = prophet_forecasts['gender']
+    for gender in gender_df['성별'].unique():
+        gender_data = gender_df[gender_df['성별'] == gender]
+        total_forecast = gender_data['예측값'].sum()
+        avg_forecast = gender_data['예측값'].mean()
+
+        gender_forecast_insights.append({
+            "gender": gender,
+            "total_30day_forecast": float(total_forecast),
+            "avg_daily_forecast": float(avg_forecast),
+            "forecast_lower": float(gender_data['하한값'].sum()),
+            "forecast_upper": float(gender_data['상한값'].sum())
+        })
+
+    gender_forecast_insights = sorted(gender_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
+
+# 연령별 예측
+age_forecast_insights = []
+if 'age' in prophet_forecasts:
+    age_df = prophet_forecasts['age']
+    for age in age_df['연령'].unique():
+        age_data = age_df[age_df['연령'] == age]
+        total_forecast = age_data['예측값'].sum()
+        avg_forecast = age_data['예측값'].mean()
+
+        age_forecast_insights.append({
+            "age": age,
+            "total_30day_forecast": float(total_forecast),
+            "avg_daily_forecast": float(avg_forecast),
+            "forecast_lower": float(age_data['하한값'].sum()),
+            "forecast_upper": float(age_data['상한값'].sum())
+        })
+
+    age_forecast_insights = sorted(age_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
+
+# 기기플랫폼별 예측
+platform_forecast_insights = []
+if 'platform' in prophet_forecasts:
+    platform_df = prophet_forecasts['platform']
+    for platform in platform_df['기기플랫폼'].unique():
+        platform_data = platform_df[platform_df['기기플랫폼'] == platform]
+        total_forecast = platform_data['예측값'].sum()
+        avg_forecast = platform_data['예측값'].mean()
+
+        platform_forecast_insights.append({
+            "platform": platform,
+            "total_30day_forecast": float(total_forecast),
+            "avg_daily_forecast": float(avg_forecast),
+            "forecast_lower": float(platform_data['하한값'].sum()),
+            "forecast_upper": float(platform_data['상한값'].sum())
+        })
+
+    platform_forecast_insights = sorted(platform_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
+
+# 프로모션별 예측
+promotion_forecast_insights = []
+if 'promotion' in prophet_forecasts:
+    promotion_df = prophet_forecasts['promotion']
+    for promotion in promotion_df['프로모션'].unique():
+        promotion_data = promotion_df[promotion_df['프로모션'] == promotion]
+        total_forecast = promotion_data['예측값'].sum()
+        avg_forecast = promotion_data['예측값'].mean()
+
+        promotion_forecast_insights.append({
+            "promotion": promotion,
+            "total_30day_forecast": float(total_forecast),
+            "avg_daily_forecast": float(avg_forecast),
+            "forecast_lower": float(promotion_data['하한값'].sum()),
+            "forecast_upper": float(promotion_data['상한값'].sum())
+        })
+
+    promotion_forecast_insights = sorted(promotion_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
+
+# Prophet 예측 기반 알림 생성
+prophet_alerts = []
+
+# 1. 전체 예측 대비 현재 성과 비교
+if 'overall' in prophet_forecasts and len(daily_summary) >= 7:
+    recent_7days_actual = daily_summary.tail(7)['전환값'].mean()
+    forecast_7days = prophet_forecasts['overall'].head(7)['예측값'].mean()
+
+    if forecast_7days > 0:
+        performance_ratio = (recent_7days_actual / forecast_7days - 1) * 100
+        if performance_ratio > 20:
+            prophet_alerts.append({
+                "type": "forecast_overperformance",
+                "message": f"최근 7일 실적이 예측 대비 {performance_ratio:.1f}% 초과 달성 중입니다!",
+                "severity": "positive",
+                "value": performance_ratio
+            })
+        elif performance_ratio < -20:
+            prophet_alerts.append({
+                "type": "forecast_underperformance",
+                "message": f"최근 7일 실적이 예측 대비 {abs(performance_ratio):.1f}% 미달입니다. 캠페인 점검이 필요합니다.",
+                "severity": "warning",
+                "value": performance_ratio
+            })
+
+# 2. 브랜드별 예측 기반 알림
+if len(brand_forecast_insights) > 0:
+    top_forecast_brand = brand_forecast_insights[0]
+    if top_forecast_brand['total_30day_forecast'] > 0:
+        prophet_alerts.append({
+            "type": "brand_forecast_leader",
+            "message": f"{top_forecast_brand['brand']} 브랜드가 향후 30일간 {top_forecast_brand['total_30day_forecast']:,.0f}원의 매출이 예상됩니다.",
+            "severity": "opportunity",
+            "brand": top_forecast_brand['brand'],
+            "value": top_forecast_brand['total_30day_forecast']
+        })
+
+# 3. 성별 예측 기반 타겟팅 추천
+if len(gender_forecast_insights) >= 2:
+    sorted_gender_forecast = sorted(gender_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
+    best_gender_forecast = sorted_gender_forecast[0]
+    if best_gender_forecast['total_30day_forecast'] > 0:
+        prophet_alerts.append({
+            "type": "gender_forecast_opportunity",
+            "message": f"{best_gender_forecast['gender']} 타겟이 향후 30일간 가장 높은 전환값({best_gender_forecast['total_30day_forecast']:,.0f}원)이 예상됩니다.",
+            "severity": "opportunity",
+            "gender": best_gender_forecast['gender'],
+            "value": best_gender_forecast['total_30day_forecast']
+        })
+
+# 4. 연령별 예측 기반 알림
+if len(age_forecast_insights) > 0:
+    top_age_forecast = age_forecast_insights[0]
+    if top_age_forecast['total_30day_forecast'] > 0:
+        prophet_alerts.append({
+            "type": "age_forecast_opportunity",
+            "message": f"{top_age_forecast['age']} 연령대가 향후 30일간 {top_age_forecast['total_30day_forecast']:,.0f}원의 전환값이 예상됩니다.",
+            "severity": "opportunity",
+            "age": top_age_forecast['age'],
+            "value": top_age_forecast['total_30day_forecast']
+        })
+
+# Prophet 예측 기반 추천사항
+prophet_recommendations = []
+
+# 1. 브랜드 집중 투자 추천
+if len(brand_forecast_insights) >= 2:
+    top_brands = brand_forecast_insights[:3]
+    brand_names = [b['brand'] for b in top_brands]
+    total_top_forecast = sum(b['total_30day_forecast'] for b in top_brands)
+
+    if total_top_forecast > 0:
+        prophet_recommendations.append({
+            "title": "브랜드 집중 투자 전략 (예측 기반)",
+            "description": f"향후 30일 예측 매출 상위 브랜드: {', '.join(brand_names)}. 해당 브랜드에 마케팅 예산을 집중하세요.",
+            "priority": "high",
+            "expected_impact": f"예상 총 매출: {total_top_forecast:,.0f}원",
+            "based_on": "prophet_forecast"
+        })
+
+# 2. 상품 포트폴리오 추천
+if len(product_forecast_insights) >= 2:
+    top_products = product_forecast_insights[:3]
+    product_names = [p['product'] for p in top_products]
+
+    prophet_recommendations.append({
+        "title": "상품 포트폴리오 최적화 (예측 기반)",
+        "description": f"향후 30일 예측 매출 상위 상품: {', '.join(product_names)}. 재고 확보 및 광고 강화를 추천합니다.",
+        "priority": "high",
+        "expected_impact": "매출 극대화 기대",
+        "based_on": "prophet_forecast"
+    })
+
+# 3. 타겟팅 최적화 추천 (성별 + 연령)
+if len(gender_forecast_insights) > 0 and len(age_forecast_insights) > 0:
+    best_gender = gender_forecast_insights[0]['gender'] if gender_forecast_insights[0]['total_30day_forecast'] > 0 else None
+    best_age = age_forecast_insights[0]['age'] if age_forecast_insights[0]['total_30day_forecast'] > 0 else None
+
+    if best_gender and best_age:
+        prophet_recommendations.append({
+            "title": "타겟 오디언스 최적화 (예측 기반)",
+            "description": f"예측 분석 결과, {best_age} {best_gender} 타겟이 가장 높은 전환이 예상됩니다. 해당 타겟 광고 비중을 확대하세요.",
+            "priority": "medium",
+            "expected_impact": "전환율 15-25% 개선 예상",
+            "based_on": "prophet_forecast"
+        })
+
+# 4. 플랫폼 최적화 추천
+if len(platform_forecast_insights) > 0:
+    best_platform = platform_forecast_insights[0]
+    if best_platform['total_30day_forecast'] > 0:
+        prophet_recommendations.append({
+            "title": "플랫폼 집중 전략 (예측 기반)",
+            "description": f"{best_platform['platform']} 플랫폼에서 향후 30일간 {best_platform['total_30day_forecast']:,.0f}원의 전환이 예상됩니다. 해당 플랫폼 광고에 집중하세요.",
+            "priority": "medium",
+            "expected_impact": "ROAS 10-20% 개선 예상",
+            "based_on": "prophet_forecast"
+        })
+
+# ============================================================================
 # 시계열 인사이트 생성
 # ============================================================================
 print("시계열 인사이트 생성 중...")
@@ -932,8 +1238,20 @@ insights = {
         "age_weekly_trend": age_weekly_trend
     },
     "timeseries_insights": timeseries_insights,
-    "alerts": alerts,
-    "recommendations": recommendations,
+    "prophet_forecast": {
+        "summary": forecast_summary,
+        "by_category": category_forecast_insights,
+        "by_brand": brand_forecast_insights[:10] if len(brand_forecast_insights) > 0 else [],
+        "by_product": product_forecast_insights[:10] if len(product_forecast_insights) > 0 else [],
+        "by_gender": gender_forecast_insights,
+        "by_age": age_forecast_insights,
+        "by_platform": platform_forecast_insights,
+        "by_promotion": promotion_forecast_insights[:10] if len(promotion_forecast_insights) > 0 else [],
+        "alerts": prophet_alerts,
+        "recommendations": prophet_recommendations
+    },
+    "alerts": alerts + prophet_alerts,
+    "recommendations": recommendations + prophet_recommendations,
     "generated_at": datetime.now().isoformat(),
     "overall": {
         "current_period": {
@@ -955,9 +1273,10 @@ insights = {
         "paid_categories": len(paid_categories),
         "top_roas_category": top_categories_list[0]['name'] if len(top_categories_list) > 0 else None,
         "analysis_period_days": summary["analysis_period"]["total_days"],
-        "alerts_count": len(alerts),
-        "recommendations_count": len(recommendations),
-        "timeseries_insights_count": len(timeseries_insights)
+        "alerts_count": len(alerts) + len(prophet_alerts),
+        "recommendations_count": len(recommendations) + len(prophet_recommendations),
+        "timeseries_insights_count": len(timeseries_insights),
+        "prophet_forecast_available": len(prophet_forecasts) > 0
     }
 }
 
@@ -995,6 +1314,21 @@ print(f"  - 성별 주별 트렌드: {len(gender_weekly_trend)}개")
 print(f"  - 연령별 주별 트렌드: {len(age_weekly_trend)}개")
 
 print(f"\n[시계열 인사이트: {len(timeseries_insights)}개]")
+
+print("\n[Prophet 예측 분석]")
+print(f"  - Prophet 예측 파일 로드: {len(prophet_forecasts)}개")
+if 'overall' in forecast_summary:
+    print(f"  - 예측 기간: {forecast_summary['overall']['forecast_period']['start_date']} ~ {forecast_summary['overall']['forecast_period']['end_date']}")
+    print(f"  - 30일 총 예측 전환값: {forecast_summary['overall']['total_forecast_revenue']:,.0f}원")
+print(f"  - 유형구분별 예측: {len(category_forecast_insights)}개")
+print(f"  - 브랜드별 예측: {len(brand_forecast_insights)}개")
+print(f"  - 상품별 예측: {len(product_forecast_insights)}개")
+print(f"  - 성별 예측: {len(gender_forecast_insights)}개")
+print(f"  - 연령별 예측: {len(age_forecast_insights)}개")
+print(f"  - 플랫폼별 예측: {len(platform_forecast_insights)}개")
+print(f"  - 프로모션별 예측: {len(promotion_forecast_insights)}개")
+print(f"  - Prophet 알림: {len(prophet_alerts)}개")
+print(f"  - Prophet 추천사항: {len(prophet_recommendations)}개")
 
 print("\n" + "=" * 100)
 print("인사이트 생성 완료!")
