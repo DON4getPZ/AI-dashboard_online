@@ -538,13 +538,14 @@ if PROPHET_AVAILABLE:
         print("\n✓ 상품별 예측 결과 저장: data/type/prophet_forecast_by_product.csv")
 
     # ============================================================================
-    # 8. 성별 다중 지표 예측 (Type4 데이터 기반)
+    # 8. 성별 다중 지표 예측 (Type4 + Type2 데이터 기반 - 메타_* 유형구분 포함)
     # ============================================================================
     print("\n" + "=" * 100)
-    print("8. 성별 다중 지표 예측 (향후 30일)")
+    print("8. 성별 다중 지표 예측 (향후 30일) - Type2 데이터 포함")
     print("=" * 100)
 
-    type4_data = df[df['data_type'] == 'Type4_광고세트+성별'].copy()
+    # Type4 + Type2 데이터 결합 (메타_* 유형구분 누락 방지)
+    type4_data = df[(df['data_type'] == 'Type4_광고세트+성별') | (df['data_type'] == 'Type2_광고세트+연령+성별')].copy()
     gender_forecast_results = []
 
     if len(type4_data) > 0:
@@ -608,13 +609,14 @@ if PROPHET_AVAILABLE:
         print("\n✓ 성별 예측 결과 저장: data/type/prophet_forecast_by_gender.csv")
 
     # ============================================================================
-    # 9. 연령별 다중 지표 예측 (Type3 데이터 기반)
+    # 9. 연령별 다중 지표 예측 (Type3 + Type2 데이터 기반 - 메타_* 유형구분 포함)
     # ============================================================================
     print("\n" + "=" * 100)
-    print("9. 연령별 다중 지표 예측 (향후 30일)")
+    print("9. 연령별 다중 지표 예측 (향후 30일) - Type2 데이터 포함")
     print("=" * 100)
 
-    type3_data = df[df['data_type'] == 'Type3_광고세트+연령'].copy()
+    # Type3 + Type2 데이터 결합 (메타_* 유형구분 누락 방지)
+    type3_data = df[(df['data_type'] == 'Type3_광고세트+연령') | (df['data_type'] == 'Type2_광고세트+연령+성별')].copy()
     age_forecast_results = []
 
     if len(type3_data) > 0:
