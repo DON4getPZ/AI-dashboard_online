@@ -870,11 +870,12 @@
                     </div>
                     <div class="collapsible-content" style="display: block;">
                         <!-- 탭 버튼 -->
-                        <div class="view-type-section" style="margin-bottom: 24px;">
-                            <button class="view-btn decision-tool-tab-btn active" data-tab="opportunity">성과 기회 분석</button>
-                            <button class="view-btn decision-tool-tab-btn" data-tab="budget">예산 투자 가이드</button>
-                            <button class="view-btn decision-tool-tab-btn" data-tab="warning">성과 개선 경고</button>
-                            <button class="view-btn decision-tool-tab-btn" data-tab="targeting">타겟팅 최적화</button>
+                        <div class="view-type-section" style="margin-bottom: 24px; flex-wrap: wrap;">
+                            <button class="view-btn decision-tool-tab-btn active" data-tab="opportunity">🎯 성과 기회</button>
+                            <button class="view-btn decision-tool-tab-btn" data-tab="forecast">🔮 AI 예측</button>
+                            <button class="view-btn decision-tool-tab-btn" data-tab="budget">💰 예산 가이드</button>
+                            <button class="view-btn decision-tool-tab-btn" data-tab="warning">⚠️ 성과 경고</button>
+                            <button class="view-btn decision-tool-tab-btn" data-tab="targeting">👥 타겟 최적화</button>
                         </div>
 
                         <!-- 탭 1: 성과 기회 분석 -->
@@ -926,7 +927,7 @@
                         <!-- 탭 4: 타겟팅 최적화 -->
                         <div class="decision-tool-tab-content" id="targetingTab" style="display: none;">
                             <div class="chart-section card" style="margin-bottom: 16px;">
-                                <div class="chart-header">🎯 타겟팅 최적화: 어떤 고객에게 집중할까요?</div>
+                                <div class="chart-header">👥 타겟팅 최적화: 어떤 고객에게 집중할까요?</div>
                                 <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%); line-height: 1.7; border-radius: 8px; margin: 0 20px 12px 20px;">
                                     <strong style="color: var(--primary-main);">📖 이 섹션은 무엇을 보여주나요?</strong><br>
                                     성별, 연령, 플랫폼별 성과를 분석하여 <strong>가장 효율적인 타겟 그룹</strong>을 찾아드립니다.<br><br>
@@ -935,6 +936,24 @@
                                     • 비효율적인 타겟의 예산을 줄여 <strong>낭비를 방지</strong>할 수 있습니다
                                 </div>
                                 <div id="targetingContent" style="padding: 20px;">
+                                    <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 탭 5: AI 예측 (Prophet) -->
+                        <div class="decision-tool-tab-content" id="forecastTab" style="display: none;">
+                            <div class="chart-section card" style="margin-bottom: 16px;">
+                                <div class="chart-header">🔮 AI 예측 분석: 향후 30일 전망</div>
+                                <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #f3e5f5 0%, #fce4ec 100%); line-height: 1.7; border-radius: 8px; margin: 0 20px 12px 20px;">
+                                    <strong style="color: #7b1fa2;">📖 Prophet AI 예측이란?</strong><br>
+                                    페이스북이 개발한 시계열 예측 모델로, 과거 데이터를 학습하여 <strong>향후 30일간의 매출을 예측</strong>합니다.<br><br>
+                                    <strong style="color: #7b1fa2;">💡 활용 방법</strong><br>
+                                    • 예측 상승 채널에 <strong>예산을 선제적으로 증액</strong>하세요<br>
+                                    • 예측 하락 채널은 <strong>원인 분석 후 크리에이티브 교체</strong>를 검토하세요<br>
+                                    • 상품별 예측을 참고하여 <strong>재고 및 프로모션</strong>을 준비하세요
+                                </div>
+                                <div id="forecastContent" style="padding: 20px;">
                                     <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
                                 </div>
                             </div>
@@ -3409,9 +3428,33 @@
             document.getElementById('kpi-wrapper').innerHTML = html;
         }
 
+        // 알수없음 데이터 필터링 헬퍼 함수
+        function isValidGender(gender) {
+            if (!gender || gender === '-') return false;
+            const genderStr = String(gender).trim().toLowerCase();
+            const unknownPattern = /^(구분없음|알\s?수\s?없음|un.*|unknown)/i;
+            return !unknownPattern.test(genderStr);
+        }
+
+        function isValidAge(age) {
+            if (!age || age === '-') return false;
+            const ageStr = String(age).trim().toLowerCase();
+            const unknownPattern = /^(구분없음|알\s?수\s?없음|un.*|unknown|age_range_undetermined)/i;
+            return !unknownPattern.test(ageStr);
+        }
+
+        function normalizeGender(gender) {
+            if (!isValidGender(gender)) return null;
+            const genderStr = String(gender).trim().toLowerCase();
+            if (/^(남자|남성|male|m)$/i.test(genderStr)) return '남성';
+            if (/^(여자|여성|female|f)$/i.test(genderStr)) return '여성';
+            return gender;
+        }
+
         // 데이터 기반 의사결정 도구 렌더링
         function renderDecisionTools() {
             renderOpportunityTab();
+            renderForecastTab();
             renderBudgetGuideTab();
             renderWarningTab();
             renderTargetingTab();
@@ -3420,71 +3463,129 @@
 
         // 탭 1: 성과 기회 분석
         function renderOpportunityTab() {
-            const opportunities = insightsData.alerts.filter(a => a.severity === 'opportunity');
+            const opportunities = insightsData.alerts.filter(a => a.severity === 'opportunity' || a.severity === 'positive');
             const topCategories = insightsData.top_categories.slice(0, 5);
+            const forecast = insightsData.prophet_forecast || null;
 
             let html = '';
 
+            // 핵심 요약 대시보드
+            html += `
+                <div style="margin-bottom: 24px; padding: 20px; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-radius: 16px;">
+                    <div style="font-size: 15px; font-weight: 700; color: #1b5e20; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 20px;">🎯</span> 지금 바로 실행할 기회
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+            `;
+
+            // 최고 ROAS 카테고리
+            if (topCategories.length > 0) {
+                const topCat = topCategories[0];
+                html += `
+                    <div style="padding: 16px; background: white; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">최고 효율 채널</div>
+                        <div style="font-size: 15px; font-weight: 700; color: var(--grey-900); margin-bottom: 4px;">${topCat.name}</div>
+                        <div style="font-size: 24px; font-weight: 800; color: #2e7d32;">${formatPercent(topCat.roas)}</div>
+                        <div style="font-size: 11px; color: #4caf50; margin-top: 4px;">✨ 예산 증액 권장</div>
+                    </div>
+                `;
+            }
+
+            // Prophet 예측 기반 상승 카테고리
+            if (forecast && forecast.by_category) {
+                const upCategory = forecast.by_category.find(c => c.trend_direction === '상승');
+                if (upCategory) {
+                    html += `
+                        <div style="padding: 16px; background: white; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                            <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">AI 예측 상승 채널</div>
+                            <div style="font-size: 15px; font-weight: 700; color: var(--grey-900); margin-bottom: 4px;">${upCategory.category}</div>
+                            <div style="font-size: 24px; font-weight: 800; color: #1565c0;">${formatCurrency(upCategory.total_30day_forecast)}</div>
+                            <div style="font-size: 11px; color: #1976d2; margin-top: 4px;">📈 30일 예측 전환값</div>
+                        </div>
+                    `;
+                }
+            }
+
+            // 상품 예측
+            if (forecast && forecast.by_product && forecast.by_product.length > 0) {
+                const topProduct = [...forecast.by_product].sort((a, b) => b.total_30day_forecast - a.total_30day_forecast)[0];
+                if (topProduct && topProduct.total_30day_forecast > 0) {
+                    html += `
+                        <div style="padding: 16px; background: white; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                            <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">AI 예측 인기 상품</div>
+                            <div style="font-size: 15px; font-weight: 700; color: var(--grey-900); margin-bottom: 4px;">${topProduct.product}</div>
+                            <div style="font-size: 24px; font-weight: 800; color: #7b1fa2;">${formatCurrency(topProduct.total_30day_forecast)}</div>
+                            <div style="font-size: 11px; color: #9c27b0; margin-top: 4px;">🛍️ 30일 예측 전환값</div>
+                        </div>
+                    `;
+                }
+            }
+
+            html += '</div></div>';
+
             // 기회 알림 카드들
             if (opportunities.length > 0) {
-                html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px;">';
+                html += `
+                    <div style="margin-bottom: 24px;">
+                        <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">🚀 발견된 성장 기회</div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px;">
+                `;
                 opportunities.forEach(opp => {
+                    const isPositive = opp.severity === 'positive';
                     html += `
-                        <div style="padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 10px; border-left: 4px solid #4caf50;">
-                            <div style="font-size: 12px; font-weight: 600; color: #4caf50; margin-bottom: 8px; text-transform: uppercase;">
-                                🚀 기회 발견
+                        <div style="padding: 16px 20px; background: linear-gradient(135deg, ${isPositive ? '#e3f2fd' : '#e8f5e9'} 0%, ${isPositive ? '#f0f7ff' : '#f1f8f4'} 100%); border-radius: 12px; border-left: 4px solid ${isPositive ? '#1976d2' : '#4caf50'};">
+                            <div style="font-size: 11px; font-weight: 600; color: ${isPositive ? '#1565c0' : '#2e7d32'}; margin-bottom: 6px; text-transform: uppercase;">
+                                ${isPositive ? '✨ 성과 초과 달성' : '🚀 기회 발견'}
                             </div>
-                            <div style="font-size: 14px; color: var(--grey-900); font-weight: 500; line-height: 1.5;">
+                            <div style="font-size: 13px; color: var(--grey-900); font-weight: 500; line-height: 1.5;">
                                 ${opp.message}
                             </div>
-                            ${opp.value !== undefined ? `
-                                <div style="font-size: 20px; font-weight: 700; color: #2e7d32; margin-top: 12px;">
-                                    ROAS ${formatPercent(opp.value)}
-                                </div>
-                            ` : ''}
                         </div>
                     `;
                 });
-                html += '</div>';
+                html += '</div></div>';
             }
 
             // Top 유형구분 테이블
             html += `
                 <div style="margin-top: 16px;">
                     <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
-                        📊 ROAS 상위 유형구분
+                        📊 ROAS 상위 유형구분 - 예산 확대 우선순위
                     </div>
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
                             <thead>
-                                <tr style="background: var(--grey-50);">
-                                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--grey-200);">유형구분</th>
-                                    <th style="padding: 12px; text-align: right; border-bottom: 2px solid var(--grey-200);">ROAS</th>
-                                    <th style="padding: 12px; text-align: right; border-bottom: 2px solid var(--grey-200);">비용</th>
-                                    <th style="padding: 12px; text-align: right; border-bottom: 2px solid var(--grey-200);">전환수</th>
-                                    <th style="padding: 12px; text-align: right; border-bottom: 2px solid var(--grey-200);">CPA</th>
-                                    <th style="padding: 12px; text-align: center; border-bottom: 2px solid var(--grey-200);">투자 제안</th>
+                                <tr style="background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%);">
+                                    <th style="padding: 14px; text-align: left; border-bottom: 2px solid #81c784; color: #2e7d32;">유형구분</th>
+                                    <th style="padding: 14px; text-align: right; border-bottom: 2px solid #81c784; color: #2e7d32;">현재 ROAS</th>
+                                    <th style="padding: 14px; text-align: right; border-bottom: 2px solid #81c784; color: #2e7d32;">비용</th>
+                                    <th style="padding: 14px; text-align: right; border-bottom: 2px solid #81c784; color: #2e7d32;">전환수</th>
+                                    <th style="padding: 14px; text-align: right; border-bottom: 2px solid #81c784; color: #2e7d32;">CPA</th>
+                                    <th style="padding: 14px; text-align: center; border-bottom: 2px solid #81c784; color: #2e7d32;">액션</th>
                                 </tr>
                             </thead>
                             <tbody>
             `;
 
             topCategories.forEach((cat, idx) => {
-                const roasLevel = cat.roas > 300 ? 'excellent' : cat.roas > 200 ? 'good' : 'normal';
-                const badge = roasLevel === 'excellent' ? '🔥 적극 확대' : roasLevel === 'good' ? '✅ 확대 권장' : '➡️ 유지';
-                const badgeColor = roasLevel === 'excellent' ? '#2e7d32' : roasLevel === 'good' ? '#1976d2' : '#757575';
+                const roasLevel = cat.roas > 500 ? 'excellent' : cat.roas > 200 ? 'good' : cat.roas > 100 ? 'normal' : 'low';
+                const badge = roasLevel === 'excellent' ? '🔥 적극 확대' : roasLevel === 'good' ? '✅ 확대 권장' : roasLevel === 'normal' ? '➡️ 유지' : '⚠️ 최적화 필요';
+                const badgeColor = roasLevel === 'excellent' ? '#2e7d32' : roasLevel === 'good' ? '#1976d2' : roasLevel === 'normal' ? '#757575' : '#f57c00';
+                const rankBadge = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
 
                 html += `
-                    <tr style="border-bottom: 1px solid var(--grey-100);">
-                        <td style="padding: 12px; font-weight: 500;">${idx + 1}. ${cat.name}</td>
-                        <td style="padding: 12px; text-align: right; font-weight: 600; color: ${roasLevel === 'excellent' ? '#2e7d32' : roasLevel === 'good' ? '#1976d2' : 'var(--grey-900)'};">
+                    <tr style="border-bottom: 1px solid var(--grey-100); ${idx === 0 ? 'background: #f1f8f4;' : ''}">
+                        <td style="padding: 14px; font-weight: 600;">
+                            <span style="margin-right: 6px;">${rankBadge}</span>${cat.name}
+                        </td>
+                        <td style="padding: 14px; text-align: right; font-weight: 700; color: ${roasLevel === 'excellent' ? '#2e7d32' : roasLevel === 'good' ? '#1976d2' : 'var(--grey-900)'};">
                             ${formatPercent(cat.roas)}
                         </td>
-                        <td style="padding: 12px; text-align: right;">${formatCurrency(cat.cost)}</td>
-                        <td style="padding: 12px; text-align: right;">${formatNumber(cat.conversions)}</td>
-                        <td style="padding: 12px; text-align: right;">${formatCurrency(cat.cpa)}</td>
-                        <td style="padding: 12px; text-align: center;">
-                            <span style="padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; background: ${badgeColor}15; color: ${badgeColor};">
+                        <td style="padding: 14px; text-align: right;">${formatCurrency(cat.cost)}</td>
+                        <td style="padding: 14px; text-align: right;">${formatNumber(cat.conversions)}</td>
+                        <td style="padding: 14px; text-align: right;">${formatCurrency(cat.cpa)}</td>
+                        <td style="padding: 14px; text-align: center;">
+                            <span style="padding: 5px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; background: ${badgeColor}15; color: ${badgeColor};">
                                 ${badge}
                             </span>
                         </td>
@@ -3499,38 +3600,156 @@
                 </div>
             `;
 
+            // 빠른 액션 가이드
+            html += `
+                <div style="margin-top: 20px; padding: 16px 20px; background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border-radius: 12px; border-left: 4px solid #ffc107;">
+                    <div style="font-size: 13px; font-weight: 600; color: #f57f17; margin-bottom: 10px;">⚡ 오늘 바로 실행하세요!</div>
+                    <div style="font-size: 12px; color: var(--grey-800); line-height: 1.8;">
+                        1. <strong>ROAS 300% 이상 채널</strong>의 일일 예산을 15-20% 증액하세요<br>
+                        2. <strong>AI 예측 상승 채널</strong>에 A/B 테스트용 새 크리에이티브를 추가하세요<br>
+                        3. <strong>전환수가 많고 CPA가 낮은 캠페인</strong>의 타겟팅을 확장하세요
+                    </div>
+                </div>
+            `;
+
             document.getElementById('opportunityContent').innerHTML = html;
         }
 
         // 탭 2: 예산 투자 가이드
         function renderBudgetGuideTab() {
             const recommendations = insightsData.recommendations || [];
+            const forecast = insightsData.prophet_forecast || null;
+            const topCategories = insightsData.top_categories || [];
+            const brandPerformance = insightsData.brand_performance || [];
+            const productPerformance = insightsData.product_performance || [];
 
-            let html = '<div style="display: grid; gap: 16px;">';
+            let html = '';
+
+            // 투자 우선순위 대시보드
+            html += `
+                <div style="margin-bottom: 24px; padding: 20px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 16px;">
+                    <div style="font-size: 15px; font-weight: 700; color: #0d47a1; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 20px;">💰</span> 예산 투자 우선순위 TOP 3
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+            `;
+
+            // 상위 카테고리 기반 투자 추천
+            topCategories.slice(0, 3).forEach((cat, idx) => {
+                const colors = ['#1565c0', '#1976d2', '#1e88e5'];
+                const icons = ['🥇', '🥈', '🥉'];
+                const increaseRate = cat.roas > 500 ? '20-30%' : cat.roas > 200 ? '15-20%' : '10-15%';
+
+                html += `
+                    <div style="padding: 16px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 20px;">${icons[idx]}</span>
+                            <span style="font-size: 13px; font-weight: 700; color: ${colors[idx]};">${cat.name}</span>
+                        </div>
+                        <div style="font-size: 22px; font-weight: 800; color: var(--grey-900); margin-bottom: 4px;">
+                            ${formatPercent(cat.roas)}
+                        </div>
+                        <div style="font-size: 11px; color: var(--grey-600);">현재 ROAS</div>
+                        <div style="margin-top: 12px; padding: 8px 12px; background: ${colors[idx]}10; border-radius: 8px; font-size: 12px; color: ${colors[idx]}; font-weight: 600;">
+                            📈 예산 ${increaseRate} 증액 권장
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div></div>';
+
+            // 예측 기반 투자 가이드
+            if (forecast) {
+                html += `
+                    <div style="margin-bottom: 24px; padding: 20px; background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); border-radius: 12px;">
+                        <div style="font-size: 14px; font-weight: 700; color: #6a1b9a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 18px;">🔮</span> AI 예측 기반 투자 전략
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                `;
+
+                // 플랫폼 예측 기반
+                if (forecast.by_platform && forecast.by_platform.length > 0) {
+                    const topPlatform = [...forecast.by_platform].sort((a, b) => b.total_30day_forecast - a.total_30day_forecast)[0];
+                    if (topPlatform && topPlatform.total_30day_forecast > 0) {
+                        html += `
+                            <div style="padding: 14px; background: white; border-radius: 10px;">
+                                <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">추천 플랫폼</div>
+                                <div style="font-size: 14px; font-weight: 700; color: var(--grey-900);">${topPlatform.platform}</div>
+                                <div style="font-size: 12px; color: #7b1fa2; margin-top: 4px;">30일 예측 전환값: ${formatCurrency(topPlatform.total_30day_forecast)}</div>
+                            </div>
+                        `;
+                    }
+                }
+
+                // 상품 예측 기반
+                if (forecast.by_product && forecast.by_product.length > 0) {
+                    const topProduct = [...forecast.by_product].sort((a, b) => b.total_30day_forecast - a.total_30day_forecast)[0];
+                    if (topProduct && topProduct.total_30day_forecast > 0) {
+                        html += `
+                            <div style="padding: 14px; background: white; border-radius: 10px;">
+                                <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">추천 상품</div>
+                                <div style="font-size: 14px; font-weight: 700; color: var(--grey-900);">${topProduct.product}</div>
+                                <div style="font-size: 12px; color: #7b1fa2; margin-top: 4px;">30일 예측 전환값: ${formatCurrency(topProduct.total_30day_forecast)}</div>
+                            </div>
+                        `;
+                    }
+                }
+
+                // 브랜드 예측 기반
+                if (forecast.by_brand && forecast.by_brand.length > 0) {
+                    const topBrand = [...forecast.by_brand].sort((a, b) => b.total_30day_forecast - a.total_30day_forecast)[0];
+                    if (topBrand && topBrand.total_30day_forecast > 0) {
+                        html += `
+                            <div style="padding: 14px; background: white; border-radius: 10px;">
+                                <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">추천 브랜드</div>
+                                <div style="font-size: 14px; font-weight: 700; color: var(--grey-900);">${topBrand.brand}</div>
+                                <div style="font-size: 12px; color: #7b1fa2; margin-top: 4px;">30일 예측 전환값: ${formatCurrency(topBrand.total_30day_forecast)}</div>
+                            </div>
+                        `;
+                    }
+                }
+
+                html += '</div></div>';
+            }
+
+            // 추천사항 목록
+            html += `<div style="font-size: 14px; font-weight: 700; color: var(--grey-900); margin-bottom: 16px;">📋 상세 투자 추천</div>`;
+            html += '<div style="display: grid; gap: 12px;">';
 
             if (recommendations.length === 0) {
-                html += '<p style="color: var(--grey-500);">추천 데이터가 없습니다.</p>';
+                html += '<p style="color: var(--grey-500); padding: 20px; text-align: center;">추천 데이터가 없습니다.</p>';
             } else {
-                recommendations.forEach((rec, idx) => {
+                // 기존 추천과 예측 기반 추천 구분
+                const regularRecs = recommendations.filter(r => !r.based_on);
+                const forecastRecs = recommendations.filter(r => r.based_on === 'prophet_forecast');
+
+                [...forecastRecs, ...regularRecs].forEach((rec, idx) => {
                     const priorityColor = rec.priority === 'high' ? '#d32f2f' : rec.priority === 'medium' ? '#f57c00' : '#388e3c';
                     const priorityLabel = rec.priority === 'high' ? '높음' : rec.priority === 'medium' ? '보통' : '낮음';
                     const priorityIcon = rec.priority === 'high' ? '🔴' : rec.priority === 'medium' ? '🟡' : '🟢';
+                    const isForecast = rec.based_on === 'prophet_forecast';
 
                     html += `
-                        <div style="padding: 20px; background: white; border-radius: 12px; border: 1px solid var(--grey-200); box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                                <div style="font-size: 15px; font-weight: 600; color: var(--grey-900);">
-                                    ${rec.title}
+                        <div style="padding: 18px 20px; background: ${isForecast ? 'linear-gradient(135deg, #fce4ec 0%, #fff 100%)' : 'white'}; border-radius: 12px; border: 1px solid ${isForecast ? '#f48fb1' : 'var(--grey-200)'}; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    ${isForecast ? '<span style="font-size: 14px;">🔮</span>' : ''}
+                                    <div style="font-size: 14px; font-weight: 600; color: var(--grey-900);">
+                                        ${rec.title}
+                                    </div>
                                 </div>
-                                <span style="padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; background: ${priorityColor}15; color: ${priorityColor};">
-                                    ${priorityIcon} 우선순위 ${priorityLabel}
+                                <span style="padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 600; background: ${priorityColor}15; color: ${priorityColor};">
+                                    ${priorityIcon} ${priorityLabel}
                                 </span>
                             </div>
-                            <div style="font-size: 13px; color: var(--grey-700); line-height: 1.6; margin-bottom: 12px;">
+                            <div style="font-size: 13px; color: var(--grey-700); line-height: 1.6; margin-bottom: 10px;">
                                 ${rec.description}
                             </div>
-                            <div style="padding: 10px 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; font-size: 12px; color: #1565c0;">
-                                <strong>💡 예상 효과:</strong> ${rec.expected_impact}
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; font-size: 12px;">
+                                <span style="color: #2e7d32;"><strong>💡 예상 효과:</strong> ${rec.expected_impact}</span>
+                                ${isForecast ? '<span style="font-size: 10px; color: #7b1fa2; font-weight: 600;">AI 예측 기반</span>' : ''}
                             </div>
                         </div>
                     `;
@@ -3539,17 +3758,25 @@
 
             html += '</div>';
 
-            // 실행 체크리스트
+            // 주간 실행 체크리스트
             html += `
-                <div style="margin-top: 24px; padding: 16px; background: linear-gradient(135deg, #fff9e6 0%, #fffcf5 100%); border-radius: 8px; border-left: 3px solid #ffc107;">
-                    <div style="font-size: 13px; font-weight: 600; color: #f57c00; margin-bottom: 10px;">
-                        ✅ 이번 주 바로 실행할 수 있는 것들
+                <div style="margin-top: 24px; padding: 20px; background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border-radius: 12px; border-left: 4px solid #ff9800;">
+                    <div style="font-size: 14px; font-weight: 700; color: #e65100; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 18px;">✅</span> 이번 주 실행 체크리스트
                     </div>
-                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.8;">
-                        1. <strong>ROAS 상위 3개 유형구분</strong>의 예산을 10-20% 증액하세요<br>
-                        2. <strong>ROAS가 100% 미만인 캠페인</strong>은 크리에이티브 교체를 고려하세요<br>
-                        3. <strong>CPA가 평균보다 높은 캠페인</strong>의 타겟팅을 재검토하세요<br>
-                        4. <strong>전환수가 높고 ROAS도 높은 캠페인</strong>은 예산 상한을 확대하세요
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+                        <div style="padding: 12px 16px; background: white; border-radius: 8px; font-size: 12px; color: var(--grey-800);">
+                            <input type="checkbox" style="margin-right: 8px;"> <strong>ROAS 상위 3개 유형구분</strong> 예산 15% 증액
+                        </div>
+                        <div style="padding: 12px 16px; background: white; border-radius: 8px; font-size: 12px; color: var(--grey-800);">
+                            <input type="checkbox" style="margin-right: 8px;"> <strong>ROAS 100% 미만 캠페인</strong> 크리에이티브 교체
+                        </div>
+                        <div style="padding: 12px 16px; background: white; border-radius: 8px; font-size: 12px; color: var(--grey-800);">
+                            <input type="checkbox" style="margin-right: 8px;"> <strong>CPA 높은 캠페인</strong> 타겟팅 재검토
+                        </div>
+                        <div style="padding: 12px 16px; background: white; border-radius: 8px; font-size: 12px; color: var(--grey-800);">
+                            <input type="checkbox" style="margin-right: 8px;"> <strong>AI 예측 상승 채널</strong>에 신규 소재 추가
+                        </div>
                     </div>
                 </div>
             `;
@@ -3627,108 +3854,192 @@
 
         // 탭 4: 타겟팅 최적화
         function renderTargetingTab() {
-            const genderData = insightsData.gender_performance || [];
-            const platformData = insightsData.platform_performance || [];
-            const ageGenderData = insightsData.age_gender_combinations || [];
+            const genderData = (insightsData.gender_performance || []).filter(g => isValidGender(g.gender));
+            const platformData = (insightsData.platform_performance || []).filter(p =>
+                p.platform && p.platform.toLowerCase() !== 'uncategorized'
+            );
+            const ageGenderData = (insightsData.age_gender_combinations || []).filter(item =>
+                isValidGender(item.gender) && isValidAge(item.age)
+            );
+            const forecast = insightsData.prophet_forecast || null;
 
             let html = '';
 
-            // 성별 성과
+            // 타겟팅 요약 대시보드
             html += `
-                <div style="margin-bottom: 24px;">
-                    <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
-                        👥 성별 성과 분석
+                <div style="margin-bottom: 24px; padding: 20px; background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%); border-radius: 16px;">
+                    <div style="font-size: 15px; font-weight: 700; color: #283593; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 20px;">🎯</span> 최적 타겟팅 요약
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
             `;
 
-            const sortedGender = [...genderData].sort((a, b) => b.roas - a.roas);
-            sortedGender.forEach((g, idx) => {
-                const level = g.performance_level === '양호' ? 'good' : 'warning';
-                const bgColor = level === 'good' ? 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)' : 'linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%)';
-                const textColor = level === 'good' ? '#2e7d32' : '#f57c00';
-                const badge = idx === 0 ? '🏆 1위' : '';
-
+            // 최고 성과 성별
+            if (genderData.length > 0) {
+                const topGender = [...genderData].sort((a, b) => b.roas - a.roas)[0];
+                const normalizedGender = normalizeGender(topGender.gender) || topGender.gender;
                 html += `
-                    <div style="padding: 16px; background: ${bgColor}; border-radius: 10px; text-align: center;">
-                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 8px;">
-                            ${g.gender} ${badge}
-                        </div>
-                        <div style="font-size: 22px; font-weight: 700; color: ${textColor};">
-                            ${formatPercent(g.roas)}
-                        </div>
-                        <div style="font-size: 11px; color: var(--grey-500); margin-top: 4px;">
-                            비용 ${formatCurrency(g.cost)} | 전환 ${formatNumber(g.conversions)}
-                        </div>
+                    <div style="padding: 14px; background: white; border-radius: 12px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+                        <div style="font-size: 10px; color: var(--grey-600); margin-bottom: 4px;">최고 성과 성별</div>
+                        <div style="font-size: 18px; font-weight: 800; color: #283593;">${normalizedGender}</div>
+                        <div style="font-size: 12px; color: #5c6bc0; margin-top: 4px;">ROAS ${formatPercent(topGender.roas)}</div>
                     </div>
                 `;
-            });
+            }
+
+            // 최고 성과 플랫폼
+            if (platformData.length > 0) {
+                const topPlatform = [...platformData].sort((a, b) => b.roas - a.roas)[0];
+                html += `
+                    <div style="padding: 14px; background: white; border-radius: 12px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+                        <div style="font-size: 10px; color: var(--grey-600); margin-bottom: 4px;">최고 성과 플랫폼</div>
+                        <div style="font-size: 18px; font-weight: 800; color: #283593;">${topPlatform.platform}</div>
+                        <div style="font-size: 12px; color: #5c6bc0; margin-top: 4px;">ROAS ${formatPercent(topPlatform.roas)}</div>
+                    </div>
+                `;
+            }
+
+            // 최고 성과 연령×성별
+            if (ageGenderData.length > 0) {
+                const topCombo = ageGenderData[0];
+                const normalizedGender = normalizeGender(topCombo.gender) || topCombo.gender;
+                html += `
+                    <div style="padding: 14px; background: white; border-radius: 12px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+                        <div style="font-size: 10px; color: var(--grey-600); margin-bottom: 4px;">최고 성과 연령×성별</div>
+                        <div style="font-size: 16px; font-weight: 800; color: #283593;">${topCombo.age} ${normalizedGender}</div>
+                        <div style="font-size: 12px; color: #5c6bc0; margin-top: 4px;">ROAS ${formatPercent(topCombo.roas)}</div>
+                    </div>
+                `;
+            }
+
+            // AI 예측 기반 타겟
+            if (forecast && forecast.by_age) {
+                const validAges = forecast.by_age.filter(a => isValidAge(a.age) && a.total_30day_forecast > 0);
+                if (validAges.length > 0) {
+                    const topAgePredict = [...validAges].sort((a, b) => b.total_30day_forecast - a.total_30day_forecast)[0];
+                    html += `
+                        <div style="padding: 14px; background: linear-gradient(135deg, #fce4ec 0%, #fff 100%); border-radius: 12px; text-align: center; border: 1px solid #f48fb1;">
+                            <div style="font-size: 10px; color: #c2185b; margin-bottom: 4px;">🔮 AI 추천 연령</div>
+                            <div style="font-size: 16px; font-weight: 800; color: #ad1457;">${topAgePredict.age}</div>
+                            <div style="font-size: 11px; color: #e91e63; margin-top: 4px;">30일 예측 전환값: ${formatCurrency(topAgePredict.total_30day_forecast)}</div>
+                        </div>
+                    `;
+                }
+            }
 
             html += '</div></div>';
+
+            // 성별 성과 (알수없음 제외)
+            if (genderData.length > 0) {
+                html += `
+                    <div style="margin-bottom: 24px;">
+                        <div style="font-size: 14px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 16px;">👥</span> 성별 성과 분석
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                `;
+
+                const sortedGender = [...genderData].sort((a, b) => b.roas - a.roas);
+                sortedGender.forEach((g, idx) => {
+                    const normalizedGender = normalizeGender(g.gender) || g.gender;
+                    const level = g.performance_level === '양호' ? 'good' : 'warning';
+                    const bgColor = level === 'good' ? 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)' : 'linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%)';
+                    const textColor = level === 'good' ? '#2e7d32' : '#f57c00';
+                    const badge = idx === 0 ? '🏆 1위' : '';
+                    const action = idx === 0 ? '예산 증액 권장' : '유지';
+
+                    html += `
+                        <div style="padding: 18px; background: ${bgColor}; border-radius: 12px; text-align: center; ${idx === 0 ? 'border: 2px solid #4caf50;' : ''}">
+                            <div style="font-size: 14px; font-weight: 700; color: var(--grey-800); margin-bottom: 8px;">
+                                ${normalizedGender} ${badge}
+                            </div>
+                            <div style="font-size: 26px; font-weight: 800; color: ${textColor};">
+                                ${formatPercent(g.roas)}
+                            </div>
+                            <div style="font-size: 11px; color: var(--grey-600); margin-top: 8px;">
+                                비용 ${formatCurrency(g.cost)} | 전환 ${formatNumber(g.conversions)}
+                            </div>
+                            <div style="margin-top: 10px; padding: 6px 12px; background: ${textColor}15; border-radius: 8px; font-size: 11px; color: ${textColor}; font-weight: 600;">
+                                ${action}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div></div>';
+            }
 
             // 플랫폼 성과
-            html += `
-                <div style="margin-bottom: 24px;">
-                    <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
-                        📱 플랫폼 성과 분석
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
-            `;
-
-            const sortedPlatform = [...platformData].sort((a, b) => b.roas - a.roas);
-            sortedPlatform.slice(0, 6).forEach((p, idx) => {
-                const bgColor = idx === 0 ? 'linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%)' : 'white';
-                const borderStyle = idx === 0 ? 'border: 2px solid #1976d2;' : 'border: 1px solid var(--grey-200);';
-                const badge = idx === 0 ? '🏆 1위' : '';
-
+            if (platformData.length > 0) {
                 html += `
-                    <div style="padding: 14px; background: ${bgColor}; border-radius: 10px; text-align: center; ${borderStyle}">
-                        <div style="font-size: 12px; font-weight: 600; color: var(--grey-700); margin-bottom: 6px;">
-                            ${p.platform} ${badge}
+                    <div style="margin-bottom: 24px;">
+                        <div style="font-size: 14px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 16px;">📱</span> 플랫폼별 성과 분석
                         </div>
-                        <div style="font-size: 18px; font-weight: 700; color: ${idx === 0 ? '#1565c0' : 'var(--grey-900)'};">
-                            ${formatPercent(p.roas)}
-                        </div>
-                        <div style="font-size: 10px; color: var(--grey-500); margin-top: 4px;">
-                            전환 ${formatNumber(p.conversions)}
-                        </div>
-                    </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;">
                 `;
-            });
 
-            html += '</div></div>';
+                const sortedPlatform = [...platformData].sort((a, b) => b.roas - a.roas);
+                sortedPlatform.slice(0, 6).forEach((p, idx) => {
+                    const bgColor = idx === 0 ? 'linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%)' : 'white';
+                    const borderStyle = idx === 0 ? 'border: 2px solid #1976d2;' : 'border: 1px solid var(--grey-200);';
+                    const badge = idx === 0 ? '🏆' : '';
 
-            // 연령+성별 조합 TOP 5
+                    html += `
+                        <div style="padding: 16px; background: ${bgColor}; border-radius: 12px; text-align: center; ${borderStyle}">
+                            <div style="font-size: 12px; font-weight: 600; color: var(--grey-700); margin-bottom: 6px;">
+                                ${badge} ${p.platform}
+                            </div>
+                            <div style="font-size: 20px; font-weight: 800; color: ${idx === 0 ? '#1565c0' : 'var(--grey-900)'};">
+                                ${formatPercent(p.roas)}
+                            </div>
+                            <div style="font-size: 10px; color: var(--grey-500); margin-top: 4px;">
+                                전환 ${formatNumber(p.conversions)}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div></div>';
+            }
+
+            // 연령+성별 조합 TOP 5 (알수없음 제외)
             if (ageGenderData.length > 0) {
                 html += `
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
-                            🎯 효율적인 연령×성별 타겟 TOP 5
+                    <div style="margin-bottom: 24px;">
+                        <div style="font-size: 14px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 16px;">🎯</span> 효율적인 연령×성별 타겟 TOP 5
                         </div>
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
                                 <thead>
-                                    <tr style="background: var(--grey-50);">
-                                        <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--grey-200);">광고세트</th>
-                                        <th style="padding: 10px; text-align: center; border-bottom: 2px solid var(--grey-200);">연령</th>
-                                        <th style="padding: 10px; text-align: center; border-bottom: 2px solid var(--grey-200);">성별</th>
-                                        <th style="padding: 10px; text-align: right; border-bottom: 2px solid var(--grey-200);">ROAS</th>
-                                        <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--grey-200);">추천</th>
+                                    <tr style="background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);">
+                                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #7986cb; color: #283593;">순위</th>
+                                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #7986cb; color: #283593;">광고세트</th>
+                                        <th style="padding: 12px; text-align: center; border-bottom: 2px solid #7986cb; color: #283593;">연령</th>
+                                        <th style="padding: 12px; text-align: center; border-bottom: 2px solid #7986cb; color: #283593;">성별</th>
+                                        <th style="padding: 12px; text-align: right; border-bottom: 2px solid #7986cb; color: #283593;">ROAS</th>
+                                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #7986cb; color: #283593;">추천 액션</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                 `;
 
                 ageGenderData.slice(0, 5).forEach((item, idx) => {
+                    const normalizedGender = normalizeGender(item.gender) || item.gender;
+                    const rankBadge = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+                    const rowBg = idx === 0 ? 'background: #f3f4f6;' : '';
+
                     html += `
-                        <tr style="border-bottom: 1px solid var(--grey-100);">
-                            <td style="padding: 10px; font-weight: 500;">${item.adset}</td>
-                            <td style="padding: 10px; text-align: center;">${item.age}</td>
-                            <td style="padding: 10px; text-align: center;">${item.gender}</td>
-                            <td style="padding: 10px; text-align: right; font-weight: 600; color: #2e7d32;">
+                        <tr style="border-bottom: 1px solid var(--grey-100); ${rowBg}">
+                            <td style="padding: 12px; font-weight: 700; font-size: 16px;">${rankBadge}</td>
+                            <td style="padding: 12px; font-weight: 500;">${item.adset}</td>
+                            <td style="padding: 12px; text-align: center; font-weight: 600;">${item.age}</td>
+                            <td style="padding: 12px; text-align: center; font-weight: 600;">${normalizedGender}</td>
+                            <td style="padding: 12px; text-align: right; font-weight: 700; color: #2e7d32;">
                                 ${formatPercent(item.roas)}
                             </td>
-                            <td style="padding: 10px; font-size: 12px; color: var(--grey-600);">
+                            <td style="padding: 12px; font-size: 12px; color: var(--grey-700);">
                                 ${item.recommendation}
                             </td>
                         </tr>
@@ -3746,6 +4057,328 @@
             document.getElementById('targetingContent').innerHTML = html;
         }
 
+        // 탭 5: AI 예측 (Prophet Forecast)
+        function renderForecastTab() {
+            const forecast = insightsData.prophet_forecast || null;
+
+            if (!forecast) {
+                document.getElementById('forecastContent').innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+                        <div style="font-size: 16px; font-weight: 600; color: var(--grey-900); margin-bottom: 8px;">
+                            예측 데이터가 아직 준비되지 않았습니다
+                        </div>
+                        <div style="font-size: 13px; color: var(--grey-600);">
+                            Prophet 예측 분석을 실행한 후 다시 확인해주세요.
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+
+            // 1. 전체 예측 요약 카드
+            if (forecast.summary && forecast.summary.overall) {
+                const overall = forecast.summary.overall;
+                const isPositive = overall.total_forecast_revenue > 0;
+
+                html += `
+                    <div style="margin-bottom: 24px; padding: 24px; background: linear-gradient(135deg, ${isPositive ? '#e8f5e9' : '#ffebee'} 0%, ${isPositive ? '#f1f8f4' : '#fff5f5'} 100%); border-radius: 16px; border: 2px solid ${isPositive ? '#4caf50' : '#ef5350'};">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                            <div>
+                                <div style="font-size: 13px; font-weight: 600; color: ${isPositive ? '#2e7d32' : '#c62828'}; margin-bottom: 4px; text-transform: uppercase;">
+                                    ${isPositive ? '📈 성장 예측' : '📉 하락 예측'}
+                                </div>
+                                <div style="font-size: 28px; font-weight: 800; color: ${isPositive ? '#1b5e20' : '#b71c1c'};">
+                                    ${formatCurrency(Math.abs(overall.total_forecast_revenue))}
+                                </div>
+                                <div style="font-size: 12px; color: var(--grey-600); margin-top: 4px;">
+                                    향후 30일 예측 전환값 (${overall.forecast_period.start_date} ~ ${overall.forecast_period.end_date})
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 4px;">일 평균 예측</div>
+                                <div style="font-size: 18px; font-weight: 700; color: var(--grey-900);">
+                                    ${formatCurrency(Math.abs(overall.avg_daily_forecast))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 2. Prophet 예측 기반 알림
+            if (forecast.alerts && forecast.alerts.length > 0) {
+                html += `
+                    <div style="margin-bottom: 24px;">
+                        <div style="font-size: 15px; font-weight: 700; color: var(--grey-900); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 18px;">🚀</span> AI가 발견한 기회
+                        </div>
+                        <div style="display: grid; gap: 12px;">
+                `;
+
+                forecast.alerts.forEach(alert => {
+                    const isPositive = alert.severity === 'positive' || alert.severity === 'opportunity';
+                    const bgColor = isPositive ? 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)' : 'linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%)';
+                    const borderColor = isPositive ? '#4caf50' : '#ff9800';
+                    const icon = isPositive ? '✨' : '💡';
+
+                    html += `
+                        <div style="padding: 16px 20px; background: ${bgColor}; border-radius: 12px; border-left: 4px solid ${borderColor};">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px;">${icon}</span>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 14px; color: var(--grey-900); font-weight: 500; line-height: 1.5;">
+                                        ${alert.message}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div></div>';
+            }
+
+            // 3. 카테고리별 예측 (상승/하락 분류)
+            if (forecast.by_category && forecast.by_category.length > 0) {
+                const upCategories = forecast.by_category.filter(c => c.trend_direction === '상승');
+                const downCategories = forecast.by_category.filter(c => c.trend_direction === '하락');
+
+                html += `
+                    <div style="margin-bottom: 24px;">
+                        <div style="font-size: 15px; font-weight: 700; color: var(--grey-900); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 18px;">📊</span> 유형구분별 30일 예측 전환값
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                `;
+
+                // 상승 예측 채널
+                if (upCategories.length > 0) {
+                    html += `
+                        <div style="padding: 20px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 12px; border: 1px solid #90caf9;">
+                            <div style="font-size: 13px; font-weight: 600; color: #1565c0; margin-bottom: 12px;">📈 상승 예측 채널</div>
+                    `;
+                    upCategories.forEach(cat => {
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(25, 118, 210, 0.1);">
+                                <span style="font-size: 13px; color: var(--grey-800);">${cat.category}</span>
+                                <span style="font-size: 14px; font-weight: 700; color: #1565c0;">${formatCurrency(cat.total_30day_forecast)}</span>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                }
+
+                // 하락 예측 채널
+                if (downCategories.length > 0) {
+                    html += `
+                        <div style="padding: 20px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 12px; border: 1px solid #ffcc80;">
+                            <div style="font-size: 13px; font-weight: 600; color: #e65100; margin-bottom: 12px;">📉 하락 예측 채널 (주의)</div>
+                    `;
+                    downCategories.forEach(cat => {
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(230, 81, 0, 0.1);">
+                                <span style="font-size: 13px; color: var(--grey-800);">${cat.category}</span>
+                                <span style="font-size: 14px; font-weight: 700; color: #e65100;">${formatCurrency(cat.total_30day_forecast)}</span>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                }
+
+                html += '</div></div>';
+            }
+
+            // 4. 상품별 예측 TOP 5
+            if (forecast.by_product && forecast.by_product.length > 0) {
+                const sortedProducts = [...forecast.by_product].sort((a, b) => b.total_30day_forecast - a.total_30day_forecast);
+                const topProducts = sortedProducts.slice(0, 5);
+
+                html += `
+                    <div style="margin-bottom: 24px;">
+                        <div style="font-size: 15px; font-weight: 700; color: var(--grey-900); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 18px;">🛍️</span> 상품별 30일 예측 전환값 TOP 5
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                                <thead>
+                                    <tr style="background: linear-gradient(135deg, #f3e5f5 0%, #fce4ec 100%);">
+                                        <th style="padding: 14px; text-align: left; border-bottom: 2px solid #ce93d8; color: #7b1fa2;">상품</th>
+                                        <th style="padding: 14px; text-align: right; border-bottom: 2px solid #ce93d8; color: #7b1fa2;">30일 예측 전환값</th>
+                                        <th style="padding: 14px; text-align: right; border-bottom: 2px solid #ce93d8; color: #7b1fa2;">일 평균 전환값</th>
+                                        <th style="padding: 14px; text-align: center; border-bottom: 2px solid #ce93d8; color: #7b1fa2;">전망</th>
+                                        <th style="padding: 14px; text-align: left; border-bottom: 2px solid #ce93d8; color: #7b1fa2;">액션</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+
+                topProducts.forEach((prod, idx) => {
+                    const isPositive = prod.total_30day_forecast > 0;
+                    const rankBadge = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+                    const action = isPositive ? '재고 확보 & 광고 강화' : '원인 분석 & 개선 필요';
+
+                    html += `
+                        <tr style="border-bottom: 1px solid var(--grey-100);">
+                            <td style="padding: 14px; font-weight: 600;">
+                                <span style="margin-right: 8px;">${rankBadge}</span>${prod.product}
+                            </td>
+                            <td style="padding: 14px; text-align: right; font-weight: 700; color: ${isPositive ? '#2e7d32' : '#c62828'};">
+                                ${formatCurrency(prod.total_30day_forecast)}
+                            </td>
+                            <td style="padding: 14px; text-align: right; color: var(--grey-600);">
+                                ${formatCurrency(prod.avg_daily_forecast)}
+                            </td>
+                            <td style="padding: 14px; text-align: center;">
+                                <span style="padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; background: ${isPositive ? '#e8f5e9' : '#ffebee'}; color: ${isPositive ? '#2e7d32' : '#c62828'};">
+                                    ${isPositive ? '📈 성장' : '📉 주의'}
+                                </span>
+                            </td>
+                            <td style="padding: 14px; font-size: 12px; color: var(--grey-600);">
+                                ${action}
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table></div></div>';
+            }
+
+            // 5. 플랫폼별 예측
+            if (forecast.by_platform && forecast.by_platform.length > 0) {
+                const sortedPlatforms = [...forecast.by_platform].sort((a, b) => b.total_30day_forecast - a.total_30day_forecast);
+
+                html += `
+                    <div style="margin-bottom: 24px;">
+                        <div style="font-size: 15px; font-weight: 700; color: var(--grey-900); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 18px;">📱</span> 플랫폼별 30일 예측 전환값
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+                `;
+
+                sortedPlatforms.forEach((plat, idx) => {
+                    const isPositive = plat.total_30day_forecast > 0;
+                    const bgColor = idx === 0 ? 'linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%)' : 'white';
+                    const borderStyle = idx === 0 ? 'border: 2px solid #1976d2;' : 'border: 1px solid var(--grey-200);';
+                    const badge = idx === 0 ? '🏆 1위' : '';
+
+                    html += `
+                        <div style="padding: 16px; background: ${bgColor}; border-radius: 12px; text-align: center; ${borderStyle}">
+                            <div style="font-size: 12px; font-weight: 600; color: var(--grey-700); margin-bottom: 8px;">
+                                ${plat.platform} ${badge}
+                            </div>
+                            <div style="font-size: 18px; font-weight: 700; color: ${isPositive ? '#1565c0' : '#c62828'};">
+                                ${formatCurrency(plat.total_30day_forecast)}
+                            </div>
+                            <div style="font-size: 10px; color: var(--grey-500); margin-top: 4px;">
+                                일 평균 전환값 ${formatCurrency(plat.avg_daily_forecast)}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div></div>';
+            }
+
+            // 6. 성별 & 연령 예측
+            html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 24px;">';
+
+            // 성별 예측
+            if (forecast.by_gender && forecast.by_gender.length > 0) {
+                const validGenders = forecast.by_gender.filter(g => isValidGender(g.gender));
+                if (validGenders.length > 0) {
+                    html += `
+                        <div style="padding: 20px; background: white; border-radius: 12px; border: 1px solid var(--grey-200);">
+                            <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 16px;">👫 성별 30일 예측 전환값</div>
+                    `;
+
+                    validGenders.forEach(g => {
+                        const isPositive = g.total_30day_forecast > 0;
+                        const normalizedGender = normalizeGender(g.gender) || g.gender;
+
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--grey-100);">
+                                <span style="font-size: 13px; color: var(--grey-800);">${normalizedGender}</span>
+                                <span style="font-size: 15px; font-weight: 700; color: ${isPositive ? '#2e7d32' : '#c62828'};">
+                                    ${formatCurrency(g.total_30day_forecast)}
+                                </span>
+                            </div>
+                        `;
+                    });
+
+                    html += '</div>';
+                }
+            }
+
+            // 연령 예측 TOP 5
+            if (forecast.by_age && forecast.by_age.length > 0) {
+                const validAges = forecast.by_age.filter(a => isValidAge(a.age));
+                const sortedAges = [...validAges].sort((a, b) => b.total_30day_forecast - a.total_30day_forecast).slice(0, 5);
+
+                if (sortedAges.length > 0) {
+                    html += `
+                        <div style="padding: 20px; background: white; border-radius: 12px; border: 1px solid var(--grey-200);">
+                            <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 16px;">👤 연령 30일 예측 전환값 TOP 5</div>
+                    `;
+
+                    sortedAges.forEach((a, idx) => {
+                        const isPositive = a.total_30day_forecast > 0;
+                        const rankBadge = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '';
+
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--grey-100);">
+                                <span style="font-size: 13px; color: var(--grey-800);">${rankBadge} ${a.age}</span>
+                                <span style="font-size: 15px; font-weight: 700; color: ${isPositive ? '#2e7d32' : '#c62828'};">
+                                    ${formatCurrency(a.total_30day_forecast)}
+                                </span>
+                            </div>
+                        `;
+                    });
+
+                    html += '</div>';
+                }
+            }
+
+            html += '</div>';
+
+            // 7. 예측 기반 추천
+            if (forecast.recommendations && forecast.recommendations.length > 0) {
+                html += `
+                    <div style="margin-top: 24px; padding: 20px; background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%); border-radius: 12px; border: 1px solid #ffd54f;">
+                        <div style="font-size: 14px; font-weight: 600; color: #f57f17; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 18px;">💡</span> AI 예측 기반 액션 추천
+                        </div>
+                        <div style="display: grid; gap: 12px;">
+                `;
+
+                forecast.recommendations.forEach(rec => {
+                    const priorityColor = rec.priority === 'high' ? '#d32f2f' : rec.priority === 'medium' ? '#f57c00' : '#388e3c';
+                    const priorityIcon = rec.priority === 'high' ? '🔴' : rec.priority === 'medium' ? '🟡' : '🟢';
+
+                    html += `
+                        <div style="padding: 16px; background: white; border-radius: 10px; border-left: 4px solid ${priorityColor};">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                                <div style="font-size: 14px; font-weight: 600; color: var(--grey-900);">${rec.title}</div>
+                                <span style="padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; background: ${priorityColor}15; color: ${priorityColor};">
+                                    ${priorityIcon} ${rec.priority === 'high' ? '높음' : rec.priority === 'medium' ? '보통' : '낮음'}
+                                </span>
+                            </div>
+                            <div style="font-size: 13px; color: var(--grey-700); line-height: 1.5;">${rec.description}</div>
+                            <div style="font-size: 12px; color: #1565c0; margin-top: 8px;">
+                                <strong>💡 예상 효과:</strong> ${rec.expected_impact}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div></div>';
+            }
+
+            document.getElementById('forecastContent').innerHTML = html;
+        }
+
         // 의사결정 도구 탭 전환 초기화
         function initDecisionToolTabs() {
             document.querySelectorAll('.decision-tool-tab-btn').forEach(btn => {
@@ -3761,6 +4394,7 @@
 
                     let selectedTab = null;
                     if (targetTab === 'opportunity') selectedTab = document.getElementById('opportunityTab');
+                    else if (targetTab === 'forecast') selectedTab = document.getElementById('forecastTab');
                     else if (targetTab === 'budget') selectedTab = document.getElementById('budgetGuideTab');
                     else if (targetTab === 'warning') selectedTab = document.getElementById('warningTab');
                     else if (targetTab === 'targeting') selectedTab = document.getElementById('targetingTab');
@@ -3826,13 +4460,19 @@
 
         // 성별 차트
         function renderGenderChart() {
-            const genders = insightsData.gender_performance.filter(g => g.cost > 0);
+            // 알수없음 필터링 및 비용 > 0 필터 적용
+            const genders = insightsData.gender_performance
+                .filter(g => g.cost > 0 && isValidGender(g.gender))
+                .map(g => ({
+                    ...g,
+                    displayGender: normalizeGender(g.gender) || g.gender
+                }));
 
             const ctx = document.getElementById('genderChart').getContext('2d');
             new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: genders.map(g => g.gender),
+                    labels: genders.map(g => g.displayGender),
                     datasets: [{
                         data: genders.map(g => g.roas),
                         backgroundColor: [
@@ -3857,7 +4497,7 @@
                                 label: function(context) {
                                     const item = genders[context.dataIndex];
                                     return [
-                                        `${item.gender}`,
+                                        `${item.displayGender}`,
                                         `ROAS: ${formatPercent(item.roas)}`,
                                         `전환수: ${formatNumber(item.conversions)}`,
                                         `성과: ${item.performance_level}`
@@ -4044,18 +4684,26 @@
         function renderAgeGenderTable() {
             const combinations = insightsData.age_gender_combinations;
 
+            // 알수없음 필터링 및 성별 정규화 적용
+            const filteredCombinations = combinations.filter(combo =>
+                isValidGender(combo.gender) && isValidAge(combo.age)
+            );
+
             const tbody = document.querySelector('#age-gender-table tbody');
-            tbody.innerHTML = combinations.map((combo, index) => `
-                <tr>
-                    <td><strong>#${index + 1}</strong></td>
-                    <td>${combo.adset}</td>
-                    <td>${combo.age}</td>
-                    <td>${combo.gender}</td>
-                    <td><strong style="color: var(--success-main)">${formatPercent(combo.roas)}</strong></td>
-                    <td>${formatNumber(combo.conversions)}</td>
-                    <td>${combo.recommendation}</td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = filteredCombinations.map((combo, index) => {
+                const normalizedGender = normalizeGender(combo.gender) || combo.gender;
+                return `
+                    <tr>
+                        <td><strong>#${index + 1}</strong></td>
+                        <td>${combo.adset}</td>
+                        <td>${combo.age}</td>
+                        <td>${normalizedGender}</td>
+                        <td><strong style="color: var(--success-main)">${formatPercent(combo.roas)}</strong></td>
+                        <td>${formatNumber(combo.conversions)}</td>
+                        <td>${combo.recommendation}</td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         // 브랜드 상세 테이블
@@ -4126,7 +4774,7 @@
                             <div class="insight-value">지표: ${formatValue(alert.value)}${alert.type.includes('roas') || alert.type.includes('revenue') || alert.type.includes('change') ? '%' : ''}</div>
                         ` : ''}
                         ${alert.category ? `<div class="insight-value">카테고리: ${alert.category}</div>` : ''}
-                        ${alert.gender ? `<div class="insight-value">성별: ${alert.gender}</div>` : ''}
+                        ${alert.gender && isValidGender(alert.gender) ? `<div class="insight-value">성별: ${normalizeGender(alert.gender)}</div>` : ''}
                     </div>
                 `;
             }).join('');
@@ -5062,8 +5710,10 @@
             const gendersToShow = new Set();
 
             genderDimensionData.forEach(row => {
-                const gender = row['성별'];
-                if (!gender || gender === '' || gender === '-') return;
+                const rawGender = row['성별'];
+                // 알수없음 필터링 및 정규화 적용
+                const normalizedGender = normalizeGender(rawGender);
+                if (!normalizedGender) return;
 
                 let matchesAllFilters = true;
 
@@ -5081,7 +5731,7 @@
                 });
 
                 if (matchesAllFilters) {
-                    gendersToShow.add(gender);
+                    gendersToShow.add(normalizedGender);
                 }
             });
 
@@ -8587,41 +9237,11 @@
             }).format(value);
         }
 
-        // 성별 정규화 함수
-        function normalizeGender(gender) {
-            if (!gender || gender === '' || gender === '-') return null;
-
-            const genderStr = gender.toString().trim();
-            const genderLower = genderStr.toLowerCase();
-
-            // 남자 패턴: 남자, 남성, MALE, male
-            if (genderLower === 'male' || genderStr === '남자' || genderStr === '남성') {
-                return 'Male';
-            }
-
-            // 여자 패턴: 여자, 여성, FEMALE, female
-            if (genderLower === 'female' || genderStr === '여자' || genderStr === '여성') {
-                return 'Female';
-            }
-
-            // 알수없음 패턴: UN*, un*, 알 수 없음, 구분없음, 알수없음, 구분 없음
-            if (genderLower.startsWith('un') ||
-                genderStr === '알 수 없음' ||
-                genderStr === '알수없음' ||
-                genderStr === '구분없음' ||
-                genderStr === '구분 없음') {
-                return 'Unknown';
-            }
-
-            return 'Unknown'; // 기타 모든 경우
-        }
-
-        // 성별 한글 레이블 함수
+        // 성별 한글 레이블 함수 (하위 호환성 유지)
         function getGenderDisplayName(normalizedGender) {
-            if (normalizedGender === 'Male') return '남자';
-            if (normalizedGender === 'Female') return '여자';
-            if (normalizedGender === 'Unknown') return '알수없음';
-            return normalizedGender;
+            if (normalizedGender === '남성' || normalizedGender === 'Male') return '남성';
+            if (normalizedGender === '여성' || normalizedGender === 'Female') return '여성';
+            return null;
         }
 
         // 성별 연령 PIVOT 테이블 렌더링
@@ -8720,10 +9340,10 @@
 
             // 고유한 성별과 연령 추출 및 정렬
             let genders = [...new Set(Object.values(pivotData).map(d => d.gender))].sort();
-            const ages = [...new Set(Object.values(pivotData).map(d => d.age))].sort();
+            const ages = [...new Set(Object.values(pivotData).map(d => d.age))].filter(a => isValidAge(a)).sort();
 
-            // Unknown 제외하고 Male, Female만 사용
-            genders = genders.filter(g => g === 'Male' || g === 'Female');
+            // Unknown 제외하고 남성, 여성만 사용 (normalizeGender가 반환하는 값)
+            genders = genders.filter(g => g === '남성' || g === '여성');
 
             // 데이터가 없으면 안내 메시지 표시
             if (Object.keys(pivotData).length === 0 || genders.length === 0 || ages.length === 0) {

@@ -3532,10 +3532,10 @@
         },
         "total_forecast_revenue": -41121819.93353799,
         "avg_daily_forecast": -1370727.331117933,
-        "forecast_range": {
-          "lower_bound": -102783749.99871059,
-          "upper_bound": 19557969.80953157
-        }
+        "avg_forecast_roas": -34.25150667616452,
+        "avg_forecast_cpa": 575122.5973019289,
+        "total_forecast_cost": 123716472.85358231,
+        "total_forecast_conversions": 706.5418817977603
       }
     },
     "by_category": [
@@ -3545,7 +3545,9 @@
         "avg_daily_forecast": 2199564.677091292,
         "trend_direction": "하락",
         "first_week_avg": 4042201.979682763,
-        "last_week_avg": 1020346.2133778663
+        "last_week_avg": 1020346.2133778663,
+        "avg_forecast_roas": 186.44381189354573,
+        "avg_forecast_cpa": 21396.926854035915
       },
       {
         "category": "네이버_쇼핑검색",
@@ -3553,7 +3555,9 @@
         "avg_daily_forecast": 1035851.7446995347,
         "trend_direction": "하락",
         "first_week_avg": 1122882.8964739682,
-        "last_week_avg": 816444.8845934013
+        "last_week_avg": 816444.8845934013,
+        "avg_forecast_roas": 234.46744365731232,
+        "avg_forecast_cpa": 61646.19448902746
       },
       {
         "category": "메타_트래픽",
@@ -3561,7 +3565,9 @@
         "avg_daily_forecast": 1619405.906892252,
         "trend_direction": "상승",
         "first_week_avg": 476379.181287984,
-        "last_week_avg": 1646560.8162988375
+        "last_week_avg": 1646560.8162988375,
+        "avg_forecast_roas": 169.04128253411213,
+        "avg_forecast_cpa": 83563.0001455925
       }
     ],
     "by_brand": [
@@ -3569,17 +3575,17 @@
         "brand": "기존제품",
         "total_30day_forecast": 15237478.794290498,
         "avg_daily_forecast": 507915.95980968326,
-        "confidence_level": "낮음",
-        "forecast_lower": -1723446.1453822106,
-        "forecast_upper": 32017769.423136875
+        "avg_forecast_roas": 70.95151549014312,
+        "avg_forecast_cpa": 24738.4836025426,
+        "total_forecast_cost": 20598925.54046659
       },
       {
         "brand": "신제품",
         "total_30day_forecast": -209832520.01438257,
         "avg_daily_forecast": -6994417.333812753,
-        "confidence_level": "낮음",
-        "forecast_lower": -215467869.17540613,
-        "forecast_upper": -204141549.36856726
+        "avg_forecast_roas": 66.62612644957362,
+        "avg_forecast_cpa": -341379.13717724587,
+        "total_forecast_cost": -292042063.1865469
       }
     ],
     "by_product": [
@@ -3587,36 +3593,41 @@
         "product": "목욕가운",
         "total_30day_forecast": 80250708.52378307,
         "avg_daily_forecast": 2675023.617459436,
-        "forecast_lower": 79597507.07148309,
-        "forecast_upper": 80904870.7382431
+        "avg_forecast_roas": -397.5136234952411,
+        "avg_forecast_cpa": 111828.71997297286,
+        "total_forecast_cost": -54145775.942302
       },
       {
         "product": "발매트",
         "total_30day_forecast": 20869927.321256578,
         "avg_daily_forecast": 695664.244041886,
-        "forecast_lower": 14367857.187735265,
-        "forecast_upper": 27395798.909644563
+        "avg_forecast_roas": -711.1583104801763,
+        "avg_forecast_cpa": -13290.786793315763,
+        "total_forecast_cost": -7124901.5723370155
       },
       {
         "product": "룸슈즈",
         "total_30day_forecast": 12249371.806966009,
         "avg_daily_forecast": 408312.3935655336,
-        "forecast_lower": 5878225.41567668,
-        "forecast_upper": 18682495.840784863
+        "avg_forecast_roas": 615.8350914572808,
+        "avg_forecast_cpa": 14041.282921967819,
+        "total_forecast_cost": 2781136.177938062
       },
       {
         "product": "기타",
         "total_30day_forecast": -28607340.097604852,
         "avg_daily_forecast": -953578.0032534951,
-        "forecast_lower": -44101360.44412082,
-        "forecast_upper": -13063960.368039256
+        "avg_forecast_roas": -180.56855030615256,
+        "avg_forecast_cpa": -429400.6128469946,
+        "total_forecast_cost": 16805238.71122454
       },
       {
         "product": "파우치",
         "total_30day_forecast": -84345678.73522069,
         "avg_daily_forecast": -2811522.624507356,
-        "forecast_lower": -85834854.6366554,
-        "forecast_upper": -82861092.61367987
+        "avg_forecast_roas": 52.2611883961199,
+        "avg_forecast_cpa": 47307.42801542913,
+        "total_forecast_cost": -114913621.95134726
       }
     ],
     "by_gender": [
@@ -3624,15 +3635,17 @@
         "gender": "남성",
         "total_30day_forecast": -125731125.41056454,
         "avg_daily_forecast": -2095518.7568427424,
-        "forecast_lower": -128548332.82881922,
-        "forecast_upper": -122932201.62340602
+        "avg_forecast_roas": 475.7616371093626,
+        "avg_forecast_cpa": 14461.017939202922,
+        "total_forecast_cost": -42225068.87886041
       },
       {
         "gender": "여성",
         "total_30day_forecast": -219643513.73979166,
         "avg_daily_forecast": -3660725.228996528,
-        "forecast_lower": -223405751.26627776,
-        "forecast_upper": -215937969.1163584
+        "avg_forecast_roas": -703.2919844286129,
+        "avg_forecast_cpa": 9567.152853999154,
+        "total_forecast_cost": 36902789.452576414
       }
     ],
     "by_age": [
@@ -3640,78 +3653,145 @@
         "age": "50세 ~ 54세",
         "total_30day_forecast": 76592340.29531911,
         "avg_daily_forecast": 2553078.00984397,
-        "forecast_lower": 76395049.5376957,
-        "forecast_upper": 76787748.29728898
+        "avg_forecast_roas": 520.3355030619759,
+        "avg_forecast_cpa": 18451.574618632334,
+        "total_forecast_cost": 11466931.553798925
       },
       {
         "age": "30세 ~ 34세",
         "total_30day_forecast": 29521607.547315624,
         "avg_daily_forecast": 984053.5849105208,
-        "forecast_lower": 28208624.477599688,
-        "forecast_upper": 30815694.553697783
+        "avg_forecast_roas": 936.8909964138458,
+        "avg_forecast_cpa": 4229.442865687552,
+        "total_forecast_cost": 3158289.146554349
       },
       {
         "age": "19세 ~ 24세",
         "total_30day_forecast": 21953420.72835934,
         "avg_daily_forecast": 731780.6909453113,
-        "forecast_lower": 21713284.760104228,
-        "forecast_upper": 22194240.568814807
+        "avg_forecast_roas": -409.0709423346066,
+        "avg_forecast_cpa": -649.9588864460328,
+        "total_forecast_cost": -2008569.3978113225
+      },
+      {
+        "age": "14세 미만",
+        "total_30day_forecast": 0.0,
+        "avg_daily_forecast": NaN,
+        "avg_forecast_roas": NaN,
+        "avg_forecast_cpa": NaN,
+        "total_forecast_cost": 0.0
+      },
+      {
+        "age": "14세 ~ 18세",
+        "total_30day_forecast": 0.0,
+        "avg_daily_forecast": NaN,
+        "avg_forecast_roas": NaN,
+        "avg_forecast_cpa": NaN,
+        "total_forecast_cost": 424308.68009059335
+      },
+      {
+        "age": "55세 ~ 59세",
+        "total_30day_forecast": 0.0,
+        "avg_daily_forecast": NaN,
+        "avg_forecast_roas": NaN,
+        "avg_forecast_cpa": NaN,
+        "total_forecast_cost": 8683584.280973693
+      },
+      {
+        "age": "60세 ~ 99세",
+        "total_30day_forecast": 0.0,
+        "avg_daily_forecast": NaN,
+        "avg_forecast_roas": NaN,
+        "avg_forecast_cpa": NaN,
+        "total_forecast_cost": 1340116.4812240442
+      },
+      {
+        "age": "AGE_RANGE_18_24",
+        "total_30day_forecast": 0.0,
+        "avg_daily_forecast": NaN,
+        "avg_forecast_roas": NaN,
+        "avg_forecast_cpa": NaN,
+        "total_forecast_cost": -1074558.608223621
+      },
+      {
+        "age": "AGE_RANGE_65_UP",
+        "total_30day_forecast": 0.0,
+        "avg_daily_forecast": NaN,
+        "avg_forecast_roas": NaN,
+        "avg_forecast_cpa": NaN,
+        "total_forecast_cost": 14205974.153282555
+      },
+      {
+        "age": "AGE_RANGE_UNDETERMINED",
+        "total_30day_forecast": 0.0,
+        "avg_daily_forecast": NaN,
+        "avg_forecast_roas": NaN,
+        "avg_forecast_cpa": NaN,
+        "total_forecast_cost": -1702716.565503747
       },
       {
         "age": "35세 ~ 39세",
         "total_30day_forecast": -8241226.925454785,
         "avg_daily_forecast": -274707.5641818262,
-        "forecast_lower": -9026210.124867957,
-        "forecast_upper": -7448707.531550669
+        "avg_forecast_roas": 698.9834095186383,
+        "avg_forecast_cpa": -3282.408050788202,
+        "total_forecast_cost": -2687835.6681034337
       },
       {
         "age": "40세 ~ 44세",
         "total_30day_forecast": -8984383.780553205,
         "avg_daily_forecast": -299479.4593517735,
-        "forecast_lower": -9983498.79409936,
-        "forecast_upper": -7983292.427396294
+        "avg_forecast_roas": -668.2346539928398,
+        "avg_forecast_cpa": -4946.076943731715,
+        "total_forecast_cost": 1607687.4875923505
       },
       {
         "age": "AGE_RANGE_55_64",
         "total_30day_forecast": -53688804.351662,
         "avg_daily_forecast": -1789626.8117220667,
-        "forecast_lower": -53981376.07443033,
-        "forecast_upper": -53396809.5526605
+        "avg_forecast_roas": -384.3354575696125,
+        "avg_forecast_cpa": -60485.45607964532,
+        "total_forecast_cost": 11836311.861164324
       },
       {
         "age": "45세 ~ 49세",
         "total_30day_forecast": -86229429.82921074,
         "avg_daily_forecast": -2874314.327640358,
-        "forecast_lower": -86693628.22644399,
-        "forecast_upper": -85766375.10554841
+        "avg_forecast_roas": -2099.3570214703464,
+        "avg_forecast_cpa": -1259.8115112429398,
+        "total_forecast_cost": 2650178.5439289655
       },
       {
         "age": "25세 ~ 29세",
         "total_30day_forecast": -95453009.53952403,
         "avg_daily_forecast": -3181766.984650801,
-        "forecast_lower": -96295513.8705759,
-        "forecast_upper": -94606843.91270697
+        "avg_forecast_roas": 1601.8518751228626,
+        "avg_forecast_cpa": -18553.82897569112,
+        "total_forecast_cost": -1445287.6311320246
       },
       {
         "age": "AGE_RANGE_35_44",
         "total_30day_forecast": -95612628.2563707,
         "avg_daily_forecast": -3187087.60854569,
-        "forecast_lower": -96655066.23280181,
-        "forecast_upper": -94573006.14215931
+        "avg_forecast_roas": 558.8208497676846,
+        "avg_forecast_cpa": 6132.8562356766915,
+        "total_forecast_cost": -16803997.116564855
       },
       {
         "age": "AGE_RANGE_45_54",
         "total_30day_forecast": -112968994.24947527,
         "avg_daily_forecast": -3765633.141649176,
-        "forecast_lower": -114546610.55672885,
-        "forecast_upper": -111416009.40171736
+        "avg_forecast_roas": 1421.4834213736654,
+        "avg_forecast_cpa": 794.6401729906917,
+        "total_forecast_cost": -7202823.665007364
       },
       {
         "age": "AGE_RANGE_25_34",
         "total_30day_forecast": -154167827.42145246,
         "avg_daily_forecast": -5138927.580715082,
-        "forecast_lower": -154209854.19042727,
-        "forecast_upper": -154126284.52806365
+        "avg_forecast_roas": 952.4450211774149,
+        "avg_forecast_cpa": 3337.4679818837863,
+        "total_forecast_cost": -13832127.591992516
       }
     ],
     "by_platform": [
@@ -3719,29 +3799,41 @@
         "platform": "Desktop",
         "total_30day_forecast": 56714432.3554452,
         "avg_daily_forecast": 1890481.07851484,
-        "forecast_lower": 56262904.11628539,
-        "forecast_upper": 57163682.911259525
+        "avg_forecast_roas": 244537.8434354989,
+        "avg_forecast_cpa": 174.02096936461663,
+        "total_forecast_cost": 16136.097752907519
       },
       {
         "platform": "Mobile app",
         "total_30day_forecast": 18314232.304733634,
         "avg_daily_forecast": 610474.4101577878,
-        "forecast_lower": 5291509.774135649,
-        "forecast_upper": 31489671.141340423
+        "avg_forecast_roas": 14.464638953675264,
+        "avg_forecast_cpa": 9534.307109094214,
+        "total_forecast_cost": 5121440.215480301
       },
       {
         "platform": "모바일",
         "total_30day_forecast": 17598644.829981297,
         "avg_daily_forecast": 586621.4943327099,
-        "forecast_lower": 4043934.6183210835,
-        "forecast_upper": 31121054.576293193
+        "avg_forecast_roas": -221.82988832353973,
+        "avg_forecast_cpa": -76557.67305840782,
+        "total_forecast_cost": -6155315.179929059
       },
       {
         "platform": "PC",
         "total_30day_forecast": 4787192.055137195,
         "avg_daily_forecast": 159573.06850457317,
-        "forecast_lower": 3186245.8394276993,
-        "forecast_upper": 6400787.286837367
+        "avg_forecast_roas": 3785.3837573509495,
+        "avg_forecast_cpa": -2351.5342016699224,
+        "total_forecast_cost": -245893.34666044152
+      },
+      {
+        "platform": "Mobile web",
+        "total_30day_forecast": 0.0,
+        "avg_daily_forecast": NaN,
+        "avg_forecast_roas": NaN,
+        "avg_forecast_cpa": NaN,
+        "total_forecast_cost": 5111.407369566262
       }
     ],
     "by_promotion": [
@@ -3749,8 +3841,9 @@
         "promotion": "기타",
         "total_30day_forecast": -19758608.268326115,
         "avg_daily_forecast": -658620.2756108704,
-        "forecast_lower": -37198118.60995971,
-        "forecast_upper": -2611867.1832776833
+        "avg_forecast_roas": -65.81124514471661,
+        "avg_forecast_cpa": 183153.15034883216,
+        "total_forecast_cost": 31514769.336376168
       }
     ],
     "alerts": [
@@ -3899,7 +3992,7 @@
       "based_on": "prophet_forecast"
     }
   ],
-  "generated_at": "2025-11-25T15:42:40.391329",
+  "generated_at": "2025-11-25T17:15:36.062094",
   "overall": {
     "current_period": {
       "start_date": "2024-09-25",
