@@ -224,7 +224,8 @@
             background: var(--paper);
             border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            user-select: none;
+            transition: box-shadow 0.2s ease;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
             border: 1px solid var(--grey-200);
         }
@@ -258,7 +259,7 @@
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background 0.15s ease, color 0.15s ease;
         }
 
         .collapsible-toggle:hover {
@@ -267,7 +268,7 @@
         }
 
         .collapsible-toggle-icon {
-            transition: transform 0.3s ease;
+            transition: transform 0.2s ease;
             transform: rotate(180deg);
         }
 
@@ -278,12 +279,14 @@
         .collapsible-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.5s ease;
+            opacity: 0;
             padding: 0 24px;
+            transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
         }
 
         .collapsible-content.expanded {
-            max-height: 10000px;
+            max-height: 5000px;
+            opacity: 1;
             padding: 24px;
         }
 
@@ -380,21 +383,47 @@
             margin-top: 4px;
         }
 
-        /* KPI 카드 */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 16px;
+        /* KPI 카드 - 2행 레이아웃 */
+        .kpi-wrapper {
             margin-bottom: 24px;
         }
 
+        .kpi-row {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .kpi-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .kpi-row-primary {
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        .kpi-row-secondary {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
         .kpi-card {
-            background: var(--paper);
-            border-radius: 12px;
             padding: 20px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--paper) 0%, var(--grey-50) 100%);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            border: 1px solid var(--grey-200);
-            transition: all 0.3s;
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 16px 0 0 16px;
         }
 
         .kpi-card:hover {
@@ -402,57 +431,71 @@
             transform: translateY(-2px);
         }
 
-        .kpi-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
+        /* Primary KPIs 색상 */
+        .kpi-row-primary .kpi-card:nth-child(1)::before { background: linear-gradient(180deg, #673ab7 0%, #9c27b0 100%); }
+        .kpi-row-primary .kpi-card:nth-child(2)::before { background: linear-gradient(180deg, #ffab00 0%, #ff8f00 100%); }
+        .kpi-row-primary .kpi-card:nth-child(3)::before { background: linear-gradient(180deg, #2196f3 0%, #1976d2 100%); }
+        .kpi-row-primary .kpi-card:nth-child(4)::before { background: linear-gradient(180deg, #ff9800 0%, #f57c00 100%); }
+        .kpi-row-primary .kpi-card:nth-child(5)::before { background: linear-gradient(180deg, #00c853 0%, #00a152 100%); }
+
+        /* Secondary KPIs 색상 */
+        .kpi-row-secondary .kpi-card:nth-child(1)::before { background: linear-gradient(180deg, #00bcd4 0%, #0097a7 100%); }
+        .kpi-row-secondary .kpi-card:nth-child(2)::before { background: linear-gradient(180deg, #e91e63 0%, #c2185b 100%); }
+        .kpi-row-secondary .kpi-card:nth-child(3)::before { background: linear-gradient(180deg, #4caf50 0%, #388e3c 100%); }
+        .kpi-row-secondary .kpi-card:nth-child(4)::before { background: linear-gradient(180deg, #9c27b0 0%, #7b1fa2 100%); }
+
+        .kpi-card h3 {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .kpi-title {
-            font-size: 13px;
-            color: var(--grey-600);
-            font-weight: 500;
-        }
-
-        .kpi-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .kpi-icon svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .kpi-value {
+        .kpi-card .value {
             font-size: 28px;
             font-weight: 700;
             color: var(--grey-900);
-            margin-bottom: 8px;
+            line-height: 1.1;
+            margin-bottom: 4px;
         }
 
-        .kpi-change {
-            font-size: 12px;
-            display: flex;
+        .kpi-card .unit {
+            font-size: 11px;
+            color: var(--grey-500);
+            font-weight: 500;
+        }
+
+        .kpi-card .trend {
+            display: inline-flex;
             align-items: center;
             gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-top: 10px;
         }
 
-        .kpi-change.positive {
+        .kpi-card .trend.up {
             color: var(--success-main);
+            background: var(--success-light);
         }
 
-        .kpi-change.negative {
+        .kpi-card .trend.down {
             color: var(--error-main);
+            background: var(--error-light);
         }
 
-        .kpi-change.neutral {
-            color: var(--grey-500);
+        .kpi-card .trend.neutral {
+            color: var(--grey-600);
+            background: var(--grey-100);
+        }
+
+        .kpi-card .trend svg {
+            width: 12px;
+            height: 12px;
         }
 
         /* 인사이트 카드 */
@@ -647,16 +690,37 @@
             }
         }
 
+        @media (max-width: 1400px) {
+            .kpi-row-primary {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .kpi-row-secondary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 padding: 16px;
             }
 
-            .kpi-grid {
-                grid-template-columns: 1fr;
+            .kpi-row-primary,
+            .kpi-row-secondary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .kpi-card .value {
+                font-size: 24px;
             }
 
             .insights-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .kpi-row-primary,
+            .kpi-row-secondary {
                 grid-template-columns: 1fr;
             }
         }
@@ -809,7 +873,7 @@
             <!-- 전체 개요 섹션 (항상 표시) -->
             <div>
                 <!-- KPI 카드 -->
-                <div class="kpi-grid" id="kpi-grid">
+                <div class="kpi-wrapper" id="kpi-wrapper">
                     <div class="loading">
                         <div class="loading-spinner"></div>
                     </div>
@@ -1126,22 +1190,35 @@
                                     </div>
                                 </div>
 
-                                <!-- 지표 선택 드롭다운 -->
-                                <div style="margin-bottom: 20px;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
-                                    <select id="genderMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
-                                        <option value="roas">ROAS</option>
-                                        <option value="cost">비용</option>
-                                        <option value="revenue">전환값</option>
-                                        <option value="conversions">전환수</option>
-                                        <option value="impressions">노출수</option>
-                                        <option value="clicks">클릭수</option>
-                                        <option value="cpm">CPM</option>
-                                        <option value="cpc">CPC</option>
-                                        <option value="cpa">CPA</option>
-                                        <option value="ctr">CTR</option>
-                                        <option value="cvr">전환율</option>
-                                    </select>
+                                <!-- 지표 선택 및 기간 선택 -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                                    <!-- 지표 선택 -->
+                                    <div style="flex: 0 0 auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
+                                        <select id="genderMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                            <option value="roas">ROAS</option>
+                                            <option value="cost">비용</option>
+                                            <option value="revenue">전환값</option>
+                                            <option value="conversions">전환수</option>
+                                            <option value="impressions">노출수</option>
+                                            <option value="clicks">클릭수</option>
+                                            <option value="cpm">CPM</option>
+                                            <option value="cpc">CPC</option>
+                                            <option value="cpa">CPA</option>
+                                            <option value="ctr">CTR</option>
+                                            <option value="cvr">전환율</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 기간 선택 -->
+                                    <div style="flex: 0 0 auto; margin-left: auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <input type="date" id="genderStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                            <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                            <input type="date" id="genderEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- 드롭다운 형태 필터 -->
@@ -1336,22 +1413,35 @@
                                     </div>
                                 </div>
 
-                                <!-- 지표 선택 드롭다운 -->
-                                <div style="margin-bottom: 20px;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
-                                    <select id="ageMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
-                                        <option value="roas">ROAS</option>
-                                        <option value="cost">비용</option>
-                                        <option value="revenue">전환값</option>
-                                        <option value="conversions">전환수</option>
-                                        <option value="impressions">노출수</option>
-                                        <option value="clicks">클릭수</option>
-                                        <option value="cpm">CPM</option>
-                                        <option value="cpc">CPC</option>
-                                        <option value="cpa">CPA</option>
-                                        <option value="ctr">CTR</option>
-                                        <option value="cvr">전환율</option>
-                                    </select>
+                                <!-- 지표 선택 및 기간 선택 -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                                    <!-- 지표 선택 -->
+                                    <div style="flex: 0 0 auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
+                                        <select id="ageMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                            <option value="roas">ROAS</option>
+                                            <option value="cost">비용</option>
+                                            <option value="revenue">전환값</option>
+                                            <option value="conversions">전환수</option>
+                                            <option value="impressions">노출수</option>
+                                            <option value="clicks">클릭수</option>
+                                            <option value="cpm">CPM</option>
+                                            <option value="cpc">CPC</option>
+                                            <option value="cpa">CPA</option>
+                                            <option value="ctr">CTR</option>
+                                            <option value="cvr">전환율</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 기간 선택 -->
+                                    <div style="flex: 0 0 auto; margin-left: auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <input type="date" id="ageStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                            <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                            <input type="date" id="ageEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- 드롭다운 형태 필터 -->
@@ -1546,22 +1636,35 @@
                                     </div>
                                 </div>
 
-                                <!-- 지표 선택 드롭다운 -->
-                                <div style="margin-bottom: 20px;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
-                                    <select id="platformMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
-                                        <option value="roas">ROAS</option>
-                                        <option value="cost">비용</option>
-                                        <option value="revenue">전환값</option>
-                                        <option value="conversions">전환수</option>
-                                        <option value="impressions">노출수</option>
-                                        <option value="clicks">클릭수</option>
-                                        <option value="cpm">CPM</option>
-                                        <option value="cpc">CPC</option>
-                                        <option value="cpa">CPA</option>
-                                        <option value="ctr">CTR</option>
-                                        <option value="cvr">전환율</option>
-                                    </select>
+                                <!-- 지표 선택 및 기간 선택 -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                                    <!-- 지표 선택 -->
+                                    <div style="flex: 0 0 auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
+                                        <select id="platformMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                            <option value="roas">ROAS</option>
+                                            <option value="cost">비용</option>
+                                            <option value="revenue">전환값</option>
+                                            <option value="conversions">전환수</option>
+                                            <option value="impressions">노출수</option>
+                                            <option value="clicks">클릭수</option>
+                                            <option value="cpm">CPM</option>
+                                            <option value="cpc">CPC</option>
+                                            <option value="cpa">CPA</option>
+                                            <option value="ctr">CTR</option>
+                                            <option value="cvr">전환율</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 기간 선택 -->
+                                    <div style="flex: 0 0 auto; margin-left: auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <input type="date" id="platformStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                            <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                            <input type="date" id="platformEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- 드롭다운 형태 필터 -->
@@ -1756,22 +1859,35 @@
                                     </div>
                                 </div>
 
-                                <!-- 지표 선택 드롭다운 -->
-                                <div style="margin-bottom: 20px;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
-                                    <select id="devicePlatformMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
-                                        <option value="roas">ROAS</option>
-                                        <option value="cost">비용</option>
-                                        <option value="revenue">전환값</option>
-                                        <option value="conversions">전환수</option>
-                                        <option value="impressions">노출수</option>
-                                        <option value="clicks">클릭수</option>
-                                        <option value="cpm">CPM</option>
-                                        <option value="cpc">CPC</option>
-                                        <option value="cpa">CPA</option>
-                                        <option value="ctr">CTR</option>
-                                        <option value="cvr">전환율</option>
-                                    </select>
+                                <!-- 지표 선택 및 기간 선택 -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                                    <!-- 지표 선택 -->
+                                    <div style="flex: 0 0 auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
+                                        <select id="devicePlatformMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                            <option value="roas">ROAS</option>
+                                            <option value="cost">비용</option>
+                                            <option value="revenue">전환값</option>
+                                            <option value="conversions">전환수</option>
+                                            <option value="impressions">노출수</option>
+                                            <option value="clicks">클릭수</option>
+                                            <option value="cpm">CPM</option>
+                                            <option value="cpc">CPC</option>
+                                            <option value="cpa">CPA</option>
+                                            <option value="ctr">CTR</option>
+                                            <option value="cvr">전환율</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 기간 선택 -->
+                                    <div style="flex: 0 0 auto; margin-left: auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <input type="date" id="devicePlatformStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                            <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                            <input type="date" id="devicePlatformEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- 드롭다운 형태 필터 -->
@@ -1966,22 +2082,35 @@
                                     </div>
                                 </div>
 
-                                <!-- 지표 선택 드롭다운 -->
-                                <div style="margin-bottom: 20px;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
-                                    <select id="deviceTypeMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
-                                        <option value="roas">ROAS</option>
-                                        <option value="cost">비용</option>
-                                        <option value="revenue">전환값</option>
-                                        <option value="conversions">전환수</option>
-                                        <option value="impressions">노출수</option>
-                                        <option value="clicks">클릭수</option>
-                                        <option value="cpm">CPM</option>
-                                        <option value="cpc">CPC</option>
-                                        <option value="cpa">CPA</option>
-                                        <option value="ctr">CTR</option>
-                                        <option value="cvr">전환율</option>
-                                    </select>
+                                <!-- 지표 선택 및 기간 선택 -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                                    <!-- 지표 선택 -->
+                                    <div style="flex: 0 0 auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
+                                        <select id="deviceTypeMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                            <option value="roas">ROAS</option>
+                                            <option value="cost">비용</option>
+                                            <option value="revenue">전환값</option>
+                                            <option value="conversions">전환수</option>
+                                            <option value="impressions">노출수</option>
+                                            <option value="clicks">클릭수</option>
+                                            <option value="cpm">CPM</option>
+                                            <option value="cpc">CPC</option>
+                                            <option value="cpa">CPA</option>
+                                            <option value="ctr">CTR</option>
+                                            <option value="cvr">전환율</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 기간 선택 -->
+                                    <div style="flex: 0 0 auto; margin-left: auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <input type="date" id="deviceTypeStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                            <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                            <input type="date" id="deviceTypeEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- 드롭다운 형태 필터 -->
@@ -2126,23 +2255,36 @@
 
                         <!-- 탭 7: 성별 연령 PIVOT -->
                         <div class="trend-analysis-tab-content" id="ageGenderPivotTab" style="display: none;">
-                            <!-- 설명 섹션 -->
-                            <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); margin-bottom: 16px; border-radius: 10px; line-height: 1.7;">
-                                <strong style="color: var(--primary-main);">📖 이 분석은 무엇을 보여주나요?</strong><br>
-                                성별과 연령대별로 교차 분석하여 어떤 타겟 그룹이 가장 효과적인지 한눈에 파악할 수 있습니다.<br><br>
-                                <strong style="color: var(--primary-main);">💡 사용 방법:</strong><br>
-                                • <strong>지표 선택</strong>에서 분석하고 싶은 지표를 선택하세요 (ROAS, 전환수, 비용 등)<br>
-                                • <strong>색상 스케일</strong>을 통해 높은 값과 낮은 값을 직관적으로 확인하세요<br>
-                                • <strong>테이블 셀</strong>을 클릭하면 상세 정보를 확인할 수 있습니다
-                            </div>
-
-                            <!-- 자동 인사이트 박스 -->
-                            <div style="margin: 16px 24px; padding: 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 10px; border-left: 4px solid #2196f3;">
-                                <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 8px;">
-                                    💡 PIVOT 분석 팁
+                            <!-- 컴팩트 설명 섹션 -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                                <!-- 분석 목적 카드 -->
+                                <div style="padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                        <span style="font-size: 16px;">📊</span>
+                                        <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
+                                    </div>
+                                    <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
+                                        성별과 연령대별 <strong style="color: #1565c0;">교차 분석</strong>을 통해<br>
+                                        가장 효과적인 타겟 그룹을 파악합니다
+                                    </p>
                                 </div>
-                                <div style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
-                                    진한 색상의 셀은 높은 성과를 나타냅니다. 해당 성별-연령 타겟에 예산을 집중하여 효율을 극대화하세요.
+
+                                <!-- 사용 방법 카드 -->
+                                <div style="padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                        <span style="font-size: 16px;">💡</span>
+                                        <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
+                                    </div>
+                                    <div style="font-size: 12px; color: #424242; line-height: 1.6;">
+                                        <div style="display: flex; align-items: start; gap: 8px; margin-bottom: 4px;">
+                                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">1</span>
+                                            <span>분류 기준 드롭다운에서 필터 선택</span>
+                                        </div>
+                                        <div style="display: flex; align-items: start; gap: 8px;">
+                                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">2</span>
+                                            <span>색상 스케일로 높은/낮은 값 확인</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -2155,30 +2297,125 @@
                                     </p>
                                 </div>
 
-                                <!-- 필터 타입 버튼 -->
-                                <div style="margin-bottom: 20px;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📊 분류 기준</div>
-                                    <div class="view-type-section">
-                                        <button class="view-btn pivot-filter-btn active" data-filter="all">전체</button>
-                                        <button class="view-btn pivot-filter-btn" data-filter="channel">채널별</button>
-                                        <button class="view-btn pivot-filter-btn" data-filter="product">제품별</button>
-                                        <button class="view-btn pivot-filter-btn" data-filter="brand">브랜드별</button>
-                                        <button class="view-btn pivot-filter-btn" data-filter="promotion">프로모션별</button>
+                                <!-- 기간 선택 -->
+                                <div style="display: flex; justify-content: flex-end; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                                    <div style="flex: 0 0 auto; margin-left: auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <input type="date" id="pivotStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                            <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                            <input type="date" id="pivotEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- 항목 선택 (드롭다운) - 전체가 아닐 때만 표시 -->
-                                <div id="pivotItemSelectSection" style="margin-bottom: 20px; display: none;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700);">🎯 항목 선택</div>
-                                        <div style="font-size: 12px; color: var(--grey-500);">
-                                            선택된 항목: <span id="selectedPivotItem">없음</span>
-                                        </div>
+                                <!-- 드롭다운 형태 필터 -->
+                                <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 분류 기준</div>
                                     </div>
-                                    <div id="pivotDropdownContainer" style="display: flex; flex-wrap: wrap; gap: 12px; padding: 16px; background: var(--grey-50); border-radius: 8px;">
-                                        <select id="pivotDropdown" style="min-width: 300px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
-                                            <option value="">항목을 선택하세요</option>
-                                        </select>
+
+                                    <!-- 드롭다운 버튼들 -->
+                                    <div style="display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap;">
+                                        <!-- 채널별 드롭다운 -->
+                                        <div style="position: relative; min-width: 180px; flex: 1;">
+                                            <button type="button" class="pivot-filter-dropdown-btn" data-filter="channel" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
+                                                <span style="font-weight: 500;">채널_전체</span>
+                                                <div style="display: flex; align-items: center; gap: 6px;">
+                                                    <span class="pivot-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                    <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                                </div>
+                                            </button>
+                                            <div class="pivot-filter-dropdown-list" data-filter="channel" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                                <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                        <input type="checkbox" class="pivot-filter-select-all" data-filter="channel" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="pivotFilterChannelList" class="pivot-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 제품별 드롭다운 -->
+                                        <div style="position: relative; min-width: 180px; flex: 1;">
+                                            <button type="button" class="pivot-filter-dropdown-btn" data-filter="product" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
+                                                <span style="font-weight: 500;">제품_전체</span>
+                                                <div style="display: flex; align-items: center; gap: 6px;">
+                                                    <span class="pivot-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                    <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                                </div>
+                                            </button>
+                                            <div class="pivot-filter-dropdown-list" data-filter="product" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                                <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                        <input type="checkbox" class="pivot-filter-select-all" data-filter="product" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="pivotFilterProductList" class="pivot-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 브랜드별 드롭다운 -->
+                                        <div style="position: relative; min-width: 180px; flex: 1;">
+                                            <button type="button" class="pivot-filter-dropdown-btn" data-filter="brand" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
+                                                <span style="font-weight: 500;">브랜드_전체</span>
+                                                <div style="display: flex; align-items: center; gap: 6px;">
+                                                    <span class="pivot-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                    <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                                </div>
+                                            </button>
+                                            <div class="pivot-filter-dropdown-list" data-filter="brand" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                                <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                        <input type="checkbox" class="pivot-filter-select-all" data-filter="brand" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="pivotFilterBrandList" class="pivot-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 프로모션별 드롭다운 -->
+                                        <div style="position: relative; min-width: 180px; flex: 1;">
+                                            <button type="button" class="pivot-filter-dropdown-btn" data-filter="promotion" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
+                                                <span style="font-weight: 500;">프로모션_전체</span>
+                                                <div style="display: flex; align-items: center; gap: 6px;">
+                                                    <span class="pivot-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                    <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                                </div>
+                                            </button>
+                                            <div class="pivot-filter-dropdown-list" data-filter="promotion" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                                <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                        <input type="checkbox" class="pivot-filter-select-all" data-filter="promotion" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="pivotFilterPromotionList" class="pivot-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 광고세트별 드롭다운 -->
+                                        <div style="position: relative; min-width: 180px; flex: 1;">
+                                            <button type="button" class="pivot-filter-dropdown-btn" data-filter="adset" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
+                                                <span style="font-weight: 500;">광고세트_전체</span>
+                                                <div style="display: flex; align-items: center; gap: 6px;">
+                                                    <span class="pivot-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                    <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                                </div>
+                                            </button>
+                                            <div class="pivot-filter-dropdown-list" data-filter="adset" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                                <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                        <input type="checkbox" class="pivot-filter-select-all" data-filter="adset" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="pivotFilterAdsetList" class="pivot-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -2797,6 +3034,8 @@
         let currentGenderFilter = 'channel';
         let currentGenderPeriod = 'daily';
         let currentGenderMetric = 'roas';
+        let genderStartDate = '';
+        let genderEndDate = '';
         let selectedGenderItems = [];
         let genderTrendChart = null;
 
@@ -2804,6 +3043,8 @@
         let currentAgeFilter = 'channel';
         let currentAgePeriod = 'daily';
         let currentAgeMetric = 'roas';
+        let ageStartDate = '';
+        let ageEndDate = '';
         let selectedAgeItems = [];
         let ageTrendChart = null;
 
@@ -2811,6 +3052,8 @@
         let currentPlatformFilter = 'channel';
         let currentPlatformPeriod = 'daily';
         let currentPlatformMetric = 'roas';
+        let platformStartDate = '';
+        let platformEndDate = '';
         let selectedPlatformItems = [];
         let platformTrendChart = null;
 
@@ -2818,6 +3061,8 @@
         let currentDevicePlatformFilter = 'channel';
         let currentDevicePlatformPeriod = 'daily';
         let currentDevicePlatformMetric = 'roas';
+        let devicePlatformStartDate = '';
+        let devicePlatformEndDate = '';
         let selectedDevicePlatformItems = [];
         let devicePlatformTrendChart = null;
 
@@ -2825,12 +3070,22 @@
         let currentDeviceTypeFilter = 'channel';
         let currentDeviceTypePeriod = 'daily';
         let currentDeviceTypeMetric = 'roas';
+        let deviceTypeStartDate = '';
+        let deviceTypeEndDate = '';
         let selectedDeviceTypeItems = [];
         let deviceTypeTrendChart = null;
 
         // 성별 연령 PIVOT 관련 변수
-        let currentPivotFilter = 'all';
-        let selectedPivotItem = null;
+        let currentPivotFilters = {
+            channel: [],
+            product: [],
+            brand: [],
+            promotion: [],
+            adset: []
+        };
+        let pivotStartDate = '';
+        let pivotEndDate = '';
+        let pivotDropdownsInitialized = false;
 
         // 데이터 로딩
         async function loadData() {
@@ -2929,7 +3184,7 @@
             initPlatformDropdowns();
             initDevicePlatformDropdowns();
             initDeviceTypeDropdowns();
-            renderAgeGenderPivotTable();
+            initPivotDropdowns();
             renderBrandPerformanceChart();
             renderProductPerformanceChart();
             renderTopAdsetsTable();
@@ -2950,70 +3205,107 @@
 
         // KPI 카드 렌더링
         function renderKPICards() {
-            const summary = insightsData.summary;
             const overall = insightsData.overall;
 
-            const kpis = [
-                {
-                    title: '총 비용',
-                    value: formatCurrency(summary.total_cost),
-                    icon: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z',
-                    color: '--primary-main',
-                    bgColor: '--primary-light'
-                },
-                {
-                    title: '총 전환수',
-                    value: formatNumber(summary.total_conversions),
-                    icon: 'M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z',
-                    color: '--success-main',
-                    bgColor: '--success-light'
-                },
-                {
-                    title: '총 전환값',
-                    value: formatCurrency(summary.total_revenue),
-                    icon: 'M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z',
-                    color: '--secondary-main',
-                    bgColor: '--secondary-light'
-                },
-                {
-                    title: 'Overall ROAS',
-                    value: formatPercent(summary.overall_roas),
-                    change: overall.trend.change_percent,
-                    changeLabel: overall.trend.direction === 'growing' ? '성장' : overall.trend.direction === 'declining' ? '감소' : '안정',
-                    icon: 'M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z',
-                    color: overall.trend.direction === 'growing' ? '--success-main' : overall.trend.direction === 'declining' ? '--error-main' : '--grey-500',
-                    bgColor: overall.trend.direction === 'growing' ? '--success-light' : overall.trend.direction === 'declining' ? '--error-light' : '--grey-100'
-                },
-                {
-                    title: 'Overall CPA',
-                    value: formatCurrency(summary.overall_cpa),
-                    icon: 'M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z',
-                    color: '--warning-main',
-                    bgColor: '--warning-light'
-                }
-            ];
+            // dimensionData(CSV)에서 KPI 합계 계산
+            // 조건: 캠페인이름, 광고세트는 존재하고, 기기유형~성별은 '-'인 데이터만
+            let totalCost = 0;
+            let totalImpressions = 0;
+            let totalClicks = 0;
+            let totalConversions = 0;
+            let totalRevenue = 0;
 
-            const html = kpis.map(kpi => `
-                <div class="kpi-card">
-                    <div class="kpi-header">
-                        <span class="kpi-title">${kpi.title}</span>
-                        <div class="kpi-icon" style="background-color: var(${kpi.bgColor})">
-                            <svg viewBox="0 0 24 24" fill="var(${kpi.color})" xmlns="http://www.w3.org/2000/svg">
-                                <path d="${kpi.icon}"/>
+            if (dimensionData && dimensionData.length > 0) {
+                dimensionData.forEach(row => {
+                    // 필터 조건: 캠페인이름, 광고세트는 값이 있고, 기기유형~성별은 '-'
+                    const hasCampaign = row['캠페인이름'] && row['캠페인이름'] !== '-';
+                    const hasAdset = row['광고세트'] && row['광고세트'] !== '-';
+                    const isDeviceTypeDash = row['기기유형'] === '-';
+                    const isPlatformDash = row['플랫폼'] === '-';
+                    const isDevicePlatformDash = row['기기플랫폼'] === '-';
+                    const isAgeDash = row['연령'] === '-';
+                    const isGenderDash = row['성별'] === '-';
+
+                    if (hasCampaign && hasAdset && isDeviceTypeDash && isPlatformDash && isDevicePlatformDash && isAgeDash && isGenderDash) {
+                        totalCost += parseFloat(row['비용']) || 0;
+                        totalImpressions += parseFloat(row['노출']) || 0;
+                        totalClicks += parseFloat(row['클릭']) || 0;
+                        totalConversions += parseFloat(row['전환수']) || 0;
+                        totalRevenue += parseFloat(row['전환값']) || 0;
+                    }
+                });
+            }
+
+            // Primary KPIs (상단 5개): 비용, CPM, CPC, CPA, ROAS
+            const cpm = totalImpressions > 0 ? (totalCost / totalImpressions * 1000) : 0;
+            const cpc = totalClicks > 0 ? (totalCost / totalClicks) : 0;
+            const cpa = totalConversions > 0 ? (totalCost / totalConversions) : 0;
+            const roas = totalCost > 0 ? (totalRevenue / totalCost * 100) : 0;
+
+            const trendDirection = overall.trend.direction;
+            const trendChange = overall.trend.change_percent || 0;
+            const trendClass = trendDirection === 'growing' ? 'up' : trendDirection === 'declining' ? 'down' : 'neutral';
+            const trendLabel = trendDirection === 'growing' ? '성장' : trendDirection === 'declining' ? '감소' : '안정';
+
+            const html = `
+                <div class="kpi-row kpi-row-primary">
+                    <div class="kpi-card">
+                        <h3>총 비용</h3>
+                        <div class="value">${formatCurrency(totalCost)}</div>
+                        <div class="unit">원</div>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>CPM</h3>
+                        <div class="value">${formatCurrency(cpm)}</div>
+                        <div class="unit">원</div>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>CPC</h3>
+                        <div class="value">${formatCurrency(cpc)}</div>
+                        <div class="unit">원</div>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>CPA</h3>
+                        <div class="value">${formatCurrency(cpa)}</div>
+                        <div class="unit">원</div>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>ROAS</h3>
+                        <div class="value">${formatPercent(roas)}</div>
+                        <div class="unit"></div>
+                        <div class="trend ${trendClass}">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="${trendClass === 'up' ? 'M7 14l5-5 5 5z' : trendClass === 'down' ? 'M7 10l5 5 5-5z' : 'M7 12h10v2H7z'}"/>
                             </svg>
+                            <span>${Math.abs(trendChange).toFixed(1)}% ${trendLabel}</span>
                         </div>
                     </div>
-                    <div class="kpi-value">${kpi.value}</div>
-                    ${kpi.change !== undefined ? `
-                        <div class="kpi-change ${kpi.change > 0 ? 'positive' : kpi.change < 0 ? 'negative' : 'neutral'}">
-                            <span>${kpi.change > 0 ? '▲' : kpi.change < 0 ? '▼' : '•'} ${Math.abs(kpi.change).toFixed(1)}%</span>
-                            <span>${kpi.changeLabel}</span>
-                        </div>
-                    ` : ''}
                 </div>
-            `).join('');
+                <div class="kpi-row kpi-row-secondary">
+                    <div class="kpi-card">
+                        <h3>총 노출</h3>
+                        <div class="value">${formatNumber(totalImpressions)}</div>
+                        <div class="unit">회</div>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>총 클릭</h3>
+                        <div class="value">${formatNumber(totalClicks)}</div>
+                        <div class="unit">회</div>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>총 전환수</h3>
+                        <div class="value">${formatNumber(totalConversions)}</div>
+                        <div class="unit">건</div>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>총 전환값</h3>
+                        <div class="value">${formatCurrency(totalRevenue)}</div>
+                        <div class="unit">원</div>
+                    </div>
+                </div>
+            `;
 
-            document.getElementById('kpi-grid').innerHTML = html;
+            document.getElementById('kpi-wrapper').innerHTML = html;
         }
 
         // 인사이트 렌더링
@@ -3467,24 +3759,18 @@
             return labels[severity] || severity;
         }
 
-        // 접기/펼치기 기능
+        // 접기/펼치기 기능 (최적화)
         document.querySelectorAll('.collapsible-header').forEach(header => {
-            header.addEventListener('click', function() {
-                const content = this.nextElementSibling;
-                const icon = this.querySelector('.collapsible-toggle-icon');
-                const toggleText = this.querySelector('.collapsible-toggle span:first-child');
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.collapsible-toggle-icon');
+            const toggleText = header.querySelector('.collapsible-toggle span:first-child');
 
-                if (content.classList.contains('expanded')) {
-                    // 접기
-                    content.classList.remove('expanded');
-                    icon.classList.add('collapsed');
-                    toggleText.textContent = '펼치기';
-                } else {
-                    // 펼치기
-                    content.classList.add('expanded');
-                    icon.classList.remove('collapsed');
-                    toggleText.textContent = '접기';
-                }
+            header.addEventListener('click', function(e) {
+                e.preventDefault();
+                const isExpanded = content.classList.contains('expanded');
+                content.classList.toggle('expanded', !isExpanded);
+                icon.classList.toggle('collapsed', isExpanded);
+                toggleText.textContent = isExpanded ? '펼치기' : '접기';
             });
         });
 
@@ -3647,6 +3933,24 @@
                 });
             }
 
+            // 성별 기간 선택 이벤트
+            const genderStartDateInput = document.getElementById('genderStartDate');
+            const genderEndDateInput = document.getElementById('genderEndDate');
+
+            if (genderStartDateInput) {
+                genderStartDateInput.addEventListener('change', function(e) {
+                    genderStartDate = e.target.value;
+                    renderGenderTrendChart();
+                });
+            }
+
+            if (genderEndDateInput) {
+                genderEndDateInput.addEventListener('change', function(e) {
+                    genderEndDate = e.target.value;
+                    renderGenderTrendChart();
+                });
+            }
+
             // 연령 필터 버튼 이벤트
             document.querySelectorAll('.age-filter-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -3673,6 +3977,24 @@
             if (ageMetricDropdown) {
                 ageMetricDropdown.addEventListener('change', function() {
                     currentAgeMetric = this.value;
+                    renderAgeTrendChart();
+                });
+            }
+
+            // 연령 기간 선택 이벤트
+            const ageStartDateInput = document.getElementById('ageStartDate');
+            const ageEndDateInput = document.getElementById('ageEndDate');
+
+            if (ageStartDateInput) {
+                ageStartDateInput.addEventListener('change', function(e) {
+                    ageStartDate = e.target.value;
+                    renderAgeTrendChart();
+                });
+            }
+
+            if (ageEndDateInput) {
+                ageEndDateInput.addEventListener('change', function(e) {
+                    ageEndDate = e.target.value;
                     renderAgeTrendChart();
                 });
             }
@@ -3707,6 +4029,24 @@
                 });
             }
 
+            // 플랫폼 기간 선택 이벤트
+            const platformStartDateInput = document.getElementById('platformStartDate');
+            const platformEndDateInput = document.getElementById('platformEndDate');
+
+            if (platformStartDateInput) {
+                platformStartDateInput.addEventListener('change', function(e) {
+                    platformStartDate = e.target.value;
+                    renderPlatformTrendChart();
+                });
+            }
+
+            if (platformEndDateInput) {
+                platformEndDateInput.addEventListener('change', function(e) {
+                    platformEndDate = e.target.value;
+                    renderPlatformTrendChart();
+                });
+            }
+
             // 기기플랫폼 필터 버튼 이벤트
             document.querySelectorAll('.device-platform-filter-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -3733,6 +4073,24 @@
             if (devicePlatformMetricDropdown) {
                 devicePlatformMetricDropdown.addEventListener('change', function() {
                     currentDevicePlatformMetric = this.value;
+                    renderDevicePlatformTrendChart();
+                });
+            }
+
+            // 기기플랫폼 기간 선택 이벤트
+            const devicePlatformStartDateInput = document.getElementById('devicePlatformStartDate');
+            const devicePlatformEndDateInput = document.getElementById('devicePlatformEndDate');
+
+            if (devicePlatformStartDateInput) {
+                devicePlatformStartDateInput.addEventListener('change', function(e) {
+                    devicePlatformStartDate = e.target.value;
+                    renderDevicePlatformTrendChart();
+                });
+            }
+
+            if (devicePlatformEndDateInput) {
+                devicePlatformEndDateInput.addEventListener('change', function(e) {
+                    devicePlatformEndDate = e.target.value;
                     renderDevicePlatformTrendChart();
                 });
             }
@@ -3767,33 +4125,38 @@
                 });
             }
 
-            // PIVOT 필터 버튼 이벤트
-            document.querySelectorAll('.pivot-filter-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.pivot-filter-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentPivotFilter = this.dataset.filter;
-                    selectedPivotItem = null;
+            // 기기유형 기간 선택 이벤트
+            const deviceTypeStartDateInput = document.getElementById('deviceTypeStartDate');
+            const deviceTypeEndDateInput = document.getElementById('deviceTypeEndDate');
 
-                    // 드롭다운 표시/숨김
-                    const dropdownSection = document.getElementById('pivotItemSelectSection');
-                    if (currentPivotFilter === 'all') {
-                        if (dropdownSection) dropdownSection.style.display = 'none';
-                    } else {
-                        if (dropdownSection) dropdownSection.style.display = 'block';
-                        initPivotDropdown();
-                    }
+            if (deviceTypeStartDateInput) {
+                deviceTypeStartDateInput.addEventListener('change', function(e) {
+                    deviceTypeStartDate = e.target.value;
+                    renderDeviceTypeTrendChart();
+                });
+            }
 
+            if (deviceTypeEndDateInput) {
+                deviceTypeEndDateInput.addEventListener('change', function(e) {
+                    deviceTypeEndDate = e.target.value;
+                    renderDeviceTypeTrendChart();
+                });
+            }
+
+            // PIVOT 기간 선택 이벤트
+            const pivotStartDateInput = document.getElementById('pivotStartDate');
+            const pivotEndDateInput = document.getElementById('pivotEndDate');
+
+            if (pivotStartDateInput) {
+                pivotStartDateInput.addEventListener('change', function(e) {
+                    pivotStartDate = e.target.value;
                     renderAgeGenderPivotTable();
                 });
-            });
+            }
 
-            // PIVOT 드롭다운 변경 이벤트
-            const pivotDropdown = document.getElementById('pivotDropdown');
-            if (pivotDropdown) {
-                pivotDropdown.addEventListener('change', function() {
-                    selectedPivotItem = this.value === '' ? null : this.value;
-                    document.getElementById('selectedPivotItem').textContent = this.value || '없음';
+            if (pivotEndDateInput) {
+                pivotEndDateInput.addEventListener('change', function(e) {
+                    pivotEndDate = e.target.value;
                     renderAgeGenderPivotTable();
                 });
             }
@@ -3995,6 +4358,14 @@
                 const adset = row['광고세트'];
                 if (!adset || adset === '' || adset === '-') return;
 
+                // 광고세트 추이는 기기유형~성별이 '-'인 데이터만 사용
+                const isDeviceTypeDash = row['기기유형'] === '-';
+                const isPlatformDash = row['플랫폼'] === '-';
+                const isDevicePlatformDash = row['기기플랫폼'] === '-';
+                const isAgeDash = row['연령'] === '-';
+                const isGenderDash = row['성별'] === '-';
+                if (!isDeviceTypeDash || !isPlatformDash || !isDevicePlatformDash || !isAgeDash || !isGenderDash) return;
+
                 let matchesAllFilters = true;
 
                 // 각 필터 타입별로 AND 연산
@@ -4124,6 +4495,35 @@
                     });
                 }
             });
+
+            // 기간 선택 초기값 설정 (전체 데이터의 최소/최대 날짜)
+            const dates = dimensionData
+                .map(row => row['일'])
+                .filter(date => date && date !== '' && date !== '-')
+                .map(date => new Date(date))
+                .filter(date => !isNaN(date));
+
+            if (dates.length > 0) {
+                const minDate = new Date(Math.min(...dates));
+                const maxDate = new Date(Math.max(...dates));
+
+                const formatDateForInput = (date) => {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                };
+
+                const startInput = document.getElementById('genderStartDate');
+                const endInput = document.getElementById('genderEndDate');
+
+                if (startInput && endInput) {
+                    startInput.value = formatDateForInput(minDate);
+                    endInput.value = formatDateForInput(maxDate);
+                    genderStartDate = formatDateForInput(minDate);
+                    genderEndDate = formatDateForInput(maxDate);
+                }
+            }
         }
 
         function updateGenderFilterButtonText(filterKey) {
@@ -4417,6 +4817,35 @@
                     updateAgeFilterButtonText(filterType);
                 });
             });
+
+            // 기간 선택 초기값 설정 (전체 데이터의 최소/최대 날짜)
+            const dates = dimensionData
+                .map(row => row['일'])
+                .filter(date => date && date !== '' && date !== '-')
+                .map(date => new Date(date))
+                .filter(date => !isNaN(date));
+
+            if (dates.length > 0) {
+                const minDate = new Date(Math.min(...dates));
+                const maxDate = new Date(Math.max(...dates));
+
+                const formatDateForInput = (date) => {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                };
+
+                const startInput = document.getElementById('ageStartDate');
+                const endInput = document.getElementById('ageEndDate');
+
+                if (startInput && endInput) {
+                    startInput.value = formatDateForInput(minDate);
+                    endInput.value = formatDateForInput(maxDate);
+                    ageStartDate = formatDateForInput(minDate);
+                    ageEndDate = formatDateForInput(maxDate);
+                }
+            }
         }
 
         function updateAgeFilterButtonText(filterKey) {
@@ -4719,6 +5148,35 @@
                     });
                 }
             });
+
+            // 기간 선택 초기값 설정 (전체 데이터의 최소/최대 날짜)
+            const dates = dimensionData
+                .map(row => row['일'])
+                .filter(date => date && date !== '' && date !== '-')
+                .map(date => new Date(date))
+                .filter(date => !isNaN(date));
+
+            if (dates.length > 0) {
+                const minDate = new Date(Math.min(...dates));
+                const maxDate = new Date(Math.max(...dates));
+
+                const formatDateForInput = (date) => {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                };
+
+                const startInput = document.getElementById('platformStartDate');
+                const endInput = document.getElementById('platformEndDate');
+
+                if (startInput && endInput) {
+                    startInput.value = formatDateForInput(minDate);
+                    endInput.value = formatDateForInput(maxDate);
+                    platformStartDate = formatDateForInput(minDate);
+                    platformEndDate = formatDateForInput(maxDate);
+                }
+            }
         }
 
         function updatePlatformFilterButtonText(filterKey) {
@@ -4850,41 +5308,173 @@
         }
 
         // PIVOT 드롭다운 초기화
-        function initPivotDropdown() {
+        function initPivotDropdowns() {
             if (!dimensionData) return;
 
             const filterMap = {
-                'channel': '유형구분',
-                'product': '상품명',
-                'brand': '브랜드명',
-                'promotion': '프로모션'
+                'channel': { column: '유형구분', listId: 'pivotFilterChannelList', label: '채널' },
+                'product': { column: '상품명', listId: 'pivotFilterProductList', label: '제품' },
+                'brand': { column: '브랜드명', listId: 'pivotFilterBrandList', label: '브랜드' },
+                'promotion': { column: '프로모션', listId: 'pivotFilterPromotionList', label: '프로모션' },
+                'adset': { column: '광고세트', listId: 'pivotFilterAdsetList', label: '광고세트' }
             };
 
-            const column = filterMap[currentPivotFilter];
-            if (!column) return;
+            // 각 필터에 대한 체크박스 리스트 생성
+            Object.keys(filterMap).forEach(filterKey => {
+                const { column, listId } = filterMap[filterKey];
+                const list = document.getElementById(listId);
+                if (!list) return;
 
-            const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
-            items.sort();
+                const items = [...new Set(dimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                items.sort();
 
-            const dropdown = document.getElementById('pivotDropdown');
-            if (!dropdown) return;
+                list.innerHTML = items.map(item => `
+                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-size: 12px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='var(--grey-100)'" onmouseout="this.style.background='transparent'">
+                        <input type="checkbox" class="pivot-filter-item-checkbox" data-filter="${filterKey}" value="${item}" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                        ${item}
+                    </label>
+                `).join('');
 
-            dropdown.innerHTML = '';
+                // 개별 체크박스 이벤트
+                list.querySelectorAll('.pivot-filter-item-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        // 전체 선택 체크박스 상태 업데이트
+                        const selectAllCheckbox = document.querySelector(`.pivot-filter-select-all[data-filter="${filterKey}"]`);
+                        if (selectAllCheckbox) {
+                            const allCheckboxes = list.querySelectorAll('.pivot-filter-item-checkbox');
+                            const checkedCheckboxes = list.querySelectorAll('.pivot-filter-item-checkbox:checked');
+                            selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length && allCheckboxes.length > 0;
+                        }
 
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = '항목을 선택하세요';
-            dropdown.appendChild(defaultOption);
-
-            items.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item;
-                option.textContent = item;
-                dropdown.appendChild(option);
+                        updatePivotFilters();
+                        updatePivotFilterButtonText(filterKey);
+                    });
+                });
             });
 
-            selectedPivotItem = null;
-            document.getElementById('selectedPivotItem').textContent = '없음';
+            // 이벤트 리스너는 한 번만 등록
+            if (!pivotDropdownsInitialized) {
+                // 드롭다운 버튼 클릭 이벤트
+                document.querySelectorAll('.pivot-filter-dropdown-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const filterType = this.dataset.filter;
+                        const dropdown = document.querySelector(`.pivot-filter-dropdown-list[data-filter="${filterType}"]`);
+
+                        // 다른 드롭다운 닫기
+                        document.querySelectorAll('.pivot-filter-dropdown-list').forEach(dd => {
+                            if (dd !== dropdown) dd.style.display = 'none';
+                        });
+
+                        // 현재 드롭다운 토글
+                        if (dropdown) {
+                            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+                        }
+                    });
+                });
+
+                // 전체 선택 체크박스 이벤트
+                document.querySelectorAll('.pivot-filter-select-all').forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        const filterType = this.dataset.filter;
+                        const list = document.getElementById(`pivotFilter${filterType.charAt(0).toUpperCase() + filterType.slice(1)}List`);
+                        if (!list) return;
+
+                        const itemCheckboxes = list.querySelectorAll('.pivot-filter-item-checkbox');
+                        itemCheckboxes.forEach(cb => {
+                            cb.checked = this.checked;
+                        });
+
+                        updatePivotFilters();
+                        updatePivotFilterButtonText(filterType);
+                    });
+                });
+
+                pivotDropdownsInitialized = true;
+            }
+
+            // 기간 선택 초기값 설정 (전체 데이터의 최소/최대 날짜)
+            const dates = dimensionData
+                .map(row => row['일'])
+                .filter(date => date && date !== '' && date !== '-')
+                .map(date => new Date(date))
+                .filter(date => !isNaN(date));
+
+            if (dates.length > 0) {
+                const minDate = new Date(Math.min(...dates));
+                const maxDate = new Date(Math.max(...dates));
+
+                const formatDateForInput = (date) => {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                };
+
+                const startInput = document.getElementById('pivotStartDate');
+                const endInput = document.getElementById('pivotEndDate');
+
+                if (startInput && endInput) {
+                    startInput.value = formatDateForInput(minDate);
+                    endInput.value = formatDateForInput(maxDate);
+                    pivotStartDate = formatDateForInput(minDate);
+                    pivotEndDate = formatDateForInput(maxDate);
+                }
+            }
+        }
+
+        function updatePivotFilterButtonText(filterKey) {
+            const filterMap = {
+                'channel': '채널',
+                'product': '제품',
+                'brand': '브랜드',
+                'promotion': '프로모션',
+                'adset': '광고세트'
+            };
+
+            const btn = document.querySelector(`.pivot-filter-dropdown-btn[data-filter="${filterKey}"]`);
+            const list = document.getElementById(`pivotFilter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}List`);
+
+            if (!btn || !list) return;
+
+            const checkedBoxes = list.querySelectorAll('.pivot-filter-item-checkbox:checked');
+            const totalBoxes = list.querySelectorAll('.pivot-filter-item-checkbox');
+            const btnText = btn.querySelector('span:first-child');
+            const countText = btn.querySelector('.pivot-selected-count');
+
+            if (checkedBoxes.length === 0) {
+                btnText.textContent = `${filterMap[filterKey]}_전체`;
+                if (countText) countText.textContent = '0개';
+            } else if (checkedBoxes.length === totalBoxes.length) {
+                btnText.textContent = `${filterMap[filterKey]}_전체`;
+                if (countText) countText.textContent = `${checkedBoxes.length}개`;
+            } else if (checkedBoxes.length === 1) {
+                btnText.textContent = checkedBoxes[0].value;
+                if (countText) countText.textContent = '1개';
+            } else {
+                btnText.textContent = `${checkedBoxes[0].value} 외 ${checkedBoxes.length - 1}개`;
+                if (countText) countText.textContent = `${checkedBoxes.length}개`;
+            }
+        }
+
+        function updatePivotFilters() {
+            const filterMap = {
+                'channel': 'pivotFilterChannelList',
+                'product': 'pivotFilterProductList',
+                'brand': 'pivotFilterBrandList',
+                'promotion': 'pivotFilterPromotionList',
+                'adset': 'pivotFilterAdsetList'
+            };
+
+            Object.keys(filterMap).forEach(filterKey => {
+                const list = document.getElementById(filterMap[filterKey]);
+                if (!list) return;
+
+                const checkedBoxes = list.querySelectorAll('.pivot-filter-item-checkbox:checked');
+                currentPivotFilters[filterKey] = Array.from(checkedBoxes).map(cb => cb.value);
+            });
+
+            renderAgeGenderPivotTable();
         }
 
         // 차트 렌더링 함수들
@@ -4929,6 +5519,14 @@
             dimensionData.forEach(row => {
                 const adset = row['광고세트'];
                 if (!adset || adset === '' || adset === '-') return;
+
+                // 광고세트 추이는 기기유형~성별이 '-'인 데이터만 사용
+                const isDeviceTypeDash = row['기기유형'] === '-';
+                const isPlatformDash = row['플랫폼'] === '-';
+                const isDevicePlatformDash = row['기기플랫폼'] === '-';
+                const isAgeDash = row['연령'] === '-';
+                const isGenderDash = row['성별'] === '-';
+                if (!isDeviceTypeDash || !isPlatformDash || !isDevicePlatformDash || !isAgeDash || !isGenderDash) return;
 
                 let matchesAllFilters = true;
 
@@ -4978,6 +5576,14 @@
             dimensionData.forEach(row => {
                 const adset = row['광고세트'];
                 if (!adsetsToShow.has(adset) || !row['일']) return;
+
+                // 광고세트 추이는 기기유형~성별이 '-'인 데이터만 사용
+                const isDeviceTypeDash = row['기기유형'] === '-';
+                const isPlatformDash = row['플랫폼'] === '-';
+                const isDevicePlatformDash = row['기기플랫폼'] === '-';
+                const isAgeDash = row['연령'] === '-';
+                const isGenderDash = row['성별'] === '-';
+                if (!isDeviceTypeDash || !isPlatformDash || !isDevicePlatformDash || !isAgeDash || !isGenderDash) return;
 
                 // AND 연산으로 필터 체크
                 let matchesAllFilters = true;
@@ -5352,6 +5958,15 @@
 
                 if (normalizedGender && gendersToShow.has(normalizedGender) && row['일']) {
                     const date = row['일'];
+
+                    // 기간 필터링
+                    if (genderStartDate || genderEndDate) {
+                        const rowDate = new Date(date);
+                        if (isNaN(rowDate)) return;
+                        if (genderStartDate && rowDate < new Date(genderStartDate)) return;
+                        if (genderEndDate && rowDate > new Date(genderEndDate)) return;
+                    }
+
                     const cost = parseFloat(row['비용']?.replace(/,/g, '') || row['비용']) || 0;
                     const revenue = parseFloat(row['전환값']?.replace(/,/g, '') || row['전환값']) || 0;
                     const conversions = parseFloat(row['전환수']?.replace(/,/g, '') || row['전환수']) || 0;
@@ -5699,6 +6314,15 @@
 
                 if (agesToShow.has(age) && row['일']) {
                     const date = row['일'];
+
+                    // 기간 필터링
+                    if (ageStartDate || ageEndDate) {
+                        const rowDate = new Date(date);
+                        if (isNaN(rowDate)) return;
+                        if (ageStartDate && rowDate < new Date(ageStartDate)) return;
+                        if (ageEndDate && rowDate > new Date(ageEndDate)) return;
+                    }
+
                     const cost = parseFloat(row['비용']?.replace(/,/g, '') || row['비용']) || 0;
                     const revenue = parseFloat(row['전환값']?.replace(/,/g, '') || row['전환값']) || 0;
                     const conversions = parseFloat(row['전환수']?.replace(/,/g, '') || row['전환수']) || 0;
@@ -6045,6 +6669,15 @@
                 const platform = row['플랫폼'];
                 if (platformsToShow.has(platform) && row['일']) {
                     const date = row['일'];
+
+                    // 기간 필터링
+                    if (platformStartDate || platformEndDate) {
+                        const rowDate = new Date(date);
+                        if (isNaN(rowDate)) return;
+                        if (platformStartDate && rowDate < new Date(platformStartDate)) return;
+                        if (platformEndDate && rowDate > new Date(platformEndDate)) return;
+                    }
+
                     const cost = parseFloat(row['비용']?.replace(/,/g, '') || row['비용']) || 0;
                     const revenue = parseFloat(row['전환값']?.replace(/,/g, '') || row['전환값']) || 0;
                     const conversions = parseFloat(row['전환수']?.replace(/,/g, '') || row['전환수']) || 0;
@@ -6381,6 +7014,35 @@
                 devicePlatformDropdownsInitialized = true;
             }
 
+            // 기간 선택 초기값 설정 (전체 데이터의 최소/최대 날짜)
+            const dates = dimensionData
+                .map(row => row['일'])
+                .filter(date => date && date !== '' && date !== '-')
+                .map(date => new Date(date))
+                .filter(date => !isNaN(date));
+
+            if (dates.length > 0) {
+                const minDate = new Date(Math.min(...dates));
+                const maxDate = new Date(Math.max(...dates));
+
+                const formatDateForInput = (date) => {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                };
+
+                const startInput = document.getElementById('devicePlatformStartDate');
+                const endInput = document.getElementById('devicePlatformEndDate');
+
+                if (startInput && endInput) {
+                    startInput.value = formatDateForInput(minDate);
+                    endInput.value = formatDateForInput(maxDate);
+                    devicePlatformStartDate = formatDateForInput(minDate);
+                    devicePlatformEndDate = formatDateForInput(maxDate);
+                }
+            }
+
             // 초기 차트 렌더링
             updateDevicePlatformFilters();
         }
@@ -6599,6 +7261,35 @@
                 });
 
                 deviceTypeDropdownsInitialized = true;
+            }
+
+            // 기간 선택 초기값 설정 (전체 데이터의 최소/최대 날짜)
+            const dates = dimensionData
+                .map(row => row['일'])
+                .filter(date => date && date !== '' && date !== '-')
+                .map(date => new Date(date))
+                .filter(date => !isNaN(date));
+
+            if (dates.length > 0) {
+                const minDate = new Date(Math.min(...dates));
+                const maxDate = new Date(Math.max(...dates));
+
+                const formatDateForInput = (date) => {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                };
+
+                const startInput = document.getElementById('deviceTypeStartDate');
+                const endInput = document.getElementById('deviceTypeEndDate');
+
+                if (startInput && endInput) {
+                    startInput.value = formatDateForInput(minDate);
+                    endInput.value = formatDateForInput(maxDate);
+                    deviceTypeStartDate = formatDateForInput(minDate);
+                    deviceTypeEndDate = formatDateForInput(maxDate);
+                }
             }
 
             // 초기 차트 렌더링
@@ -6832,6 +7523,15 @@
                 const devicePlatform = row['기기플랫폼'];
                 if (devicePlatformsToShow.has(devicePlatform) && row['일']) {
                     const date = row['일'];
+
+                    // 기간 필터링
+                    if (devicePlatformStartDate || devicePlatformEndDate) {
+                        const rowDate = new Date(date);
+                        if (isNaN(rowDate)) return;
+                        if (devicePlatformStartDate && rowDate < new Date(devicePlatformStartDate)) return;
+                        if (devicePlatformEndDate && rowDate > new Date(devicePlatformEndDate)) return;
+                    }
+
                     const cost = parseFloat(row['비용']?.replace(/,/g, '') || row['비용']) || 0;
                     const revenue = parseFloat(row['전환값']?.replace(/,/g, '') || row['전환값']) || 0;
                     const conversions = parseFloat(row['전환수']?.replace(/,/g, '') || row['전환수']) || 0;
@@ -7179,6 +7879,15 @@
                 const deviceType = row['기기유형'];
                 if (deviceTypesToShow.has(deviceType) && row['일']) {
                     const date = row['일'];
+
+                    // 기간 필터링
+                    if (deviceTypeStartDate || deviceTypeEndDate) {
+                        const rowDate = new Date(date);
+                        if (isNaN(rowDate)) return;
+                        if (deviceTypeStartDate && rowDate < new Date(deviceTypeStartDate)) return;
+                        if (deviceTypeEndDate && rowDate > new Date(deviceTypeEndDate)) return;
+                    }
+
                     const cost = parseFloat(row['비용']?.replace(/,/g, '') || row['비용']) || 0;
                     const revenue = parseFloat(row['전환값']?.replace(/,/g, '') || row['전환값']) || 0;
                     const conversions = parseFloat(row['전환수']?.replace(/,/g, '') || row['전환수']) || 0;
@@ -7502,29 +8211,59 @@
             const container = document.getElementById('ageGenderPivotTableContainer');
             if (!container || !dimensionData) return;
 
-            // 필터링된 데이터 준비
-            let filteredData = dimensionData;
+            const filterMap = {
+                'channel': '유형구분',
+                'product': '상품명',
+                'brand': '브랜드명',
+                'promotion': '프로모션',
+                'adset': '광고세트'
+            };
 
-            if (currentPivotFilter !== 'all' && selectedPivotItem) {
-                const filterMap = {
-                    'channel': '유형구분',
-                    'product': '상품명',
-                    'brand': '브랜드명',
-                    'promotion': '프로모션'
-                };
-                const column = filterMap[currentPivotFilter];
-                filteredData = dimensionData.filter(row => row[column] === selectedPivotItem);
-            }
+            // 필터 조건을 만족하는 행만 필터링하는 헬퍼 함수
+            const rowMatchesFilters = (row) => {
+                // 모든 필터가 비어있는지 확인
+                const allFiltersEmpty = Object.values(currentPivotFilters).every(arr => !arr || arr.length === 0);
+
+                // 모든 필터가 비어있으면 false 반환 (데이터 표시 안 함)
+                if (allFiltersEmpty) {
+                    return false;
+                }
+
+                // 모든 필터를 AND 조건으로 확인
+                for (const filterKey of Object.keys(filterMap)) {
+                    const column = filterMap[filterKey];
+                    const selectedValues = currentPivotFilters[filterKey];
+
+                    if (selectedValues && selectedValues.length > 0) {
+                        const rowValue = row[column];
+                        if (!selectedValues.includes(rowValue)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            };
 
             // 성별과 연령대별 데이터 집계
             const pivotData = {};
 
-            filteredData.forEach(row => {
+            dimensionData.forEach(row => {
+                if (!rowMatchesFilters(row)) return;
+
                 const rawGender = row['성별'];
                 const normalizedGender = normalizeGender(rawGender);
                 const age = row['연령'];
 
                 if (!normalizedGender || !age || age === '' || age === '-') return;
+
+                // 기간 필터링
+                const date = row['일'];
+                if (pivotStartDate || pivotEndDate) {
+                    const rowDate = new Date(date);
+                    if (isNaN(rowDate)) return;
+                    if (pivotStartDate && rowDate < new Date(pivotStartDate)) return;
+                    if (pivotEndDate && rowDate > new Date(pivotEndDate)) return;
+                }
 
                 const key = `${normalizedGender}_${age}`;
                 if (!pivotData[key]) {
@@ -7567,6 +8306,20 @@
 
             // Unknown 제외하고 Male, Female만 사용
             genders = genders.filter(g => g === 'Male' || g === 'Female');
+
+            // 데이터가 없으면 안내 메시지 표시
+            if (Object.keys(pivotData).length === 0 || genders.length === 0 || ages.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: var(--grey-500);">
+                        <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+                        <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">데이터를 표시할 수 없습니다</div>
+                        <div style="font-size: 13px; color: var(--grey-400);">
+                            위의 분류 기준에서 하나 이상의 항목을 선택해주세요.
+                        </div>
+                    </div>
+                `;
+                return;
+            }
 
             // 테이블 HTML 생성 - 새로운 형식: 연령별 행, 지표별 남자/여자 컬럼
             const metrics = [

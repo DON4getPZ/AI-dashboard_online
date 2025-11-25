@@ -30,7 +30,7 @@ df = pd.read_csv(input_file, thousands=',', low_memory=False)
 df['일'] = pd.to_datetime(df['일'])
 
 # 수치형 컬럼 변환
-numeric_cols = ['비용', '노출', '링크클릭', '전환수', '전환값']
+numeric_cols = ['비용', '노출', '클릭', '전환수', '전환값']
 for col in numeric_cols:
     df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
 
@@ -46,16 +46,16 @@ print("=" * 100)
 category_summary = df.groupby('유형구분').agg({
     '비용': 'sum',
     '노출': 'sum',
-    '링크클릭': 'sum',
+    '클릭': 'sum',
     '전환수': 'sum',
     '전환값': 'sum'
 }).reset_index()
 
 category_summary['ROAS'] = (category_summary['전환값'] / category_summary['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
 category_summary['CPA'] = (category_summary['비용'] / category_summary['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
-category_summary['CPC'] = (category_summary['비용'] / category_summary['링크클릭']).replace([np.inf, -np.inf], 0).fillna(0)
-category_summary['CTR'] = (category_summary['링크클릭'] / category_summary['노출'] * 100).fillna(0)
-category_summary['CVR'] = (category_summary['전환수'] / category_summary['링크클릭'] * 100).fillna(0)
+category_summary['CPC'] = (category_summary['비용'] / category_summary['클릭']).replace([np.inf, -np.inf], 0).fillna(0)
+category_summary['CTR'] = (category_summary['클릭'] / category_summary['노출'] * 100).fillna(0)
+category_summary['CVR'] = (category_summary['전환수'] / category_summary['클릭'] * 100).fillna(0)
 
 print("\n유형구분별 성과:")
 for _, row in category_summary.iterrows():
@@ -75,15 +75,15 @@ print("=" * 100)
 daily_data = df.groupby('일').agg({
     '비용': 'sum',
     '노출': 'sum',
-    '링크클릭': 'sum',
+    '클릭': 'sum',
     '전환수': 'sum',
     '전환값': 'sum'
 }).reset_index()
 
 daily_data['ROAS'] = (daily_data['전환값'] / daily_data['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
 daily_data['CPA'] = (daily_data['비용'] / daily_data['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
-daily_data['CTR'] = (daily_data['링크클릭'] / daily_data['노출'] * 100).fillna(0)
-daily_data['CVR'] = (daily_data['전환수'] / daily_data['링크클릭'] * 100).fillna(0)
+daily_data['CTR'] = (daily_data['클릭'] / daily_data['노출'] * 100).fillna(0)
+daily_data['CVR'] = (daily_data['전환수'] / daily_data['클릭'] * 100).fillna(0)
 
 print(f"일별 데이터: {len(daily_data)}일")
 print(f"기간: {daily_data['일'].min().date()} ~ {daily_data['일'].max().date()}")

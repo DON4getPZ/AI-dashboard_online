@@ -27,7 +27,7 @@ df = pd.read_csv(file_path, thousands=',', low_memory=False)
 df['일'] = pd.to_datetime(df['일'])
 
 # 수치형 컬럼 변환
-numeric_cols = ['비용', '노출', '링크클릭', '전환수', '전환값']
+numeric_cols = ['비용', '노출', '클릭', '전환수', '전환값']
 for col in numeric_cols:
     df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
 
@@ -41,7 +41,7 @@ print(f"총 데이터: {len(df):,}행")
 daily_data = df.groupby('일').agg({
     '비용': 'sum',
     '노출': 'sum',
-    '링크클릭': 'sum',
+    '클릭': 'sum',
     '전환수': 'sum',
     '전환값': 'sum'
 }).reset_index()

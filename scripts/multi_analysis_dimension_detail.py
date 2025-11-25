@@ -25,9 +25,13 @@ df = pd.read_csv(file_path, thousands=',', low_memory=False)
 df['일'] = pd.to_datetime(df['일'])
 
 # 수치형 컬럼 변환
-numeric_cols = ['비용', '노출', '링크클릭', '전환수', '전환값']
+numeric_cols = ['비용', '노출', '클릭', '전환수', '전환값']
 for col in numeric_cols:
     df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
+
+# 월, 주 컬럼 추가
+df['월'] = df['일'].dt.to_period('M').astype(str)
+df['주'] = df['일'].dt.to_period('W').astype(str)
 
 print("=" * 100)
 print("마케팅 데이터 차원별 상세 분석 V3")
@@ -73,10 +77,10 @@ print("=" * 100)
 
 type1_data = df[df['data_type'] == 'Type1_캠페인+광고세트']
 if len(type1_data) > 0:
-    type1_analysis = type1_data.groupby(['캠페인이름', '광고세트', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
+    type1_analysis = type1_data.groupby(['월', '주', '일', '캠페인이름', '광고세트', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
         '비용': 'sum',
         '노출': 'sum',
-        '링크클릭': 'sum',
+        '클릭': 'sum',
         '전환수': 'sum',
         '전환값': 'sum'
     }).reset_index()
@@ -100,10 +104,10 @@ print("=" * 100)
 
 type2_data = df[df['data_type'] == 'Type2_광고세트+연령+성별']
 if len(type2_data) > 0:
-    type2_analysis = type2_data.groupby(['광고세트', '연령', '성별', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
+    type2_analysis = type2_data.groupby(['월', '주', '일', '광고세트', '연령', '성별', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
         '비용': 'sum',
         '노출': 'sum',
-        '링크클릭': 'sum',
+        '클릭': 'sum',
         '전환수': 'sum',
         '전환값': 'sum'
     }).reset_index()
@@ -141,10 +145,10 @@ print("=" * 100)
 
 type3_data = df[df['data_type'] == 'Type3_광고세트+연령']
 if len(type3_data) > 0:
-    type3_analysis = type3_data.groupby(['광고세트', '연령', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
+    type3_analysis = type3_data.groupby(['월', '주', '일', '광고세트', '연령', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
         '비용': 'sum',
         '노출': 'sum',
-        '링크클릭': 'sum',
+        '클릭': 'sum',
         '전환수': 'sum',
         '전환값': 'sum'
     }).reset_index()
@@ -168,10 +172,10 @@ print("=" * 100)
 
 type4_data = df[df['data_type'] == 'Type4_광고세트+성별']
 if len(type4_data) > 0:
-    type4_analysis = type4_data.groupby(['광고세트', '성별', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
+    type4_analysis = type4_data.groupby(['월', '주', '일', '광고세트', '성별', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
         '비용': 'sum',
         '노출': 'sum',
-        '링크클릭': 'sum',
+        '클릭': 'sum',
         '전환수': 'sum',
         '전환값': 'sum'
     }).reset_index()
@@ -205,10 +209,10 @@ print("=" * 100)
 
 type5_data = df[df['data_type'] == 'Type5_광고세트+기기유형']
 if len(type5_data) > 0:
-    type5_analysis = type5_data.groupby(['광고세트', '기기유형', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
+    type5_analysis = type5_data.groupby(['월', '주', '일', '광고세트', '기기유형', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
         '비용': 'sum',
         '노출': 'sum',
-        '링크클릭': 'sum',
+        '클릭': 'sum',
         '전환수': 'sum',
         '전환값': 'sum'
     }).reset_index()
@@ -232,10 +236,10 @@ print("=" * 100)
 
 type6_data = df[df['data_type'] == 'Type6_광고세트+플랫폼']
 if len(type6_data) > 0:
-    type6_analysis = type6_data.groupby(['광고세트', '플랫폼', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
+    type6_analysis = type6_data.groupby(['월', '주', '일', '광고세트', '플랫폼', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
         '비용': 'sum',
         '노출': 'sum',
-        '링크클릭': 'sum',
+        '클릭': 'sum',
         '전환수': 'sum',
         '전환값': 'sum'
     }).reset_index()
@@ -259,10 +263,10 @@ print("=" * 100)
 
 type7_data = df[df['data_type'] == 'Type7_광고세트+기기플랫폼']
 if len(type7_data) > 0:
-    type7_analysis = type7_data.groupby(['광고세트', '기기플랫폼', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
+    type7_analysis = type7_data.groupby(['월', '주', '일', '광고세트', '기기플랫폼', '유형구분', '타겟팅', '브랜드명', '상품명', '프로모션']).agg({
         '비용': 'sum',
         '노출': 'sum',
-        '링크클릭': 'sum',
+        '클릭': 'sum',
         '전환수': 'sum',
         '전환값': 'sum'
     }).reset_index()
