@@ -904,34 +904,49 @@
 
                             <div class="card">
                                 <!-- 상단 헤더 및 컨트롤 -->
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
-                                    <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                    <div>
                                         <div class="card-title" style="margin-bottom: 4px;">시간에 따른 광고세트 성과 추이</div>
                                         <p style="color: var(--grey-600); font-size: 13px; margin: 0;">
                                             시간에 따른 각 세그먼트의 성과 변화를 추적하여 트렌드를 파악할 수 있습니다.
                                         </p>
                                     </div>
-                                    <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
-                                        <!-- 집계 단위 -->
-                                        <div class="view-type-section" style="margin-bottom: 0;">
-                                            <button class="view-btn timeseries-period-btn active" data-period="daily">일별</button>
-                                            <button class="view-btn timeseries-period-btn" data-period="weekly">주별</button>
-                                            <button class="view-btn timeseries-period-btn" data-period="monthly">월별</button>
-                                        </div>
-                                        <!-- 지표 선택 -->
-                                        <select id="timeseriesMetricDropdown" style="min-width: 180px; padding: 6px 10px; border: 1px solid var(--grey-300); border-radius: 4px; background: white; font-size: 12px; color: var(--grey-800); cursor: pointer;">
-                                            <option value="roas">📈 ROAS</option>
-                                            <option value="cost">💰 비용</option>
-                                            <option value="revenue">💵 전환값</option>
-                                            <option value="conversions">🎯 전환수</option>
-                                            <option value="impressions">👁 노출수</option>
-                                            <option value="clicks">👆 클릭수</option>
-                                            <option value="cpm">📊 CPM</option>
-                                            <option value="cpc">💲 CPC</option>
-                                            <option value="cpa">🎯 CPA</option>
-                                            <option value="ctr">📈 CTR</option>
-                                            <option value="cvr">🎯 전환율</option>
+                                    <!-- 집계 단위 선택 버튼 -->
+                                    <div class="view-type-section" style="margin-bottom: 0;">
+                                        <button class="view-btn timeseries-period-btn active" data-period="daily">일별</button>
+                                        <button class="view-btn timeseries-period-btn" data-period="weekly">주별</button>
+                                        <button class="view-btn timeseries-period-btn" data-period="monthly">월별</button>
+                                    </div>
+                                </div>
+
+                                <!-- 지표 선택 및 기간 선택 -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                                    <!-- 지표 선택 -->
+                                    <div style="flex: 0 0 auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
+                                        <select id="timeseriesMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                            <option value="roas">ROAS</option>
+                                            <option value="cost">비용</option>
+                                            <option value="revenue">전환값</option>
+                                            <option value="conversions">전환수</option>
+                                            <option value="impressions">노출수</option>
+                                            <option value="clicks">클릭수</option>
+                                            <option value="cpm">CPM</option>
+                                            <option value="cpc">CPC</option>
+                                            <option value="cpa">CPA</option>
+                                            <option value="ctr">CTR</option>
+                                            <option value="cvr">전환율</option>
                                         </select>
+                                    </div>
+
+                                    <!-- 기간 선택 -->
+                                    <div style="flex: 0 0 auto; margin-left: auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <input type="date" id="timeseriesStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                            <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                            <input type="date" id="timeseriesEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1227,6 +1242,28 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- 광고세트별 드롭다운 -->
+                                        <div style="position: relative; min-width: 180px; flex: 1;">
+                                            <button type="button" class="gender-filter-dropdown-btn" data-filter="adset" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
+                                                <span style="font-weight: 500;">광고세트_전체</span>
+                                                <span style="display: flex; align-items: center; gap: 6px;">
+                                                    <span class="gender-selected-count" style="font-size: 11px; color: var(--grey-500);"></span>
+                                                    <span style="font-size: 10px;">▼</span>
+                                                </span>
+                                            </button>
+                                            <div class="gender-filter-dropdown-list" data-filter="adset" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                                <div style="padding: 8px;">
+                                                    <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px; z-index: 1;">
+                                                        <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px; border-radius: 4px; transition: background 0.2s;">
+                                                            <input type="checkbox" class="gender-filter-select-all" data-filter="adset" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                            전체 선택
+                                                        </label>
+                                                    </div>
+                                                    <div id="genderFilterAdsetList" class="gender-filter-checkbox-list"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1412,6 +1449,28 @@
                                                         </label>
                                                     </div>
                                                     <div id="ageFilterPromotionList" class="age-filter-checkbox-list"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 광고세트별 드롭다운 -->
+                                        <div style="position: relative; min-width: 180px; flex: 1;">
+                                            <button type="button" class="age-filter-dropdown-btn" data-filter="adset" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
+                                                <span style="font-weight: 500;">광고세트_전체</span>
+                                                <span style="display: flex; align-items: center; gap: 6px;">
+                                                    <span class="age-selected-count" style="font-size: 11px; color: var(--grey-500);"></span>
+                                                    <span style="font-size: 10px;">▼</span>
+                                                </span>
+                                            </button>
+                                            <div class="age-filter-dropdown-list" data-filter="adset" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                                <div style="padding: 8px;">
+                                                    <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px; z-index: 1;">
+                                                        <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px; border-radius: 4px; transition: background 0.2s;">
+                                                            <input type="checkbox" class="age-filter-select-all" data-filter="adset" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                            전체 선택
+                                                        </label>
+                                                    </div>
+                                                    <div id="ageFilterAdsetList" class="age-filter-checkbox-list"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -1603,6 +1662,28 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- 광고세트별 드롭다운 -->
+                                        <div style="position: relative; min-width: 180px; flex: 1;">
+                                            <button type="button" class="platform-filter-dropdown-btn" data-filter="adset" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
+                                                <span style="font-weight: 500;">광고세트_전체</span>
+                                                <span style="display: flex; align-items: center; gap: 6px;">
+                                                    <span class="platform-selected-count" style="font-size: 11px; color: var(--grey-500);"></span>
+                                                    <span style="font-size: 10px;">▼</span>
+                                                </span>
+                                            </button>
+                                            <div class="platform-filter-dropdown-list" data-filter="adset" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                                <div style="padding: 8px;">
+                                                    <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px; z-index: 1;">
+                                                        <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px; border-radius: 4px; transition: background 0.2s;">
+                                                            <input type="checkbox" class="platform-filter-select-all" data-filter="adset" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                            전체 선택
+                                                        </label>
+                                                    </div>
+                                                    <div id="platformFilterAdsetList" class="platform-filter-checkbox-list"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1791,6 +1872,28 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- 광고세트별 드롭다운 -->
+                                        <div style="position: relative; min-width: 180px; flex: 1;">
+                                            <button type="button" class="deviceplatform-filter-dropdown-btn" data-filter="adset" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
+                                                <span style="font-weight: 500;">광고세트_전체</span>
+                                                <span style="display: flex; align-items: center; gap: 6px;">
+                                                    <span class="deviceplatform-selected-count" style="font-size: 11px; color: var(--grey-500);"></span>
+                                                    <span style="font-size: 10px;">▼</span>
+                                                </span>
+                                            </button>
+                                            <div class="deviceplatform-filter-dropdown-list" data-filter="adset" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                                <div style="padding: 8px;">
+                                                    <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px; z-index: 1;">
+                                                        <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px; border-radius: 4px; transition: background 0.2s;">
+                                                            <input type="checkbox" class="deviceplatform-filter-select-all" data-filter="adset" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                            전체 선택
+                                                        </label>
+                                                    </div>
+                                                    <div id="deviceplatformFilterAdsetList" class="deviceplatform-filter-checkbox-list"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1976,6 +2079,28 @@
                                                         </label>
                                                     </div>
                                                     <div id="devicetypeFilterPromotionList" class="devicetype-filter-checkbox-list"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 광고세트별 드롭다운 -->
+                                        <div style="position: relative; min-width: 180px; flex: 1;">
+                                            <button type="button" class="devicetype-filter-dropdown-btn" data-filter="adset" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
+                                                <span style="font-weight: 500;">광고세트_전체</span>
+                                                <span style="display: flex; align-items: center; gap: 6px;">
+                                                    <span class="devicetype-selected-count" style="font-size: 11px; color: var(--grey-500);"></span>
+                                                    <span style="font-size: 10px;">▼</span>
+                                                </span>
+                                            </button>
+                                            <div class="devicetype-filter-dropdown-list" data-filter="adset" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                                <div style="padding: 8px;">
+                                                    <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px; z-index: 1;">
+                                                        <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px; border-radius: 4px; transition: background 0.2s;">
+                                                            <input type="checkbox" class="devicetype-filter-select-all" data-filter="adset" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                            전체 선택
+                                                        </label>
+                                                    </div>
+                                                    <div id="devicetypeFilterAdsetList" class="devicetype-filter-checkbox-list"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -2664,6 +2789,8 @@
             brand: [],
             promotion: []
         };
+        let timeseriesStartDate = '';
+        let timeseriesEndDate = '';
         let timeseriesTrendChart = null;
 
         // 성별 추이 관련 변수
@@ -3469,6 +3596,24 @@
                 });
             }
 
+            // 시계열 기간 선택 이벤트
+            const timeseriesStartDateInput = document.getElementById('timeseriesStartDate');
+            const timeseriesEndDateInput = document.getElementById('timeseriesEndDate');
+
+            if (timeseriesStartDateInput) {
+                timeseriesStartDateInput.addEventListener('change', function(e) {
+                    timeseriesStartDate = e.target.value;
+                    renderTimeseriesTrendChart();
+                });
+            }
+
+            if (timeseriesEndDateInput) {
+                timeseriesEndDateInput.addEventListener('change', function(e) {
+                    timeseriesEndDate = e.target.value;
+                    renderTimeseriesTrendChart();
+                });
+            }
+
             // 시계열 필터 버튼 이벤트
             // 시계열 필터 - 이제 체크박스로 처리됨 (initTimeseriesDropdowns에서 처리)
 
@@ -3739,6 +3884,35 @@
                     });
                 }
             });
+
+            // 기간 선택 초기값 설정 (전체 데이터의 최소/최대 날짜)
+            const dates = dimensionData
+                .map(row => row['일'])
+                .filter(date => date && date !== '' && date !== '-')
+                .map(date => new Date(date))
+                .filter(date => !isNaN(date));
+
+            if (dates.length > 0) {
+                const minDate = new Date(Math.min(...dates));
+                const maxDate = new Date(Math.max(...dates));
+
+                const formatDateForInput = (date) => {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                };
+
+                const startInput = document.getElementById('timeseriesStartDate');
+                const endInput = document.getElementById('timeseriesEndDate');
+
+                if (startInput && endInput) {
+                    startInput.value = formatDateForInput(minDate);
+                    endInput.value = formatDateForInput(maxDate);
+                    timeseriesStartDate = formatDateForInput(minDate);
+                    timeseriesEndDate = formatDateForInput(maxDate);
+                }
+            }
         }
 
         function updateFilterButtonText(filterKey) {
@@ -3869,7 +4043,8 @@
                 'channel': { column: '유형구분', listId: 'genderFilterChannelList', label: '채널' },
                 'product': { column: '상품명', listId: 'genderFilterProductList', label: '제품' },
                 'brand': { column: '브랜드명', listId: 'genderFilterBrandList', label: '브랜드' },
-                'promotion': { column: '프로모션', listId: 'genderFilterPromotionList', label: '프로모션' }
+                'promotion': { column: '프로모션', listId: 'genderFilterPromotionList', label: '프로모션' },
+                'adset': { column: '광고세트', listId: 'genderFilterAdsetList', label: '광고세트' }
             };
 
             // 각 필터에 대한 체크박스 리스트 생성
@@ -3956,7 +4131,8 @@
                 'channel': '채널',
                 'product': '제품',
                 'brand': '브랜드',
-                'promotion': '프로모션'
+                'promotion': '프로모션',
+                'adset': '광고세트'
             };
 
             const btn = document.querySelector(`.gender-filter-dropdown-btn[data-filter="${filterKey}"]`);
@@ -3989,7 +4165,8 @@
             channel: [],
             product: [],
             brand: [],
-            promotion: []
+            promotion: [],
+            adset: []
         };
 
         function updateGenderFilters() {
@@ -3999,7 +4176,8 @@
                 'channel': { column: '유형구분', listId: 'genderFilterChannelList' },
                 'product': { column: '상품명', listId: 'genderFilterProductList' },
                 'brand': { column: '브랜드명', listId: 'genderFilterBrandList' },
-                'promotion': { column: '프로모션', listId: 'genderFilterPromotionList' }
+                'promotion': { column: '프로모션', listId: 'genderFilterPromotionList' },
+                'adset': { column: '광고세트', listId: 'genderFilterAdsetList' }
             };
 
             // 선택된 필터 값 수집
@@ -4024,7 +4202,8 @@
                     channel: [],
                     product: [],
                     brand: [],
-                    promotion: []
+                    promotion: [],
+                    adset: []
                 };
             }
 
@@ -4042,7 +4221,8 @@
                 'channel': '유형구분',
                 'product': '상품명',
                 'brand': '브랜드명',
-                'promotion': '프로모션'
+                'promotion': '프로모션',
+                'adset': '광고세트'
             };
 
             const gendersToShow = new Set();
@@ -4165,7 +4345,8 @@
                 'channel': { column: '유형구분', listId: 'ageFilterChannelList', label: '채널' },
                 'product': { column: '상품명', listId: 'ageFilterProductList', label: '제품' },
                 'brand': { column: '브랜드명', listId: 'ageFilterBrandList', label: '브랜드' },
-                'promotion': { column: '프로모션', listId: 'ageFilterPromotionList', label: '프로모션' }
+                'promotion': { column: '프로모션', listId: 'ageFilterPromotionList', label: '프로모션' },
+                'adset': { column: '광고세트', listId: 'ageFilterAdsetList', label: '광고세트' }
             };
 
             // 각 필터에 대한 체크박스 리스트 생성
@@ -4243,7 +4424,8 @@
                 'channel': '채널',
                 'product': '제품',
                 'brand': '브랜드',
-                'promotion': '프로모션'
+                'promotion': '프로모션',
+                'adset': '광고세트'
             };
 
             const btn = document.querySelector(`.age-filter-dropdown-btn[data-filter="${filterKey}"]`);
@@ -4276,7 +4458,8 @@
             channel: [],
             product: [],
             brand: [],
-            promotion: []
+            promotion: [],
+            adset: []
         };
 
         function updateAgeFilters() {
@@ -4286,7 +4469,8 @@
                 'channel': { column: '유형구분', listId: 'ageFilterChannelList' },
                 'product': { column: '상품명', listId: 'ageFilterProductList' },
                 'brand': { column: '브랜드명', listId: 'ageFilterBrandList' },
-                'promotion': { column: '프로모션', listId: 'ageFilterPromotionList' }
+                'promotion': { column: '프로모션', listId: 'ageFilterPromotionList' },
+                'adset': { column: '광고세트', listId: 'ageFilterAdsetList' }
             };
 
             // 선택된 필터 값 수집
@@ -4311,7 +4495,8 @@
                     channel: [],
                     product: [],
                     brand: [],
-                    promotion: []
+                    promotion: [],
+                    adset: []
                 };
             }
 
@@ -4329,7 +4514,8 @@
                 'channel': '유형구분',
                 'product': '상품명',
                 'brand': '브랜드명',
-                'promotion': '프로모션'
+                'promotion': '프로모션',
+                'adset': '광고세트'
             };
 
             const agesToShow = new Set();
@@ -4452,7 +4638,8 @@
                 'channel': { column: '유형구분', listId: 'platformFilterChannelList', label: '채널' },
                 'product': { column: '상품명', listId: 'platformFilterProductList', label: '제품' },
                 'brand': { column: '브랜드명', listId: 'platformFilterBrandList', label: '브랜드' },
-                'promotion': { column: '프로모션', listId: 'platformFilterPromotionList', label: '프로모션' }
+                'promotion': { column: '프로모션', listId: 'platformFilterPromotionList', label: '프로모션' },
+                'adset': { column: '광고세트', listId: 'platformFilterAdsetList', label: '광고세트' }
             };
 
             // 각 필터에 대한 체크박스 리스트 생성
@@ -4539,7 +4726,8 @@
                 'channel': '채널',
                 'product': '제품',
                 'brand': '브랜드',
-                'promotion': '프로모션'
+                'promotion': '프로모션',
+                'adset': '광고세트'
             };
 
             const btn = document.querySelector(`.platform-filter-dropdown-btn[data-filter="${filterKey}"]`);
@@ -4572,7 +4760,8 @@
             channel: [],
             product: [],
             brand: [],
-            promotion: []
+            promotion: [],
+            adset: []
         };
 
         function updatePlatformFilters() {
@@ -4582,7 +4771,8 @@
                 'channel': { column: '유형구분', listId: 'platformFilterChannelList' },
                 'product': { column: '상품명', listId: 'platformFilterProductList' },
                 'brand': { column: '브랜드명', listId: 'platformFilterBrandList' },
-                'promotion': { column: '프로모션', listId: 'platformFilterPromotionList' }
+                'promotion': { column: '프로모션', listId: 'platformFilterPromotionList' },
+                'adset': { column: '광고세트', listId: 'platformFilterAdsetList' }
             };
 
             // 선택된 필터 값 수집
@@ -4607,7 +4797,8 @@
                     channel: [],
                     product: [],
                     brand: [],
-                    promotion: []
+                    promotion: [],
+                    adset: []
                 };
             }
 
@@ -4625,7 +4816,8 @@
                 'channel': '유형구분',
                 'product': '상품명',
                 'brand': '브랜드명',
-                'promotion': '프로모션'
+                'promotion': '프로모션',
+                'adset': '광고세트'
             };
 
             const platformsToShow = new Set();
@@ -4804,6 +4996,14 @@
                 if (!matchesAllFilters) return;
 
                 const date = row['일'];
+
+                // 기간 필터링
+                if (timeseriesStartDate || timeseriesEndDate) {
+                    const rowDate = new Date(date);
+                    if (isNaN(rowDate)) return;
+                    if (timeseriesStartDate && rowDate < new Date(timeseriesStartDate)) return;
+                    if (timeseriesEndDate && rowDate > new Date(timeseriesEndDate)) return;
+                }
                 const cost = parseFloat(row['비용']?.replace(/,/g, '') || row['비용']) || 0;
                 const revenue = parseFloat(row['전환값']?.replace(/,/g, '') || row['전환값']) || 0;
                 const conversions = parseFloat(row['전환수']?.replace(/,/g, '') || row['전환수']) || 0;
@@ -5080,7 +5280,8 @@
                 'channel': '유형구분',
                 'product': '상품명',
                 'brand': '브랜드명',
-                'promotion': '프로모션'
+                'promotion': '프로모션',
+                'adset': '광고세트'
             };
 
             // 필터 조건을 만족하는 행만 필터링하는 헬퍼 함수
@@ -5428,7 +5629,8 @@
                 'channel': '유형구분',
                 'product': '상품명',
                 'brand': '브랜드명',
-                'promotion': '프로모션'
+                'promotion': '프로모션',
+                'adset': '광고세트'
             };
 
             // 필터 조건을 만족하는 행만 필터링하는 헬퍼 함수
@@ -5774,7 +5976,8 @@
                 'channel': '유형구분',
                 'product': '상품명',
                 'brand': '브랜드명',
-                'promotion': '프로모션'
+                'promotion': '프로모션',
+                'adset': '광고세트'
             };
 
             // 필터 조건을 만족하는 행만 필터링하는 헬퍼 함수
@@ -6100,7 +6303,8 @@
                 'channel': { column: '유형구분', listId: 'deviceplatformFilterChannelList', label: '채널' },
                 'product': { column: '상품명', listId: 'deviceplatformFilterProductList', label: '제품' },
                 'brand': { column: '브랜드명', listId: 'deviceplatformFilterBrandList', label: '브랜드' },
-                'promotion': { column: '프로모션', listId: 'deviceplatformFilterPromotionList', label: '프로모션' }
+                'promotion': { column: '프로모션', listId: 'deviceplatformFilterPromotionList', label: '프로모션' },
+                'adset': { column: '광고세트', listId: 'deviceplatformFilterAdsetList', label: '광고세트' }
             };
 
             // 각 필터에 대한 체크박스 리스트 생성
@@ -6186,7 +6390,8 @@
                 'channel': '채널',
                 'product': '제품',
                 'brand': '브랜드',
-                'promotion': '프로모션'
+                'promotion': '프로모션',
+                'adset': '광고세트'
             };
 
             const btn = document.querySelector(`.deviceplatform-filter-dropdown-btn[data-filter="${filterKey}"]`);
@@ -6219,7 +6424,8 @@
             channel: [],
             product: [],
             brand: [],
-            promotion: []
+            promotion: [],
+            adset: []
         };
 
         function updateDevicePlatformFilters() {
@@ -6229,7 +6435,8 @@
                 'channel': { column: '유형구분', listId: 'deviceplatformFilterChannelList' },
                 'product': { column: '상품명', listId: 'deviceplatformFilterProductList' },
                 'brand': { column: '브랜드명', listId: 'deviceplatformFilterBrandList' },
-                'promotion': { column: '프로모션', listId: 'deviceplatformFilterPromotionList' }
+                'promotion': { column: '프로모션', listId: 'deviceplatformFilterPromotionList' },
+                'adset': { column: '광고세트', listId: 'deviceplatformFilterAdsetList' }
             };
 
             // 선택된 필터 값 수집
@@ -6254,7 +6461,8 @@
                     channel: [],
                     product: [],
                     brand: [],
-                    promotion: []
+                    promotion: [],
+                    adset: []
                 };
             }
 
@@ -6272,7 +6480,8 @@
                 'channel': '유형구분',
                 'product': '상품명',
                 'brand': '브랜드명',
-                'promotion': '프로모션'
+                'promotion': '프로모션',
+                'adset': '광고세트'
             };
 
             const devicePlatformsToShow = new Set();
@@ -6314,7 +6523,8 @@
                 'channel': { column: '유형구분', listId: 'devicetypeFilterChannelList', label: '채널' },
                 'product': { column: '상품명', listId: 'devicetypeFilterProductList', label: '제품' },
                 'brand': { column: '브랜드명', listId: 'devicetypeFilterBrandList', label: '브랜드' },
-                'promotion': { column: '프로모션', listId: 'devicetypeFilterPromotionList', label: '프로모션' }
+                'promotion': { column: '프로모션', listId: 'devicetypeFilterPromotionList', label: '프로모션' },
+                'adset': { column: '광고세트', listId: 'devicetypeFilterAdsetList', label: '광고세트' }
             };
 
             // 각 필터에 대한 체크박스 리스트 생성
@@ -6400,7 +6610,8 @@
                 'channel': '채널',
                 'product': '제품',
                 'brand': '브랜드',
-                'promotion': '프로모션'
+                'promotion': '프로모션',
+                'adset': '광고세트'
             };
 
             const btn = document.querySelector(`.devicetype-filter-dropdown-btn[data-filter="${filterKey}"]`);
@@ -6433,7 +6644,8 @@
             channel: [],
             product: [],
             brand: [],
-            promotion: []
+            promotion: [],
+            adset: []
         };
 
         function updateDeviceTypeFilters() {
@@ -6443,7 +6655,8 @@
                 'channel': { column: '유형구분', listId: 'devicetypeFilterChannelList' },
                 'product': { column: '상품명', listId: 'devicetypeFilterProductList' },
                 'brand': { column: '브랜드명', listId: 'devicetypeFilterBrandList' },
-                'promotion': { column: '프로모션', listId: 'devicetypeFilterPromotionList' }
+                'promotion': { column: '프로모션', listId: 'devicetypeFilterPromotionList' },
+                'adset': { column: '광고세트', listId: 'devicetypeFilterAdsetList' }
             };
 
             // 선택된 필터 값 수집
@@ -6468,7 +6681,8 @@
                     channel: [],
                     product: [],
                     brand: [],
-                    promotion: []
+                    promotion: [],
+                    adset: []
                 };
             }
 
@@ -6486,7 +6700,8 @@
                 'channel': '유형구분',
                 'product': '상품명',
                 'brand': '브랜드명',
-                'promotion': '프로모션'
+                'promotion': '프로모션',
+                'adset': '광고세트'
             };
 
             const deviceTypesToShow = new Set();
@@ -6548,7 +6763,8 @@
                 'channel': '유형구분',
                 'product': '상품명',
                 'brand': '브랜드명',
-                'promotion': '프로모션'
+                'promotion': '프로모션',
+                'adset': '광고세트'
             };
 
             // 필터 조건을 만족하는 행만 필터링하는 헬퍼 함수
@@ -6894,7 +7110,8 @@
                 'channel': '유형구분',
                 'product': '상품명',
                 'brand': '브랜드명',
-                'promotion': '프로모션'
+                'promotion': '프로모션',
+                'adset': '광고세트'
             };
 
             // 필터 조건을 만족하는 행만 필터링하는 헬퍼 함수
