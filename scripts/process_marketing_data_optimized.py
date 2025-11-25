@@ -1,5 +1,5 @@
 """
-메모리 최적화 마케팅 데이터 처리 스크립트
+메모리 최적화 마케팅 데이터 처리 스크립트 v1.1
 
 메모리 최적화 기법:
 1. 청크 단위 데이터 읽기/처리
@@ -8,6 +8,7 @@
 4. Prophet 모델 순차 학습 후 즉시 메모리 해제
 5. 중간 데이터프레임 즉시 삭제
 6. 메모리 사용량 모니터링
+7. 최근 365일 데이터 기반 학습 (연간 계절성 반영)
 
 환경변수:
 - INPUT_CSV_PATH: 입력 CSV 파일 경로 (기본값: raw_data.csv)
@@ -60,6 +61,9 @@ for dir_path in [RAW_DIR, META_DIR, FORECAST_DIR, STATS_DIR, VISUAL_DIR]:
 
 plt.rcParams['font.family'] = 'Malgun Gothic'
 plt.rcParams['axes.unicode_minus'] = False
+
+# 학습 기간 설정 (일)
+TRAINING_DAYS = 365
 
 
 def get_memory_usage():
@@ -162,18 +166,32 @@ def forecast_with_memory_control(daily_df: pd.DataFrame, days: int = 30) -> pd.D
 
     mem_start = get_memory_usage()
 
+    # 최근 365일 데이터만 필터링
+    max_date = daily_df['일 구분'].max()
+    cutoff_date = max_date - timedelta(days=TRAINING_DAYS)
+    daily_filtered = daily_df[daily_df['일 구분'] >= cutoff_date].copy()
+
+    # 학습 기간 계산
+    total_data_days = (daily_filtered['일 구분'].max() - daily_filtered['일 구분'].min()).days + 1
+    use_yearly = total_data_days >= 365
+
+    print(f"   ├ 학습 기준: 최근 {TRAINING_DAYS}일")
+    print(f"   ├ 실제 데이터: {total_data_days}일")
+    if not use_yearly:
+        print(f"   ├ ⚠️ 연간 계절성 비활성화 (데이터 {TRAINING_DAYS}일 미만)")
+
     for idx, metric in enumerate(metrics):
         print(f"   ├ [{idx+1}/{len(metrics)}] {metric} 예측 중...")
 
         try:
             # Prophet 데이터 준비 (float32 사용)
-            prophet_df = daily_df[['일 구분', metric]].copy()
+            prophet_df = daily_filtered[['일 구분', metric]].copy()
             prophet_df.columns = ['ds', 'y']
             prophet_df['y'] = prophet_df['y'].astype('float32')
 
-            # Prophet 모델 생성 및 학습
+            # Prophet 모델 생성 및 학습 (연간 계절성 자동 설정)
             model = Prophet(
-                yearly_seasonality=False,
+                yearly_seasonality=use_yearly,
                 weekly_seasonality=True,
                 daily_seasonality=False,
                 seasonality_mode='additive',

@@ -58,6 +58,29 @@ def is_valid_age(age_value):
 
     return True
 
+def safe_float(value):
+    """NaN, Inf 값을 None으로 변환하여 JSON 표준 준수"""
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        if pd.isna(value) or np.isinf(value):
+            return None
+        return float(value)
+    return value
+
+def clean_dict_for_json(obj):
+    """딕셔너리/리스트 내의 모든 NaN/Inf 값을 None으로 재귀적으로 변환"""
+    if isinstance(obj, dict):
+        return {k: clean_dict_for_json(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [clean_dict_for_json(item) for item in obj]
+    elif isinstance(obj, (int, float)):
+        if pd.isna(obj) or np.isinf(obj):
+            return None
+        return obj
+    else:
+        return obj
+
 # 경로 설정
 data_dir = Path(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type')
 
@@ -106,7 +129,8 @@ prophet_files = {
     'gender': 'prophet_forecast_by_gender.csv',
     'age': 'prophet_forecast_by_age.csv',
     'platform': 'prophet_forecast_by_platform.csv',
-    'promotion': 'prophet_forecast_by_promotion.csv'
+    'promotion': 'prophet_forecast_by_promotion.csv',
+    'age_gender': 'prophet_forecast_by_age_gender.csv'
 }
 
 prophet_forecasts = {}
@@ -933,6 +957,34 @@ if 'promotion' in prophet_forecasts:
 
     promotion_forecast_insights = sorted(promotion_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
 
+# 연령+성별 조합별 예측
+age_gender_forecast_insights = []
+if 'age_gender' in prophet_forecasts:
+    age_gender_df = prophet_forecasts['age_gender']
+    for age_gender in age_gender_df['연령_성별'].unique():
+        age_gender_data = age_gender_df[age_gender_df['연령_성별'] == age_gender]
+        total_forecast = age_gender_data['예측_전환값'].sum()
+        avg_forecast = age_gender_data['예측_전환값'].mean()
+
+        # 연령과 성별 분리
+        parts = age_gender.split('_')
+        age_part = parts[0] if len(parts) >= 1 else age_gender
+        gender_part = parts[1] if len(parts) >= 2 else ''
+
+        age_gender_forecast_insights.append({
+            "age_gender": age_gender,
+            "age": age_part,
+            "gender": gender_part,
+            "total_30day_forecast": float(total_forecast),
+            "avg_daily_forecast": float(avg_forecast),
+            "avg_forecast_roas": float(age_gender_data['예측_ROAS'].mean()) if '예측_ROAS' in age_gender_data.columns else 0,
+            "avg_forecast_cpa": float(age_gender_data['예측_CPA'].mean()) if '예측_CPA' in age_gender_data.columns else 0,
+            "total_forecast_cost": float(age_gender_data['예측_비용'].sum()) if '예측_비용' in age_gender_data.columns else 0,
+            "total_forecast_conversions": float(age_gender_data['예측_전환수'].sum()) if '예측_전환수' in age_gender_data.columns else 0
+        })
+
+    age_gender_forecast_insights = sorted(age_gender_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
+
 # Prophet 예측 기반 알림 생성
 prophet_alerts = []
 
@@ -995,6 +1047,20 @@ if len(age_forecast_insights) > 0:
             "value": top_age_forecast['total_30day_forecast']
         })
 
+# 5. 연령+성별 조합 예측 기반 알림
+if len(age_gender_forecast_insights) > 0:
+    top_age_gender_forecast = age_gender_forecast_insights[0]
+    if top_age_gender_forecast['total_30day_forecast'] > 0:
+        prophet_alerts.append({
+            "type": "age_gender_forecast_opportunity",
+            "message": f"{top_age_gender_forecast['age']} {top_age_gender_forecast['gender']} 타겟이 향후 30일간 {top_age_gender_forecast['total_30day_forecast']:,.0f}원의 전환값이 예상됩니다.",
+            "severity": "opportunity",
+            "age_gender": top_age_gender_forecast['age_gender'],
+            "age": top_age_gender_forecast['age'],
+            "gender": top_age_gender_forecast['gender'],
+            "value": top_age_gender_forecast['total_30day_forecast']
+        })
+
 # Prophet 예측 기반 추천사항
 prophet_recommendations = []
 
@@ -1049,6 +1115,21 @@ if len(platform_forecast_insights) > 0:
             "description": f"{best_platform['platform']} 플랫폼에서 향후 30일간 {best_platform['total_30day_forecast']:,.0f}원의 전환이 예상됩니다. 해당 플랫폼 광고에 집중하세요.",
             "priority": "medium",
             "expected_impact": "ROAS 10-20% 개선 예상",
+            "based_on": "prophet_forecast"
+        })
+
+# 5. 연령+성별 조합 타겟팅 추천
+if len(age_gender_forecast_insights) >= 3:
+    top_age_gender_combos = age_gender_forecast_insights[:3]
+    combo_names = [f"{c['age']} {c['gender']}" for c in top_age_gender_combos]
+    total_top_combo_forecast = sum(c['total_30day_forecast'] for c in top_age_gender_combos)
+
+    if total_top_combo_forecast > 0:
+        prophet_recommendations.append({
+            "title": "연령+성별 타겟팅 최적화 (예측 기반)",
+            "description": f"향후 30일 예측 매출 상위 타겟: {', '.join(combo_names)}. 해당 타겟에 광고 예산을 집중 배분하세요.",
+            "priority": "high",
+            "expected_impact": f"예상 총 매출: {total_top_combo_forecast:,.0f}원",
             "based_on": "prophet_forecast"
         })
 
@@ -1323,6 +1404,7 @@ insights = {
         "by_age": age_forecast_insights,
         "by_platform": platform_forecast_insights,
         "by_promotion": promotion_forecast_insights[:10] if len(promotion_forecast_insights) > 0 else [],
+        "by_age_gender": age_gender_forecast_insights[:10] if len(age_gender_forecast_insights) > 0 else [],
         "alerts": prophet_alerts,
         "recommendations": prophet_recommendations
     },
@@ -1356,10 +1438,11 @@ insights = {
     }
 }
 
-# JSON 파일 저장
+# JSON 파일 저장 (NaN/Inf 값을 null로 변환)
 output_file = data_dir / 'insights.json'
+insights_cleaned = clean_dict_for_json(insights)
 with open(output_file, 'w', encoding='utf-8') as f:
-    json.dump(insights, f, ensure_ascii=False, indent=2)
+    json.dump(insights_cleaned, f, ensure_ascii=False, indent=2)
 
 print(f"\n✓ 인사이트 생성 완료: {output_file}")
 
@@ -1403,6 +1486,7 @@ print(f"  - 성별 예측: {len(gender_forecast_insights)}개")
 print(f"  - 연령별 예측: {len(age_forecast_insights)}개")
 print(f"  - 플랫폼별 예측: {len(platform_forecast_insights)}개")
 print(f"  - 프로모션별 예측: {len(promotion_forecast_insights)}개")
+print(f"  - 연령+성별 조합별 예측: {len(age_gender_forecast_insights)}개")
 print(f"  - Prophet 알림: {len(prophet_alerts)}개")
 print(f"  - Prophet 추천사항: {len(prophet_recommendations)}개")
 

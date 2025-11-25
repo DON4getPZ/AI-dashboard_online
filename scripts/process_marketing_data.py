@@ -1,5 +1,5 @@
 """
-마케팅 데이터 전처리 및 분석 스크립트 v2.0
+마케팅 데이터 전처리 및 분석 스크립트 v2.1
 
 기능:
 1. 원본 CSV 데이터 로드 및 정제
@@ -7,6 +7,7 @@
 3. 통계 분석 (평균, 표준편차, 이상치 탐지)
 4. 시계열 예측 (Prophet 또는 간단한 이동평균)
 5. 메타데이터 생성
+6. 최근 365일 데이터 기반 학습 (연간 계절성 반영)
 
 환경변수:
 - INPUT_CSV_PATH: 입력 CSV 파일 경로 (기본값: raw_data.csv)
@@ -61,6 +62,9 @@ for dir_path in [RAW_DIR, META_DIR, FORECAST_DIR, STATS_DIR, VISUAL_DIR]:
 # 한글 폰트 설정 (Windows)
 plt.rcParams['font.family'] = 'Malgun Gothic'
 plt.rcParams['axes.unicode_minus'] = False
+
+# 학습 기간 설정 (일)
+TRAINING_DAYS = 365
 
 
 def load_and_clean_data(file_path: str) -> pd.DataFrame:
@@ -413,7 +417,7 @@ def simple_forecast(df: pd.DataFrame, days: int = 30) -> pd.DataFrame:
 
 
 def advanced_detailed_forecast(df: pd.DataFrame, days: int = 30) -> Dict[str, pd.DataFrame]:
-    """상세 시계열 분석 및 예측 (Prophet 사용, 전체 데이터 활용)"""
+    """상세 시계열 분석 및 예측 (Prophet 사용, 최근 365일 데이터 활용)"""
     print(f"\n🔬 상세 시계열 분석 시작 ({days}일 예측)...")
 
     if not PROPHET_AVAILABLE:
@@ -421,7 +425,7 @@ def advanced_detailed_forecast(df: pd.DataFrame, days: int = 30) -> Dict[str, pd
         # 단순 예측으로 대체
         return simple_forecast_as_detailed(df, days)
 
-    # 일별 집계 (전체 데이터 사용)
+    # 일별 집계
     daily = df.groupby('일 구분').agg({
         '비용': 'sum',
         '노출': 'sum',
@@ -431,10 +435,26 @@ def advanced_detailed_forecast(df: pd.DataFrame, days: int = 30) -> Dict[str, pd
     }).reset_index()
 
     daily = daily.sort_values('일 구분')
-    daily_indexed = daily.set_index('일 구분')
 
-    print(f"   ├ 학습 데이터: {len(daily)}일 (전체)")
-    print(f"   ├ 기간: {daily['일 구분'].min()} ~ {daily['일 구분'].max()}")
+    # 최근 365일 데이터만 필터링
+    max_date = daily['일 구분'].max()
+    cutoff_date = max_date - timedelta(days=TRAINING_DAYS)
+    daily_filtered = daily[daily['일 구분'] >= cutoff_date].copy()
+
+    daily_indexed = daily_filtered.set_index('일 구분')
+
+    # 학습 기간 계산 및 메시지 출력
+    total_data_days = (daily_filtered['일 구분'].max() - daily_filtered['일 구분'].min()).days + 1
+
+    print(f"   ├ 학습 기준: 최근 {TRAINING_DAYS}일 (연간 학습)")
+    print(f"   ├ 실제 학습 데이터: {len(daily_filtered)}일")
+    print(f"   ├ 기간: {daily_filtered['일 구분'].min()} ~ {daily_filtered['일 구분'].max()}")
+
+    if total_data_days < TRAINING_DAYS:
+        print(f"   ├ ⚠️ 데이터 {total_data_days}일 ({TRAINING_DAYS}일 미만)")
+        print(f"   ├    → 연간 계절성 비활성화, 주간 패턴만 학습")
+    else:
+        print(f"   ├ ✓ 연간 학습 가능 ({total_data_days}일)")
 
     metrics = ['비용', '노출', '클릭', '전환수', '전환값']
     forecasts = {}
@@ -444,20 +464,24 @@ def advanced_detailed_forecast(df: pd.DataFrame, days: int = 30) -> Dict[str, pd
 
         try:
             # Prophet용 데이터 준비 (ds, y 컬럼 필요)
-            prophet_df = daily[['일 구분', metric]].copy()
+            prophet_df = daily_filtered[['일 구분', metric]].copy()
             prophet_df.columns = ['ds', 'y']
             prophet_df['ds'] = pd.to_datetime(prophet_df['ds'])
 
             # 결측치 처리
             prophet_df['y'] = prophet_df['y'].fillna(0)
 
-            # Prophet 모델 생성 (주간 계절성 활성화)
+            # 데이터 기간 확인하여 연간 계절성 자동 설정
+            data_days = (prophet_df['ds'].max() - prophet_df['ds'].min()).days
+            use_yearly = data_days >= 365
+
+            # Prophet 모델 생성 (연간 계절성 자동 설정)
             model = Prophet(
-                yearly_seasonality=False,  # 연간 계절성 (데이터가 1년 미만일 수 있음)
-                weekly_seasonality=True,   # 주간 계절성
-                daily_seasonality=False,   # 일간 계절성
+                yearly_seasonality=use_yearly,  # 365일 이상일 때만 활성화
+                weekly_seasonality=True,        # 주간 계절성
+                daily_seasonality=False,        # 일간 계절성
                 seasonality_mode='additive',
-                changepoint_prior_scale=0.05  # 추세 변화 민감도
+                changepoint_prior_scale=0.05    # 추세 변화 민감도
             )
 
             # 모델 학습

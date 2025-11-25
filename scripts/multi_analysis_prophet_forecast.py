@@ -1,11 +1,13 @@
 """
-Prophet 시계열 예측 V4 - 다중 지표 예측 (비용, 노출, 클릭, 전환수, 전환값)
+Prophet 시계열 예측 V5 - 연간 학습 기반 다중 지표 예측
 
 - Prophet 1.2.0+ (cmdstanpy 백엔드, Python 3.13 지원)
+- 최근 365일 데이터 기반 학습 (연간 계절성 반영)
 - 유형구분별 일별 다중 지표 예측 (향후 30일)
 - Dimension Type별 예측 (브랜드, 상품, 성별, 연령, 기기플랫폼)
 - 비용, 노출, 클릭, 전환수, 전환값 모두 예측
 - 예측 ROAS, CPA 자동 계산
+- 365일 미만 데이터도 정상 동작 (경고 메시지 출력)
 """
 
 import pandas as pd
@@ -25,9 +27,12 @@ except ImportError:
 # 예측 대상 지표 목록
 FORECAST_METRICS = ['비용', '노출', '클릭', '전환수', '전환값']
 
+# 학습 기간 설정 (일)
+TRAINING_DAYS = 365
+
 def forecast_multiple_metrics(daily_data, metrics=FORECAST_METRICS, periods=30):
     """
-    여러 지표를 동시에 예측하는 함수
+    여러 지표를 동시에 예측하는 함수 (최근 365일 데이터 사용)
 
     Args:
         daily_data: 일별 집계 데이터 (DataFrame, '일' 컬럼 필수)
@@ -39,19 +44,31 @@ def forecast_multiple_metrics(daily_data, metrics=FORECAST_METRICS, periods=30):
     """
     forecasts = {}
 
+    # 최근 365일 데이터만 필터링
+    if '일' in daily_data.columns:
+        max_date = daily_data['일'].max()
+        cutoff_date = max_date - pd.Timedelta(days=TRAINING_DAYS)
+        filtered_data = daily_data[daily_data['일'] >= cutoff_date].copy()
+    else:
+        filtered_data = daily_data.copy()
+
     for metric in metrics:
-        if metric not in daily_data.columns:
+        if metric not in filtered_data.columns:
             continue
 
-        prophet_df = daily_data[['일', metric]].copy()
+        prophet_df = filtered_data[['일', metric]].copy()
         prophet_df.columns = ['ds', 'y']
         prophet_df = prophet_df[prophet_df['y'] > 0]
 
         if len(prophet_df) < 10:
             continue
 
+        # 데이터 기간 확인하여 연간 계절성 자동 설정
+        data_days = (prophet_df['ds'].max() - prophet_df['ds'].min()).days
+        use_yearly = data_days >= 365
+
         model = Prophet(
-            yearly_seasonality=True,
+            yearly_seasonality=use_yearly,
             weekly_seasonality=True,
             daily_seasonality=False,
             changepoint_prior_scale=0.05,
@@ -112,10 +129,20 @@ for col in numeric_cols:
     df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
 
 print("=" * 100)
-print("Prophet 시계열 예측 V3 - 유형구분별 + Dimension Type별 예측")
+print("Prophet 시계열 예측 V5 - 연간 학습 기반 다중 지표 예측")
 print("=" * 100)
 print(f"데이터 기간: {df['일'].min().date()} ~ {df['일'].max().date()}")
 print(f"총 데이터: {len(df):,}행")
+
+# 학습 기간 계산 및 메시지 출력
+total_data_days = (df['일'].max() - df['일'].min()).days + 1
+print(f"학습 기준: 최근 {TRAINING_DAYS}일 (연간 학습)")
+
+if total_data_days < TRAINING_DAYS:
+    print(f"⚠️ 현재 데이터: {total_data_days}일 ({TRAINING_DAYS}일 미만)")
+    print(f"   → 연간 계절성(yearly_seasonality) 비활성화, 주간 패턴만 학습")
+else:
+    print(f"✓ 현재 데이터: {total_data_days}일 (연간 학습 가능)")
 
 # 데이터 타입 분류 함수 (multi_analysis_dimension_detail.py와 동일)
 def classify_data_type_v2(row):
@@ -517,14 +544,31 @@ if PROPHET_AVAILABLE:
     print("8. 성별 다중 지표 예측 (향후 30일)")
     print("=" * 100)
 
-    type4_data = df[df['data_type'] == 'Type4_광고세트+성별']
+    type4_data = df[df['data_type'] == 'Type4_광고세트+성별'].copy()
     gender_forecast_results = []
 
     if len(type4_data) > 0:
-        genders = type4_data[type4_data['성별'] != '-']['성별'].unique()
+        # 성별 통합 매핑 (다양한 표기 → 한글 통합)
+        gender_map = {
+            # 남성 통합
+            'MALE': '남성',
+            'male': '남성',
+            '남자': '남성',
+            # 여성 통합
+            'FEMALE': '여성',
+            'female': '여성',
+            '여자': '여성',
+            # 알 수 없음 통합
+            'UNDETERMINED': '알 수 없음'
+        }
+        type4_data['성별_통합'] = type4_data['성별'].replace(gender_map)
+        print("성별 데이터 통합: 남자/MALE/male→남성, 여자/FEMALE/female→여성")
+
+        # 통합된 성별 목록
+        genders = type4_data[type4_data['성별_통합'] != '-']['성별_통합'].unique()
 
         for gender in genders:
-            gender_data = type4_data[type4_data['성별'] == gender]
+            gender_data = type4_data[type4_data['성별_통합'] == gender]
             daily_gender = gender_data.groupby('일').agg({
                 '비용': 'sum',
                 '노출': 'sum',
@@ -570,14 +614,37 @@ if PROPHET_AVAILABLE:
     print("9. 연령별 다중 지표 예측 (향후 30일)")
     print("=" * 100)
 
-    type3_data = df[df['data_type'] == 'Type3_광고세트+연령']
+    type3_data = df[df['data_type'] == 'Type3_광고세트+연령'].copy()
     age_forecast_results = []
 
     if len(type3_data) > 0:
-        ages = type3_data[type3_data['연령'] != '-']['연령'].unique()
+        # 연령 통합 매핑 (영문 → 한글, 세부 연령대 → 통합 연령대)
+        age_map = {
+            'AGE_RANGE_18_24': '19세 ~ 24세',
+            'AGE_RANGE_25_34': '25세 ~ 34세',
+            'AGE_RANGE_35_44': '35세 ~ 44세',
+            'AGE_RANGE_45_54': '45세 ~ 54세',
+            'AGE_RANGE_55_64': '55세 ~ 64세',
+            'AGE_RANGE_65_UP': '65세 이상',
+            'AGE_RANGE_UNDETERMINED': '알 수 없음',
+            # 한글 세부 연령대 통합
+            '25세 ~ 29세': '25세 ~ 34세',
+            '30세 ~ 34세': '25세 ~ 34세',
+            '35세 ~ 39세': '35세 ~ 44세',
+            '40세 ~ 44세': '35세 ~ 44세',
+            '45세 ~ 49세': '45세 ~ 54세',
+            '50세 ~ 54세': '45세 ~ 54세',
+            '55세 ~ 59세': '55세 ~ 64세',
+            '60세 ~ 99세': '65세 이상'
+        }
+        type3_data['연령_통합'] = type3_data['연령'].replace(age_map)
+        print("연령 데이터 통합: 영문→한글, 세부 연령대→10세 단위 통합")
+
+        # 통합된 연령 목록
+        ages = type3_data[type3_data['연령_통합'] != '-']['연령_통합'].unique()
 
         for age in ages:
-            age_data = type3_data[type3_data['연령'] == age]
+            age_data = type3_data[type3_data['연령_통합'] == age]
             daily_age = age_data.groupby('일').agg({
                 '비용': 'sum',
                 '노출': 'sum',
@@ -724,6 +791,103 @@ if PROPHET_AVAILABLE:
                                     index=False, encoding='utf-8-sig')
         print("\n✓ 프로모션별 예측 결과 저장: data/type/prophet_forecast_by_promotion.csv")
 
+    # ============================================================================
+    # 12. 연령+성별 조합별 다중 지표 예측 (Type2 데이터 기반)
+    # ============================================================================
+    print("\n" + "=" * 100)
+    print("12. 연령+성별 조합별 다중 지표 예측 (향후 30일)")
+    print("=" * 100)
+
+    type2_data = df[df['data_type'] == 'Type2_광고세트+연령+성별'].copy()
+    age_gender_forecast_results = []
+
+    if len(type2_data) > 0:
+        # 성별 통합 매핑
+        gender_map = {
+            'MALE': '남성', 'male': '남성', '남자': '남성',
+            'FEMALE': '여성', 'female': '여성', '여자': '여성',
+            'UNDETERMINED': '알 수 없음'
+        }
+        type2_data['성별_통합'] = type2_data['성별'].replace(gender_map)
+
+        # 연령 통합 매핑
+        age_map = {
+            'AGE_RANGE_18_24': '19세 ~ 24세',
+            'AGE_RANGE_25_34': '25세 ~ 34세',
+            'AGE_RANGE_35_44': '35세 ~ 44세',
+            'AGE_RANGE_45_54': '45세 ~ 54세',
+            'AGE_RANGE_55_64': '55세 ~ 64세',
+            'AGE_RANGE_65_UP': '65세 이상',
+            'AGE_RANGE_UNDETERMINED': '알 수 없음',
+            '25세 ~ 29세': '25세 ~ 34세',
+            '30세 ~ 34세': '25세 ~ 34세',
+            '35세 ~ 39세': '35세 ~ 44세',
+            '40세 ~ 44세': '35세 ~ 44세',
+            '45세 ~ 49세': '45세 ~ 54세',
+            '50세 ~ 54세': '45세 ~ 54세',
+            '55세 ~ 59세': '55세 ~ 64세',
+            '60세 ~ 99세': '65세 이상'
+        }
+        type2_data['연령_통합'] = type2_data['연령'].replace(age_map)
+
+        # 연령+성별 조합 컬럼 생성
+        type2_data['연령_성별'] = type2_data['연령_통합'] + '_' + type2_data['성별_통합']
+        print("연령+성별 조합 데이터 생성 완료")
+
+        # 유효한 조합만 필터링 (-, 알 수 없음 제외)
+        valid_data = type2_data[
+            (type2_data['연령_통합'] != '-') &
+            (type2_data['성별_통합'] != '-') &
+            (type2_data['연령_통합'] != '알 수 없음') &
+            (type2_data['성별_통합'] != '알 수 없음')
+        ]
+
+        # 상위 조합 추출 (전환값 기준)
+        combo_summary = valid_data.groupby('연령_성별').agg({'전환값': 'sum'}).reset_index()
+        top_combos = combo_summary.nlargest(10, '전환값')['연령_성별'].tolist()
+
+        for combo in top_combos:
+            combo_data = valid_data[valid_data['연령_성별'] == combo]
+            daily_combo = combo_data.groupby('일').agg({
+                '비용': 'sum',
+                '노출': 'sum',
+                '클릭': 'sum',
+                '전환수': 'sum',
+                '전환값': 'sum'
+            }).reset_index()
+
+            if len(daily_combo) < 10:
+                print(f"\n[{combo}]: 데이터 부족 ({len(daily_combo)}일)")
+                continue
+
+            print(f"\n[{combo}] 다중 지표 예측")
+            print(f"학습 데이터: {len(daily_combo)}일")
+
+            combo_forecasts = forecast_multiple_metrics(daily_combo)
+            combo_result = combine_metric_forecasts(combo_forecasts, '연령_성별', combo)
+
+            if combo_result is not None:
+                age_gender_forecast_results.append(combo_result)
+                if '예측_전환값' in combo_result.columns:
+                    print(f"향후 30일 예상 총 전환값: {combo_result['예측_전환값'].sum():,.0f}원")
+                if '예측_ROAS' in combo_result.columns:
+                    print(f"평균 예측 ROAS: {combo_result['예측_ROAS'].mean():.1f}%")
+    else:
+        print("\nType2 데이터 없음 (광고세트+연령+성별)")
+
+    # 연령+성별 조합별 예측 결과 저장
+    if age_gender_forecast_results:
+        combined_age_gender = pd.concat(age_gender_forecast_results, ignore_index=True)
+        cols = ['연령_성별', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_age_gender.columns]
+        if '예측_ROAS' in combined_age_gender.columns:
+            cols.append('예측_ROAS')
+        if '예측_CPA' in combined_age_gender.columns:
+            cols.append('예측_CPA')
+        combined_age_gender = combined_age_gender[cols]
+        combined_age_gender.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_age_gender.csv',
+                                     index=False, encoding='utf-8-sig')
+        print("\n✓ 연령+성별 조합별 예측 결과 저장: data/type/prophet_forecast_by_age_gender.csv")
+
 else:
     print("\n" + "=" * 100)
     print("Prophet 라이브러리를 설치해주세요")
@@ -734,6 +898,16 @@ else:
 print("\n" + "=" * 100)
 print("분석 완료")
 print("=" * 100)
+
+# 최종 학습 기간 요약
+print(f"\n[학습 설정 요약]")
+print(f"  - 학습 기준: 최근 {TRAINING_DAYS}일 (연간 학습)")
+print(f"  - 실제 데이터: {total_data_days}일")
+if total_data_days < TRAINING_DAYS:
+    print(f"  - 연간 계절성: 비활성화 (데이터 {TRAINING_DAYS}일 미만)")
+else:
+    print(f"  - 연간 계절성: 활성화")
+
 print("\n생성된 파일 목록 (다중 지표 예측: 비용, 노출, 클릭, 전환수, 전환값, ROAS, CPA):")
 print("  1. prophet_forecast_overall.csv - 전체 다중 지표 예측")
 print("  2. prophet_forecast_by_category.csv - 유형구분별 다중 지표 예측")
@@ -746,6 +920,7 @@ print("  8. prophet_forecast_by_gender.csv - 성별 다중 지표 예측")
 print("  9. prophet_forecast_by_age.csv - 연령별 다중 지표 예측")
 print("  10. prophet_forecast_by_platform.csv - 기기플랫폼별 다중 지표 예측")
 print("  11. prophet_forecast_by_promotion.csv - 프로모션별 다중 지표 예측")
+print("  12. prophet_forecast_by_age_gender.csv - 연령+성별 조합별 다중 지표 예측")
 print("\n각 CSV 파일에는 다음 컬럼이 포함됩니다:")
 print("  - 예측_비용, 예측_노출, 예측_클릭, 예측_전환수, 예측_전환값")
 print("  - 예측_ROAS (= 예측_전환값 / 예측_비용 * 100)")

@@ -1,10 +1,11 @@
 """
-세그먼트별 데이터 처리 및 예측 모듈 v1.0
+세그먼트별 데이터 처리 및 예측 모듈 v1.1
 
 기능:
 1. 브랜드/채널/상품별 데이터 집계
 2. 세그먼트별 시계열 예측 (데이터 양에 따라 모델 자동 선택)
 3. data/forecast/에 세그먼트별 예측 CSV 저장
+4. 최근 365일 데이터 기반 학습 (연간 계절성 반영)
 
 환경변수:
 - INPUT_CSV_PATH: 입력 CSV 파일 경로 (기본값: raw_data.csv)
@@ -44,6 +45,9 @@ FORECAST_DIR = DATA_DIR / 'forecast'
 
 # 디렉토리 생성
 FORECAST_DIR.mkdir(parents=True, exist_ok=True)
+
+# 학습 기간 설정 (일)
+TRAINING_DAYS = 365
 
 
 class SegmentProcessor:
@@ -142,13 +146,25 @@ class SegmentProcessor:
 
     def forecast_prophet(self, daily: pd.DataFrame, metric: str,
                         weekly_seasonality: bool = True) -> pd.Series:
-        """Prophet을 사용한 예측"""
-        prophet_df = daily[['일 구분', metric]].copy()
+        """Prophet을 사용한 예측 (최근 365일 데이터 사용)"""
+        # 최근 365일 데이터만 필터링
+        if '일 구분' in daily.columns:
+            max_date = daily['일 구분'].max()
+            cutoff_date = max_date - timedelta(days=TRAINING_DAYS)
+            filtered_daily = daily[daily['일 구분'] >= cutoff_date].copy()
+        else:
+            filtered_daily = daily.copy()
+
+        prophet_df = filtered_daily[['일 구분', metric]].copy()
         prophet_df.columns = ['ds', 'y']
         prophet_df['y'] = prophet_df['y'].fillna(0)
 
+        # 데이터 기간 확인하여 연간 계절성 자동 설정
+        data_days = (prophet_df['ds'].max() - prophet_df['ds'].min()).days
+        use_yearly = data_days >= 365
+
         model = Prophet(
-            yearly_seasonality=False,
+            yearly_seasonality=use_yearly,
             weekly_seasonality=weekly_seasonality,
             daily_seasonality=False,
             seasonality_mode='additive',
