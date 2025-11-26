@@ -342,12 +342,13 @@ if PROPHET_AVAILABLE:
     print("4. 계절성 예측 분석 (Prophet 기반) - 다중 지표")
     print("=" * 100)
 
-    # Prophet 365일 예측 기반으로 요일별/월별/분기별 패턴 분석
-    SEASONALITY_FORECAST_DAYS = 365  # 1년 예측으로 계절성 패턴 분석
+    # 하이브리드 방식: 과거 데이터 fitted 값 + 단기 예측(90일)
+    SEASONALITY_FORECAST_DAYS = 90  # 단기 예측만 (신뢰도 높음)
 
     def forecast_seasonality_metrics(data, forecast_days=365):
-        """Prophet으로 지정 기간 예측 후 계절성 분석용 데이터 반환"""
+        """Prophet으로 365일 미래 예측 반환 (개별 유형구분용)"""
         forecasts = {}
+
         for metric in FORECAST_METRICS:
             prophet_df = data[['일', metric]].copy()
             prophet_df.columns = ['ds', 'y']
@@ -371,39 +372,86 @@ if PROPHET_AVAILABLE:
             future = model.make_future_dataframe(periods=forecast_days)
             forecast = model.predict(future)
 
-            # 예측 기간만 반환 (학습 데이터 제외)
+            # 미래 예측값만 추출
             forecast_only = forecast[forecast['ds'] > prophet_df['ds'].max()].copy()
+
+            # 음수 값을 0으로 클리핑 (비용, 전환 등은 음수가 될 수 없음)
+            forecast_only['yhat'] = forecast_only['yhat'].clip(lower=0)
+
             forecasts[metric] = forecast_only[['ds', 'yhat']]
 
         return forecasts
 
-    print("\n전체 Prophet 365일 예측 생성 중...")
-    overall_seasonality_forecasts = forecast_seasonality_metrics(daily_data, SEASONALITY_FORECAST_DAYS)
+    def forecast_seasonality_with_history(data, forecast_days=90):
+        """Prophet으로 과거 fitted 값 + 단기 예측 반환 (계절성 분석용)"""
+        forecasts_history = {}  # 과거 데이터 fitted 값
+        forecasts_future = {}   # 미래 예측값
 
-    # 예측 결과 통합
-    first_metric = list(overall_seasonality_forecasts.keys())[0]
-    seasonality_forecast_df = overall_seasonality_forecasts[first_metric][['ds']].copy()
-    seasonality_forecast_df.columns = ['일자']
+        for metric in FORECAST_METRICS:
+            prophet_df = data[['일', metric]].copy()
+            prophet_df.columns = ['ds', 'y']
+            prophet_df['ds'] = pd.to_datetime(prophet_df['ds'])
 
-    for metric, forecast_df in overall_seasonality_forecasts.items():
-        seasonality_forecast_df[f'예측_{metric}'] = forecast_df['yhat'].values
+            # 학습 기간 제한
+            if len(prophet_df) > TRAINING_DAYS:
+                prophet_df = prophet_df.tail(TRAINING_DAYS)
+
+            # 연간 학습 가능 여부 확인
+            data_days = (prophet_df['ds'].max() - prophet_df['ds'].min()).days
+            use_yearly = data_days >= TRAINING_DAYS
+
+            model = Prophet(
+                yearly_seasonality=use_yearly,
+                weekly_seasonality=True,
+                daily_seasonality=False
+            )
+            model.fit(prophet_df)
+
+            # 과거 + 미래 전체 예측
+            future = model.make_future_dataframe(periods=forecast_days)
+            forecast = model.predict(future)
+
+            # 과거 데이터 fitted 값 (계절성 패턴 분석용)
+            history_forecast = forecast[forecast['ds'] <= prophet_df['ds'].max()].copy()
+            history_forecast['yhat'] = history_forecast['yhat'].clip(lower=0)
+            forecasts_history[metric] = history_forecast[['ds', 'yhat']]
+
+            # 미래 예측값 (단기)
+            future_forecast = forecast[forecast['ds'] > prophet_df['ds'].max()].copy()
+            future_forecast['yhat'] = future_forecast['yhat'].clip(lower=0)
+            forecasts_future[metric] = future_forecast[['ds', 'yhat']]
+
+        return forecasts_history, forecasts_future
+
+    print("\n전체 Prophet 계절성 분석 중 (과거 fitted + 90일 예측)...")
+    history_forecasts, future_forecasts = forecast_seasonality_with_history(daily_data, SEASONALITY_FORECAST_DAYS)
+
+    # ========== 과거 데이터 기반 계절성 분석 ==========
+    # 과거 fitted 값으로 요일별/월별/분기별 패턴 추출
+    first_metric = list(history_forecasts.keys())[0]
+    history_df = history_forecasts[first_metric][['ds']].copy()
+    history_df.columns = ['일자']
+
+    for metric, forecast_df in history_forecasts.items():
+        history_df[f'예측_{metric}'] = forecast_df['yhat'].values
 
     # ROAS, CPA 계산
-    seasonality_forecast_df['예측_ROAS'] = (seasonality_forecast_df['예측_전환값'] / seasonality_forecast_df['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
-    seasonality_forecast_df['예측_CPA'] = (seasonality_forecast_df['예측_비용'] / seasonality_forecast_df['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    history_df['예측_ROAS'] = (history_df['예측_전환값'] / history_df['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+    history_df['예측_CPA'] = (history_df['예측_비용'] / history_df['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
 
-    # 요일 정보 추가
-    seasonality_forecast_df['요일번호'] = pd.to_datetime(seasonality_forecast_df['일자']).dt.dayofweek
-    seasonality_forecast_df['월'] = pd.to_datetime(seasonality_forecast_df['일자']).dt.month
-    seasonality_forecast_df['분기'] = seasonality_forecast_df['월'].apply(
+    # 요일/월/분기 정보 추가
+    history_df['요일번호'] = pd.to_datetime(history_df['일자']).dt.dayofweek
+    history_df['월'] = pd.to_datetime(history_df['일자']).dt.month
+    history_df['년월'] = pd.to_datetime(history_df['일자']).dt.to_period('M').astype(str)
+    history_df['분기'] = history_df['월'].apply(
         lambda x: 'Q1(1~3월)' if x <= 3 else ('Q2(4~6월)' if x <= 6 else ('Q3(7~9월)' if x <= 9 else 'Q4(10~12월)'))
     )
 
     dow_names = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일']
 
-    # ========== 요일별 예측 집계 ==========
-    print("\n요일별 예측 성과 분석...")
-    dow_forecast = seasonality_forecast_df.groupby('요일번호').agg({
+    # ========== 요일별 패턴 (과거 데이터 기반) ==========
+    print("\n요일별 예측 성과 분석 (과거 데이터 기반)...")
+    dow_forecast = history_df.groupby('요일번호').agg({
         '예측_비용': 'mean',
         '예측_노출': 'mean',
         '예측_클릭': 'mean',
@@ -470,9 +518,9 @@ if PROPHET_AVAILABLE:
         except Exception as e:
             print(f"\n[{category}]: 예측 오류 - {str(e)}")
 
-    # ========== 월별 예측 집계 ==========
-    print("\n월별 예측 성과 분석...")
-    monthly_forecast = seasonality_forecast_df.groupby('월').agg({
+    # ========== 월별 예측 집계 (과거 fitted 데이터 기반) ==========
+    print("\n월별 예측 성과 분석 (과거 데이터 기반)...")
+    monthly_forecast = history_df.groupby('월').agg({
         '예측_비용': 'sum',
         '예측_노출': 'sum',
         '예측_클릭': 'sum',
@@ -491,9 +539,9 @@ if PROPHET_AVAILABLE:
     all_monthly_data = [monthly_output]
     print(f"  ✓ 월별 예측 데이터: {len(monthly_output)}행")
 
-    # ========== 분기별 예측 집계 ==========
-    print("\n분기별 예측 성과 분석...")
-    quarterly_forecast = seasonality_forecast_df.groupby('분기').agg({
+    # ========== 분기별 예측 집계 (과거 fitted 데이터 기반) ==========
+    print("\n분기별 예측 성과 분석 (과거 데이터 기반)...")
+    quarterly_forecast = history_df.groupby('분기').agg({
         '예측_비용': 'mean',
         '예측_노출': 'mean',
         '예측_클릭': 'mean',
@@ -511,14 +559,32 @@ if PROPHET_AVAILABLE:
     all_quarterly_data = [quarterly_output]
     print(f"  ✓ 분기별 예측 데이터: {len(quarterly_output)}행")
 
-    # ========== 일별 예측 데이터 ==========
-    print("\n일별 예측 데이터 추가...")
-    daily_output = seasonality_forecast_df[['일자', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']].copy()
+    # ========== 일별 예측 데이터 (과거 fitted + 미래 예측) ==========
+    print("\n일별 예측 데이터 추가 (과거 fitted + 90일 미래 예측)...")
+
+    # 미래 예측 데이터 구성
+    first_metric = list(future_forecasts.keys())[0]
+    future_df = future_forecasts[first_metric][['ds']].copy()
+    future_df.columns = ['일자']
+
+    for metric, forecast_df in future_forecasts.items():
+        future_df[f'예측_{metric}'] = forecast_df['yhat'].values
+
+    future_df['예측_ROAS'] = (future_df['예측_전환값'] / future_df['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+    future_df['예측_CPA'] = (future_df['예측_비용'] / future_df['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+
+    # 과거 fitted + 미래 예측 결합
+    combined_daily = pd.concat([
+        history_df[['일자', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']],
+        future_df[['일자', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']]
+    ], ignore_index=True)
+
+    daily_output = combined_daily.copy()
     daily_output['일자'] = pd.to_datetime(daily_output['일자']).dt.strftime('%Y-%m-%d')
     daily_output.columns = ['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']
     daily_output['유형구분'] = '전체'
     daily_output['기간유형'] = '일별'
-    print(f"  ✓ 일별 예측 데이터: {len(daily_output)}행")
+    print(f"  ✓ 일별 예측 데이터: {len(daily_output)}행 (과거 {len(history_df)}일 + 미래 {len(future_df)}일)")
 
     # 전체 데이터 통합
     seasonality_df = pd.concat(all_seasonality_data, ignore_index=True)
@@ -530,7 +596,7 @@ if PROPHET_AVAILABLE:
     final_seasonality_df.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_seasonality.csv',
                          index=False, encoding='utf-8-sig')
     print("\n✓ 계절성 예측 결과 저장: data/type/prophet_forecast_by_seasonality.csv")
-    print("  포함 데이터: 요일별, 월별, 분기별, 일별 (Prophet 365일 예측 기반)")
+    print("  포함 데이터: 요일별, 월별, 분기별 (과거 fitted 기반), 일별 (과거 fitted + 90일 미래 예측)")
     print("  포함 지표: 예측_비용, 예측_노출, 예측_클릭, 예측_전환수, 예측_전환값, 예측_ROAS, 예측_CPA")
 
     print("\n" + "=" * 100)

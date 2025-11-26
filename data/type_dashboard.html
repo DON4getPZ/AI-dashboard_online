@@ -1007,14 +1007,6 @@
                         <div class="collapsible-title">
                             <span class="collapsible-icon">🔬</span>
                             <span>데이터 기반 의사결정 도구</span>
-                            <span class="decision-info-tooltip" style="margin-left: 8px; cursor: help; position: relative;">
-                                <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: var(--grey-200); border-radius: 50%; font-size: 11px; color: var(--grey-600);">?</span>
-                                <span class="decision-tooltip-content" style="display: none; position: absolute; left: 50%; transform: translateX(-50%); bottom: 130%; width: 280px; padding: 12px; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); font-size: 12px; color: var(--grey-700); line-height: 1.6; z-index: 1000; font-weight: 400;">
-                                    <strong style="color: var(--primary-main);">이 도구는 무엇인가요?</strong><br>
-                                    광고 데이터를 분석하여 <strong>어디에 돈을 더 쓸지</strong>, <strong>어떤 광고를 줄일지</strong> 쉽게 결정할 수 있도록 도와드립니다.
-                                    <span style="display: block; width: 10px; height: 10px; background: white; position: absolute; left: 50%; bottom: -5px; transform: translateX(-50%) rotate(45deg);"></span>
-                                </span>
-                            </span>
                         </div>
                         <button class="collapsible-toggle expanded">
                             <span>접기</span>
@@ -1051,7 +1043,7 @@
                                 👥 타겟 분석
                             </button>
                             <button class="view-btn decision-tool-tab-btn" data-tab="dayAnalysis" style="padding: 8px 14px; font-size: 12px;">
-                                📅 요일별 분석
+                                📊 계절성 분석
                             </button>
                             <button class="view-btn decision-tool-tab-btn" data-tab="forecast" style="padding: 8px 14px; font-size: 12px;">
                                 🔮 AI 예측
@@ -1090,21 +1082,74 @@
                         <div class="decision-tool-tab-content" id="dayAnalysisTab" style="display: none;">
                             <!-- 서브탭 버튼 -->
                             <div style="display: flex; flex-wrap: wrap; gap: 8px; padding: 16px; background: #f8f9fa; border-bottom: 1px solid #e9ecef;">
-                                <button class="day-analysis-subtab active" data-day-tab="dayConversion"
+                                <button class="day-analysis-subtab active" data-day-tab="quarterlyTrend"
                                         style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: none; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #1a73e8; color: white;">
-                                    요일별 전환
+                                    📈 분기별 추이
+                                </button>
+                                <button class="day-analysis-subtab" data-day-tab="dayConversion"
+                                        style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                                    📅 요일별 분석
                                 </button>
                                 <button class="day-analysis-subtab" data-day-tab="channelDay"
                                         style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
-                                    채널별 요일
+                                    📊 채널별 요일
                                 </button>
                             </div>
 
+                            <!-- 분기별 추이 뷰 -->
+                            <div class="day-analysis-tab-content active" id="quarterlyTrendView">
+                                <!-- 종합 계절성 인사이트 -->
+                                <div style="padding: 20px 24px; background: linear-gradient(135deg, #e3f2fd 0%, #f5faff 100%); border-bottom: 1px solid #e9ecef;">
+                                    <div style="font-size: 14px; color: #1565c0; font-weight: 600; margin-bottom: 12px;">📊 계절성 분석 인사이트</div>
+                                    <div style="font-size: 13px; color: #424242; line-height: 1.8;" id="quarterlySeasonalityInsightText">로딩 중...</div>
+                                </div>
+
+                                <!-- 분기별 KPI 카드 -->
+                                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 16px 20px; background: #fafafa;">
+                                    <div id="quarterlyKpiCards" style="display: contents;"></div>
+                                </div>
+
+                                <!-- 분기별 추이 차트 -->
+                                <div class="card" style="margin: 16px; border-radius: 12px;">
+                                    <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                        <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">분기별 주요 지표 추이</h4>
+                                        <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">분기별 비용, ROAS, CPA 변화를 한눈에 확인하세요</p>
+                                    </div>
+                                    <div style="padding: 20px;">
+                                        <canvas id="quarterlyTrendChart" height="280"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- 분기별 상세 테이블 -->
+                                <div class="card" style="margin: 16px; border-radius: 12px;">
+                                    <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                        <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">분기별 상세 성과</h4>
+                                    </div>
+                                    <div style="padding: 16px 20px; overflow-x: auto;">
+                                        <table class="data-table" id="quarterlyTable" style="margin-top: 0;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="min-width: 100px; text-align: center;">분기</th>
+                                                    <th style="min-width: 120px; text-align: right;">평균 비용</th>
+                                                    <th style="min-width: 100px; text-align: right;">ROAS</th>
+                                                    <th style="min-width: 100px; text-align: right;">CPA</th>
+                                                    <th style="min-width: 100px; text-align: right;">전환수</th>
+                                                    <th style="min-width: 120px; text-align: right;">전환값</th>
+                                                    <th style="min-width: 100px;">성과 수준</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="quarterlyTableBody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- 요일별 전환 뷰 -->
-                            <div class="day-analysis-tab-content active" id="dayConversionView">
+                            <div class="day-analysis-tab-content" id="dayConversionView" style="display: none;">
                                 <!-- 자연어 인사이트 -->
                                 <div style="padding: 20px 24px; background: linear-gradient(135deg, #fff8e1 0%, #fffef5 100%); border-bottom: 1px solid #e9ecef;">
-                                    <div style="font-size: 14px; color: #f57c00; font-weight: 600; margin-bottom: 8px;">💡 요일별 계절성 인사이트</div>
+                                    <div style="font-size: 14px; color: #f57c00; font-weight: 600; margin-bottom: 8px;">💡 요일별 성과 인사이트</div>
                                     <div style="font-size: 13px; color: #424242; line-height: 1.7;" id="seasonalityInsightText">로딩 중...</div>
                                 </div>
 
@@ -1150,27 +1195,52 @@
 
                             <!-- 채널별 요일 뷰 -->
                             <div class="day-analysis-tab-content" id="channelDayView" style="display: none;">
-                                <!-- 자연어 인사이트 -->
-                                <div style="padding: 20px 24px; background: linear-gradient(135deg, #e8f5e9 0%, #f5fff5 100%); border-bottom: 1px solid #e9ecef;">
-                                    <div style="font-size: 14px; color: #2e7d32; font-weight: 600; margin-bottom: 8px;">💡 채널별 요일 인사이트</div>
-                                    <div style="font-size: 13px; color: #424242; line-height: 1.7;" id="seasonalityCategoryInsightText">로딩 중...</div>
+                                <!-- 자연어 인사이트 (강화) -->
+                                <div style="padding: 20px 24px; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-bottom: 1px solid #a5d6a7;">
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                                        <span style="font-size: 20px;">📊</span>
+                                        <div style="font-size: 15px; color: #1b5e20; font-weight: 700;">채널별 요일 성과 분석</div>
+                                    </div>
+                                    <div style="font-size: 13px; color: #2e7d32; line-height: 1.8; background: rgba(255,255,255,0.7); padding: 12px 16px; border-radius: 8px;" id="seasonalityCategoryInsightText">로딩 중...</div>
                                 </div>
 
-                                <div class="card" style="margin: 16px; border-radius: 12px;">
+                                <!-- 채널별 KPI 카드 -->
+                                <div id="channelDayKpiCards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; padding: 20px 24px; background: #fafafa;">
+                                    <!-- 동적으로 채널 카드 생성 -->
+                                </div>
+
+                                <!-- 채널별 요일 ROAS 비교 차트 -->
+                                <div class="card" style="margin: 0 16px 16px 16px; border-radius: 12px;">
                                     <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
-                                        <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">채널별 요일 성과</h4>
-                                        <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">각 채널이 가장 효율적인 요일을 확인하세요</p>
+                                        <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">📈 채널별 요일 ROAS 비교</h4>
+                                        <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">각 채널의 요일별 ROAS를 비교하여 최적의 광고 집행 요일을 파악하세요</p>
+                                    </div>
+                                    <div style="padding: 20px; height: 350px;">
+                                        <canvas id="channelDayRoasChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- 채널별 상세 테이블 -->
+                                <div class="card" style="margin: 0 16px 16px 16px; border-radius: 12px;">
+                                    <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                                        <div>
+                                            <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">📋 요일별 상세 성과</h4>
+                                            <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">채널을 선택하여 요일별 성과를 확인하세요</p>
+                                        </div>
+                                        <select id="channelDaySelector" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; background: white; cursor: pointer; min-width: 160px;">
+                                            <!-- 동적으로 채널 옵션 생성 -->
+                                        </select>
                                     </div>
                                     <div style="padding: 16px 20px; overflow-x: auto;">
                                         <table class="data-table" id="seasonalityCategoryTable" style="margin-top: 0;">
                                             <thead>
                                                 <tr>
-                                                    <th style="min-width: 140px;">채널</th>
-                                                    <th style="min-width: 80px; text-align: center;">최고 요일</th>
-                                                    <th style="min-width: 120px; text-align: right;">최고 전환값</th>
-                                                    <th style="min-width: 80px; text-align: center;">최저 요일</th>
-                                                    <th style="min-width: 120px; text-align: right;">최저 전환값</th>
-                                                    <th style="min-width: 100px; text-align: right;">편차</th>
+                                                    <th style="min-width: 80px; text-align: center;">요일</th>
+                                                    <th style="min-width: 110px; text-align: right;">평균 비용</th>
+                                                    <th style="min-width: 110px; text-align: right;">평균 전환값</th>
+                                                    <th style="min-width: 90px; text-align: right;">ROAS</th>
+                                                    <th style="min-width: 100px; text-align: right;">CPA</th>
+                                                    <th style="min-width: 80px; text-align: center;">성과</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="seasonalityCategoryTableBody">
@@ -3060,13 +3130,13 @@
                     <div class="retargeting-tab-content" id="devicePlatformRetargetView" style="display: none;">
                         <!-- 자연어 인사이트 -->
                         <div style="padding: 20px 24px; background: linear-gradient(135deg, #e0f2f1 0%, #f5fffd 100%); border-bottom: 1px solid #e9ecef;">
-                            <div style="font-size: 14px; color: #00796b; font-weight: 600; margin-bottom: 8px;">💡 노출기기별 인사이트</div>
+                            <div style="font-size: 14px; color: #00796b; font-weight: 600; margin-bottom: 8px;">💡 노출기기별 리타겟팅 인사이트</div>
                             <div style="font-size: 13px; color: #424242; line-height: 1.7;" id="devicePlatformRetargetInsightText">로딩 중...</div>
                         </div>
 
                         <div class="card" style="margin: 16px; border-radius: 12px;">
                             <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
-                                <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">노출기기별 성과</h4>
+                                <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">노출기기별 리타겟팅 성과</h4>
                                 <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">Mobile app, Mobile web, Desktop 등 노출기기별 광고 효율</p>
                             </div>
                             <div style="padding: 16px 20px; overflow-x: auto;">
@@ -3486,18 +3556,6 @@
 
         // 툴팁 초기화
         function initDecisionTooltips() {
-            // 헤더 물음표 툴팁
-            document.querySelectorAll('.decision-info-tooltip').forEach(tooltip => {
-                tooltip.addEventListener('mouseenter', function() {
-                    const content = this.querySelector('.decision-tooltip-content');
-                    if (content) content.style.display = 'block';
-                });
-                tooltip.addEventListener('mouseleave', function() {
-                    const content = this.querySelector('.decision-tooltip-content');
-                    if (content) content.style.display = 'none';
-                });
-            });
-
             // 인라인 툴팁 (? 아이콘)
             document.addEventListener('mouseenter', function(e) {
                 if (e.target && e.target.classList && e.target.classList.contains('inline-help-icon')) {
@@ -3551,6 +3609,7 @@
 
             // 이벤트 위임 방식으로 호버 처리
             document.addEventListener('mouseenter', function(e) {
+                if (!e.target || !e.target.closest) return;
                 const card = e.target.closest('.hoverable-card');
                 if (card && card.dataset.tooltipTitle) {
                     showCardTooltip(card, cardTooltip);
@@ -3558,6 +3617,7 @@
             }, true);
 
             document.addEventListener('mouseleave', function(e) {
+                if (!e.target || !e.target.closest) return;
                 const card = e.target.closest('.hoverable-card');
                 if (card && card.dataset.tooltipTitle) {
                     hideCardTooltip(cardTooltip);
@@ -3565,6 +3625,7 @@
             }, true);
 
             document.addEventListener('mousemove', function(e) {
+                if (!e.target || !e.target.closest) return;
                 const card = e.target.closest('.hoverable-card');
                 if (card && card.dataset.tooltipTitle && cardTooltip.classList.contains('show')) {
                     positionCardTooltip(e, cardTooltip);
@@ -5473,8 +5534,10 @@
                         selectedTab.classList.add('active');
                     }
 
-                    // 요일별 분석 탭 선택 시 테이블 렌더링
+                    // 계절성 분석 탭 선택 시 기본 렌더링 (분기별 추이가 기본)
                     if (targetTab === 'dayAnalysis') {
+                        renderQuarterlyTrendChart();
+                        renderQuarterlyTable();
                         renderSeasonalityTable();
                         renderSeasonalityCategoryTable();
                         setupRetargetingSortEvents();
@@ -5514,6 +5577,7 @@
                     });
 
                     const viewMap = {
+                        'quarterlyTrend': 'quarterlyTrendView',
                         'dayConversion': 'dayConversionView',
                         'channelDay': 'channelDayView'
                     };
@@ -5522,6 +5586,19 @@
                     if (targetView) {
                         targetView.style.display = 'block';
                         targetView.classList.add('active');
+
+                        // 분기별 추이 탭 선택 시 차트 렌더링
+                        if (targetTab === 'quarterlyTrend') {
+                            renderQuarterlyTrendChart();
+                            renderQuarterlyTable();
+                        }
+
+                        // 채널별 요일 탭 선택 시 차트 및 KPI 카드 렌더링
+                        if (targetTab === 'channelDay') {
+                            renderChannelDayKpiCards();
+                            renderChannelDayRoasChart();
+                            renderSeasonalityCategoryTable();
+                        }
                     }
                 });
             });
@@ -6571,6 +6648,339 @@
             return icons[devicePlatform] || '📊';
         }
 
+        // ========== 분기별 추이 차트 및 테이블 ==========
+        let quarterlyTrendChartInstance = null;
+
+        // 분기별 추이 차트 렌더링
+        function renderQuarterlyTrendChart() {
+            const seasonality = insightsData.seasonality_analysis || {};
+            const quarterlyData = seasonality.quarterly_overall || [];
+            const insights = insightsData.seasonality_insights || [];
+
+            if (quarterlyData.length === 0) return;
+
+            // 분기 순서 정렬
+            const quarterOrder = ['Q1(1~3월)', 'Q2(4~6월)', 'Q3(7~9월)', 'Q4(10~12월)'];
+            const sortedData = [...quarterlyData].sort((a, b) =>
+                quarterOrder.indexOf(a.quarter) - quarterOrder.indexOf(b.quarter)
+            );
+
+            const labels = sortedData.map(d => d.quarter);
+            const costData = sortedData.map(d => Math.round(d.avg_cost / 10000)); // 만원 단위
+            const roasData = sortedData.map(d => d.avg_roas);
+            const cpaData = sortedData.map(d => Math.round(d.avg_cpa / 1000)); // 천원 단위
+
+            const ctx = document.getElementById('quarterlyTrendChart');
+            if (!ctx) return;
+
+            // 기존 차트 제거
+            if (quarterlyTrendChartInstance) {
+                quarterlyTrendChartInstance.destroy();
+            }
+
+            quarterlyTrendChartInstance = new Chart(ctx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '비용 (만원)',
+                            data: costData,
+                            backgroundColor: 'rgba(66, 133, 244, 0.7)',
+                            borderColor: 'rgba(66, 133, 244, 1)',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            yAxisID: 'y',
+                            order: 2
+                        },
+                        {
+                            label: 'ROAS (%)',
+                            data: roasData,
+                            type: 'line',
+                            borderColor: '#34a853',
+                            backgroundColor: 'rgba(52, 168, 83, 0.1)',
+                            borderWidth: 3,
+                            pointRadius: 6,
+                            pointBackgroundColor: '#34a853',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            tension: 0.3,
+                            fill: false,
+                            yAxisID: 'y1',
+                            order: 1
+                        },
+                        {
+                            label: 'CPA (천원)',
+                            data: cpaData,
+                            type: 'line',
+                            borderColor: '#ea4335',
+                            backgroundColor: 'rgba(234, 67, 53, 0.1)',
+                            borderWidth: 3,
+                            pointRadius: 6,
+                            pointBackgroundColor: '#ea4335',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            tension: 0.3,
+                            fill: false,
+                            yAxisID: 'y2',
+                            order: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { size: 12, weight: '500' }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#333',
+                            bodyColor: '#666',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.parsed.y;
+                                    if (label.includes('비용')) return label + ': ' + value.toLocaleString() + '만원';
+                                    if (label.includes('ROAS')) return label + ': ' + value.toFixed(1) + '%';
+                                    if (label.includes('CPA')) return label + ': ' + value.toLocaleString() + '천원';
+                                    return label + ': ' + value;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 12, weight: '600' } }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: '비용 (만원)',
+                                color: '#4285f4',
+                                font: { size: 11, weight: '600' }
+                            },
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                            ticks: {
+                                color: '#4285f4',
+                                callback: function(value) { return value.toLocaleString(); }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'ROAS (%)',
+                                color: '#34a853',
+                                font: { size: 11, weight: '600' }
+                            },
+                            grid: { drawOnChartArea: false },
+                            ticks: {
+                                color: '#34a853',
+                                callback: function(value) { return value.toFixed(0) + '%'; }
+                            }
+                        },
+                        y2: {
+                            type: 'linear',
+                            display: false,
+                            position: 'right',
+                            grid: { drawOnChartArea: false }
+                        }
+                    }
+                }
+            });
+
+            // KPI 카드 렌더링
+            renderQuarterlyKpiCards(sortedData);
+
+            // 계절성 인사이트 렌더링
+            renderQuarterlySeasonalityInsight(sortedData, insights);
+        }
+
+        // 분기별 KPI 카드 렌더링
+        function renderQuarterlyKpiCards(quarterlyData) {
+            const container = document.getElementById('quarterlyKpiCards');
+            if (!container || quarterlyData.length === 0) return;
+
+            // 분기별 색상
+            const quarterColors = {
+                'Q1(1~3월)': { bg: '#e3f2fd', text: '#1565c0', icon: '🌸' },
+                'Q2(4~6월)': { bg: '#e8f5e9', text: '#2e7d32', icon: '☀️' },
+                'Q3(7~9월)': { bg: '#fff3e0', text: '#ef6c00', icon: '🍂' },
+                'Q4(10~12월)': { bg: '#fce4ec', text: '#c2185b', icon: '❄️' }
+            };
+
+            let html = '';
+            quarterlyData.forEach(q => {
+                const color = quarterColors[q.quarter] || { bg: '#f5f5f5', text: '#757575', icon: '📊' };
+                html += `
+                    <div style="background: ${color.bg}; border-radius: 12px; padding: 16px; text-align: center;">
+                        <div style="font-size: 20px; margin-bottom: 8px;">${color.icon}</div>
+                        <div style="font-size: 13px; font-weight: 600; color: ${color.text}; margin-bottom: 4px;">${q.quarter}</div>
+                        <div style="font-size: 18px; font-weight: 700; color: ${color.text};">${q.avg_roas.toFixed(1)}%</div>
+                        <div style="font-size: 11px; color: #757575; margin-top: 4px;">ROAS</div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // 분기별 계절성 인사이트 렌더링
+        function renderQuarterlySeasonalityInsight(quarterlyData, insights) {
+            const insightText = document.getElementById('quarterlySeasonalityInsightText');
+            if (!insightText) return;
+
+            // 분기별 데이터에서 최고/최저 분기 찾기
+            const bestQuarter = [...quarterlyData].sort((a, b) => b.avg_roas - a.avg_roas)[0];
+            const worstQuarter = [...quarterlyData].sort((a, b) => a.avg_roas - b.avg_roas)[0];
+            const lowestCpaQuarter = [...quarterlyData].sort((a, b) => a.avg_cpa - b.avg_cpa)[0];
+
+            // 요일별 인사이트
+            const bestDayInsight = insights.find(i => i.type === 'best_day_overall');
+            const worstDayInsight = insights.find(i => i.type === 'worst_day_overall');
+            const weekdayInsight = insights.find(i => i.type === 'weekday_better' || i.type === 'weekend_better');
+
+            let insightHtml = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+
+            // 분기별 인사이트
+            insightHtml += `
+                <div style="display: flex; align-items: flex-start; gap: 8px;">
+                    <span style="color: #1565c0; font-size: 16px;">📈</span>
+                    <div>
+                        <strong style="color: #1565c0;">분기별 성과:</strong>
+                        <strong>${bestQuarter.quarter}</strong>이 ROAS <strong>${bestQuarter.avg_roas.toFixed(1)}%</strong>로 가장 효율이 높고,
+                        ${worstQuarter.quarter}이 ${worstQuarter.avg_roas.toFixed(1)}%로 가장 낮습니다.
+                        ${lowestCpaQuarter.quarter !== bestQuarter.quarter ?
+                            ` CPA는 ${lowestCpaQuarter.quarter}이 ${Math.round(lowestCpaQuarter.avg_cpa).toLocaleString()}원으로 가장 낮습니다.` : ''}
+                    </div>
+                </div>
+            `;
+
+            // 요일별 인사이트
+            if (bestDayInsight) {
+                insightHtml += `
+                    <div style="display: flex; align-items: flex-start; gap: 8px;">
+                        <span style="color: #2e7d32; font-size: 16px;">📅</span>
+                        <div>
+                            <strong style="color: #2e7d32;">요일별 성과:</strong>
+                            <strong>${bestDayInsight.day}</strong>이 ROAS ${bestDayInsight.avg_roas.toFixed(1)}%로 최고,
+                            ${worstDayInsight ? worstDayInsight.day + '이 ' + worstDayInsight.avg_roas.toFixed(1) + '%로 최저입니다.' : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 주중/주말 인사이트
+            if (weekdayInsight) {
+                const isWeekdayBetter = weekdayInsight.type === 'weekday_better';
+                insightHtml += `
+                    <div style="display: flex; align-items: flex-start; gap: 8px;">
+                        <span style="color: #f57c00; font-size: 16px;">💡</span>
+                        <div>
+                            <strong style="color: #f57c00;">운영 제안:</strong>
+                            ${isWeekdayBetter ?
+                                '주중이 주말보다 ROAS가 ' + weekdayInsight.diff_percent.toFixed(1) + '% 높습니다. <strong>주중 집중 운영</strong>을 권장합니다.' :
+                                '주말이 주중보다 ROAS가 높습니다. <strong>주말 예산 증액</strong>을 고려해보세요.'}
+                        </div>
+                    </div>
+                `;
+            }
+
+            insightHtml += '</div>';
+            insightText.innerHTML = insightHtml;
+        }
+
+        // 분기별 테이블 렌더링
+        function renderQuarterlyTable() {
+            const seasonality = insightsData.seasonality_analysis || {};
+            const quarterlyData = seasonality.quarterly_overall || [];
+            const tbody = document.getElementById('quarterlyTableBody');
+
+            if (!tbody || quarterlyData.length === 0) {
+                if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--grey-500);">데이터가 없습니다</td></tr>';
+                return;
+            }
+
+            // 분기 순서 정렬
+            const quarterOrder = ['Q1(1~3월)', 'Q2(4~6월)', 'Q3(7~9월)', 'Q4(10~12월)'];
+            const sortedData = [...quarterlyData].sort((a, b) =>
+                quarterOrder.indexOf(a.quarter) - quarterOrder.indexOf(b.quarter)
+            );
+
+            // ROAS 기준 최대/최소 계산
+            const maxRoas = Math.max(...sortedData.map(d => d.avg_roas));
+            const minRoas = Math.min(...sortedData.map(d => d.avg_roas));
+
+            // 분기별 이모지
+            const quarterEmoji = {
+                'Q1(1~3월)': '🌸',
+                'Q2(4~6월)': '☀️',
+                'Q3(7~9월)': '🍂',
+                'Q4(10~12월)': '❄️'
+            };
+
+            let html = '';
+            sortedData.forEach(item => {
+                const emoji = quarterEmoji[item.quarter] || '📊';
+
+                // 효율 등급 계산
+                let efficiencyGrade = '';
+                let gradeColor = '';
+                if (item.avg_roas >= maxRoas * 0.95) {
+                    efficiencyGrade = '최고';
+                    gradeColor = '#2e7d32';
+                } else if (item.avg_roas <= minRoas * 1.05) {
+                    efficiencyGrade = '최저';
+                    gradeColor = '#d32f2f';
+                } else {
+                    efficiencyGrade = '보통';
+                    gradeColor = '#757575';
+                }
+
+                // 성과 바
+                const barWidth = maxRoas > minRoas ? ((item.avg_roas - minRoas) / (maxRoas - minRoas) * 100).toFixed(0) : 50;
+                const performanceBar = '<div style="display: flex; align-items: center; gap: 8px;">' +
+                    '<div style="flex: 1; background: #e9ecef; border-radius: 4px; height: 8px; overflow: hidden;">' +
+                    '<div style="width: ' + barWidth + '%; background: ' + gradeColor + '; height: 100%; border-radius: 4px;"></div>' +
+                    '</div>' +
+                    '<span style="font-size: 11px; color: ' + gradeColor + '; font-weight: 600;">' + efficiencyGrade + '</span>' +
+                    '</div>';
+
+                html += '<tr>';
+                html += '<td style="text-align: center; font-weight: 600;">' + emoji + ' ' + item.quarter + '</td>';
+                html += '<td style="text-align: right;">' + formatCurrency(item.avg_cost) + '</td>';
+                html += '<td style="text-align: right; font-weight: 600; color: #1565c0;">' + item.avg_roas.toFixed(1) + '%</td>';
+                html += '<td style="text-align: right;">' + formatCurrency(item.avg_cpa) + '</td>';
+                html += '<td style="text-align: right;">' + item.avg_conversions.toFixed(1) + '</td>';
+                html += '<td style="text-align: right; font-weight: 500;">' + formatCurrency(item.avg_revenue) + '</td>';
+                html += '<td>' + performanceBar + '</td>';
+                html += '</tr>';
+            });
+
+            tbody.innerHTML = html;
+        }
+
         // 요일별 전환 테이블 렌더링
         function renderSeasonalityTable() {
             const seasonality = insightsData.seasonality_analysis || {};
@@ -6667,11 +7077,190 @@
             }
         }
 
-        // 채널별 요일 분석 테이블 렌더링
+        // ========================================
+        // 채널별 요일 분석 - 강화된 버전
+        // ========================================
+
+        // 채널별 KPI 카드 렌더링
+        function renderChannelDayKpiCards() {
+            const seasonality = insightsData.seasonality_analysis || {};
+            const byCategory = seasonality.by_category || {};
+            const container = document.getElementById('channelDayKpiCards');
+
+            if (!container) return;
+
+            const categories = Object.keys(byCategory);
+            if (categories.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--grey-500); padding: 20px;">채널 데이터가 없습니다</div>';
+                return;
+            }
+
+            // 채널별 색상 정의
+            const channelColors = {
+                '메타_전환': { bg: '#e3f2fd', border: '#1976d2', icon: '📘', gradient: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)' },
+                '네이버_쇼핑검색': { bg: '#e8f5e9', border: '#388e3c', icon: '🛒', gradient: 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)' },
+                '네이버_파워링크': { bg: '#fff3e0', border: '#f57c00', icon: '🔗', gradient: 'linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%)' },
+                '네이버_신제품검색광고': { bg: '#fce4ec', border: '#c2185b', icon: '✨', gradient: 'linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%)' },
+                '구분필요': { bg: '#f3e5f5', border: '#7b1fa2', icon: '❓', gradient: 'linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%)' }
+            };
+
+            let html = '';
+            categories.forEach(category => {
+                const dayData = byCategory[category];
+                if (!dayData || dayData.length === 0) return;
+
+                // 최고/최저 ROAS 요일 찾기
+                const sortedByRoas = [...dayData].sort((a, b) => (b.avg_roas || 0) - (a.avg_roas || 0));
+                const bestRoasDay = sortedByRoas[0];
+                const worstRoasDay = sortedByRoas[sortedByRoas.length - 1];
+
+                // 평균 계산
+                const avgRoas = dayData.reduce((sum, d) => sum + (d.avg_roas || 0), 0) / dayData.length;
+                const avgCost = dayData.reduce((sum, d) => sum + (d.avg_cost || 0), 0) / dayData.length;
+                const avgRevenue = dayData.reduce((sum, d) => sum + (d.avg_revenue || 0), 0) / dayData.length;
+
+                const roasDiff = bestRoasDay.avg_roas && worstRoasDay.avg_roas
+                    ? ((bestRoasDay.avg_roas - worstRoasDay.avg_roas) / worstRoasDay.avg_roas * 100).toFixed(1)
+                    : '0';
+
+                const colorConfig = channelColors[category] || { bg: '#f5f5f5', border: '#757575', icon: '📊', gradient: 'linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%)' };
+
+                html += `
+                <div style="background: ${colorConfig.gradient}; border-radius: 12px; padding: 20px; border-left: 4px solid ${colorConfig.border}; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                        <span style="font-size: 24px;">${colorConfig.icon}</span>
+                        <div>
+                            <div style="font-size: 15px; font-weight: 700; color: #212121;">${category}</div>
+                            <div style="font-size: 11px; color: #757575;">일평균 비용 ${formatCurrency(avgCost)}</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                        <div style="background: rgba(255,255,255,0.8); padding: 12px; border-radius: 8px;">
+                            <div style="font-size: 10px; color: #757575; margin-bottom: 4px;">🏆 최고 ROAS 요일</div>
+                            <div style="font-size: 14px; font-weight: 700; color: #2e7d32;">${getDayEmoji(bestRoasDay.day)} ${bestRoasDay.day}</div>
+                            <div style="font-size: 18px; font-weight: 800; color: #1b5e20;">${(bestRoasDay.avg_roas || 0).toFixed(0)}%</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.8); padding: 12px; border-radius: 8px;">
+                            <div style="font-size: 10px; color: #757575; margin-bottom: 4px;">📉 최저 ROAS 요일</div>
+                            <div style="font-size: 14px; font-weight: 700; color: #c62828;">${getDayEmoji(worstRoasDay.day)} ${worstRoasDay.day}</div>
+                            <div style="font-size: 18px; font-weight: 800; color: #b71c1c;">${(worstRoasDay.avg_roas || 0).toFixed(0)}%</div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.6); padding: 10px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 11px; color: #616161;">요일별 ROAS 편차</span>
+                        <span style="font-size: 13px; font-weight: 700; color: ${parseFloat(roasDiff) > 20 ? '#d32f2f' : '#1565c0'};">+${roasDiff}%</span>
+                    </div>
+                </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // 채널별 요일 ROAS 비교 차트 렌더링
+        let channelDayRoasChartInstance = null;
+        function renderChannelDayRoasChart() {
+            const seasonality = insightsData.seasonality_analysis || {};
+            const byCategory = seasonality.by_category || {};
+            const canvas = document.getElementById('channelDayRoasChart');
+
+            if (!canvas) return;
+
+            const categories = Object.keys(byCategory);
+            if (categories.length === 0) return;
+
+            // 요일 순서 정의
+            const dayOrder = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];
+            const dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
+
+            // 채널별 색상
+            const channelColorMap = {
+                '메타_전환': { bg: 'rgba(25, 118, 210, 0.7)', border: '#1976d2' },
+                '네이버_쇼핑검색': { bg: 'rgba(56, 142, 60, 0.7)', border: '#388e3c' },
+                '네이버_파워링크': { bg: 'rgba(245, 124, 0, 0.7)', border: '#f57c00' },
+                '네이버_신제품검색광고': { bg: 'rgba(194, 24, 91, 0.7)', border: '#c2185b' },
+                '구분필요': { bg: 'rgba(123, 31, 162, 0.7)', border: '#7b1fa2' }
+            };
+
+            // 데이터셋 생성
+            const datasets = categories.map(category => {
+                const dayData = byCategory[category];
+                const roasByDay = {};
+                dayData.forEach(d => { roasByDay[d.day] = d.avg_roas || 0; });
+
+                const colors = channelColorMap[category] || { bg: 'rgba(158, 158, 158, 0.7)', border: '#9e9e9e' };
+
+                return {
+                    label: category,
+                    data: dayOrder.map(day => roasByDay[day] || 0),
+                    backgroundColor: colors.bg,
+                    borderColor: colors.border,
+                    borderWidth: 1,
+                    borderRadius: 4
+                };
+            });
+
+            // 기존 차트 제거
+            if (channelDayRoasChartInstance) {
+                channelDayRoasChartInstance.destroy();
+            }
+
+            const ctx = canvas.getContext('2d');
+            channelDayRoasChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dayLabels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: { size: 11 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ROAS ' + context.raw.toFixed(1) + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'ROAS (%)',
+                                font: { size: 11 }
+                            },
+                            ticks: {
+                                callback: function(value) { return value + '%'; }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 채널별 요일 분석 테이블 렌더링 (드롭다운 방식)
+        let channelDaySelectorInitialized = false;
+
         function renderSeasonalityCategoryTable() {
             const seasonality = insightsData.seasonality_analysis || {};
             const byCategory = seasonality.by_category || {};
-            const insights = insightsData.seasonality_insights || [];
+            const selector = document.getElementById('channelDaySelector');
             const tbody = document.getElementById('seasonalityCategoryTableBody');
 
             const categories = Object.keys(byCategory);
@@ -6680,44 +7269,151 @@
                 return;
             }
 
+            // 드롭다운 옵션 생성 (최초 1회)
+            if (selector && !channelDaySelectorInitialized) {
+                const channelIcons = {
+                    '메타_전환': '📘',
+                    '네이버_쇼핑검색': '🛒',
+                    '네이버_파워링크': '🔗',
+                    '네이버_신제품검색광고': '✨',
+                    '구분필요': '❓'
+                };
+
+                selector.innerHTML = categories.map((cat, idx) => {
+                    const icon = channelIcons[cat] || '📊';
+                    return `<option value="${cat}" ${idx === 0 ? 'selected' : ''}>${icon} ${cat}</option>`;
+                }).join('');
+
+                // 드롭다운 변경 이벤트
+                selector.addEventListener('change', function() {
+                    renderChannelDayTableForCategory(this.value);
+                });
+
+                channelDaySelectorInitialized = true;
+            }
+
+            // 첫 번째 채널 데이터 렌더링
+            const selectedCategory = selector ? selector.value : categories[0];
+            renderChannelDayTableForCategory(selectedCategory);
+
+            // 인사이트 업데이트
+            renderChannelDayInsight();
+        }
+
+        // 선택된 채널의 요일별 데이터 렌더링
+        function renderChannelDayTableForCategory(category) {
+            const seasonality = insightsData.seasonality_analysis || {};
+            const byCategory = seasonality.by_category || {};
+            const tbody = document.getElementById('seasonalityCategoryTableBody');
+
+            if (!tbody || !byCategory[category]) {
+                if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: var(--grey-500);">데이터가 없습니다</td></tr>';
+                return;
+            }
+
+            const dayData = byCategory[category];
+            const dayOrder = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];
+
+            // 요일 데이터 맵 생성
+            const dayMap = {};
+            dayData.forEach(d => { dayMap[d.day] = d; });
+
+            // 최고/최저 ROAS 찾기
+            const roasValues = dayData.map(d => d.avg_roas || 0);
+            const maxRoas = Math.max(...roasValues);
+            const minRoas = Math.min(...roasValues);
+
             let html = '';
+            dayOrder.forEach((day) => {
+                const d = dayMap[day];
+                if (!d) return;
+
+                const isBest = d.avg_roas === maxRoas;
+                const isWorst = d.avg_roas === minRoas;
+
+                // 성과 레벨 판단
+                let performanceLabel = '보통';
+                let performanceColor = '#757575';
+                let performanceBg = '#f5f5f5';
+                if (isBest) {
+                    performanceLabel = '🏆 최고';
+                    performanceColor = '#1b5e20';
+                    performanceBg = '#c8e6c9';
+                } else if (isWorst) {
+                    performanceLabel = '📉 최저';
+                    performanceColor = '#b71c1c';
+                    performanceBg = '#ffcdd2';
+                } else if (d.avg_roas > (maxRoas + minRoas) / 2) {
+                    performanceLabel = '양호';
+                    performanceColor = '#2e7d32';
+                    performanceBg = '#e8f5e9';
+                }
+
+                const rowBg = isBest ? 'background: #f1f8e9;' : (isWorst ? 'background: #fff8f8;' : '');
+
+                html += `<tr style="${rowBg}">`;
+                html += `<td style="text-align: center; font-weight: 600;">${getDayEmoji(day)} ${day}</td>`;
+                html += `<td style="text-align: right;">${formatCurrency(d.avg_cost || 0)}</td>`;
+                html += `<td style="text-align: right; font-weight: 500;">${formatCurrency(d.avg_revenue || 0)}</td>`;
+                html += `<td style="text-align: right; font-weight: 700; font-size: 14px; color: ${isBest ? '#1b5e20' : (isWorst ? '#b71c1c' : '#424242')};">${(d.avg_roas || 0).toFixed(1)}%</td>`;
+                html += `<td style="text-align: right; color: ${isWorst ? '#b71c1c' : '#616161'};">${formatCurrency(d.avg_cpa || 0)}</td>`;
+                html += `<td style="text-align: center;"><span style="background: ${performanceBg}; color: ${performanceColor}; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">${performanceLabel}</span></td>`;
+                html += '</tr>';
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // 채널별 요일 인사이트 렌더링 (강화)
+        function renderChannelDayInsight() {
+            const seasonality = insightsData.seasonality_analysis || {};
+            const byCategory = seasonality.by_category || {};
+            const insights = insightsData.seasonality_insights || [];
+            const insightText = document.getElementById('seasonalityCategoryInsightText');
+
+            if (!insightText) return;
+
+            const categories = Object.keys(byCategory);
+            if (categories.length === 0) {
+                insightText.innerHTML = '채널별 요일 데이터를 분석 중입니다.';
+                return;
+            }
+
+            let insightParts = [];
+
+            // 각 채널별 분석
             categories.forEach(category => {
                 const dayData = byCategory[category];
                 if (!dayData || dayData.length === 0) return;
 
-                // 최고/최저 요일 찾기
-                const sortedDays = [...dayData].sort((a, b) => b.avg_revenue - a.avg_revenue);
-                const bestDay = sortedDays[0];
-                const worstDay = sortedDays[sortedDays.length - 1];
-                const diffPercent = ((bestDay.avg_revenue - worstDay.avg_revenue) / worstDay.avg_revenue * 100).toFixed(1);
+                const sortedByRoas = [...dayData].sort((a, b) => (b.avg_roas || 0) - (a.avg_roas || 0));
+                const bestDay = sortedByRoas[0];
+                const worstDay = sortedByRoas[sortedByRoas.length - 1];
 
-                const categoryIcon = getCategoryIcon(category);
+                const roasDiff = ((bestDay.avg_roas - worstDay.avg_roas) / worstDay.avg_roas * 100).toFixed(0);
 
-                html += `
-                    <tr>
-                        <td style="font-weight: 500;">${categoryIcon} ${category}</td>
-                        <td style="text-align: center;"><span style="background: #e8f5e9; color: #2e7d32; padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 600;">${getDayEmoji(bestDay.day)} ${bestDay.day}</span></td>
-                        <td style="text-align: right; color: #2e7d32; font-weight: 600;">${formatCurrency(bestDay.avg_revenue)}</td>
-                        <td style="text-align: center;"><span style="background: #ffebee; color: #d32f2f; padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 600;">${getDayEmoji(worstDay.day)} ${worstDay.day}</span></td>
-                        <td style="text-align: right; color: #d32f2f;">${formatCurrency(worstDay.avg_revenue)}</td>
-                        <td style="text-align: right; font-weight: 600; color: #1565c0;">+${diffPercent}%</td>
-                    </tr>
-                `;
+                insightParts.push(`<strong>${category}</strong>: ${getDayEmoji(bestDay.day)} <span style="color: #1b5e20; font-weight: 600;">${bestDay.day}</span>이 ROAS ${bestDay.avg_roas.toFixed(0)}%로 가장 효율적 (vs ${worstDay.day} ${worstDay.avg_roas.toFixed(0)}%, +${roasDiff}% 차이)`);
             });
 
-            tbody.innerHTML = html;
+            // 전략적 제안 추가
+            let strategy = '';
+            if (categories.includes('메타_전환') && categories.includes('네이버_쇼핑검색')) {
+                const metaData = byCategory['메타_전환'];
+                const naverData = byCategory['네이버_쇼핑검색'];
 
-            // 인사이트 업데이트
-            const insightText = document.getElementById('seasonalityCategoryInsightText');
-            if (insightText) {
-                const categoryInsights = insights.filter(i => i.type && i.type.startsWith('best_day_') && i.category);
-                if (categoryInsights.length > 0) {
-                    const insightHtml = categoryInsights.map(i => i.message).join('<br>');
-                    insightText.innerHTML = insightHtml;
-                } else {
-                    insightText.innerHTML = '각 채널별로 가장 효율적인 요일이 다릅니다. 채널 특성에 맞게 요일별 예산을 조정해보세요.';
+                if (metaData && naverData) {
+                    const metaBest = [...metaData].sort((a, b) => (b.avg_roas || 0) - (a.avg_roas || 0))[0];
+                    const naverBest = [...naverData].sort((a, b) => (b.avg_roas || 0) - (a.avg_roas || 0))[0];
+
+                    if (metaBest.day !== naverBest.day) {
+                        strategy = `<br><br>💡 <strong>전략 제안</strong>: 메타는 <span style="color: #1976d2; font-weight: 600;">${metaBest.day}</span>, 네이버는 <span style="color: #388e3c; font-weight: 600;">${naverBest.day}</span>에 예산을 집중하면 채널별 최적화가 가능합니다.`;
+                    } else {
+                        strategy = `<br><br>💡 <strong>전략 제안</strong>: 두 채널 모두 <span style="font-weight: 600;">${metaBest.day}</span>이 최적입니다. 해당 요일에 전체 예산을 집중 배분하세요.`;
+                    }
                 }
             }
+
+            insightText.innerHTML = insightParts.join('<br>') + strategy;
         }
 
         // 기기 아이콘 반환
