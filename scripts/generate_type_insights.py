@@ -144,7 +144,7 @@ prophet_files = {
     'platform': 'prophet_forecast_by_platform.csv',
     'promotion': 'prophet_forecast_by_promotion.csv',
     'age_gender': 'prophet_forecast_by_age_gender.csv',
-    'seasonality': 'prophet_seasonality.csv'
+    'seasonality': 'prophet_forecast_by_seasonality.csv'
 }
 
 prophet_forecasts = {}
@@ -1441,7 +1441,7 @@ if len(promotion_insights) > 0:
         })
 
 # ============================================================================
-# 요일별 계절성 분석 (prophet_seasonality.csv 활용) - 다중 지표
+# 요일별 계절성 분석 (prophet_forecast_by_seasonality.csv 활용) - 다중 지표
 # ============================================================================
 print("요일별 계절성 분석 중... (다중 지표: cost, conversions, revenue, roas, cpa)")
 
@@ -1458,28 +1458,34 @@ if 'seasonality' in prophet_forecasts:
     day_order = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일']
 
     # 컬럼 매핑 (새 다중 지표 컬럼 지원, 기존 컬럼도 호환)
-    has_multi_metrics = '평균_비용' in seasonality_df.columns
+    has_multi_metrics = '예측_비용' in seasonality_df.columns
 
-    # 유형구분별 분석
-    for category in seasonality_df['유형구분'].unique():
-        cat_data = seasonality_df[seasonality_df['유형구분'] == category].copy()
+    # 기간유형 필터링 (요일별 데이터만 선택, 새 구조 지원)
+    if '기간유형' in seasonality_df.columns:
+        dow_df = seasonality_df[seasonality_df['기간유형'] == '요일별'].copy()
+    else:
+        dow_df = seasonality_df.copy()  # 기존 구조 호환
+
+    # 유형구분별 분석 (요일별 데이터)
+    for category in dow_df['유형구분'].unique():
+        cat_data = dow_df[dow_df['유형구분'] == category].copy()
 
         # 요일별 데이터 정리 (다중 지표 포함)
         day_data = []
         for _, row in cat_data.iterrows():
             day_item = {
                 "day": row['요일'],
-                "avg_revenue": float(row.get('평균_전환값', 0))
+                "avg_revenue": float(row.get('예측_전환값', 0))
             }
 
             # 다중 지표가 있는 경우 추가
             if has_multi_metrics:
-                day_item["avg_cost"] = float(row.get('평균_비용', 0))
-                day_item["avg_impressions"] = float(row.get('평균_노출', 0))
-                day_item["avg_clicks"] = float(row.get('평균_클릭', 0))
-                day_item["avg_conversions"] = float(row.get('평균_전환수', 0))
-                day_item["avg_roas"] = float(row.get('평균_ROAS', 0))
-                day_item["avg_cpa"] = float(row.get('평균_CPA', 0))
+                day_item["avg_cost"] = float(row.get('예측_비용', 0))
+                day_item["avg_impressions"] = float(row.get('예측_노출', 0))
+                day_item["avg_clicks"] = float(row.get('예측_클릭', 0))
+                day_item["avg_conversions"] = float(row.get('예측_전환수', 0))
+                day_item["avg_roas"] = float(row.get('예측_ROAS', 0))
+                day_item["avg_cpa"] = float(row.get('예측_CPA', 0))
 
             day_data.append(day_item)
 
@@ -1687,8 +1693,184 @@ if 'seasonality' in prophet_forecasts:
     print(f"  - 계절성 인사이트: {len(seasonality_insights)}개")
     if has_multi_metrics:
         print("  - 다중 지표 포함: cost, conversions, revenue, roas, cpa")
+
+    # ========== 분기별/월별 분석 추가 ==========
+    print("\n분기별/월별 분석 중...")
+
+    # 기간유형 컬럼이 있는지 확인
+    has_period_type = '기간유형' in seasonality_df.columns
+
+    if has_period_type:
+        # 분기별 분석
+        quarterly_data = seasonality_df[seasonality_df['기간유형'] == '분기별'].copy()
+        if len(quarterly_data) > 0:
+            seasonality_analysis['quarterly'] = {}
+            seasonality_analysis['quarterly_overall'] = []
+
+            quarter_order = ['Q1(1~3월)', 'Q2(4~6월)', 'Q3(7~9월)', 'Q4(10~12월)']
+
+            for category in quarterly_data['유형구분'].unique():
+                cat_quarterly = quarterly_data[quarterly_data['유형구분'] == category].copy()
+                quarter_items = []
+
+                for _, row in cat_quarterly.iterrows():
+                    quarter_item = {
+                        "quarter": row['요일'],  # 분기명이 요일 컬럼에 저장됨
+                        "avg_cost": float(row.get('예측_비용', 0)),
+                        "avg_impressions": float(row.get('예측_노출', 0)),
+                        "avg_clicks": float(row.get('예측_클릭', 0)),
+                        "avg_conversions": float(row.get('예측_전환수', 0)),
+                        "avg_revenue": float(row.get('예측_전환값', 0)),
+                        "avg_roas": float(row.get('예측_ROAS', 0)),
+                        "avg_cpa": float(row.get('예측_CPA', 0))
+                    }
+                    quarter_items.append(quarter_item)
+
+                # 분기 순서대로 정렬
+                quarter_items_sorted = sorted(quarter_items, key=lambda x: quarter_order.index(x['quarter']) if x['quarter'] in quarter_order else 99)
+
+                if category == '전체':
+                    seasonality_analysis['quarterly_overall'] = quarter_items_sorted
+                else:
+                    seasonality_analysis['quarterly'][category] = quarter_items_sorted
+
+            # 분기별 인사이트 생성
+            if seasonality_analysis.get('quarterly_overall'):
+                q_data = seasonality_analysis['quarterly_overall']
+                if len(q_data) >= 2:
+                    # ROAS 기준 최고/최저 분기
+                    best_quarter = max(q_data, key=lambda x: x.get('avg_roas', 0))
+                    worst_quarter = min(q_data, key=lambda x: x.get('avg_roas', 0))
+
+                    seasonality_insights.append({
+                        "type": "best_quarter",
+                        "message": f"{best_quarter['quarter']}이 평균 ROAS {best_quarter['avg_roas']:.1f}%로 가장 효율적인 분기입니다.",
+                        "severity": "opportunity",
+                        "quarter": best_quarter['quarter'],
+                        "avg_roas": best_quarter['avg_roas'],
+                        "avg_revenue": best_quarter['avg_revenue'],
+                        "avg_cost": best_quarter['avg_cost']
+                    })
+
+                    seasonality_insights.append({
+                        "type": "worst_quarter",
+                        "message": f"{worst_quarter['quarter']}이 평균 ROAS {worst_quarter['avg_roas']:.1f}%로 효율이 가장 낮습니다. 시즌별 전략 검토가 필요합니다.",
+                        "severity": "warning",
+                        "quarter": worst_quarter['quarter'],
+                        "avg_roas": worst_quarter['avg_roas'],
+                        "avg_revenue": worst_quarter['avg_revenue'],
+                        "avg_cost": worst_quarter['avg_cost']
+                    })
+
+                    # 전환값 기준 분기 비교
+                    best_revenue_q = max(q_data, key=lambda x: x.get('avg_revenue', 0))
+                    seasonality_insights.append({
+                        "type": "best_revenue_quarter",
+                        "message": f"{best_revenue_q['quarter']}에 평균 전환값이 {best_revenue_q['avg_revenue']:,.0f}원으로 가장 높습니다. 이 시기에 예산을 집중하는 것을 권장합니다.",
+                        "severity": "opportunity",
+                        "quarter": best_revenue_q['quarter'],
+                        "avg_revenue": best_revenue_q['avg_revenue']
+                    })
+
+            print(f"  - 분기별 분석: {len(seasonality_analysis.get('quarterly_overall', []))}개 분기")
+
+        # 월별 분석
+        monthly_data = seasonality_df[seasonality_df['기간유형'] == '월별'].copy()
+        if len(monthly_data) > 0:
+            seasonality_analysis['monthly'] = {}
+            seasonality_analysis['monthly_overall'] = []
+
+            for category in monthly_data['유형구분'].unique():
+                cat_monthly = monthly_data[monthly_data['유형구분'] == category].copy()
+                monthly_items = []
+
+                for _, row in cat_monthly.iterrows():
+                    monthly_item = {
+                        "month": row['요일'],  # 년월이 요일 컬럼에 저장됨
+                        "total_cost": float(row.get('예측_비용', 0)),
+                        "total_impressions": float(row.get('예측_노출', 0)),
+                        "total_clicks": float(row.get('예측_클릭', 0)),
+                        "total_conversions": float(row.get('예측_전환수', 0)),
+                        "total_revenue": float(row.get('예측_전환값', 0)),
+                        "roas": float(row.get('예측_ROAS', 0)),
+                        "cpa": float(row.get('예측_CPA', 0))
+                    }
+                    monthly_items.append(monthly_item)
+
+                # 월별 정렬
+                monthly_items_sorted = sorted(monthly_items, key=lambda x: x['month'])
+
+                if category == '전체':
+                    seasonality_analysis['monthly_overall'] = monthly_items_sorted
+                else:
+                    seasonality_analysis['monthly'][category] = monthly_items_sorted
+
+            # 월별 인사이트 생성
+            if seasonality_analysis.get('monthly_overall') and len(seasonality_analysis['monthly_overall']) >= 2:
+                m_data = seasonality_analysis['monthly_overall']
+
+                # 최근 2개월 비교 (트렌드)
+                if len(m_data) >= 2:
+                    recent_month = m_data[-1]
+                    prev_month = m_data[-2]
+
+                    roas_change = recent_month['roas'] - prev_month['roas']
+                    revenue_change_pct = ((recent_month['total_revenue'] - prev_month['total_revenue']) / prev_month['total_revenue'] * 100) if prev_month['total_revenue'] > 0 else 0
+
+                    if roas_change > 5:
+                        seasonality_insights.append({
+                            "type": "monthly_trend_up",
+                            "message": f"{recent_month['month']}의 ROAS가 전월 대비 {roas_change:.1f}%p 상승했습니다. 현재 전략이 효과적입니다.",
+                            "severity": "opportunity",
+                            "current_month": recent_month['month'],
+                            "prev_month": prev_month['month'],
+                            "roas_change": roas_change,
+                            "current_roas": recent_month['roas'],
+                            "prev_roas": prev_month['roas']
+                        })
+                    elif roas_change < -5:
+                        seasonality_insights.append({
+                            "type": "monthly_trend_down",
+                            "message": f"{recent_month['month']}의 ROAS가 전월 대비 {abs(roas_change):.1f}%p 하락했습니다. 원인 분석이 필요합니다.",
+                            "severity": "warning",
+                            "current_month": recent_month['month'],
+                            "prev_month": prev_month['month'],
+                            "roas_change": roas_change,
+                            "current_roas": recent_month['roas'],
+                            "prev_roas": prev_month['roas']
+                        })
+
+            print(f"  - 월별 분석: {len(seasonality_analysis.get('monthly_overall', []))}개 월")
+
+        # 일별 분석 (트렌드용)
+        daily_detail_data = seasonality_df[seasonality_df['기간유형'] == '일별'].copy()
+        if len(daily_detail_data) > 0:
+            seasonality_analysis['daily'] = []
+
+            # 전체 일별 데이터만 저장
+            overall_daily = daily_detail_data[daily_detail_data['유형구분'] == '전체'].copy()
+            for _, row in overall_daily.iterrows():
+                daily_item = {
+                    "date": row['요일'],  # 날짜가 요일 컬럼에 저장됨
+                    "cost": float(row.get('예측_비용', 0)),
+                    "impressions": float(row.get('예측_노출', 0)),
+                    "clicks": float(row.get('예측_클릭', 0)),
+                    "conversions": float(row.get('예측_전환수', 0)),
+                    "revenue": float(row.get('예측_전환값', 0)),
+                    "roas": float(row.get('예측_ROAS', 0)),
+                    "cpa": float(row.get('예측_CPA', 0))
+                }
+                seasonality_analysis['daily'].append(daily_item)
+
+            # 날짜순 정렬
+            seasonality_analysis['daily'] = sorted(seasonality_analysis['daily'], key=lambda x: x['date'])
+            print(f"  - 일별 상세 데이터: {len(seasonality_analysis['daily'])}일")
+    else:
+        print("  - 기간유형 컬럼 없음 (요일별 데이터만 사용)")
+
+    print(f"  - 총 계절성 인사이트: {len(seasonality_insights)}개")
 else:
-    print("  - prophet_seasonality.csv 파일 없음")
+    print("  - prophet_forecast_by_seasonality.csv 파일 없음")
 
 # ============================================================================
 # 리타겟팅 분석 (타겟팅='리타겟팅' 데이터 분석)

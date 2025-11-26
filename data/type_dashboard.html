@@ -1050,6 +1050,9 @@
                             <button class="view-btn decision-tool-tab-btn" data-tab="targeting" style="padding: 8px 14px; font-size: 12px;">
                                 👥 타겟 분석
                             </button>
+                            <button class="view-btn decision-tool-tab-btn" data-tab="dayAnalysis" style="padding: 8px 14px; font-size: 12px;">
+                                📅 요일별 분석
+                            </button>
                             <button class="view-btn decision-tool-tab-btn" data-tab="forecast" style="padding: 8px 14px; font-size: 12px;">
                                 🔮 AI 예측
                             </button>
@@ -1083,7 +1086,102 @@
                             </div>
                         </div>
 
-                        <!-- 탭 4: AI 예측 (Prophet) -->
+                        <!-- 탭 4: 요일별 분석 -->
+                        <div class="decision-tool-tab-content" id="dayAnalysisTab" style="display: none;">
+                            <!-- 서브탭 버튼 -->
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; padding: 16px; background: #f8f9fa; border-bottom: 1px solid #e9ecef;">
+                                <button class="day-analysis-subtab active" data-day-tab="dayConversion"
+                                        style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: none; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #1a73e8; color: white;">
+                                    요일별 전환
+                                </button>
+                                <button class="day-analysis-subtab" data-day-tab="channelDay"
+                                        style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                                    채널별 요일
+                                </button>
+                            </div>
+
+                            <!-- 요일별 전환 뷰 -->
+                            <div class="day-analysis-tab-content active" id="dayConversionView">
+                                <!-- 자연어 인사이트 -->
+                                <div style="padding: 20px 24px; background: linear-gradient(135deg, #fff8e1 0%, #fffef5 100%); border-bottom: 1px solid #e9ecef;">
+                                    <div style="font-size: 14px; color: #f57c00; font-weight: 600; margin-bottom: 8px;">💡 요일별 계절성 인사이트</div>
+                                    <div style="font-size: 13px; color: #424242; line-height: 1.7;" id="seasonalityInsightText">로딩 중...</div>
+                                </div>
+
+                                <div class="card" style="margin: 16px; border-radius: 12px;">
+                                    <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                        <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">요일별 성과 분석</h4>
+                                        <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">어떤 요일에 광고 효율이 가장 좋은지 확인하세요 (헤더 클릭으로 정렬)</p>
+                                    </div>
+                                    <div style="padding: 16px 20px; overflow-x: auto;">
+                                        <table class="data-table" id="seasonalityTable" style="margin-top: 0;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="min-width: 100px; text-align: center;">요일</th>
+                                                    <th class="sortable-header" data-table="seasonality" data-column="roas" style="min-width: 100px; text-align: right;">
+                                                        ROAS
+                                                        <div class="sort-icon active"><div class="sort-arrow up"></div><div class="sort-arrow down active"></div></div>
+                                                    </th>
+                                                    <th class="sortable-header" data-table="seasonality" data-column="cpa" style="min-width: 100px; text-align: right;">
+                                                        CPA
+                                                        <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                                    </th>
+                                                    <th class="sortable-header" data-table="seasonality" data-column="cost" style="min-width: 120px; text-align: right;">
+                                                        광고비
+                                                        <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                                    </th>
+                                                    <th class="sortable-header" data-table="seasonality" data-column="conversions" style="min-width: 80px; text-align: right;">
+                                                        전환수
+                                                        <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                                    </th>
+                                                    <th class="sortable-header" data-table="seasonality" data-column="revenue" style="min-width: 120px; text-align: right;">
+                                                        전환값
+                                                        <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                                    </th>
+                                                    <th style="min-width: 120px;">성과 수준</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="seasonalityTableBody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 채널별 요일 뷰 -->
+                            <div class="day-analysis-tab-content" id="channelDayView" style="display: none;">
+                                <!-- 자연어 인사이트 -->
+                                <div style="padding: 20px 24px; background: linear-gradient(135deg, #e8f5e9 0%, #f5fff5 100%); border-bottom: 1px solid #e9ecef;">
+                                    <div style="font-size: 14px; color: #2e7d32; font-weight: 600; margin-bottom: 8px;">💡 채널별 요일 인사이트</div>
+                                    <div style="font-size: 13px; color: #424242; line-height: 1.7;" id="seasonalityCategoryInsightText">로딩 중...</div>
+                                </div>
+
+                                <div class="card" style="margin: 16px; border-radius: 12px;">
+                                    <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                        <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">채널별 요일 성과</h4>
+                                        <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">각 채널이 가장 효율적인 요일을 확인하세요</p>
+                                    </div>
+                                    <div style="padding: 16px 20px; overflow-x: auto;">
+                                        <table class="data-table" id="seasonalityCategoryTable" style="margin-top: 0;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="min-width: 140px;">채널</th>
+                                                    <th style="min-width: 80px; text-align: center;">최고 요일</th>
+                                                    <th style="min-width: 120px; text-align: right;">최고 전환값</th>
+                                                    <th style="min-width: 80px; text-align: center;">최저 요일</th>
+                                                    <th style="min-width: 120px; text-align: right;">최저 전환값</th>
+                                                    <th style="min-width: 100px; text-align: right;">편차</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="seasonalityCategoryTableBody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 탭 5: AI 예측 (Prophet) -->
                         <div class="decision-tool-tab-content" id="forecastTab" style="display: none;">
                             <div id="forecastContent">
                                 <p style="color: var(--grey-500); padding: 20px;">데이터를 불러오는 중...</p>
@@ -2781,12 +2879,12 @@
                 </div>
             </div>
 
-            <!-- 2. 리타겟팅 및 계절성 분석 -->
+            <!-- 2. 리타겟팅 분석 -->
             <div class="collapsible-section">
                 <div class="collapsible-header">
                     <div class="collapsible-title">
                         <span class="collapsible-icon">🎯</span>
-                        <span>리타겟팅 및 계절성 분석 - 제품이 잘 팔리는 요일과 제품에 관심이 많은 소비자를 확인하세요</span>
+                        <span>리타겟팅 분석 - 제품에 관심이 많은 소비자를 확인하세요</span>
                     </div>
                     <button class="collapsible-toggle">
                         <span>펼치기</span>
@@ -2811,14 +2909,6 @@
                         <button class="retargeting-subtab" data-retarget-tab="devicePlatform"
                                 style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
                             노출기기별
-                        </button>
-                        <button class="retargeting-subtab" data-retarget-tab="seasonality"
-                                style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
-                            요일별 전환
-                        </button>
-                        <button class="retargeting-subtab" data-retarget-tab="seasonalityCategory"
-                                style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
-                            채널별 요일
                         </button>
                     </div>
 
@@ -3008,86 +3098,6 @@
                                         </tr>
                                     </thead>
                                     <tbody id="devicePlatformRetargetTableBody">
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 요일별 전환 뷰 -->
-                    <div class="retargeting-tab-content" id="seasonalityView" style="display: none;">
-                        <!-- 자연어 인사이트 -->
-                        <div style="padding: 20px 24px; background: linear-gradient(135deg, #fff8e1 0%, #fffef5 100%); border-bottom: 1px solid #e9ecef;">
-                            <div style="font-size: 14px; color: #f57c00; font-weight: 600; margin-bottom: 8px;">💡 요일별 계절성 인사이트</div>
-                            <div style="font-size: 13px; color: #424242; line-height: 1.7;" id="seasonalityInsightText">로딩 중...</div>
-                        </div>
-
-                        <div class="card" style="margin: 16px; border-radius: 12px;">
-                            <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
-                                <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">요일별 성과 분석</h4>
-                                <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">어떤 요일에 광고 효율이 가장 좋은지 확인하세요 (헤더 클릭으로 정렬)</p>
-                            </div>
-                            <div style="padding: 16px 20px; overflow-x: auto;">
-                                <table class="data-table" id="seasonalityTable" style="margin-top: 0;">
-                                    <thead>
-                                        <tr>
-                                            <th style="min-width: 100px; text-align: center;">요일</th>
-                                            <th class="sortable-header" data-table="seasonality" data-column="roas" style="min-width: 100px; text-align: right;">
-                                                ROAS
-                                                <div class="sort-icon active"><div class="sort-arrow up"></div><div class="sort-arrow down active"></div></div>
-                                            </th>
-                                            <th class="sortable-header" data-table="seasonality" data-column="cpa" style="min-width: 100px; text-align: right;">
-                                                CPA
-                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
-                                            </th>
-                                            <th class="sortable-header" data-table="seasonality" data-column="cost" style="min-width: 120px; text-align: right;">
-                                                광고비
-                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
-                                            </th>
-                                            <th class="sortable-header" data-table="seasonality" data-column="conversions" style="min-width: 80px; text-align: right;">
-                                                전환수
-                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
-                                            </th>
-                                            <th class="sortable-header" data-table="seasonality" data-column="revenue" style="min-width: 120px; text-align: right;">
-                                                전환값
-                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
-                                            </th>
-                                            <th style="min-width: 120px;">성과 수준</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="seasonalityTableBody">
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 채널별 요일 분석 뷰 -->
-                    <div class="retargeting-tab-content" id="seasonalityCategoryView" style="display: none;">
-                        <!-- 자연어 인사이트 -->
-                        <div style="padding: 20px 24px; background: linear-gradient(135deg, #e8f5e9 0%, #f5fff5 100%); border-bottom: 1px solid #e9ecef;">
-                            <div style="font-size: 14px; color: #2e7d32; font-weight: 600; margin-bottom: 8px;">💡 채널별 요일 인사이트</div>
-                            <div style="font-size: 13px; color: #424242; line-height: 1.7;" id="seasonalityCategoryInsightText">로딩 중...</div>
-                        </div>
-
-                        <div class="card" style="margin: 16px; border-radius: 12px;">
-                            <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
-                                <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">채널별 요일 성과</h4>
-                                <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">각 채널이 가장 효율적인 요일을 확인하세요</p>
-                            </div>
-                            <div style="padding: 16px 20px; overflow-x: auto;">
-                                <table class="data-table" id="seasonalityCategoryTable" style="margin-top: 0;">
-                                    <thead>
-                                        <tr>
-                                            <th style="min-width: 140px;">채널</th>
-                                            <th style="min-width: 80px; text-align: center;">최고 요일</th>
-                                            <th style="min-width: 120px; text-align: right;">최고 전환값</th>
-                                            <th style="min-width: 80px; text-align: center;">최저 요일</th>
-                                            <th style="min-width: 120px; text-align: right;">최저 전환값</th>
-                                            <th style="min-width: 100px; text-align: right;">편차</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="seasonalityCategoryTableBody">
                                     </tbody>
                                 </table>
                             </div>
@@ -5440,6 +5450,7 @@
                 'opportunity': 'opportunityTab',
                 'warning': 'warningTab',
                 'targeting': 'targetingTab',
+                'dayAnalysis': 'dayAnalysisTab',
                 'forecast': 'forecastTab'
             };
 
@@ -5461,6 +5472,13 @@
                         selectedTab.style.display = 'block';
                         selectedTab.classList.add('active');
                     }
+
+                    // 요일별 분석 탭 선택 시 테이블 렌더링
+                    if (targetTab === 'dayAnalysis') {
+                        renderSeasonalityTable();
+                        renderSeasonalityCategoryTable();
+                        setupRetargetingSortEvents();
+                    }
                 });
             });
 
@@ -5469,6 +5487,44 @@
             if (defaultBtn) {
                 defaultBtn.click();
             }
+
+            // 요일별 분석 서브탭 이벤트 초기화
+            initDayAnalysisSubtabs();
+        }
+
+        // 요일별 분석 서브탭 전환 이벤트
+        function initDayAnalysisSubtabs() {
+            document.querySelectorAll('.day-analysis-subtab').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 버튼 스타일 변경
+                    document.querySelectorAll('.day-analysis-subtab').forEach(b => {
+                        b.style.background = 'white';
+                        b.style.color = '#495057';
+                        b.style.border = '1px solid #dee2e6';
+                    });
+                    this.style.background = '#1a73e8';
+                    this.style.color = 'white';
+                    this.style.border = 'none';
+
+                    // 콘텐츠 전환
+                    const targetTab = this.dataset.dayTab;
+                    document.querySelectorAll('.day-analysis-tab-content').forEach(content => {
+                        content.style.display = 'none';
+                        content.classList.remove('active');
+                    });
+
+                    const viewMap = {
+                        'dayConversion': 'dayConversionView',
+                        'channelDay': 'channelDayView'
+                    };
+
+                    const targetView = document.getElementById(viewMap[targetTab]);
+                    if (targetView) {
+                        targetView.style.display = 'block';
+                        targetView.classList.add('active');
+                    }
+                });
+            });
         }
 
         // 성별 차트
@@ -6196,8 +6252,6 @@
             renderDeviceRetargetTable();
             renderPlatformRetargetTable();
             renderDevicePlatformRetargetTable();
-            renderSeasonalityTable();
-            renderSeasonalityCategoryTable();
             setupRetargetingTabEvents();
             setupRetargetingSortEvents();
         }
@@ -6284,9 +6338,7 @@
                         'ageGender': 'ageGenderRetargetView',
                         'device': 'deviceRetargetView',
                         'platform': 'platformRetargetView',
-                        'devicePlatform': 'devicePlatformRetargetView',
-                        'seasonality': 'seasonalityView',
-                        'seasonalityCategory': 'seasonalityCategoryView'
+                        'devicePlatform': 'devicePlatformRetargetView'
                     };
 
                     const targetView = document.getElementById(viewMap[targetTab]);

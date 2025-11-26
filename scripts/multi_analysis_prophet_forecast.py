@@ -339,75 +339,199 @@ if PROPHET_AVAILABLE:
         print("\n✓ 트렌드 분석 결과 저장: data/type/prophet_trend_analysis.csv")
 
     print("\n" + "=" * 100)
-    print("4. 계절성 분석 (유형구분별) - 다중 지표")
+    print("4. 계절성 예측 분석 (Prophet 기반) - 다중 지표")
     print("=" * 100)
 
-    # 요일별 패턴 (전체) - 다중 지표
-    daily_data_with_dow = daily_data.copy()
-    daily_data_with_dow['요일번호'] = daily_data_with_dow['일'].dt.dayofweek
+    # Prophet 365일 예측 기반으로 요일별/월별/분기별 패턴 분석
+    SEASONALITY_FORECAST_DAYS = 365  # 1년 예측으로 계절성 패턴 분석
 
-    dow_performance = daily_data_with_dow.groupby('요일번호').agg({
-        '비용': 'mean',
-        '노출': 'mean',
-        '클릭': 'mean',
-        '전환수': 'mean',
-        '전환값': 'mean'
-    }).reset_index()
+    def forecast_seasonality_metrics(data, forecast_days=365):
+        """Prophet으로 지정 기간 예측 후 계절성 분석용 데이터 반환"""
+        forecasts = {}
+        for metric in FORECAST_METRICS:
+            prophet_df = data[['일', metric]].copy()
+            prophet_df.columns = ['ds', 'y']
+            prophet_df['ds'] = pd.to_datetime(prophet_df['ds'])
+
+            # 학습 기간 제한
+            if len(prophet_df) > TRAINING_DAYS:
+                prophet_df = prophet_df.tail(TRAINING_DAYS)
+
+            # 연간 학습 가능 여부 확인
+            data_days = (prophet_df['ds'].max() - prophet_df['ds'].min()).days
+            use_yearly = data_days >= TRAINING_DAYS
+
+            model = Prophet(
+                yearly_seasonality=use_yearly,
+                weekly_seasonality=True,
+                daily_seasonality=False
+            )
+            model.fit(prophet_df)
+
+            future = model.make_future_dataframe(periods=forecast_days)
+            forecast = model.predict(future)
+
+            # 예측 기간만 반환 (학습 데이터 제외)
+            forecast_only = forecast[forecast['ds'] > prophet_df['ds'].max()].copy()
+            forecasts[metric] = forecast_only[['ds', 'yhat']]
+
+        return forecasts
+
+    print("\n전체 Prophet 365일 예측 생성 중...")
+    overall_seasonality_forecasts = forecast_seasonality_metrics(daily_data, SEASONALITY_FORECAST_DAYS)
+
+    # 예측 결과 통합
+    first_metric = list(overall_seasonality_forecasts.keys())[0]
+    seasonality_forecast_df = overall_seasonality_forecasts[first_metric][['ds']].copy()
+    seasonality_forecast_df.columns = ['일자']
+
+    for metric, forecast_df in overall_seasonality_forecasts.items():
+        seasonality_forecast_df[f'예측_{metric}'] = forecast_df['yhat'].values
 
     # ROAS, CPA 계산
-    dow_performance['ROAS'] = (dow_performance['전환값'] / dow_performance['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
-    dow_performance['CPA'] = (dow_performance['비용'] / dow_performance['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    seasonality_forecast_df['예측_ROAS'] = (seasonality_forecast_df['예측_전환값'] / seasonality_forecast_df['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+    seasonality_forecast_df['예측_CPA'] = (seasonality_forecast_df['예측_비용'] / seasonality_forecast_df['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+
+    # 요일 정보 추가
+    seasonality_forecast_df['요일번호'] = pd.to_datetime(seasonality_forecast_df['일자']).dt.dayofweek
+    seasonality_forecast_df['월'] = pd.to_datetime(seasonality_forecast_df['일자']).dt.month
+    seasonality_forecast_df['분기'] = seasonality_forecast_df['월'].apply(
+        lambda x: 'Q1(1~3월)' if x <= 3 else ('Q2(4~6월)' if x <= 6 else ('Q3(7~9월)' if x <= 9 else 'Q4(10~12월)'))
+    )
 
     dow_names = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일']
-    dow_performance['요일명'] = [dow_names[i] for i in dow_performance['요일번호']]
 
-    print("\n전체 요일별 평균 성과:")
-    for _, row in dow_performance.iterrows():
-        print(f"  {row['요일명']}: 비용 {row['비용']:,.0f}원, 전환값 {row['전환값']:,.0f}원, ROAS {row['ROAS']:.1f}%")
+    # ========== 요일별 예측 집계 ==========
+    print("\n요일별 예측 성과 분석...")
+    dow_forecast = seasonality_forecast_df.groupby('요일번호').agg({
+        '예측_비용': 'mean',
+        '예측_노출': 'mean',
+        '예측_클릭': 'mean',
+        '예측_전환수': 'mean',
+        '예측_전환값': 'mean'
+    }).reset_index()
 
-    # 전체 요일별 패턴 저장
-    dow_output = dow_performance[['요일명', '비용', '노출', '클릭', '전환수', '전환값', 'ROAS', 'CPA']].copy()
+    dow_forecast['예측_ROAS'] = (dow_forecast['예측_전환값'] / dow_forecast['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+    dow_forecast['예측_CPA'] = (dow_forecast['예측_비용'] / dow_forecast['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    dow_forecast['요일'] = [dow_names[i] for i in dow_forecast['요일번호']]
+
+    print("\n전체 요일별 예측 성과:")
+    for _, row in dow_forecast.iterrows():
+        print(f"  {row['요일']}: 비용 {row['예측_비용']:,.0f}원, 전환값 {row['예측_전환값']:,.0f}원, ROAS {row['예측_ROAS']:.1f}%")
+
+    dow_output = dow_forecast[['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']].copy()
     dow_output['유형구분'] = '전체'
-    dow_output.columns = ['요일', '평균_비용', '평균_노출', '평균_클릭', '평균_전환수', '평균_전환값', '평균_ROAS', '평균_CPA', '유형구분']
+    dow_output['기간유형'] = '요일별'
 
-    # 주요 유형구분별 요일 패턴
-    print("\n주요 유형구분별 요일 패턴:")
     all_seasonality_data = [dow_output]
 
+    # 주요 유형구분별 요일 예측
+    print("\n주요 유형구분별 요일 예측 패턴:")
     for category in ['메타_전환', '네이버_쇼핑검색']:
         cat_data = df[df['유형구분'] == category].copy()
-        cat_data['요일번호'] = cat_data['일'].dt.dayofweek
-
-        cat_dow = cat_data.groupby('요일번호').agg({
-            '비용': 'mean',
-            '노출': 'mean',
-            '클릭': 'mean',
-            '전환수': 'mean',
-            '전환값': 'mean'
+        cat_daily = cat_data.groupby('일').agg({
+            '비용': 'sum', '노출': 'sum', '클릭': 'sum', '전환수': 'sum', '전환값': 'sum'
         }).reset_index()
 
-        # ROAS, CPA 계산
-        cat_dow['ROAS'] = (cat_dow['전환값'] / cat_dow['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
-        cat_dow['CPA'] = (cat_dow['비용'] / cat_dow['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
-        cat_dow['요일명'] = [dow_names[i] for i in cat_dow['요일번호']]
+        if len(cat_daily) < 30:
+            print(f"\n[{category}]: 데이터 부족 (30일 미만)")
+            continue
 
-        print(f"\n[{category}]")
-        for _, row in cat_dow.iterrows():
-            print(f"  {row['요일명']}: 비용 {row['비용']:,.0f}원, 전환값 {row['전환값']:,.0f}원, ROAS {row['ROAS']:.1f}%")
+        try:
+            cat_forecasts = forecast_seasonality_metrics(cat_daily, SEASONALITY_FORECAST_DAYS)
 
-        # 유형구분별 요일 패턴 저장용
-        cat_dow_output = cat_dow[['요일명', '비용', '노출', '클릭', '전환수', '전환값', 'ROAS', 'CPA']].copy()
-        cat_dow_output['유형구분'] = category
-        cat_dow_output.columns = ['요일', '평균_비용', '평균_노출', '평균_클릭', '평균_전환수', '평균_전환값', '평균_ROAS', '평균_CPA', '유형구분']
-        all_seasonality_data.append(cat_dow_output)
+            # 예측 결과 통합
+            cat_forecast_df = cat_forecasts[first_metric][['ds']].copy()
+            cat_forecast_df.columns = ['일자']
+            for metric, forecast_df in cat_forecasts.items():
+                cat_forecast_df[f'예측_{metric}'] = forecast_df['yhat'].values
 
-    # 계절성 분석 결과 통합 저장
+            cat_forecast_df['예측_ROAS'] = (cat_forecast_df['예측_전환값'] / cat_forecast_df['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+            cat_forecast_df['예측_CPA'] = (cat_forecast_df['예측_비용'] / cat_forecast_df['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+            cat_forecast_df['요일번호'] = pd.to_datetime(cat_forecast_df['일자']).dt.dayofweek
+
+            # 요일별 집계
+            cat_dow = cat_forecast_df.groupby('요일번호').agg({
+                '예측_비용': 'mean', '예측_노출': 'mean', '예측_클릭': 'mean',
+                '예측_전환수': 'mean', '예측_전환값': 'mean'
+            }).reset_index()
+            cat_dow['예측_ROAS'] = (cat_dow['예측_전환값'] / cat_dow['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+            cat_dow['예측_CPA'] = (cat_dow['예측_비용'] / cat_dow['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+            cat_dow['요일'] = [dow_names[i] for i in cat_dow['요일번호']]
+
+            print(f"\n[{category}]")
+            for _, row in cat_dow.iterrows():
+                print(f"  {row['요일']}: 비용 {row['예측_비용']:,.0f}원, 전환값 {row['예측_전환값']:,.0f}원, ROAS {row['예측_ROAS']:.1f}%")
+
+            cat_dow_output = cat_dow[['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']].copy()
+            cat_dow_output['유형구분'] = category
+            cat_dow_output['기간유형'] = '요일별'
+            all_seasonality_data.append(cat_dow_output)
+        except Exception as e:
+            print(f"\n[{category}]: 예측 오류 - {str(e)}")
+
+    # ========== 월별 예측 집계 ==========
+    print("\n월별 예측 성과 분석...")
+    monthly_forecast = seasonality_forecast_df.groupby('월').agg({
+        '예측_비용': 'sum',
+        '예측_노출': 'sum',
+        '예측_클릭': 'sum',
+        '예측_전환수': 'sum',
+        '예측_전환값': 'sum'
+    }).reset_index()
+    monthly_forecast['예측_ROAS'] = (monthly_forecast['예측_전환값'] / monthly_forecast['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+    monthly_forecast['예측_CPA'] = (monthly_forecast['예측_비용'] / monthly_forecast['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    monthly_forecast['월명'] = monthly_forecast['월'].apply(lambda x: f"{x}월")
+
+    monthly_output = monthly_forecast[['월명', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']].copy()
+    monthly_output.columns = ['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']
+    monthly_output['유형구분'] = '전체'
+    monthly_output['기간유형'] = '월별'
+
+    all_monthly_data = [monthly_output]
+    print(f"  ✓ 월별 예측 데이터: {len(monthly_output)}행")
+
+    # ========== 분기별 예측 집계 ==========
+    print("\n분기별 예측 성과 분석...")
+    quarterly_forecast = seasonality_forecast_df.groupby('분기').agg({
+        '예측_비용': 'mean',
+        '예측_노출': 'mean',
+        '예측_클릭': 'mean',
+        '예측_전환수': 'mean',
+        '예측_전환값': 'mean'
+    }).reset_index()
+    quarterly_forecast['예측_ROAS'] = (quarterly_forecast['예측_전환값'] / quarterly_forecast['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+    quarterly_forecast['예측_CPA'] = (quarterly_forecast['예측_비용'] / quarterly_forecast['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+
+    quarterly_output = quarterly_forecast[['분기', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']].copy()
+    quarterly_output.columns = ['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']
+    quarterly_output['유형구분'] = '전체'
+    quarterly_output['기간유형'] = '분기별'
+
+    all_quarterly_data = [quarterly_output]
+    print(f"  ✓ 분기별 예측 데이터: {len(quarterly_output)}행")
+
+    # ========== 일별 예측 데이터 ==========
+    print("\n일별 예측 데이터 추가...")
+    daily_output = seasonality_forecast_df[['일자', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']].copy()
+    daily_output['일자'] = pd.to_datetime(daily_output['일자']).dt.strftime('%Y-%m-%d')
+    daily_output.columns = ['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']
+    daily_output['유형구분'] = '전체'
+    daily_output['기간유형'] = '일별'
+    print(f"  ✓ 일별 예측 데이터: {len(daily_output)}행")
+
+    # 전체 데이터 통합
     seasonality_df = pd.concat(all_seasonality_data, ignore_index=True)
-    seasonality_df = seasonality_df[['유형구분', '요일', '평균_비용', '평균_노출', '평균_클릭', '평균_전환수', '평균_전환값', '평균_ROAS', '평균_CPA']]
-    seasonality_df.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_seasonality.csv',
+    monthly_df = pd.concat(all_monthly_data, ignore_index=True)
+    quarterly_df = pd.concat(all_quarterly_data, ignore_index=True)
+
+    final_seasonality_df = pd.concat([seasonality_df, monthly_df, quarterly_df, daily_output], ignore_index=True)
+    final_seasonality_df = final_seasonality_df[['유형구분', '기간유형', '요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']]
+    final_seasonality_df.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_seasonality.csv',
                          index=False, encoding='utf-8-sig')
-    print("\n✓ 계절성 분석 결과 저장: data/type/prophet_seasonality.csv")
-    print("  포함 지표: 평균_비용, 평균_노출, 평균_클릭, 평균_전환수, 평균_전환값, 평균_ROAS, 평균_CPA")
+    print("\n✓ 계절성 예측 결과 저장: data/type/prophet_forecast_by_seasonality.csv")
+    print("  포함 데이터: 요일별, 월별, 분기별, 일별 (Prophet 365일 예측 기반)")
+    print("  포함 지표: 예측_비용, 예측_노출, 예측_클릭, 예측_전환수, 예측_전환값, 예측_ROAS, 예측_CPA")
 
     print("\n" + "=" * 100)
     print("5. 이상치 탐지 (유형구분별)")
@@ -905,7 +1029,7 @@ print("\n생성된 파일 목록 (다중 지표 예측: 비용, 노출, 클릭, 
 print("  1. prophet_forecast_overall.csv - 전체 다중 지표 예측")
 print("  2. prophet_forecast_by_category.csv - 유형구분별 다중 지표 예측")
 print("  3. prophet_trend_analysis.csv - 트렌드 분석")
-print("  4. prophet_seasonality.csv - 계절성 분석")
+print("  4. prophet_forecast_by_seasonality.csv - 계절성 예측 분석")
 print("  5. prophet_outliers.csv - 이상치 탐지")
 print("  6. prophet_forecast_by_brand.csv - 브랜드별 다중 지표 예측")
 print("  7. prophet_forecast_by_product.csv - 상품별 다중 지표 예측")
