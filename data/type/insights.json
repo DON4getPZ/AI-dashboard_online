@@ -3916,7 +3916,7 @@
       "based_on": "prophet_forecast"
     }
   ],
-  "generated_at": "2025-11-26T00:56:01.367539",
+  "generated_at": "2025-11-26T14:03:40.114694",
   "overall": {
     "current_period": {
       "start_date": "2024-09-25",
@@ -3941,5 +3941,244 @@
     "recommendations_count": 11,
     "timeseries_insights_count": 5,
     "prophet_forecast_available": true
-  }
+  },
+  "retargeting_analysis": {
+    "summary": {},
+    "by_age_gender": [],
+    "by_device": [
+      {
+        "device": "Computers",
+        "cost": 4258629.38,
+        "conversions": 413.09,
+        "revenue": 11625701.24,
+        "roas": 272.9916177866598,
+        "cpa": 10309.204725362511
+      },
+      {
+        "device": "Mobile phones",
+        "cost": 19402937.06,
+        "conversions": 1161.99,
+        "revenue": 33200684.5,
+        "roas": 171.11164354825775,
+        "cpa": 16698.024131016617
+      },
+      {
+        "device": "OTHER",
+        "cost": 0.0,
+        "conversions": 0.0,
+        "revenue": 0.0,
+        "roas": 0.0,
+        "cpa": 0.0
+      },
+      {
+        "device": "TV screens",
+        "cost": 80139.09,
+        "conversions": 4.0,
+        "revenue": 118400.0,
+        "roas": 147.74313010042914,
+        "cpa": 20034.7725
+      },
+      {
+        "device": "Tablets",
+        "cost": 118236.85,
+        "conversions": 11.0,
+        "revenue": 340200.0,
+        "roas": 287.7275570179686,
+        "cpa": 10748.804545454546
+      }
+    ],
+    "by_platform": [
+      {
+        "platform": "Cross-network",
+        "cost": 23733120.05,
+        "conversions": 1590.08,
+        "revenue": 45284985.74,
+        "roas": 190.80923892263377,
+        "cpa": 14925.739616874624
+      },
+      {
+        "platform": "Display Network",
+        "cost": 34317.45,
+        "conversions": 0.0,
+        "revenue": 0.0,
+        "roas": 0.0,
+        "cpa": 0.0
+      },
+      {
+        "platform": "Google search",
+        "cost": 16320.0,
+        "conversions": 0.0,
+        "revenue": 0.0,
+        "roas": 0.0,
+        "cpa": 0.0
+      },
+      {
+        "platform": "Search partners",
+        "cost": 1133.0,
+        "conversions": 0.0,
+        "revenue": 0.0,
+        "roas": 0.0,
+        "cpa": 0.0
+      },
+      {
+        "platform": "YouTube",
+        "cost": 75051.88,
+        "conversions": 0.0,
+        "revenue": 0.0,
+        "roas": 0.0,
+        "cpa": 0.0
+      }
+    ],
+    "by_device_platform": []
+  },
+  "retargeting_insights": [
+    {
+      "type": "retargeting_best_device",
+      "message": "리타겟팅에서 Tablets 기기가 ROAS 287.7%로 가장 효율적입니다.",
+      "severity": "opportunity",
+      "device": "Tablets",
+      "value": 287.7275570179686
+    },
+    {
+      "type": "retargeting_best_platform",
+      "message": "리타겟팅에서 Cross-network 플랫폼이 ROAS 190.8%로 가장 효율적입니다.",
+      "severity": "opportunity",
+      "platform": "Cross-network",
+      "value": 190.80923892263377
+    }
+  ],
+  "seasonality_analysis": {
+    "overall": [
+      {
+        "day": "월요일",
+        "avg_revenue": 5965487.122131147
+      },
+      {
+        "day": "화요일",
+        "avg_revenue": 5583405.335901639
+      },
+      {
+        "day": "수요일",
+        "avg_revenue": 5439577.233606557
+      },
+      {
+        "day": "목요일",
+        "avg_revenue": 5848750.970491803
+      },
+      {
+        "day": "금요일",
+        "avg_revenue": 5429496.37885246
+      },
+      {
+        "day": "토요일",
+        "avg_revenue": 5485029.452459017
+      },
+      {
+        "day": "일요일",
+        "avg_revenue": 5975044.373934426
+      }
+    ],
+    "by_category": {
+      "메타_전환": [
+        {
+          "day": "월요일",
+          "avg_revenue": 45695.10410916897
+        },
+        {
+          "day": "화요일",
+          "avg_revenue": 44570.29792623081
+        },
+        {
+          "day": "수요일",
+          "avg_revenue": 43680.43963589907
+        },
+        {
+          "day": "목요일",
+          "avg_revenue": 46412.80393700788
+        },
+        {
+          "day": "금요일",
+          "avg_revenue": 42495.37993596585
+        },
+        {
+          "day": "토요일",
+          "avg_revenue": 44388.32725236038
+        },
+        {
+          "day": "일요일",
+          "avg_revenue": 46921.3428307408
+        }
+      ],
+      "네이버_쇼핑검색": [
+        {
+          "day": "월요일",
+          "avg_revenue": 4662.330856472428
+        },
+        {
+          "day": "화요일",
+          "avg_revenue": 4552.6085192697765
+        },
+        {
+          "day": "수요일",
+          "avg_revenue": 4528.442453480358
+        },
+        {
+          "day": "목요일",
+          "avg_revenue": 4338.216560509554
+        },
+        {
+          "day": "금요일",
+          "avg_revenue": 3490.311373320223
+        },
+        {
+          "day": "토요일",
+          "avg_revenue": 3485.146831530139
+        },
+        {
+          "day": "일요일",
+          "avg_revenue": 3408.835562549174
+        }
+      ]
+    }
+  },
+  "seasonality_insights": [
+    {
+      "type": "best_day_overall",
+      "message": "전체 기준 일요일이 평균 전환값 5,975,044원으로 가장 높습니다.",
+      "severity": "opportunity",
+      "day": "일요일",
+      "value": 5975044.373934426
+    },
+    {
+      "type": "worst_day_overall",
+      "message": "전체 기준 금요일이 평균 전환값 5,429,496원으로 가장 낮습니다.",
+      "severity": "warning",
+      "day": "금요일",
+      "value": 5429496.37885246
+    },
+    {
+      "type": "weekend_better",
+      "message": "주말 평균 전환값이 주중보다 1.4% 높습니다. 주말 예산 증액을 고려하세요.",
+      "severity": "opportunity",
+      "weekday_avg": 5653343.408196721,
+      "weekend_avg": 5730036.913196722,
+      "diff_percent": 1.356604392522905
+    },
+    {
+      "type": "best_day_메타_전환",
+      "message": "메타_전환에서 일요일이 평균 전환값 46,921원으로 최고입니다.",
+      "severity": "info",
+      "category": "메타_전환",
+      "day": "일요일",
+      "value": 46921.3428307408
+    },
+    {
+      "type": "best_day_네이버_쇼핑검색",
+      "message": "네이버_쇼핑검색에서 월요일이 평균 전환값 4,662원으로 최고입니다.",
+      "severity": "info",
+      "category": "네이버_쇼핑검색",
+      "day": "월요일",
+      "value": 4662.330856472428
+    }
+  ]
 }

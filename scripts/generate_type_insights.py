@@ -143,7 +143,8 @@ prophet_files = {
     'age': 'prophet_forecast_by_age.csv',
     'platform': 'prophet_forecast_by_platform.csv',
     'promotion': 'prophet_forecast_by_promotion.csv',
-    'age_gender': 'prophet_forecast_by_age_gender.csv'
+    'age_gender': 'prophet_forecast_by_age_gender.csv',
+    'seasonality': 'prophet_seasonality.csv'
 }
 
 prophet_forecasts = {}
@@ -151,7 +152,9 @@ for key, filename in prophet_files.items():
     file_path = data_dir / filename
     if file_path.exists():
         prophet_forecasts[key] = pd.read_csv(file_path)
-        prophet_forecasts[key]['일자'] = pd.to_datetime(prophet_forecasts[key]['일자'])
+        # seasonality 파일은 일자 컬럼이 없음
+        if key != 'seasonality' and '일자' in prophet_forecasts[key].columns:
+            prophet_forecasts[key]['일자'] = pd.to_datetime(prophet_forecasts[key]['일자'])
         print(f"✓ {filename} 로드 완료")
 
 # ============================================================================
@@ -1438,6 +1441,332 @@ if len(promotion_insights) > 0:
         })
 
 # ============================================================================
+# 요일별 계절성 분석 (prophet_seasonality.csv 활용)
+# ============================================================================
+print("요일별 계절성 분석 중...")
+
+seasonality_analysis = {
+    "overall": [],
+    "by_category": {}
+}
+seasonality_insights = []
+
+if 'seasonality' in prophet_forecasts:
+    seasonality_df = prophet_forecasts['seasonality']
+
+    # 요일 순서 정의
+    day_order = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일']
+
+    # 유형구분별 분석
+    for category in seasonality_df['유형구분'].unique():
+        cat_data = seasonality_df[seasonality_df['유형구분'] == category].copy()
+
+        # 요일별 데이터 정리
+        day_data = []
+        for _, row in cat_data.iterrows():
+            day_data.append({
+                "day": row['요일'],
+                "avg_revenue": float(row['평균_전환값'])
+            })
+
+        # 요일 순서대로 정렬
+        day_data_sorted = sorted(day_data, key=lambda x: day_order.index(x['day']) if x['day'] in day_order else 99)
+
+        if category == '전체':
+            seasonality_analysis['overall'] = day_data_sorted
+        else:
+            seasonality_analysis['by_category'][category] = day_data_sorted
+
+        # 최고/최저 성과 요일 찾기
+        if len(day_data) > 0:
+            best_day = max(day_data, key=lambda x: x['avg_revenue'])
+            worst_day = min(day_data, key=lambda x: x['avg_revenue'])
+
+            # 전체 데이터에서만 인사이트 생성
+            if category == '전체':
+                seasonality_insights.append({
+                    "type": "best_day_overall",
+                    "message": f"전체 기준 {best_day['day']}이 평균 전환값 {best_day['avg_revenue']:,.0f}원으로 가장 높습니다.",
+                    "severity": "opportunity",
+                    "day": best_day['day'],
+                    "value": best_day['avg_revenue']
+                })
+                seasonality_insights.append({
+                    "type": "worst_day_overall",
+                    "message": f"전체 기준 {worst_day['day']}이 평균 전환값 {worst_day['avg_revenue']:,.0f}원으로 가장 낮습니다.",
+                    "severity": "warning",
+                    "day": worst_day['day'],
+                    "value": worst_day['avg_revenue']
+                })
+
+                # 주중 vs 주말 비교
+                weekday_avg = sum(d['avg_revenue'] for d in day_data if d['day'] in ['월요일', '화요일', '수요일', '목요일', '금요일']) / 5
+                weekend_avg = sum(d['avg_revenue'] for d in day_data if d['day'] in ['토요일', '일요일']) / 2
+
+                if weekend_avg > weekday_avg:
+                    diff_pct = ((weekend_avg - weekday_avg) / weekday_avg) * 100
+                    seasonality_insights.append({
+                        "type": "weekend_better",
+                        "message": f"주말 평균 전환값이 주중보다 {diff_pct:.1f}% 높습니다. 주말 예산 증액을 고려하세요.",
+                        "severity": "opportunity",
+                        "weekday_avg": weekday_avg,
+                        "weekend_avg": weekend_avg,
+                        "diff_percent": diff_pct
+                    })
+                else:
+                    diff_pct = ((weekday_avg - weekend_avg) / weekend_avg) * 100
+                    seasonality_insights.append({
+                        "type": "weekday_better",
+                        "message": f"주중 평균 전환값이 주말보다 {diff_pct:.1f}% 높습니다. 주중 집중 운영을 권장합니다.",
+                        "severity": "info",
+                        "weekday_avg": weekday_avg,
+                        "weekend_avg": weekend_avg,
+                        "diff_percent": diff_pct
+                    })
+            else:
+                # 유형구분별 최고 성과 요일
+                seasonality_insights.append({
+                    "type": f"best_day_{category}",
+                    "message": f"{category}에서 {best_day['day']}이 평균 전환값 {best_day['avg_revenue']:,.0f}원으로 최고입니다.",
+                    "severity": "info",
+                    "category": category,
+                    "day": best_day['day'],
+                    "value": best_day['avg_revenue']
+                })
+
+    print(f"  - 전체 요일별 분석: {len(seasonality_analysis['overall'])}개")
+    print(f"  - 유형구분별 요일 분석: {len(seasonality_analysis['by_category'])}개 카테고리")
+    print(f"  - 계절성 인사이트: {len(seasonality_insights)}개")
+else:
+    print("  - prophet_seasonality.csv 파일 없음")
+
+# ============================================================================
+# 리타겟팅 분석 (타겟팅='리타겟팅' 데이터 분석)
+# Type2: 연령+성별, Type5: 기기유형, Type6: 플랫폼, Type7: 노출기기(기기플랫폼)
+# ============================================================================
+print("리타겟팅 성과 분석 중...")
+
+retargeting_analysis = {
+    "summary": {},
+    "by_age_gender": [],
+    "by_device": [],
+    "by_platform": [],
+    "by_device_platform": []
+}
+
+# Type2에서 리타겟팅 연령+성별 조합 분석
+if 'type2' in dimensions:
+    type2_df = dimensions['type2'].copy()
+
+    if '타겟팅' in type2_df.columns:
+        retargeting_df = type2_df[type2_df['타겟팅'] == '리타겟팅'].copy()
+
+        if len(retargeting_df) > 0:
+            print(f"  - Type2 리타겟팅 데이터: {len(retargeting_df)}행")
+
+            # 전체 요약 (Type2 기준)
+            total_cost = retargeting_df['비용'].sum()
+            total_conversions = retargeting_df['전환수'].sum()
+            total_revenue = retargeting_df['전환값'].sum()
+
+            retargeting_analysis['summary'] = {
+                "total_cost": float(total_cost),
+                "total_conversions": float(total_conversions),
+                "total_revenue": float(total_revenue),
+                "roas": float((total_revenue / total_cost * 100) if total_cost > 0 else 0),
+                "cpa": float((total_cost / total_conversions) if total_conversions > 0 else 0),
+                "data_rows": len(retargeting_df)
+            }
+
+            # 성별_통합/연령_통합 컬럼 사용
+            gender_col = get_gender_column(retargeting_df)
+            age_col = get_age_column(retargeting_df)
+
+            # 연령+성별 조합 분석
+            if gender_col in retargeting_df.columns and age_col in retargeting_df.columns:
+                retargeting_df_combo = retargeting_df[
+                    retargeting_df[gender_col].apply(is_valid_gender) &
+                    retargeting_df[age_col].apply(is_valid_age)
+                ].copy()
+                retargeting_df_combo['성별_정규화'] = retargeting_df_combo[gender_col].apply(normalize_gender)
+                retargeting_df_combo['연령_정규화'] = retargeting_df_combo[age_col]
+
+                combo_summary = retargeting_df_combo.groupby(['연령_정규화', '성별_정규화']).agg({
+                    '비용': 'sum',
+                    '전환수': 'sum',
+                    '전환값': 'sum'
+                }).reset_index()
+
+                combo_summary['ROAS'] = (combo_summary['전환값'] / combo_summary['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+                combo_summary['CPA'] = (combo_summary['비용'] / combo_summary['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+
+                for _, row in combo_summary.iterrows():
+                    retargeting_analysis['by_age_gender'].append({
+                        "age": row['연령_정규화'],
+                        "gender": row['성별_정규화'],
+                        "label": f"{row['연령_정규화']} {row['성별_정규화']}",
+                        "cost": float(row['비용']),
+                        "conversions": float(row['전환수']),
+                        "revenue": float(row['전환값']),
+                        "roas": float(row['ROAS']),
+                        "cpa": float(row['CPA'])
+                    })
+
+# Type5에서 리타겟팅 기기유형 분석
+if 'type5' in dimensions:
+    type5_df = dimensions['type5'].copy()
+
+    if '타겟팅' in type5_df.columns and '기기유형' in type5_df.columns:
+        retargeting_device = type5_df[type5_df['타겟팅'] == '리타겟팅'].copy()
+
+        if len(retargeting_device) > 0:
+            print(f"  - Type5 리타겟팅 데이터: {len(retargeting_device)}행")
+
+            device_summary = retargeting_device.groupby('기기유형').agg({
+                '비용': 'sum',
+                '전환수': 'sum',
+                '전환값': 'sum'
+            }).reset_index()
+
+            device_summary['ROAS'] = (device_summary['전환값'] / device_summary['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+            device_summary['CPA'] = (device_summary['비용'] / device_summary['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+
+            for _, row in device_summary.iterrows():
+                retargeting_analysis['by_device'].append({
+                    "device": row['기기유형'],
+                    "cost": float(row['비용']),
+                    "conversions": float(row['전환수']),
+                    "revenue": float(row['전환값']),
+                    "roas": float(row['ROAS']),
+                    "cpa": float(row['CPA'])
+                })
+
+# Type6에서 리타겟팅 플랫폼 분석
+if 'type6' in dimensions:
+    type6_df = dimensions['type6'].copy()
+
+    if '타겟팅' in type6_df.columns and '플랫폼' in type6_df.columns:
+        retargeting_platform = type6_df[type6_df['타겟팅'] == '리타겟팅'].copy()
+
+        if len(retargeting_platform) > 0:
+            print(f"  - Type6 리타겟팅 데이터: {len(retargeting_platform)}행")
+
+            platform_summary = retargeting_platform.groupby('플랫폼').agg({
+                '비용': 'sum',
+                '전환수': 'sum',
+                '전환값': 'sum'
+            }).reset_index()
+
+            platform_summary['ROAS'] = (platform_summary['전환값'] / platform_summary['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+            platform_summary['CPA'] = (platform_summary['비용'] / platform_summary['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+
+            for _, row in platform_summary.iterrows():
+                retargeting_analysis['by_platform'].append({
+                    "platform": row['플랫폼'],
+                    "cost": float(row['비용']),
+                    "conversions": float(row['전환수']),
+                    "revenue": float(row['전환값']),
+                    "roas": float(row['ROAS']),
+                    "cpa": float(row['CPA'])
+                })
+
+# Type7에서 리타겟팅 노출기기(기기플랫폼) 분석
+if 'type7' in dimensions:
+    type7_df = dimensions['type7'].copy()
+
+    if '타겟팅' in type7_df.columns and '기기플랫폼' in type7_df.columns:
+        retargeting_deviceplatform = type7_df[type7_df['타겟팅'] == '리타겟팅'].copy()
+
+        if len(retargeting_deviceplatform) > 0:
+            print(f"  - Type7 리타겟팅 데이터: {len(retargeting_deviceplatform)}행")
+
+            deviceplatform_summary = retargeting_deviceplatform.groupby('기기플랫폼').agg({
+                '비용': 'sum',
+                '전환수': 'sum',
+                '전환값': 'sum'
+            }).reset_index()
+
+            deviceplatform_summary['ROAS'] = (deviceplatform_summary['전환값'] / deviceplatform_summary['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+            deviceplatform_summary['CPA'] = (deviceplatform_summary['비용'] / deviceplatform_summary['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+
+            for _, row in deviceplatform_summary.iterrows():
+                retargeting_analysis['by_device_platform'].append({
+                    "device_platform": row['기기플랫폼'],
+                    "cost": float(row['비용']),
+                    "conversions": float(row['전환수']),
+                    "revenue": float(row['전환값']),
+                    "roas": float(row['ROAS']),
+                    "cpa": float(row['CPA'])
+                })
+
+# 리타겟팅 인사이트 생성
+retargeting_insights = []
+
+# 전체 요약 인사이트
+if retargeting_analysis['summary'].get('total_cost', 0) > 0:
+    summary_data = retargeting_analysis['summary']
+    retargeting_insights.append({
+        "type": "retargeting_summary",
+        "message": f"리타겟팅 캠페인 전체 ROAS: {summary_data['roas']:.1f}%, 총 전환값: {summary_data['total_revenue']:,.0f}원",
+        "severity": "info",
+        "value": summary_data['roas']
+    })
+
+# 최고 성과 연령+성별 조합
+if len(retargeting_analysis['by_age_gender']) > 0:
+    best_combo = max(retargeting_analysis['by_age_gender'], key=lambda x: x['roas'])
+    if best_combo['roas'] > 0:
+        retargeting_insights.append({
+            "type": "retargeting_best_age_gender",
+            "message": f"리타겟팅에서 {best_combo['label']} 타겟이 ROAS {best_combo['roas']:.1f}%로 최고 성과입니다.",
+            "severity": "opportunity",
+            "label": best_combo['label'],
+            "value": best_combo['roas']
+        })
+
+# 최고 성과 기기유형
+if len(retargeting_analysis['by_device']) > 0:
+    best_device = max(retargeting_analysis['by_device'], key=lambda x: x['roas'])
+    if best_device['roas'] > 0:
+        retargeting_insights.append({
+            "type": "retargeting_best_device",
+            "message": f"리타겟팅에서 {best_device['device']} 기기가 ROAS {best_device['roas']:.1f}%로 가장 효율적입니다.",
+            "severity": "opportunity",
+            "device": best_device['device'],
+            "value": best_device['roas']
+        })
+
+# 최고 성과 플랫폼
+if len(retargeting_analysis['by_platform']) > 0:
+    best_platform = max(retargeting_analysis['by_platform'], key=lambda x: x['roas'])
+    if best_platform['roas'] > 0:
+        retargeting_insights.append({
+            "type": "retargeting_best_platform",
+            "message": f"리타겟팅에서 {best_platform['platform']} 플랫폼이 ROAS {best_platform['roas']:.1f}%로 가장 효율적입니다.",
+            "severity": "opportunity",
+            "platform": best_platform['platform'],
+            "value": best_platform['roas']
+        })
+
+# 최고 성과 노출기기
+if len(retargeting_analysis['by_device_platform']) > 0:
+    best_dp = max(retargeting_analysis['by_device_platform'], key=lambda x: x['roas'])
+    if best_dp['roas'] > 0:
+        retargeting_insights.append({
+            "type": "retargeting_best_device_platform",
+            "message": f"리타겟팅에서 {best_dp['device_platform']} 노출기기가 ROAS {best_dp['roas']:.1f}%로 가장 효율적입니다.",
+            "severity": "opportunity",
+            "device_platform": best_dp['device_platform'],
+            "value": best_dp['roas']
+        })
+
+print(f"  - 리타겟팅 연령+성별 분석: {len(retargeting_analysis['by_age_gender'])}개")
+print(f"  - 리타겟팅 기기유형 분석: {len(retargeting_analysis['by_device'])}개")
+print(f"  - 리타겟팅 플랫폼 분석: {len(retargeting_analysis['by_platform'])}개")
+print(f"  - 리타겟팅 노출기기 분석: {len(retargeting_analysis['by_device_platform'])}개")
+print(f"  - 리타겟팅 인사이트: {len(retargeting_insights)}개")
+
+# ============================================================================
 # 최종 JSON 생성
 # ============================================================================
 insights = {
@@ -1505,7 +1834,11 @@ insights = {
         "recommendations_count": len(recommendations) + len(prophet_recommendations),
         "timeseries_insights_count": len(timeseries_insights),
         "prophet_forecast_available": len(prophet_forecasts) > 0
-    }
+    },
+    "retargeting_analysis": retargeting_analysis,
+    "retargeting_insights": retargeting_insights,
+    "seasonality_analysis": seasonality_analysis,
+    "seasonality_insights": seasonality_insights
 }
 
 # JSON 파일 저장 (NaN/Inf 값을 null로 변환)
@@ -1559,6 +1892,18 @@ print(f"  - 프로모션별 예측: {len(promotion_forecast_insights)}개")
 print(f"  - 연령+성별 조합별 예측: {len(age_gender_forecast_insights)}개")
 print(f"  - Prophet 알림: {len(prophet_alerts)}개")
 print(f"  - Prophet 추천사항: {len(prophet_recommendations)}개")
+
+print("\n[요일별 계절성 분석]")
+print(f"  - 전체 요일별: {len(seasonality_analysis['overall'])}개")
+print(f"  - 유형구분별 요일: {len(seasonality_analysis['by_category'])}개 카테고리")
+print(f"  - 계절성 인사이트: {len(seasonality_insights)}개")
+
+print("\n[리타겟팅 분석]")
+print(f"  - 연령+성별 조합 (Type2): {len(retargeting_analysis['by_age_gender'])}개")
+print(f"  - 기기유형 (Type5): {len(retargeting_analysis['by_device'])}개")
+print(f"  - 플랫폼 (Type6): {len(retargeting_analysis['by_platform'])}개")
+print(f"  - 노출기기 (Type7): {len(retargeting_analysis['by_device_platform'])}개")
+print(f"  - 리타겟팅 인사이트: {len(retargeting_insights)}개")
 
 print("\n" + "=" * 100)
 print("인사이트 생성 완료!")
