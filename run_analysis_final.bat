@@ -142,7 +142,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [5/9] Generating AARRR funnel analysis with advanced analytics...
+echo [5/10] Generating AARRR funnel analysis with advanced analytics...
 cd scripts
 python generate_funnel_data.py
 cd ..
@@ -152,7 +152,15 @@ if errorlevel 1 (
 )
 
 echo.
-echo [6/9] Running category and daily summary analysis...
+echo [6/10] Generating channel engagement data...
+python scripts\generate_engagement_data.py
+
+if errorlevel 1 (
+    echo [WARNING] Channel engagement data generation failed
+)
+
+echo.
+echo [7/10] Running category and daily summary analysis...
 python scripts\run_multi_analysis.py
 
 if errorlevel 1 (

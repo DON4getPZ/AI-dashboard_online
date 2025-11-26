@@ -1,140 +1,132 @@
 {
-  "generated_at": "2025-11-26T15:56:16.284185",
+  "generated_at": "2025-11-26T23:28:46.819445",
   "overall": {
     "current_period": {
-      "start_date": "2025-10-23",
-      "end_date": "2025-11-21",
-      "total_cost": 21809630.28,
-      "total_conversions": 1088.72,
-      "total_revenue": 34817875.74,
-      "total_clicks": 28625,
-      "total_impressions": 2380009,
-      "roas": 159.64,
-      "avg_cpa": 20032.36,
-      "cvr": 3.8,
-      "ctr": 1.2
+      "start_date": "2025-10-28",
+      "end_date": "2025-11-26",
+      "total_cost": 20458167.0,
+      "total_conversions": 951.0,
+      "total_revenue": 35978002.0,
+      "total_clicks": 26735.0,
+      "total_impressions": 1388413.0,
+      "roas": 175.86,
+      "avg_cpa": 21512.27,
+      "cvr": 3.56,
+      "ctr": 1.93
     },
     "forecast_period": {
-      "start_date": "2025-11-22",
-      "end_date": "2025-12-21",
-      "total_cost": 36462963.49,
-      "total_conversions": 2032.32,
-      "total_revenue": 64374583.98,
-      "total_clicks": 48848,
-      "total_impressions": 4165205,
-      "roas": 176.55,
-      "avg_cpa": 17941.55,
-      "cvr": 4.16,
-      "ctr": 1.17
+      "start_date": "2025-11-27",
+      "end_date": "2025-12-26",
+      "total_cost": 29157622.45,
+      "total_conversions": 1471.87,
+      "total_revenue": 50737438.22,
+      "total_clicks": 32228.0,
+      "total_impressions": 1680951.0,
+      "roas": 174.01,
+      "avg_cpa": 19809.92,
+      "cvr": 4.57,
+      "ctr": 1.92
     },
     "trend": {
-      "roas_change": 16.91,
-      "conversion_change": 86.67,
-      "direction": "improving"
+      "roas_change": -1.85,
+      "conversion_change": 54.77,
+      "direction": "declining"
     },
     "alerts": [
       {
         "type": "budget_alert",
         "severity": "high",
-        "message": "월 예산 대비 109.0% 소진 (2025-11-21 기준)"
+        "message": "월 예산 대비 102.3% 소진 (2025-11-26 기준)"
       }
     ],
     "daily_comparison": {
-      "date": "2025-11-21",
+      "date": "2025-11-26",
       "actual": {
-        "cost": 738.94,
-        "conversions": 0.0,
-        "revenue": 0.0
+        "cost": 55887.0,
+        "conversions": 4.0,
+        "revenue": 223400.0
       }
     }
   },
   "segments": {
     "alerts": [
       {
-        "type": "conversion_decline",
-        "segment_type": "channel",
-        "segment_value": "메타_트래픽",
-        "metric": "전환수",
-        "change_pct": -35.4,
-        "severity": "high"
+        "type": "roas_decline",
+        "segment_type": "brand",
+        "segment_value": "기타",
+        "metric": "ROAS",
+        "change_pct": -14.8,
+        "severity": "medium"
       },
       {
         "type": "roas_decline",
         "segment_type": "channel",
         "segment_value": "메타_전환",
         "metric": "ROAS",
-        "change_pct": -22.5,
-        "severity": "high"
+        "change_pct": -18.5,
+        "severity": "medium"
       },
       {
         "type": "conversion_decline",
-        "segment_type": "product",
-        "segment_value": "발매트",
+        "segment_type": "channel",
+        "segment_value": "메타_트래픽",
         "metric": "전환수",
-        "change_pct": -27.6,
+        "change_pct": -52.0,
         "severity": "high"
       },
       {
         "type": "roas_decline",
         "segment_type": "product",
-        "segment_value": "호랑이러그",
+        "segment_value": "기타",
         "metric": "ROAS",
-        "change_pct": -67.9,
-        "severity": "high"
-      },
-      {
-        "type": "conversion_decline",
-        "segment_type": "product",
-        "segment_value": "앞치마",
-        "metric": "전환수",
-        "change_pct": -10.8,
+        "change_pct": -14.8,
         "severity": "medium"
       },
       {
-        "type": "revenue_decline",
-        "segment_type": "product",
-        "segment_value": "앞치마",
-        "metric": "전환값",
-        "change_pct": -20.2,
-        "severity": "high"
+        "type": "roas_decline",
+        "segment_type": "promotion",
+        "segment_value": "기타",
+        "metric": "ROAS",
+        "change_pct": -14.8,
+        "severity": "medium"
       }
     ],
     "recommendations": [
       {
         "priority": 1,
-        "action": "예산 유지 및 모니터링",
+        "action": "예산 20% 증액",
         "target": {
           "type": "channel",
           "value": "메타_전환"
         },
         "reasons": [
-          "ROAS 174.72%로 높은 효율",
-          "CVR 3.9%"
+          "ROAS 193.77%로 높은 효율",
+          "CVR 3.21%",
+          "전환수 0.7% 증가 예상"
         ],
-        "expected_impact": "현 성과 유지",
+        "expected_impact": "전환수 15-20% 증가 예상",
         "metrics": {
-          "roas": 174.72,
-          "cvr": 3.9,
-          "cpa": 20482.53
+          "roas": 193.77,
+          "cvr": 3.21,
+          "cpa": 21514.34
         }
       },
       {
         "priority": 2,
-        "action": "예산 20% 증액",
+        "action": "예산 유지 및 모니터링",
         "target": {
           "type": "product",
-          "value": "파자마"
+          "value": "기타"
         },
         "reasons": [
-          "ROAS 254.9%로 높은 효율",
-          "CVR 3.32%",
-          "전환수 12.9% 증가 예상"
+          "ROAS 193.77%로 높은 효율",
+          "CVR 3.21%"
         ],
-        "expected_impact": "전환수 15-20% 증가 예상",
+        "expected_impact": "현 성과 유지",
         "metrics": {
-          "roas": 254.9,
-          "cvr": 3.32,
-          "cpa": 27404.0
+          "roas": 193.77,
+          "cvr": 3.21,
+          "cpa": 21514.34
         }
       },
       {
@@ -142,96 +134,58 @@
         "action": "예산 유지 및 모니터링",
         "target": {
           "type": "brand",
-          "value": "신제품"
+          "value": "기타"
         },
         "reasons": [
-          "ROAS 194.75%로 높은 효율",
-          "CVR 2.97%"
+          "ROAS 193.77%로 높은 효율",
+          "CVR 3.21%"
         ],
         "expected_impact": "현 성과 유지",
         "metrics": {
-          "roas": 194.75,
-          "cvr": 2.97,
-          "cpa": 20112.82
+          "roas": 193.77,
+          "cvr": 3.21,
+          "cpa": 21514.34
         }
       },
       {
         "priority": 4,
-        "action": "예산 20% 증액",
+        "action": "예산 유지 및 모니터링",
         "target": {
           "type": "promotion",
           "value": "기타"
         },
         "reasons": [
-          "ROAS 133.92%로 높은 효율",
-          "CVR 2.54%",
-          "전환수 88.2% 증가 예상"
+          "ROAS 193.77%로 높은 효율",
+          "CVR 3.21%"
         ],
-        "expected_impact": "전환수 15-20% 증가 예상",
+        "expected_impact": "현 성과 유지",
         "metrics": {
-          "roas": 133.92,
-          "cvr": 2.54,
-          "cpa": 22889.47
+          "roas": 193.77,
+          "cvr": 3.21,
+          "cpa": 21514.34
         }
       }
     ]
   },
-  "summary": "📊 전체 성과 (2025-10-23 ~ 2025-11-21): ROAS 159.64%, 전환수 1088, 전환값 34,817,875원\n📈 트렌드: ROAS +16.9%p 개선 예상\n⚠️ 월 예산 대비 109.0% 소진 (2025-11-21 기준)\n\n🚨 주의: channel '메타_트래픽'의 전환수이(가) 35.4% 하락할 것으로 예측됩니다.\n💡 권장: channel '메타_전환'에 예산 유지 및 모니터링을 권장합니다. (ROAS 174.72%로 높은 효율, CVR 3.9%)\n   예상 효과: 현 성과 유지\n🔍 추가 검토 대상: 파자마, 신제품",
+  "summary": "📊 전체 성과 (2025-10-28 ~ 2025-11-26): ROAS 175.86%, 전환수 951, 전환값 35,978,002원\n📉 트렌드: ROAS -1.9%p 하락 예상\n⚠️ 월 예산 대비 102.3% 소진 (2025-11-26 기준)\n\n🚨 주의: channel '메타_트래픽'의 전환수이(가) 52.0% 하락할 것으로 예측됩니다.\n💡 권장: channel '메타_전환'에 예산 20% 증액을 권장합니다. (ROAS 193.77%로 높은 효율, CVR 3.21%)\n   예상 효과: 전환수 15-20% 증가 예상\n🔍 추가 검토 대상: 기타, 기타",
   "details": {
-    "total_segment_alerts": 6,
-    "high_severity_alerts": 5,
+    "total_segment_alerts": 5,
+    "high_severity_alerts": 1,
     "total_overall_alerts": 1,
     "total_recommendations": 4,
     "analyzed_segments": {
-      "brand": 2,
-      "channel": 7,
-      "product": 10,
-      "promotion": 2
+      "brand": 1,
+      "channel": 3,
+      "product": 1,
+      "promotion": 1
     },
-    "overall_roas": 159.64,
-    "forecast_roas": 176.55
+    "overall_roas": 175.86,
+    "forecast_roas": 174.01
   },
   "performance_trends": {
     "improvements_7d": [],
     "improvements_30d": [],
-    "declines_7d": [
-      {
-        "metric": "비용",
-        "period": "7d",
-        "risk_level": "high",
-        "change_pct": -89.42,
-        "recent_avg": 70425.99,
-        "previous_avg": 665507.21,
-        "recommendation": "비용이(가) 하락하고 있습니다. 마케팅 전략 점검이 필요합니다."
-      },
-      {
-        "metric": "전환수",
-        "period": "7d",
-        "risk_level": "high",
-        "change_pct": -95.83,
-        "recent_avg": 1.29,
-        "previous_avg": 30.84,
-        "recommendation": "전환수이(가) 하락하고 있습니다. 마케팅 전략 점검이 필요합니다."
-      },
-      {
-        "metric": "전환값",
-        "period": "7d",
-        "risk_level": "high",
-        "change_pct": -97.06,
-        "recent_avg": 28128.57,
-        "previous_avg": 956682.52,
-        "recommendation": "전환값이(가) 하락하고 있습니다. 마케팅 전략 점검이 필요합니다."
-      },
-      {
-        "metric": "ROAS",
-        "period": "7d",
-        "risk_level": "high",
-        "change_pct": -72.22,
-        "recent_avg": 39.94,
-        "previous_avg": 143.75,
-        "recommendation": "ROAS가 하락하고 있습니다. 광고 효율성 점검이 필요합니다."
-      }
-    ],
+    "declines_7d": [],
     "declines_30d": []
   }
 }

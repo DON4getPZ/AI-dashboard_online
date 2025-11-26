@@ -3024,17 +3024,35 @@
 
                         <div class="card" style="margin: 16px; border-radius: 12px;">
                             <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
-                                <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">요일별 평균 전환값</h4>
-                                <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">어떤 요일에 전환이 가장 활발한지 확인하세요</p>
+                                <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">요일별 성과 분석</h4>
+                                <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">어떤 요일에 광고 효율이 가장 좋은지 확인하세요 (헤더 클릭으로 정렬)</p>
                             </div>
                             <div style="padding: 16px 20px; overflow-x: auto;">
                                 <table class="data-table" id="seasonalityTable" style="margin-top: 0;">
                                     <thead>
                                         <tr>
                                             <th style="min-width: 100px; text-align: center;">요일</th>
-                                            <th style="min-width: 150px; text-align: right;">평균 전환값</th>
-                                            <th style="min-width: 120px; text-align: right;">전체 대비</th>
-                                            <th style="min-width: 200px;">성과 수준</th>
+                                            <th class="sortable-header" data-table="seasonality" data-column="roas" style="min-width: 100px; text-align: right;">
+                                                ROAS
+                                                <div class="sort-icon active"><div class="sort-arrow up"></div><div class="sort-arrow down active"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="seasonality" data-column="cpa" style="min-width: 100px; text-align: right;">
+                                                CPA
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="seasonality" data-column="cost" style="min-width: 120px; text-align: right;">
+                                                광고비
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="seasonality" data-column="conversions" style="min-width: 80px; text-align: right;">
+                                                전환수
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="seasonality" data-column="revenue" style="min-width: 120px; text-align: right;">
+                                                전환값
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th style="min-width: 120px;">성과 수준</th>
                                         </tr>
                                     </thead>
                                     <tbody id="seasonalityTableBody">
@@ -6168,7 +6186,8 @@
             ageGender: { column: 'roas', direction: 'desc' },
             device: { column: 'roas', direction: 'desc' },
             platform: { column: 'roas', direction: 'desc' },
-            devicePlatform: { column: 'roas', direction: 'desc' }
+            devicePlatform: { column: 'roas', direction: 'desc' },
+            seasonality: { column: 'roas', direction: 'desc' }
         };
 
         // 리타겟팅 분석 초기화
@@ -6205,6 +6224,7 @@
                         case 'device': renderDeviceRetargetTable(); break;
                         case 'platform': renderPlatformRetargetTable(); break;
                         case 'devicePlatform': renderDevicePlatformRetargetTable(); break;
+                        case 'seasonality': renderSeasonalityTable(); break;
                     }
 
                     // 정렬 아이콘 업데이트
@@ -6507,47 +6527,77 @@
             const tbody = document.getElementById('seasonalityTableBody');
 
             if (!tbody || data.length === 0) {
-                if (tbody) tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 20px; color: var(--grey-500);">데이터가 없습니다</td></tr>';
+                if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--grey-500);">데이터가 없습니다</td></tr>';
                 return;
             }
 
-            // 평균 계산
-            const avgRevenue = data.reduce((sum, d) => sum + d.avg_revenue, 0) / data.length;
-            const maxRevenue = Math.max(...data.map(d => d.avg_revenue));
-            const minRevenue = Math.min(...data.map(d => d.avg_revenue));
+            // 데이터 정규화 (필드명 매핑)
+            const normalizedData = data.map(item => ({
+                day: item.day,
+                roas: item.avg_roas || 0,
+                cpa: item.avg_cpa || 0,
+                cost: item.avg_cost || 0,
+                conversions: item.avg_conversions || 0,
+                revenue: item.avg_revenue || 0
+            }));
 
-            // 요일 순서 지정
-            const dayOrder = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];
-            const sortedData = [...data].sort((a, b) => dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day));
+            // 정렬 상태에 따른 정렬
+            const { column, direction } = retargetingSortState.seasonality;
+            const sortedData = [...normalizedData].sort((a, b) => {
+                const aVal = a[column] || 0;
+                const bVal = b[column] || 0;
+                return direction === 'desc' ? bVal - aVal : aVal - bVal;
+            });
+
+            // ROAS 기준 최대/최소 계산 (성과 수준 바 표시용)
+            const maxRoas = Math.max(...normalizedData.map(d => d.roas));
+            const minRoas = Math.min(...normalizedData.map(d => d.roas));
 
             let html = '';
             sortedData.forEach(item => {
-                const diffPercent = ((item.avg_revenue - avgRevenue) / avgRevenue * 100).toFixed(1);
-                const diffColor = diffPercent >= 0 ? '#2e7d32' : '#d32f2f';
-                const diffSign = diffPercent >= 0 ? '+' : '';
                 const dayEmoji = getDayEmoji(item.day);
 
-                let performanceBar = '';
-                const barWidth = ((item.avg_revenue - minRevenue) / (maxRevenue - minRevenue) * 100).toFixed(0);
-                const barColor = item.avg_revenue === maxRevenue ? '#2e7d32' : item.avg_revenue === minRevenue ? '#d32f2f' : '#1a73e8';
-                performanceBar = `<div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="flex: 1; background: #e9ecef; border-radius: 4px; height: 8px; overflow: hidden;">
-                        <div style="width: ${barWidth}%; background: ${barColor}; height: 100%; border-radius: 4px;"></div>
-                    </div>
-                    <span style="font-size: 11px; color: ${barColor}; font-weight: 600;">${item.avg_revenue === maxRevenue ? '최고' : item.avg_revenue === minRevenue ? '최저' : ''}</span>
-                </div>`;
+                // 효율 등급 계산 (ROAS 기준)
+                let efficiencyGrade = '';
+                let gradeColor = '';
+                if (item.roas >= maxRoas * 0.95) {
+                    efficiencyGrade = '최고';
+                    gradeColor = '#2e7d32';
+                } else if (item.roas <= minRoas * 1.05) {
+                    efficiencyGrade = '최저';
+                    gradeColor = '#d32f2f';
+                } else if (item.roas >= maxRoas * 0.8) {
+                    efficiencyGrade = '우수';
+                    gradeColor = '#1565c0';
+                } else {
+                    efficiencyGrade = '보통';
+                    gradeColor = '#757575';
+                }
 
-                html += `
-                    <tr>
-                        <td style="text-align: center; font-weight: 600;">${dayEmoji} ${item.day}</td>
-                        <td style="text-align: right; font-weight: 500;">${formatCurrency(item.avg_revenue)}</td>
-                        <td style="text-align: right; color: ${diffColor}; font-weight: 600;">${diffSign}${diffPercent}%</td>
-                        <td>${performanceBar}</td>
-                    </tr>
-                `;
+                // 성과 바 (ROAS 기준)
+                const barWidth = maxRoas > minRoas ? ((item.roas - minRoas) / (maxRoas - minRoas) * 100).toFixed(0) : 50;
+                const performanceBar = '<div style="display: flex; align-items: center; gap: 8px;">' +
+                    '<div style="flex: 1; background: #e9ecef; border-radius: 4px; height: 8px; overflow: hidden;">' +
+                    '<div style="width: ' + barWidth + '%; background: ' + gradeColor + '; height: 100%; border-radius: 4px;"></div>' +
+                    '</div>' +
+                    '<span style="font-size: 11px; color: ' + gradeColor + '; font-weight: 600;">' + efficiencyGrade + '</span>' +
+                    '</div>';
+
+                html += '<tr>';
+                html += '<td style="text-align: center; font-weight: 600;">' + dayEmoji + ' ' + item.day + '</td>';
+                html += '<td style="text-align: right; font-weight: 600; color: #1565c0;">' + item.roas.toFixed(1) + '%</td>';
+                html += '<td style="text-align: right;">' + formatCurrency(item.cpa) + '</td>';
+                html += '<td style="text-align: right;">' + formatCurrency(item.cost) + '</td>';
+                html += '<td style="text-align: right;">' + item.conversions.toFixed(1) + '</td>';
+                html += '<td style="text-align: right; font-weight: 500;">' + formatCurrency(item.revenue) + '</td>';
+                html += '<td>' + performanceBar + '</td>';
+                html += '</tr>';
             });
 
             tbody.innerHTML = html;
+
+            // 정렬 아이콘 업데이트
+            updateRetargetingSortIcons('seasonality');
 
             // 인사이트 업데이트
             const insightText = document.getElementById('seasonalityInsightText');

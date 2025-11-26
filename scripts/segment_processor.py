@@ -74,29 +74,23 @@ class SegmentProcessor:
     def load_data(self) -> pd.DataFrame:
         """데이터 로드"""
         print("\n" + "="*60)
-        print("Segment Processor v1.0")
+        print("Segment Processor v1.1")
         print("="*60)
         print("\n[1/4] Loading data...")
 
+        # 우선순위: 1) input_file 2) data/raw/raw_data.csv
+        raw_data_file = RAW_DIR / 'raw_data.csv'
+
         if self.input_file and os.path.exists(self.input_file):
-            # 단일 파일 로드
+            # 지정된 파일 로드
             df = pd.read_csv(self.input_file, encoding='utf-8')
             print(f"   Loaded from: {self.input_file}")
+        elif raw_data_file.exists():
+            # data/raw/raw_data.csv 로드
+            df = pd.read_csv(raw_data_file, encoding='utf-8')
+            print(f"   Loaded from: {raw_data_file}")
         else:
-            # 모든 월별 데이터 로드
-            all_data = []
-            for f in sorted(RAW_DIR.glob('*.csv')):
-                try:
-                    month_df = pd.read_csv(f, encoding='utf-8')
-                    all_data.append(month_df)
-                except Exception as e:
-                    print(f"   Warning: Failed to load {f.name}: {e}")
-
-            if not all_data:
-                raise ValueError("No data files found in data/raw/")
-
-            df = pd.concat(all_data, ignore_index=True)
-            print(f"   Loaded {len(all_data)} monthly files")
+            raise ValueError(f"No data file found. Expected: {raw_data_file}")
 
         # 날짜 변환
         df['일 구분'] = pd.to_datetime(df['일 구분'], errors='coerce')

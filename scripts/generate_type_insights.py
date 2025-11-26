@@ -1441,9 +1441,9 @@ if len(promotion_insights) > 0:
         })
 
 # ============================================================================
-# 요일별 계절성 분석 (prophet_seasonality.csv 활용)
+# 요일별 계절성 분석 (prophet_seasonality.csv 활용) - 다중 지표
 # ============================================================================
-print("요일별 계절성 분석 중...")
+print("요일별 계절성 분석 중... (다중 지표: cost, conversions, revenue, roas, cpa)")
 
 seasonality_analysis = {
     "overall": [],
@@ -1457,17 +1457,31 @@ if 'seasonality' in prophet_forecasts:
     # 요일 순서 정의
     day_order = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일']
 
+    # 컬럼 매핑 (새 다중 지표 컬럼 지원, 기존 컬럼도 호환)
+    has_multi_metrics = '평균_비용' in seasonality_df.columns
+
     # 유형구분별 분석
     for category in seasonality_df['유형구분'].unique():
         cat_data = seasonality_df[seasonality_df['유형구분'] == category].copy()
 
-        # 요일별 데이터 정리
+        # 요일별 데이터 정리 (다중 지표 포함)
         day_data = []
         for _, row in cat_data.iterrows():
-            day_data.append({
+            day_item = {
                 "day": row['요일'],
-                "avg_revenue": float(row['평균_전환값'])
-            })
+                "avg_revenue": float(row.get('평균_전환값', 0))
+            }
+
+            # 다중 지표가 있는 경우 추가
+            if has_multi_metrics:
+                day_item["avg_cost"] = float(row.get('평균_비용', 0))
+                day_item["avg_impressions"] = float(row.get('평균_노출', 0))
+                day_item["avg_clicks"] = float(row.get('평균_클릭', 0))
+                day_item["avg_conversions"] = float(row.get('평균_전환수', 0))
+                day_item["avg_roas"] = float(row.get('평균_ROAS', 0))
+                day_item["avg_cpa"] = float(row.get('평균_CPA', 0))
+
+            day_data.append(day_item)
 
         # 요일 순서대로 정렬
         day_data_sorted = sorted(day_data, key=lambda x: day_order.index(x['day']) if x['day'] in day_order else 99)
@@ -1477,66 +1491,202 @@ if 'seasonality' in prophet_forecasts:
         else:
             seasonality_analysis['by_category'][category] = day_data_sorted
 
-        # 최고/최저 성과 요일 찾기
+        # 최고/최저 성과 요일 찾기 (ROAS 기준)
         if len(day_data) > 0:
-            best_day = max(day_data, key=lambda x: x['avg_revenue'])
-            worst_day = min(day_data, key=lambda x: x['avg_revenue'])
-
-            # 전체 데이터에서만 인사이트 생성
+            # 전체 데이터에서만 상세 인사이트 생성
             if category == '전체':
-                seasonality_insights.append({
-                    "type": "best_day_overall",
-                    "message": f"전체 기준 {best_day['day']}이 평균 전환값 {best_day['avg_revenue']:,.0f}원으로 가장 높습니다.",
-                    "severity": "opportunity",
-                    "day": best_day['day'],
-                    "value": best_day['avg_revenue']
-                })
-                seasonality_insights.append({
-                    "type": "worst_day_overall",
-                    "message": f"전체 기준 {worst_day['day']}이 평균 전환값 {worst_day['avg_revenue']:,.0f}원으로 가장 낮습니다.",
-                    "severity": "warning",
-                    "day": worst_day['day'],
-                    "value": worst_day['avg_revenue']
-                })
+                # 주중 vs 주말 비교를 위한 데이터 준비
+                weekdays = [d for d in day_data if d['day'] in ['월요일', '화요일', '수요일', '목요일', '금요일']]
+                weekends = [d for d in day_data if d['day'] in ['토요일', '일요일']]
 
-                # 주중 vs 주말 비교
-                weekday_avg = sum(d['avg_revenue'] for d in day_data if d['day'] in ['월요일', '화요일', '수요일', '목요일', '금요일']) / 5
-                weekend_avg = sum(d['avg_revenue'] for d in day_data if d['day'] in ['토요일', '일요일']) / 2
+                weekday_avg_revenue = sum(d['avg_revenue'] for d in weekdays) / 5 if weekdays else 0
+                weekend_avg_revenue = sum(d['avg_revenue'] for d in weekends) / 2 if weekends else 0
 
-                if weekend_avg > weekday_avg:
-                    diff_pct = ((weekend_avg - weekday_avg) / weekday_avg) * 100
+                # 다중 지표가 있는 경우 ROAS 기준으로 분석
+                if has_multi_metrics:
+                    # ROAS 기준 최고/최저 요일 (메인 인사이트)
+                    best_day_roas = max(day_data, key=lambda x: x.get('avg_roas', 0))
+                    worst_day_roas = min(day_data, key=lambda x: x.get('avg_roas', 0))
+
                     seasonality_insights.append({
-                        "type": "weekend_better",
-                        "message": f"주말 평균 전환값이 주중보다 {diff_pct:.1f}% 높습니다. 주말 예산 증액을 고려하세요.",
+                        "type": "best_day_overall",
+                        "message": f"전체 기준 {best_day_roas['day']}이 평균 ROAS {best_day_roas.get('avg_roas', 0):.1f}%로 광고 효율이 가장 높습니다.",
                         "severity": "opportunity",
-                        "weekday_avg": weekday_avg,
-                        "weekend_avg": weekend_avg,
-                        "diff_percent": diff_pct
+                        "day": best_day_roas['day'],
+                        "value": best_day_roas.get('avg_roas', 0),
+                        "avg_roas": best_day_roas.get('avg_roas', 0),
+                        "avg_cost": best_day_roas.get('avg_cost', 0),
+                        "avg_revenue": best_day_roas.get('avg_revenue', 0),
+                        "avg_conversions": best_day_roas.get('avg_conversions', 0),
+                        "avg_cpa": best_day_roas.get('avg_cpa', 0)
+                    })
+
+                    seasonality_insights.append({
+                        "type": "worst_day_overall",
+                        "message": f"전체 기준 {worst_day_roas['day']}이 평균 ROAS {worst_day_roas.get('avg_roas', 0):.1f}%로 광고 효율이 가장 낮습니다. 해당 요일 예산 재검토를 권장합니다.",
+                        "severity": "warning",
+                        "day": worst_day_roas['day'],
+                        "value": worst_day_roas.get('avg_roas', 0),
+                        "avg_roas": worst_day_roas.get('avg_roas', 0),
+                        "avg_cost": worst_day_roas.get('avg_cost', 0),
+                        "avg_revenue": worst_day_roas.get('avg_revenue', 0),
+                        "avg_conversions": worst_day_roas.get('avg_conversions', 0),
+                        "avg_cpa": worst_day_roas.get('avg_cpa', 0)
+                    })
+
+                    # CPA 기준 최고(낮은)/최저(높은) 요일
+                    valid_cpa_days = [d for d in day_data if d.get('avg_cpa', 0) > 0]
+                    if valid_cpa_days:
+                        best_day_cpa = min(valid_cpa_days, key=lambda x: x.get('avg_cpa', float('inf')))
+                        worst_day_cpa = max(valid_cpa_days, key=lambda x: x.get('avg_cpa', 0))
+
+                        seasonality_insights.append({
+                            "type": "best_cpa_day",
+                            "message": f"{best_day_cpa['day']}이 평균 CPA {best_day_cpa.get('avg_cpa', 0):,.0f}원으로 전환 비용이 가장 낮습니다.",
+                            "severity": "opportunity",
+                            "day": best_day_cpa['day'],
+                            "value": best_day_cpa.get('avg_cpa', 0),
+                            "avg_cpa": best_day_cpa.get('avg_cpa', 0),
+                            "avg_conversions": best_day_cpa.get('avg_conversions', 0),
+                            "avg_roas": best_day_cpa.get('avg_roas', 0)
+                        })
+
+                        seasonality_insights.append({
+                            "type": "worst_cpa_day",
+                            "message": f"{worst_day_cpa['day']}이 평균 CPA {worst_day_cpa.get('avg_cpa', 0):,.0f}원으로 전환 비용이 가장 높습니다.",
+                            "severity": "warning",
+                            "day": worst_day_cpa['day'],
+                            "value": worst_day_cpa.get('avg_cpa', 0),
+                            "avg_cpa": worst_day_cpa.get('avg_cpa', 0),
+                            "avg_conversions": worst_day_cpa.get('avg_conversions', 0),
+                            "avg_roas": worst_day_cpa.get('avg_roas', 0)
+                        })
+
+                    # 주중/주말 평균 계산
+                    weekday_avg_cost = sum(d.get('avg_cost', 0) for d in weekdays) / 5 if weekdays else 0
+                    weekend_avg_cost = sum(d.get('avg_cost', 0) for d in weekends) / 2 if weekends else 0
+                    weekday_avg_roas = sum(d.get('avg_roas', 0) for d in weekdays) / 5 if weekdays else 0
+                    weekend_avg_roas = sum(d.get('avg_roas', 0) for d in weekends) / 2 if weekends else 0
+                    weekday_avg_cpa = sum(d.get('avg_cpa', 0) for d in weekdays) / 5 if weekdays else 0
+                    weekend_avg_cpa = sum(d.get('avg_cpa', 0) for d in weekends) / 2 if weekends else 0
+                    weekday_avg_conversions = sum(d.get('avg_conversions', 0) for d in weekdays) / 5 if weekdays else 0
+                    weekend_avg_conversions = sum(d.get('avg_conversions', 0) for d in weekends) / 2 if weekends else 0
+
+                    # ROAS 기준 주중 vs 주말 비교 (메인 비교)
+                    if weekday_avg_roas > 0 and weekend_avg_roas > 0:
+                        if weekend_avg_roas > weekday_avg_roas:
+                            roas_diff = ((weekend_avg_roas - weekday_avg_roas) / weekday_avg_roas) * 100
+                            seasonality_insights.append({
+                                "type": "weekend_better",
+                                "message": f"주말 평균 ROAS가 주중보다 {roas_diff:.1f}% 높습니다. 주말 예산 증액을 고려하세요. (주말 {weekend_avg_roas:.1f}% vs 주중 {weekday_avg_roas:.1f}%)",
+                                "severity": "opportunity",
+                                "weekday_avg_roas": weekday_avg_roas,
+                                "weekend_avg_roas": weekend_avg_roas,
+                                "weekday_avg_revenue": weekday_avg_revenue,
+                                "weekend_avg_revenue": weekend_avg_revenue,
+                                "weekday_avg_cost": weekday_avg_cost,
+                                "weekend_avg_cost": weekend_avg_cost,
+                                "weekday_avg_cpa": weekday_avg_cpa,
+                                "weekend_avg_cpa": weekend_avg_cpa,
+                                "weekday_avg_conversions": weekday_avg_conversions,
+                                "weekend_avg_conversions": weekend_avg_conversions,
+                                "diff_percent": roas_diff
+                            })
+                        else:
+                            roas_diff = ((weekday_avg_roas - weekend_avg_roas) / weekend_avg_roas) * 100
+                            seasonality_insights.append({
+                                "type": "weekday_better",
+                                "message": f"주중 평균 ROAS가 주말보다 {roas_diff:.1f}% 높습니다. 주중 집중 운영을 권장합니다. (주중 {weekday_avg_roas:.1f}% vs 주말 {weekend_avg_roas:.1f}%)",
+                                "severity": "info",
+                                "weekday_avg_roas": weekday_avg_roas,
+                                "weekend_avg_roas": weekend_avg_roas,
+                                "weekday_avg_revenue": weekday_avg_revenue,
+                                "weekend_avg_revenue": weekend_avg_revenue,
+                                "weekday_avg_cost": weekday_avg_cost,
+                                "weekend_avg_cost": weekend_avg_cost,
+                                "weekday_avg_cpa": weekday_avg_cpa,
+                                "weekend_avg_cpa": weekend_avg_cpa,
+                                "weekday_avg_conversions": weekday_avg_conversions,
+                                "weekend_avg_conversions": weekend_avg_conversions,
+                                "diff_percent": roas_diff
+                            })
+
+                else:
+                    # 다중 지표가 없는 경우 전환값 기준 (하위 호환)
+                    best_day_revenue = max(day_data, key=lambda x: x['avg_revenue'])
+                    worst_day_revenue = min(day_data, key=lambda x: x['avg_revenue'])
+
+                    seasonality_insights.append({
+                        "type": "best_day_overall",
+                        "message": f"전체 기준 {best_day_revenue['day']}이 평균 전환값 {best_day_revenue['avg_revenue']:,.0f}원으로 가장 높습니다.",
+                        "severity": "opportunity",
+                        "day": best_day_revenue['day'],
+                        "value": best_day_revenue['avg_revenue']
+                    })
+                    seasonality_insights.append({
+                        "type": "worst_day_overall",
+                        "message": f"전체 기준 {worst_day_revenue['day']}이 평균 전환값 {worst_day_revenue['avg_revenue']:,.0f}원으로 가장 낮습니다.",
+                        "severity": "warning",
+                        "day": worst_day_revenue['day'],
+                        "value": worst_day_revenue['avg_revenue']
+                    })
+
+                    # 주중 vs 주말 비교 (전환값 기준)
+                    if weekend_avg_revenue > weekday_avg_revenue and weekday_avg_revenue > 0:
+                        diff_pct = ((weekend_avg_revenue - weekday_avg_revenue) / weekday_avg_revenue) * 100
+                        seasonality_insights.append({
+                            "type": "weekend_better",
+                            "message": f"주말 평균 전환값이 주중보다 {diff_pct:.1f}% 높습니다. 주말 예산 증액을 고려하세요.",
+                            "severity": "opportunity",
+                            "weekday_avg_revenue": weekday_avg_revenue,
+                            "weekend_avg_revenue": weekend_avg_revenue,
+                            "diff_percent": diff_pct
+                        })
+                    elif weekend_avg_revenue > 0:
+                        diff_pct = ((weekday_avg_revenue - weekend_avg_revenue) / weekend_avg_revenue) * 100
+                        seasonality_insights.append({
+                            "type": "weekday_better",
+                            "message": f"주중 평균 전환값이 주말보다 {diff_pct:.1f}% 높습니다. 주중 집중 운영을 권장합니다.",
+                            "severity": "info",
+                            "weekday_avg_revenue": weekday_avg_revenue,
+                            "weekend_avg_revenue": weekend_avg_revenue,
+                            "diff_percent": diff_pct
+                        })
+
+            else:
+                # 유형구분별 최고 성과 요일 (ROAS 기준)
+                if has_multi_metrics:
+                    best_day_roas = max(day_data, key=lambda x: x.get('avg_roas', 0))
+                    seasonality_insights.append({
+                        "type": f"best_day_{category}",
+                        "message": f"{category}에서 {best_day_roas['day']}이 평균 ROAS {best_day_roas.get('avg_roas', 0):.1f}%로 최고입니다.",
+                        "severity": "info",
+                        "category": category,
+                        "day": best_day_roas['day'],
+                        "value": best_day_roas.get('avg_roas', 0),
+                        "avg_roas": best_day_roas.get('avg_roas', 0),
+                        "avg_cost": best_day_roas.get('avg_cost', 0),
+                        "avg_revenue": best_day_roas.get('avg_revenue', 0),
+                        "avg_cpa": best_day_roas.get('avg_cpa', 0),
+                        "avg_conversions": best_day_roas.get('avg_conversions', 0)
                     })
                 else:
-                    diff_pct = ((weekday_avg - weekend_avg) / weekend_avg) * 100
+                    best_day_revenue = max(day_data, key=lambda x: x['avg_revenue'])
                     seasonality_insights.append({
-                        "type": "weekday_better",
-                        "message": f"주중 평균 전환값이 주말보다 {diff_pct:.1f}% 높습니다. 주중 집중 운영을 권장합니다.",
+                        "type": f"best_day_{category}",
+                        "message": f"{category}에서 {best_day_revenue['day']}이 평균 전환값 {best_day_revenue['avg_revenue']:,.0f}원으로 최고입니다.",
                         "severity": "info",
-                        "weekday_avg": weekday_avg,
-                        "weekend_avg": weekend_avg,
-                        "diff_percent": diff_pct
+                        "category": category,
+                        "day": best_day_revenue['day'],
+                        "value": best_day_revenue['avg_revenue'],
+                        "avg_revenue": best_day_revenue['avg_revenue']
                     })
-            else:
-                # 유형구분별 최고 성과 요일
-                seasonality_insights.append({
-                    "type": f"best_day_{category}",
-                    "message": f"{category}에서 {best_day['day']}이 평균 전환값 {best_day['avg_revenue']:,.0f}원으로 최고입니다.",
-                    "severity": "info",
-                    "category": category,
-                    "day": best_day['day'],
-                    "value": best_day['avg_revenue']
-                })
 
     print(f"  - 전체 요일별 분석: {len(seasonality_analysis['overall'])}개")
     print(f"  - 유형구분별 요일 분석: {len(seasonality_analysis['by_category'])}개 카테고리")
     print(f"  - 계절성 인사이트: {len(seasonality_insights)}개")
+    if has_multi_metrics:
+        print("  - 다중 지표 포함: cost, conversions, revenue, roas, cpa")
 else:
     print("  - prophet_seasonality.csv 파일 없음")
 

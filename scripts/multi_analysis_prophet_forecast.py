@@ -339,28 +339,36 @@ if PROPHET_AVAILABLE:
         print("\n✓ 트렌드 분석 결과 저장: data/type/prophet_trend_analysis.csv")
 
     print("\n" + "=" * 100)
-    print("4. 계절성 분석 (유형구분별)")
+    print("4. 계절성 분석 (유형구분별) - 다중 지표")
     print("=" * 100)
 
-    # 요일별 패턴 (전체)
+    # 요일별 패턴 (전체) - 다중 지표
     daily_data_with_dow = daily_data.copy()
     daily_data_with_dow['요일번호'] = daily_data_with_dow['일'].dt.dayofweek
 
     dow_performance = daily_data_with_dow.groupby('요일번호').agg({
+        '비용': 'mean',
+        '노출': 'mean',
+        '클릭': 'mean',
+        '전환수': 'mean',
         '전환값': 'mean'
     }).reset_index()
+
+    # ROAS, CPA 계산
+    dow_performance['ROAS'] = (dow_performance['전환값'] / dow_performance['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+    dow_performance['CPA'] = (dow_performance['비용'] / dow_performance['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
 
     dow_names = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일']
     dow_performance['요일명'] = [dow_names[i] for i in dow_performance['요일번호']]
 
-    print("\n전체 요일별 평균 전환값:")
+    print("\n전체 요일별 평균 성과:")
     for _, row in dow_performance.iterrows():
-        print(f"  {row['요일명']}: {row['전환값']:,.0f}원")
+        print(f"  {row['요일명']}: 비용 {row['비용']:,.0f}원, 전환값 {row['전환값']:,.0f}원, ROAS {row['ROAS']:.1f}%")
 
     # 전체 요일별 패턴 저장
-    dow_output = dow_performance[['요일명', '전환값']].copy()
+    dow_output = dow_performance[['요일명', '비용', '노출', '클릭', '전환수', '전환값', 'ROAS', 'CPA']].copy()
     dow_output['유형구분'] = '전체'
-    dow_output.columns = ['요일', '평균_전환값', '유형구분']
+    dow_output.columns = ['요일', '평균_비용', '평균_노출', '평균_클릭', '평균_전환수', '평균_전환값', '평균_ROAS', '평균_CPA', '유형구분']
 
     # 주요 유형구분별 요일 패턴
     print("\n주요 유형구분별 요일 패턴:")
@@ -370,25 +378,36 @@ if PROPHET_AVAILABLE:
         cat_data = df[df['유형구분'] == category].copy()
         cat_data['요일번호'] = cat_data['일'].dt.dayofweek
 
-        cat_dow = cat_data.groupby('요일번호').agg({'전환값': 'mean'}).reset_index()
+        cat_dow = cat_data.groupby('요일번호').agg({
+            '비용': 'mean',
+            '노출': 'mean',
+            '클릭': 'mean',
+            '전환수': 'mean',
+            '전환값': 'mean'
+        }).reset_index()
+
+        # ROAS, CPA 계산
+        cat_dow['ROAS'] = (cat_dow['전환값'] / cat_dow['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+        cat_dow['CPA'] = (cat_dow['비용'] / cat_dow['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
         cat_dow['요일명'] = [dow_names[i] for i in cat_dow['요일번호']]
 
         print(f"\n[{category}]")
         for _, row in cat_dow.iterrows():
-            print(f"  {row['요일명']}: {row['전환값']:,.0f}원")
+            print(f"  {row['요일명']}: 비용 {row['비용']:,.0f}원, 전환값 {row['전환값']:,.0f}원, ROAS {row['ROAS']:.1f}%")
 
         # 유형구분별 요일 패턴 저장용
-        cat_dow_output = cat_dow[['요일명', '전환값']].copy()
+        cat_dow_output = cat_dow[['요일명', '비용', '노출', '클릭', '전환수', '전환값', 'ROAS', 'CPA']].copy()
         cat_dow_output['유형구분'] = category
-        cat_dow_output.columns = ['요일', '평균_전환값', '유형구분']
+        cat_dow_output.columns = ['요일', '평균_비용', '평균_노출', '평균_클릭', '평균_전환수', '평균_전환값', '평균_ROAS', '평균_CPA', '유형구분']
         all_seasonality_data.append(cat_dow_output)
 
     # 계절성 분석 결과 통합 저장
     seasonality_df = pd.concat(all_seasonality_data, ignore_index=True)
-    seasonality_df = seasonality_df[['유형구분', '요일', '평균_전환값']]
+    seasonality_df = seasonality_df[['유형구분', '요일', '평균_비용', '평균_노출', '평균_클릭', '평균_전환수', '평균_전환값', '평균_ROAS', '평균_CPA']]
     seasonality_df.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_seasonality.csv',
                          index=False, encoding='utf-8-sig')
     print("\n✓ 계절성 분석 결과 저장: data/type/prophet_seasonality.csv")
+    print("  포함 지표: 평균_비용, 평균_노출, 평균_클릭, 평균_전환수, 평균_전환값, 평균_ROAS, 평균_CPA")
 
     print("\n" + "=" * 100)
     print("5. 이상치 탐지 (유형구분별)")

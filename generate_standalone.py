@@ -19,7 +19,8 @@ json_paths = [
     'meta/latest.json',
     'forecast/segment_stats.json',
     'forecast/insights.json',
-    'funnel/insights.json'
+    'funnel/insights.json',
+    'type/insights.json'
 ]
 
 for json_path in json_paths:
@@ -53,6 +54,16 @@ csv_paths = [
     'funnel/channel_funnel.csv',
     'funnel/campaign_funnel.csv',
     'funnel/new_vs_returning.csv',
+    'funnel/channel_engagement.csv',
+    'funnel/new_vs_returning_conversion.csv',
+    'type/merged_data.csv',
+    'type/dimension_type1_campaign_adset.csv',
+    'type/dimension_type2_adset_age_gender.csv',
+    'type/dimension_type3_adset_age.csv',
+    'type/dimension_type4_adset_gender.csv',
+    'type/dimension_type5_adset_device.csv',
+    'type/dimension_type6_adset_platform.csv',
+    'type/dimension_type7_adset_deviceplatform.csv',
     'creative/2025-11.csv',
     'creative/Meta-이미지-URL_url.csv',
     'GA4/2025-11.csv'
@@ -223,7 +234,8 @@ html_files = {
     'main': 'marketing_dashboard_v3.html',
     'creative': 'creative_analysis.html',
     'timeseries': 'timeseries_analysis.html',
-    'funnel': 'funnel_dashboard.html'
+    'funnel': 'funnel_dashboard.html',
+    'type': 'type_dashboard.html'
 }
 
 modified_html = {}
@@ -253,7 +265,8 @@ output_files = {
     'main': 'marketing_dashboard_v3_standalone.html',
     'creative': 'creative_analysis_standalone.html',
     'timeseries': 'timeseries_analysis_standalone.html',
-    'funnel': 'funnel_dashboard_standalone.html'
+    'funnel': 'funnel_dashboard_standalone.html',
+    'type': 'type_dashboard_standalone.html'
 }
 
 # Write each modified HTML as a separate standalone file
