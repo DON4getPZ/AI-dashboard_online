@@ -1,86 +1,91 @@
 {
   "summary": {
-    "total_acquisition": 259885,
-    "total_activation": 104311,
-    "total_consideration": 0,
-    "total_conversion": 0,
-    "total_purchase": 347,
-    "total_revenue": 55901425.0,
-    "overall_cvr": 0.13
+    "total_acquisition": 39971,
+    "total_activation": 12411,
+    "total_consideration": 4455,
+    "total_conversion": 532,
+    "total_purchase": 259,
+    "total_revenue": 0.0,
+    "overall_cvr": 0.65
   },
   "top_channels": [
     {
-      "name": "메타 광고",
-      "purchases": 156,
-      "revenue": 25292225.0
-    },
-    {
       "name": "Direct",
-      "purchases": 130,
-      "revenue": 18462050.0
+      "purchases": 51,
+      "revenue": 0.0
     },
     {
-      "name": "네이버 Organic",
-      "purchases": 24,
-      "revenue": 5366350.0
+      "name": "구글 Organic",
+      "purchases": 32,
+      "revenue": 0.0
     },
     {
-      "name": "리틀리",
-      "purchases": 13,
-      "revenue": 2435300.0
+      "name": "구글 검색",
+      "purchases": 1,
+      "revenue": 0.0
+    },
+    {
+      "name": "구분 불가 (not set)",
+      "purchases": 2,
+      "revenue": 0.0
     },
     {
       "name": "기타",
-      "purchases": 12,
-      "revenue": 2110300.0
+      "purchases": 6,
+      "revenue": 0.0
     }
   ],
   "top_campaigns": [
     {
       "name": "(direct)",
-      "purchases": 130,
-      "revenue": 18462050.0
+      "purchases": 51,
+      "revenue": 0.0
     },
     {
-      "name": "(referral)",
-      "purchases": 61,
-      "revenue": 10178100.0
-    },
-    {
-      "name": "120231823913960106",
-      "purchases": 50,
-      "revenue": 9073600.0
-    },
-    {
-      "name": "conv",
-      "purchases": 57,
-      "revenue": 8528550.0
+      "name": "(not set)",
+      "purchases": 2,
+      "revenue": 0.0
     },
     {
       "name": "(organic)",
-      "purchases": 10,
-      "revenue": 2869750.0
+      "purchases": 40,
+      "revenue": 0.0
+    },
+    {
+      "name": "(referral)",
+      "purchases": 22,
+      "revenue": 0.0
+    },
+    {
+      "name": "120229326882430611",
+      "purchases": 1,
+      "revenue": 0.0
     }
   ],
   "alerts": [
     {
       "type": "low_activation",
-      "message": "유입→활동 전환율이 40.1%로 낮습니다. 랜딩페이지 최적화가 필요합니다.",
+      "message": "유입→활동 전환율이 31.1%로 낮습니다. 랜딩페이지 최적화가 필요합니다.",
       "severity": "high"
+    },
+    {
+      "type": "low_consideration_conversion",
+      "message": "장바구니→구매 전환율이 5.8%로 낮습니다. 결제 프로세스 개선이 필요합니다.",
+      "severity": "medium"
     }
   ],
-  "generated_at": "2025-11-26T14:03:00.752241",
+  "generated_at": "2025-11-26T15:56:18.741418",
   "overall": {
     "current_period": {
-      "start_date": "2025-06-01",
-      "end_date": "2025-11-24",
-      "total_acquisition": 259885,
-      "total_activation": 104311,
-      "total_consideration": 0,
-      "total_conversion": 0,
-      "total_purchase": 347,
-      "total_revenue": 55901425.0,
-      "overall_cvr": 0.13
+      "start_date": "2025-02-12",
+      "end_date": "2025-11-26",
+      "total_acquisition": 39971,
+      "total_activation": 12411,
+      "total_consideration": 4455,
+      "total_conversion": 532,
+      "total_purchase": 259,
+      "total_revenue": 0.0,
+      "overall_cvr": 0.65
     },
     "trend": {
       "direction": "stable"
@@ -90,190 +95,261 @@
     {
       "type": "channel_comparison",
       "group_a": "Direct",
+      "group_b": "구글 Organic",
+      "metric": "conversion_rate",
+      "chi2_statistic": 1.9981628632065493,
+      "p_value": 0.15748999078363227,
+      "significant": false,
+      "cvr_a": 0.8161305808929429,
+      "cvr_b": 1.1494252873563218
+    },
+    {
+      "type": "channel_comparison",
+      "group_a": "Direct",
       "group_b": "기타",
       "metric": "conversion_rate",
-      "chi2_statistic": 17.48193672217237,
-      "p_value": 2.9005043191705523e-05,
-      "significant": true,
-      "cvr_a": 0.14281790716836035,
-      "cvr_b": 0.5016722408026756
+      "chi2_statistic": 0.08044308379132781,
+      "p_value": 0.7766978531004,
+      "significant": false,
+      "cvr_a": 0.8161305808929429,
+      "cvr_b": 1.0204081632653061
     },
     {
       "type": "channel_comparison",
       "group_a": "Direct",
       "group_b": "네이버 Organic",
       "metric": "conversion_rate",
-      "chi2_statistic": 65.95939689674304,
-      "p_value": 4.603085866665682e-16,
-      "significant": true,
-      "cvr_a": 0.14281790716836035,
-      "cvr_b": 0.7483629560336763
-    },
-    {
-      "type": "channel_comparison",
-      "group_a": "Direct",
-      "group_b": "네이버 쇼핑광고&자연유입",
-      "metric": "conversion_rate",
-      "chi2_statistic": 37.83528548125418,
-      "p_value": 7.697680021666573e-10,
-      "significant": true,
-      "cvr_a": 0.14281790716836035,
-      "cvr_b": 1.4150943396226416
-    },
-    {
-      "type": "channel_comparison",
-      "group_a": "Direct",
-      "group_b": "리틀리",
-      "metric": "conversion_rate",
-      "chi2_statistic": 4.573652786287009,
-      "p_value": 0.03246726591976123,
-      "significant": true,
-      "cvr_a": 0.14281790716836035,
-      "cvr_b": 0.2778965369816161
+      "chi2_statistic": 0.04358487680822662,
+      "p_value": 0.8346278592875499,
+      "significant": false,
+      "cvr_a": 0.8161305808929429,
+      "cvr_b": 0.9424083769633508
     },
     {
       "type": "channel_comparison",
       "group_a": "Direct",
       "group_b": "메타 광고",
       "metric": "conversion_rate",
-      "chi2_statistic": 8.699461725121816,
-      "p_value": 0.003183040310386582,
+      "chi2_statistic": 2.2796571140279496,
+      "p_value": 0.13108085046946383,
+      "significant": false,
+      "cvr_a": 0.8161305808929429,
+      "cvr_b": 0.6288144997225819
+    },
+    {
+      "type": "channel_comparison",
+      "group_a": "Direct",
+      "group_b": "이메일",
+      "metric": "conversion_rate",
+      "chi2_statistic": 0.07003105873354039,
+      "p_value": 0.7912915640169633,
+      "significant": false,
+      "cvr_a": 0.8161305808929429,
+      "cvr_b": 1.0118043844856661
+    },
+    {
+      "type": "channel_comparison",
+      "group_a": "Direct",
+      "group_b": "이오플래닛",
+      "metric": "conversion_rate",
+      "chi2_statistic": 5.009376057297762,
+      "p_value": 0.025210391952663554,
       "significant": true,
-      "cvr_a": 0.14281790716836035,
-      "cvr_b": 0.10009367741604322
+      "cvr_a": 0.8161305808929429,
+      "cvr_b": 2.3529411764705883
+    },
+    {
+      "type": "channel_comparison",
+      "group_a": "구글 Organic",
+      "group_b": "기타",
+      "metric": "conversion_rate",
+      "chi2_statistic": 0.0029506045992549793,
+      "p_value": 0.9566806392628203,
+      "significant": false,
+      "cvr_a": 1.1494252873563218,
+      "cvr_b": 1.0204081632653061
+    },
+    {
+      "type": "channel_comparison",
+      "group_a": "구글 Organic",
+      "group_b": "네이버 Organic",
+      "metric": "conversion_rate",
+      "chi2_statistic": 0.12252407866773332,
+      "p_value": 0.7263128839650582,
+      "significant": false,
+      "cvr_a": 1.1494252873563218,
+      "cvr_b": 0.9424083769633508
+    },
+    {
+      "type": "channel_comparison",
+      "group_a": "구글 Organic",
+      "group_b": "메타 광고",
+      "metric": "conversion_rate",
+      "chi2_statistic": 9.034506919378058,
+      "p_value": 0.002649305038297504,
+      "significant": true,
+      "cvr_a": 1.1494252873563218,
+      "cvr_b": 0.6288144997225819
+    },
+    {
+      "type": "channel_comparison",
+      "group_a": "구글 Organic",
+      "group_b": "이메일",
+      "metric": "conversion_rate",
+      "chi2_statistic": 0.005488944523676905,
+      "p_value": 0.9409408320021493,
+      "significant": false,
+      "cvr_a": 1.1494252873563218,
+      "cvr_b": 1.0118043844856661
+    },
+    {
+      "type": "channel_comparison",
+      "group_a": "구글 Organic",
+      "group_b": "이오플래닛",
+      "metric": "conversion_rate",
+      "chi2_statistic": 1.8522624831069885,
+      "p_value": 0.1735204833142369,
+      "significant": false,
+      "cvr_a": 1.1494252873563218,
+      "cvr_b": 2.3529411764705883
     },
     {
       "type": "channel_comparison",
       "group_a": "기타",
       "group_b": "네이버 Organic",
       "metric": "conversion_rate",
-      "chi2_statistic": 0.9475699611902438,
-      "p_value": 0.3303386150325905,
+      "chi2_statistic": 0.0,
+      "p_value": 1.0,
       "significant": false,
-      "cvr_a": 0.5016722408026756,
-      "cvr_b": 0.7483629560336763
-    },
-    {
-      "type": "channel_comparison",
-      "group_a": "기타",
-      "group_b": "네이버 쇼핑광고&자연유입",
-      "metric": "conversion_rate",
-      "chi2_statistic": 3.40242337104739,
-      "p_value": 0.06510071080832684,
-      "significant": false,
-      "cvr_a": 0.5016722408026756,
-      "cvr_b": 1.4150943396226416
-    },
-    {
-      "type": "channel_comparison",
-      "group_a": "기타",
-      "group_b": "리틀리",
-      "metric": "conversion_rate",
-      "chi2_statistic": 1.6590363767980196,
-      "p_value": 0.19773348055730477,
-      "significant": false,
-      "cvr_a": 0.5016722408026756,
-      "cvr_b": 0.2778965369816161
+      "cvr_a": 1.0204081632653061,
+      "cvr_b": 0.9424083769633508
     },
     {
       "type": "channel_comparison",
       "group_a": "기타",
       "group_b": "메타 광고",
       "metric": "conversion_rate",
-      "chi2_statistic": 32.13725814984067,
-      "p_value": 1.4365575819538846e-08,
-      "significant": true,
-      "cvr_a": 0.5016722408026756,
-      "cvr_b": 0.10009367741604322
-    },
-    {
-      "type": "channel_comparison",
-      "group_a": "네이버 Organic",
-      "group_b": "네이버 쇼핑광고&자연유입",
-      "metric": "conversion_rate",
-      "chi2_statistic": 1.2994302421844468,
-      "p_value": 0.2543173226440956,
+      "chi2_statistic": 0.8343440157680038,
+      "p_value": 0.3610194117438581,
       "significant": false,
-      "cvr_a": 0.7483629560336763,
-      "cvr_b": 1.4150943396226416
+      "cvr_a": 1.0204081632653061,
+      "cvr_b": 0.6288144997225819
+    },
+    {
+      "type": "channel_comparison",
+      "group_a": "기타",
+      "group_b": "이메일",
+      "metric": "conversion_rate",
+      "chi2_statistic": 0.0,
+      "p_value": 1.0,
+      "significant": false,
+      "cvr_a": 1.0204081632653061,
+      "cvr_b": 1.0118043844856661
+    },
+    {
+      "type": "channel_comparison",
+      "group_a": "기타",
+      "group_b": "이오플래닛",
+      "metric": "conversion_rate",
+      "chi2_statistic": 1.4012503963679332,
+      "p_value": 0.23651432571343858,
+      "significant": false,
+      "cvr_a": 1.0204081632653061,
+      "cvr_b": 2.3529411764705883
     },
     {
       "type": "channel_comparison",
       "group_a": "네이버 Organic",
-      "group_b": "리틀리",
+      "group_b": "메타 광고",
       "metric": "conversion_rate",
-      "chi2_statistic": 8.037708047547104,
-      "p_value": 0.004581346692709614,
-      "significant": true,
-      "cvr_a": 0.7483629560336763,
-      "cvr_b": 0.2778965369816161
+      "chi2_statistic": 0.9611710330906915,
+      "p_value": 0.32689201310584115,
+      "significant": false,
+      "cvr_a": 0.9424083769633508,
+      "cvr_b": 0.6288144997225819
     },
     {
       "type": "channel_comparison",
       "group_a": "네이버 Organic",
-      "group_b": "메타 광고",
+      "group_b": "이메일",
       "metric": "conversion_rate",
-      "chi2_statistic": 111.16334236592083,
-      "p_value": 5.449084649566984e-26,
-      "significant": true,
-      "cvr_a": 0.7483629560336763,
-      "cvr_b": 0.10009367741604322
+      "chi2_statistic": 0.0,
+      "p_value": 1.0,
+      "significant": false,
+      "cvr_a": 0.9424083769633508,
+      "cvr_b": 1.0118043844856661
     },
     {
       "type": "channel_comparison",
-      "group_a": "네이버 쇼핑광고&자연유입",
-      "group_b": "리틀리",
+      "group_a": "네이버 Organic",
+      "group_b": "이오플래닛",
       "metric": "conversion_rate",
-      "chi2_statistic": 10.659032367040663,
-      "p_value": 0.0010953468177353645,
-      "significant": true,
-      "cvr_a": 1.4150943396226416,
-      "cvr_b": 0.2778965369816161
+      "chi2_statistic": 2.2200130378189815,
+      "p_value": 0.13623190918306072,
+      "significant": false,
+      "cvr_a": 0.9424083769633508,
+      "cvr_b": 2.3529411764705883
     },
     {
       "type": "channel_comparison",
-      "group_a": "네이버 쇼핑광고&자연유입",
-      "group_b": "메타 광고",
+      "group_a": "메타 광고",
+      "group_b": "이메일",
       "metric": "conversion_rate",
-      "chi2_statistic": 58.483042545078156,
-      "p_value": 2.05050704349278e-14,
-      "significant": true,
-      "cvr_a": 1.4150943396226416,
-      "cvr_b": 0.10009367741604322
+      "chi2_statistic": 0.7983790175113639,
+      "p_value": 0.37157845894274,
+      "significant": false,
+      "cvr_a": 0.6288144997225819,
+      "cvr_b": 1.0118043844856661
     },
     {
       "type": "channel_comparison",
-      "group_a": "리틀리",
-      "group_b": "메타 광고",
+      "group_a": "메타 광고",
+      "group_b": "이오플래닛",
       "metric": "conversion_rate",
-      "chi2_statistic": 12.014571604478833,
-      "p_value": 0.0005278621975674796,
+      "chi2_statistic": 9.100276160174408,
+      "p_value": 0.002555709046035908,
       "significant": true,
-      "cvr_a": 0.2778965369816161,
-      "cvr_b": 0.10009367741604322
+      "cvr_a": 0.6288144997225819,
+      "cvr_b": 2.3529411764705883
+    },
+    {
+      "type": "channel_comparison",
+      "group_a": "이메일",
+      "group_b": "이오플래닛",
+      "metric": "conversion_rate",
+      "chi2_statistic": 1.4382095984777419,
+      "p_value": 0.23042928617023994,
+      "significant": false,
+      "cvr_a": 1.0118043844856661,
+      "cvr_b": 2.3529411764705883
     }
   ],
   "channel_clusters": {
     "n_clusters": 3,
     "clusters": {
-      "cluster_0": [
-        "CRM",
+      "cluster_1": [
         "Direct",
-        "구글 Organic",
+        "구글 검색",
+        "구분 불가 (not set)",
         "기타",
+        "메타 광고",
+        "스타트업위클리",
+        "이메일"
+      ],
+      "cluster_0": [
+        "구글 Organic",
         "네이버 Organic",
-        "네이버 블로그",
-        "네이버 쇼핑광고&자연유입",
-        "네이버 플레이스",
-        "다음 Organic",
-        "리틀리",
-        "메타 광고"
+        "이오플래닛",
+        "프레이머"
       ],
       "cluster_2": [
-        "구분 불가 (not set)"
-      ],
-      "cluster_1": [
-        "페북/인스타 샵"
+        "네이버 플레이스",
+        "뉴스와이어",
+        "브런치",
+        "스케일업스쿼드_direct",
+        "스티비",
+        "채널톡",
+        "채용"
       ]
     },
     "description": {
@@ -287,19 +363,10 @@
       "stage": "유입",
       "period": "7d",
       "risk_level": "medium",
-      "change_pct": -26.98,
-      "recent_avg": 839.29,
-      "previous_avg": 1149.43,
+      "change_pct": -25.57,
+      "recent_avg": 116.86,
+      "previous_avg": 157.0,
       "recommendation": "유입 단계의 사용자 이탈이 증가하고 있습니다. 마케팅 캠페인 점검이 필요합니다."
-    },
-    {
-      "stage": "활동",
-      "period": "7d",
-      "risk_level": "medium",
-      "change_pct": -23.56,
-      "recent_avg": 351.43,
-      "previous_avg": 459.71,
-      "recommendation": "활동 단계의 사용자 이탈이 증가하고 있습니다. 마케팅 캠페인 점검이 필요합니다."
     }
   ],
   "churn_predictions_30d": [
@@ -307,9 +374,9 @@
       "stage": "유입",
       "period": "30d",
       "risk_level": "medium",
-      "change_pct": -24.71,
-      "recent_avg": 1059.5,
-      "previous_avg": 1407.2,
+      "change_pct": -21.4,
+      "recent_avg": 134.17,
+      "previous_avg": 170.7,
       "recommendation": "유입 단계의 사용자 이탈이 증가하고 있습니다. 마케팅 캠페인 점검이 필요합니다."
     }
   ],
@@ -320,28 +387,19 @@
       "stage": "유입",
       "period": "7d",
       "risk_level": "medium",
-      "change_pct": -26.98,
-      "recent_avg": 839.29,
-      "previous_avg": 1149.43,
+      "change_pct": -25.57,
+      "recent_avg": 116.86,
+      "previous_avg": 157.0,
       "recommendation": "유입 단계의 사용자 이탈이 증가하고 있습니다. 마케팅 캠페인 점검이 필요합니다."
-    },
-    {
-      "stage": "활동",
-      "period": "7d",
-      "risk_level": "medium",
-      "change_pct": -23.56,
-      "recent_avg": 351.43,
-      "previous_avg": 459.71,
-      "recommendation": "활동 단계의 사용자 이탈이 증가하고 있습니다. 마케팅 캠페인 점검이 필요합니다."
     }
   ],
   "details": {
-    "total_channels": 13,
+    "total_channels": 18,
     "total_campaigns": 20,
-    "analysis_period_days": 177,
-    "ab_tests_conducted": 15,
-    "significant_ab_tests": 11,
-    "churn_risk_stages_7d": 2,
+    "analysis_period_days": 288,
+    "ab_tests_conducted": 21,
+    "significant_ab_tests": 3,
+    "churn_risk_stages_7d": 1,
     "churn_risk_stages_30d": 1,
     "improvement_stages_7d": 0,
     "improvement_stages_30d": 0

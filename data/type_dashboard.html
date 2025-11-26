@@ -853,6 +853,59 @@
         .tab-content.active {
             display: block;
         }
+
+        /* 테이블 정렬 기능 */
+        .sortable-header {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-right: 24px !important;
+            transition: background 0.2s ease;
+        }
+
+        .sortable-header:hover {
+            background: var(--grey-100);
+        }
+
+        .sort-icon {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            opacity: 0.3;
+            transition: opacity 0.2s ease;
+        }
+
+        .sortable-header:hover .sort-icon {
+            opacity: 0.6;
+        }
+
+        .sort-icon.active {
+            opacity: 1;
+        }
+
+        .sort-arrow {
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+        }
+
+        .sort-arrow.up {
+            border-bottom: 4px solid var(--grey-600);
+        }
+
+        .sort-arrow.down {
+            border-top: 4px solid var(--grey-600);
+        }
+
+        .sort-arrow.active {
+            border-bottom-color: var(--primary-main);
+            border-top-color: var(--primary-main);
+        }
     </style>
 </head>
 <body>
@@ -2728,6 +2781,303 @@
                 </div>
             </div>
 
+            <!-- 2. 리타겟팅 및 계절성 분석 -->
+            <div class="collapsible-section">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">🎯</span>
+                        <span>리타겟팅 및 계절성 분석 - 제품이 잘 팔리는 요일과 제품에 관심이 많은 소비자를 확인하세요</span>
+                    </div>
+                    <button class="collapsible-toggle">
+                        <span>펼치기</span>
+                        <span class="collapsible-toggle-icon collapsed">▼</span>
+                    </button>
+                </div>
+                <div class="collapsible-content">
+                    <!-- 서브탭 버튼 -->
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 24px; background: #f8f9fa; border-bottom: 1px solid #e9ecef;">
+                        <button class="retargeting-subtab active" data-retarget-tab="ageGender"
+                                style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: none; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #1a73e8; color: white;">
+                            성별/연령
+                        </button>
+                        <button class="retargeting-subtab" data-retarget-tab="device"
+                                style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                            기기별
+                        </button>
+                        <button class="retargeting-subtab" data-retarget-tab="platform"
+                                style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                            플랫폼별
+                        </button>
+                        <button class="retargeting-subtab" data-retarget-tab="devicePlatform"
+                                style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                            노출기기별
+                        </button>
+                        <button class="retargeting-subtab" data-retarget-tab="seasonality"
+                                style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                            요일별 전환
+                        </button>
+                        <button class="retargeting-subtab" data-retarget-tab="seasonalityCategory"
+                                style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                            채널별 요일
+                        </button>
+                    </div>
+
+                    <!-- 성별/연령 리타겟팅 뷰 -->
+                    <div class="retargeting-tab-content active" id="ageGenderRetargetView">
+                        <!-- 자연어 인사이트 -->
+                        <div style="padding: 20px 24px; background: linear-gradient(135deg, #fce4ec 0%, #fff5f7 100%); border-bottom: 1px solid #e9ecef;">
+                            <div style="font-size: 14px; color: #c2185b; font-weight: 600; margin-bottom: 8px;">💡 성별/연령 타겟팅 인사이트</div>
+                            <div style="font-size: 13px; color: #424242; line-height: 1.7;" id="ageGenderRetargetInsightText">로딩 중...</div>
+                        </div>
+
+                        <div class="card" style="margin: 16px; border-radius: 12px;">
+                            <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">성별/연령 조합별 성과</h4>
+                                <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">어떤 연령대와 성별 조합이 가장 효과적인지 확인하세요</p>
+                            </div>
+                            <div style="padding: 16px 20px; overflow-x: auto;">
+                                <table class="data-table" id="ageGenderRetargetTable" style="margin-top: 0;">
+                                    <thead>
+                                        <tr>
+                                            <th style="min-width: 140px;">연령/성별</th>
+                                            <th class="sortable-header" data-table="ageGender" data-column="roas" style="min-width: 100px; text-align: right;">
+                                                ROAS
+                                                <div class="sort-icon active"><div class="sort-arrow up"></div><div class="sort-arrow down active"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="ageGender" data-column="cpa" style="min-width: 100px; text-align: right;">
+                                                CPA
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="ageGender" data-column="cost" style="min-width: 120px; text-align: right;">
+                                                광고비
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="ageGender" data-column="conversions" style="min-width: 80px; text-align: right;">
+                                                전환수
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="ageGender" data-column="revenue" style="min-width: 120px; text-align: right;">
+                                                전환값
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th style="min-width: 80px; text-align: center;">효율등급</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ageGenderRetargetTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 기기별 리타겟팅 뷰 -->
+                    <div class="retargeting-tab-content" id="deviceRetargetView" style="display: none;">
+                        <!-- 자연어 인사이트 -->
+                        <div style="padding: 20px 24px; background: linear-gradient(135deg, #e3f2fd 0%, #f5f9ff 100%); border-bottom: 1px solid #e9ecef;">
+                            <div style="font-size: 14px; color: #1565c0; font-weight: 600; margin-bottom: 8px;">💡 기기별 리타겟팅 인사이트</div>
+                            <div style="font-size: 13px; color: #424242; line-height: 1.7;" id="deviceRetargetInsightText">로딩 중...</div>
+                        </div>
+
+                        <div class="card" style="margin: 16px; border-radius: 12px;">
+                            <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">기기별 리타겟팅 성과</h4>
+                                <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">Android, iPhone, Computers, Tablets 등 기기별 광고 효율</p>
+                            </div>
+                            <div style="padding: 16px 20px; overflow-x: auto;">
+                                <table class="data-table" id="deviceRetargetTable" style="margin-top: 0;">
+                                    <thead>
+                                        <tr>
+                                            <th style="min-width: 150px;">기기</th>
+                                            <th class="sortable-header" data-table="device" data-column="roas" style="min-width: 100px; text-align: right;">
+                                                ROAS
+                                                <div class="sort-icon active"><div class="sort-arrow up"></div><div class="sort-arrow down active"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="device" data-column="cpa" style="min-width: 100px; text-align: right;">
+                                                CPA
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="device" data-column="cost" style="min-width: 120px; text-align: right;">
+                                                광고비
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="device" data-column="conversions" style="min-width: 80px; text-align: right;">
+                                                전환수
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="device" data-column="revenue" style="min-width: 120px; text-align: right;">
+                                                전환값
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th style="min-width: 80px; text-align: center;">효율등급</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="deviceRetargetTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 플랫폼별 리타겟팅 뷰 -->
+                    <div class="retargeting-tab-content" id="platformRetargetView" style="display: none;">
+                        <!-- 자연어 인사이트 -->
+                        <div style="padding: 20px 24px; background: linear-gradient(135deg, #f3e5f5 0%, #faf5ff 100%); border-bottom: 1px solid #e9ecef;">
+                            <div style="font-size: 14px; color: #7b1fa2; font-weight: 600; margin-bottom: 8px;">💡 플랫폼별 리타겟팅 인사이트</div>
+                            <div style="font-size: 13px; color: #424242; line-height: 1.7;" id="platformRetargetInsightText">로딩 중...</div>
+                        </div>
+
+                        <div class="card" style="margin: 16px; border-radius: 12px;">
+                            <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">플랫폼별 리타겟팅 성과</h4>
+                                <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">Cross-network, YouTube, Display 등 플랫폼별 광고 효율</p>
+                            </div>
+                            <div style="padding: 16px 20px; overflow-x: auto;">
+                                <table class="data-table" id="platformRetargetTable" style="margin-top: 0;">
+                                    <thead>
+                                        <tr>
+                                            <th style="min-width: 140px;">플랫폼</th>
+                                            <th class="sortable-header" data-table="platform" data-column="roas" style="min-width: 100px; text-align: right;">
+                                                ROAS
+                                                <div class="sort-icon active"><div class="sort-arrow up"></div><div class="sort-arrow down active"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="platform" data-column="cpa" style="min-width: 100px; text-align: right;">
+                                                CPA
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="platform" data-column="cost" style="min-width: 120px; text-align: right;">
+                                                광고비
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="platform" data-column="conversions" style="min-width: 80px; text-align: right;">
+                                                전환수
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="platform" data-column="revenue" style="min-width: 120px; text-align: right;">
+                                                전환값
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th style="min-width: 80px; text-align: center;">효율등급</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="platformRetargetTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 노출기기별 리타겟팅 뷰 -->
+                    <div class="retargeting-tab-content" id="devicePlatformRetargetView" style="display: none;">
+                        <!-- 자연어 인사이트 -->
+                        <div style="padding: 20px 24px; background: linear-gradient(135deg, #e0f2f1 0%, #f5fffd 100%); border-bottom: 1px solid #e9ecef;">
+                            <div style="font-size: 14px; color: #00796b; font-weight: 600; margin-bottom: 8px;">💡 노출기기별 인사이트</div>
+                            <div style="font-size: 13px; color: #424242; line-height: 1.7;" id="devicePlatformRetargetInsightText">로딩 중...</div>
+                        </div>
+
+                        <div class="card" style="margin: 16px; border-radius: 12px;">
+                            <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">노출기기별 성과</h4>
+                                <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">Mobile app, Mobile web, Desktop 등 노출기기별 광고 효율</p>
+                            </div>
+                            <div style="padding: 16px 20px; overflow-x: auto;">
+                                <table class="data-table" id="devicePlatformRetargetTable" style="margin-top: 0;">
+                                    <thead>
+                                        <tr>
+                                            <th style="min-width: 140px;">노출기기</th>
+                                            <th class="sortable-header" data-table="devicePlatform" data-column="roas" style="min-width: 100px; text-align: right;">
+                                                ROAS
+                                                <div class="sort-icon active"><div class="sort-arrow up"></div><div class="sort-arrow down active"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="devicePlatform" data-column="cpa" style="min-width: 100px; text-align: right;">
+                                                CPA
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="devicePlatform" data-column="cost" style="min-width: 120px; text-align: right;">
+                                                광고비
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="devicePlatform" data-column="conversions" style="min-width: 80px; text-align: right;">
+                                                전환수
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th class="sortable-header" data-table="devicePlatform" data-column="revenue" style="min-width: 120px; text-align: right;">
+                                                전환값
+                                                <div class="sort-icon"><div class="sort-arrow up"></div><div class="sort-arrow down"></div></div>
+                                            </th>
+                                            <th style="min-width: 80px; text-align: center;">효율등급</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="devicePlatformRetargetTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 요일별 전환 뷰 -->
+                    <div class="retargeting-tab-content" id="seasonalityView" style="display: none;">
+                        <!-- 자연어 인사이트 -->
+                        <div style="padding: 20px 24px; background: linear-gradient(135deg, #fff8e1 0%, #fffef5 100%); border-bottom: 1px solid #e9ecef;">
+                            <div style="font-size: 14px; color: #f57c00; font-weight: 600; margin-bottom: 8px;">💡 요일별 계절성 인사이트</div>
+                            <div style="font-size: 13px; color: #424242; line-height: 1.7;" id="seasonalityInsightText">로딩 중...</div>
+                        </div>
+
+                        <div class="card" style="margin: 16px; border-radius: 12px;">
+                            <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">요일별 평균 전환값</h4>
+                                <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">어떤 요일에 전환이 가장 활발한지 확인하세요</p>
+                            </div>
+                            <div style="padding: 16px 20px; overflow-x: auto;">
+                                <table class="data-table" id="seasonalityTable" style="margin-top: 0;">
+                                    <thead>
+                                        <tr>
+                                            <th style="min-width: 100px; text-align: center;">요일</th>
+                                            <th style="min-width: 150px; text-align: right;">평균 전환값</th>
+                                            <th style="min-width: 120px; text-align: right;">전체 대비</th>
+                                            <th style="min-width: 200px;">성과 수준</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="seasonalityTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 채널별 요일 분석 뷰 -->
+                    <div class="retargeting-tab-content" id="seasonalityCategoryView" style="display: none;">
+                        <!-- 자연어 인사이트 -->
+                        <div style="padding: 20px 24px; background: linear-gradient(135deg, #e8f5e9 0%, #f5fff5 100%); border-bottom: 1px solid #e9ecef;">
+                            <div style="font-size: 14px; color: #2e7d32; font-weight: 600; margin-bottom: 8px;">💡 채널별 요일 인사이트</div>
+                            <div style="font-size: 13px; color: #424242; line-height: 1.7;" id="seasonalityCategoryInsightText">로딩 중...</div>
+                        </div>
+
+                        <div class="card" style="margin: 16px; border-radius: 12px;">
+                            <div style="padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                <h4 style="font-size: 14px; font-weight: 600; color: var(--grey-800); margin: 0;">채널별 요일 성과</h4>
+                                <p style="font-size: 12px; color: var(--grey-600); margin: 4px 0 0 0;">각 채널이 가장 효율적인 요일을 확인하세요</p>
+                            </div>
+                            <div style="padding: 16px 20px; overflow-x: auto;">
+                                <table class="data-table" id="seasonalityCategoryTable" style="margin-top: 0;">
+                                    <thead>
+                                        <tr>
+                                            <th style="min-width: 140px;">채널</th>
+                                            <th style="min-width: 80px; text-align: center;">최고 요일</th>
+                                            <th style="min-width: 120px; text-align: right;">최고 전환값</th>
+                                            <th style="min-width: 80px; text-align: center;">최저 요일</th>
+                                            <th style="min-width: 120px; text-align: right;">최저 전환값</th>
+                                            <th style="min-width: 100px; text-align: right;">편차</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="seasonalityCategoryTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -2973,6 +3323,7 @@
             initDeviceTypeDropdowns();
             initPivotDropdowns();
             initPerformanceCharts();
+            initRetargetingAnalysis();
         }
 
         // 기간 정보 업데이트
@@ -5809,6 +6160,524 @@
         function renderPromotionDetailTable() {}
         function renderTopAdsetsTable() {}
         function renderAgeGenderTable() {}
+
+        // ========== 리타겟팅 및 계절성 분석 ==========
+
+        // 리타겟팅 테이블 정렬 상태
+        const retargetingSortState = {
+            ageGender: { column: 'roas', direction: 'desc' },
+            device: { column: 'roas', direction: 'desc' },
+            platform: { column: 'roas', direction: 'desc' },
+            devicePlatform: { column: 'roas', direction: 'desc' }
+        };
+
+        // 리타겟팅 분석 초기화
+        function initRetargetingAnalysis() {
+            renderAgeGenderRetargetTable();
+            renderDeviceRetargetTable();
+            renderPlatformRetargetTable();
+            renderDevicePlatformRetargetTable();
+            renderSeasonalityTable();
+            renderSeasonalityCategoryTable();
+            setupRetargetingTabEvents();
+            setupRetargetingSortEvents();
+        }
+
+        // 리타겟팅 테이블 정렬 이벤트 설정
+        function setupRetargetingSortEvents() {
+            document.querySelectorAll('.sortable-header[data-table]').forEach(th => {
+                th.addEventListener('click', function() {
+                    const tableType = this.getAttribute('data-table');
+                    const column = this.getAttribute('data-column');
+
+                    // 같은 열 클릭시 방향 토글, 다른 열이면 desc로 시작
+                    if (retargetingSortState[tableType].column === column) {
+                        retargetingSortState[tableType].direction =
+                            retargetingSortState[tableType].direction === 'desc' ? 'asc' : 'desc';
+                    } else {
+                        retargetingSortState[tableType].column = column;
+                        retargetingSortState[tableType].direction = 'desc';
+                    }
+
+                    // 해당 테이블 다시 렌더링
+                    switch(tableType) {
+                        case 'ageGender': renderAgeGenderRetargetTable(); break;
+                        case 'device': renderDeviceRetargetTable(); break;
+                        case 'platform': renderPlatformRetargetTable(); break;
+                        case 'devicePlatform': renderDevicePlatformRetargetTable(); break;
+                    }
+
+                    // 정렬 아이콘 업데이트
+                    updateRetargetingSortIcons(tableType);
+                });
+            });
+        }
+
+        // 정렬 아이콘 업데이트
+        function updateRetargetingSortIcons(tableType) {
+            const headers = document.querySelectorAll(`.sortable-header[data-table="${tableType}"]`);
+            headers.forEach(th => {
+                const column = th.getAttribute('data-column');
+                const sortIcon = th.querySelector('.sort-icon');
+                const upArrow = th.querySelector('.sort-arrow.up');
+                const downArrow = th.querySelector('.sort-arrow.down');
+
+                if (column === retargetingSortState[tableType].column) {
+                    sortIcon.classList.add('active');
+                    if (retargetingSortState[tableType].direction === 'asc') {
+                        upArrow.classList.add('active');
+                        downArrow.classList.remove('active');
+                    } else {
+                        upArrow.classList.remove('active');
+                        downArrow.classList.add('active');
+                    }
+                } else {
+                    sortIcon.classList.remove('active');
+                    upArrow.classList.remove('active');
+                    downArrow.classList.remove('active');
+                }
+            });
+        }
+
+        // 리타겟팅 탭 전환 이벤트
+        function setupRetargetingTabEvents() {
+            document.querySelectorAll('.retargeting-subtab').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 버튼 스타일 변경
+                    document.querySelectorAll('.retargeting-subtab').forEach(b => {
+                        b.style.background = 'white';
+                        b.style.color = '#495057';
+                        b.style.border = '1px solid #dee2e6';
+                    });
+                    this.style.background = '#1a73e8';
+                    this.style.color = 'white';
+                    this.style.border = 'none';
+
+                    // 콘텐츠 전환
+                    const targetTab = this.dataset.retargetTab;
+                    document.querySelectorAll('.retargeting-tab-content').forEach(content => {
+                        content.style.display = 'none';
+                        content.classList.remove('active');
+                    });
+
+                    const viewMap = {
+                        'ageGender': 'ageGenderRetargetView',
+                        'device': 'deviceRetargetView',
+                        'platform': 'platformRetargetView',
+                        'devicePlatform': 'devicePlatformRetargetView',
+                        'seasonality': 'seasonalityView',
+                        'seasonalityCategory': 'seasonalityCategoryView'
+                    };
+
+                    const targetView = document.getElementById(viewMap[targetTab]);
+                    if (targetView) {
+                        targetView.style.display = 'block';
+                        targetView.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        // 성별/연령 리타겟팅 테이블 렌더링
+        function renderAgeGenderRetargetTable() {
+            const retargeting = insightsData.retargeting_analysis || {};
+            const data = retargeting.by_age_gender || [];
+            const insights = insightsData.retargeting_insights || [];
+            const tbody = document.getElementById('ageGenderRetargetTableBody');
+
+            if (!tbody || data.length === 0) {
+                if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--grey-500);">데이터가 없습니다</td></tr>';
+                return;
+            }
+
+            // 정렬 상태에 따른 정렬
+            const filteredData = data.filter(item => item.roas > 0);
+            const { column, direction } = retargetingSortState.ageGender;
+            const sortedData = [...filteredData].sort((a, b) => {
+                const aVal = a[column] || 0;
+                const bVal = b[column] || 0;
+                return direction === 'desc' ? bVal - aVal : aVal - bVal;
+            });
+            const maxRoas = Math.max(...filteredData.map(d => d.roas), 100);
+
+            let html = '';
+            sortedData.forEach((item, index) => {
+                const genderIcon = item.gender === '남성' ? '👨' : '👩';
+                const roasColor = item.roas >= 50 ? '#2e7d32' : item.roas >= 20 ? '#1565c0' : '#d32f2f';
+                const efficiencyGrade = getEfficiencyGrade(item.roas, maxRoas);
+
+                html += `
+                    <tr>
+                        <td style="font-weight: 500;">${genderIcon} ${item.label || (item.age + ' ' + item.gender)}</td>
+                        <td style="text-align: right; font-weight: 700; color: ${roasColor};">${formatPercent(item.roas)}</td>
+                        <td style="text-align: right;">${item.cpa > 0 ? formatCurrency(item.cpa) : '-'}</td>
+                        <td style="text-align: right;">${formatCurrency(item.cost)}</td>
+                        <td style="text-align: right;">${formatNumber(item.conversions)}</td>
+                        <td style="text-align: right;">${formatCurrency(item.revenue)}</td>
+                        <td style="text-align: center;">${efficiencyGrade}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+
+            // 인사이트 업데이트
+            const ageGenderInsight = insights.find(i => i.type === 'retargeting_best_age_gender');
+            const insightText = document.getElementById('ageGenderRetargetInsightText');
+            if (insightText && ageGenderInsight) {
+                insightText.innerHTML = ageGenderInsight.message;
+            } else if (insightText && sortedData.length > 0) {
+                insightText.innerHTML = `<strong>${sortedData[0].label}</strong> 타겟이 ROAS <strong>${formatPercent(sortedData[0].roas)}</strong>로 가장 높은 효율을 보이고 있습니다.`;
+            }
+        }
+
+        // 기기별 리타겟팅 테이블 렌더링
+        function renderDeviceRetargetTable() {
+            const retargeting = insightsData.retargeting_analysis || {};
+            const data = retargeting.by_device || [];
+            const insights = insightsData.retargeting_insights || [];
+            const tbody = document.getElementById('deviceRetargetTableBody');
+
+            if (!tbody || data.length === 0) {
+                if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--grey-500);">데이터가 없습니다</td></tr>';
+                return;
+            }
+
+            // 정렬 상태에 따른 정렬
+            const filteredData = data.filter(item => item.roas > 0);
+            const { column, direction } = retargetingSortState.device;
+            const sortedData = [...filteredData].sort((a, b) => {
+                const aVal = a[column] || 0;
+                const bVal = b[column] || 0;
+                return direction === 'desc' ? bVal - aVal : aVal - bVal;
+            });
+            const maxRoas = Math.max(...filteredData.map(d => d.roas), 100);
+
+            let html = '';
+            sortedData.forEach((item, index) => {
+                const deviceIcon = getDeviceIcon(item.device);
+                const roasColor = item.roas >= 200 ? '#2e7d32' : item.roas >= 100 ? '#1565c0' : '#d32f2f';
+                const efficiencyGrade = getEfficiencyGrade(item.roas, maxRoas);
+
+                html += `
+                    <tr>
+                        <td style="font-weight: 500;">${deviceIcon} ${item.device}</td>
+                        <td style="text-align: right; font-weight: 700; color: ${roasColor};">${formatPercent(item.roas)}</td>
+                        <td style="text-align: right;">${item.cpa > 0 ? formatCurrency(item.cpa) : '-'}</td>
+                        <td style="text-align: right;">${formatCurrency(item.cost)}</td>
+                        <td style="text-align: right;">${formatNumber(item.conversions)}</td>
+                        <td style="text-align: right;">${formatCurrency(item.revenue)}</td>
+                        <td style="text-align: center;">${efficiencyGrade}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+
+            // 인사이트 업데이트
+            const deviceInsight = insights.find(i => i.type === 'retargeting_best_device');
+            const insightText = document.getElementById('deviceRetargetInsightText');
+            if (insightText && deviceInsight) {
+                insightText.innerHTML = deviceInsight.message;
+            } else if (insightText && sortedData.length > 0) {
+                insightText.innerHTML = `<strong>${sortedData[0].device}</strong> 기기가 ROAS <strong>${formatPercent(sortedData[0].roas)}</strong>로 가장 높은 효율을 보이고 있습니다.`;
+            }
+        }
+
+        // 플랫폼별 리타겟팅 테이블 렌더링
+        function renderPlatformRetargetTable() {
+            const retargeting = insightsData.retargeting_analysis || {};
+            const data = retargeting.by_platform || [];
+            const insights = insightsData.retargeting_insights || [];
+            const tbody = document.getElementById('platformRetargetTableBody');
+
+            if (!tbody || data.length === 0) {
+                if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--grey-500);">데이터가 없습니다</td></tr>';
+                return;
+            }
+
+            // 정렬 상태에 따른 정렬
+            const { column, direction } = retargetingSortState.platform;
+            const sortedData = [...data].sort((a, b) => {
+                const aVal = a[column] || 0;
+                const bVal = b[column] || 0;
+                return direction === 'desc' ? bVal - aVal : aVal - bVal;
+            });
+            const maxRoas = Math.max(...data.filter(d => d.roas > 0).map(d => d.roas), 100);
+
+            let html = '';
+            sortedData.forEach(item => {
+                const platformIcon = getPlatformIcon(item.platform);
+                const roasColor = item.roas >= 150 ? '#2e7d32' : item.roas >= 50 ? '#1565c0' : item.roas > 0 ? '#e65100' : '#9e9e9e';
+                const efficiencyGrade = item.roas > 0 ? getEfficiencyGrade(item.roas, maxRoas) : '<span style="background: #f5f5f5; color: #9e9e9e; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">-</span>';
+
+                html += `
+                    <tr>
+                        <td style="font-weight: 500;">${platformIcon} ${item.platform}</td>
+                        <td style="text-align: right; font-weight: 700; color: ${roasColor};">${item.roas > 0 ? formatPercent(item.roas) : '-'}</td>
+                        <td style="text-align: right;">${item.cpa > 0 ? formatCurrency(item.cpa) : '-'}</td>
+                        <td style="text-align: right;">${formatCurrency(item.cost)}</td>
+                        <td style="text-align: right;">${formatNumber(item.conversions)}</td>
+                        <td style="text-align: right;">${formatCurrency(item.revenue)}</td>
+                        <td style="text-align: center;">${efficiencyGrade}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+
+            // 인사이트 업데이트
+            const platformInsight = insights.find(i => i.type === 'retargeting_best_platform');
+            const insightText = document.getElementById('platformRetargetInsightText');
+            if (insightText && platformInsight) {
+                insightText.innerHTML = platformInsight.message;
+            } else if (insightText && sortedData.length > 0 && sortedData[0].roas > 0) {
+                insightText.innerHTML = `<strong>${sortedData[0].platform}</strong> 플랫폼이 ROAS <strong>${formatPercent(sortedData[0].roas)}</strong>로 가장 높은 효율을 기록 중입니다.`;
+            }
+        }
+
+        // 노출기기별 리타겟팅 테이블 렌더링
+        function renderDevicePlatformRetargetTable() {
+            const retargeting = insightsData.retargeting_analysis || {};
+            const data = retargeting.by_device_platform || [];
+            const insights = insightsData.retargeting_insights || [];
+            const tbody = document.getElementById('devicePlatformRetargetTableBody');
+
+            if (!tbody || data.length === 0) {
+                if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--grey-500);">데이터가 없습니다</td></tr>';
+                return;
+            }
+
+            // 정렬 상태에 따른 정렬
+            const { column, direction } = retargetingSortState.devicePlatform;
+            const sortedData = [...data].sort((a, b) => {
+                const aVal = a[column] || 0;
+                const bVal = b[column] || 0;
+                return direction === 'desc' ? bVal - aVal : aVal - bVal;
+            });
+            const maxRoas = Math.max(...data.filter(d => d.roas > 0).map(d => d.roas), 100);
+
+            let html = '';
+            sortedData.forEach(item => {
+                const devicePlatformIcon = getDevicePlatformIcon(item.device_platform);
+                const roasColor = item.roas >= 30 ? '#2e7d32' : item.roas >= 10 ? '#1565c0' : item.roas > 0 ? '#e65100' : '#9e9e9e';
+                const efficiencyGrade = item.roas > 0 ? getEfficiencyGrade(item.roas, maxRoas) : '<span style="background: #f5f5f5; color: #9e9e9e; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">-</span>';
+
+                html += `
+                    <tr>
+                        <td style="font-weight: 500;">${devicePlatformIcon} ${item.device_platform}</td>
+                        <td style="text-align: right; font-weight: 700; color: ${roasColor};">${item.roas > 0 ? formatPercent(item.roas) : '-'}</td>
+                        <td style="text-align: right;">${item.cpa > 0 ? formatCurrency(item.cpa) : '-'}</td>
+                        <td style="text-align: right;">${formatCurrency(item.cost)}</td>
+                        <td style="text-align: right;">${formatNumber(item.conversions)}</td>
+                        <td style="text-align: right;">${formatCurrency(item.revenue)}</td>
+                        <td style="text-align: center;">${efficiencyGrade}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+
+            // 인사이트 업데이트
+            const devicePlatformInsight = insights.find(i => i.type === 'retargeting_best_device_platform');
+            const insightText = document.getElementById('devicePlatformRetargetInsightText');
+            if (insightText && devicePlatformInsight) {
+                insightText.innerHTML = devicePlatformInsight.message;
+            } else if (insightText && sortedData.length > 0 && sortedData[0].roas > 0) {
+                insightText.innerHTML = `<strong>${sortedData[0].device_platform}</strong> 노출기기가 ROAS <strong>${formatPercent(sortedData[0].roas)}</strong>로 가장 높은 효율을 기록 중입니다.`;
+            }
+        }
+
+        // 노출기기 아이콘 반환
+        function getDevicePlatformIcon(devicePlatform) {
+            const icons = {
+                'Mobile app': '📱',
+                'Mobile web': '📲',
+                'Desktop': '🖥️',
+                'Uncategorized': '❓'
+            };
+            return icons[devicePlatform] || '📊';
+        }
+
+        // 요일별 전환 테이블 렌더링
+        function renderSeasonalityTable() {
+            const seasonality = insightsData.seasonality_analysis || {};
+            const data = seasonality.overall || [];
+            const insights = insightsData.seasonality_insights || [];
+            const tbody = document.getElementById('seasonalityTableBody');
+
+            if (!tbody || data.length === 0) {
+                if (tbody) tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 20px; color: var(--grey-500);">데이터가 없습니다</td></tr>';
+                return;
+            }
+
+            // 평균 계산
+            const avgRevenue = data.reduce((sum, d) => sum + d.avg_revenue, 0) / data.length;
+            const maxRevenue = Math.max(...data.map(d => d.avg_revenue));
+            const minRevenue = Math.min(...data.map(d => d.avg_revenue));
+
+            // 요일 순서 지정
+            const dayOrder = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];
+            const sortedData = [...data].sort((a, b) => dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day));
+
+            let html = '';
+            sortedData.forEach(item => {
+                const diffPercent = ((item.avg_revenue - avgRevenue) / avgRevenue * 100).toFixed(1);
+                const diffColor = diffPercent >= 0 ? '#2e7d32' : '#d32f2f';
+                const diffSign = diffPercent >= 0 ? '+' : '';
+                const dayEmoji = getDayEmoji(item.day);
+
+                let performanceBar = '';
+                const barWidth = ((item.avg_revenue - minRevenue) / (maxRevenue - minRevenue) * 100).toFixed(0);
+                const barColor = item.avg_revenue === maxRevenue ? '#2e7d32' : item.avg_revenue === minRevenue ? '#d32f2f' : '#1a73e8';
+                performanceBar = `<div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="flex: 1; background: #e9ecef; border-radius: 4px; height: 8px; overflow: hidden;">
+                        <div style="width: ${barWidth}%; background: ${barColor}; height: 100%; border-radius: 4px;"></div>
+                    </div>
+                    <span style="font-size: 11px; color: ${barColor}; font-weight: 600;">${item.avg_revenue === maxRevenue ? '최고' : item.avg_revenue === minRevenue ? '최저' : ''}</span>
+                </div>`;
+
+                html += `
+                    <tr>
+                        <td style="text-align: center; font-weight: 600;">${dayEmoji} ${item.day}</td>
+                        <td style="text-align: right; font-weight: 500;">${formatCurrency(item.avg_revenue)}</td>
+                        <td style="text-align: right; color: ${diffColor}; font-weight: 600;">${diffSign}${diffPercent}%</td>
+                        <td>${performanceBar}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+
+            // 인사이트 업데이트
+            const insightText = document.getElementById('seasonalityInsightText');
+            if (insightText) {
+                const bestDay = insights.find(i => i.type === 'best_day_overall');
+                const worstDay = insights.find(i => i.type === 'worst_day_overall');
+                const weekendInsight = insights.find(i => i.type === 'weekend_better' || i.type === 'weekday_better');
+
+                let insightHtml = '';
+                if (bestDay) insightHtml += bestDay.message + ' ';
+                if (worstDay) insightHtml += worstDay.message + ' ';
+                if (weekendInsight) insightHtml += '<br>' + weekendInsight.message;
+
+                insightText.innerHTML = insightHtml || '요일별 전환 데이터를 분석 중입니다.';
+            }
+        }
+
+        // 채널별 요일 분석 테이블 렌더링
+        function renderSeasonalityCategoryTable() {
+            const seasonality = insightsData.seasonality_analysis || {};
+            const byCategory = seasonality.by_category || {};
+            const insights = insightsData.seasonality_insights || [];
+            const tbody = document.getElementById('seasonalityCategoryTableBody');
+
+            const categories = Object.keys(byCategory);
+            if (!tbody || categories.length === 0) {
+                if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: var(--grey-500);">데이터가 없습니다</td></tr>';
+                return;
+            }
+
+            let html = '';
+            categories.forEach(category => {
+                const dayData = byCategory[category];
+                if (!dayData || dayData.length === 0) return;
+
+                // 최고/최저 요일 찾기
+                const sortedDays = [...dayData].sort((a, b) => b.avg_revenue - a.avg_revenue);
+                const bestDay = sortedDays[0];
+                const worstDay = sortedDays[sortedDays.length - 1];
+                const diffPercent = ((bestDay.avg_revenue - worstDay.avg_revenue) / worstDay.avg_revenue * 100).toFixed(1);
+
+                const categoryIcon = getCategoryIcon(category);
+
+                html += `
+                    <tr>
+                        <td style="font-weight: 500;">${categoryIcon} ${category}</td>
+                        <td style="text-align: center;"><span style="background: #e8f5e9; color: #2e7d32; padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 600;">${getDayEmoji(bestDay.day)} ${bestDay.day}</span></td>
+                        <td style="text-align: right; color: #2e7d32; font-weight: 600;">${formatCurrency(bestDay.avg_revenue)}</td>
+                        <td style="text-align: center;"><span style="background: #ffebee; color: #d32f2f; padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 600;">${getDayEmoji(worstDay.day)} ${worstDay.day}</span></td>
+                        <td style="text-align: right; color: #d32f2f;">${formatCurrency(worstDay.avg_revenue)}</td>
+                        <td style="text-align: right; font-weight: 600; color: #1565c0;">+${diffPercent}%</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+
+            // 인사이트 업데이트
+            const insightText = document.getElementById('seasonalityCategoryInsightText');
+            if (insightText) {
+                const categoryInsights = insights.filter(i => i.type && i.type.startsWith('best_day_') && i.category);
+                if (categoryInsights.length > 0) {
+                    const insightHtml = categoryInsights.map(i => i.message).join('<br>');
+                    insightText.innerHTML = insightHtml;
+                } else {
+                    insightText.innerHTML = '각 채널별로 가장 효율적인 요일이 다릅니다. 채널 특성에 맞게 요일별 예산을 조정해보세요.';
+                }
+            }
+        }
+
+        // 기기 아이콘 반환
+        function getDeviceIcon(device) {
+            const icons = {
+                'Computers': '🖥️',
+                'Mobile phones': '📱',
+                'Tablets': '📱',
+                'TV screens': '📺',
+                'OTHER': '❓'
+            };
+            return icons[device] || '📊';
+        }
+
+        // 플랫폼 아이콘 반환
+        function getPlatformIcon(platform) {
+            const icons = {
+                'Cross-network': '🌐',
+                'Display Network': '🖼️',
+                'Google search': '🔍',
+                'Search partners': '🔎',
+                'YouTube': '▶️'
+            };
+            return icons[platform] || '📊';
+        }
+
+        // 요일 이모지 반환
+        function getDayEmoji(day) {
+            const emojis = {
+                '월요일': '🌙',
+                '화요일': '🔥',
+                '수요일': '💧',
+                '목요일': '🌳',
+                '금요일': '💰',
+                '토요일': '🌍',
+                '일요일': '☀️'
+            };
+            return emojis[day] || '📅';
+        }
+
+        // 채널 아이콘 반환
+        function getCategoryIcon(category) {
+            if (category.includes('메타')) return '📘';
+            if (category.includes('네이버')) return '🟢';
+            if (category.includes('구글')) return '🔵';
+            return '📊';
+        }
+
+        // 효율 등급 뱃지 반환
+        function getEfficiencyGrade(roas, maxRoas) {
+            if (maxRoas === 0) return '<span style="background: #f5f5f5; color: #9e9e9e; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">-</span>';
+            const ratio = roas / maxRoas;
+            if (ratio >= 0.8) {
+                return '<span style="background: #e8f5e9; color: #2e7d32; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">A등급</span>';
+            } else if (ratio >= 0.5) {
+                return '<span style="background: #e3f2fd; color: #1565c0; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">B등급</span>';
+            } else if (ratio >= 0.2) {
+                return '<span style="background: #fff3e0; color: #e65100; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">C등급</span>';
+            } else {
+                return '<span style="background: #ffebee; color: #d32f2f; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">D등급</span>';
+            }
+        }
 
         // 유틸리티 함수들
         function formatCurrency(value) {
