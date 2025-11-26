@@ -861,7 +861,15 @@
                     <div class="collapsible-header">
                         <div class="collapsible-title">
                             <span class="collapsible-icon">🔬</span>
-                            <span>데이터 기반 의사결정 도구 (성과 기회, 예산 투자, 경고, 타겟팅)</span>
+                            <span>데이터 기반 의사결정 도구</span>
+                            <span class="decision-info-tooltip" style="margin-left: 8px; cursor: help; position: relative;">
+                                <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: var(--grey-200); border-radius: 50%; font-size: 11px; color: var(--grey-600);">?</span>
+                                <span class="decision-tooltip-content" style="display: none; position: absolute; left: 50%; transform: translateX(-50%); bottom: 130%; width: 280px; padding: 12px; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); font-size: 12px; color: var(--grey-700); line-height: 1.6; z-index: 1000; font-weight: 400;">
+                                    <strong style="color: var(--primary-main);">이 도구는 무엇인가요?</strong><br>
+                                    광고 데이터를 분석하여 <strong>어디에 돈을 더 쓸지</strong>, <strong>어떤 광고를 줄일지</strong> 쉽게 결정할 수 있도록 도와드립니다.
+                                    <span style="display: block; width: 10px; height: 10px; background: white; position: absolute; left: 50%; bottom: -5px; transform: translateX(-50%) rotate(45deg);"></span>
+                                </span>
+                            </span>
                         </div>
                         <button class="collapsible-toggle expanded">
                             <span>접기</span>
@@ -869,93 +877,71 @@
                         </button>
                     </div>
                     <div class="collapsible-content" style="display: block;">
-                        <!-- 탭 버튼 -->
-                        <div class="view-type-section" style="margin-bottom: 24px; flex-wrap: wrap;">
-                            <button class="view-btn decision-tool-tab-btn active" data-tab="opportunity">🎯 성과 기회</button>
-                            <button class="view-btn decision-tool-tab-btn" data-tab="forecast">🔮 AI 예측</button>
-                            <button class="view-btn decision-tool-tab-btn" data-tab="budget">💰 예산 가이드</button>
-                            <button class="view-btn decision-tool-tab-btn" data-tab="warning">⚠️ 성과 경고</button>
-                            <button class="view-btn decision-tool-tab-btn" data-tab="targeting">👥 타겟 최적화</button>
+
+                        <!-- 스토리 기반 인트로 -->
+                        <div style="margin-bottom: 20px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; color: white;">
+                            <div style="display: flex; align-items: flex-start; gap: 16px;">
+                                <div style="font-size: 40px; line-height: 1;">📊</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">오늘의 광고 성과, 한눈에 파악하세요</div>
+                                    <div style="font-size: 13px; opacity: 0.9; line-height: 1.6;">
+                                        복잡한 데이터를 쉽게 이해할 수 있도록 정리했습니다. 아래 탭에서 <strong>지금 해야 할 일</strong>을 확인하세요.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 메인 탭 버튼 (컴팩트) -->
+                        <div class="view-type-section" style="margin-bottom: 16px; flex-wrap: wrap; gap: 6px;">
+                            <button class="view-btn decision-tool-tab-btn active" data-tab="summary" style="padding: 8px 14px; font-size: 12px;">
+                                📋 오늘의 요약
+                            </button>
+                            <button class="view-btn decision-tool-tab-btn" data-tab="opportunity" style="padding: 8px 14px; font-size: 12px;">
+                                🎯 성과 기회
+                            </button>
+                            <button class="view-btn decision-tool-tab-btn" data-tab="warning" style="padding: 8px 14px; font-size: 12px;">
+                                ⚠️ 주의 필요
+                            </button>
+                            <button class="view-btn decision-tool-tab-btn" data-tab="targeting" style="padding: 8px 14px; font-size: 12px;">
+                                👥 타겟 분석
+                            </button>
+                            <button class="view-btn decision-tool-tab-btn" data-tab="forecast" style="padding: 8px 14px; font-size: 12px;">
+                                🔮 AI 예측
+                            </button>
+                        </div>
+
+                        <!-- 탭 0: 오늘의 요약 (새로운 메인 탭) -->
+                        <div class="decision-tool-tab-content active" id="summaryTab">
+                            <div id="summaryContent">
+                                <p style="color: var(--grey-500); padding: 20px;">데이터를 불러오는 중...</p>
+                            </div>
                         </div>
 
                         <!-- 탭 1: 성과 기회 분석 -->
-                        <div class="decision-tool-tab-content active" id="opportunityTab">
-                            <div class="chart-section card" style="margin-bottom: 16px;">
-                                <div class="chart-header">🎯 성과 기회 분석: 지금 확대해야 할 캠페인</div>
-                                <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
-                                    ROAS가 높고 효율적인 캠페인을 자동으로 찾아 <strong>예산 증액 기회</strong>를 제안합니다.
-                                </div>
-                                <div id="opportunityContent" style="padding: 20px;">
-                                    <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
-                                </div>
+                        <div class="decision-tool-tab-content" id="opportunityTab" style="display: none;">
+                            <div id="opportunityContent">
+                                <p style="color: var(--grey-500); padding: 20px;">데이터를 불러오는 중...</p>
                             </div>
                         </div>
 
-                        <!-- 탭 2: 예산 투자 가이드 -->
-                        <div class="decision-tool-tab-content" id="budgetGuideTab" style="display: none;">
-                            <div class="chart-section card" style="margin-bottom: 16px;">
-                                <div class="chart-header">💰 예산 투자 가이드: 어디에 투자해야 할까요?</div>
-                                <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
-                                    각 유형별 성과 데이터를 종합하여 <strong>구체적인 투자 전략</strong>을 제안합니다.
-                                    <div style="margin-top: 8px; padding: 8px; background: var(--grey-50); border-radius: 6px; font-size: 12px;">
-                                        <strong>📌 분석 기준:</strong> ROAS, CPA, 전환수를 종합하여 투자 우선순위를 산정합니다.
-                                    </div>
-                                </div>
-                                <div id="budgetGuideContent" style="padding: 20px;">
-                                    <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 탭 3: 성과 개선 경고 -->
+                        <!-- 탭 2: 주의 필요 (경고) -->
                         <div class="decision-tool-tab-content" id="warningTab" style="display: none;">
-                            <div class="chart-section card" style="margin-bottom: 16px;">
-                                <div class="chart-header">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span>⚠️ 성과 개선 경고: 주의가 필요한 캠페인</span>
-                                    </div>
-                                </div>
-                                <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
-                                    ROAS가 낮거나 성과가 하락하는 캠페인을 알려드립니다. 빠르게 대응하면 손실을 줄일 수 있습니다.
-                                </div>
-                                <div id="warningContent" style="padding: 20px;">
-                                    <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
-                                </div>
+                            <div id="warningContent">
+                                <p style="color: var(--grey-500); padding: 20px;">데이터를 불러오는 중...</p>
                             </div>
                         </div>
 
-                        <!-- 탭 4: 타겟팅 최적화 -->
+                        <!-- 탭 3: 타겟 분석 -->
                         <div class="decision-tool-tab-content" id="targetingTab" style="display: none;">
-                            <div class="chart-section card" style="margin-bottom: 16px;">
-                                <div class="chart-header">👥 타겟팅 최적화: 어떤 고객에게 집중할까요?</div>
-                                <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%); line-height: 1.7; border-radius: 8px; margin: 0 20px 12px 20px;">
-                                    <strong style="color: var(--primary-main);">📖 이 섹션은 무엇을 보여주나요?</strong><br>
-                                    성별, 연령, 플랫폼별 성과를 분석하여 <strong>가장 효율적인 타겟 그룹</strong>을 찾아드립니다.<br><br>
-                                    <strong style="color: var(--primary-main);">💡 왜 중요한가요?</strong><br>
-                                    • 효율적인 타겟에 예산을 집중하면 <strong>ROAS를 크게 개선</strong>할 수 있습니다<br>
-                                    • 비효율적인 타겟의 예산을 줄여 <strong>낭비를 방지</strong>할 수 있습니다
-                                </div>
-                                <div id="targetingContent" style="padding: 20px;">
-                                    <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
-                                </div>
+                            <div id="targetingContent">
+                                <p style="color: var(--grey-500); padding: 20px;">데이터를 불러오는 중...</p>
                             </div>
                         </div>
 
-                        <!-- 탭 5: AI 예측 (Prophet) -->
+                        <!-- 탭 4: AI 예측 (Prophet) -->
                         <div class="decision-tool-tab-content" id="forecastTab" style="display: none;">
-                            <div class="chart-section card" style="margin-bottom: 16px;">
-                                <div class="chart-header">🔮 AI 예측 분석: 향후 30일 ROAS & CPA 전망</div>
-                                <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #f3e5f5 0%, #fce4ec 100%); line-height: 1.7; border-radius: 8px; margin: 0 20px 12px 20px;">
-                                    <strong style="color: #7b1fa2;">📖 Prophet AI 예측이란?</strong><br>
-                                    페이스북이 개발한 시계열 예측 모델로, 과거 데이터를 학습하여 <strong>향후 30일간의 ROAS와 CPA를 예측</strong>합니다.<br><br>
-                                    <strong style="color: #7b1fa2;">💡 활용 방법</strong><br>
-                                    • <strong>ROAS 100% 이상</strong> 채널에 예산을 선제적으로 증액하세요<br>
-                                    • <strong>ROAS 100% 미만</strong> 채널은 원인 분석 후 크리에이티브 교체를 검토하세요<br>
-                                    • <strong>CPA가 낮은</strong> 상품/타겟에 집중하여 효율을 극대화하세요
-                                </div>
-                                <div id="forecastContent" style="padding: 20px;">
-                                    <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
-                                </div>
+                            <div id="forecastContent">
+                                <p style="color: var(--grey-500); padding: 20px;">데이터를 불러오는 중...</p>
                             </div>
                         </div>
                     </div>
@@ -3343,160 +3329,428 @@
 
         // 데이터 기반 의사결정 도구 렌더링
         function renderDecisionTools() {
+            renderSummaryTab();
             renderOpportunityTab();
-            renderForecastTab();
-            renderBudgetGuideTab();
             renderWarningTab();
             renderTargetingTab();
+            renderForecastTab();
             initDecisionToolTabs();
+            initDecisionTooltips();
         }
 
-        // 탭 1: 성과 기회 분석 (Compact + ROAS/CPA 인사이트)
-        function renderOpportunityTab() {
-            const opportunities = insightsData.alerts.filter(a => a.severity === 'opportunity' || a.severity === 'positive');
-            const topCategories = insightsData.top_categories.slice(0, 5);
-            const forecast = insightsData.prophet_forecast || null;
+        // 툴팁 초기화
+        function initDecisionTooltips() {
+            // 헤더 물음표 툴팁
+            document.querySelectorAll('.decision-info-tooltip').forEach(tooltip => {
+                tooltip.addEventListener('mouseenter', function() {
+                    const content = this.querySelector('.decision-tooltip-content');
+                    if (content) content.style.display = 'block';
+                });
+                tooltip.addEventListener('mouseleave', function() {
+                    const content = this.querySelector('.decision-tooltip-content');
+                    if (content) content.style.display = 'none';
+                });
+            });
+
+            // 인라인 툴팁 (? 아이콘)
+            document.addEventListener('mouseenter', function(e) {
+                if (e.target && e.target.classList && e.target.classList.contains('inline-help-icon')) {
+                    const tooltipText = e.target.getAttribute('data-tooltip');
+                    if (tooltipText) {
+                        showInlineTooltip(e.target, tooltipText);
+                    }
+                }
+            }, true);
+
+            document.addEventListener('mouseleave', function(e) {
+                if (e.target && e.target.classList && e.target.classList.contains('inline-help-icon')) {
+                    hideInlineTooltip();
+                }
+            }, true);
+        }
+
+        // 인라인 툴팁 표시
+        function showInlineTooltip(element, text) {
+            let tooltip = document.getElementById('inlineDecisionTooltip');
+            if (!tooltip) {
+                tooltip = document.createElement('div');
+                tooltip.id = 'inlineDecisionTooltip';
+                tooltip.style.cssText = 'position: fixed; background: #1a1a2e; color: white; padding: 10px 14px; border-radius: 8px; font-size: 12px; max-width: 280px; line-height: 1.5; z-index: 10000; box-shadow: 0 4px 20px rgba(0,0,0,0.25); pointer-events: none;';
+                document.body.appendChild(tooltip);
+            }
+            tooltip.innerHTML = text;
+            tooltip.style.display = 'block';
+
+            const rect = element.getBoundingClientRect();
+            tooltip.style.left = rect.left + 'px';
+            tooltip.style.top = (rect.bottom + 8) + 'px';
+        }
+
+        // 인라인 툴팁 숨기기
+        function hideInlineTooltip() {
+            const tooltip = document.getElementById('inlineDecisionTooltip');
+            if (tooltip) tooltip.style.display = 'none';
+        }
+
+        // 탭 0: 오늘의 요약 (새로운 메인 탭)
+        function renderSummaryTab() {
             const summary = insightsData.summary || {};
+            const topCategories = insightsData.top_categories || [];
             const productPerformance = insightsData.product_performance || [];
+            const genderData = (insightsData.gender_performance || []).filter(g => isValidGender(g.gender));
+            const timeseries = insightsData.timeseries || {};
+
+            const avgRoas = summary.overall_roas || 0;
+            const avgCpa = summary.overall_cpa || 0;
+            const totalConversions = summary.total_conversions || 0;
+            const totalRevenue = summary.total_revenue || 0;
+            const totalCost = summary.total_cost || 0;
+
+            // 성과 상태 판단
+            const roasStatus = avgRoas >= 200 ? 'excellent' : avgRoas >= 150 ? 'good' : avgRoas >= 100 ? 'normal' : 'warning';
+            const statusConfig = {
+                excellent: { text: '매우 좋음', color: '#00c853', bg: '#e8f5e9', icon: '🎉' },
+                good: { text: '양호', color: '#2e7d32', bg: '#e8f5e9', icon: '👍' },
+                normal: { text: '보통', color: '#f57c00', bg: '#fff3e0', icon: '📊' },
+                warning: { text: '개선 필요', color: '#d32f2f', bg: '#ffebee', icon: '⚠️' }
+            };
+            const status = statusConfig[roasStatus];
+
+            // 최고/최저 성과 찾기
+            const sortedByRoas = [...topCategories].sort((a, b) => b.roas - a.roas);
+            const sortedByCpa = [...topCategories].sort((a, b) => a.cpa - b.cpa);
+            const topChannel = sortedByRoas[0];
+            const lowCpaChannel = sortedByCpa[0];
+
+            // 월별 추세에서 최근 변화 계산
+            let recentTrend = '';
+            let trendIcon = '';
+            if (timeseries.monthly_growth && timeseries.monthly_growth.length > 0) {
+                const lastMonth = timeseries.monthly_growth[timeseries.monthly_growth.length - 1];
+                if (lastMonth.roas_change > 10) {
+                    recentTrend = `지난달 대비 ROAS ${lastMonth.roas_change.toFixed(1)}%p 상승`;
+                    trendIcon = '📈';
+                } else if (lastMonth.roas_change < -10) {
+                    recentTrend = `지난달 대비 ROAS ${Math.abs(lastMonth.roas_change).toFixed(1)}%p 하락`;
+                    trendIcon = '📉';
+                } else {
+                    recentTrend = '지난달과 비슷한 성과 유지 중';
+                    trendIcon = '➡️';
+                }
+            }
 
             let html = '';
 
-            // 1. 핵심 지표 요약 (Compact)
-            const avgCpa = summary.overall_cpa || 0;
-            const avgRoas = summary.overall_roas || 0;
-            const roasStatus = avgRoas >= 200 ? '양호' : avgRoas >= 100 ? '보통' : '개선필요';
-            const roasColor = avgRoas >= 200 ? '#2e7d32' : avgRoas >= 100 ? '#f57c00' : '#d32f2f';
-
+            // 1. 핵심 지표 대시보드 (카드 형태)
             html += `
-                <div style="margin-bottom: 16px; padding: 16px; background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%); border-radius: 12px; color: white;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-                        <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
+                    <!-- 전체 ROAS -->
+                    <div style="padding: 16px; background: ${status.bg}; border-radius: 12px; border: 1px solid ${status.color}20; position: relative;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                             <div>
-                                <div style="font-size: 10px; opacity: 0.8;">ROAS</div>
-                                <div style="font-size: 22px; font-weight: 800;">${formatPercent(avgRoas)}</div>
+                                <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                                    ROAS
+                                    <span class="inline-help-icon" data-tooltip="<strong>ROAS란?</strong><br>광고비 대비 매출 비율입니다.<br>예: ROAS 200%는 1만원 광고비로 2만원 매출을 올렸다는 의미입니다." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: var(--grey-300); border-radius: 50%; font-size: 9px; color: var(--grey-600); cursor: help;">?</span>
+                                </div>
+                                <div style="font-size: 24px; font-weight: 800; color: ${status.color};">${formatPercent(avgRoas)}</div>
                             </div>
-                            <div>
-                                <div style="font-size: 10px; opacity: 0.8;">CPA</div>
-                                <div style="font-size: 22px; font-weight: 800;">${formatCurrency(avgCpa)}</div>
-                            </div>
-                            <div>
-                                <div style="font-size: 10px; opacity: 0.8;">전환</div>
-                                <div style="font-size: 22px; font-weight: 800;">${formatNumber(summary.total_conversions || 0)}</div>
+                            <div style="padding: 4px 8px; background: ${status.color}; color: white; border-radius: 12px; font-size: 10px; font-weight: 600;">
+                                ${status.icon} ${status.text}
                             </div>
                         </div>
-                        <div style="padding: 6px 14px; background: ${roasColor}; border-radius: 20px; font-size: 11px; font-weight: 600;">
-                            ${roasStatus}
+                    </div>
+
+                    <!-- CPA -->
+                    <div style="padding: 16px; background: #e3f2fd; border-radius: 12px; border: 1px solid #90caf920;">
+                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                            CPA
+                            <span class="inline-help-icon" data-tooltip="<strong>CPA란?</strong><br>전환 1건당 드는 비용입니다.<br>예: CPA 10,000원이면 구매 1건에 광고비 1만원이 든다는 의미입니다. 낮을수록 효율적입니다." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: var(--grey-300); border-radius: 50%; font-size: 9px; color: var(--grey-600); cursor: help;">?</span>
+                        </div>
+                        <div style="font-size: 24px; font-weight: 800; color: #1565c0;">${formatCurrency(avgCpa)}</div>
+                    </div>
+
+                    <!-- 총 전환 -->
+                    <div style="padding: 16px; background: #f3e5f5; border-radius: 12px; border: 1px solid #ce93d820;">
+                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                            총 전환수
+                            <span class="inline-help-icon" data-tooltip="<strong>전환이란?</strong><br>광고를 통해 발생한 구매, 가입 등의 목표 행동 수입니다." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: var(--grey-300); border-radius: 50%; font-size: 9px; color: var(--grey-600); cursor: help;">?</span>
+                        </div>
+                        <div style="font-size: 24px; font-weight: 800; color: #7b1fa2;">${formatNumber(totalConversions)}</div>
+                    </div>
+
+                    <!-- 총 매출 -->
+                    <div style="padding: 16px; background: #fff8e1; border-radius: 12px; border: 1px solid #ffcc8020;">
+                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">총 매출</div>
+                        <div style="font-size: 24px; font-weight: 800; color: #f57c00;">${formatCurrency(totalRevenue)}</div>
+                    </div>
+                </div>
+            `;
+
+            // 2. 한줄 요약 (스토리텔링)
+            html += `
+                <div style="margin-bottom: 20px; padding: 16px 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px; border-left: 4px solid ${status.color};">
+                    <div style="font-size: 14px; color: var(--grey-900); line-height: 1.7;">
+                        <span style="font-size: 18px; margin-right: 8px;">${trendIcon}</span>
+                        ${recentTrend ? `<strong>${recentTrend}</strong>입니다. ` : ''}
+                        ${topChannel ? `현재 <strong style="color: #2e7d32;">${topChannel.name}</strong> 채널이 ROAS ${formatPercent(topChannel.roas)}로 가장 좋은 성과를 보이고 있습니다.` : ''}
+                    </div>
+                </div>
+            `;
+
+            // 3. 지금 해야 할 일 3가지
+            html += `
+                <div style="margin-bottom: 20px;">
+                    <div style="font-size: 14px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 18px;">✅</span> 지금 바로 할 수 있는 일
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+            `;
+
+            // 액션 1: 확대할 채널
+            if (topChannel && topChannel.roas >= 200) {
+                html += `
+                    <div style="padding: 14px; background: #e8f5e9; border-radius: 10px; border-left: 3px solid #4caf50;">
+                        <div style="font-size: 11px; color: #2e7d32; font-weight: 600; margin-bottom: 6px;">🔥 예산 늘리기</div>
+                        <div style="font-size: 12px; color: var(--grey-800); line-height: 1.5;">
+                            <strong>${topChannel.name}</strong> 채널에 예산을 <strong>10-20%</strong> 더 투자하세요
+                        </div>
+                        <div style="font-size: 10px; color: var(--grey-500); margin-top: 6px;">ROAS ${formatPercent(topChannel.roas)}</div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div style="padding: 14px; background: #e3f2fd; border-radius: 10px; border-left: 3px solid #2196f3;">
+                        <div style="font-size: 11px; color: #1565c0; font-weight: 600; margin-bottom: 6px;">📊 성과 분석</div>
+                        <div style="font-size: 12px; color: var(--grey-800); line-height: 1.5;">
+                            채널별 성과를 비교하여 <strong>가장 효율적인 채널</strong>을 찾아보세요
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 액션 2: CPA 최적화
+            if (lowCpaChannel) {
+                html += `
+                    <div style="padding: 14px; background: #e3f2fd; border-radius: 10px; border-left: 3px solid #1976d2;">
+                        <div style="font-size: 11px; color: #1565c0; font-weight: 600; margin-bottom: 6px;">💰 비용 효율화</div>
+                        <div style="font-size: 12px; color: var(--grey-800); line-height: 1.5;">
+                            <strong>${lowCpaChannel.name}</strong>이 전환당 비용이 가장 낮습니다
+                        </div>
+                        <div style="font-size: 10px; color: var(--grey-500); margin-top: 6px;">CPA ${formatCurrency(lowCpaChannel.cpa)}</div>
+                    </div>
+                `;
+            }
+
+            // 액션 3: 개선 필요
+            const poorChannel = sortedByRoas.length > 0 ? sortedByRoas[sortedByRoas.length - 1] : null;
+            if (poorChannel && poorChannel.roas < 100) {
+                html += `
+                    <div style="padding: 14px; background: #fff3e0; border-radius: 10px; border-left: 3px solid #f57c00;">
+                        <div style="font-size: 11px; color: #e65100; font-weight: 600; margin-bottom: 6px;">⚠️ 점검 필요</div>
+                        <div style="font-size: 12px; color: var(--grey-800); line-height: 1.5;">
+                            <strong>${poorChannel.name}</strong> 채널의 광고 소재를 교체해보세요
+                        </div>
+                        <div style="font-size: 10px; color: var(--grey-500); margin-top: 6px;">ROAS ${formatPercent(poorChannel.roas)}</div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div style="padding: 14px; background: #f3e5f5; border-radius: 10px; border-left: 3px solid #9c27b0;">
+                        <div style="font-size: 11px; color: #7b1fa2; font-weight: 600; margin-bottom: 6px;">🎯 타겟 최적화</div>
+                        <div style="font-size: 12px; color: var(--grey-800); line-height: 1.5;">
+                            '타겟 분석' 탭에서 가장 효과적인 <strong>고객층</strong>을 확인하세요
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += `</div></div>`;
+
+            // 4. 채널 성과 순위 (컴팩트 테이블)
+            if (topCategories.length > 0) {
+                html += `
+                    <div style="padding: 16px; background: white; border-radius: 12px; border: 1px solid var(--grey-200);">
+                        <div style="font-size: 13px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+                            <span>📊 채널별 성과 순위</span>
+                            <span class="inline-help-icon" data-tooltip="<strong>ROAS 기준</strong>으로 정렬된 상위 5개 채널입니다.<br>🔥 확대: 예산 증액 추천<br>✓ 유지: 현재 전략 유지<br>⚠️ 검토: 개선 필요" style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: var(--grey-200); border-radius: 50%; font-size: 10px; color: var(--grey-600); cursor: help;">?</span>
+                        </div>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                            <thead>
+                                <tr style="background: #f5f5f5; border-radius: 8px;">
+                                    <th style="padding: 10px 12px; text-align: left; font-weight: 600; color: var(--grey-700);">채널</th>
+                                    <th style="padding: 10px 8px; text-align: right; font-weight: 600; color: var(--grey-700);">ROAS</th>
+                                    <th style="padding: 10px 8px; text-align: right; font-weight: 600; color: var(--grey-700);">CPA</th>
+                                    <th style="padding: 10px 8px; text-align: center; font-weight: 600; color: var(--grey-700);">권장</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                sortedByRoas.slice(0, 5).forEach((cat, idx) => {
+                    const roasLevel = cat.roas > 200 ? 'high' : cat.roas > 100 ? 'mid' : 'low';
+                    let verdict = '', verdictColor = '', verdictBg = '';
+                    if (roasLevel === 'high') {
+                        verdict = '🔥 확대'; verdictColor = '#2e7d32'; verdictBg = '#e8f5e9';
+                    } else if (roasLevel === 'low') {
+                        verdict = '⚠️ 검토'; verdictColor = '#e65100'; verdictBg = '#fff3e0';
+                    } else {
+                        verdict = '✓ 유지'; verdictColor = '#757575'; verdictBg = '#f5f5f5';
+                    }
+
+                    const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '';
+
+                    html += `
+                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                            <td style="padding: 10px 12px; font-weight: 500;">${medal} ${cat.name}</td>
+                            <td style="padding: 10px 8px; text-align: right; font-weight: 700; color: ${roasLevel === 'high' ? '#2e7d32' : roasLevel === 'low' ? '#d32f2f' : 'var(--grey-900)'};">${formatPercent(cat.roas)}</td>
+                            <td style="padding: 10px 8px; text-align: right; color: var(--grey-700);">${formatCurrency(cat.cpa)}</td>
+                            <td style="padding: 10px 8px; text-align: center;">
+                                <span style="display: inline-block; padding: 3px 8px; background: ${verdictBg}; color: ${verdictColor}; border-radius: 10px; font-size: 10px; font-weight: 600;">${verdict}</span>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                html += `</tbody></table></div>`;
+            }
+
+            document.getElementById('summaryContent').innerHTML = html;
+        }
+
+        // 탭 1: 성과 기회 분석 (컴팩트 + 스토리텔링)
+        function renderOpportunityTab() {
+            const topCategories = insightsData.top_categories || [];
+            const summary = insightsData.summary || {};
+            const productPerformance = insightsData.product_performance || [];
+            const topAdsets = insightsData.top_adsets || [];
+
+            const avgCpa = summary.overall_cpa || 0;
+            const avgRoas = summary.overall_roas || 0;
+
+            // ROAS 높은 순으로 정렬
+            const sortedByRoas = [...topCategories].sort((a, b) => b.roas - a.roas);
+            const goodChannels = sortedByRoas.filter(c => c.roas >= 200);
+            const sortedProducts = [...productPerformance].sort((a, b) => b.roas - a.roas);
+            const goodProducts = sortedProducts.filter(p => p.roas >= 150);
+
+            let html = '';
+
+            // 인트로 메시지
+            html += `
+                <div style="margin-bottom: 16px; padding: 16px 20px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 12px; border-left: 4px solid #4caf50;">
+                    <div style="display: flex; align-items: flex-start; gap: 12px;">
+                        <span style="font-size: 28px;">🎯</span>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 700; color: #2e7d32; margin-bottom: 4px;">성과가 좋은 곳에 더 투자하세요</div>
+                            <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6;">
+                                아래는 <strong>예산을 늘리면 더 좋은 성과</strong>를 낼 수 있는 채널과 상품입니다.
+                                <span class="inline-help-icon" data-tooltip="<strong>왜 예산을 늘려야 할까요?</strong><br>ROAS가 높다는 것은 광고비를 쓸수록 더 많은 매출이 발생한다는 의미입니다. 효율이 검증된 곳에 투자를 집중하세요." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: #4caf50; border-radius: 50%; font-size: 9px; color: white; cursor: help; margin-left: 4px;">?</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
 
-            // 2. 핵심 인사이트 카드 (2개만)
-            html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">`;
-
-            if (topCategories.length > 0) {
-                const topCat = topCategories[0];
-                const lowestCpaCat = [...topCategories].sort((a, b) => a.cpa - b.cpa)[0];
-
+            // 1. 확대 추천 채널 (ROAS 200% 이상)
+            if (goodChannels.length > 0) {
                 html += `
-                    <div style="padding: 14px; background: #e8f5e9; border-radius: 10px; border-left: 3px solid #4caf50;">
-                        <div style="font-size: 10px; color: #2e7d32; font-weight: 600; margin-bottom: 4px;">🏆 최고 ROAS</div>
-                        <div style="font-size: 13px; font-weight: 700; color: var(--grey-900);">${topCat.name}</div>
-                        <div style="font-size: 18px; font-weight: 800; color: #2e7d32;">${formatPercent(topCat.roas)}</div>
-                        <div style="font-size: 10px; color: var(--grey-600);">CPA ${formatCurrency(topCat.cpa)}</div>
-                    </div>
-                    <div style="padding: 14px; background: #e3f2fd; border-radius: 10px; border-left: 3px solid #1976d2;">
-                        <div style="font-size: 10px; color: #1565c0; font-weight: 600; margin-bottom: 4px;">💰 최저 CPA</div>
-                        <div style="font-size: 13px; font-weight: 700; color: var(--grey-900);">${lowestCpaCat.name}</div>
-                        <div style="font-size: 18px; font-weight: 800; color: #1565c0;">${formatCurrency(lowestCpaCat.cpa)}</div>
-                        <div style="font-size: 10px; color: var(--grey-600);">ROAS ${formatPercent(lowestCpaCat.roas)}</div>
-                    </div>
-                `;
-            }
-            html += `</div>`;
-
-            // 3. 채널별 ROAS/CPA 분석 (접기/펼치기)
-            html += `
-                <div style="margin-bottom: 16px; border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden;">
-                    <div style="padding: 12px 16px; background: #f5f5f5; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
-                         onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
-                        <span style="font-size: 13px; font-weight: 600; color: var(--grey-900);">📊 채널별 ROAS/CPA 순위</span>
-                        <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▼</span>
-                    </div>
-                    <div style="padding: 12px;">
-                        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-                            <thead>
-                                <tr style="background: #fafafa;">
-                                    <th style="padding: 8px; text-align: left; color: var(--grey-700);">채널</th>
-                                    <th style="padding: 8px; text-align: right; color: var(--grey-700);">ROAS</th>
-                                    <th style="padding: 8px; text-align: right; color: var(--grey-700);">CPA</th>
-                                    <th style="padding: 8px; text-align: center; color: var(--grey-700);">판단</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-            `;
-
-            topCategories.forEach((cat, idx) => {
-                const roasLevel = cat.roas > 300 ? 'high' : cat.roas > 150 ? 'mid' : 'low';
-                const cpaLevel = cat.cpa < avgCpa * 0.8 ? 'good' : cat.cpa > avgCpa * 1.2 ? 'bad' : 'normal';
-                let verdict = '', verdictColor = '';
-
-                if (roasLevel === 'high' && cpaLevel !== 'bad') {
-                    verdict = '🔥 확대'; verdictColor = '#2e7d32';
-                } else if (roasLevel === 'low' || cpaLevel === 'bad') {
-                    verdict = '⚠️ 검토'; verdictColor = '#f57c00';
-                } else {
-                    verdict = '✓ 유지'; verdictColor = '#757575';
-                }
-
-                html += `
-                    <tr style="border-bottom: 1px solid #f0f0f0;">
-                        <td style="padding: 8px; font-weight: 500;">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : ''} ${cat.name}</td>
-                        <td style="padding: 8px; text-align: right; font-weight: 600; color: ${roasLevel === 'high' ? '#2e7d32' : roasLevel === 'low' ? '#d32f2f' : 'var(--grey-900)'};">${formatPercent(cat.roas)}</td>
-                        <td style="padding: 8px; text-align: right; color: ${cpaLevel === 'good' ? '#2e7d32' : cpaLevel === 'bad' ? '#d32f2f' : 'var(--grey-700)'};">${formatCurrency(cat.cpa)}</td>
-                        <td style="padding: 8px; text-align: center;"><span style="font-size: 11px; color: ${verdictColor}; font-weight: 600;">${verdict}</span></td>
-                    </tr>
-                `;
-            });
-
-            html += `</tbody></table></div></div>`;
-
-            // 4. 상품별 효율 (접기/펼치기)
-            if (productPerformance.length > 0) {
-                const sortedProducts = [...productPerformance].sort((a, b) => b.roas - a.roas);
-                html += `
-                    <div style="margin-bottom: 16px; border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden;">
-                        <div style="padding: 12px 16px; background: #f5f5f5; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
-                             onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
-                            <span style="font-size: 13px; font-weight: 600; color: var(--grey-900);">🛍️ 상품별 광고 효율</span>
-                            <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▼</span>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 13px; font-weight: 700; color: var(--grey-900); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                            🔥 예산 확대 추천 채널
+                            <span style="font-size: 10px; color: var(--grey-500); font-weight: 400;">(ROAS 200% 이상)</span>
                         </div>
-                        <div style="padding: 12px;">
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
                 `;
 
-                sortedProducts.slice(0, 6).forEach(prod => {
-                    const cpa = prod.conversions > 0 ? prod.cost / prod.conversions : 0;
-                    const isGood = prod.roas >= 150;
+                goodChannels.slice(0, 4).forEach((cat, idx) => {
+                    const increasePercent = cat.roas >= 500 ? '20-30%' : cat.roas >= 300 ? '15-20%' : '10-15%';
                     html += `
-                        <div style="padding: 10px; background: ${isGood ? '#f1f8f4' : '#fff8f0'}; border-radius: 8px; text-align: center;">
-                            <div style="font-size: 11px; font-weight: 600; color: var(--grey-800); margin-bottom: 4px;">${prod.product}</div>
-                            <div style="font-size: 16px; font-weight: 800; color: ${isGood ? '#2e7d32' : '#f57c00'};">${formatPercent(prod.roas)}</div>
-                            <div style="font-size: 9px; color: var(--grey-600);">CPA ${formatCurrency(cpa)}</div>
+                        <div style="padding: 14px; background: white; border-radius: 10px; border: 2px solid #4caf50; position: relative;">
+                            ${idx === 0 ? '<div style="position: absolute; top: -8px; right: 10px; padding: 2px 8px; background: #4caf50; color: white; font-size: 9px; font-weight: 600; border-radius: 8px;">TOP</div>' : ''}
+                            <div style="font-size: 12px; font-weight: 600; color: var(--grey-800); margin-bottom: 8px;">${cat.name}</div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                                <div>
+                                    <div style="font-size: 10px; color: var(--grey-500);">ROAS</div>
+                                    <div style="font-size: 20px; font-weight: 800; color: #2e7d32;">${formatPercent(cat.roas)}</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 9px; color: var(--grey-500);">추천 증액</div>
+                                    <div style="font-size: 12px; font-weight: 700; color: #1565c0;">${increasePercent}</div>
+                                </div>
+                            </div>
                         </div>
                     `;
                 });
 
-                html += `</div></div></div>`;
+                html += `</div></div>`;
+            } else {
+                html += `
+                    <div style="margin-bottom: 16px; padding: 20px; background: #f5f5f5; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">📊</div>
+                        <div style="font-size: 13px; color: var(--grey-700);">현재 ROAS 200% 이상 채널이 없습니다</div>
+                        <div style="font-size: 11px; color: var(--grey-500); margin-top: 4px;">광고 소재 개선이나 타겟 최적화를 고려해보세요</div>
+                    </div>
+                `;
             }
 
-            // 5. 액션 가이드 (Compact)
+            // 2. 효율 좋은 상품 (컴팩트)
+            if (goodProducts.length > 0) {
+                html += `
+                    <div style="margin-bottom: 16px; padding: 14px; background: #f5f5f5; border-radius: 10px;">
+                        <div style="font-size: 12px; font-weight: 700; color: var(--grey-900); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                            🛍️ 효율 좋은 상품
+                            <span class="inline-help-icon" data-tooltip="ROAS 150% 이상인 상품들입니다. 이 상품들의 광고를 더 활성화하면 전체 성과가 개선됩니다." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: var(--grey-400); border-radius: 50%; font-size: 9px; color: white; cursor: help;">?</span>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                `;
+
+                goodProducts.slice(0, 5).forEach(prod => {
+                    html += `
+                        <div style="padding: 6px 12px; background: white; border-radius: 16px; font-size: 11px; display: flex; align-items: center; gap: 6px;">
+                            <span style="font-weight: 600; color: var(--grey-800);">${prod.product}</span>
+                            <span style="color: #2e7d32; font-weight: 700;">${formatPercent(prod.roas)}</span>
+                        </div>
+                    `;
+                });
+
+                html += `</div></div>`;
+            }
+
+            // 3. TOP 광고세트 (간단히)
+            if (topAdsets.length > 0) {
+                html += `
+                    <div style="border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden;">
+                        <div style="padding: 10px 14px; background: #fafafa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
+                             onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
+                            <span style="font-size: 12px; font-weight: 600; color: var(--grey-800);">📈 성과 TOP 광고세트 (상위 5개)</span>
+                            <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▶</span>
+                        </div>
+                        <div style="display: none; padding: 12px;">
+                `;
+
+                topAdsets.slice(0, 5).forEach((adset, idx) => {
+                    html += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                            <div style="flex: 1;">
+                                <div style="font-size: 11px; font-weight: 600; color: var(--grey-800);">${idx + 1}. ${adset.adset}</div>
+                                <div style="font-size: 10px; color: var(--grey-500);">${adset.category}</div>
+                            </div>
+                            <div style="font-size: 13px; font-weight: 700; color: #2e7d32;">${formatPercent(adset.roas)}</div>
+                        </div>
+                    `;
+                });
+
+                html += `</div></div>`;
+            }
+
+            // 4. 액션 가이드
             html += `
-                <div style="padding: 12px 14px; background: #fff8e1; border-radius: 8px; border-left: 3px solid #ffc107;">
-                    <div style="font-size: 11px; font-weight: 600; color: #f57f17; margin-bottom: 6px;">⚡ 즉시 실행</div>
-                    <div style="font-size: 11px; color: var(--grey-800); line-height: 1.6;">
-                        • ROAS 200%↑ 채널 → 예산 15-20% 증액<br>
-                        • CPA 평균 이하 채널 → 타겟 확장 테스트
+                <div style="margin-top: 16px; padding: 12px 14px; background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%); border-radius: 10px; border-left: 3px solid #ffc107;">
+                    <div style="font-size: 11px; font-weight: 600; color: #f57f17; margin-bottom: 6px;">💡 이렇게 실행하세요</div>
+                    <div style="font-size: 11px; color: var(--grey-800); line-height: 1.7;">
+                        1. 🔥 표시된 채널의 일일 예산을 <strong>10-20%</strong> 늘려보세요<br>
+                        2. 효율 좋은 상품 광고의 <strong>노출을 확대</strong>하세요<br>
+                        3. 3-5일 후 성과를 확인하고 추가 조정하세요
                     </div>
                 </div>
             `;
@@ -3663,152 +3917,179 @@
             document.getElementById('budgetGuideContent').innerHTML = html;
         }
 
-        // 탭 3: 성과 개선 경고 (Compact + ROAS/CPA 인사이트)
+        // 탭 2: 주의 필요 (경고) - 사용자 친화적 버전
         function renderWarningTab() {
-            const warnings = insightsData.alerts.filter(a => a.severity === 'warning' || a.severity === 'high');
+            const warnings = (insightsData.alerts || []).filter(a => a.severity === 'warning' || a.severity === 'high');
             const topCategories = insightsData.top_categories || [];
             const summary = insightsData.summary || {};
             const productPerformance = insightsData.product_performance || [];
 
-            let html = '';
             const avgCpa = summary.overall_cpa || 0;
             const highCpaCategories = topCategories.filter(cat => cat.cpa > avgCpa * 1.5);
             const lowRoasCategories = topCategories.filter(cat => cat.roas < 100);
             const lowRoasProducts = productPerformance.filter(prod => prod.roas < 100);
-            const totalIssues = warnings.length + highCpaCategories.length + lowRoasCategories.length;
+            const totalIssues = highCpaCategories.length + lowRoasCategories.length + lowRoasProducts.length;
 
-            // 1. 경고 요약 (Compact)
-            const statusColor = totalIssues === 0 ? '#2e7d32' : totalIssues <= 2 ? '#f57c00' : '#d32f2f';
-            const statusText = totalIssues === 0 ? '양호' : totalIssues <= 2 ? '주의' : '경고';
+            let html = '';
 
-            html += `
-                <div style="margin-bottom: 16px; padding: 14px; background: ${totalIssues === 0 ? '#e8f5e9' : totalIssues <= 2 ? '#fff8e1' : '#ffebee'}; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
-                    <div style="display: flex; gap: 16px; font-size: 11px;">
-                        <div><span style="font-weight: 700; color: #d32f2f;">${highCpaCategories.length}</span> 높은CPA</div>
-                        <div><span style="font-weight: 700; color: #f57c00;">${lowRoasCategories.length}</span> 낮은ROAS</div>
-                        <div><span style="font-weight: 700; color: #7b1fa2;">${lowRoasProducts.length}</span> 비효율상품</div>
-                    </div>
-                    <div style="padding: 4px 12px; background: ${statusColor}; color: white; border-radius: 12px; font-size: 11px; font-weight: 600;">
-                        ${statusText}
-                    </div>
-                </div>
-            `;
-
-            // 경고 없음
-            if (totalIssues === 0 && lowRoasProducts.length === 0) {
+            // 인트로 메시지
+            if (totalIssues === 0) {
                 html += `
-                    <div style="text-align: center; padding: 30px;">
-                        <div style="font-size: 36px; margin-bottom: 10px;">✨</div>
-                        <div style="font-size: 14px; font-weight: 600; color: #2e7d32;">모든 캠페인이 정상 운영 중</div>
-                        <div style="font-size: 11px; color: var(--grey-600);">현재 주의가 필요한 항목이 없습니다</div>
+                    <div style="padding: 40px 20px; text-align: center;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
+                        <div style="font-size: 18px; font-weight: 700; color: #2e7d32; margin-bottom: 8px;">모든 광고가 잘 돌아가고 있어요!</div>
+                        <div style="font-size: 13px; color: var(--grey-600); line-height: 1.6;">
+                            현재 특별히 주의가 필요한 항목이 없습니다.<br>
+                            계속해서 좋은 성과를 유지해주세요.
+                        </div>
                     </div>
                 `;
-            } else {
-                // 2. CPA 높은 채널 (접기/펼치기)
-                if (highCpaCategories.length > 0) {
-                    html += `
-                        <div style="margin-bottom: 12px; border: 1px solid #ffcdd2; border-radius: 10px; overflow: hidden;">
-                            <div style="padding: 10px 14px; background: #ffebee; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
-                                 onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
-                                <span style="font-size: 12px; font-weight: 600; color: #c62828;">💸 CPA 높은 채널 (${highCpaCategories.length})</span>
-                                <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▼</span>
-                            </div>
-                            <div style="padding: 10px;">
-                    `;
-                    highCpaCategories.forEach(cat => {
-                        const cpaRatio = (cat.cpa / avgCpa * 100).toFixed(0);
-                        html += `
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f5f5f5;">
-                                <div>
-                                    <div style="font-size: 12px; font-weight: 600;">${cat.name}</div>
-                                    <div style="font-size: 10px; color: var(--grey-600);">ROAS ${formatPercent(cat.roas)}</div>
-                                </div>
-                                <div style="text-align: right;">
-                                    <div style="font-size: 14px; font-weight: 700; color: #d32f2f;">${formatCurrency(cat.cpa)}</div>
-                                    <div style="font-size: 9px; color: #d32f2f;">평균 ${cpaRatio}%</div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    html += `
-                            <div style="margin-top: 8px; padding: 8px; background: #fff5f5; border-radius: 6px; font-size: 10px; color: #b71c1c;">
-                                💡 타겟팅 세분화 및 입찰 전략 재검토 필요
-                            </div>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                // 3. 비효율 상품 (접기/펼치기)
-                if (lowRoasProducts.length > 0) {
-                    html += `
-                        <div style="margin-bottom: 12px; border: 1px solid #ffe0b2; border-radius: 10px; overflow: hidden;">
-                            <div style="padding: 10px 14px; background: #fff3e0; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
-                                 onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
-                                <span style="font-size: 12px; font-weight: 600; color: #e65100;">📦 비효율 상품 (${lowRoasProducts.length})</span>
-                                <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▶</span>
-                            </div>
-                            <div style="padding: 10px; display: none;">
-                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 6px;">
-                    `;
-                    lowRoasProducts.slice(0, 6).forEach(prod => {
-                        html += `
-                            <div style="padding: 8px; background: #fff8f0; border-radius: 6px; text-align: center;">
-                                <div style="font-size: 10px; font-weight: 600; color: var(--grey-800);">${prod.product}</div>
-                                <div style="font-size: 14px; font-weight: 800; color: #e65100;">${formatPercent(prod.roas)}</div>
-                            </div>
-                        `;
-                    });
-                    html += `
-                                </div>
-                                <div style="margin-top: 8px; padding: 8px; background: #fff5f0; border-radius: 6px; font-size: 10px; color: #e65100;">
-                                    💡 프로모션 강화 또는 예산 재배분 검토
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                // 4. 기타 경고 (접기/펼치기)
-                if (warnings.length > 0) {
-                    html += `
-                        <div style="margin-bottom: 12px; border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden;">
-                            <div style="padding: 10px 14px; background: #f5f5f5; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
-                                 onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
-                                <span style="font-size: 12px; font-weight: 600; color: var(--grey-800);">⚠️ 기타 경고 (${warnings.length})</span>
-                                <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▶</span>
-                            </div>
-                            <div style="padding: 10px; display: none;">
-                    `;
-                    warnings.forEach(warning => {
-                        const isHigh = warning.severity === 'high';
-                        html += `
-                            <div style="padding: 8px; margin-bottom: 6px; background: ${isHigh ? '#ffebee' : '#fff8e1'}; border-radius: 6px; border-left: 3px solid ${isHigh ? '#d32f2f' : '#f57c00'};">
-                                <div style="font-size: 11px; color: var(--grey-900);">${warning.message}</div>
-                                ${warning.value !== undefined ? `<div style="font-size: 10px; color: ${isHigh ? '#d32f2f' : '#f57c00'}; margin-top: 4px;">ROAS: ${formatPercent(warning.value)}</div>` : ''}
-                            </div>
-                        `;
-                    });
-                    html += `</div></div>`;
-                }
+                document.getElementById('warningContent').innerHTML = html;
+                return;
             }
 
-            // 5. 해결 가이드 (Compact)
+            // 경고 있을 때 인트로
             html += `
-                <div style="padding: 10px 12px; background: #e3f2fd; border-radius: 8px; border-left: 3px solid #1976d2;">
-                    <div style="font-size: 11px; font-weight: 600; color: #1565c0; margin-bottom: 4px;">🔧 해결 가이드</div>
-                    <div style="font-size: 10px; color: var(--grey-700); line-height: 1.6;">
-                        • CPA↑ → 타겟 세분화, 입찰 최적화<br>
-                        • ROAS↓ → 크리에이티브 교체, A/B 테스트<br>
-                        • CPA 200%↑ → 캠페인 일시 중단 검토
+                <div style="margin-bottom: 16px; padding: 16px 20px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 12px; border-left: 4px solid #ef5350;">
+                    <div style="display: flex; align-items: flex-start; gap: 12px;">
+                        <span style="font-size: 28px;">⚠️</span>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 700; color: #c62828; margin-bottom: 4px;">확인이 필요한 항목이 있어요</div>
+                            <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6;">
+                                아래 항목들은 <strong>예산 낭비</strong>가 발생할 수 있어요. 빨리 조치하면 손실을 줄일 수 있습니다.
+                                <span class="inline-help-icon" data-tooltip="<strong>왜 점검해야 할까요?</strong><br>ROAS가 100% 미만이면 광고비보다 매출이 적다는 의미입니다. 계속 두면 손해가 커질 수 있어요." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: #ef5350; border-radius: 50%; font-size: 9px; color: white; cursor: help; margin-left: 4px;">?</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
+
+            // 문제 요약 배지
+            html += `
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
+            `;
+            if (lowRoasCategories.length > 0) {
+                html += `<div style="padding: 6px 12px; background: #ffebee; border-radius: 16px; font-size: 11px; color: #c62828; font-weight: 600;">🔴 ROAS 낮음 ${lowRoasCategories.length}개</div>`;
+            }
+            if (highCpaCategories.length > 0) {
+                html += `<div style="padding: 6px 12px; background: #fff3e0; border-radius: 16px; font-size: 11px; color: #e65100; font-weight: 600;">🟠 CPA 높음 ${highCpaCategories.length}개</div>`;
+            }
+            if (lowRoasProducts.length > 0) {
+                html += `<div style="padding: 6px 12px; background: #f3e5f5; border-radius: 16px; font-size: 11px; color: #7b1fa2; font-weight: 600;">🟣 비효율 상품 ${lowRoasProducts.length}개</div>`;
+            }
+            html += `</div>`;
+
+            // 1. ROAS 낮은 채널 (손실 발생 가능)
+            if (lowRoasCategories.length > 0) {
+                html += `
+                    <div style="margin-bottom: 12px; padding: 14px; background: white; border-radius: 10px; border: 1px solid #ffcdd2;">
+                        <div style="font-size: 12px; font-weight: 700; color: #c62828; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                            🔴 수익보다 비용이 더 나가는 채널
+                            <span class="inline-help-icon" data-tooltip="ROAS가 100% 미만이면 1만원을 쓰고 1만원 미만의 매출을 올리고 있다는 의미입니다." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: #c62828; border-radius: 50%; font-size: 9px; color: white; cursor: help;">?</span>
+                        </div>
+                `;
+
+                lowRoasCategories.forEach(cat => {
+                    const lossPercent = (100 - cat.roas).toFixed(0);
+                    html += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f5f5f5;">
+                            <div>
+                                <div style="font-size: 12px; font-weight: 600; color: var(--grey-800);">${cat.name}</div>
+                                <div style="font-size: 10px; color: #c62828;">광고비 100원당 ${cat.roas.toFixed(0)}원 회수</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 16px; font-weight: 800; color: #c62828;">${formatPercent(cat.roas)}</div>
+                                <div style="font-size: 10px; color: var(--grey-500);">-${lossPercent}% 손실</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        <div style="margin-top: 10px; padding: 10px; background: #fff5f5; border-radius: 8px;">
+                            <div style="font-size: 11px; font-weight: 600; color: #c62828; margin-bottom: 4px;">💡 이렇게 해보세요</div>
+                            <div style="font-size: 10px; color: var(--grey-700); line-height: 1.6;">
+                                • 광고 소재(이미지/영상)를 새롭게 교체해보세요<br>
+                                • 타겟 대상을 더 좁혀보세요 (관심사, 연령 등)
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 2. CPA 높은 채널
+            if (highCpaCategories.length > 0) {
+                html += `
+                    <div style="margin-bottom: 12px; padding: 14px; background: white; border-radius: 10px; border: 1px solid #ffe0b2;">
+                        <div style="font-size: 12px; font-weight: 700; color: #e65100; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                            🟠 전환 비용이 너무 높은 채널
+                            <span class="inline-help-icon" data-tooltip="<strong>CPA가 높다는 것은?</strong><br>한 번의 구매/전환을 얻는 데 드는 비용이 평균보다 훨씬 높다는 의미입니다." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: #e65100; border-radius: 50%; font-size: 9px; color: white; cursor: help;">?</span>
+                        </div>
+                `;
+
+                highCpaCategories.forEach(cat => {
+                    const cpaRatio = ((cat.cpa / avgCpa - 1) * 100).toFixed(0);
+                    html += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f5f5f5;">
+                            <div>
+                                <div style="font-size: 12px; font-weight: 600; color: var(--grey-800);">${cat.name}</div>
+                                <div style="font-size: 10px; color: #e65100;">전환 1건당 ${formatCurrency(cat.cpa)}</div>
+                            </div>
+                            <div style="padding: 4px 10px; background: #fff3e0; border-radius: 12px; font-size: 10px; color: #e65100; font-weight: 600;">
+                                평균보다 +${cpaRatio}% 비쌈
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        <div style="margin-top: 10px; padding: 10px; background: #fff8f0; border-radius: 8px;">
+                            <div style="font-size: 11px; font-weight: 600; color: #e65100; margin-bottom: 4px;">💡 이렇게 해보세요</div>
+                            <div style="font-size: 10px; color: var(--grey-700); line-height: 1.6;">
+                                • 입찰 금액을 낮춰보세요<br>
+                                • 더 정확한 타겟에게만 광고를 노출하세요
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 3. 비효율 상품 (간단히)
+            if (lowRoasProducts.length > 0) {
+                html += `
+                    <div style="border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden;">
+                        <div style="padding: 10px 14px; background: #fafafa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
+                             onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
+                            <span style="font-size: 12px; font-weight: 600; color: #7b1fa2;">🟣 효율이 낮은 상품 (${lowRoasProducts.length}개)</span>
+                            <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▶</span>
+                        </div>
+                        <div style="display: none; padding: 12px;">
+                            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                `;
+
+                lowRoasProducts.slice(0, 6).forEach(prod => {
+                    html += `
+                        <div style="padding: 6px 12px; background: #f3e5f5; border-radius: 16px; font-size: 11px; display: flex; align-items: center; gap: 6px;">
+                            <span style="color: var(--grey-800);">${prod.product}</span>
+                            <span style="color: #7b1fa2; font-weight: 700;">${formatPercent(prod.roas)}</span>
+                        </div>
+                    `;
+                });
+
+                html += `
+                            </div>
+                            <div style="margin-top: 10px; font-size: 10px; color: var(--grey-600);">
+                                💡 이 상품들은 광고보다 프로모션/할인이 더 효과적일 수 있어요
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
 
             document.getElementById('warningContent').innerHTML = html;
         }
 
-        // 탭 4: 타겟팅 최적화 (Compact + ROAS/CPA 인사이트)
+        // 탭 3: 타겟 분석 - 사용자 친화적 버전
         function renderTargetingTab() {
             const genderData = (insightsData.gender_performance || []).filter(g => isValidGender(g.gender));
             const platformData = (insightsData.platform_performance || []).filter(p =>
@@ -3818,113 +4099,101 @@
                 isValidGender(item.gender) && isValidAge(item.age)
             );
             const summary = insightsData.summary || {};
-
-            let html = '';
             const avgCpa = summary.overall_cpa || 0;
 
-            // 1. 핵심 타겟 요약 (Compact)
-            html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin-bottom: 16px;">`;
+            let html = '';
 
-            if (genderData.length > 0) {
-                const topGender = [...genderData].sort((a, b) => b.roas - a.roas)[0];
-                const normalizedGender = normalizeGender(topGender.gender) || topGender.gender;
-                const cpa = topGender.conversions > 0 ? topGender.cost / topGender.conversions : 0;
-                html += `
-                    <div style="padding: 10px; background: #e8f5e9; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 9px; color: #2e7d32;">👥 최고 성별</div>
-                        <div style="font-size: 14px; font-weight: 800; color: #1b5e20;">${normalizedGender}</div>
-                        <div style="font-size: 10px; color: var(--grey-600);">ROAS ${formatPercent(topGender.roas)}</div>
-                    </div>
-                `;
-            }
-
-            if (platformData.length > 0) {
-                const topPlatform = [...platformData].sort((a, b) => b.roas - a.roas)[0];
-                html += `
-                    <div style="padding: 10px; background: #e3f2fd; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 9px; color: #1565c0;">📱 최고 플랫폼</div>
-                        <div style="font-size: 14px; font-weight: 800; color: #0d47a1;">${topPlatform.platform}</div>
-                        <div style="font-size: 10px; color: var(--grey-600);">ROAS ${formatPercent(topPlatform.roas)}</div>
-                    </div>
-                `;
-            }
-
-            if (ageGenderData.length > 0) {
-                const topCombo = ageGenderData[0];
-                const normalizedGender = normalizeGender(topCombo.gender) || topCombo.gender;
-                html += `
-                    <div style="padding: 10px; background: #f3e5f5; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 9px; color: #7b1fa2;">🎯 최고 타겟</div>
-                        <div style="font-size: 12px; font-weight: 800; color: #4a148c;">${topCombo.age}</div>
-                        <div style="font-size: 10px; color: var(--grey-600);">${normalizedGender}</div>
-                    </div>
-                `;
-            }
-
-            html += `</div>`;
-
-            // 2. 성별 ROAS/CPA (접기/펼치기)
-            if (genderData.length > 0) {
-                html += `
-                    <div style="margin-bottom: 12px; border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden;">
-                        <div style="padding: 10px 14px; background: #f5f5f5; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
-                             onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
-                            <span style="font-size: 12px; font-weight: 600; color: var(--grey-800);">👥 성별 ROAS/CPA 분석</span>
-                            <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▼</span>
+            // 인트로 메시지
+            html += `
+                <div style="margin-bottom: 16px; padding: 16px 20px; background: linear-gradient(135deg, #e8eaf6 0%, #f5f5ff 100%); border-radius: 12px; border-left: 4px solid #5c6bc0;">
+                    <div style="display: flex; align-items: flex-start; gap: 12px;">
+                        <span style="font-size: 28px;">👥</span>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 700; color: #3949ab; margin-bottom: 4px;">누구에게 광고를 보여줘야 효과적일까요?</div>
+                            <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6;">
+                                성별, 연령, 기기별로 <strong>어떤 고객이 가장 잘 반응하는지</strong> 분석했습니다.
+                                <span class="inline-help-icon" data-tooltip="<strong>타겟팅이란?</strong><br>광고를 특정 그룹(성별, 나이, 관심사 등)에게만 보여주는 것입니다. 효율적인 타겟에 집중하면 같은 비용으로 더 많은 성과를 얻을 수 있어요." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: #5c6bc0; border-radius: 50%; font-size: 9px; color: white; cursor: help; margin-left: 4px;">?</span>
+                            </div>
                         </div>
-                        <div style="padding: 10px;">
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;">
+                    </div>
+                </div>
+            `;
+
+            // 1. 핵심 타겟 요약 (큰 카드)
+            const topGender = genderData.length > 0 ? [...genderData].sort((a, b) => b.roas - a.roas)[0] : null;
+            const topPlatform = platformData.length > 0 ? [...platformData].sort((a, b) => b.roas - a.roas)[0] : null;
+            const topAgeGender = ageGenderData.length > 0 ? ageGenderData[0] : null;
+
+            html += `
+                <div style="margin-bottom: 16px; padding: 16px; background: white; border-radius: 12px; border: 1px solid var(--grey-200);">
+                    <div style="font-size: 13px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px;">🏆 가장 효과적인 타겟</div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+            `;
+
+            // 최고 성별
+            if (topGender) {
+                const normalizedGender = normalizeGender(topGender.gender) || topGender.gender;
+                html += `
+                    <div style="padding: 12px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 10px; text-align: center;">
+                        <div style="font-size: 24px; margin-bottom: 4px;">👤</div>
+                        <div style="font-size: 10px; color: var(--grey-500); margin-bottom: 2px;">성별</div>
+                        <div style="font-size: 16px; font-weight: 800; color: #2e7d32;">${normalizedGender}</div>
+                        <div style="font-size: 11px; color: var(--grey-600); margin-top: 4px;">ROAS ${formatPercent(topGender.roas)}</div>
+                    </div>
+                `;
+            }
+
+            // 최고 플랫폼
+            if (topPlatform) {
+                html += `
+                    <div style="padding: 12px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 10px; text-align: center;">
+                        <div style="font-size: 24px; margin-bottom: 4px;">📱</div>
+                        <div style="font-size: 10px; color: var(--grey-500); margin-bottom: 2px;">기기</div>
+                        <div style="font-size: 16px; font-weight: 800; color: #1565c0;">${topPlatform.platform}</div>
+                        <div style="font-size: 11px; color: var(--grey-600); margin-top: 4px;">ROAS ${formatPercent(topPlatform.roas)}</div>
+                    </div>
+                `;
+            }
+
+            // 최고 연령×성별
+            if (topAgeGender) {
+                const normalizedGender = normalizeGender(topAgeGender.gender) || topAgeGender.gender;
+                html += `
+                    <div style="padding: 12px; background: linear-gradient(135deg, #f3e5f5 0%, #fce4ec 100%); border-radius: 10px; text-align: center;">
+                        <div style="font-size: 24px; margin-bottom: 4px;">🎯</div>
+                        <div style="font-size: 10px; color: var(--grey-500); margin-bottom: 2px;">최고 조합</div>
+                        <div style="font-size: 14px; font-weight: 800; color: #7b1fa2;">${topAgeGender.age}</div>
+                        <div style="font-size: 11px; color: var(--grey-600);">${normalizedGender}</div>
+                    </div>
+                `;
+            }
+
+            html += `</div></div>`;
+
+            // 2. 성별 비교 (시각적)
+            if (genderData.length > 0) {
+                html += `
+                    <div style="margin-bottom: 12px; padding: 14px; background: white; border-radius: 10px; border: 1px solid var(--grey-200);">
+                        <div style="font-size: 12px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                            👥 성별 비교
+                            <span class="inline-help-icon" data-tooltip="같은 광고를 봤을 때 남성과 여성 중 누가 더 잘 구매했는지 비교합니다." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: var(--grey-400); border-radius: 50%; font-size: 9px; color: white; cursor: help;">?</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
                 `;
 
                 const sortedGender = [...genderData].sort((a, b) => b.roas - a.roas);
                 sortedGender.forEach((g, idx) => {
                     const normalizedGender = normalizeGender(g.gender) || g.gender;
                     const cpa = g.conversions > 0 ? g.cost / g.conversions : 0;
-                    const isGood = g.roas >= 150;
+                    const isTop = idx === 0;
                     html += `
-                        <div style="padding: 10px; background: ${isGood ? '#f1f8f4' : '#fff8f0'}; border-radius: 8px; ${idx === 0 ? 'border: 2px solid #4caf50;' : ''}">
-                            <div style="font-size: 11px; font-weight: 700; color: var(--grey-800); text-align: center; margin-bottom: 6px;">${normalizedGender} ${idx === 0 ? '🏆' : ''}</div>
-                            <div style="display: flex; justify-content: space-around; font-size: 10px;">
-                                <div style="text-align: center;">
-                                    <div style="color: var(--grey-500);">ROAS</div>
-                                    <div style="font-weight: 700; color: ${isGood ? '#2e7d32' : '#f57c00'};">${formatPercent(g.roas)}</div>
-                                </div>
-                                <div style="text-align: center;">
-                                    <div style="color: var(--grey-500);">CPA</div>
-                                    <div style="font-weight: 700; color: #1565c0;">${formatCurrency(cpa)}</div>
-                                </div>
+                        <div style="padding: 12px; background: ${isTop ? '#e8f5e9' : '#f5f5f5'}; border-radius: 8px; ${isTop ? 'border: 2px solid #4caf50;' : ''}">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-size: 13px; font-weight: 700; color: var(--grey-800);">${normalizedGender}</span>
+                                ${isTop ? '<span style="font-size: 10px; padding: 2px 6px; background: #4caf50; color: white; border-radius: 8px;">추천</span>' : ''}
                             </div>
-                        </div>
-                    `;
-                });
-
-                html += `</div></div></div>`;
-            }
-
-            // 3. 플랫폼 ROAS/CPA (접기/펼치기)
-            if (platformData.length > 0) {
-                html += `
-                    <div style="margin-bottom: 12px; border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden;">
-                        <div style="padding: 10px 14px; background: #f5f5f5; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
-                             onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
-                            <span style="font-size: 12px; font-weight: 600; color: var(--grey-800);">📱 플랫폼별 ROAS/CPA</span>
-                            <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▶</span>
-                        </div>
-                        <div style="padding: 10px; display: none;">
-                `;
-
-                const sortedPlatform = [...platformData].sort((a, b) => b.roas - a.roas);
-                sortedPlatform.slice(0, 6).forEach((p, idx) => {
-                    const cpa = p.conversions > 0 ? p.cost / p.conversions : 0;
-                    const cpaStatus = cpa < avgCpa ? '효율적' : '비효율적';
-                    const cpaColor = cpa < avgCpa ? '#2e7d32' : '#f57c00';
-                    html += `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                            <div style="font-size: 12px; font-weight: 600;">${idx === 0 ? '🏆' : ''} ${p.platform}</div>
-                            <div style="display: flex; gap: 12px; font-size: 11px;">
-                                <div>ROAS <strong style="color: ${p.roas >= 150 ? '#2e7d32' : '#f57c00'};">${formatPercent(p.roas)}</strong></div>
-                                <div>CPA <strong style="color: ${cpaColor};">${formatCurrency(cpa)}</strong></div>
-                            </div>
+                            <div style="font-size: 18px; font-weight: 800; color: ${isTop ? '#2e7d32' : 'var(--grey-700)'}; margin-bottom: 4px;">${formatPercent(g.roas)}</div>
+                            <div style="font-size: 10px; color: var(--grey-500);">전환당 ${formatCurrency(cpa)}</div>
                         </div>
                     `;
                 });
@@ -3932,28 +4201,57 @@
                 html += `</div></div>`;
             }
 
-            // 4. 연령×성별 TOP 타겟 (접기/펼치기)
-            if (ageGenderData.length > 0) {
+            // 3. 플랫폼/기기별 (컴팩트)
+            if (platformData.length > 0) {
                 html += `
-                    <div style="margin-bottom: 12px; border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden;">
-                        <div style="padding: 10px 14px; background: #e8eaf6; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
+                    <div style="border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden; margin-bottom: 12px;">
+                        <div style="padding: 10px 14px; background: #fafafa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
                              onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
-                            <span style="font-size: 12px; font-weight: 600; color: #283593;">🎯 연령×성별 TOP 타겟</span>
+                            <span style="font-size: 12px; font-weight: 600; color: var(--grey-800);">📱 기기/플랫폼별 성과</span>
                             <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▶</span>
                         </div>
-                        <div style="padding: 10px; display: none;">
+                        <div style="display: none; padding: 12px;">
+                `;
+
+                const sortedPlatform = [...platformData].sort((a, b) => b.roas - a.roas);
+                sortedPlatform.slice(0, 5).forEach((p, idx) => {
+                    const cpa = p.conversions > 0 ? p.cost / p.conversions : 0;
+                    html += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                            <div style="font-size: 12px; font-weight: 500; color: var(--grey-800);">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`} ${p.platform}</div>
+                            <div style="font-size: 12px; font-weight: 700; color: ${p.roas >= 150 ? '#2e7d32' : '#f57c00'};">${formatPercent(p.roas)}</div>
+                        </div>
+                    `;
+                });
+
+                html += `</div></div>`;
+            }
+
+            // 4. 연령×성별 TOP 5 (접기)
+            if (ageGenderData.length > 0) {
+                html += `
+                    <div style="border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden;">
+                        <div style="padding: 10px 14px; background: #fafafa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
+                             onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
+                            <span style="font-size: 12px; font-weight: 600; color: var(--grey-800);">🎯 연령+성별 조합 TOP 5</span>
+                            <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▶</span>
+                        </div>
+                        <div style="display: none; padding: 12px;">
+                            <div style="font-size: 10px; color: var(--grey-600); margin-bottom: 10px; padding: 8px; background: #f5f5f5; border-radius: 6px;">
+                                💡 이 조합의 타겟에게 광고를 집중하면 더 좋은 성과를 얻을 수 있어요
+                            </div>
                 `;
 
                 ageGenderData.slice(0, 5).forEach((item, idx) => {
                     const normalizedGender = normalizeGender(item.gender) || item.gender;
-                    const rankBadge = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`;
+                    const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`;
                     html += `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
                             <div>
-                                <span style="font-size: 12px; font-weight: 700;">${rankBadge}</span>
-                                <span style="font-size: 11px; margin-left: 6px;">${item.age} ${normalizedGender}</span>
+                                <span style="font-size: 14px;">${medal}</span>
+                                <span style="font-size: 12px; font-weight: 600; margin-left: 8px; color: var(--grey-800);">${item.age} ${normalizedGender}</span>
                             </div>
-                            <div style="font-size: 12px; font-weight: 700; color: #2e7d32;">${formatPercent(item.roas)}</div>
+                            <div style="font-size: 14px; font-weight: 800; color: #2e7d32;">${formatPercent(item.roas)}</div>
                         </div>
                     `;
                 });
@@ -3961,14 +4259,14 @@
                 html += `</div></div>`;
             }
 
-            // 5. 타겟팅 가이드 (Compact)
+            // 5. 실행 가이드
             html += `
-                <div style="padding: 10px 12px; background: #e8eaf6; border-radius: 8px; border-left: 3px solid #3f51b5;">
-                    <div style="font-size: 11px; font-weight: 600; color: #283593; margin-bottom: 4px;">🎯 타겟팅 가이드</div>
-                    <div style="font-size: 10px; color: var(--grey-700); line-height: 1.6;">
-                        • ROAS 높은 타겟 → 예산 집중<br>
-                        • CPA 낮은 타겟 → 볼륨 확장<br>
-                        • 연령×성별 조합 활용 → 세분화
+                <div style="margin-top: 16px; padding: 12px 14px; background: linear-gradient(135deg, #e8eaf6 0%, #f5f5ff 100%); border-radius: 10px; border-left: 3px solid #5c6bc0;">
+                    <div style="font-size: 11px; font-weight: 600; color: #3949ab; margin-bottom: 6px;">💡 이렇게 활용하세요</div>
+                    <div style="font-size: 11px; color: var(--grey-800); line-height: 1.7;">
+                        1. 🏆 표시된 타겟에게 <strong>광고 예산을 더 배정</strong>하세요<br>
+                        2. 효율 낮은 타겟은 광고 <strong>노출을 줄이거나 제외</strong>하세요<br>
+                        3. 연령+성별 조합으로 <strong>맞춤 광고 소재</strong>를 만들어보세요
                     </div>
                 </div>
             `;
@@ -3979,354 +4277,844 @@
         // 탭 5: AI 예측 (Prophet Forecast)
         function renderForecastTab() {
             const forecast = insightsData.prophet_forecast || null;
+            let html = '';
 
+            // forecast 데이터가 없어도 insightsData 기반 AI 분석 표시
             if (!forecast) {
-                document.getElementById('forecastContent').innerHTML = `
-                    <div style="text-align: center; padding: 40px;">
-                        <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
-                        <div style="font-size: 16px; font-weight: 600; color: var(--grey-900); margin-bottom: 8px;">
-                            예측 데이터가 아직 준비되지 않았습니다
+                // 인트로 메시지
+                html += `
+                    <div style="margin-bottom: 16px; padding: 14px 18px; background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); border-radius: 12px; border-left: 4px solid #7c4dff;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 18px;">🤖</span>
+                            <span style="font-size: 13px; font-weight: 700; color: #5e35b1;">AI 데이터 분석 인사이트</span>
+                            <span class="inline-help-icon" data-tooltip="현재 데이터를 기반으로 AI가 분석한 기회와 추천 액션입니다">ℹ️</span>
                         </div>
-                        <div style="font-size: 13px; color: var(--grey-600);">
-                            Prophet 예측 분석을 실행한 후 다시 확인해주세요.
+                        <div style="font-size: 11px; color: #7c4dff; margin-top: 6px;">📊 현재 광고 성과 데이터를 기반으로 분석했습니다</div>
+                    </div>
+                `;
+
+                // 핵심 성과 요약 (insightsData 기반)
+                if (insightsData && insightsData.summary) {
+                    const summary = insightsData.summary;
+                    const overallRoas = summary.overall_roas || 0;
+                    const overallCpa = summary.overall_cpa || 0;
+                    const isPositiveRoas = overallRoas >= 100;
+
+                    html += `
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">
+                            <div style="padding: 14px; background: ${isPositiveRoas ? 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)' : 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)'}; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 10px; color: ${isPositiveRoas ? '#2e7d32' : '#c62828'}; font-weight: 600; margin-bottom: 2px;">
+                                    ${isPositiveRoas ? '📈 전체 ROAS' : '📉 전체 ROAS'}
+                                </div>
+                                <div style="font-size: 22px; font-weight: 800; color: ${isPositiveRoas ? '#1b5e20' : '#b71c1c'};">${overallRoas.toFixed(0)}%</div>
+                            </div>
+                            <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 10px; text-align: center;">
+                                <div style="font-size: 10px; color: #1565c0; font-weight: 600; margin-bottom: 2px;">💰 평균 CPA</div>
+                                <div style="font-size: 18px; font-weight: 800; color: #0d47a1;">${formatCurrency(overallCpa)}</div>
+                            </div>
+                            <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-radius: 10px; text-align: center;">
+                                <div style="font-size: 10px; color: #e65100; font-weight: 600; margin-bottom: 2px;">📊 전환 수</div>
+                                <div style="font-size: 18px; font-weight: 700; color: #bf360c;">${formatNumber(summary.total_conversions || 0)}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // 최적 타겟 정보 (insightsData 기반)
+                html += `<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">`;
+
+                // 최적 채널
+                if (insightsData && insightsData.top_categories && insightsData.top_categories.length > 0) {
+                    const sorted = [...insightsData.top_categories].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                    const top = sorted[0];
+                    if (top) {
+                        html += `
+                            <div style="padding: 12px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 10px; text-align: center;">
+                                <div style="font-size: 9px; color: #1565c0; font-weight: 600; margin-bottom: 2px;">📊 최적 채널</div>
+                                <div style="font-size: 11px; font-weight: 700; color: #0d47a1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${top.name}</div>
+                                <div style="font-size: 10px; color: #1565c0;">ROAS ${(top.roas || 0).toFixed(0)}%</div>
+                            </div>
+                        `;
+                    }
+                }
+
+                // 최적 성별
+                if (insightsData && insightsData.gender_performance && insightsData.gender_performance.length > 0) {
+                    const validGenders = insightsData.gender_performance.filter(function(g) { return g.cost > 0 && isValidGender(g.gender); });
+                    if (validGenders.length > 0) {
+                        const sorted = [...validGenders].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                        const top = sorted[0];
+                        if (top) {
+                            const genderName = normalizeGender(top.gender) || top.gender;
+                            html += `
+                                <div style="padding: 12px; background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); border-radius: 10px; text-align: center;">
+                                    <div style="font-size: 9px; color: #c2185b; font-weight: 600; margin-bottom: 2px;">👫 최적 성별</div>
+                                    <div style="font-size: 12px; font-weight: 700; color: #880e4f;">${genderName}</div>
+                                    <div style="font-size: 10px; color: #c2185b;">ROAS ${(top.roas || 0).toFixed(0)}%</div>
+                                </div>
+                            `;
+                        }
+                    }
+                }
+
+                // 최적 상품
+                if (insightsData && insightsData.product_performance && insightsData.product_performance.length > 0) {
+                    const sorted = [...insightsData.product_performance].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                    const top = sorted[0];
+                    if (top) {
+                        html += `
+                            <div style="padding: 12px; background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%); border-radius: 10px; text-align: center;">
+                                <div style="font-size: 9px; color: #3949ab; font-weight: 600; margin-bottom: 2px;">🛍️ 최적 상품</div>
+                                <div style="font-size: 11px; font-weight: 700; color: #1a237e;">${top.product}</div>
+                                <div style="font-size: 10px; color: #3949ab;">ROAS ${(top.roas || 0).toFixed(0)}%</div>
+                            </div>
+                        `;
+                    }
+                }
+                html += '</div>';
+
+                // 채널별 ROAS 순위 (컴팩트 테이블)
+                if (insightsData && insightsData.top_categories && insightsData.top_categories.length > 1) {
+                    const sorted = [...insightsData.top_categories].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                    html += `
+                        <div style="margin-bottom: 12px; padding: 12px; background: white; border: 1px solid var(--grey-200); border-radius: 10px;">
+                            <div style="font-size: 11px; font-weight: 700; color: #333; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                                <span>📈</span> 채널별 ROAS 순위
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;">
+                    `;
+                    sorted.slice(0, 6).forEach((cat, idx) => {
+                        const roas = cat.roas || 0;
+                        const isGood = roas >= 100;
+                        const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '';
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; background: ${isGood ? '#f1f8e9' : '#fff3e0'}; border-radius: 6px; font-size: 10px;">
+                                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100px;">${medal} ${cat.name}</span>
+                                <span style="font-weight: 700; color: ${isGood ? '#2e7d32' : '#e65100'};">${roas.toFixed(0)}%</span>
+                            </div>
+                        `;
+                    });
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // AI가 발견한 기회 (insightsData 기반)
+                const opportunityData = generateAIOpportunities(null) || [];
+                const opportunityCount = opportunityData.length;
+
+                let opportunityItemsHtml = '';
+                if (opportunityData.length > 0) {
+                    opportunityData.forEach(function(item, idx) {
+                        const borderStyle = idx === opportunityData.length - 1 ? 'border-bottom: none;' : '';
+                        const metricHtml = item.metric ? '<div style="margin-top: 6px; font-size: 10px; font-weight: 600; color: #2e7d32; background: #e8f5e9; padding: 4px 8px; border-radius: 4px; display: inline-block;">' + item.metric + '</div>' : '';
+                        opportunityItemsHtml += '<div style="padding: 12px 16px; border-bottom: 1px solid #fce4ec; ' + borderStyle + '">' +
+                            '<div style="display: flex; align-items: flex-start; gap: 10px;">' +
+                                '<span style="font-size: 16px; flex-shrink: 0;">' + item.icon + '</span>' +
+                                '<div style="flex: 1;">' +
+                                    '<div style="font-size: 11px; font-weight: 600; color: #880e4f; margin-bottom: 4px;">' + item.title + '</div>' +
+                                    '<div style="font-size: 10px; color: #666; line-height: 1.5;">' + item.description + '</div>' +
+                                    metricHtml +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+                    });
+                } else {
+                    opportunityItemsHtml = '<div style="padding: 16px; text-align: center; color: #666; font-size: 11px;">데이터를 분석 중입니다...</div>';
+                }
+
+                html += '<div class="forecast-accordion" style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid #f8bbd0;">' +
+                    '<div class="forecast-accordion-header" data-target="forecastOpportunityContent" style="background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">' +
+                        '<div style="display: flex; align-items: center; gap: 8px;">' +
+                            '<span style="font-size: 14px;">🚀</span>' +
+                            '<span style="font-size: 12px; font-weight: 700; color: #880e4f;">AI가 발견한 기회 (' + opportunityCount + '건)</span>' +
+                        '</div>' +
+                        '<span class="forecast-accordion-icon" style="font-size: 12px; color: #880e4f; transition: transform 0.3s;">▼</span>' +
+                    '</div>' +
+                    '<div id="forecastOpportunityContent" class="forecast-accordion-content" style="display: none; background: #fff5f7; padding: 0;">' +
+                        opportunityItemsHtml +
+                    '</div>' +
+                '</div>';
+
+                // AI 추천 액션 (insightsData 기반)
+                const actionData = generateAIActions(null) || [];
+                const actionCount = actionData.length;
+
+                let actionItemsHtml = '';
+                if (actionData.length > 0) {
+                    actionData.forEach(function(item, idx) {
+                        const borderStyle = idx === actionData.length - 1 ? 'border-bottom: none;' : '';
+                        let priorityBadge = '';
+                        if (item.priority === 'high') {
+                            priorityBadge = '<span style="background: #ffebee; color: #c62828; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 6px;">긴급</span>';
+                        } else if (item.priority === 'medium') {
+                            priorityBadge = '<span style="background: #fff3e0; color: #e65100; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 6px;">중요</span>';
+                        }
+                        const effectHtml = item.expectedEffect ? '<div style="margin-top: 6px; font-size: 10px; font-weight: 600; color: #1565c0; background: #e3f2fd; padding: 4px 8px; border-radius: 4px; display: inline-block;">예상 효과: ' + item.expectedEffect + '</div>' : '';
+                        actionItemsHtml += '<div style="padding: 12px 16px; border-bottom: 1px solid #fff9c4; ' + borderStyle + '">' +
+                            '<div style="display: flex; align-items: flex-start; gap: 10px;">' +
+                                '<span style="font-size: 16px; flex-shrink: 0;">' + item.icon + '</span>' +
+                                '<div style="flex: 1;">' +
+                                    '<div style="font-size: 11px; font-weight: 600; color: #f57f17; margin-bottom: 4px;">' + item.title + priorityBadge + '</div>' +
+                                    '<div style="font-size: 10px; color: #666; line-height: 1.5;">' + item.description + '</div>' +
+                                    effectHtml +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+                    });
+                } else {
+                    actionItemsHtml = '<div style="padding: 16px; text-align: center; color: #666; font-size: 11px;">데이터를 분석 중입니다...</div>';
+                }
+
+                html += '<div class="forecast-accordion" style="margin-bottom: 12px; border-radius: 10px; overflow: hidden; border: 1px solid #fff176;">' +
+                    '<div class="forecast-accordion-header" data-target="forecastActionContent" style="background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%); padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">' +
+                        '<div style="display: flex; align-items: center; gap: 8px;">' +
+                            '<span style="font-size: 14px;">💡</span>' +
+                            '<span style="font-size: 12px; font-weight: 700; color: #f57f17;">AI 추천 액션 (' + actionCount + '건)</span>' +
+                        '</div>' +
+                        '<span class="forecast-accordion-icon" style="font-size: 12px; color: #f57f17; transition: transform 0.3s;">▼</span>' +
+                    '</div>' +
+                    '<div id="forecastActionContent" class="forecast-accordion-content" style="display: none; background: #fffef5; padding: 0;">' +
+                        actionItemsHtml +
+                    '</div>' +
+                '</div>';
+
+                // 활용 가이드
+                html += `
+                    <div style="padding: 10px 12px; background: linear-gradient(135deg, #eceff1 0%, #cfd8dc 100%); border-radius: 8px;">
+                        <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 10px; color: #546e7a;">
+                            <span>✅ ROAS 100%+ 채널에 예산 집중</span>
+                            <span>✅ CPA 높은 상품 소재/타겟 점검</span>
+                            <span>✅ 고효율 타겟 활용</span>
                         </div>
                     </div>
                 `;
+
+                document.getElementById('forecastContent').innerHTML = html;
+
+                // 아코디언 초기화
+                initForecastAccordions();
                 return;
             }
 
-            let html = '';
+            // forecast 데이터가 있는 경우
+            html = '';
 
-            // 1. 전체 예측 요약 카드
+            // 인트로 메시지
+            html += `
+                <div style="margin-bottom: 16px; padding: 14px 18px; background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); border-radius: 12px; border-left: 4px solid #7c4dff;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 18px;">🔮</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #5e35b1;">AI가 분석한 향후 30일 예측</span>
+                        <span class="inline-help-icon" data-tooltip="ROAS(광고수익률)가 100% 이상이면 광고비보다 많은 수익이 발생한다는 의미예요">ℹ️</span>
+                    </div>
+                </div>
+            `;
+
+            // 1. 핵심 예측 요약 (예측 ROAS, CPA, 기간) - 1행
             if (forecast.summary && forecast.summary.overall) {
                 const overall = forecast.summary.overall;
                 const avgRoas = overall.avg_forecast_roas || 0;
                 const avgCpa = overall.avg_forecast_cpa || 0;
                 const isPositiveRoas = avgRoas >= 100;
+                // 예측 비용: forecast에서 가져오거나 insightsData에서 계산
+                const forecastCost = overall.total_forecast_cost || overall.avg_forecast_cost || (insightsData && insightsData.summary ? insightsData.summary.total_cost / 12 : 0);
 
                 html += `
-                    <div style="margin-bottom: 24px; padding: 24px; background: linear-gradient(135deg, ${isPositiveRoas ? '#e8f5e9' : '#ffebee'} 0%, ${isPositiveRoas ? '#f1f8f4' : '#fff5f5'} 100%); border-radius: 16px; border: 2px solid ${isPositiveRoas ? '#4caf50' : '#ef5350'};">
-                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-                            <div>
-                                <div style="font-size: 13px; font-weight: 600; color: ${isPositiveRoas ? '#2e7d32' : '#c62828'}; margin-bottom: 4px; text-transform: uppercase;">
-                                    ${isPositiveRoas ? '📈 양호한 효율 예측' : '📉 효율 개선 필요'}
-                                </div>
-                                <div style="font-size: 28px; font-weight: 800; color: ${isPositiveRoas ? '#1b5e20' : '#b71c1c'};">
-                                    ROAS ${avgRoas.toFixed(1)}%
-                                </div>
-                                <div style="font-size: 12px; color: var(--grey-600); margin-top: 4px;">
-                                    향후 30일 예측 평균 ROAS (${overall.forecast_period.start_date} ~ ${overall.forecast_period.end_date})
-                                </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px;">
+                        <div style="padding: 14px; background: ${isPositiveRoas ? 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)' : 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)'}; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 10px; color: ${isPositiveRoas ? '#2e7d32' : '#c62828'}; font-weight: 600; margin-bottom: 2px;">
+                                ${isPositiveRoas ? '📈 예측 ROAS' : '📉 예측 ROAS'}
                             </div>
-                            <div style="text-align: right;">
-                                <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 4px;">예측 평균 CPA</div>
-                                <div style="font-size: 18px; font-weight: 700; color: var(--grey-900);">
-                                    ${formatCurrency(avgCpa)}
-                                </div>
-                            </div>
+                            <div style="font-size: 22px; font-weight: 800; color: ${isPositiveRoas ? '#1b5e20' : '#b71c1c'};">${avgRoas.toFixed(0)}%</div>
+                        </div>
+                        <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 10px; text-align: center;">
+                            <div style="font-size: 10px; color: #1565c0; font-weight: 600; margin-bottom: 2px;">💰 예측 CPA</div>
+                            <div style="font-size: 18px; font-weight: 800; color: #0d47a1;">${formatCurrency(avgCpa)}</div>
+                        </div>
+                        <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-radius: 10px; text-align: center;">
+                            <div style="font-size: 10px; color: #e65100; font-weight: 600; margin-bottom: 2px;">💵 예측 비용</div>
+                            <div style="font-size: 16px; font-weight: 700; color: #bf360c;">${formatCurrency(forecastCost)}</div>
                         </div>
                     </div>
                 `;
             }
 
-            // 2. Prophet 예측 기반 알림
-            if (forecast.alerts && forecast.alerts.length > 0) {
-                html += `
-                    <div style="margin-bottom: 24px;">
-                        <div style="font-size: 15px; font-weight: 700; color: var(--grey-900); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 18px;">🚀</span> AI가 발견한 기회
-                        </div>
-                        <div style="display: grid; gap: 12px;">
-                `;
+            // 2. 최적 타겟 (플랫폼, 성별, 연령) - 2행
+            html += `<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">`;
 
-                forecast.alerts.forEach(alert => {
-                    const isPositive = alert.severity === 'positive' || alert.severity === 'opportunity';
-                    const bgColor = isPositive ? 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)' : 'linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%)';
-                    const borderColor = isPositive ? '#4caf50' : '#ff9800';
-                    const icon = isPositive ? '✨' : '💡';
-
-                    html += `
-                        <div style="padding: 16px 20px; background: ${bgColor}; border-radius: 12px; border-left: 4px solid ${borderColor};">
-                            <div style="display: flex; align-items: flex-start; gap: 12px;">
-                                <span style="font-size: 20px;">${icon}</span>
-                                <div style="flex: 1;">
-                                    <div style="font-size: 14px; color: var(--grey-900); font-weight: 500; line-height: 1.5;">
-                                        ${alert.message}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                html += '</div></div>';
-            }
-
-            // 3. 카테고리별 예측 (ROAS 기준 정렬)
-            if (forecast.by_category && forecast.by_category.length > 0) {
-                const sortedByRoas = [...forecast.by_category].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
-                const goodCategories = sortedByRoas.filter(c => (c.avg_forecast_roas || 0) >= 100);
-                const poorCategories = sortedByRoas.filter(c => (c.avg_forecast_roas || 0) < 100);
-
-                html += `
-                    <div style="margin-bottom: 24px;">
-                        <div style="font-size: 15px; font-weight: 700; color: var(--grey-900); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 18px;">📊</span> 유형구분별 30일 예측 ROAS & CPA
-                        </div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
-                `;
-
-                // 효율 양호 채널 (ROAS >= 100%)
-                if (goodCategories.length > 0) {
-                    html += `
-                        <div style="padding: 20px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 12px; border: 1px solid #90caf9;">
-                            <div style="font-size: 13px; font-weight: 600; color: #1565c0; margin-bottom: 12px;">📈 효율 양호 채널 (ROAS ≥ 100%)</div>
-                    `;
-                    goodCategories.forEach(cat => {
-                        const roas = cat.avg_forecast_roas || 0;
-                        const cpa = cat.avg_forecast_cpa || 0;
-                        html += `
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(25, 118, 210, 0.1);">
-                                <span style="font-size: 13px; color: var(--grey-800);">${cat.category}</span>
-                                <div style="text-align: right;">
-                                    <span style="font-size: 14px; font-weight: 700; color: #1565c0;">ROAS ${roas.toFixed(1)}%</span>
-                                    <span style="font-size: 11px; color: var(--grey-600); margin-left: 8px;">CPA ${formatCurrency(cpa)}</span>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    html += '</div>';
-                }
-
-                // 효율 개선 필요 채널 (ROAS < 100%)
-                if (poorCategories.length > 0) {
-                    html += `
-                        <div style="padding: 20px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 12px; border: 1px solid #ffcc80;">
-                            <div style="font-size: 13px; font-weight: 600; color: #e65100; margin-bottom: 12px;">📉 효율 개선 필요 (ROAS < 100%)</div>
-                    `;
-                    poorCategories.forEach(cat => {
-                        const roas = cat.avg_forecast_roas || 0;
-                        const cpa = cat.avg_forecast_cpa || 0;
-                        html += `
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(230, 81, 0, 0.1);">
-                                <span style="font-size: 13px; color: var(--grey-800);">${cat.category}</span>
-                                <div style="text-align: right;">
-                                    <span style="font-size: 14px; font-weight: 700; color: #e65100;">ROAS ${roas.toFixed(1)}%</span>
-                                    <span style="font-size: 11px; color: var(--grey-600); margin-left: 8px;">CPA ${formatCurrency(cpa)}</span>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    html += '</div>';
-                }
-
-                html += '</div></div>';
-            }
-
-            // 4. 상품별 예측 TOP 5 (ROAS 기준)
-            if (forecast.by_product && forecast.by_product.length > 0) {
-                const sortedProducts = [...forecast.by_product].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
-                const topProducts = sortedProducts.slice(0, 5);
-
-                html += `
-                    <div style="margin-bottom: 24px;">
-                        <div style="font-size: 15px; font-weight: 700; color: var(--grey-900); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 18px;">🛍️</span> 상품별 30일 예측 ROAS TOP 5
-                        </div>
-                        <div style="overflow-x: auto;">
-                            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                                <thead>
-                                    <tr style="background: linear-gradient(135deg, #f3e5f5 0%, #fce4ec 100%);">
-                                        <th style="padding: 14px; text-align: left; border-bottom: 2px solid #ce93d8; color: #7b1fa2;">상품</th>
-                                        <th style="padding: 14px; text-align: right; border-bottom: 2px solid #ce93d8; color: #7b1fa2;">예측 ROAS</th>
-                                        <th style="padding: 14px; text-align: right; border-bottom: 2px solid #ce93d8; color: #7b1fa2;">예측 CPA</th>
-                                        <th style="padding: 14px; text-align: center; border-bottom: 2px solid #ce93d8; color: #7b1fa2;">효율</th>
-                                        <th style="padding: 14px; text-align: left; border-bottom: 2px solid #ce93d8; color: #7b1fa2;">액션</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                `;
-
-                topProducts.forEach((prod, idx) => {
-                    const roas = prod.avg_forecast_roas || 0;
-                    const cpa = prod.avg_forecast_cpa || 0;
-                    const isGood = roas >= 100;
-                    const rankBadge = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
-                    const action = isGood ? '예산 확대 검토' : 'CPA 개선 필요';
-
-                    html += `
-                        <tr style="border-bottom: 1px solid var(--grey-100);">
-                            <td style="padding: 14px; font-weight: 600;">
-                                <span style="margin-right: 8px;">${rankBadge}</span>${prod.product}
-                            </td>
-                            <td style="padding: 14px; text-align: right; font-weight: 700; color: ${isGood ? '#2e7d32' : '#c62828'};">
-                                ${roas.toFixed(1)}%
-                            </td>
-                            <td style="padding: 14px; text-align: right; color: var(--grey-600);">
-                                ${formatCurrency(cpa)}
-                            </td>
-                            <td style="padding: 14px; text-align: center;">
-                                <span style="padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; background: ${isGood ? '#e8f5e9' : '#ffebee'}; color: ${isGood ? '#2e7d32' : '#c62828'};">
-                                    ${isGood ? '📈 양호' : '📉 개선필요'}
-                                </span>
-                            </td>
-                            <td style="padding: 14px; font-size: 12px; color: var(--grey-600);">
-                                ${action}
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                html += '</tbody></table></div></div>';
-            }
-
-            // 5. 플랫폼별 예측 (ROAS 기준)
+            // 최적 플랫폼
             if (forecast.by_platform && forecast.by_platform.length > 0) {
                 const sortedPlatforms = [...forecast.by_platform].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
-
+                const topPlatform = sortedPlatforms[0];
                 html += `
-                    <div style="margin-bottom: 24px;">
-                        <div style="font-size: 15px; font-weight: 700; color: var(--grey-900); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 18px;">📱</span> 플랫폼별 30일 예측 ROAS & CPA
-                        </div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                    <div style="padding: 12px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 10px; text-align: center;">
+                        <div style="font-size: 9px; color: #1565c0; font-weight: 600; margin-bottom: 2px;">📱 최적 플랫폼</div>
+                        <div style="font-size: 12px; font-weight: 700; color: #0d47a1;">${topPlatform.platform}</div>
+                        <div style="font-size: 10px; color: #1565c0;">ROAS ${(topPlatform.avg_forecast_roas || 0).toFixed(0)}%</div>
+                    </div>
                 `;
-
-                sortedPlatforms.forEach((plat, idx) => {
-                    const roas = plat.avg_forecast_roas || 0;
-                    const cpa = plat.avg_forecast_cpa || 0;
-                    const isGood = roas >= 100;
-                    const bgColor = idx === 0 ? 'linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%)' : 'white';
-                    const borderStyle = idx === 0 ? 'border: 2px solid #1976d2;' : 'border: 1px solid var(--grey-200);';
-                    const badge = idx === 0 ? '🏆 1위' : '';
-
-                    html += `
-                        <div style="padding: 16px; background: ${bgColor}; border-radius: 12px; text-align: center; ${borderStyle}">
-                            <div style="font-size: 12px; font-weight: 600; color: var(--grey-700); margin-bottom: 8px;">
-                                ${plat.platform} ${badge}
-                            </div>
-                            <div style="font-size: 18px; font-weight: 700; color: ${isGood ? '#1565c0' : '#c62828'};">
-                                ROAS ${roas.toFixed(1)}%
-                            </div>
-                            <div style="font-size: 11px; color: var(--grey-500); margin-top: 4px;">
-                                CPA ${formatCurrency(cpa)}
-                            </div>
-                        </div>
-                    `;
-                });
-
-                html += '</div></div>';
             }
 
-            // 6. 성별 & 연령 예측 (ROAS & CPA 기준)
-            html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 24px;">';
-
-            // 성별 예측
+            // 최적 성별
             if (forecast.by_gender && forecast.by_gender.length > 0) {
                 const validGenders = forecast.by_gender.filter(g => isValidGender(g.gender));
                 if (validGenders.length > 0) {
+                    const sorted = [...validGenders].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
+                    const top = sorted[0];
                     html += `
-                        <div style="padding: 20px; background: white; border-radius: 12px; border: 1px solid var(--grey-200);">
-                            <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 16px;">👫 성별 30일 예측 ROAS & CPA</div>
+                        <div style="padding: 12px; background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); border-radius: 10px; text-align: center;">
+                            <div style="font-size: 9px; color: #c2185b; font-weight: 600; margin-bottom: 2px;">👫 최적 성별</div>
+                            <div style="font-size: 12px; font-weight: 700; color: #880e4f;">${normalizeGender(top.gender) || top.gender}</div>
+                            <div style="font-size: 10px; color: #c2185b;">ROAS ${(top.avg_forecast_roas || 0).toFixed(0)}%</div>
+                        </div>
                     `;
-
-                    validGenders.forEach(g => {
-                        const roas = g.avg_forecast_roas || 0;
-                        const cpa = g.avg_forecast_cpa || 0;
-                        const isGood = roas >= 100;
-                        const normalizedGender = normalizeGender(g.gender) || g.gender;
-
-                        html += `
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--grey-100);">
-                                <span style="font-size: 13px; color: var(--grey-800);">${normalizedGender}</span>
-                                <div style="text-align: right;">
-                                    <span style="font-size: 14px; font-weight: 700; color: ${isGood ? '#2e7d32' : '#c62828'};">
-                                        ROAS ${roas.toFixed(1)}%
-                                    </span>
-                                    <span style="font-size: 11px; color: var(--grey-600); margin-left: 8px;">CPA ${formatCurrency(cpa)}</span>
-                                </div>
-                            </div>
-                        `;
-                    });
-
-                    html += '</div>';
                 }
             }
 
-            // 연령 예측 TOP 5 (ROAS 기준)
+            // 최적 연령
             if (forecast.by_age && forecast.by_age.length > 0) {
                 const validAges = forecast.by_age.filter(a => isValidAge(a.age));
-                const sortedAges = [...validAges].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0)).slice(0, 5);
-
-                if (sortedAges.length > 0) {
+                if (validAges.length > 0) {
+                    const sorted = [...validAges].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
+                    const top = sorted[0];
                     html += `
-                        <div style="padding: 20px; background: white; border-radius: 12px; border: 1px solid var(--grey-200);">
-                            <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 16px;">👤 연령 30일 예측 ROAS TOP 5</div>
+                        <div style="padding: 12px; background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%); border-radius: 10px; text-align: center;">
+                            <div style="font-size: 9px; color: #3949ab; font-weight: 600; margin-bottom: 2px;">👤 최적 연령</div>
+                            <div style="font-size: 11px; font-weight: 700; color: #1a237e;">${top.age}</div>
+                            <div style="font-size: 10px; color: #3949ab;">ROAS ${(top.avg_forecast_roas || 0).toFixed(0)}%</div>
+                        </div>
                     `;
+                }
+            }
+            html += '</div>';
 
-                    sortedAges.forEach((a, idx) => {
-                        const roas = a.avg_forecast_roas || 0;
-                        const cpa = a.avg_forecast_cpa || 0;
-                        const isGood = roas >= 100;
-                        const rankBadge = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '';
+            // 3. 상품별 예측 + 서브탭 (성별&연령, 기기, 플랫폼, 노출기기)
+            html += `
+                <div style="margin-bottom: 16px; background: white; border: 1px solid var(--grey-200); border-radius: 12px; overflow: hidden;">
+                    <div style="display: flex; border-bottom: 1px solid var(--grey-200); background: #f8f9fa;">
+                        <button class="forecast-subtab active" data-subtab="product" style="flex: 1; padding: 10px 8px; font-size: 11px; font-weight: 600; border: none; background: none; cursor: pointer; color: var(--grey-600); border-bottom: 2px solid transparent;">🛍️ 상품별</button>
+                        <button class="forecast-subtab" data-subtab="gender-age" style="flex: 1; padding: 10px 8px; font-size: 11px; font-weight: 600; border: none; background: none; cursor: pointer; color: var(--grey-600); border-bottom: 2px solid transparent;">👫 성별&연령</button>
+                        <button class="forecast-subtab" data-subtab="platform" style="flex: 1; padding: 10px 8px; font-size: 11px; font-weight: 600; border: none; background: none; cursor: pointer; color: var(--grey-600); border-bottom: 2px solid transparent;">📱 플랫폼</button>
+                        <button class="forecast-subtab" data-subtab="category" style="flex: 1; padding: 10px 8px; font-size: 11px; font-weight: 600; border: none; background: none; cursor: pointer; color: var(--grey-600); border-bottom: 2px solid transparent;">📊 채널</button>
+                    </div>
+                    <div id="forecastSubtabContent" style="padding: 12px;"></div>
+                </div>
+            `;
 
+            // 4. AI 발견 기회 (펼치기/접기)
+            const opportunityData = generateAIOpportunities(forecast) || [];
+            const opportunityCount = opportunityData.length;
+
+            let opportunityItemsHtml = '';
+            if (opportunityData.length > 0) {
+                opportunityData.forEach(function(item, idx) {
+                    const borderStyle = idx === opportunityData.length - 1 ? 'border-bottom: none;' : '';
+                    const metricHtml = item.metric ? '<div style="margin-top: 6px; font-size: 10px; font-weight: 600; color: #2e7d32; background: #e8f5e9; padding: 4px 8px; border-radius: 4px; display: inline-block;">' + item.metric + '</div>' : '';
+                    opportunityItemsHtml += '<div style="padding: 12px 16px; border-bottom: 1px solid #fce4ec; ' + borderStyle + '">' +
+                        '<div style="display: flex; align-items: flex-start; gap: 10px;">' +
+                            '<span style="font-size: 16px; flex-shrink: 0;">' + item.icon + '</span>' +
+                            '<div style="flex: 1;">' +
+                                '<div style="font-size: 11px; font-weight: 600; color: #880e4f; margin-bottom: 4px;">' + item.title + '</div>' +
+                                '<div style="font-size: 10px; color: #666; line-height: 1.5;">' + item.description + '</div>' +
+                                metricHtml +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+                });
+            } else {
+                opportunityItemsHtml = '<div style="padding: 16px; text-align: center; color: #666; font-size: 11px;">데이터를 분석 중입니다...</div>';
+            }
+
+            html += '<div class="forecast-accordion" style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid #f8bbd0;">' +
+                '<div class="forecast-accordion-header" data-target="forecastOpportunityContent" style="background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">' +
+                    '<div style="display: flex; align-items: center; gap: 8px;">' +
+                        '<span style="font-size: 14px;">🚀</span>' +
+                        '<span style="font-size: 12px; font-weight: 700; color: #880e4f;">AI가 발견한 기회 (' + opportunityCount + '건)</span>' +
+                    '</div>' +
+                    '<span class="forecast-accordion-icon" style="font-size: 12px; color: #880e4f; transition: transform 0.3s;">▼</span>' +
+                '</div>' +
+                '<div id="forecastOpportunityContent" class="forecast-accordion-content" style="display: none; background: #fff5f7; padding: 0;">' +
+                    opportunityItemsHtml +
+                '</div>' +
+            '</div>';
+
+            // 5. AI 추천 액션 (펼치기/접기)
+            const actionData = generateAIActions(forecast) || [];
+            const actionCount = actionData.length;
+
+            let actionItemsHtml = '';
+            if (actionData.length > 0) {
+                actionData.forEach(function(item, idx) {
+                    const borderStyle = idx === actionData.length - 1 ? 'border-bottom: none;' : '';
+                    let priorityBadge = '';
+                    if (item.priority === 'high') {
+                        priorityBadge = '<span style="background: #ffebee; color: #c62828; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 6px;">긴급</span>';
+                    } else if (item.priority === 'medium') {
+                        priorityBadge = '<span style="background: #fff3e0; color: #e65100; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 6px;">중요</span>';
+                    }
+                    const effectHtml = item.expectedEffect ? '<div style="margin-top: 6px; font-size: 10px; font-weight: 600; color: #1565c0; background: #e3f2fd; padding: 4px 8px; border-radius: 4px; display: inline-block;">예상 효과: ' + item.expectedEffect + '</div>' : '';
+                    actionItemsHtml += '<div style="padding: 12px 16px; border-bottom: 1px solid #fff9c4; ' + borderStyle + '">' +
+                        '<div style="display: flex; align-items: flex-start; gap: 10px;">' +
+                            '<span style="font-size: 16px; flex-shrink: 0;">' + item.icon + '</span>' +
+                            '<div style="flex: 1;">' +
+                                '<div style="font-size: 11px; font-weight: 600; color: #f57f17; margin-bottom: 4px;">' + item.title + priorityBadge + '</div>' +
+                                '<div style="font-size: 10px; color: #666; line-height: 1.5;">' + item.description + '</div>' +
+                                effectHtml +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+                });
+            } else {
+                actionItemsHtml = '<div style="padding: 16px; text-align: center; color: #666; font-size: 11px;">데이터를 분석 중입니다...</div>';
+            }
+
+            html += '<div class="forecast-accordion" style="margin-bottom: 12px; border-radius: 10px; overflow: hidden; border: 1px solid #fff176;">' +
+                '<div class="forecast-accordion-header" data-target="forecastActionContent" style="background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%); padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">' +
+                    '<div style="display: flex; align-items: center; gap: 8px;">' +
+                        '<span style="font-size: 14px;">💡</span>' +
+                        '<span style="font-size: 12px; font-weight: 700; color: #f57f17;">AI 추천 액션 (' + actionCount + '건)</span>' +
+                    '</div>' +
+                    '<span class="forecast-accordion-icon" style="font-size: 12px; color: #f57f17; transition: transform 0.3s;">▼</span>' +
+                '</div>' +
+                '<div id="forecastActionContent" class="forecast-accordion-content" style="display: none; background: #fffef5; padding: 0;">' +
+                    actionItemsHtml +
+                '</div>' +
+            '</div>';
+
+            // 5. 예측 활용 가이드 (컴팩트)
+            html += `
+                <div style="padding: 10px 12px; background: linear-gradient(135deg, #eceff1 0%, #cfd8dc 100%); border-radius: 8px;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 10px; color: #546e7a;">
+                        <span>✅ ROAS 100%+ 채널에 예산 집중</span>
+                        <span>✅ CPA 높은 상품 소재/타겟 점검</span>
+                        <span>✅ 최적 타겟 활용</span>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('forecastContent').innerHTML = html;
+
+            // 서브탭 초기화
+            initForecastSubtabs(forecast);
+
+            // 아코디언 초기화
+            initForecastAccordions();
+        }
+
+        // AI 예측 서브탭 초기화
+        function initForecastSubtabs(forecast) {
+            const subtabBtns = document.querySelectorAll('.forecast-subtab');
+            const contentDiv = document.getElementById('forecastSubtabContent');
+
+            subtabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    subtabBtns.forEach(b => {
+                        b.classList.remove('active');
+                        b.style.color = 'var(--grey-600)';
+                        b.style.borderBottom = '2px solid transparent';
+                    });
+                    this.classList.add('active');
+                    this.style.color = '#7c4dff';
+                    this.style.borderBottom = '2px solid #7c4dff';
+                    renderForecastSubtab(this.dataset.subtab, forecast, contentDiv);
+                });
+            });
+
+            // 기본 탭 활성화
+            const defaultBtn = document.querySelector('.forecast-subtab[data-subtab="product"]');
+            if (defaultBtn) {
+                defaultBtn.style.color = '#7c4dff';
+                defaultBtn.style.borderBottom = '2px solid #7c4dff';
+                renderForecastSubtab('product', forecast, contentDiv);
+            }
+        }
+
+        // AI 예측 아코디언 초기화
+        function initForecastAccordions() {
+            const forecastContent = document.getElementById('forecastContent');
+            if (!forecastContent) return;
+
+            // 이벤트 위임 방식으로 변경 - 기존 리스너 제거 후 재등록
+            forecastContent.removeEventListener('click', handleForecastAccordionClick);
+            forecastContent.addEventListener('click', handleForecastAccordionClick);
+        }
+
+        // 아코디언 클릭 핸들러 (이벤트 위임)
+        function handleForecastAccordionClick(e) {
+            const header = e.target.closest('.forecast-accordion-header');
+            if (!header) return;
+
+            const targetId = header.dataset.target;
+            const content = document.getElementById(targetId);
+            const icon = header.querySelector('.forecast-accordion-icon');
+
+            if (!content || !icon) return;
+
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.style.display = 'none';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // AI가 발견한 기회 데이터 생성 (5개) - insightsData 기반
+        function generateAIOpportunities(forecast) {
+            const opportunities = [];
+
+            try {
+                // 1. 최고 성과 플랫폼 기회
+                if (insightsData && insightsData.platform_performance && insightsData.platform_performance.length > 0) {
+                    const validPlatforms = insightsData.platform_performance.filter(p => p.cost > 0 && p.platform !== 'Uncategorized');
+                    if (validPlatforms.length > 0) {
+                        const sorted = [...validPlatforms].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                        const top = sorted[0];
+                        if (top && (top.roas || 0) >= 100) {
+                            opportunities.push({
+                                icon: '📱',
+                                title: top.platform + ' 플랫폼 고효율 기회',
+                                description: top.platform + '에서 ROAS ' + (top.roas || 0).toFixed(0) + '%로 가장 높은 효율을 보이고 있습니다. 해당 플랫폼의 예산을 확대하면 전체 캠페인 성과 개선이 기대됩니다.',
+                                metric: 'ROAS ' + (top.roas || 0).toFixed(0) + '%'
+                            });
+                        }
+                    }
+                }
+
+                // 2. 고성과 채널 기회
+                if (insightsData && insightsData.top_categories && insightsData.top_categories.length > 0) {
+                    const sorted = [...insightsData.top_categories].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                    const top = sorted[0];
+                    if (top && (top.roas || 0) >= 100) {
+                        opportunities.push({
+                            icon: '📊',
+                            title: top.name + ' 채널 확대 기회',
+                            description: top.name + ' 채널의 ROAS가 ' + (top.roas || 0).toFixed(0) + '%로 매우 높습니다. 이 채널에 예산을 집중하면 높은 수익을 기대할 수 있습니다.',
+                            metric: 'ROAS ' + (top.roas || 0).toFixed(0) + '%'
+                        });
+                    }
+                }
+
+                // 3. 최적 성별 기회
+                if (insightsData && insightsData.gender_performance && insightsData.gender_performance.length > 0) {
+                    const validGenders = insightsData.gender_performance.filter(function(g) { return g.cost > 0 && isValidGender(g.gender); });
+                    if (validGenders.length > 0) {
+                        const sorted = [...validGenders].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                        const top = sorted[0];
+                        if (top && (top.roas || 0) >= 100) {
+                            const genderName = normalizeGender(top.gender) || top.gender;
+                            opportunities.push({
+                                icon: '👫',
+                                title: genderName + ' 타겟 확대 기회',
+                                description: genderName + ' 타겟에서 ROAS ' + (top.roas || 0).toFixed(0) + '%로 우수한 성과를 보이고 있습니다. 성별 맞춤 메시지 전략을 강화하세요.',
+                                metric: 'ROAS ' + (top.roas || 0).toFixed(0) + '%'
+                            });
+                        }
+                    }
+                }
+
+                // 4. 고성과 상품 기회
+                if (insightsData && insightsData.product_performance && insightsData.product_performance.length > 0) {
+                    const sorted = [...insightsData.product_performance].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                    const top = sorted[0];
+                    if (top && (top.roas || 0) >= 100) {
+                        opportunities.push({
+                            icon: '🛍️',
+                            title: top.product + ' 상품 확대 기회',
+                            description: top.product + ' 상품의 ROAS가 ' + (top.roas || 0).toFixed(0) + '%로 가장 높습니다. 해당 상품 중심의 프로모션 및 광고 예산 집중을 권장합니다.',
+                            metric: 'ROAS ' + (top.roas || 0).toFixed(0) + '%'
+                        });
+                    }
+                }
+
+                // 5. 전체 성과 기회
+                if (insightsData && insightsData.summary) {
+                    const overallRoas = insightsData.summary.overall_roas || 0;
+                    if (overallRoas >= 100) {
+                        opportunities.push({
+                            icon: '📈',
+                            title: '전체 캠페인 성장 기회',
+                            description: '전체 ROAS가 ' + overallRoas.toFixed(0) + '%로 양호합니다. 현재 전략을 유지하면서 고효율 채널에 추가 투자를 검토하세요.',
+                            metric: '전체 ROAS ' + overallRoas.toFixed(0) + '%'
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error('generateAIOpportunities error:', e);
+            }
+
+            // 최소 5개 보장 - 기본값 추가
+            const defaults = [
+                { icon: '🎯', title: '타겟 최적화 기회', description: '현재 데이터를 기반으로 타겟팅 전략을 개선하면 더 높은 성과를 기대할 수 있습니다.', metric: null },
+                { icon: '💰', title: '예산 재배분 기회', description: '고효율 채널로 예산을 재배분하여 전체 ROAS를 개선할 수 있는 기회가 있습니다.', metric: null },
+                { icon: '🔄', title: '크리에이티브 갱신 기회', description: '새로운 크리에이티브 테스트를 통해 광고 피로도를 낮추고 성과를 개선할 수 있습니다.', metric: null },
+                { icon: '📊', title: '데이터 기반 최적화 기회', description: 'A/B 테스트를 통해 더 효과적인 광고 소재와 타겟을 발굴할 기회가 있습니다.', metric: null },
+                { icon: '⚡', title: '시즌 대응 기회', description: '시즌별 트렌드에 맞춰 상품과 메시지를 최적화하면 추가 성과를 기대할 수 있습니다.', metric: null }
+            ];
+
+            let defaultIdx = 0;
+            while (opportunities.length < 5) {
+                opportunities.push(defaults[defaultIdx]);
+                defaultIdx++;
+            }
+
+            return opportunities.slice(0, 5);
+        }
+
+        // AI 추천 액션 데이터 생성 (5개) - insightsData 기반
+        function generateAIActions(forecast) {
+            const actions = [];
+
+            try {
+                // 1. 저효율 상품 개선 액션
+                if (insightsData && insightsData.product_performance && insightsData.product_performance.length > 0) {
+                    const sorted = [...insightsData.product_performance].sort((a, b) => (a.roas || 0) - (b.roas || 0));
+                    const worst = sorted[0];
+                    if (worst && (worst.roas || 0) < 100) {
+                        actions.push({
+                            icon: '🔧',
+                            title: worst.product + ' 상품 광고 개선',
+                            description: worst.product + '의 ROAS가 ' + (worst.roas || 0).toFixed(0) + '%로 낮습니다. 타겟 재설정, 크리에이티브 교체, 또는 예산 축소를 검토하세요.',
+                            priority: 'high',
+                            expectedEffect: 'CPA 15~20% 개선'
+                        });
+                    }
+                }
+
+                // 2. 고효율 플랫폼 예산 확대 액션
+                if (insightsData && insightsData.platform_performance && insightsData.platform_performance.length > 0) {
+                    const validPlatforms = insightsData.platform_performance.filter(function(p) { return p.cost > 0 && p.platform !== 'Uncategorized'; });
+                    if (validPlatforms.length > 0) {
+                        const sorted = [...validPlatforms].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                        const top = sorted[0];
+                        if (top && (top.roas || 0) >= 150) {
+                            actions.push({
+                                icon: '💵',
+                                title: top.platform + ' 예산 20% 증액',
+                                description: top.platform + '의 ROAS가 ' + (top.roas || 0).toFixed(0) + '%로 매우 높습니다. 해당 플랫폼 예산을 20% 증액하여 성과를 극대화하세요.',
+                                priority: 'high',
+                                expectedEffect: '매출 증가 기대'
+                            });
+                        }
+                    }
+                }
+
+                // 3. 고효율 채널 집중 액션
+                if (insightsData && insightsData.top_categories && insightsData.top_categories.length > 0) {
+                    const sorted = [...insightsData.top_categories].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                    const top = sorted[0];
+                    if (top) {
+                        actions.push({
+                            icon: '🎯',
+                            title: top.name + ' 채널 캠페인 강화',
+                            description: top.name + ' 채널의 성과가 가장 우수합니다(ROAS ' + (top.roas || 0).toFixed(0) + '%). 해당 채널 전용 캠페인을 신설하거나 기존 캠페인의 예산 비중을 높이세요.',
+                            priority: 'medium',
+                            expectedEffect: 'ROAS 10~15% 개선'
+                        });
+                    }
+                }
+
+                // 4. 저효율 플랫폼 개선 또는 축소 액션
+                if (insightsData && insightsData.platform_performance && insightsData.platform_performance.length > 1) {
+                    const validPlatforms = insightsData.platform_performance.filter(function(p) { return p.cost > 10000 && p.platform !== 'Uncategorized'; });
+                    if (validPlatforms.length > 0) {
+                        const sorted = [...validPlatforms].sort((a, b) => (a.roas || 0) - (b.roas || 0));
+                        const worst = sorted[0];
+                        if (worst && (worst.roas || 0) < 100) {
+                            actions.push({
+                                icon: '⚠️',
+                                title: worst.platform + ' 예산 재검토',
+                                description: worst.platform + '의 ROAS가 ' + (worst.roas || 0).toFixed(0) + '%로 손익분기점 미달입니다. 타겟 및 소재 최적화 후에도 개선되지 않으면 예산 축소를 고려하세요.',
+                                priority: 'medium',
+                                expectedEffect: '비용 효율화'
+                            });
+                        }
+                    }
+                }
+
+                // 5. 전체 전략 액션
+                if (insightsData && insightsData.summary) {
+                    const avgCpa = insightsData.summary.overall_cpa || 0;
+                    actions.push({
+                        icon: '📋',
+                        title: 'CPA 기반 입찰 전략 최적화',
+                        description: '전체 CPA가 ' + formatCurrency(avgCpa) + '입니다. 목표 CPA를 기준으로 자동 입찰 전략을 조정하고, 고CPA 광고세트는 수동 검토하세요.',
+                        priority: 'low',
+                        expectedEffect: '전체 CPA 5~10% 개선'
+                    });
+                }
+            } catch (e) {
+                console.error('generateAIActions error:', e);
+            }
+
+            // 최소 5개 보장 - 기본값 추가
+            const defaults = [
+                { icon: '🔄', title: '크리에이티브 A/B 테스트', description: '현재 운영 중인 광고 소재의 다양한 버전을 테스트하여 최적의 성과를 찾으세요.', priority: 'low', expectedEffect: 'CTR 향상' },
+                { icon: '📱', title: '랜딩페이지 최적화', description: '광고 클릭 후 전환율을 높이기 위해 랜딩페이지 로딩 속도와 UX를 점검하세요.', priority: 'low', expectedEffect: '전환율 향상' },
+                { icon: '🕐', title: '광고 노출 시간대 최적화', description: '성과가 좋은 시간대에 예산을 집중하여 효율을 극대화하세요.', priority: 'low', expectedEffect: 'ROAS 개선' },
+                { icon: '📊', title: '리타겟팅 캠페인 강화', description: '사이트 방문자 및 장바구니 이탈자 대상 리타겟팅을 강화하세요.', priority: 'low', expectedEffect: '전환 증가' },
+                { icon: '🎨', title: '시즌 맞춤 소재 제작', description: '현재 시즌 및 트렌드에 맞는 새로운 광고 소재를 제작하세요.', priority: 'low', expectedEffect: '광고 피로도 감소' }
+            ];
+
+            let defaultIdx = 0;
+            while (actions.length < 5) {
+                actions.push(defaults[defaultIdx]);
+                defaultIdx++;
+            }
+
+            return actions.slice(0, 5);
+        }
+
+        // AI 예측 서브탭 렌더링
+        function renderForecastSubtab(tab, forecast, container) {
+            let html = '';
+
+            if (tab === 'product') {
+                // 상품별 예측
+                if (forecast.by_product && forecast.by_product.length > 0) {
+                    const sorted = [...forecast.by_product].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
+                    html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">`;
+
+                    // ROAS TOP
+                    html += `<div style="padding: 10px; background: #e8f5e9; border-radius: 8px;">
+                        <div style="font-size: 10px; font-weight: 600; color: #2e7d32; margin-bottom: 6px;">🏆 ROAS TOP</div>`;
+                    sorted.slice(0, 4).forEach((prod, idx) => {
+                        const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '';
                         html += `
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--grey-100);">
-                                <span style="font-size: 13px; color: var(--grey-800);">${rankBadge} ${a.age}</span>
-                                <div style="text-align: right;">
-                                    <span style="font-size: 14px; font-weight: 700; color: ${isGood ? '#2e7d32' : '#c62828'};">
-                                        ROAS ${roas.toFixed(1)}%
-                                    </span>
-                                    <span style="font-size: 11px; color: var(--grey-600); margin-left: 8px;">CPA ${formatCurrency(cpa)}</span>
-                                </div>
+                            <div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 10px; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                                <span>${medal} ${prod.product}</span>
+                                <span style="font-weight: 700; color: #1b5e20;">${(prod.avg_forecast_roas || 0).toFixed(0)}%</span>
                             </div>
                         `;
                     });
-
                     html += '</div>';
+
+                    // CPA 개선 필요
+                    const bottom = sorted.slice(-4).reverse();
+                    html += `<div style="padding: 10px; background: #fff3e0; border-radius: 8px;">
+                        <div style="font-size: 10px; font-weight: 600; color: #e65100; margin-bottom: 6px;">📉 CPA 개선 필요</div>`;
+                    bottom.forEach(prod => {
+                        html += `
+                            <div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 10px; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                                <span>${prod.product}</span>
+                                <span style="font-weight: 700; color: #bf360c;">${(prod.avg_forecast_roas || 0).toFixed(0)}%</span>
+                            </div>
+                        `;
+                    });
+                    html += '</div></div>';
+                }
+            } else if (tab === 'gender-age') {
+                // 성별 & 연령 예측
+                html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">`;
+
+                // 성별
+                if (forecast.by_gender && forecast.by_gender.length > 0) {
+                    const validGenders = forecast.by_gender.filter(g => isValidGender(g.gender));
+                    html += `<div style="padding: 10px; background: #fce4ec; border-radius: 8px;">
+                        <div style="font-size: 10px; font-weight: 600; color: #c2185b; margin-bottom: 6px;">👫 성별 예측</div>`;
+                    validGenders.forEach(g => {
+                        const roas = g.avg_forecast_roas || 0;
+                        html += `
+                            <div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 10px; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                                <span>${normalizeGender(g.gender) || g.gender}</span>
+                                <span style="font-weight: 700; color: ${roas >= 100 ? '#2e7d32' : '#c62828'};">${roas.toFixed(0)}%</span>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                }
+
+                // 연령
+                if (forecast.by_age && forecast.by_age.length > 0) {
+                    const validAges = forecast.by_age.filter(a => isValidAge(a.age));
+                    const sorted = [...validAges].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
+                    html += `<div style="padding: 10px; background: #e8eaf6; border-radius: 8px;">
+                        <div style="font-size: 10px; font-weight: 600; color: #3949ab; margin-bottom: 6px;">👤 연령 예측 TOP 5</div>`;
+                    sorted.slice(0, 5).forEach((a, idx) => {
+                        const roas = a.avg_forecast_roas || 0;
+                        const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '';
+                        html += `
+                            <div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 10px; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                                <span>${medal} ${a.age}</span>
+                                <span style="font-weight: 700; color: ${roas >= 100 ? '#2e7d32' : '#c62828'};">${roas.toFixed(0)}%</span>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                }
+                html += '</div>';
+            } else if (tab === 'platform') {
+                // 플랫폼 예측
+                if (forecast.by_platform && forecast.by_platform.length > 0) {
+                    const sorted = [...forecast.by_platform].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
+                    html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px;">`;
+                    sorted.forEach((plat, idx) => {
+                        const roas = plat.avg_forecast_roas || 0;
+                        const isTop = idx === 0;
+                        html += `
+                            <div style="padding: 10px; background: ${isTop ? 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)' : '#f5f5f5'}; border-radius: 8px; text-align: center; ${isTop ? 'border: 2px solid #1976d2;' : ''}">
+                                <div style="font-size: 9px; color: var(--grey-600); margin-bottom: 2px;">${plat.platform}</div>
+                                <div style="font-size: 14px; font-weight: 700; color: ${roas >= 100 ? '#1565c0' : '#c62828'};">${roas.toFixed(0)}%</div>
+                                ${isTop ? '<div style="font-size: 8px; color: #1976d2; margin-top: 2px;">🏆 1위</div>' : ''}
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                }
+            } else if (tab === 'category') {
+                // 채널별 예측
+                if (forecast.by_category && forecast.by_category.length > 0) {
+                    const sorted = [...forecast.by_category].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
+                    const good = sorted.filter(c => (c.avg_forecast_roas || 0) >= 100);
+                    const poor = sorted.filter(c => (c.avg_forecast_roas || 0) < 100);
+
+                    html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">`;
+
+                    // 효율 양호
+                    html += `<div style="padding: 10px; background: #e8f5e9; border-radius: 8px;">
+                        <div style="font-size: 10px; font-weight: 600; color: #2e7d32; margin-bottom: 6px;">✅ 효율 양호</div>`;
+                    good.forEach(cat => {
+                        html += `
+                            <div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 10px; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80px;">${cat.category}</span>
+                                <span style="font-weight: 700; color: #1b5e20;">${(cat.avg_forecast_roas || 0).toFixed(0)}%</span>
+                            </div>
+                        `;
+                    });
+                    if (good.length === 0) html += '<div style="font-size: 10px; color: var(--grey-500);">데이터 없음</div>';
+                    html += '</div>';
+
+                    // 개선 필요
+                    html += `<div style="padding: 10px; background: #ffebee; border-radius: 8px;">
+                        <div style="font-size: 10px; font-weight: 600; color: #c62828; margin-bottom: 6px;">⚠️ 개선 필요</div>`;
+                    poor.forEach(cat => {
+                        html += `
+                            <div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 10px; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80px;">${cat.category}</span>
+                                <span style="font-weight: 700; color: #b71c1c;">${(cat.avg_forecast_roas || 0).toFixed(0)}%</span>
+                            </div>
+                        `;
+                    });
+                    if (poor.length === 0) html += '<div style="font-size: 10px; color: var(--grey-500);">데이터 없음</div>';
+                    html += '</div></div>';
                 }
             }
 
-            html += '</div>';
-
-            // 7. 예측 기반 추천
-            if (forecast.recommendations && forecast.recommendations.length > 0) {
-                html += `
-                    <div style="margin-top: 24px; padding: 20px; background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%); border-radius: 12px; border: 1px solid #ffd54f;">
-                        <div style="font-size: 14px; font-weight: 600; color: #f57f17; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 18px;">💡</span> AI 예측 기반 액션 추천
-                        </div>
-                        <div style="display: grid; gap: 12px;">
-                `;
-
-                forecast.recommendations.forEach(rec => {
-                    const priorityColor = rec.priority === 'high' ? '#d32f2f' : rec.priority === 'medium' ? '#f57c00' : '#388e3c';
-                    const priorityIcon = rec.priority === 'high' ? '🔴' : rec.priority === 'medium' ? '🟡' : '🟢';
-
-                    html += `
-                        <div style="padding: 16px; background: white; border-radius: 10px; border-left: 4px solid ${priorityColor};">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                <div style="font-size: 14px; font-weight: 600; color: var(--grey-900);">${rec.title}</div>
-                                <span style="padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; background: ${priorityColor}15; color: ${priorityColor};">
-                                    ${priorityIcon} ${rec.priority === 'high' ? '높음' : rec.priority === 'medium' ? '보통' : '낮음'}
-                                </span>
-                            </div>
-                            <div style="font-size: 13px; color: var(--grey-700); line-height: 1.5;">${rec.description}</div>
-                            <div style="font-size: 12px; color: #1565c0; margin-top: 8px;">
-                                <strong>💡 예상 효과:</strong> ${rec.expected_impact}
-                            </div>
-                        </div>
-                    `;
-                });
-
-                html += '</div></div>';
-            }
-
-            document.getElementById('forecastContent').innerHTML = html;
+            container.innerHTML = html || '<div style="text-align: center; padding: 20px; color: var(--grey-500); font-size: 12px;">데이터가 없습니다</div>';
         }
 
         // 의사결정 도구 탭 전환 초기화
         function initDecisionToolTabs() {
+            const tabMapping = {
+                'summary': 'summaryTab',
+                'opportunity': 'opportunityTab',
+                'warning': 'warningTab',
+                'targeting': 'targetingTab',
+                'forecast': 'forecastTab'
+            };
+
             document.querySelectorAll('.decision-tool-tab-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     document.querySelectorAll('.decision-tool-tab-btn').forEach(b => b.classList.remove('active'));
@@ -4338,12 +5126,8 @@
                         content.classList.remove('active');
                     });
 
-                    let selectedTab = null;
-                    if (targetTab === 'opportunity') selectedTab = document.getElementById('opportunityTab');
-                    else if (targetTab === 'forecast') selectedTab = document.getElementById('forecastTab');
-                    else if (targetTab === 'budget') selectedTab = document.getElementById('budgetGuideTab');
-                    else if (targetTab === 'warning') selectedTab = document.getElementById('warningTab');
-                    else if (targetTab === 'targeting') selectedTab = document.getElementById('targetingTab');
+                    const tabId = tabMapping[targetTab];
+                    const selectedTab = tabId ? document.getElementById(tabId) : null;
 
                     if (selectedTab) {
                         selectedTab.style.display = 'block';
@@ -4351,6 +5135,12 @@
                     }
                 });
             });
+
+            // 기본으로 '오늘의 요약' 탭 활성화
+            const defaultBtn = document.querySelector('.decision-tool-tab-btn[data-tab="summary"]');
+            if (defaultBtn) {
+                defaultBtn.click();
+            }
         }
 
         // 성별 차트
