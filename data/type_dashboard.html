@@ -633,6 +633,98 @@
             color: var(--success-light);
         }
 
+        /* 카드 호버 툴팁 (funnel_dashboard 스타일 참고) */
+        .card-hover-tooltip {
+            position: fixed;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+            z-index: 10001;
+            max-width: 320px;
+            min-width: 240px;
+            display: none;
+            pointer-events: none;
+            border: 2px solid var(--primary-main);
+            overflow: hidden;
+        }
+
+        .card-hover-tooltip.show {
+            display: block;
+        }
+
+        .card-tooltip-header {
+            padding: 12px 16px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, #e8f5e9 100%);
+            border-bottom: 1px solid var(--grey-200);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-tooltip-header-icon {
+            font-size: 18px;
+        }
+
+        .card-tooltip-header-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary-main);
+        }
+
+        .card-tooltip-insight {
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+            border-bottom: 1px solid #ffd54f;
+        }
+
+        .card-tooltip-insight-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #f57c00;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .card-tooltip-insight-text {
+            font-size: 12px;
+            color: var(--grey-800);
+            line-height: 1.6;
+        }
+
+        .card-tooltip-recommendation {
+            padding: 12px 16px;
+            background: white;
+        }
+
+        .card-tooltip-recommendation-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--primary-main);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .card-tooltip-recommendation-text {
+            font-size: 12px;
+            color: var(--grey-700);
+            line-height: 1.6;
+        }
+
+        /* 호버 가능한 카드 스타일 */
+        .hoverable-card {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .hoverable-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
         /* 그리드 레이아웃 */
         .grid-2 {
             display: grid;
@@ -2473,7 +2565,7 @@
                 </div>
             </div>
 
-            <!-- 1. 성과 분석 (브랜드/상품/프로모션) -->
+            <!-- 1. 성과 분석 (브랜드/상품/프로모션/타겟팅) -->
             <div class="collapsible-section">
                 <div class="collapsible-header">
                     <div class="collapsible-title">
@@ -2486,123 +2578,52 @@
                     </button>
                 </div>
                 <div class="collapsible-content">
-                    <!-- 필터 버튼 -->
-                    <div class="view-type-section" style="margin-bottom: 24px;">
-                        <button class="view-btn performance-filter-btn active" data-filter="brand">브랜드명</button>
-                        <button class="view-btn performance-filter-btn" data-filter="product">상품명</button>
-                        <button class="view-btn performance-filter-btn" data-filter="promotion">프로모션</button>
-                        <button class="view-btn performance-filter-btn" data-filter="targeting">타겟팅</button>
+                    <!-- 서브탭 버튼 -->
+                    <div style="display: flex; gap: 8px; padding: 16px 24px; background: #f8f9fa; border-bottom: 1px solid #e9ecef;">
+                        <button class="performance-subtab active" data-perf-tab="brand"
+                                style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: none; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #1a73e8; color: white;">
+                            브랜드
+                        </button>
+                        <button class="performance-subtab" data-perf-tab="product"
+                                style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                            상품
+                        </button>
+                        <button class="performance-subtab" data-perf-tab="promotion"
+                                style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                            프로모션
+                        </button>
+                        <button class="performance-subtab" data-perf-tab="targeting"
+                                style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                            타겟팅
+                        </button>
                     </div>
 
                     <!-- 브랜드 뷰 -->
                     <div class="performance-filter-content active" id="brandView">
-                        <!-- 설명 섹션 -->
-                        <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); margin-bottom: 16px; border-radius: 10px; line-height: 1.7;">
-                            <strong style="color: var(--primary-main);">📖 이 분석은 무엇을 보여주나요?</strong><br>
-                            브랜드별로 광고 성과를 비교하여 어떤 브랜드가 가장 높은 수익을 내고 있는지 확인할 수 있습니다.<br><br>
-                            <strong style="color: var(--primary-main);">💡 사용 방법:</strong><br>
-                            • 왼쪽 차트에서 <strong>ROAS가 높은 브랜드</strong>를 확인하세요<br>
-                            • 오른쪽 테이블에서 각 브랜드의 <strong>상세 지표</strong>(비용, 전환수, 전환값)를 비교하세요<br>
-                            • <strong>차트 위에 마우스를 올리면</strong> 상세한 성과 데이터를 볼 수 있습니다
+                        <!-- 자연어 인사이트 -->
+                        <div id="brandInsightText" style="padding: 20px 24px; background: linear-gradient(135deg, #e3f2fd 0%, #f5f9ff 100%); border-bottom: 1px solid #e9ecef;">
+                            <div style="font-size: 14px; color: #1565c0; font-weight: 600; margin-bottom: 8px;">💡 브랜드 성과 인사이트</div>
+                            <div style="font-size: 13px; color: #424242; line-height: 1.7;">로딩 중...</div>
                         </div>
 
-                        <!-- 자동 인사이트 박스 -->
-                        <div style="margin: 16px 24px; padding: 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 10px; border-left: 4px solid #2196f3;">
-                            <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 8px;">
-                                💡 브랜드 분석 인사이트
-                            </div>
-                            <div style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
-                                ROAS가 높은 브랜드는 예산을 늘려 투자를 확대하고, ROAS가 낮은 브랜드는 타겟팅이나 소재를 개선하세요.
-                            </div>
-                        </div>
-
-                        <div class="grid-2">
-                            <div class="card">
-                                <div class="card-header">
-                                    <div>
-                                        <h2 class="card-title">브랜드 성과</h2>
-                                        <p class="card-subtitle">ROAS 기준 상위 브랜드</p>
-                                    </div>
+                        <div class="card" style="margin: 16px; border-radius: 12px;">
+                            <!-- 컨트롤 버튼 -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="perf-kpi-btn active" data-category="brand" data-kpi="roas" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; background: #1a73e8; color: white;">ROAS</button>
+                                    <button class="perf-kpi-btn" data-category="brand" data-kpi="cost" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">비용</button>
+                                    <button class="perf-kpi-btn" data-category="brand" data-kpi="cpa" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">CPA</button>
+                                    <button class="perf-kpi-btn" data-category="brand" data-kpi="conversions" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">전환수</button>
                                 </div>
-                                <div class="chart-container small">
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="perf-sort-btn active" data-category="brand" data-sort="desc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: #f8f9fa; color: #495057;">↓ 내림차순</button>
+                                    <button class="perf-sort-btn" data-category="brand" data-sort="asc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">↑ 오름차순</button>
+                                </div>
+                            </div>
+                            <!-- 막대 그래프 -->
+                            <div style="padding: 20px;">
+                                <div class="chart-container" style="height: 280px;">
                                     <canvas id="brandPerformanceChart"></canvas>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">
-                                    <div>
-                                        <h2 class="card-title">브랜드별 상세 데이터</h2>
-                                        <p class="card-subtitle">전체 브랜드 분석</p>
-                                    </div>
-                                </div>
-                                <table class="data-table" id="brand-detail-table">
-                                    <thead>
-                                        <tr>
-                                            <th>순위</th>
-                                            <th>브랜드</th>
-                                            <th>비용</th>
-                                            <th>전환수</th>
-                                            <th>전환값</th>
-                                            <th>ROAS</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="6" class="loading">데이터 로딩 중...</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- 해석 가이드 -->
-                        <div style="margin-top: 20px; padding: 0 24px 20px 24px;">
-                            <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
-                                📋 브랜드 성과 해석 가이드
-                            </div>
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-                                <!-- ROAS가 높은 브랜드 -->
-                                <div style="padding: 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 3px solid #4caf50;">
-                                    <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 6px;">
-                                        🌟 ROAS가 높은 브랜드
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                        <strong>의미:</strong> 투자 대비 수익이 우수한 브랜드<br>
-                                        <strong>전략:</strong> 광고 예산을 적극 확대하여 매출 극대화
-                                    </div>
-                                </div>
-
-                                <!-- ROAS가 낮은 브랜드 -->
-                                <div style="padding: 14px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 8px; border-left: 3px solid #f44336;">
-                                    <div style="font-size: 13px; font-weight: 600; color: #f44336; margin-bottom: 6px;">
-                                        ⚠️ ROAS가 낮은 브랜드
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                        <strong>원인:</strong> 타겟팅 미스매치 또는 소재 문제<br>
-                                        <strong>전략:</strong> 타겟 고객층 재설정 또는 광고 소재 교체
-                                    </div>
-                                </div>
-
-                                <!-- 전환수가 많은 브랜드 -->
-                                <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 3px solid #2196f3;">
-                                    <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 6px;">
-                                        💎 전환수가 많은 브랜드
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                        <strong>의미:</strong> 고객 반응이 좋은 인기 브랜드<br>
-                                        <strong>전략:</strong> 재고 확보 및 프로모션 강화로 판매 확대
-                                    </div>
-                                </div>
-
-                                <!-- 비용이 높은 브랜드 -->
-                                <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 8px; border-left: 3px solid #ff9800;">
-                                    <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 6px;">
-                                        💰 비용이 높은 브랜드
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                        <strong>확인사항:</strong> ROAS와 전환수를 함께 확인<br>
-                                        <strong>주의:</strong> ROAS가 낮다면 예산 축소 검토 필요
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2610,113 +2631,30 @@
 
                     <!-- 상품 뷰 -->
                     <div class="performance-filter-content" id="productView" style="display: none;">
-                        <!-- 설명 섹션 -->
-                        <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); margin-bottom: 16px; border-radius: 10px; line-height: 1.7;">
-                            <strong style="color: var(--primary-main);">📖 이 분석은 무엇을 보여주나요?</strong><br>
-                            상품별로 광고 성과를 비교하여 어떤 상품이 실제 매출을 가장 많이 만들어내는지 확인할 수 있습니다.<br><br>
-                            <strong style="color: var(--primary-main);">💡 사용 방법:</strong><br>
-                            • 왼쪽 차트에서 <strong>상위 5개 상품</strong>의 ROAS를 비교하세요<br>
-                            • 오른쪽 테이블에서 <strong>모든 상품</strong>의 성과를 순위별로 확인하세요<br>
-                            • <strong>전환수가 많으면서 ROAS도 높은 상품</strong>이 가장 우수한 상품입니다
+                        <!-- 자연어 인사이트 -->
+                        <div id="productInsightText" style="padding: 20px 24px; background: linear-gradient(135deg, #e8f5e9 0%, #f5fff5 100%); border-bottom: 1px solid #e9ecef;">
+                            <div style="font-size: 14px; color: #2e7d32; font-weight: 600; margin-bottom: 8px;">💡 상품 성과 인사이트</div>
+                            <div style="font-size: 13px; color: #424242; line-height: 1.7;">로딩 중...</div>
                         </div>
 
-                        <!-- 자동 인사이트 박스 -->
-                        <div style="margin: 16px 24px; padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 10px; border-left: 4px solid #4caf50;">
-                            <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 8px;">
-                                💡 상품 분석 인사이트
-                            </div>
-                            <div style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
-                                성과가 좋은 상품은 재고와 광고 예산을 충분히 확보하고, 성과가 낮은 상품은 프로모션이나 타겟팅을 변경해보세요.
-                            </div>
-                        </div>
-
-                        <div class="grid-2">
-                            <div class="card">
-                                <div class="card-header">
-                                    <div>
-                                        <h2 class="card-title">상품 성과</h2>
-                                        <p class="card-subtitle">ROAS 기준 상위 상품 (Top 5)</p>
-                                    </div>
+                        <div class="card" style="margin: 16px; border-radius: 12px;">
+                            <!-- 컨트롤 버튼 -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="perf-kpi-btn active" data-category="product" data-kpi="roas" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; background: #1a73e8; color: white;">ROAS</button>
+                                    <button class="perf-kpi-btn" data-category="product" data-kpi="cost" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">비용</button>
+                                    <button class="perf-kpi-btn" data-category="product" data-kpi="cpa" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">CPA</button>
+                                    <button class="perf-kpi-btn" data-category="product" data-kpi="conversions" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">전환수</button>
                                 </div>
-                                <div class="chart-container small">
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="perf-sort-btn active" data-category="product" data-sort="desc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: #f8f9fa; color: #495057;">↓ 내림차순</button>
+                                    <button class="perf-sort-btn" data-category="product" data-sort="asc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">↑ 오름차순</button>
+                                </div>
+                            </div>
+                            <!-- 막대 그래프 -->
+                            <div style="padding: 20px;">
+                                <div class="chart-container" style="height: 280px;">
                                     <canvas id="productPerformanceChart"></canvas>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">
-                                    <div>
-                                        <h2 class="card-title">상품별 상세 데이터</h2>
-                                        <p class="card-subtitle">전체 상품 분석</p>
-                                    </div>
-                                </div>
-                                <table class="data-table" id="product-detail-table">
-                                    <thead>
-                                        <tr>
-                                            <th>순위</th>
-                                            <th>상품</th>
-                                            <th>비용</th>
-                                            <th>전환수</th>
-                                            <th>전환값</th>
-                                            <th>ROAS</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="6" class="loading">데이터 로딩 중...</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- 해석 가이드 -->
-                        <div style="margin-top: 20px; padding: 0 24px 20px 24px;">
-                            <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
-                                📋 상품 성과 해석 가이드
-                            </div>
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-                                <!-- 스타 상품 -->
-                                <div style="padding: 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 3px solid #4caf50;">
-                                    <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 6px;">
-                                        ⭐ 스타 상품 (ROAS↑ + 전환수↑)
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                        <strong>유형:</strong> 효율과 규모 모두 우수<br>
-                                        <strong>전략:</strong> 최우선 투자 대상. 재고와 예산을 충분히 확보하세요
-                                    </div>
-                                </div>
-
-                                <!-- 숨은 보석 -->
-                                <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 3px solid #2196f3;">
-                                    <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 6px;">
-                                        💎 숨은 보석 (ROAS↑ + 전환수↓)
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                        <strong>유형:</strong> 효율은 좋지만 규모가 작음<br>
-                                        <strong>전략:</strong> 광고 예산 확대로 노출 증대 필요
-                                    </div>
-                                </div>
-
-                                <!-- 개선 필요 -->
-                                <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 8px; border-left: 3px solid #ff9800;">
-                                    <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 6px;">
-                                        🔧 개선 필요 (ROAS↓ + 전환수↑)
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                        <strong>유형:</strong> 규모는 크지만 비효율적<br>
-                                        <strong>전략:</strong> 타겟팅 정교화 또는 가격 전략 재검토
-                                    </div>
-                                </div>
-
-                                <!-- 중단 검토 -->
-                                <div style="padding: 14px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 8px; border-left: 3px solid #f44336;">
-                                    <div style="font-size: 13px; font-weight: 600; color: #f44336; margin-bottom: 6px;">
-                                        ⛔ 중단 검토 (ROAS↓ + 전환수↓)
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                        <strong>유형:</strong> 효율과 규모 모두 부족<br>
-                                        <strong>전략:</strong> 광고 중단 또는 전면 개편 필요
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2724,100 +2662,30 @@
 
                     <!-- 프로모션 뷰 -->
                     <div class="performance-filter-content" id="promotionView" style="display: none;">
-                        <!-- 설명 섹션 -->
-                        <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); margin-bottom: 16px; border-radius: 10px; line-height: 1.7;">
-                            <strong style="color: var(--primary-main);">📖 이 분석은 무엇을 보여주나요?</strong><br>
-                            프로모션(할인, 이벤트 등)별로 광고 성과를 비교하여 어떤 프로모션이 가장 효과적인지 확인할 수 있습니다.<br><br>
-                            <strong style="color: var(--primary-main);">💡 사용 방법:</strong><br>
-                            • 각 프로모션의 <strong>ROAS와 전환수</strong>를 비교하세요<br>
-                            • <strong>비용 대비 전환값</strong>이 높은 프로모션을 찾아 유사한 프로모션을 기획하세요<br>
-                            • 성과가 낮은 프로모션은 혜택을 조정하거나 중단을 고려하세요
+                        <!-- 자연어 인사이트 -->
+                        <div id="promotionInsightText" style="padding: 20px 24px; background: linear-gradient(135deg, #fff3e0 0%, #fffaf5 100%); border-bottom: 1px solid #e9ecef;">
+                            <div style="font-size: 14px; color: #e65100; font-weight: 600; margin-bottom: 8px;">💡 프로모션 성과 인사이트</div>
+                            <div style="font-size: 13px; color: #424242; line-height: 1.7;">로딩 중...</div>
                         </div>
 
-                        <!-- 자동 인사이트 박스 -->
-                        <div style="margin: 16px 24px; padding: 16px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 10px; border-left: 4px solid #ff9800;">
-                            <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 8px;">
-                                💡 프로모션 분석 인사이트
-                            </div>
-                            <div style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
-                                효과적인 프로모션을 찾아내어 반복 실행하고, 성과가 낮은 프로모션은 혜택이나 타겟 고객을 조정해보세요.
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header">
-                                <div>
-                                    <h2 class="card-title">프로모션별 상세 성과</h2>
-                                    <p class="card-subtitle">전체 프로모션 분석</p>
+                        <div class="card" style="margin: 16px; border-radius: 12px;">
+                            <!-- 컨트롤 버튼 -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="perf-kpi-btn active" data-category="promotion" data-kpi="roas" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; background: #1a73e8; color: white;">ROAS</button>
+                                    <button class="perf-kpi-btn" data-category="promotion" data-kpi="cost" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">비용</button>
+                                    <button class="perf-kpi-btn" data-category="promotion" data-kpi="cpa" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">CPA</button>
+                                    <button class="perf-kpi-btn" data-category="promotion" data-kpi="conversions" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">전환수</button>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="perf-sort-btn active" data-category="promotion" data-sort="desc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: #f8f9fa; color: #495057;">↓ 내림차순</button>
+                                    <button class="perf-sort-btn" data-category="promotion" data-sort="asc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">↑ 오름차순</button>
                                 </div>
                             </div>
-                            <table class="data-table" id="promotion-detail-table">
-                                <thead>
-                                    <tr>
-                                        <th>순위</th>
-                                        <th>프로모션</th>
-                                        <th>비용</th>
-                                        <th>전환수</th>
-                                        <th>전환값</th>
-                                        <th>ROAS</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td colspan="6" class="loading">데이터 로딩 중...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <!-- 해석 가이드 -->
-                            <div style="margin-top: 20px; padding: 0 24px 20px 24px;">
-                                <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
-                                    📋 프로모션 성과 해석 가이드
-                                </div>
-                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-                                    <!-- 성공 프로모션 -->
-                                    <div style="padding: 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 3px solid #4caf50;">
-                                        <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 6px;">
-                                            🎉 성공 프로모션 (ROAS 200% 이상)
-                                        </div>
-                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                            <strong>의미:</strong> 고객 반응이 매우 좋은 프로모션<br>
-                                            <strong>전략:</strong> 유사한 프로모션 반복 실행 및 확대
-                                        </div>
-                                    </div>
-
-                                    <!-- 기간 연장 검토 -->
-                                    <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 3px solid #2196f3;">
-                                        <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 6px;">
-                                            📅 기간 연장 검토 (ROAS 100-200%)
-                                        </div>
-                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                            <strong>의미:</strong> 수익이 나는 적정 프로모션<br>
-                                            <strong>전략:</strong> 프로모션 기간 연장 또는 혜택 강화
-                                        </div>
-                                    </div>
-
-                                    <!-- 개선 필요 -->
-                                    <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 8px; border-left: 3px solid #ff9800;">
-                                        <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 6px;">
-                                            🔧 개선 필요 (ROAS 50-100%)
-                                        </div>
-                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                            <strong>원인:</strong> 혜택이 약하거나 타겟이 부정확<br>
-                                            <strong>전략:</strong> 할인율 조정 또는 타겟 고객 재설정
-                                        </div>
-                                    </div>
-
-                                    <!-- 중단 검토 -->
-                                    <div style="padding: 14px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 8px; border-left: 3px solid #f44336;">
-                                        <div style="font-size: 13px; font-weight: 600; color: #f44336; margin-bottom: 6px;">
-                                            ⛔ 중단 검토 (ROAS 50% 미만)
-                                        </div>
-                                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                            <strong>문제:</strong> 비용 대비 수익이 매우 낮음<br>
-                                            <strong>전략:</strong> 프로모션 즉시 중단 및 원인 분석
-                                        </div>
-                                    </div>
+                            <!-- 막대 그래프 -->
+                            <div style="padding: 20px;">
+                                <div class="chart-container" style="height: 280px;">
+                                    <canvas id="promotionPerformanceChart"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -2825,130 +2693,30 @@
 
                     <!-- 타겟팅 뷰 -->
                     <div class="performance-filter-content" id="targetingView" style="display: none;">
-                        <!-- 설명 섹션 -->
-                        <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); margin-bottom: 16px; border-radius: 10px; line-height: 1.7;">
-                            <strong style="color: var(--primary-main);">📖 이 분석은 무엇을 보여주나요?</strong><br>
-                            연령과 성별 조합별로 어떤 타겟 고객층이 가장 높은 성과를 내는지 확인할 수 있습니다.<br><br>
-                            <strong style="color: var(--primary-main);">💡 사용 방법:</strong><br>
-                            • 첫 번째 테이블에서 <strong>최고 성과 연령 x 성별 조합</strong>을 확인하세요<br>
-                            • 두 번째 테이블에서 <strong>최고 성과 광고세트 Top 10</strong>을 확인하세요<br>
-                            • ROAS가 높은 타겟 조합에 <strong>예산을 집중</strong>하고, 낮은 조합은 예산을 줄이세요
+                        <!-- 자연어 인사이트 -->
+                        <div id="targetingInsightText" style="padding: 20px 24px; background: linear-gradient(135deg, #f3e5f5 0%, #faf5ff 100%); border-bottom: 1px solid #e9ecef;">
+                            <div style="font-size: 14px; color: #7b1fa2; font-weight: 600; margin-bottom: 8px;">💡 타겟팅 성과 인사이트</div>
+                            <div style="font-size: 13px; color: #424242; line-height: 1.7;">로딩 중...</div>
                         </div>
 
-                        <!-- 자동 인사이트 박스 -->
-                        <div style="margin: 16px 24px; padding: 16px; background: linear-gradient(135deg, #f3e5f5 0%, #faf5fc 100%); border-radius: 10px; border-left: 4px solid #9c27b0;">
-                            <div style="font-size: 13px; font-weight: 600; color: #9c27b0; margin-bottom: 8px;">
-                                💡 타겟팅 분석 인사이트
-                            </div>
-                            <div style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
-                                성과가 좋은 타겟 조합을 발견했다면, 해당 조합으로 신규 광고세트를 만들어 확장하세요. 성과가 낮은 타겟은 과감히 제외하는 것이 효율적입니다.
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header">
-                                <div>
-                                    <h2 class="card-title">연령 x 성별 조합</h2>
-                                    <p class="card-subtitle">최고 성과 타겟 조합</p>
+                        <div class="card" style="margin: 16px; border-radius: 12px;">
+                            <!-- 컨트롤 버튼 -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="perf-kpi-btn active" data-category="targeting" data-kpi="roas" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; background: #1a73e8; color: white;">ROAS</button>
+                                    <button class="perf-kpi-btn" data-category="targeting" data-kpi="cost" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">비용</button>
+                                    <button class="perf-kpi-btn" data-category="targeting" data-kpi="cpa" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">CPA</button>
+                                    <button class="perf-kpi-btn" data-category="targeting" data-kpi="conversions" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">전환수</button>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="perf-sort-btn active" data-category="targeting" data-sort="desc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: #f8f9fa; color: #495057;">↓ 내림차순</button>
+                                    <button class="perf-sort-btn" data-category="targeting" data-sort="asc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">↑ 오름차순</button>
                                 </div>
                             </div>
-                            <table class="data-table" id="age-gender-table">
-                                <thead>
-                                    <tr>
-                                        <th>순위</th>
-                                        <th>광고세트</th>
-                                        <th>연령</th>
-                                        <th>성별</th>
-                                        <th>ROAS</th>
-                                        <th>전환수</th>
-                                        <th>추천사항</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td colspan="7" class="loading">데이터 로딩 중...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- 최고 성과 광고세트 -->
-                        <div class="card">
-                            <div class="card-header">
-                                <div>
-                                    <h2 class="card-title">최고 성과 광고세트 (Top 10)</h2>
-                                    <p class="card-subtitle">ROAS 기준</p>
-                                </div>
-                            </div>
-                            <table class="data-table" id="top-adsets-table">
-                                <thead>
-                                    <tr>
-                                        <th>순위</th>
-                                        <th>캠페인</th>
-                                        <th>광고세트</th>
-                                        <th>유형구분</th>
-                                        <th>비용</th>
-                                        <th>전환수</th>
-                                        <th>전환값</th>
-                                        <th>ROAS</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td colspan="8" class="loading">데이터 로딩 중...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- 해석 가이드 -->
-                        <div style="margin-top: 20px; padding: 0 24px 20px 24px;">
-                            <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 12px;">
-                                📋 타겟팅 성과 해석 가이드
-                            </div>
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-                                <!-- 황금 타겟 -->
-                                <div style="padding: 14px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 3px solid #4caf50;">
-                                    <div style="font-size: 13px; font-weight: 600; color: #4caf50; margin-bottom: 6px;">
-                                        🎯 황금 타겟 (ROAS 300% 이상)
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                        <strong>의미:</strong> 가장 수익성이 높은 타겟 조합<br>
-                                        <strong>전략:</strong> 동일 조합으로 광고세트 추가 생성하여 확장
-                                    </div>
-                                </div>
-
-                                <!-- 우수 타겟 -->
-                                <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 3px solid #2196f3;">
-                                    <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 6px;">
-                                        ⭐ 우수 타겟 (ROAS 150-300%)
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                        <strong>의미:</strong> 안정적인 수익을 내는 타겟<br>
-                                        <strong>전략:</strong> 예산 유지 및 점진적 확대
-                                    </div>
-                                </div>
-
-                                <!-- 재검토 필요 -->
-                                <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%); border-radius: 8px; border-left: 3px solid #ff9800;">
-                                    <div style="font-size: 13px; font-weight: 600; color: #ff9800; margin-bottom: 6px;">
-                                        🔍 재검토 필요 (ROAS 50-150%)
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                        <strong>원인:</strong> 타겟 범위가 너무 넓거나 좁음<br>
-                                        <strong>전략:</strong> 연령대 조정 또는 성별 타겟 재설정
-                                    </div>
-                                </div>
-
-                                <!-- 제외 권장 -->
-                                <div style="padding: 14px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 8px; border-left: 3px solid #f44336;">
-                                    <div style="font-size: 13px; font-weight: 600; color: #f44336; margin-bottom: 6px;">
-                                        🚫 제외 권장 (ROAS 50% 미만)
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">
-                                        <strong>문제:</strong> 해당 타겟에 제품 수요 없음<br>
-                                        <strong>전략:</strong> 타겟에서 제외하고 예산을 다른 곳에 투자
-                                    </div>
+                            <!-- 막대 그래프 -->
+                            <div style="padding: 20px;">
+                                <div class="chart-container" style="height: 280px;">
+                                    <canvas id="targetingPerformanceChart"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -3200,13 +2968,7 @@
             initDevicePlatformDropdowns();
             initDeviceTypeDropdowns();
             initPivotDropdowns();
-            renderBrandPerformanceChart();
-            renderProductPerformanceChart();
-            renderTopAdsetsTable();
-            renderAgeGenderTable();
-            renderBrandDetailTable();
-            renderProductDetailTable();
-            renderPromotionDetailTable();
+            initPerformanceCharts();
         }
 
         // 기간 정보 업데이트
@@ -3336,6 +3098,7 @@
             renderForecastTab();
             initDecisionToolTabs();
             initDecisionTooltips();
+            initCardHoverTooltips();
         }
 
         // 툴팁 초기화
@@ -3392,6 +3155,110 @@
             if (tooltip) tooltip.style.display = 'none';
         }
 
+        // 카드 호버 툴팁 초기화
+        function initCardHoverTooltips() {
+            // 글로벌 툴팁 엘리먼트 생성
+            let cardTooltip = document.getElementById('cardHoverTooltip');
+            if (!cardTooltip) {
+                cardTooltip = document.createElement('div');
+                cardTooltip.id = 'cardHoverTooltip';
+                cardTooltip.className = 'card-hover-tooltip';
+                document.body.appendChild(cardTooltip);
+            }
+
+            // 이벤트 위임 방식으로 호버 처리
+            document.addEventListener('mouseenter', function(e) {
+                const card = e.target.closest('.hoverable-card');
+                if (card && card.dataset.tooltipTitle) {
+                    showCardTooltip(card, cardTooltip);
+                }
+            }, true);
+
+            document.addEventListener('mouseleave', function(e) {
+                const card = e.target.closest('.hoverable-card');
+                if (card && card.dataset.tooltipTitle) {
+                    hideCardTooltip(cardTooltip);
+                }
+            }, true);
+
+            document.addEventListener('mousemove', function(e) {
+                const card = e.target.closest('.hoverable-card');
+                if (card && card.dataset.tooltipTitle && cardTooltip.classList.contains('show')) {
+                    positionCardTooltip(e, cardTooltip);
+                }
+            }, true);
+        }
+
+        // 카드 툴팁 표시
+        function showCardTooltip(card, tooltip) {
+            const title = card.dataset.tooltipTitle || '';
+            const icon = card.dataset.tooltipIcon || '💡';
+            const insight = card.dataset.tooltipInsight || '';
+            const recommendation = card.dataset.tooltipRecommendation || '';
+
+            let html = `
+                <div class="card-tooltip-header">
+                    <span class="card-tooltip-header-icon">${icon}</span>
+                    <span class="card-tooltip-header-title">${title}</span>
+                </div>
+            `;
+
+            if (insight) {
+                html += `
+                    <div class="card-tooltip-insight">
+                        <div class="card-tooltip-insight-label">💡 인사이트</div>
+                        <div class="card-tooltip-insight-text">${insight}</div>
+                    </div>
+                `;
+            }
+
+            if (recommendation) {
+                html += `
+                    <div class="card-tooltip-recommendation">
+                        <div class="card-tooltip-recommendation-label">✅ 활용 팁</div>
+                        <div class="card-tooltip-recommendation-text">${recommendation}</div>
+                    </div>
+                `;
+            }
+
+            tooltip.innerHTML = html;
+            tooltip.classList.add('show');
+        }
+
+        // 카드 툴팁 위치 조정
+        function positionCardTooltip(e, tooltip) {
+            const padding = 15;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const tooltipWidth = tooltip.offsetWidth;
+            const tooltipHeight = tooltip.offsetHeight;
+
+            let left = e.clientX + padding;
+            let top = e.clientY + padding;
+
+            // 오른쪽 화면 밖으로 나가면 왼쪽에 표시
+            if (left + tooltipWidth > viewportWidth - padding) {
+                left = e.clientX - tooltipWidth - padding;
+            }
+
+            // 아래 화면 밖으로 나가면 위에 표시
+            if (top + tooltipHeight > viewportHeight - padding) {
+                top = e.clientY - tooltipHeight - padding;
+            }
+
+            // 최소값 보정
+            if (left < padding) left = padding;
+            if (top < padding) top = padding;
+
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+        }
+
+        // 카드 툴팁 숨기기
+        function hideCardTooltip(tooltip) {
+            tooltip.classList.remove('show');
+        }
+
         // 탭 0: 오늘의 요약 (새로운 메인 탭)
         function renderSummaryTab() {
             const summary = insightsData.summary || {};
@@ -3441,17 +3308,19 @@
 
             let html = '';
 
-            // 1. 핵심 지표 대시보드 (카드 형태)
+            // 1. 핵심 지표 대시보드 (카드 형태) - 호버 툴팁 적용
             html += `
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
                     <!-- 전체 ROAS -->
-                    <div style="padding: 16px; background: ${status.bg}; border-radius: 12px; border: 1px solid ${status.color}20; position: relative;">
+                    <div class="hoverable-card"
+                         data-tooltip-title="ROAS (광고수익률)"
+                         data-tooltip-icon="📈"
+                         data-tooltip-insight="광고비 대비 매출 비율입니다. ROAS 200%는 1만원 광고비로 2만원 매출을 올렸다는 의미입니다."
+                         data-tooltip-recommendation="ROAS 100% 이상이면 수익 발생, 200% 이상이면 효율적인 광고입니다."
+                         style="padding: 16px; background: ${status.bg}; border-radius: 12px; border: 1px solid ${status.color}20; position: relative;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                             <div>
-                                <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
-                                    ROAS
-                                    <span class="inline-help-icon" data-tooltip="<strong>ROAS란?</strong><br>광고비 대비 매출 비율입니다.<br>예: ROAS 200%는 1만원 광고비로 2만원 매출을 올렸다는 의미입니다." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: var(--grey-300); border-radius: 50%; font-size: 9px; color: var(--grey-600); cursor: help;">?</span>
-                                </div>
+                                <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">ROAS</div>
                                 <div style="font-size: 24px; font-weight: 800; color: ${status.color};">${formatPercent(avgRoas)}</div>
                             </div>
                             <div style="padding: 4px 8px; background: ${status.color}; color: white; border-radius: 12px; font-size: 10px; font-weight: 600;">
@@ -3461,25 +3330,34 @@
                     </div>
 
                     <!-- CPA -->
-                    <div style="padding: 16px; background: #e3f2fd; border-radius: 12px; border: 1px solid #90caf920;">
-                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
-                            CPA
-                            <span class="inline-help-icon" data-tooltip="<strong>CPA란?</strong><br>전환 1건당 드는 비용입니다.<br>예: CPA 10,000원이면 구매 1건에 광고비 1만원이 든다는 의미입니다. 낮을수록 효율적입니다." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: var(--grey-300); border-radius: 50%; font-size: 9px; color: var(--grey-600); cursor: help;">?</span>
-                        </div>
+                    <div class="hoverable-card"
+                         data-tooltip-title="CPA (전환당 비용)"
+                         data-tooltip-icon="💰"
+                         data-tooltip-insight="전환 1건당 드는 비용입니다. CPA 10,000원이면 구매 1건에 광고비 1만원이 든다는 의미입니다."
+                         data-tooltip-recommendation="CPA가 낮을수록 효율적입니다. 상품 마진 대비 CPA를 확인하세요."
+                         style="padding: 16px; background: #e3f2fd; border-radius: 12px; border: 1px solid #90caf920;">
+                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">CPA</div>
                         <div style="font-size: 24px; font-weight: 800; color: #1565c0;">${formatCurrency(avgCpa)}</div>
                     </div>
 
                     <!-- 총 전환 -->
-                    <div style="padding: 16px; background: #f3e5f5; border-radius: 12px; border: 1px solid #ce93d820;">
-                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
-                            총 전환수
-                            <span class="inline-help-icon" data-tooltip="<strong>전환이란?</strong><br>광고를 통해 발생한 구매, 가입 등의 목표 행동 수입니다." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: var(--grey-300); border-radius: 50%; font-size: 9px; color: var(--grey-600); cursor: help;">?</span>
-                        </div>
+                    <div class="hoverable-card"
+                         data-tooltip-title="총 전환수"
+                         data-tooltip-icon="🎯"
+                         data-tooltip-insight="광고를 통해 발생한 구매, 가입 등의 목표 행동 수입니다."
+                         data-tooltip-recommendation="전환수가 많을수록 광고가 잘 동작하고 있습니다."
+                         style="padding: 16px; background: #f3e5f5; border-radius: 12px; border: 1px solid #ce93d820;">
+                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">총 전환수</div>
                         <div style="font-size: 24px; font-weight: 800; color: #7b1fa2;">${formatNumber(totalConversions)}</div>
                     </div>
 
                     <!-- 총 매출 -->
-                    <div style="padding: 16px; background: #fff8e1; border-radius: 12px; border: 1px solid #ffcc8020;">
+                    <div class="hoverable-card"
+                         data-tooltip-title="총 매출"
+                         data-tooltip-icon="💵"
+                         data-tooltip-insight="광고를 통해 발생한 총 매출 금액입니다."
+                         data-tooltip-recommendation="매출 대비 광고비 비율을 확인하여 수익성을 점검하세요."
+                         style="padding: 16px; background: #fff8e1; border-radius: 12px; border: 1px solid #ffcc8020;">
                         <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">총 매출</div>
                         <div style="font-size: 24px; font-weight: 800; color: #f57c00;">${formatCurrency(totalRevenue)}</div>
                     </div>
@@ -3566,13 +3444,17 @@
 
             html += `</div></div>`;
 
-            // 4. 채널 성과 순위 (컴팩트 테이블)
+            // 4. 채널 성과 순위 (컴팩트 테이블) - 호버 툴팁 적용
             if (topCategories.length > 0) {
                 html += `
-                    <div style="padding: 16px; background: white; border-radius: 12px; border: 1px solid var(--grey-200);">
-                        <div style="font-size: 13px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-                            <span>📊 채널별 성과 순위</span>
-                            <span class="inline-help-icon" data-tooltip="<strong>ROAS 기준</strong>으로 정렬된 상위 5개 채널입니다.<br>🔥 확대: 예산 증액 추천<br>✓ 유지: 현재 전략 유지<br>⚠️ 검토: 개선 필요" style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: var(--grey-200); border-radius: 50%; font-size: 10px; color: var(--grey-600); cursor: help;">?</span>
+                    <div class="hoverable-card"
+                         data-tooltip-title="채널별 성과 순위"
+                         data-tooltip-icon="📊"
+                         data-tooltip-insight="ROAS 기준으로 정렬된 상위 5개 채널입니다."
+                         data-tooltip-recommendation="🔥 확대: 예산 증액 추천 | ✓ 유지: 현재 전략 유지 | ⚠️ 검토: 개선 필요"
+                         style="padding: 16px; background: white; border-radius: 12px; border: 1px solid var(--grey-200);">
+                        <div style="font-size: 13px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px;">
+                            📊 채널별 성과 순위
                         </div>
                         <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                             <thead>
@@ -3635,16 +3517,20 @@
 
             let html = '';
 
-            // 인트로 메시지
+            // 인트로 메시지 - 호버 툴팁 적용
             html += `
-                <div style="margin-bottom: 16px; padding: 16px 20px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 12px; border-left: 4px solid #4caf50;">
+                <div class="hoverable-card"
+                     data-tooltip-title="예산 확대 기회"
+                     data-tooltip-icon="🎯"
+                     data-tooltip-insight="ROAS가 높다는 것은 광고비를 쓸수록 더 많은 매출이 발생한다는 의미입니다."
+                     data-tooltip-recommendation="효율이 검증된 곳에 투자를 집중하세요. 예산 증액 시 성과 상승이 기대됩니다."
+                     style="margin-bottom: 16px; padding: 16px 20px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 12px; border-left: 4px solid #4caf50;">
                     <div style="display: flex; align-items: flex-start; gap: 12px;">
                         <span style="font-size: 28px;">🎯</span>
                         <div>
                             <div style="font-size: 14px; font-weight: 700; color: #2e7d32; margin-bottom: 4px;">성과가 좋은 곳에 더 투자하세요</div>
                             <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6;">
                                 아래는 <strong>예산을 늘리면 더 좋은 성과</strong>를 낼 수 있는 채널과 상품입니다.
-                                <span class="inline-help-icon" data-tooltip="<strong>왜 예산을 늘려야 할까요?</strong><br>ROAS가 높다는 것은 광고비를 쓸수록 더 많은 매출이 발생한다는 의미입니다. 효율이 검증된 곳에 투자를 집중하세요." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: #4caf50; border-radius: 50%; font-size: 9px; color: white; cursor: help; margin-left: 4px;">?</span>
                             </div>
                         </div>
                     </div>
@@ -3693,13 +3579,17 @@
                 `;
             }
 
-            // 2. 효율 좋은 상품 (컴팩트)
+            // 2. 효율 좋은 상품 (컴팩트) - 호버 툴팁 적용
             if (goodProducts.length > 0) {
                 html += `
-                    <div style="margin-bottom: 16px; padding: 14px; background: #f5f5f5; border-radius: 10px;">
-                        <div style="font-size: 12px; font-weight: 700; color: var(--grey-900); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                    <div class="hoverable-card"
+                         data-tooltip-title="효율 좋은 상품"
+                         data-tooltip-icon="🛍️"
+                         data-tooltip-insight="ROAS 150% 이상인 상품들입니다."
+                         data-tooltip-recommendation="이 상품들의 광고를 더 활성화하면 전체 성과가 개선됩니다."
+                         style="margin-bottom: 16px; padding: 14px; background: #f5f5f5; border-radius: 10px;">
+                        <div style="font-size: 12px; font-weight: 700; color: var(--grey-900); margin-bottom: 10px;">
                             🛍️ 효율 좋은 상품
-                            <span class="inline-help-icon" data-tooltip="ROAS 150% 이상인 상품들입니다. 이 상품들의 광고를 더 활성화하면 전체 성과가 개선됩니다." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: var(--grey-400); border-radius: 50%; font-size: 9px; color: white; cursor: help;">?</span>
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 6px;">
                 `;
@@ -3948,82 +3838,77 @@
                 return;
             }
 
-            // 경고 있을 때 인트로
+            // 경고 있을 때 인트로 - 호버 툴팁 적용
             html += `
-                <div style="margin-bottom: 16px; padding: 16px 20px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 12px; border-left: 4px solid #ef5350;">
+                <div class="hoverable-card"
+                     data-tooltip-title="주의 필요 항목"
+                     data-tooltip-icon="⚠️"
+                     data-tooltip-insight="ROAS가 100% 미만이면 광고비보다 매출이 적다는 의미입니다."
+                     data-tooltip-recommendation="계속 두면 손해가 커질 수 있어요. 빨리 조치하면 손실을 줄일 수 있습니다."
+                     style="margin-bottom: 16px; padding: 16px 20px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 12px; border-left: 4px solid #ef5350;">
                     <div style="display: flex; align-items: flex-start; gap: 12px;">
                         <span style="font-size: 28px;">⚠️</span>
                         <div>
                             <div style="font-size: 14px; font-weight: 700; color: #c62828; margin-bottom: 4px;">확인이 필요한 항목이 있어요</div>
                             <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6;">
                                 아래 항목들은 <strong>예산 낭비</strong>가 발생할 수 있어요. 빨리 조치하면 손실을 줄일 수 있습니다.
-                                <span class="inline-help-icon" data-tooltip="<strong>왜 점검해야 할까요?</strong><br>ROAS가 100% 미만이면 광고비보다 매출이 적다는 의미입니다. 계속 두면 손해가 커질 수 있어요." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: #ef5350; border-radius: 50%; font-size: 9px; color: white; cursor: help; margin-left: 4px;">?</span>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
 
-            // 문제 요약 배지
+            // 서브탭 구현 - CPA 높음, 비효율 상품
+            const hasHighCpa = highCpaCategories.length > 0;
+            const hasLowRoasProducts = lowRoasProducts.length > 0;
+            const firstActiveTab = hasHighCpa ? 'cpa' : (hasLowRoasProducts ? 'products' : 'cpa');
+
             html += `
-                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
+                <div style="margin-bottom: 16px;">
+                    <div style="display: flex; gap: 8px; border-bottom: 2px solid var(--grey-200); padding-bottom: 0;">
             `;
-            if (lowRoasCategories.length > 0) {
-                html += `<div style="padding: 6px 12px; background: #ffebee; border-radius: 16px; font-size: 11px; color: #c62828; font-weight: 600;">🔴 ROAS 낮음 ${lowRoasCategories.length}개</div>`;
-            }
-            if (highCpaCategories.length > 0) {
-                html += `<div style="padding: 6px 12px; background: #fff3e0; border-radius: 16px; font-size: 11px; color: #e65100; font-weight: 600;">🟠 CPA 높음 ${highCpaCategories.length}개</div>`;
-            }
-            if (lowRoasProducts.length > 0) {
-                html += `<div style="padding: 6px 12px; background: #f3e5f5; border-radius: 16px; font-size: 11px; color: #7b1fa2; font-weight: 600;">🟣 비효율 상품 ${lowRoasProducts.length}개</div>`;
-            }
-            html += `</div>`;
 
-            // 1. ROAS 낮은 채널 (손실 발생 가능)
-            if (lowRoasCategories.length > 0) {
+            if (hasHighCpa) {
                 html += `
-                    <div style="margin-bottom: 12px; padding: 14px; background: white; border-radius: 10px; border: 1px solid #ffcdd2;">
-                        <div style="font-size: 12px; font-weight: 700; color: #c62828; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-                            🔴 수익보다 비용이 더 나가는 채널
-                            <span class="inline-help-icon" data-tooltip="ROAS가 100% 미만이면 1만원을 쓰고 1만원 미만의 매출을 올리고 있다는 의미입니다." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: #c62828; border-radius: 50%; font-size: 9px; color: white; cursor: help;">?</span>
-                        </div>
+                    <button class="warning-subtab ${firstActiveTab === 'cpa' ? 'active' : ''}" data-warning-tab="cpa"
+                            style="padding: 10px 16px; font-size: 12px; font-weight: 600; border: none; background: ${firstActiveTab === 'cpa' ? '#fff3e0' : 'transparent'};
+                                   color: ${firstActiveTab === 'cpa' ? '#e65100' : 'var(--grey-600)'}; cursor: pointer; border-radius: 8px 8px 0 0;
+                                   border-bottom: ${firstActiveTab === 'cpa' ? '3px solid #e65100' : '3px solid transparent'}; margin-bottom: -2px;
+                                   transition: all 0.2s ease;">
+                        🟠 CPA 높음 ${highCpaCategories.length}개
+                    </button>
                 `;
+            }
 
-                lowRoasCategories.forEach(cat => {
-                    const lossPercent = (100 - cat.roas).toFixed(0);
-                    html += `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f5f5f5;">
-                            <div>
-                                <div style="font-size: 12px; font-weight: 600; color: var(--grey-800);">${cat.name}</div>
-                                <div style="font-size: 10px; color: #c62828;">광고비 100원당 ${cat.roas.toFixed(0)}원 회수</div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div style="font-size: 16px; font-weight: 800; color: #c62828;">${formatPercent(cat.roas)}</div>
-                                <div style="font-size: 10px; color: var(--grey-500);">-${lossPercent}% 손실</div>
-                            </div>
-                        </div>
-                    `;
-                });
-
+            if (hasLowRoasProducts) {
                 html += `
-                        <div style="margin-top: 10px; padding: 10px; background: #fff5f5; border-radius: 8px;">
-                            <div style="font-size: 11px; font-weight: 600; color: #c62828; margin-bottom: 4px;">💡 이렇게 해보세요</div>
-                            <div style="font-size: 10px; color: var(--grey-700); line-height: 1.6;">
-                                • 광고 소재(이미지/영상)를 새롭게 교체해보세요<br>
-                                • 타겟 대상을 더 좁혀보세요 (관심사, 연령 등)
-                            </div>
-                        </div>
+                    <button class="warning-subtab ${firstActiveTab === 'products' ? 'active' : ''}" data-warning-tab="products"
+                            style="padding: 10px 16px; font-size: 12px; font-weight: 600; border: none; background: ${firstActiveTab === 'products' ? '#f3e5f5' : 'transparent'};
+                                   color: ${firstActiveTab === 'products' ? '#7b1fa2' : 'var(--grey-600)'}; cursor: pointer; border-radius: 8px 8px 0 0;
+                                   border-bottom: ${firstActiveTab === 'products' ? '3px solid #7b1fa2' : '3px solid transparent'}; margin-bottom: -2px;
+                                   transition: all 0.2s ease;">
+                        🟣 비효율 상품 ${lowRoasProducts.length}개
+                    </button>
+                `;
+            }
+
+            html += `
                     </div>
-                `;
-            }
+                </div>
+            `;
 
-            // 2. CPA 높은 채널
-            if (highCpaCategories.length > 0) {
+            // CPA 높은 채널 컨텐츠
+            if (hasHighCpa) {
+                html += `<div id="warningTabCpa" class="warning-tab-content" style="display: ${firstActiveTab === 'cpa' ? 'block' : 'none'};">`;
                 html += `
-                    <div style="margin-bottom: 12px; padding: 14px; background: white; border-radius: 10px; border: 1px solid #ffe0b2;">
-                        <div style="font-size: 12px; font-weight: 700; color: #e65100; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                    <div class="hoverable-card"
+                         data-tooltip-title="CPA 높은 채널"
+                         data-tooltip-icon="🟠"
+                         data-tooltip-insight="한 번의 구매/전환을 얻는 데 드는 비용이 평균보다 훨씬 높다는 의미입니다."
+                         data-tooltip-recommendation="입찰 금액 조정 또는 타겟 정밀화를 고려하세요."
+                         style="margin-bottom: 12px; padding: 14px; background: white; border-radius: 10px; border: 1px solid #ffe0b2;">
+                        <div style="font-size: 12px; font-weight: 700; color: #e65100; margin-bottom: 10px;">
                             🟠 전환 비용이 너무 높은 채널
-                            <span class="inline-help-icon" data-tooltip="<strong>CPA가 높다는 것은?</strong><br>한 번의 구매/전환을 얻는 데 드는 비용이 평균보다 훨씬 높다는 의미입니다." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: #e65100; border-radius: 50%; font-size: 9px; color: white; cursor: help;">?</span>
                         </div>
                 `;
 
@@ -4051,42 +3936,96 @@
                             </div>
                         </div>
                     </div>
+                </div>
                 `;
             }
 
-            // 3. 비효율 상품 (간단히)
-            if (lowRoasProducts.length > 0) {
+            // 비효율 상품 컨텐츠
+            if (hasLowRoasProducts) {
+                html += `<div id="warningTabProducts" class="warning-tab-content" style="display: ${firstActiveTab === 'products' ? 'block' : 'none'};">`;
                 html += `
-                    <div style="border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden;">
-                        <div style="padding: 10px 14px; background: #fafafa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
-                             onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
-                            <span style="font-size: 12px; font-weight: 600; color: #7b1fa2;">🟣 효율이 낮은 상품 (${lowRoasProducts.length}개)</span>
-                            <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▶</span>
+                    <div class="hoverable-card"
+                         data-tooltip-title="비효율 상품"
+                         data-tooltip-icon="🟣"
+                         data-tooltip-insight="ROAS가 100% 미만인 상품들입니다. 광고비보다 매출이 적습니다."
+                         data-tooltip-recommendation="이 상품들은 광고보다 프로모션/할인이 더 효과적일 수 있어요."
+                         style="margin-bottom: 12px; padding: 14px; background: white; border-radius: 10px; border: 1px solid #e1bee7;">
+                        <div style="font-size: 12px; font-weight: 700; color: #7b1fa2; margin-bottom: 12px;">
+                            🟣 효율이 낮은 상품 (${lowRoasProducts.length}개)
                         </div>
-                        <div style="display: none; padding: 12px;">
-                            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
                 `;
 
-                lowRoasProducts.slice(0, 6).forEach(prod => {
+                lowRoasProducts.forEach(prod => {
                     html += `
-                        <div style="padding: 6px 12px; background: #f3e5f5; border-radius: 16px; font-size: 11px; display: flex; align-items: center; gap: 6px;">
-                            <span style="color: var(--grey-800);">${prod.product}</span>
-                            <span style="color: #7b1fa2; font-weight: 700;">${formatPercent(prod.roas)}</span>
-                        </div>
+                            <div style="padding: 8px 14px; background: #f3e5f5; border-radius: 20px; font-size: 11px; display: flex; align-items: center; gap: 8px; border: 1px solid #ce93d8;">
+                                <span style="color: var(--grey-800); font-weight: 500;">${prod.product}</span>
+                                <span style="color: #7b1fa2; font-weight: 700;">${formatPercent(prod.roas)}</span>
+                            </div>
                     `;
                 });
 
                 html += `
-                            </div>
-                            <div style="margin-top: 10px; font-size: 10px; color: var(--grey-600);">
-                                💡 이 상품들은 광고보다 프로모션/할인이 더 효과적일 수 있어요
+                        </div>
+                        <div style="padding: 10px; background: #fce4ec; border-radius: 8px;">
+                            <div style="font-size: 11px; font-weight: 600; color: #7b1fa2; margin-bottom: 4px;">💡 이렇게 해보세요</div>
+                            <div style="font-size: 10px; color: var(--grey-700); line-height: 1.6;">
+                                • 이 상품들은 광고보다 프로모션/할인이 더 효과적일 수 있어요<br>
+                                • 광고 소재나 타겟을 변경해보세요<br>
+                                • 광고 예산을 효율 좋은 상품으로 이동하세요
                             </div>
                         </div>
                     </div>
+                </div>
                 `;
             }
 
             document.getElementById('warningContent').innerHTML = html;
+
+            // 서브탭 클릭 이벤트 초기화
+            initWarningSubtabs();
+        }
+
+        // 주의 필요 탭의 서브탭 이벤트 핸들러
+        function initWarningSubtabs() {
+            const subtabs = document.querySelectorAll('.warning-subtab');
+            subtabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetTab = this.dataset.warningTab;
+
+                    // 모든 탭 비활성화
+                    subtabs.forEach(t => {
+                        t.classList.remove('active');
+                        t.style.background = 'transparent';
+                        t.style.color = 'var(--grey-600)';
+                        t.style.borderBottom = '3px solid transparent';
+                    });
+
+                    // 클릭한 탭 활성화
+                    this.classList.add('active');
+                    if (targetTab === 'cpa') {
+                        this.style.background = '#fff3e0';
+                        this.style.color = '#e65100';
+                        this.style.borderBottom = '3px solid #e65100';
+                    } else if (targetTab === 'products') {
+                        this.style.background = '#f3e5f5';
+                        this.style.color = '#7b1fa2';
+                        this.style.borderBottom = '3px solid #7b1fa2';
+                    }
+
+                    // 모든 컨텐츠 숨기기
+                    document.querySelectorAll('.warning-tab-content').forEach(content => {
+                        content.style.display = 'none';
+                    });
+
+                    // 해당 컨텐츠 표시
+                    const contentId = targetTab === 'cpa' ? 'warningTabCpa' : 'warningTabProducts';
+                    const targetContent = document.getElementById(contentId);
+                    if (targetContent) {
+                        targetContent.style.display = 'block';
+                    }
+                });
+            });
         }
 
         // 탭 3: 타겟 분석 - 사용자 친화적 버전
@@ -4103,16 +4042,20 @@
 
             let html = '';
 
-            // 인트로 메시지
+            // 인트로 메시지 - 호버 툴팁 적용
             html += `
-                <div style="margin-bottom: 16px; padding: 16px 20px; background: linear-gradient(135deg, #e8eaf6 0%, #f5f5ff 100%); border-radius: 12px; border-left: 4px solid #5c6bc0;">
+                <div class="hoverable-card"
+                     data-tooltip-title="타겟 분석"
+                     data-tooltip-icon="👥"
+                     data-tooltip-insight="광고를 특정 그룹(성별, 나이, 관심사 등)에게만 보여주는 것을 타겟팅이라고 합니다."
+                     data-tooltip-recommendation="효율적인 타겟에 집중하면 같은 비용으로 더 많은 성과를 얻을 수 있어요."
+                     style="margin-bottom: 16px; padding: 16px 20px; background: linear-gradient(135deg, #e8eaf6 0%, #f5f5ff 100%); border-radius: 12px; border-left: 4px solid #5c6bc0;">
                     <div style="display: flex; align-items: flex-start; gap: 12px;">
                         <span style="font-size: 28px;">👥</span>
                         <div>
                             <div style="font-size: 14px; font-weight: 700; color: #3949ab; margin-bottom: 4px;">누구에게 광고를 보여줘야 효과적일까요?</div>
                             <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6;">
                                 성별, 연령, 기기별로 <strong>어떤 고객이 가장 잘 반응하는지</strong> 분석했습니다.
-                                <span class="inline-help-icon" data-tooltip="<strong>타겟팅이란?</strong><br>광고를 특정 그룹(성별, 나이, 관심사 등)에게만 보여주는 것입니다. 효율적인 타겟에 집중하면 같은 비용으로 더 많은 성과를 얻을 수 있어요." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: #5c6bc0; border-radius: 50%; font-size: 9px; color: white; cursor: help; margin-left: 4px;">?</span>
                             </div>
                         </div>
                     </div>
@@ -4170,13 +4113,17 @@
 
             html += `</div></div>`;
 
-            // 2. 성별 비교 (시각적)
+            // 2. 성별 비교 (시각적) - 호버 툴팁 적용
             if (genderData.length > 0) {
                 html += `
-                    <div style="margin-bottom: 12px; padding: 14px; background: white; border-radius: 10px; border: 1px solid var(--grey-200);">
-                        <div style="font-size: 12px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                    <div class="hoverable-card"
+                         data-tooltip-title="성별 비교"
+                         data-tooltip-icon="👥"
+                         data-tooltip-insight="같은 광고를 봤을 때 남성과 여성 중 누가 더 잘 구매했는지 비교합니다."
+                         data-tooltip-recommendation="효율이 높은 성별에 예산을 집중하면 성과가 개선됩니다."
+                         style="margin-bottom: 12px; padding: 14px; background: white; border-radius: 10px; border: 1px solid var(--grey-200);">
+                        <div style="font-size: 12px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px;">
                             👥 성별 비교
-                            <span class="inline-help-icon" data-tooltip="같은 광고를 봤을 때 남성과 여성 중 누가 더 잘 구매했는지 비교합니다." style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: var(--grey-400); border-radius: 50%; font-size: 9px; color: white; cursor: help;">?</span>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
                 `;
@@ -4281,13 +4228,17 @@
 
             // forecast 데이터가 없어도 insightsData 기반 AI 분석 표시
             if (!forecast) {
-                // 인트로 메시지
+                // 인트로 메시지 - 호버 툴팁 적용
                 html += `
-                    <div style="margin-bottom: 16px; padding: 14px 18px; background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); border-radius: 12px; border-left: 4px solid #7c4dff;">
+                    <div class="hoverable-card"
+                         data-tooltip-title="AI 데이터 분석"
+                         data-tooltip-icon="🤖"
+                         data-tooltip-insight="현재 데이터를 기반으로 AI가 분석한 기회와 추천 액션입니다."
+                         data-tooltip-recommendation="AI 추천을 참고하여 광고 전략을 최적화하세요."
+                         style="margin-bottom: 16px; padding: 14px 18px; background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); border-radius: 12px; border-left: 4px solid #7c4dff;">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <span style="font-size: 18px;">🤖</span>
                             <span style="font-size: 13px; font-weight: 700; color: #5e35b1;">AI 데이터 분석 인사이트</span>
-                            <span class="inline-help-icon" data-tooltip="현재 데이터를 기반으로 AI가 분석한 기회와 추천 액션입니다">ℹ️</span>
                         </div>
                         <div style="font-size: 11px; color: #7c4dff; margin-top: 6px;">📊 현재 광고 성과 데이터를 기반으로 분석했습니다</div>
                     </div>
@@ -4501,13 +4452,17 @@
             // forecast 데이터가 있는 경우
             html = '';
 
-            // 인트로 메시지
+            // 인트로 메시지 - 호버 툴팁 적용
             html += `
-                <div style="margin-bottom: 16px; padding: 14px 18px; background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); border-radius: 12px; border-left: 4px solid #7c4dff;">
+                <div class="hoverable-card"
+                     data-tooltip-title="AI 예측 분석"
+                     data-tooltip-icon="🔮"
+                     data-tooltip-insight="ROAS(광고수익률)가 100% 이상이면 광고비보다 많은 수익이 발생한다는 의미예요."
+                     data-tooltip-recommendation="AI 예측을 참고하여 예산 배분을 최적화하세요."
+                     style="margin-bottom: 16px; padding: 14px 18px; background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); border-radius: 12px; border-left: 4px solid #7c4dff;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span style="font-size: 18px;">🔮</span>
                         <span style="font-size: 13px; font-weight: 700; color: #5e35b1;">AI가 분석한 향후 30일 예측</span>
-                        <span class="inline-help-icon" data-tooltip="ROAS(광고수익률)가 100% 이상이면 광고비보다 많은 수익이 발생한다는 의미예요">ℹ️</span>
                     </div>
                 </div>
             `;
@@ -5243,20 +5198,210 @@
         }
 
         // 브랜드 성과 차트
+        // 성과분석 차트 상태 관리
+        let perfChartState = {
+            brand: { kpi: 'roas', sort: 'desc', chart: null },
+            product: { kpi: 'roas', sort: 'desc', chart: null },
+            promotion: { kpi: 'roas', sort: 'desc', chart: null },
+            targeting: { kpi: 'roas', sort: 'desc', chart: null }
+        };
+
+        // KPI별 색상
+        const kpiColors = {
+            roas: { bg: 'rgba(0, 200, 83, 0.8)', border: 'rgba(0, 200, 83, 1)' },
+            cost: { bg: 'rgba(255, 152, 0, 0.8)', border: 'rgba(255, 152, 0, 1)' },
+            cpa: { bg: 'rgba(244, 67, 54, 0.8)', border: 'rgba(244, 67, 54, 1)' },
+            conversions: { bg: 'rgba(33, 150, 243, 0.8)', border: 'rgba(33, 150, 243, 1)' }
+        };
+
+        // KPI별 라벨
+        const kpiLabels = {
+            roas: 'ROAS (%)',
+            cost: '비용 (원)',
+            cpa: 'CPA (원)',
+            conversions: '전환수'
+        };
+
+        // 자연어 인사이트 생성
+        function generateBrandInsight() {
+            const brands = insightsData.brand_performance;
+            if (!brands || brands.length === 0) return;
+
+            const sorted = [...brands].sort((a, b) => b.roas - a.roas);
+            const best = sorted[0];
+            const worst = sorted[sorted.length - 1];
+            const avgRoas = brands.reduce((sum, b) => sum + b.roas, 0) / brands.length;
+            const totalCost = brands.reduce((sum, b) => sum + b.cost, 0);
+
+            const highPerformers = brands.filter(b => b.roas >= 200);
+            const lowPerformers = brands.filter(b => b.roas < 100);
+
+            let insight = `<strong>${best.brand}</strong>가 ROAS <strong>${formatPercent(best.roas)}</strong>로 가장 높은 성과를 보이고 있습니다. `;
+
+            if (highPerformers.length > 1) {
+                insight += `${highPerformers.length}개 브랜드가 ROAS 200% 이상의 우수한 성과를 내고 있어 예산 확대를 권장합니다. `;
+            }
+
+            if (lowPerformers.length > 0) {
+                insight += `<br><br>⚠️ <strong>${worst.brand}</strong> 등 ${lowPerformers.length}개 브랜드는 ROAS ${formatPercent(worst.roas)}로 효율이 낮습니다. 타겟팅 재설정이나 광고 소재 개선이 필요합니다.`;
+            }
+
+            insight += `<br><br>📊 전체 평균 ROAS는 <strong>${formatPercent(avgRoas)}</strong>이며, 총 광고비 <strong>${formatCurrency(totalCost)}</strong>가 집행되었습니다.`;
+
+            document.querySelector('#brandInsightText > div:last-child').innerHTML = insight;
+        }
+
+        function generateProductInsight() {
+            const products = insightsData.product_performance;
+            if (!products || products.length === 0) return;
+
+            const sorted = [...products].sort((a, b) => b.roas - a.roas);
+            const best = sorted[0];
+            const worst = sorted[sorted.length - 1];
+
+            // 스타상품 (ROAS↑ 전환↑)
+            const avgConv = products.reduce((sum, p) => sum + p.conversions, 0) / products.length;
+            const starProducts = products.filter(p => p.roas >= 200 && p.conversions >= avgConv);
+            const hiddenGems = products.filter(p => p.roas >= 200 && p.conversions < avgConv);
+            const needsWork = products.filter(p => p.roas < 100);
+
+            let insight = `<strong>${best.product}</strong>가 ROAS <strong>${formatPercent(best.roas)}</strong>로 최고 성과 상품입니다. `;
+
+            if (starProducts.length > 0) {
+                insight += `<br><br>⭐ <strong>스타 상품 ${starProducts.length}개</strong> (${starProducts.map(p => p.product).join(', ')}): ROAS와 전환수 모두 우수합니다. 재고 확보와 예산 확대를 최우선으로 진행하세요.`;
+            }
+
+            if (hiddenGems.length > 0) {
+                insight += `<br><br>💎 <strong>숨은 보석 ${hiddenGems.length}개</strong> (${hiddenGems.map(p => p.product).join(', ')}): ROAS는 높지만 전환수가 적습니다. 광고 노출을 늘려 판매를 확대하세요.`;
+            }
+
+            if (needsWork.length > 0) {
+                insight += `<br><br>⛔ <strong>개선 필요 ${needsWork.length}개</strong>: ROAS 100% 미만으로 비효율적입니다. 프로모션 변경이나 광고 중단을 검토하세요.`;
+            }
+
+            document.querySelector('#productInsightText > div:last-child').innerHTML = insight;
+        }
+
+        function generatePromotionInsight() {
+            const promotions = insightsData.promotion_performance;
+            if (!promotions || promotions.length === 0) return;
+
+            const sorted = [...promotions].sort((a, b) => b.roas - a.roas);
+            const best = sorted[0];
+
+            const successful = promotions.filter(p => p.roas >= 200);
+            const moderate = promotions.filter(p => p.roas >= 100 && p.roas < 200);
+            const failing = promotions.filter(p => p.roas < 50);
+
+            let insight = `<strong>${best.promotion}</strong> 프로모션이 ROAS <strong>${formatPercent(best.roas)}</strong>로 가장 효과적입니다. `;
+
+            if (successful.length > 0) {
+                insight += `<br><br>🎉 <strong>성공 프로모션 ${successful.length}개</strong>: ROAS 200% 이상으로 고객 반응이 매우 좋습니다. 유사한 프로모션을 반복 실행하세요.`;
+            }
+
+            if (moderate.length > 0) {
+                insight += `<br><br>📅 <strong>유지 프로모션 ${moderate.length}개</strong>: ROAS 100-200%로 수익이 발생하고 있습니다. 기간 연장이나 혜택 강화를 고려하세요.`;
+            }
+
+            if (failing.length > 0) {
+                insight += `<br><br>⛔ <strong>중단 권장 ${failing.length}개</strong> (${failing.map(p => p.promotion).join(', ')}): ROAS 50% 미만으로 손실이 발생하고 있습니다. 즉시 중단하고 원인을 분석하세요.`;
+            }
+
+            document.querySelector('#promotionInsightText > div:last-child').innerHTML = insight;
+        }
+
+        function generateTargetingInsight() {
+            // pivotDimensionData에서 연령×성별 집계
+            if (!pivotDimensionData || pivotDimensionData.length === 0) {
+                document.querySelector('#targetingInsightText > div:last-child').innerHTML = '타겟팅 데이터를 불러오는 중...';
+                return;
+            }
+
+            const groupedData = {};
+            pivotDimensionData.forEach(row => {
+                const age = row['연령_통합'] || row['연령'];
+                const gender = row['성별_통합'] || row['성별'];
+                if (!age || !gender || gender === '알 수 없음' || age === '알 수 없음') return;
+
+                const key = `${age}_${gender}`;
+                if (!groupedData[key]) {
+                    groupedData[key] = { age, gender, cost: 0, conversions: 0, revenue: 0 };
+                }
+                groupedData[key].cost += parseFloat(row['비용']) || 0;
+                groupedData[key].conversions += parseFloat(row['전환수']) || 0;
+                groupedData[key].revenue += parseFloat(row['전환값']) || 0;
+            });
+
+            const targetingData = Object.values(groupedData).map(g => ({
+                ...g,
+                roas: g.cost > 0 ? (g.revenue / g.cost) * 100 : 0,
+                cpa: g.conversions > 0 ? g.cost / g.conversions : 0
+            })).filter(g => g.cost > 0);
+
+            if (targetingData.length === 0) return;
+
+            const sorted = [...targetingData].sort((a, b) => b.roas - a.roas);
+            const best = sorted[0];
+            const totalCost = targetingData.reduce((sum, t) => sum + t.cost, 0);
+
+            const golden = targetingData.filter(c => c.roas >= 300);
+            const excellent = targetingData.filter(c => c.roas >= 150 && c.roas < 300);
+            const poor = targetingData.filter(c => c.roas < 50);
+
+            let insight = `<strong>${best.age} ${best.gender}</strong> 타겟이 ROAS <strong>${formatPercent(best.roas)}</strong>로 가장 높은 수익을 내고 있습니다. `;
+            insight += `(비용: ${formatCurrency(best.cost)}, CPA: ${formatCurrency(best.cpa)})`;
+
+            if (golden.length > 0) {
+                insight += `<br><br>🎯 <strong>황금 타겟 ${golden.length}개</strong>: ROAS 300% 이상의 핵심 고객층입니다. 이 타겟 조합으로 새로운 광고세트를 추가 생성하여 공격적으로 확장하세요.`;
+            }
+
+            if (excellent.length > 0) {
+                insight += `<br><br>⭐ <strong>우수 타겟 ${excellent.length}개</strong>: 안정적인 수익을 내는 타겟입니다. 현재 예산을 유지하면서 점진적으로 확대하세요.`;
+            }
+
+            if (poor.length > 0) {
+                const poorCost = poor.reduce((sum, p) => sum + p.cost, 0);
+                insight += `<br><br>🚫 <strong>제외 권장 ${poor.length}개</strong>: ROAS 50% 미만으로 총 <strong>${formatCurrency(poorCost)}</strong>가 비효율적으로 사용되고 있습니다. 과감히 타겟에서 제외하세요.`;
+            }
+
+            document.querySelector('#targetingInsightText > div:last-child').innerHTML = insight;
+        }
+
+        // 브랜드 성과 차트
         function renderBrandPerformanceChart() {
+            const state = perfChartState.brand;
             const brands = insightsData.brand_performance;
 
+            // CPA 계산
+            const dataWithCpa = brands.map(b => ({
+                ...b,
+                cpa: b.conversions > 0 ? b.cost / b.conversions : 0
+            }));
+
+            // 정렬
+            let sorted = [...dataWithCpa].sort((a, b) => {
+                const aVal = state.kpi === 'cpa' ? a.cpa : a[state.kpi];
+                const bVal = state.kpi === 'cpa' ? b.cpa : b[state.kpi];
+                return state.sort === 'desc' ? bVal - aVal : aVal - bVal;
+            });
+
+            const labels = sorted.map(b => b.brand);
+            const values = sorted.map(b => state.kpi === 'cpa' ? b.cpa : b[state.kpi]);
+
+            if (state.chart) state.chart.destroy();
+
             const ctx = document.getElementById('brandPerformanceChart').getContext('2d');
-            new Chart(ctx, {
+            state.chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: brands.map(b => b.brand),
+                    labels: labels,
                     datasets: [{
-                        label: 'ROAS (%)',
-                        data: brands.map(b => b.roas),
-                        backgroundColor: 'rgba(0, 200, 83, 0.8)',
-                        borderColor: 'rgba(0, 200, 83, 1)',
-                        borderWidth: 1
+                        label: kpiLabels[state.kpi],
+                        data: values,
+                        backgroundColor: kpiColors[state.kpi].bg,
+                        borderColor: kpiColors[state.kpi].border,
+                        borderWidth: 1,
+                        borderRadius: 4
                     }]
                 },
                 options: {
@@ -5264,51 +5409,72 @@
                     maintainAspectRatio: false,
                     indexAxis: 'y',
                     plugins: {
-                        legend: {
-                            display: false
-                        },
+                        legend: { display: false },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    const item = brands[context.dataIndex];
+                                    const item = sorted[context.dataIndex];
                                     return [
                                         `ROAS: ${formatPercent(item.roas)}`,
                                         `비용: ${formatCurrency(item.cost)}`,
-                                        `전환수: ${formatNumber(item.conversions)}`,
-                                        `전환값: ${formatCurrency(item.revenue)}`
+                                        `CPA: ${formatCurrency(item.cpa)}`,
+                                        `전환수: ${formatNumber(item.conversions)}`
                                     ];
                                 }
                             }
                         }
                     },
                     scales: {
-                        x: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'ROAS (%)'
+                        x: { beginAtZero: true },
+                        y: {
+                            ticks: {
+                                font: { size: 11 },
+                                callback: function(value) {
+                                    const label = this.getLabelForValue(value);
+                                    return label.length > 12 ? label.substring(0, 12) + '...' : label;
+                                }
                             }
                         }
                     }
                 }
             });
+
+            generateBrandInsight();
         }
 
         // 상품 성과 차트
         function renderProductPerformanceChart() {
-            const products = insightsData.product_performance.slice(0, 5);
+            const state = perfChartState.product;
+            const products = insightsData.product_performance;
+
+            const dataWithCpa = products.map(p => ({
+                ...p,
+                cpa: p.conversions > 0 ? p.cost / p.conversions : 0
+            }));
+
+            let sorted = [...dataWithCpa].sort((a, b) => {
+                const aVal = state.kpi === 'cpa' ? a.cpa : a[state.kpi];
+                const bVal = state.kpi === 'cpa' ? b.cpa : b[state.kpi];
+                return state.sort === 'desc' ? bVal - aVal : aVal - bVal;
+            });
+
+            const labels = sorted.map(p => p.product);
+            const values = sorted.map(p => state.kpi === 'cpa' ? p.cpa : p[state.kpi]);
+
+            if (state.chart) state.chart.destroy();
 
             const ctx = document.getElementById('productPerformanceChart').getContext('2d');
-            new Chart(ctx, {
+            state.chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: products.map(p => p.product),
+                    labels: labels,
                     datasets: [{
-                        label: 'ROAS (%)',
-                        data: products.map(p => p.roas),
-                        backgroundColor: 'rgba(33, 150, 243, 0.8)',
-                        borderColor: 'rgba(33, 150, 243, 1)',
-                        borderWidth: 1
+                        label: kpiLabels[state.kpi],
+                        data: values,
+                        backgroundColor: kpiColors[state.kpi].bg,
+                        borderColor: kpiColors[state.kpi].border,
+                        borderWidth: 1,
+                        borderRadius: 4
                     }]
                 },
                 options: {
@@ -5316,131 +5482,283 @@
                     maintainAspectRatio: false,
                     indexAxis: 'y',
                     plugins: {
-                        legend: {
-                            display: false
-                        },
+                        legend: { display: false },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    const item = products[context.dataIndex];
+                                    const item = sorted[context.dataIndex];
                                     return [
                                         `ROAS: ${formatPercent(item.roas)}`,
                                         `비용: ${formatCurrency(item.cost)}`,
-                                        `전환수: ${formatNumber(item.conversions)}`,
-                                        `전환값: ${formatCurrency(item.revenue)}`
+                                        `CPA: ${formatCurrency(item.cpa)}`,
+                                        `전환수: ${formatNumber(item.conversions)}`
                                     ];
                                 }
                             }
                         }
                     },
                     scales: {
-                        x: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'ROAS (%)'
+                        x: { beginAtZero: true },
+                        y: {
+                            ticks: {
+                                font: { size: 11 },
+                                callback: function(value) {
+                                    const label = this.getLabelForValue(value);
+                                    return label.length > 12 ? label.substring(0, 12) + '...' : label;
+                                }
                             }
                         }
                     }
                 }
             });
+
+            generateProductInsight();
         }
 
-        // 최고 성과 광고세트 테이블
-        function renderTopAdsetsTable() {
-            const adsets = insightsData.top_adsets;
-
-            const tbody = document.querySelector('#top-adsets-table tbody');
-            tbody.innerHTML = adsets.map((adset, index) => `
-                <tr>
-                    <td><strong>#${index + 1}</strong></td>
-                    <td>${adset.campaign}</td>
-                    <td>${adset.adset}</td>
-                    <td><span class="badge low">${adset.category}</span></td>
-                    <td>${formatCurrency(adset.cost)}</td>
-                    <td>${formatNumber(adset.conversions)}</td>
-                    <td>${formatCurrency(adset.revenue)}</td>
-                    <td><strong style="color: var(--success-main)">${formatPercent(adset.roas)}</strong></td>
-                </tr>
-            `).join('');
-        }
-
-        // 연령 x 성별 테이블
-        function renderAgeGenderTable() {
-            const combinations = insightsData.age_gender_combinations;
-
-            // 알수없음 필터링 및 성별 정규화 적용
-            const filteredCombinations = combinations.filter(combo =>
-                isValidGender(combo.gender) && isValidAge(combo.age)
-            );
-
-            const tbody = document.querySelector('#age-gender-table tbody');
-            tbody.innerHTML = filteredCombinations.map((combo, index) => {
-                const normalizedGender = normalizeGender(combo.gender) || combo.gender;
-                return `
-                    <tr>
-                        <td><strong>#${index + 1}</strong></td>
-                        <td>${combo.adset}</td>
-                        <td>${combo.age}</td>
-                        <td>${normalizedGender}</td>
-                        <td><strong style="color: var(--success-main)">${formatPercent(combo.roas)}</strong></td>
-                        <td>${formatNumber(combo.conversions)}</td>
-                        <td>${combo.recommendation}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        // 브랜드 상세 테이블
-        function renderBrandDetailTable() {
-            const brands = insightsData.brand_performance;
-
-            const tbody = document.querySelector('#brand-detail-table tbody');
-            tbody.innerHTML = brands.map((brand, index) => `
-                <tr>
-                    <td><strong>#${index + 1}</strong></td>
-                    <td>${brand.brand}</td>
-                    <td>${formatCurrency(brand.cost)}</td>
-                    <td>${formatNumber(brand.conversions)}</td>
-                    <td>${formatCurrency(brand.revenue)}</td>
-                    <td><strong style="color: var(--success-main)">${formatPercent(brand.roas)}</strong></td>
-                </tr>
-            `).join('');
-        }
-
-        // 상품 상세 테이블
-        function renderProductDetailTable() {
-            const products = insightsData.product_performance;
-
-            const tbody = document.querySelector('#product-detail-table tbody');
-            tbody.innerHTML = products.map((product, index) => `
-                <tr>
-                    <td><strong>#${index + 1}</strong></td>
-                    <td>${product.product}</td>
-                    <td>${formatCurrency(product.cost)}</td>
-                    <td>${formatNumber(product.conversions)}</td>
-                    <td>${formatCurrency(product.revenue)}</td>
-                    <td><strong style="color: var(--success-main)">${formatPercent(product.roas)}</strong></td>
-                </tr>
-            `).join('');
-        }
-
-        // 프로모션 상세 테이블
-        function renderPromotionDetailTable() {
+        // 프로모션 성과 차트
+        function renderPromotionPerformanceChart() {
+            const state = perfChartState.promotion;
             const promotions = insightsData.promotion_performance;
 
-            const tbody = document.querySelector('#promotion-detail-table tbody');
-            tbody.innerHTML = promotions.map((promo, index) => `
-                <tr>
-                    <td><strong>#${index + 1}</strong></td>
-                    <td>${promo.promotion}</td>
-                    <td>${formatCurrency(promo.cost)}</td>
-                    <td>${formatNumber(promo.conversions)}</td>
-                    <td>${formatCurrency(promo.revenue)}</td>
-                    <td><strong style="color: var(--success-main)">${formatPercent(promo.roas)}</strong></td>
-                </tr>
-            `).join('');
+            const dataWithCpa = promotions.map(p => ({
+                ...p,
+                cpa: p.conversions > 0 ? p.cost / p.conversions : 0
+            }));
+
+            let sorted = [...dataWithCpa].sort((a, b) => {
+                const aVal = state.kpi === 'cpa' ? a.cpa : a[state.kpi];
+                const bVal = state.kpi === 'cpa' ? b.cpa : b[state.kpi];
+                return state.sort === 'desc' ? bVal - aVal : aVal - bVal;
+            });
+
+            const labels = sorted.map(p => p.promotion);
+            const values = sorted.map(p => state.kpi === 'cpa' ? p.cpa : p[state.kpi]);
+
+            if (state.chart) state.chart.destroy();
+
+            const ctx = document.getElementById('promotionPerformanceChart').getContext('2d');
+            state.chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: kpiLabels[state.kpi],
+                        data: values,
+                        backgroundColor: kpiColors[state.kpi].bg,
+                        borderColor: kpiColors[state.kpi].border,
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const item = sorted[context.dataIndex];
+                                    return [
+                                        `ROAS: ${formatPercent(item.roas)}`,
+                                        `비용: ${formatCurrency(item.cost)}`,
+                                        `CPA: ${formatCurrency(item.cpa)}`,
+                                        `전환수: ${formatNumber(item.conversions)}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { beginAtZero: true },
+                        y: {
+                            ticks: {
+                                font: { size: 11 },
+                                callback: function(value) {
+                                    const label = this.getLabelForValue(value);
+                                    return label.length > 15 ? label.substring(0, 15) + '...' : label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            generatePromotionInsight();
         }
+
+        // 타겟팅 성과 차트 - pivotDimensionData(dimension_type2_adset_age_gender.csv) 사용
+        function renderTargetingPerformanceChart() {
+            const state = perfChartState.targeting;
+
+            // pivotDimensionData에서 연령×성별 집계
+            let targetingData = [];
+
+            if (pivotDimensionData && pivotDimensionData.length > 0) {
+                // 연령_통합 × 성별_통합 으로 그룹핑
+                const groupedData = {};
+                pivotDimensionData.forEach(row => {
+                    const age = row['연령_통합'] || row['연령'];
+                    const gender = row['성별_통합'] || row['성별'];
+
+                    // 알 수 없음 제외
+                    if (!age || !gender || gender === '알 수 없음' || age === '알 수 없음') return;
+
+                    const key = `${age}_${gender}`;
+                    if (!groupedData[key]) {
+                        groupedData[key] = {
+                            age: age,
+                            gender: gender,
+                            cost: 0,
+                            conversions: 0,
+                            revenue: 0
+                        };
+                    }
+                    groupedData[key].cost += parseFloat(row['비용']) || 0;
+                    groupedData[key].conversions += parseFloat(row['전환수']) || 0;
+                    groupedData[key].revenue += parseFloat(row['전환값']) || 0;
+                });
+
+                // ROAS, CPA 계산
+                targetingData = Object.values(groupedData).map(g => ({
+                    ...g,
+                    roas: g.cost > 0 ? (g.revenue / g.cost) * 100 : 0,
+                    cpa: g.conversions > 0 ? g.cost / g.conversions : 0,
+                    label: `${g.age} ${g.gender}`
+                })).filter(g => g.cost > 0); // 비용 있는 것만
+            }
+
+            // 정렬
+            let sorted = [...targetingData].sort((a, b) => {
+                const aVal = a[state.kpi];
+                const bVal = b[state.kpi];
+                return state.sort === 'desc' ? bVal - aVal : aVal - bVal;
+            }).slice(0, 10);
+
+            const labels = sorted.map(c => c.label);
+            const values = sorted.map(c => c[state.kpi]);
+
+            if (state.chart) state.chart.destroy();
+
+            const ctx = document.getElementById('targetingPerformanceChart').getContext('2d');
+            state.chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: kpiLabels[state.kpi],
+                        data: values,
+                        backgroundColor: kpiColors[state.kpi].bg,
+                        borderColor: kpiColors[state.kpi].border,
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const item = sorted[context.dataIndex];
+                                    return [
+                                        `ROAS: ${formatPercent(item.roas)}`,
+                                        `비용: ${formatCurrency(item.cost)}`,
+                                        `CPA: ${formatCurrency(item.cpa)}`,
+                                        `전환수: ${formatNumber(item.conversions)}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { beginAtZero: true },
+                        y: {
+                            ticks: { font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+
+            generateTargetingInsight();
+        }
+
+        // 성과분석 KPI/정렬 버튼 이벤트
+        function setupPerformanceControls() {
+            // KPI 버튼
+            document.querySelectorAll('.perf-kpi-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    const kpi = this.dataset.kpi;
+
+                    // 버튼 스타일 변경
+                    document.querySelectorAll(`.perf-kpi-btn[data-category="${category}"]`).forEach(b => {
+                        b.style.background = 'white';
+                        b.style.color = '#495057';
+                        b.style.border = '1px solid #dee2e6';
+                        b.classList.remove('active');
+                    });
+                    this.style.background = '#1a73e8';
+                    this.style.color = 'white';
+                    this.style.border = 'none';
+                    this.classList.add('active');
+
+                    // 상태 업데이트 및 차트 재렌더링
+                    perfChartState[category].kpi = kpi;
+                    renderPerformanceChart(category);
+                });
+            });
+
+            // 정렬 버튼
+            document.querySelectorAll('.perf-sort-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    const sort = this.dataset.sort;
+
+                    // 버튼 스타일 변경
+                    document.querySelectorAll(`.perf-sort-btn[data-category="${category}"]`).forEach(b => {
+                        b.style.background = 'white';
+                        b.classList.remove('active');
+                    });
+                    this.style.background = '#f8f9fa';
+                    this.classList.add('active');
+
+                    // 상태 업데이트 및 차트 재렌더링
+                    perfChartState[category].sort = sort;
+                    renderPerformanceChart(category);
+                });
+            });
+        }
+
+        // 카테고리별 차트 렌더링
+        function renderPerformanceChart(category) {
+            switch(category) {
+                case 'brand': renderBrandPerformanceChart(); break;
+                case 'product': renderProductPerformanceChart(); break;
+                case 'promotion': renderPromotionPerformanceChart(); break;
+                case 'targeting': renderTargetingPerformanceChart(); break;
+            }
+        }
+
+        // 모든 성과분석 차트 초기화
+        function initPerformanceCharts() {
+            renderBrandPerformanceChart();
+            renderProductPerformanceChart();
+            renderPromotionPerformanceChart();
+            renderTargetingPerformanceChart();
+            setupPerformanceControls();
+        }
+
+        // 기존 테이블 함수들 (호환성 유지)
+        function renderBrandDetailTable() {}
+        function renderProductDetailTable() {}
+        function renderPromotionDetailTable() {}
+        function renderTopAdsetsTable() {}
+        function renderAgeGenderTable() {}
 
         // 유틸리티 함수들
         function formatCurrency(value) {
@@ -5489,13 +5807,21 @@
             });
         });
 
-        // 성과 분석 필터 버튼
-        document.querySelectorAll('.performance-filter-btn').forEach(btn => {
+        // 성과 분석 서브탭 버튼
+        document.querySelectorAll('.performance-subtab').forEach(btn => {
             btn.addEventListener('click', function() {
-                const filter = this.dataset.filter;
+                const targetTab = this.dataset.perfTab;
 
-                // 버튼 활성화 상태 변경
-                document.querySelectorAll('.performance-filter-btn').forEach(b => b.classList.remove('active'));
+                // 버튼 스타일 변경
+                document.querySelectorAll('.performance-subtab').forEach(b => {
+                    b.style.background = 'white';
+                    b.style.color = '#495057';
+                    b.style.border = '1px solid #dee2e6';
+                    b.classList.remove('active');
+                });
+                this.style.background = '#1a73e8';
+                this.style.color = 'white';
+                this.style.border = 'none';
                 this.classList.add('active');
 
                 // 컨텐츠 표시
@@ -5511,7 +5837,7 @@
                     'targeting': 'targetingView'
                 };
 
-                const targetView = document.getElementById(viewMap[filter]);
+                const targetView = document.getElementById(viewMap[targetTab]);
                 if (targetView) {
                     targetView.style.display = 'block';
                     targetView.classList.add('active');
