@@ -2,6 +2,10 @@
 chcp 65001 >nul
 setlocal enabledelayedexpansion
 
+REM 스크립트 위치 기준 동적 경로 설정
+set "SCRIPT_DIR=%~dp0"
+cd /d "%SCRIPT_DIR%"
+
 echo ================================================================================
 echo Marketing Dashboard - Run Data Pipeline
 echo ================================================================================
@@ -13,8 +17,8 @@ echo   3. Process segments
 echo   4. Generate insights
 echo.
 
-REM config.json 확인
-if not exist config.json (
+REM config.json 확인 (스크립트 위치 기준)
+if not exist "%SCRIPT_DIR%config.json" (
     echo [ERROR] config.json not found
     echo Please run setup_analysis_fixed.bat first
     pause
@@ -24,10 +28,10 @@ if not exist config.json (
 echo [1/5] Loading configuration...
 echo.
 
-REM config.json에서 값 읽기
-for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content config.json | ConvertFrom-Json).google.credentials_path"`) do set GOOGLE_JSON=%%i
-for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content config.json | ConvertFrom-Json).google.sheet_id"`) do set SHEET_ID=%%i
-for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content config.json | ConvertFrom-Json).google.worksheet_name"`) do set WORKSHEET_NAME=%%i
+REM config.json에서 값 읽기 (스크립트 위치 기준)
+for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content '%SCRIPT_DIR%config.json' | ConvertFrom-Json).google.credentials_path"`) do set GOOGLE_JSON=%%i
+for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content '%SCRIPT_DIR%config.json' | ConvertFrom-Json).google.sheet_id"`) do set SHEET_ID=%%i
+for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content '%SCRIPT_DIR%config.json' | ConvertFrom-Json).google.worksheet_name"`) do set WORKSHEET_NAME=%%i
 
 if not defined GOOGLE_JSON (
     echo [ERROR] Failed to load credentials_path from config.json

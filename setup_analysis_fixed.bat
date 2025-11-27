@@ -2,6 +2,10 @@
 chcp 65001 >nul
 setlocal enabledelayedexpansion
 
+REM 스크립트 위치 기준 동적 경로 설정
+set "SCRIPT_DIR=%~dp0"
+cd /d "%SCRIPT_DIR%"
+
 echo ================================================================================
 echo Marketing Dashboard v3.0 - Analysis Setup (Python 3.13 Compatible)
 echo ================================================================================
@@ -114,8 +118,8 @@ echo.
 echo [2/10] Enter configuration details
 echo.
 
-REM 기존 config.json이 있는지 확인
-if exist config.json (
+REM 기존 config.json이 있는지 확인 (스크립트 위치 기준)
+if exist "%SCRIPT_DIR%config.json" (
     echo Found existing config.json
     set /p USE_EXISTING="Use existing configuration? (Y/N, default: Y): "
     if "!USE_EXISTING!"=="" set USE_EXISTING=Y
@@ -123,10 +127,10 @@ if exist config.json (
 
     if /i "!USE_EXISTING!"=="Y" (
         echo [OK] Using existing config.json
-        REM config.json에서 값 읽기
-        for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content config.json | ConvertFrom-Json).google.credentials_path"`) do set GOOGLE_JSON=%%i
-        for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content config.json | ConvertFrom-Json).google.sheet_id"`) do set SHEET_ID=%%i
-        for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content config.json | ConvertFrom-Json).google.worksheet_name"`) do set WORKSHEET_NAME=%%i
+        REM config.json에서 값 읽기 (스크립트 위치 기준)
+        for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content '%SCRIPT_DIR%config.json' | ConvertFrom-Json).google.credentials_path"`) do set GOOGLE_JSON=%%i
+        for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content '%SCRIPT_DIR%config.json' | ConvertFrom-Json).google.sheet_id"`) do set SHEET_ID=%%i
+        for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content '%SCRIPT_DIR%config.json' | ConvertFrom-Json).google.worksheet_name"`) do set WORKSHEET_NAME=%%i
 
         REM 변수가 제대로 로드되었는지 확인
         if not defined GOOGLE_JSON (
@@ -237,10 +241,10 @@ echo.
 echo [3/10] Creating config file...
 echo.
 
-REM Use PowerShell to create JSON properly (without GitHub)
-powershell -Command "$config = @{google=@{credentials_path='%GOOGLE_JSON:\\=\\\\%';sheet_id='%SHEET_ID%';worksheet_name='%WORKSHEET_NAME%'}}; $config | ConvertTo-Json -Depth 10 | Out-File -Encoding UTF8 config.json"
+REM Use PowerShell to create JSON properly (without GitHub, 스크립트 위치 기준)
+powershell -Command "$config = @{google=@{credentials_path='%GOOGLE_JSON:\\=\\\\%';sheet_id='%SHEET_ID%';worksheet_name='%WORKSHEET_NAME%'}}; $config | ConvertTo-Json -Depth 10 | Out-File -Encoding UTF8 '%SCRIPT_DIR%config.json'"
 
-if exist config.json (
+if exist "%SCRIPT_DIR%config.json" (
     echo [OK] config.json created/updated
 ) else (
     echo [ERROR] Failed to create config.json

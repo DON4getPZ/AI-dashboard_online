@@ -94,8 +94,9 @@ def clean_dict_for_json(obj):
     else:
         return obj
 
-# 경로 설정
-data_dir = Path(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type')
+# 경로 설정 (동적 경로)
+BASE_DIR = Path(__file__).parent.parent
+data_dir = BASE_DIR / 'data' / 'type'
 
 print("=" * 100)
 print("Type 분석 인사이트 생성")

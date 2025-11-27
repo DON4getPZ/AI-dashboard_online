@@ -10,12 +10,17 @@
 import pandas as pd
 import numpy as np
 from datetime import datetime
+from pathlib import Path
 import warnings
 warnings.filterwarnings('ignore')
 
+# 경로 설정 (동적 경로)
+BASE_DIR = Path(__file__).parent.parent
+DATA_TYPE_DIR = BASE_DIR / 'data' / 'type'
+
 # CSV 파일 경로
-input_file = r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\merged_data.csv'
-output_dir = r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type'
+input_file = DATA_TYPE_DIR / 'merged_data.csv'
+output_dir = DATA_TYPE_DIR
 
 print("=" * 100)
 print("통합 마케팅 데이터 분석 시작")

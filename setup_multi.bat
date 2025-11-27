@@ -2,6 +2,10 @@
 chcp 65001 >nul
 setlocal enabledelayedexpansion
 
+REM 스크립트 위치 기준 동적 경로 설정
+set "SCRIPT_DIR=%~dp0"
+cd /d "%SCRIPT_DIR%"
+
 echo ================================================================================
 echo 여러 개의 Data Downloader - 설정 스크립트
 echo ================================================================================
@@ -26,15 +30,15 @@ echo.
 echo [2/6] 설정 정보 입력
 echo.
 
-REM 기존 config_multi.json이 있는지 확인
-if exist config_multi.json (
+REM 기존 config_multi.json이 있는지 확인 (스크립트 위치 기준)
+if exist "%SCRIPT_DIR%config_multi.json" (
     echo 기존 config_multi.json 파일을 발견했습니다
     set /p USE_EXISTING="기존 설정을 사용하시겠습니까? (Y/N): "
     if /i "!USE_EXISTING!"=="Y" (
         echo [확인] 기존 config_multi.json 사용
 
-        REM config_multi.json에서 값 읽기
-        for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content config_multi.json | ConvertFrom-Json).google.credentials_path"`) do set GOOGLE_JSON=%%i
+        REM config_multi.json에서 값 읽기 (스크립트 위치 기준)
+        for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "(Get-Content '%SCRIPT_DIR%config_multi.json' | ConvertFrom-Json).google.credentials_path"`) do set GOOGLE_JSON=%%i
 
         echo.
         echo 로드된 설정:
@@ -160,10 +164,10 @@ echo.
 echo [3/6] Config 파일 생성 중...
 echo.
 
-REM PowerShell로 JSON 생성 (BOM 없이 UTF-8로 저장)
-powershell -Command "$sheets = @(); $ids = '%SHEET_IDS%' -split ','; $descs = '%SHEET_DESCS%' -split ','; for ($i = 0; $i -lt $ids.Length; $i++) { $sheets += @{sheet_id=$ids[$i]; worksheet_name='%WORKSHEET_NAME%'; description=$descs[$i]} }; $config = @{google=@{credentials_path='%GOOGLE_JSON:\=\\%'; sheets=$sheets; output=@{directory='data/type'; merged_filename='merged_data.csv'}}}; $json = $config | ConvertTo-Json -Depth 10; [System.IO.File]::WriteAllText('config_multi.json', $json, [System.Text.UTF8Encoding]::new($false))"
+REM PowerShell로 JSON 생성 (BOM 없이 UTF-8로 저장, 스크립트 위치 기준)
+powershell -Command "$sheets = @(); $ids = '%SHEET_IDS%' -split ','; $descs = '%SHEET_DESCS%' -split ','; for ($i = 0; $i -lt $ids.Length; $i++) { $sheets += @{sheet_id=$ids[$i]; worksheet_name='%WORKSHEET_NAME%'; description=$descs[$i]} }; $config = @{google=@{credentials_path='%GOOGLE_JSON:\=\\%'; sheets=$sheets; output=@{directory='data/type'; merged_filename='merged_data.csv'}}}; $json = $config | ConvertTo-Json -Depth 10; [System.IO.File]::WriteAllText('%SCRIPT_DIR%config_multi.json', $json, [System.Text.UTF8Encoding]::new($false))"
 
-if exist config_multi.json (
+if exist "%SCRIPT_DIR%config_multi.json" (
     echo [확인] config_multi.json 생성 완료
 ) else (
     echo [오류] config_multi.json 생성 실패

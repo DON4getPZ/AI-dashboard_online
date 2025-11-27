@@ -13,6 +13,7 @@ Prophet 시계열 예측 V5 - 연간 학습 기반 다중 지표 예측
 import pandas as pd
 import numpy as np
 from datetime import datetime
+from pathlib import Path
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -23,6 +24,10 @@ except ImportError:
     PROPHET_AVAILABLE = False
     print("Prophet이 설치되지 않았습니다.")
     print("설치 방법: pip install prophet>=1.2.0 cmdstanpy>=1.3.0")
+
+# 경로 설정 (동적 경로)
+BASE_DIR = Path(__file__).parent.parent
+DATA_TYPE_DIR = BASE_DIR / 'data' / 'type'
 
 # 예측 대상 지표 목록
 FORECAST_METRICS = ['비용', '노출', '클릭', '전환수', '전환값']
@@ -119,7 +124,7 @@ def combine_metric_forecasts(forecasts, key_column=None, key_value=None):
     return result
 
 # CSV 파일 읽기
-file_path = r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\merged_data.csv'
+file_path = DATA_TYPE_DIR / 'merged_data.csv'
 df = pd.read_csv(file_path, thousands=',', low_memory=False)
 df['일'] = pd.to_datetime(df['일'])
 
@@ -238,7 +243,7 @@ if PROPHET_AVAILABLE:
             print(f"  평균 CPA: {avg_cpa:,.0f}원")
 
         # 전체 예측 결과 저장
-        overall_result.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_overall.csv',
+        overall_result.to_csv(DATA_TYPE_DIR / 'prophet_forecast_overall.csv',
                               index=False, encoding='utf-8-sig')
         print("\n✓ 전체 예측 결과 저장: data/type/prophet_forecast_overall.csv")
 
@@ -278,7 +283,8 @@ if PROPHET_AVAILABLE:
 
         if cat_result is not None:
             category_forecast_results.append(cat_result)
-            print(f"향후 30일 예상 총 전환값: {cat_result['예측_전환값'].sum():,.0f}원")
+            if '예측_전환값' in cat_result.columns:
+                print(f"향후 30일 예상 총 전환값: {cat_result['예측_전환값'].sum():,.0f}원")
             if '예측_ROAS' in cat_result.columns:
                 print(f"평균 예측 ROAS: {cat_result['예측_ROAS'].mean():.1f}%")
 
@@ -292,7 +298,7 @@ if PROPHET_AVAILABLE:
         if '예측_CPA' in combined_category.columns:
             cols.append('예측_CPA')
         combined_category = combined_category[cols]
-        combined_category.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_category.csv',
+        combined_category.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_category.csv',
                                   index=False, encoding='utf-8-sig')
         print("\n✓ 유형구분별 예측 결과 저장: data/type/prophet_forecast_by_category.csv")
 
@@ -334,7 +340,7 @@ if PROPHET_AVAILABLE:
     # 트렌드 분석 결과 저장
     if trend_analysis_list:
         trend_df = pd.DataFrame(trend_analysis_list)
-        trend_df.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_trend_analysis.csv',
+        trend_df.to_csv(DATA_TYPE_DIR / 'prophet_trend_analysis.csv',
                        index=False, encoding='utf-8-sig')
         print("\n✓ 트렌드 분석 결과 저장: data/type/prophet_trend_analysis.csv")
 
@@ -593,7 +599,7 @@ if PROPHET_AVAILABLE:
 
     final_seasonality_df = pd.concat([seasonality_df, monthly_df, quarterly_df, daily_output], ignore_index=True)
     final_seasonality_df = final_seasonality_df[['유형구분', '기간유형', '요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']]
-    final_seasonality_df.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_seasonality.csv',
+    final_seasonality_df.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_seasonality.csv',
                          index=False, encoding='utf-8-sig')
     print("\n✓ 계절성 예측 결과 저장: data/type/prophet_forecast_by_seasonality.csv")
     print("  포함 데이터: 요일별, 월별, 분기별 (과거 fitted 기반), 일별 (과거 fitted + 90일 미래 예측)")
@@ -633,7 +639,7 @@ if PROPHET_AVAILABLE:
         outliers_df = pd.concat(all_outliers, ignore_index=True)
         outliers_df = outliers_df[['유형구분', '일', '전환값', 'zscore']]
         outliers_df.columns = ['유형구분', '일자', '전환값', 'Z_Score']
-        outliers_df.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_outliers.csv',
+        outliers_df.to_csv(DATA_TYPE_DIR / 'prophet_outliers.csv',
                           index=False, encoding='utf-8-sig')
         print("\n✓ 이상치 탐지 결과 저장: data/type/prophet_outliers.csv")
 
@@ -675,7 +681,8 @@ if PROPHET_AVAILABLE:
 
             if brand_result is not None:
                 brand_forecast_results.append(brand_result)
-                print(f"향후 30일 예상 총 전환값: {brand_result['예측_전환값'].sum():,.0f}원")
+                if '예측_전환값' in brand_result.columns:
+                    print(f"향후 30일 예상 총 전환값: {brand_result['예측_전환값'].sum():,.0f}원")
                 if '예측_ROAS' in brand_result.columns:
                     print(f"평균 예측 ROAS: {brand_result['예측_ROAS'].mean():.1f}%")
 
@@ -688,7 +695,7 @@ if PROPHET_AVAILABLE:
         if '예측_CPA' in combined_brand.columns:
             cols.append('예측_CPA')
         combined_brand = combined_brand[cols]
-        combined_brand.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_brand.csv',
+        combined_brand.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_brand.csv',
                                 index=False, encoding='utf-8-sig')
         print("\n✓ 브랜드별 예측 결과 저장: data/type/prophet_forecast_by_brand.csv")
 
@@ -729,7 +736,8 @@ if PROPHET_AVAILABLE:
 
             if product_result is not None:
                 product_forecast_results.append(product_result)
-                print(f"향후 30일 예상 총 전환값: {product_result['예측_전환값'].sum():,.0f}원")
+                if '예측_전환값' in product_result.columns:
+                    print(f"향후 30일 예상 총 전환값: {product_result['예측_전환값'].sum():,.0f}원")
                 if '예측_ROAS' in product_result.columns:
                     print(f"평균 예측 ROAS: {product_result['예측_ROAS'].mean():.1f}%")
 
@@ -742,7 +750,7 @@ if PROPHET_AVAILABLE:
         if '예측_CPA' in combined_product.columns:
             cols.append('예측_CPA')
         combined_product = combined_product[cols]
-        combined_product.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_product.csv',
+        combined_product.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_product.csv',
                                   index=False, encoding='utf-8-sig')
         print("\n✓ 상품별 예측 결과 저장: data/type/prophet_forecast_by_product.csv")
 
@@ -754,7 +762,7 @@ if PROPHET_AVAILABLE:
     print("=" * 100)
 
     # dimension_type4 CSV 파일 로드 (이미 성별_통합 컬럼 포함)
-    type4_csv_path = r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\dimension_type4_adset_gender.csv'
+    type4_csv_path = DATA_TYPE_DIR / 'dimension_type4_adset_gender.csv'
     gender_forecast_results = []
 
     try:
@@ -805,7 +813,7 @@ if PROPHET_AVAILABLE:
             if '예측_CPA' in combined_gender.columns:
                 cols.append('예측_CPA')
             combined_gender = combined_gender[cols]
-            combined_gender.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_gender.csv',
+            combined_gender.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_gender.csv',
                                      index=False, encoding='utf-8-sig')
             print("\n✓ 성별 예측 결과 저장: data/type/prophet_forecast_by_gender.csv")
 
@@ -821,7 +829,7 @@ if PROPHET_AVAILABLE:
     print("=" * 100)
 
     # dimension_type3 CSV 파일 로드 (이미 연령_통합 컬럼 포함)
-    type3_csv_path = r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\dimension_type3_adset_age.csv'
+    type3_csv_path = DATA_TYPE_DIR / 'dimension_type3_adset_age.csv'
     age_forecast_results = []
 
     try:
@@ -872,7 +880,7 @@ if PROPHET_AVAILABLE:
             if '예측_CPA' in combined_age.columns:
                 cols.append('예측_CPA')
             combined_age = combined_age[cols]
-            combined_age.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_age.csv',
+            combined_age.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_age.csv',
                                   index=False, encoding='utf-8-sig')
             print("\n✓ 연령별 예측 결과 저장: data/type/prophet_forecast_by_age.csv")
 
@@ -888,7 +896,7 @@ if PROPHET_AVAILABLE:
     print("=" * 100)
 
     # dimension_type7 CSV 파일 로드 (이미 기기플랫폼_통합 컬럼 포함)
-    type7_csv_path = r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\dimension_type7_adset_deviceplatform.csv'
+    type7_csv_path = DATA_TYPE_DIR / 'dimension_type7_adset_deviceplatform.csv'
     platform_forecast_results = []
 
     try:
@@ -939,7 +947,7 @@ if PROPHET_AVAILABLE:
             if '예측_CPA' in combined_platform.columns:
                 cols.append('예측_CPA')
             combined_platform = combined_platform[cols]
-            combined_platform.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_platform.csv',
+            combined_platform.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_platform.csv',
                                        index=False, encoding='utf-8-sig')
             print("\n✓ 기기플랫폼별 예측 결과 저장: data/type/prophet_forecast_by_platform.csv")
 
@@ -955,7 +963,7 @@ if PROPHET_AVAILABLE:
     print("=" * 100)
 
     # dimension_type5 CSV 파일 로드 (이미 기기유형_통합 컬럼 포함)
-    type5_csv_path = r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\dimension_type5_adset_device.csv'
+    type5_csv_path = DATA_TYPE_DIR / 'dimension_type5_adset_device.csv'
     device_forecast_results = []
 
     try:
@@ -1006,7 +1014,7 @@ if PROPHET_AVAILABLE:
             if '예측_CPA' in combined_device.columns:
                 cols.append('예측_CPA')
             combined_device = combined_device[cols]
-            combined_device.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_device.csv',
+            combined_device.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_device.csv',
                                      index=False, encoding='utf-8-sig')
             print("\n✓ 기기유형별 예측 결과 저장: data/type/prophet_forecast_by_device.csv")
 
@@ -1065,7 +1073,7 @@ if PROPHET_AVAILABLE:
         if '예측_CPA' in combined_promotion.columns:
             cols.append('예측_CPA')
         combined_promotion = combined_promotion[cols]
-        combined_promotion.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_promotion.csv',
+        combined_promotion.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_promotion.csv',
                                     index=False, encoding='utf-8-sig')
         print("\n✓ 프로모션별 예측 결과 저장: data/type/prophet_forecast_by_promotion.csv")
 
@@ -1077,7 +1085,7 @@ if PROPHET_AVAILABLE:
     print("=" * 100)
 
     # dimension_type2 CSV 파일 로드 (이미 연령_통합, 성별_통합 컬럼 포함)
-    type2_csv_path = r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\dimension_type2_adset_age_gender.csv'
+    type2_csv_path = DATA_TYPE_DIR / 'dimension_type2_adset_age_gender.csv'
     age_gender_forecast_results = []
 
     try:
@@ -1144,7 +1152,7 @@ if PROPHET_AVAILABLE:
             if '예측_CPA' in combined_age_gender.columns:
                 cols.append('예측_CPA')
             combined_age_gender = combined_age_gender[cols]
-            combined_age_gender.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_age_gender.csv',
+            combined_age_gender.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_age_gender.csv',
                                          index=False, encoding='utf-8-sig')
             print("\n✓ 연령+성별 조합별 예측 결과 저장: data/type/prophet_forecast_by_age_gender.csv")
 

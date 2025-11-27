@@ -19,15 +19,19 @@ import sys
 import json
 import csv
 from datetime import datetime
+from pathlib import Path
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+
+# 경로 설정 (동적 경로 - 스크립트 위치 기준)
+BASE_DIR = Path(__file__).parent.parent
 
 
 def load_config():
     """config_multi.json 파일 로드"""
-    config_path = 'config_multi.json'
+    config_path = BASE_DIR / 'config_multi.json'
 
-    if not os.path.exists(config_path):
+    if not config_path.exists():
         print(f"\n❌ 오류: {config_path} 파일을 찾을 수 없습니다")
         sys.exit(1)
 
