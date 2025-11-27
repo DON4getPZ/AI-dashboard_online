@@ -1,500 +1,278 @@
-# 📊 마케팅 대시보드 v3.0 - AI 고급 분석 버전
+# 마케팅 대시보드 v4.0 - Standalone HTML 기반
 
 **Growthmaker - 데이터 기반 그로스 마케팅 대시보드**
 
-## 🎯 v3.0 주요 개선사항
+---
 
-### ✨ 새로운 기능 (v3.0)
-1. **SARIMAX 고급 시계열 예측** - 계절성 반영 ARIMA 모델 (Prophet 대체)
-2. **인터랙티브 HTML 대시보드** - Plotly 기반 줌/팬 가능 차트
-3. **5가지 시각화 자동 생성** - 정규분포, 계절성, 상관관계, 이상치
-4. **주별/월별 예측** - 일별 예측을 자동으로 주/월 단위 집계
-5. **전체 데이터 학습** - 최근 30일이 아닌 전체 데이터로 모델 학습
-6. **Python 3.13+ 호환** - C++ 컴파일러 불필요 (바이너리 휠 사용)
+## 주요 특징
 
-### 🔄 v2.0 대비 개선점
-- ~~Prophet~~ → **SARIMAX**: 설치 간편화, Windows 호환성 개선
-- 단순 이동평균 → **추세 반영 예측**: 매일 다른 예측값 생성
-- 정적 분석 → **인터랙티브 대시보드**: 웹 브라우저에서 실시간 탐색
-- 제한적 시각화 → **5가지 상세 그래프**: 정규분포, 계절성, 상관관계 등
+- **Standalone HTML**: 서버 없이 브라우저에서 바로 실행
+- **Prophet 시계열 예측**: 계절성 패턴 분석 및 90일 예측
+- **다차원 분석**: 캠페인, 광고세트, 연령, 성별, 기기, 플랫폼별 분석
+- **퍼널 분석**: 채널별/캠페인별 전환 퍼널 시각화
+- **크리에이티브 분석**: 이미지별 성과 분석
 
 ---
 
-## 🚀 빠른 시작 (5분 완료)
+## 대시보드 구성
 
-### Windows 사용자
+### 1. Type Dashboard (type_dashboard_standalone.html)
+**가장 포괄적인 분석 대시보드**
 
-```cmd
-# 1. 프로젝트 디렉토리로 이동
-cd marketing-dashboard_v3
+| 기능 | 설명 |
+|------|------|
+| 오늘의 요약 | 핵심 KPI 및 AI 추천 |
+| 성과 분석 | 캠페인/광고세트별 ROAS, CPA 분석 |
+| 타겟 분석 | 연령, 성별, 기기, 플랫폼별 성과 |
+| 계절성 분석 | 분기별 추이, 요일별 분석, 채널별 요일 |
+| AI 예측 | Prophet 기반 시계열 예측 |
+| 성과 추이 | 광고세트/성별/연령/플랫폼 추이 차트 |
 
-# 2. setup_fixed.bat 실행 (Python 3.13 호환)
-setup_fixed.bat
+### 2. Marketing Dashboard (marketing_dashboard_v3_standalone.html)
+- KPI 카드 (광고비, 클릭수, 전환수, ROAS)
+- 성과 트렌드 차트
+- PIVOT 테이블
 
-# 3. 대화형 프롬프트에 따라 정보 입력
-#    - Google Service Account JSON 경로
-#    - Google Sheets ID
-#    - Worksheet 이름
-#    - GitHub Username
-#    - Repository 이름
+### 3. Funnel Dashboard (funnel_dashboard_standalone.html)
+- 채널별/캠페인별 전환 퍼널
+- 신규 vs 재방문 분석
+- 채널 참여도 분석
 
-# 4. 선택적: 로컬 테스트 실행 (Y 권장)
-#    → 데이터 페치 및 분석 결과 즉시 확인
+### 4. Timeseries Analysis (timeseries_analysis_standalone.html)
+- Prophet 예측 차트
+- 계절성 분해
+- 신뢰구간 표시
 
-# 5. GitHub Secrets 설정
-#    → setup 스크립트가 안내 제공
-```
+### 5. Creative Analysis (creative_analysis_standalone.html)
+- 이미지별 성과 분석
+- 크리에이티브 ROAS 비교
 
-### Mac/Linux 사용자
+---
 
+## 빠른 시작
+
+### 1. 데이터 수집
 ```bash
-# 1. 프로젝트 디렉토리로 이동
-cd marketing-dashboard_v3
-
-# 2. 실행 권한 부여 및 실행
-chmod +x setup.sh
-./setup.sh
-
-# 3. 대화형 프롬프트에 따라 정보 입력
+# Google Sheets에서 데이터 가져오기
+python scripts/fetch_google_sheets.py
 ```
 
----
-
-## 📋 사전 준비사항
-
-### 1. 필수 소프트웨어
-
-- **Python 3.13+** (권장) 또는 3.10+
-- **Node.js 18+**
-- **Git**
-
-> ⚠️ Python 3.13을 사용하면 C++ 컴파일러 없이 모든 패키지 설치 가능!
-
-### 2. Google Service Account 생성
-
-1. [Google Cloud Console](https://console.cloud.google.com) 접속
-2. 새 프로젝트 생성: `Marketing-Dashboard`
-3. **API 라이브러리**에서 활성화:
-   - Google Sheets API
-   - Google Drive API
-4. **서비스 계정 만들기**:
-   - 이름: `marketing-bot`
-   - 역할: 편집자
-   - **JSON 키 생성 → 다운로드**
-5. 다운로드한 JSON 파일 위치 기억 (setup 시 경로 입력)
-
-### 3. Google Sheets 설정
-
-1. 마케팅 데이터 스프레드시트 열기
-2. **공유** 버튼 클릭
-3. 서비스 계정 이메일 추가 (JSON 파일의 `client_email`)
-4. 권한: **편집자**
-5. **시트 이름 확인**: 기본값 `data_integration`
-
-### 4. Google Sheets ID 확인
-
-```
-https://docs.google.com/spreadsheets/d/[이 부분이 SHEET_ID]/edit
-                                        ^^^^^^^^^^^^^^^^^^^^
+### 2. 분석 실행
+```bash
+# 전체 분석 파이프라인 실행
+python scripts/run_multi_analysis.py
 ```
 
----
-
-## 📁 프로젝트 구조
-
-```
-marketing-dashboard_v3/
-├── setup_fixed.bat                    # Windows 자동 설치 (Python 3.13+)
-├── setup.sh                           # Mac/Linux 자동 설치
-├── requirements_fixed.txt             # Python 패키지 (바이너리 휠)
-├── config.json                        # 설정 파일 (자동 생성)
-├── .gitignore
-├── .github/
-│   └── workflows/
-│       └── sync-data.yml             # 매일 10:30 KST 실행
-├── scripts/
-│   ├── fetch_google_sheets.py        # Google Sheets → CSV
-│   └── process_marketing_data.py     # 🆕 고급 분석 + 시각화
-├── react-app/                         # Next.js 대시보드
-│   ├── components/
-│   │   ├── Dashboard.tsx
-│   │   ├── PivotTable.tsx
-│   │   ├── StatisticalChart.tsx
-│   │   └── ForecastChart.tsx
-│   ├── hooks/
-│   │   └── useMarketingData.ts
-│   └── package.json
-├── docs/                              # 문서
-│   ├── SETUP_GUIDE.md
-│   ├── INSTALL_FIX.md                # 🆕 Python 3.13 설치 가이드
-│   └── WORKSHEET_GUIDE.md
-└── data/                              # 자동 생성
-    ├── raw/                          # 월별 CSV
-    ├── meta/                         # 메타데이터 (latest.json)
-    ├── forecast/                     # 🆕 예측 파일
-    │   ├── predictions.csv           # 일별 단순 예측
-    │   ├── predictions_detailed.csv  # 🆕 일별 SARIMAX 예측
-    │   ├── predictions_weekly.csv    # 🆕 주별 집계
-    │   └── predictions_monthly.csv   # 🆕 월별 집계
-    ├── statistics/                   # 통계 분석
-    │   ├── statistics.json
-    │   └── daily_statistics.csv
-    ├── visualizations/               # 🆕 시각화 이미지
-    │   ├── timeseries_forecast.png   # 시계열 예측 (5개 지표)
-    │   ├── distribution_analysis.png # 정규분포 분석
-    │   ├── seasonal_decomposition.png# 계절성 분해 (7일 주기)
-    │   ├── correlation_heatmap.png   # 상관관계 히트맵
-    │   └── boxplot_outliers.png      # 이상치 탐지
-    └── dashboard.html                # 🆕 인터랙티브 대시보드 ⭐
+### 3. Standalone HTML 생성
+```bash
+# 모든 대시보드를 standalone으로 변환
+python generate_standalone.py
 ```
 
----
-
-## 📊 새로운 고급 분석 기능 (v3.0)
-
-### 1. SARIMAX 기반 시계열 예측 🔬
-
-**기술 스택:**
-- **SARIMAX**: Seasonal ARIMA with eXogenous variables
-- **계절성 주기**: 7일 (주간 패턴 자동 감지)
-- **정상성 검사**: ADF Test 자동 수행
-- **모델 평가**: AIC, BIC 지표 제공
-
-**기능:**
-- 전체 데이터로 학습 (최근 30일 ❌)
-- 향후 30일 예측 (일/주/월 단위)
-- 95% 신뢰구간 제공
-- 추세 + 계절성 분해
-
-**출력 파일:**
-- `predictions_detailed.csv`: SARIMAX 예측 결과
-- `predictions_weekly.csv`: 주별 집계
-- `predictions_monthly.csv`: 월별 집계
-
-**활용:**
-- 광고비 예산 계획
-- 전환수 목표 설정
-- 계절성 패턴 분석
-- 트렌드 변화 감지
-
----
-
-### 2. 인터랙티브 HTML 대시보드 🌐
-
-**위치**: `data/dashboard.html`
-
-**기능:**
-- **Plotly 인터랙티브 차트**:
-  - 줌/팬으로 시계열 탐색
-  - 호버로 정확한 수치 확인
-  - 범례 클릭으로 데이터 토글
-  - 95% 신뢰구간 표시
-
-- **정적 시각화 임베드**:
-  - 정규분포 분석
-  - 계절성 분해 (7일 주기)
-  - 상관관계 히트맵
-  - 이상치 박스플롯
-
-- **통계 테이블**:
-  - 주요 통계 지표 (평균, 중앙값, 표준편차 등)
-  - 예측 모델 정보 (SARIMAX 파라미터, AIC, BIC)
-
-- **성과 카드**:
-  - 총 광고비, 전환수, 전환값, ROAS
-  - 분석 기간 및 데이터 포인트 수
-
-**열기:**
+### 4. 대시보드 열기
 ```bash
 # Windows
-start data/dashboard.html
+start data/type_dashboard_standalone.html
 
 # Mac/Linux
-open data/dashboard.html
+open data/type_dashboard_standalone.html
 ```
 
 ---
 
-### 3. 5가지 자동 시각화 📈
+## 프로젝트 구조
 
-#### 3.1 시계열 예측 그래프
-- **파일**: `timeseries_forecast.png`
-- **내용**: 5개 지표별 실제 데이터 + 예측 + 신뢰구간
-- **지표**: 비용, 노출, 클릭, 전환수, 전환값
-
-#### 3.2 정규분포 분석
-- **파일**: `distribution_analysis.png`
-- **내용**: 히스토그램 + 정규분포 곡선
-- **통계**: 왜도, 첨도, 평균, ±1σ 표시
-
-#### 3.3 계절성 분해
-- **파일**: `seasonal_decomposition.png`
-- **내용**: 시계열 4단 분해 (원본, 추세, 계절성, 잔차)
-- **주기**: 7일 (주간 패턴)
-
-#### 3.4 상관관계 히트맵
-- **파일**: `correlation_heatmap.png`
-- **내용**: 5개 지표 간 상관계수 행렬
-- **범위**: -1 (음의 상관) ~ +1 (양의 상관)
-
-#### 3.5 이상치 탐지 박스플롯
-- **파일**: `boxplot_outliers.png`
-- **내용**: 5개 지표별 박스플롯 + 이상치 개수
-- **기준**: IQR 방식 (Q1 - 1.5×IQR, Q3 + 1.5×IQR)
-
----
-
-### 4. 정규분포 기반 통계 분석
-
-**기능:**
-- 평균, 중앙값, 표준편차
-- 왜도(Skewness), 첨도(Kurtosis)
-- Z-Score 이상치 탐지 (|z| > 2.5)
-- 성과 등급 분류 (상/중/하)
-
-**출력 파일:**
-- `statistics.json`: 전체 통계 요약
-- `daily_statistics.csv`: 일별 Z-Score 및 등급
-
-**활용:**
-- 성과 이상치 감지
-- 최적 성과 구간 파악
-- 성과 등급 기반 예산 배분
-- 캠페인 성과 벤치마킹
-
----
-
-### 5. 추세 반영 예측 알고리즘
-
-**개선 사항:**
-- **이전 (v2.0)**: 최근 30일 평균 → 모든 날짜 동일한 예측값
-- **이후 (v3.0)**: 이상치 제거 + 선형 추세 반영 → 매일 다른 예측값
-
-**알고리즘:**
-1. 최근 30일 데이터 수집
-2. 하위 20% 제거 (캠페인 중단일 등)
-3. 최근 14일로 추세선 계산 (선형 회귀)
-4. 기준값 + (추세 × 예측일수)로 예측
-
-**결과:**
 ```
-예측 1일차: 1,050,000원
-예측 2일차: 1,035,000원 (추세 -15,000원/일)
-예측 3일차: 1,020,000원
+marketing-dashboard/
+├── generate_standalone.py          # Standalone HTML 생성기
+├── config.json                     # 설정 파일
+├── scripts/
+│   ├── fetch_google_sheets.py      # Google Sheets 데이터 수집
+│   ├── fetch_creative_sheets.py    # Creative 데이터 수집
+│   ├── fetch_ga4_sheets.py         # GA4 데이터 수집
+│   ├── process_marketing_data.py   # 마케팅 데이터 처리
+│   ├── generate_funnel_data.py     # 퍼널 데이터 생성
+│   ├── generate_type_insights.py   # 타입별 인사이트 생성
+│   ├── multi_analysis_prophet_forecast.py  # Prophet 예측
+│   ├── multi_analysis_dimension_detail.py  # 차원 상세 분석
+│   └── run_multi_analysis.py       # 분석 실행
+├── data/
+│   ├── raw/                        # 월별 원본 CSV
+│   ├── forecast/                   # Prophet 예측 결과
+│   │   ├── predictions.csv
+│   │   ├── predictions_daily.csv
+│   │   ├── predictions_weekly.csv
+│   │   ├── predictions_monthly.csv
+│   │   └── insights.json
+│   ├── funnel/                     # 퍼널 분석 데이터
+│   │   ├── daily_funnel.csv
+│   │   ├── channel_funnel.csv
+│   │   └── insights.json
+│   ├── type/                       # 타입별 분석 데이터
+│   │   ├── merged_data.csv
+│   │   ├── dimension_type*.csv
+│   │   └── insights.json
+│   ├── creative/                   # 크리에이티브 데이터
+│   ├── GA4/                        # GA4 데이터
+│   ├── statistics/                 # 통계 데이터
+│   ├── visualizations/             # 시각화 이미지
+│   │
+│   ├── type_dashboard.html         # 원본 HTML
+│   ├── type_dashboard_standalone.html      # Standalone 버전
+│   ├── marketing_dashboard_v3.html
+│   ├── marketing_dashboard_v3_standalone.html
+│   ├── funnel_dashboard.html
+│   ├── funnel_dashboard_standalone.html
+│   ├── timeseries_analysis.html
+│   ├── timeseries_analysis_standalone.html
+│   ├── creative_analysis.html
+│   └── creative_analysis_standalone.html
+└── docs/
+    ├── PROPHET_SEASONALITY_GUIDE.md
+    └── SETUP_GUIDE.md
 ```
 
 ---
 
-## ⏰ 스케줄 설정
+## 데이터 파이프라인
 
-### GitHub Actions - 매일 오전 10:30 (한국시간)
-
-```yaml
-schedule:
-  # 매일 한국시간 오전 10:30 (UTC 01:30)
-  - cron: '30 1 * * *'
+```
+Google Sheets → fetch_google_sheets.py → raw/*.csv
+                        ↓
+              process_marketing_data.py
+                        ↓
+    ┌───────────────────┼───────────────────┐
+    ↓                   ↓                   ↓
+generate_funnel_data  generate_type_insights  multi_analysis_prophet_forecast
+    ↓                   ↓                   ↓
+funnel/*.csv         type/*.csv          forecast/*.csv
+funnel/insights.json type/insights.json  forecast/insights.json
+                        ↓
+              generate_standalone.py
+                        ↓
+              *_standalone.html (브라우저에서 바로 실행)
 ```
 
-**자동 실행 내용:**
-1. Google Sheets 데이터 페치
-2. 데이터 전처리 및 월별 분할
-3. **SARIMAX 예측 생성** (일/주/월)
-4. **5가지 시각화 생성** (PNG)
-5. **HTML 대시보드 생성**
-6. 통계 분석 수행
-7. GitHub에 자동 커밋
-8. Slack 알림 (선택)
+---
+
+## Prophet 예측 알고리즘
+
+### 하이브리드 접근법
+1. **학습 기간**: 최근 365일 데이터
+2. **과거 fitted 값**: 계절성 패턴 분석용 (365일)
+3. **미래 예측값**: 단기 예측용 (90일)
+4. **음수 방지**: `.clip(lower=0)` 적용
+
+### 분석 지표
+- 비용 (Cost)
+- ROAS (Return on Ad Spend)
+- CPA (Cost Per Acquisition)
+- 전환수 (Conversions)
+- 전환값 (Revenue)
+
+### 계절성 분석
+- **분기별 추이**: Q1~Q4 성과 비교
+- **요일별 분석**: 월~일 전환 패턴
+- **채널별 요일**: 채널별 최적 광고 요일 파악
 
 ---
 
-## 🔐 보안 설정
+## 사전 준비사항
 
-### GitHub Secrets 등록
+### 필수 소프트웨어
+- Python 3.10+
+- pip
 
-**Settings → Secrets and variables → Actions**
-
-1. **GOOGLE_CREDENTIALS**
-   - Google Service Account JSON 전체 내용
-   - JSON 파일을 열어서 전체 복사 (줄바꿈 포함)
-
-2. **SHEET_ID**
-   - Google Sheets ID
-   - 예: `1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms`
-
-3. **WORKSHEET_NAME** (선택)
-   - 기본값: `data_integration`
-   - 다른 이름 사용 시 입력
-
-4. **SLACK_WEBHOOK** (선택)
-   - Slack 알림 URL
-   - 데이터 업데이트 알림 수신
-
----
-
-## 📈 대시보드 기능
-
-### 메인 페이지
-1. **KPI 카드**
-   - 총 광고비, 클릭수, 전환수, ROAS
-   - 전일 대비 증감률
-
-2. **성과 트렌드 차트**
-   - 시계열 라인 차트
-   - 월/주/일 단위 전환
-   - 예측 데이터 오버레이
-
-3. **PIVOT 테이블**
-   - 동적 집계 테이블
-   - 브랜드/상품/캠페인별 분석
-   - 실시간 정렬/필터
-   - CSV 다운로드
-
-### 예측 분석
-4. **SARIMAX 예측 차트**
-   - 실제 vs 예측 비교
-   - 95% 신뢰구간 표시
-   - 주별/월별 예측 토글
-
-### 통계 분석
-5. **정규분포 차트**
-   - 평균/표준편차 밴드
-   - 이상치 표시
-   - 성과 등급 분포
-   - 히스토그램 + 정규곡선
-
-### 시각화
-6. **계절성 분해**
-   - 추세 (Trend)
-   - 계절성 (Seasonality - 7일)
-   - 잔차 (Residual)
-
-7. **상관관계 분석**
-   - 5개 지표 간 상관계수
-   - 히트맵 시각화
-
----
-
-## 🛠️ 문제 해결
-
-### Python 3.13 설치 오류
-
-**Windows:**
-```cmd
-# Python 3.13+ 다운로드
-# https://www.python.org/downloads/
-
-# setup_fixed.bat 사용 (바이너리 휠 패키지)
-setup_fixed.bat
-```
-
-**Mac:**
+### Python 패키지 설치
 ```bash
-brew install python@3.13
-pip3 install -r requirements_fixed.txt
+pip install -r requirements.txt
 ```
 
-**상세 가이드:** [docs/INSTALL_FIX.md](docs/INSTALL_FIX.md)
-
-### ~~Prophet~~ SARIMAX 설치 간편화
-
-v3.0에서는 Prophet 대신 statsmodels의 SARIMAX를 사용하여:
-- ✅ C++ 컴파일러 불필요
-- ✅ Windows 호환성 개선
-- ✅ 설치 시간 단축 (5분 → 2분)
-- ✅ 계절성 패턴 더 정확하게 포착
-
-### GitHub Actions 실패
-
-1. **GOOGLE_CREDENTIALS 오류**
-   - JSON 전체 내용 복사 (줄바꿈 포함)
-   - 따옴표 escape 확인
-
-2. **스케줄 미실행**
-   - Actions 탭에서 워크플로우 활성화 확인
-   - 최소 1회 수동 실행 필요
-
-3. **패키지 설치 실패**
-   - `requirements_fixed.txt` 사용 확인
-   - Python 3.13+ 버전 확인
-
-### Vercel 배포 오류
-
+### Prophet 설치 (cmdstanpy 기반)
 ```bash
-cd react-app
-npm install
-npm run build  # 로컬에서 먼저 테스트
+# 1. cmdstanpy 설치
+pip install cmdstanpy
+
+# 2. CmdStan 설치 (Prophet 백엔드)
+python -c "import cmdstanpy; cmdstanpy.install_cmdstan()"
+
+# 3. Prophet 설치
+pip install prophet
+```
+
+### 주요 패키지
+- pandas, numpy: 데이터 처리
+- prophet + cmdstanpy: 시계열 예측
+- plotly: 인터랙티브 차트
+- gspread: Google Sheets 연동
+
+---
+
+## Google Sheets 설정
+
+### 1. Service Account 생성
+1. [Google Cloud Console](https://console.cloud.google.com) 접속
+2. 새 프로젝트 생성
+3. Google Sheets API, Google Drive API 활성화
+4. 서비스 계정 생성 → JSON 키 다운로드
+
+### 2. 스프레드시트 공유
+1. 마케팅 데이터 스프레드시트 열기
+2. 서비스 계정 이메일로 공유 (편집자 권한)
+
+### 3. config.json 설정
+```json
+{
+  "google_credentials_path": "your-credentials.json",
+  "sheet_id": "your-sheet-id",
+  "worksheet_name": "data_integration"
+}
 ```
 
 ---
 
-## 📞 지원
+## Standalone HTML 장점
+
+| 특징 | 설명 |
+|------|------|
+| 서버 불필요 | 브라우저에서 바로 실행 |
+| 오프라인 사용 | 인터넷 없이도 동작 |
+| 쉬운 공유 | 파일 하나로 전체 대시보드 공유 |
+| 빠른 로딩 | 모든 데이터가 HTML에 임베드 |
+
+### 파일 크기
+- type_dashboard_standalone.html: ~30MB
+- 모든 CSV/JSON 데이터 포함
+
+---
+
+## 문제 해결
+
+### 한글 깨짐
+```bash
+# UTF-8 인코딩 확인 (Linux/Mac)
+export PYTHONIOENCODING=utf-8
+
+# Windows PowerShell
+$env:PYTHONIOENCODING="utf-8"
+```
+
+### 메모리 부족
+```bash
+# 대용량 데이터 처리 시 lite 버전 사용
+python scripts/process_marketing_data_lite.py
+```
+
+---
+
+## 지원
 
 **Growthmaker**
 - 웹사이트: https://blog.growthmaker.kr
 - 이메일: contact@growthmaker.kr
-- GitHub Issues: [프로젝트 저장소]/issues
 
 ---
 
-## 🎉 완료!
-
-```
-✅ setup_fixed.bat로 5분 만에 설치 (Python 3.13+)
-✅ SARIMAX 고급 시계열 예측 (계절성 반영)
-✅ 인터랙티브 HTML 대시보드 (Plotly)
-✅ 5가지 자동 시각화 (정규분포, 계절성, 상관관계 등)
-✅ 주별/월별 예측 자동 생성
-✅ 전체 데이터 학습 (최대 정확도)
-✅ 매일 오전 10:30 자동 업데이트
-✅ GitHub + Vercel 자동 배포
-```
-
-**다음 단계:**
-1. `setup_fixed.bat` (Windows) 또는 `setup.sh` (Mac/Linux) 실행
-2. 대화형 프롬프트에 따라 정보 입력
-3. 로컬 테스트 실행 (Y 선택 권장)
-4. `data/dashboard.html` 브라우저에서 확인 ⭐
-5. GitHub Secrets 등록
-6. Vercel 배포
-7. 매일 자동 업데이트 확인!
-
-🚀 **이제 AI 기반 데이터 분석으로 마케팅 ROI를 극대화하세요!**
-
----
-
-## 📚 추가 문서
-
-- [설치 가이드](docs/SETUP_GUIDE.md) - 상세 설치 가이드
-- [Python 3.13 설치](docs/INSTALL_FIX.md) - C++ 컴파일러 없이 설치
-- [워크시트 가이드](docs/WORKSHEET_GUIDE.md) - Google Sheets 설정
-
----
-
-## 🆕 v3.0 변경 로그
-
-### 추가된 기능
-- ✨ SARIMAX 기반 고급 시계열 예측
-- ✨ Plotly 인터랙티브 HTML 대시보드
-- ✨ 5가지 자동 시각화 (PNG)
-- ✨ 주별/월별 예측 자동 생성
-- ✨ 전체 데이터 학습 (최대 정확도)
-- ✨ 계절성 분해 (7일 주기)
-- ✨ 상관관계 히트맵
-- ✨ 이상치 탐지 박스플롯
-
-### 개선된 기능
-- 🔧 단순 이동평균 → 추세 반영 예측
-- 🔧 Prophet → SARIMAX (설치 간편화)
-- 🔧 Python 3.13+ 완전 호환
-- 🔧 이상치 자동 필터링
-- 🔧 UTF-8 출력 자동 처리 (Windows)
-
-### 제거된 기능
-- ❌ Prophet 의존성 (SARIMAX로 대체)
-
----
-
-**버전**: 3.0.0
-**최종 업데이트**: 2025-11-18
+**버전**: 4.0.0
+**최종 업데이트**: 2025-11-27
 **라이선스**: MIT
-**제작**: Growthmaker

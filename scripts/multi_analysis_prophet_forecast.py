@@ -881,20 +881,30 @@ if PROPHET_AVAILABLE:
         print("dimension_type3 CSV 파일을 확인해주세요.")
 
     # ============================================================================
-    # 10. 기기플랫폼별 다중 지표 예측 (Type7 데이터 기반)
+    # 10. 기기플랫폼별 다중 지표 예측 (dimension_type7 CSV 활용 - 이미 매핑된 데이터)
     # ============================================================================
     print("\n" + "=" * 100)
-    print("10. 기기플랫폼별 다중 지표 예측 (향후 30일)")
+    print("10. 기기플랫폼별 다중 지표 예측 (향후 30일) - dimension_type7 CSV 활용")
     print("=" * 100)
 
-    type7_data = df[df['data_type'] == 'Type7_광고세트+기기플랫폼']
+    # dimension_type7 CSV 파일 로드 (이미 기기플랫폼_통합 컬럼 포함)
+    type7_csv_path = r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\dimension_type7_adset_deviceplatform.csv'
     platform_forecast_results = []
 
-    if len(type7_data) > 0:
-        platforms = type7_data[type7_data['기기플랫폼'] != '-']['기기플랫폼'].unique()
+    try:
+        type7_data = pd.read_csv(type7_csv_path, thousands=',', low_memory=False)
+        type7_data['일'] = pd.to_datetime(type7_data['일'])
+        for col in numeric_cols:
+            if col in type7_data.columns:
+                type7_data[col] = pd.to_numeric(type7_data[col], errors='coerce').fillna(0)
+        print(f"dimension_type7 CSV 로드 완료: {len(type7_data):,}행")
+        print("기기플랫폼_통합 컬럼 활용 (이미 매핑 완료)")
+
+        # 통합된 기기플랫폼 목록 (기기플랫폼_통합 컬럼 사용)
+        platforms = type7_data[type7_data['기기플랫폼_통합'] != '-']['기기플랫폼_통합'].unique()
 
         for platform in platforms:
-            platform_data = type7_data[type7_data['기기플랫폼'] == platform]
+            platform_data = type7_data[type7_data['기기플랫폼_통합'] == platform]
             daily_platform = platform_data.groupby('일').agg({
                 '비용': 'sum',
                 '노출': 'sum',
@@ -911,7 +921,7 @@ if PROPHET_AVAILABLE:
             print(f"학습 데이터: {len(daily_platform)}일")
 
             platform_forecasts = forecast_multiple_metrics(daily_platform)
-            platform_result = combine_metric_forecasts(platform_forecasts, '기기플랫폼', platform)
+            platform_result = combine_metric_forecasts(platform_forecasts, '기기플랫폼_통합', platform)
 
             if platform_result is not None:
                 platform_forecast_results.append(platform_result)
@@ -920,18 +930,89 @@ if PROPHET_AVAILABLE:
                 if '예측_ROAS' in platform_result.columns:
                     print(f"평균 예측 ROAS: {platform_result['예측_ROAS'].mean():.1f}%")
 
-    # 기기플랫폼별 예측 결과 저장
-    if platform_forecast_results:
-        combined_platform = pd.concat(platform_forecast_results, ignore_index=True)
-        cols = ['기기플랫폼', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_platform.columns]
-        if '예측_ROAS' in combined_platform.columns:
-            cols.append('예측_ROAS')
-        if '예측_CPA' in combined_platform.columns:
-            cols.append('예측_CPA')
-        combined_platform = combined_platform[cols]
-        combined_platform.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_platform.csv',
-                                   index=False, encoding='utf-8-sig')
-        print("\n✓ 기기플랫폼별 예측 결과 저장: data/type/prophet_forecast_by_platform.csv")
+        # 기기플랫폼별 예측 결과 저장
+        if platform_forecast_results:
+            combined_platform = pd.concat(platform_forecast_results, ignore_index=True)
+            cols = ['기기플랫폼_통합', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_platform.columns]
+            if '예측_ROAS' in combined_platform.columns:
+                cols.append('예측_ROAS')
+            if '예측_CPA' in combined_platform.columns:
+                cols.append('예측_CPA')
+            combined_platform = combined_platform[cols]
+            combined_platform.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_platform.csv',
+                                       index=False, encoding='utf-8-sig')
+            print("\n✓ 기기플랫폼별 예측 결과 저장: data/type/prophet_forecast_by_platform.csv")
+
+    except Exception as e:
+        print(f"\n기기플랫폼 예측 오류: {e}")
+        print("dimension_type7 CSV 파일을 확인해주세요.")
+
+    # ============================================================================
+    # 10-2. 기기유형별 다중 지표 예측 (dimension_type5 CSV 활용 - 이미 매핑된 데이터)
+    # ============================================================================
+    print("\n" + "=" * 100)
+    print("10-2. 기기유형별 다중 지표 예측 (향후 30일) - dimension_type5 CSV 활용")
+    print("=" * 100)
+
+    # dimension_type5 CSV 파일 로드 (이미 기기유형_통합 컬럼 포함)
+    type5_csv_path = r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\dimension_type5_adset_device.csv'
+    device_forecast_results = []
+
+    try:
+        type5_data = pd.read_csv(type5_csv_path, thousands=',', low_memory=False)
+        type5_data['일'] = pd.to_datetime(type5_data['일'])
+        for col in numeric_cols:
+            if col in type5_data.columns:
+                type5_data[col] = pd.to_numeric(type5_data[col], errors='coerce').fillna(0)
+        print(f"dimension_type5 CSV 로드 완료: {len(type5_data):,}행")
+        print("기기유형_통합 컬럼 활용 (이미 매핑 완료)")
+
+        # 통합된 기기유형 목록 (기기유형_통합 컬럼 사용)
+        devices = type5_data[type5_data['기기유형_통합'] != '-']['기기유형_통합'].unique()
+
+        for device in devices:
+            device_data = type5_data[type5_data['기기유형_통합'] == device]
+            daily_device = device_data.groupby('일').agg({
+                '비용': 'sum',
+                '노출': 'sum',
+                '클릭': 'sum',
+                '전환수': 'sum',
+                '전환값': 'sum'
+            }).reset_index()
+
+            if len(daily_device) < 10:
+                print(f"\n[{device}]: 데이터 부족 ({len(daily_device)}일)")
+                continue
+
+            print(f"\n[{device}] 다중 지표 예측")
+            print(f"학습 데이터: {len(daily_device)}일")
+
+            device_forecasts = forecast_multiple_metrics(daily_device)
+            device_result = combine_metric_forecasts(device_forecasts, '기기유형_통합', device)
+
+            if device_result is not None:
+                device_forecast_results.append(device_result)
+                if '예측_전환값' in device_result.columns:
+                    print(f"향후 30일 예상 총 전환값: {device_result['예측_전환값'].sum():,.0f}원")
+                if '예측_ROAS' in device_result.columns:
+                    print(f"평균 예측 ROAS: {device_result['예측_ROAS'].mean():.1f}%")
+
+        # 기기유형별 예측 결과 저장
+        if device_forecast_results:
+            combined_device = pd.concat(device_forecast_results, ignore_index=True)
+            cols = ['기기유형_통합', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_device.columns]
+            if '예측_ROAS' in combined_device.columns:
+                cols.append('예측_ROAS')
+            if '예측_CPA' in combined_device.columns:
+                cols.append('예측_CPA')
+            combined_device = combined_device[cols]
+            combined_device.to_csv(r'c:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\data\type\prophet_forecast_by_device.csv',
+                                     index=False, encoding='utf-8-sig')
+            print("\n✓ 기기유형별 예측 결과 저장: data/type/prophet_forecast_by_device.csv")
+
+    except Exception as e:
+        print(f"\n기기유형 예측 오류: {e}")
+        print("dimension_type5 CSV 파일을 확인해주세요.")
 
     # ============================================================================
     # 11. 프로모션별 다중 지표 예측 (Type1 데이터 기반)
@@ -1102,8 +1183,9 @@ print("  7. prophet_forecast_by_product.csv - 상품별 다중 지표 예측")
 print("  8. prophet_forecast_by_gender.csv - 성별 다중 지표 예측")
 print("  9. prophet_forecast_by_age.csv - 연령별 다중 지표 예측")
 print("  10. prophet_forecast_by_platform.csv - 기기플랫폼별 다중 지표 예측")
-print("  11. prophet_forecast_by_promotion.csv - 프로모션별 다중 지표 예측")
-print("  12. prophet_forecast_by_age_gender.csv - 연령+성별 조합별 다중 지표 예측")
+print("  11. prophet_forecast_by_device.csv - 기기유형별 다중 지표 예측")
+print("  12. prophet_forecast_by_promotion.csv - 프로모션별 다중 지표 예측")
+print("  13. prophet_forecast_by_age_gender.csv - 연령+성별 조합별 다중 지표 예측")
 print("\n각 CSV 파일에는 다음 컬럼이 포함됩니다:")
 print("  - 예측_비용, 예측_노출, 예측_클릭, 예측_전환수, 예측_전환값")
 print("  - 예측_ROAS (= 예측_전환값 / 예측_비용 * 100)")

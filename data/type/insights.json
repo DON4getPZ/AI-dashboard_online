@@ -205,28 +205,51 @@
       "recommendation": "65세 이상 여성 타겟팅이 효과적입니다"
     }
   ],
+  "device_performance": [
+    {
+      "device": "Other",
+      "cost": 45.0,
+      "conversions": 10.0,
+      "revenue": 352851.0,
+      "roas": 784113.3333333334
+    },
+    {
+      "device": "TV",
+      "cost": 80139.09,
+      "conversions": 4.0,
+      "revenue": 118400.0,
+      "roas": 147.74313010042914
+    },
+    {
+      "device": "모바일",
+      "cost": 19521173.91,
+      "conversions": 1172.99,
+      "revenue": 33540884.5,
+      "roas": 171.81796880984808
+    },
+    {
+      "device": "안드로이드",
+      "cost": 104585336.0,
+      "conversions": 5698.0,
+      "revenue": 190713463.0,
+      "roas": 182.35201061074184
+    },
+    {
+      "device": "애플",
+      "cost": 80877622.0,
+      "conversions": 4868.0,
+      "revenue": 152706726.0,
+      "roas": 188.8120869824783
+    },
+    {
+      "device": "웹",
+      "cost": 4543905.38,
+      "conversions": 445.09,
+      "revenue": 12621901.24,
+      "roas": 277.77649806607553
+    }
+  ],
   "platform_performance": [
-    {
-      "platform": "Desktop",
-      "cost": 272806.0,
-      "conversions": 32.0,
-      "revenue": 996200.0,
-      "roas": 365.16792152665266
-    },
-    {
-      "platform": "Mobile app",
-      "cost": 185403166.0,
-      "conversions": 10565.0,
-      "revenue": 343396289.0,
-      "roas": 185.2159789978991
-    },
-    {
-      "platform": "Mobile web",
-      "cost": 72291.0,
-      "conversions": 1.0,
-      "revenue": 23900.0,
-      "roas": 33.06082361566447
-    },
     {
       "platform": "PC",
       "cost": 1169058.0,
@@ -243,10 +266,24 @@
     },
     {
       "platform": "모바일",
-      "cost": 18883150.0,
-      "conversions": 576.0,
-      "revenue": 89589100.0,
-      "roas": 474.43938114138797
+      "cost": 18955441.0,
+      "conversions": 577.0,
+      "revenue": 89613000.0,
+      "roas": 472.7560809584963
+    },
+    {
+      "platform": "앱",
+      "cost": 185403166.0,
+      "conversions": 10565.0,
+      "revenue": 343396289.0,
+      "roas": 185.2159789978991
+    },
+    {
+      "platform": "웹",
+      "cost": 272806.0,
+      "conversions": 32.0,
+      "revenue": 996200.0,
+      "roas": 365.16792152665266
     }
   ],
   "brand_performance": [
@@ -2685,9 +2722,59 @@
         "total_forecast_cost": 0.0
       }
     ],
+    "by_device": [
+      {
+        "device": "안드로이드",
+        "total_30day_forecast": 16459126.979420492,
+        "avg_daily_forecast": 548637.5659806831,
+        "avg_forecast_roas": 202.1401812856079,
+        "avg_forecast_cpa": 24737.00920944241,
+        "total_forecast_cost": 8298275.389930545
+      },
+      {
+        "device": "애플",
+        "total_30day_forecast": 12048854.382426577,
+        "avg_daily_forecast": 401628.4794142192,
+        "avg_forecast_roas": 163.743943282094,
+        "avg_forecast_cpa": 28271.529028612575,
+        "total_forecast_cost": 7348425.504699481
+      },
+      {
+        "device": "모바일",
+        "total_30day_forecast": 4216475.724593623,
+        "avg_daily_forecast": 140549.1908197874,
+        "avg_forecast_roas": 166.83304670319933,
+        "avg_forecast_cpa": 16111.80777639856,
+        "total_forecast_cost": 2530152.848967727
+      },
+      {
+        "device": "웹",
+        "total_30day_forecast": 1797618.3790385055,
+        "avg_daily_forecast": 59920.61263461685,
+        "avg_forecast_roas": 25.005174319400066,
+        "avg_forecast_cpa": 16001.986740049959,
+        "total_forecast_cost": 288460.0100584994
+      },
+      {
+        "device": "TV",
+        "total_30day_forecast": 0.0,
+        "avg_daily_forecast": null,
+        "avg_forecast_roas": null,
+        "avg_forecast_cpa": null,
+        "total_forecast_cost": 9182.342822454
+      },
+      {
+        "device": "OTHER",
+        "total_30day_forecast": 0.0,
+        "avg_daily_forecast": null,
+        "avg_forecast_roas": null,
+        "avg_forecast_cpa": null,
+        "total_forecast_cost": 0.0
+      }
+    ],
     "by_platform": [
       {
-        "platform": "Mobile app",
+        "platform": "앱",
         "total_30day_forecast": 27037807.51748681,
         "avg_daily_forecast": 901260.2505828937,
         "avg_forecast_roas": 172.209329898719,
@@ -2696,11 +2783,11 @@
       },
       {
         "platform": "모바일",
-        "total_30day_forecast": 26628705.02989774,
-        "avg_daily_forecast": 887623.5009965913,
-        "avg_forecast_roas": 556.9914076886117,
-        "avg_forecast_cpa": 32015.252414179544,
-        "total_forecast_cost": 4782881.818695966
+        "total_30day_forecast": 26492062.519933637,
+        "avg_daily_forecast": 883068.7506644545,
+        "avg_forecast_roas": 573.7993861363656,
+        "avg_forecast_cpa": 31348.99823036133,
+        "total_forecast_cost": 4617249.529021572
       },
       {
         "platform": "PC",
@@ -2711,20 +2798,12 @@
         "total_forecast_cost": 582123.6872678834
       },
       {
-        "platform": "Desktop",
+        "platform": "웹",
         "total_30day_forecast": 1248741.3785995138,
         "avg_daily_forecast": 41624.712619983795,
         "avg_forecast_roas": 3110.3063949015727,
         "avg_forecast_cpa": 1336.0203937761123,
         "total_forecast_cost": 49211.11754665698
-      },
-      {
-        "platform": "Mobile web",
-        "total_30day_forecast": 0.0,
-        "avg_daily_forecast": null,
-        "avg_forecast_roas": null,
-        "avg_forecast_cpa": null,
-        "total_forecast_cost": 16333.861268009665
       }
     ],
     "by_promotion": [
@@ -2897,7 +2976,7 @@
       },
       {
         "title": "플랫폼 집중 전략 (예측 기반)",
-        "description": "Mobile app 플랫폼에서 향후 30일간 27,037,808원의 전환이 예상됩니다. 해당 플랫폼 광고에 집중하세요.",
+        "description": "앱 플랫폼에서 향후 30일간 27,037,808원의 전환이 예상됩니다. 해당 플랫폼 광고에 집중하세요.",
         "priority": "medium",
         "expected_impact": "ROAS 10-20% 개선 예상",
         "based_on": "prophet_forecast"
@@ -3028,7 +3107,7 @@
     },
     {
       "title": "플랫폼 집중 전략 (예측 기반)",
-      "description": "Mobile app 플랫폼에서 향후 30일간 27,037,808원의 전환이 예상됩니다. 해당 플랫폼 광고에 집중하세요.",
+      "description": "앱 플랫폼에서 향후 30일간 27,037,808원의 전환이 예상됩니다. 해당 플랫폼 광고에 집중하세요.",
       "priority": "medium",
       "expected_impact": "ROAS 10-20% 개선 예상",
       "based_on": "prophet_forecast"
@@ -3041,7 +3120,7 @@
       "based_on": "prophet_forecast"
     }
   ],
-  "generated_at": "2025-11-27T00:39:01.711043",
+  "generated_at": "2025-11-27T10:23:54.562696",
   "overall": {
     "current_period": {
       "start_date": "2024-09-25",

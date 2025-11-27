@@ -63,6 +63,31 @@ AGE_MAP = {
     '60세 ~ 99세': '65세 이상'
 }
 
+# 기기유형 통합 매핑 (data_mapping_guide.md 기준)
+DEVICE_MAP = {
+    # 안드로이드 (Meta)
+    'Android Smartphone': '안드로이드',
+    'Android Tablet': '안드로이드',
+    # 애플 (Meta)
+    'iPhone': '애플',
+    'iPad': '애플',
+    # 모바일 (Google Ads - OS 구분 불가)
+    'Mobile phones': '모바일',
+    'Tablets': '모바일',
+    # 웹/데스크톱
+    'Computers': '웹',
+    'Desktop': '웹',
+    # TV
+    'TV screens': 'TV'
+}
+
+# 기기플랫폼 통합 매핑 (data_mapping_guide.md 기준)
+PLATFORM_MAP = {
+    'Mobile app': '앱',
+    'Mobile web': '모바일',
+    'Desktop': '웹'
+}
+
 def apply_gender_mapping(df):
     """성별 통합 컬럼 추가"""
     if '성별' in df.columns:
@@ -79,6 +104,20 @@ def apply_age_mapping(df):
     if '연령' in df.columns:
         df['연령_통합'] = df['연령'].replace(AGE_MAP)
         # 매핑되지 않은 값은 원본 유지 (이미 통합 형식인 경우)
+    return df
+
+def apply_device_mapping(df):
+    """기기유형 통합 컬럼 추가"""
+    if '기기유형' in df.columns:
+        df['기기유형_통합'] = df['기기유형'].replace(DEVICE_MAP)
+        # 매핑되지 않은 값은 원본 유지
+    return df
+
+def apply_platform_mapping(df):
+    """기기플랫폼 통합 컬럼 추가"""
+    if '기기플랫폼' in df.columns:
+        df['기기플랫폼_통합'] = df['기기플랫폼'].replace(PLATFORM_MAP)
+        # 매핑되지 않은 값은 원본 유지
     return df
 
 # CSV 파일 읽기
@@ -296,11 +335,15 @@ if len(type5_data) > 0:
     type5_analysis['ROAS'] = (type5_analysis['전환값'] / type5_analysis['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     type5_analysis['CPA'] = (type5_analysis['비용'] / type5_analysis['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
 
+    # 기기유형_통합 컬럼 추가
+    type5_analysis = apply_device_mapping(type5_analysis)
+
     output_file = f"{output_dir}/dimension_type5_adset_device.csv"
     type5_analysis.to_csv(output_file, index=False, encoding='utf-8-sig')
     print(f"✓ 저장: {output_file}")
     print(f"  - 광고세트 수: {type5_analysis['광고세트'].nunique()}개")
     print(f"  - 기기유형 수: {type5_analysis['기기유형'].nunique()}개")
+    print(f"  - 기기유형_통합 수: {type5_analysis['기기유형_통합'].nunique()}개")
     print(f"  - 총 조합: {len(type5_analysis)}개")
 
 # ============================================================================
@@ -350,16 +393,20 @@ if len(type7_data) > 0:
     type7_analysis['ROAS'] = (type7_analysis['전환값'] / type7_analysis['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     type7_analysis['CPA'] = (type7_analysis['비용'] / type7_analysis['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
 
+    # 기기플랫폼_통합 컬럼 추가
+    type7_analysis = apply_platform_mapping(type7_analysis)
+
     output_file = f"{output_dir}/dimension_type7_adset_deviceplatform.csv"
     type7_analysis.to_csv(output_file, index=False, encoding='utf-8-sig')
     print(f"✓ 저장: {output_file}")
     print(f"  - 광고세트 수: {type7_analysis['광고세트'].nunique()}개")
     print(f"  - 기기플랫폼 수: {type7_analysis['기기플랫폼'].nunique()}개")
+    print(f"  - 기기플랫폼_통합 수: {type7_analysis['기기플랫폼_통합'].nunique()}개")
     print(f"  - 총 조합: {len(type7_analysis)}개")
 
-    # 모바일 vs PC 비교
-    print("\n기기플랫폼 성과 비교:")
-    platform_summary = type7_analysis.groupby('기기플랫폼').agg({
+    # 기기플랫폼_통합 기준 성과 비교
+    print("\n기기플랫폼_통합 성과 비교:")
+    platform_summary = type7_analysis.groupby('기기플랫폼_통합').agg({
         '비용': 'sum',
         '전환수': 'sum',
         '전환값': 'sum'

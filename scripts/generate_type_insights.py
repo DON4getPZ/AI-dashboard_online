@@ -142,6 +142,7 @@ prophet_files = {
     'gender': 'prophet_forecast_by_gender.csv',
     'age': 'prophet_forecast_by_age.csv',
     'platform': 'prophet_forecast_by_platform.csv',
+    'device': 'prophet_forecast_by_device.csv',
     'promotion': 'prophet_forecast_by_promotion.csv',
     'age_gender': 'prophet_forecast_by_age_gender.csv',
     'seasonality': 'prophet_forecast_by_seasonality.csv'
@@ -317,6 +318,36 @@ if 'type2' in dimensions:
         })
 
 # ============================================================================
+# 기기유형 분석 (Type5)
+# ============================================================================
+print("기기유형 인사이트 생성 중...")
+
+device_insights = []
+if 'type5' in dimensions:
+    type5_df = dimensions['type5']
+
+    # 기기유형_통합 컬럼 사용 (fallback: 기기유형)
+    device_col = '기기유형_통합' if '기기유형_통합' in type5_df.columns else '기기유형'
+
+    device_summary = type5_df.groupby(device_col).agg({
+        '비용': 'sum',
+        '전환수': 'sum',
+        '전환값': 'sum'
+    }).reset_index()
+
+    device_summary['ROAS'] = (device_summary['전환값'] / device_summary['비용'] * 100).replace([np.inf, -np.inf], 0)
+    device_summary = device_summary[device_summary['전환수'] > 0]
+
+    for _, row in device_summary.iterrows():
+        device_insights.append({
+            "device": row[device_col],
+            "cost": float(row['비용']),
+            "conversions": float(row['전환수']),
+            "revenue": float(row['전환값']),
+            "roas": float(row['ROAS'])
+        })
+
+# ============================================================================
 # 기기플랫폼 분석 (Type7)
 # ============================================================================
 print("기기플랫폼 인사이트 생성 중...")
@@ -325,7 +356,10 @@ platform_insights = []
 if 'type7' in dimensions:
     type7_df = dimensions['type7']
 
-    platform_summary = type7_df.groupby('기기플랫폼').agg({
+    # 기기플랫폼_통합 컬럼 사용 (fallback: 기기플랫폼)
+    platform_col = '기기플랫폼_통합' if '기기플랫폼_통합' in type7_df.columns else '기기플랫폼'
+
+    platform_summary = type7_df.groupby(platform_col).agg({
         '비용': 'sum',
         '전환수': 'sum',
         '전환값': 'sum'
@@ -336,7 +370,7 @@ if 'type7' in dimensions:
 
     for _, row in platform_summary.iterrows():
         platform_insights.append({
-            "platform": row['기기플랫폼'],
+            "platform": row[platform_col],
             "cost": float(row['비용']),
             "conversions": float(row['전환수']),
             "revenue": float(row['전환값']),
@@ -972,8 +1006,10 @@ if 'age' in prophet_forecasts:
 platform_forecast_insights = []
 if 'platform' in prophet_forecasts:
     platform_df = prophet_forecasts['platform']
-    for platform in platform_df['기기플랫폼'].unique():
-        platform_data = platform_df[platform_df['기기플랫폼'] == platform]
+    # 기기플랫폼_통합 컬럼 사용 (fallback: 기기플랫폼)
+    platform_col = '기기플랫폼_통합' if '기기플랫폼_통합' in platform_df.columns else '기기플랫폼'
+    for platform in platform_df[platform_col].unique():
+        platform_data = platform_df[platform_df[platform_col] == platform]
         total_forecast = platform_data['예측_전환값'].sum()
         avg_forecast = platform_data['예측_전환값'].mean()
 
@@ -987,6 +1023,28 @@ if 'platform' in prophet_forecasts:
         })
 
     platform_forecast_insights = sorted(platform_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
+
+# 기기유형별 예측
+device_forecast_insights = []
+if 'device' in prophet_forecasts:
+    device_df = prophet_forecasts['device']
+    # 기기유형_통합 컬럼 사용 (fallback: 기기유형)
+    device_col = '기기유형_통합' if '기기유형_통합' in device_df.columns else '기기유형'
+    for device in device_df[device_col].unique():
+        device_data = device_df[device_df[device_col] == device]
+        total_forecast = device_data['예측_전환값'].sum()
+        avg_forecast = device_data['예측_전환값'].mean()
+
+        device_forecast_insights.append({
+            "device": device,
+            "total_30day_forecast": float(total_forecast),
+            "avg_daily_forecast": float(avg_forecast),
+            "avg_forecast_roas": float(device_data['예측_ROAS'].mean()) if '예측_ROAS' in device_data.columns else 0,
+            "avg_forecast_cpa": float(device_data['예측_CPA'].mean()) if '예측_CPA' in device_data.columns else 0,
+            "total_forecast_cost": float(device_data['예측_비용'].sum()) if '예측_비용' in device_data.columns else 0
+        })
+
+    device_forecast_insights = sorted(device_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
 
 # 프로모션별 예측
 promotion_forecast_insights = []
@@ -2107,6 +2165,7 @@ insights = {
     "gender_performance": gender_insights,
     "top_adsets": top_adsets[:10] if len(top_adsets) > 0 else [],
     "age_gender_combinations": age_gender_insights,
+    "device_performance": device_insights,
     "platform_performance": platform_insights,
     "brand_performance": brand_insights[:10] if len(brand_insights) > 0 else [],
     "product_performance": product_insights[:10] if len(product_insights) > 0 else [],
@@ -2133,6 +2192,7 @@ insights = {
         "by_product": product_forecast_insights[:10] if len(product_forecast_insights) > 0 else [],
         "by_gender": gender_forecast_insights,
         "by_age": age_forecast_insights,
+        "by_device": device_forecast_insights,
         "by_platform": platform_forecast_insights,
         "by_promotion": promotion_forecast_insights[:10] if len(promotion_forecast_insights) > 0 else [],
         "by_age_gender": age_gender_forecast_insights[:10] if len(age_gender_forecast_insights) > 0 else [],
@@ -2219,6 +2279,7 @@ print(f"  - 브랜드별 예측: {len(brand_forecast_insights)}개")
 print(f"  - 상품별 예측: {len(product_forecast_insights)}개")
 print(f"  - 성별 예측: {len(gender_forecast_insights)}개")
 print(f"  - 연령별 예측: {len(age_forecast_insights)}개")
+print(f"  - 기기유형별 예측: {len(device_forecast_insights)}개")
 print(f"  - 플랫폼별 예측: {len(platform_forecast_insights)}개")
 print(f"  - 프로모션별 예측: {len(promotion_forecast_insights)}개")
 print(f"  - 연령+성별 조합별 예측: {len(age_gender_forecast_insights)}개")
