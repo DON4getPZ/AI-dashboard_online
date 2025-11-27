@@ -51,16 +51,42 @@
 
 ## 빠른 시작
 
-### 1. 데이터 수집
+### 0. 패키지 설치
 ```bash
-# Google Sheets에서 데이터 가져오기
-python scripts/fetch_google_sheets.py
+# 전체 패키지 설치 (Prophet 포함)
+pip install -r requirements.txt
+
+# Prophet cmdstan 백엔드 설치
+python -c "import cmdstanpy; cmdstanpy.install_cmdstan()"
+```
+> 상세 설치 가이드: [docs/requirements.md](docs/requirements.md)
+
+### 1. 데이터 다운로드 (Setup 스크립트)
+```bash
+# 광고 성과 데이터 (필수)
+setup_raw.bat
+
+# 채널별 분석 데이터
+setup_multi.bat
+
+# 크리에이티브 데이터
+setup_creative_final.bat
+setup_creative_url_final.bat
+
+# GA4 퍼널 데이터
+setup_ga4_final.bat
 ```
 
-### 2. 분석 실행
+### 2. 데이터 분석 실행
 ```bash
-# 전체 분석 파이프라인 실행
-python scripts/run_multi_analysis.py
+# 분석 메뉴 실행
+run_analysis_final.bat
+
+# 메뉴에서 선택:
+# [1] LITE MODE - 빠른 분석 (Prophet 제외)
+# [2] OPTIMIZED MODE - Prophet + 메모리 최적화
+# [3] FULL MODE - 전체 Prophet 분석
+# [4] SEGMENT MODE - 세그먼트 + 퍼널 + 차원 분석 (권장)
 ```
 
 ### 3. Standalone HTML 생성
@@ -127,31 +153,92 @@ marketing-dashboard/
 │   ├── timeseries_analysis_standalone.html
 │   ├── creative_analysis.html
 │   └── creative_analysis_standalone.html
-└── docs/
-    ├── PROPHET_SEASONALITY_GUIDE.md
-    └── SETUP_GUIDE.md
+├── docs/
+│   ├── requirements.md             # 패키지 요구사항 가이드
+│   ├── integration.md              # 통합 아키텍처 문서
+│   ├── CSV_PARSING_STANDARD.md     # CSV 파싱 표준 (RFC 4180)
+│   ├── PROPHET_SEASONALITY_GUIDE.md
+│   └── SETUP_GUIDE.md
+├── requirements.txt                # 전체 패키지 (Prophet 포함)
+├── requirements_multi.txt          # Multi-sheet 다운로드용
+├── requirements_creative.txt       # Creative 다운로드용
+└── requirements_creative_url.txt   # Creative URL 다운로드용
 ```
 
 ---
 
 ## 데이터 파이프라인
 
+### 전체 파이프라인 개요
+
 ```
-Google Sheets → fetch_google_sheets.py → raw/*.csv
-                        ↓
-              process_marketing_data.py
-                        ↓
-    ┌───────────────────┼───────────────────┐
-    ↓                   ↓                   ↓
-generate_funnel_data  generate_type_insights  multi_analysis_prophet_forecast
-    ↓                   ↓                   ↓
-funnel/*.csv         type/*.csv          forecast/*.csv
-funnel/insights.json type/insights.json  forecast/insights.json
-                        ↓
-              generate_standalone.py
-                        ↓
-              *_standalone.html (브라우저에서 바로 실행)
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         1단계: 데이터 다운로드                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  setup_raw.bat ────────→ fetch_google_sheets.py ────→ data/raw/*.csv        │
+│  setup_multi.bat ──────→ fetch_sheets_multi.py ─────→ data/type/merged_data │
+│  setup_creative_final.bat → fetch_creative_sheets.py → data/creative/*.csv  │
+│  setup_creative_url_final.bat → fetch_creative_url.py → data/creative/*_url │
+│  setup_ga4_final.bat ──→ fetch_ga4_sheets.py ───────→ data/GA4/*.csv        │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      ↓
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         2단계: 데이터 분석                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  run_analysis_final.bat (SEGMENT MODE)                                      │
+│  ├── [1/10] process_marketing_data.py ────→ data/forecast/predictions*.csv  │
+│  ├── [2/10] segment_processor.py ─────────→ data/forecast/segment_*.csv     │
+│  ├── [3/10] insight_generator.py ─────────→ data/forecast/insights.json     │
+│  ├── [4/10] visualization_generator.py ───→ data/visualizations/            │
+│  ├── [5/10] generate_funnel_data.py ──────→ data/funnel/*.csv, insights.json│
+│  ├── [6/10] generate_engagement_data.py ──→ data/funnel/channel_engagement  │
+│  ├── [7/10] run_multi_analysis.py ────────→ data/type/analysis_*.csv        │
+│  ├── [8/10] multi_analysis_dimension_detail.py → data/type/dimension_type*  │
+│  ├── [9/10] multi_analysis_prophet_forecast.py → data/type/prophet_*.csv    │
+│  └── [10/10] generate_type_insights.py ───→ data/type/insights.json         │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      ↓
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         3단계: Standalone 생성                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  generate_standalone.py ────→ *_standalone.html (브라우저에서 바로 실행)     │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
+
+### 대시보드별 데이터 의존성
+
+| 대시보드 | 필요 데이터 | Setup 스크립트 | Analysis 스크립트 |
+|---------|------------|---------------|------------------|
+| marketing_dashboard_v3.html | `data/raw/*.csv` | setup_raw.bat | - |
+| creative_analysis.html | `data/creative/*.csv` | setup_creative_final.bat, setup_creative_url_final.bat | - |
+| timeseries_analysis.html | `data/forecast/*` | setup_raw.bat | run_analysis_final.bat |
+| type_dashboard.html | `data/type/*` | setup_multi.bat | run_analysis_final.bat |
+| funnel_dashboard.html | `data/funnel/*`, `data/GA4/*` | setup_ga4_final.bat | run_analysis_final.bat |
+
+### 데이터 다운로드 스크립트
+
+| 스크립트 | 용도 | 출력 경로 | Config 파일 |
+|---------|------|----------|-------------|
+| `setup_raw.bat` | 광고 성과 원본 데이터 | `data/raw/*.csv` | `config.json` |
+| `setup_multi.bat` | 다중 시트 (채널별 분석) | `data/type/merged_data.csv` | `config_multi.json` |
+| `setup_creative_final.bat` | 크리에이티브 성과 데이터 | `data/creative/*.csv` | `config_creative.json` |
+| `setup_creative_url_final.bat` | 크리에이티브 이미지 URL | `data/creative/*_url.csv` | `config_creative_url.json` |
+| `setup_ga4_final.bat` | GA4 퍼널 데이터 | `data/GA4/*.csv` | `config_ga4.json` |
+
+### 분석 모드 비교
+
+| 모드 | 메모리 | 처리 시간 | 기능 |
+|-----|--------|----------|------|
+| LITE | 200-500MB | 30-60초 | 기본 예측 (Prophet 제외) |
+| OPTIMIZED | 500MB-1GB | 3-7분 | Prophet + 메모리 최적화 |
+| FULL | 1-3GB | 5-10분 | 전체 Prophet 분석 |
+| SEGMENT | 2-4GB | 10-20분 | 세그먼트 + 퍼널 + 차원 분석 |
 
 ---
 
@@ -267,9 +354,9 @@ python scripts/process_marketing_data_lite.py
 
 ## 지원
 
-**Growthmaker**
-- 웹사이트: https://blog.growthmaker.kr
-- 이메일: contact@growthmaker.kr
+**윤태웅**
+- 이메일: tee1228@naver.com
+- 전화: 010-7600-4362
 
 ---
 

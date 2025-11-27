@@ -1,50 +1,50 @@
 {
-  "generated_at": "2025-11-27T11:24:43.230200",
+  "generated_at": "2025-11-27T17:41:35.752602",
   "overall": {
     "current_period": {
-      "start_date": "2025-10-28",
-      "end_date": "2025-11-26",
-      "total_cost": 20458167.0,
-      "total_conversions": 951.0,
-      "total_revenue": 35978002.0,
-      "total_clicks": 26735.0,
-      "total_impressions": 1388413.0,
-      "roas": 175.86,
-      "avg_cpa": 21512.27,
-      "cvr": 3.56,
-      "ctr": 1.93
-    },
-    "forecast_period": {
-      "start_date": "2025-11-27",
-      "end_date": "2025-12-26",
-      "total_cost": 29157622.45,
-      "total_conversions": 1471.87,
-      "total_revenue": 50737438.22,
-      "total_clicks": 32228.0,
-      "total_impressions": 1680951.0,
-      "roas": 174.01,
-      "avg_cpa": 19809.92,
-      "cvr": 4.57,
+      "start_date": "2025-10-29",
+      "end_date": "2025-11-27",
+      "total_cost": 20182662.0,
+      "total_conversions": 945.0,
+      "total_revenue": 36217202.0,
+      "total_clicks": 26733.0,
+      "total_impressions": 1389179.0,
+      "roas": 179.45,
+      "avg_cpa": 21357.31,
+      "cvr": 3.53,
       "ctr": 1.92
     },
+    "forecast_period": {
+      "start_date": "2025-11-28",
+      "end_date": "2025-12-27",
+      "total_cost": 29035515.92,
+      "total_conversions": 1448.85,
+      "total_revenue": 50006989.42,
+      "total_clicks": 32257.0,
+      "total_impressions": 1685657.0,
+      "roas": 172.23,
+      "avg_cpa": 20040.39,
+      "cvr": 4.49,
+      "ctr": 1.91
+    },
     "trend": {
-      "roas_change": -1.85,
-      "conversion_change": 54.77,
+      "roas_change": -7.22,
+      "conversion_change": 53.32,
       "direction": "declining"
     },
     "alerts": [
       {
         "type": "budget_alert",
         "severity": "high",
-        "message": "월 예산 대비 102.3% 소진 (2025-11-26 기준)"
+        "message": "월 예산 대비 100.9% 소진 (2025-11-27 기준)"
       }
     ],
     "daily_comparison": {
-      "date": "2025-11-26",
+      "date": "2025-11-27",
       "actual": {
-        "cost": 55887.0,
-        "conversions": 4.0,
-        "revenue": 223400.0
+        "cost": 48100.0,
+        "conversions": 3.0,
+        "revenue": 116200.0
       }
     }
   },
@@ -55,7 +55,7 @@
         "segment_type": "brand",
         "segment_value": "기타",
         "metric": "ROAS",
-        "change_pct": -14.8,
+        "change_pct": -12.0,
         "severity": "medium"
       },
       {
@@ -63,7 +63,7 @@
         "segment_type": "channel",
         "segment_value": "메타_전환",
         "metric": "ROAS",
-        "change_pct": -18.5,
+        "change_pct": -17.4,
         "severity": "medium"
       },
       {
@@ -79,7 +79,7 @@
         "segment_type": "product",
         "segment_value": "기타",
         "metric": "ROAS",
-        "change_pct": -14.8,
+        "change_pct": -12.0,
         "severity": "medium"
       },
       {
@@ -87,28 +87,27 @@
         "segment_type": "promotion",
         "segment_value": "기타",
         "metric": "ROAS",
-        "change_pct": -14.8,
+        "change_pct": -12.0,
         "severity": "medium"
       }
     ],
     "recommendations": [
       {
         "priority": 1,
-        "action": "예산 20% 증액",
+        "action": "예산 유지 및 모니터링",
         "target": {
           "type": "channel",
           "value": "메타_전환"
         },
         "reasons": [
-          "ROAS 193.77%로 높은 효율",
-          "CVR 3.21%",
-          "전환수 0.7% 증가 예상"
+          "ROAS 195.58%로 높은 효율",
+          "CVR 3.28%"
         ],
-        "expected_impact": "전환수 15-20% 증가 예상",
+        "expected_impact": "현 성과 유지",
         "metrics": {
-          "roas": 193.77,
-          "cvr": 3.21,
-          "cpa": 21514.34
+          "roas": 195.58,
+          "cvr": 3.28,
+          "cpa": 21371.84
         }
       },
       {
@@ -119,14 +118,14 @@
           "value": "기타"
         },
         "reasons": [
-          "ROAS 193.77%로 높은 효율",
-          "CVR 3.21%"
+          "ROAS 195.58%로 높은 효율",
+          "CVR 3.28%"
         ],
         "expected_impact": "현 성과 유지",
         "metrics": {
-          "roas": 193.77,
-          "cvr": 3.21,
-          "cpa": 21514.34
+          "roas": 195.58,
+          "cvr": 3.28,
+          "cpa": 21371.84
         }
       },
       {
@@ -137,14 +136,14 @@
           "value": "기타"
         },
         "reasons": [
-          "ROAS 193.77%로 높은 효율",
-          "CVR 3.21%"
+          "ROAS 195.58%로 높은 효율",
+          "CVR 3.28%"
         ],
         "expected_impact": "현 성과 유지",
         "metrics": {
-          "roas": 193.77,
-          "cvr": 3.21,
-          "cpa": 21514.34
+          "roas": 195.58,
+          "cvr": 3.28,
+          "cpa": 21371.84
         }
       },
       {
@@ -155,19 +154,19 @@
           "value": "기타"
         },
         "reasons": [
-          "ROAS 193.77%로 높은 효율",
-          "CVR 3.21%"
+          "ROAS 195.58%로 높은 효율",
+          "CVR 3.28%"
         ],
         "expected_impact": "현 성과 유지",
         "metrics": {
-          "roas": 193.77,
-          "cvr": 3.21,
-          "cpa": 21514.34
+          "roas": 195.58,
+          "cvr": 3.28,
+          "cpa": 21371.84
         }
       }
     ]
   },
-  "summary": "📊 전체 성과 (2025-10-28 ~ 2025-11-26): ROAS 175.86%, 전환수 951, 전환값 35,978,002원\n📉 트렌드: ROAS -1.9%p 하락 예상\n⚠️ 월 예산 대비 102.3% 소진 (2025-11-26 기준)\n\n🚨 주의: channel '메타_트래픽'의 전환수이(가) 52.0% 하락할 것으로 예측됩니다.\n💡 권장: channel '메타_전환'에 예산 20% 증액을 권장합니다. (ROAS 193.77%로 높은 효율, CVR 3.21%)\n   예상 효과: 전환수 15-20% 증가 예상\n🔍 추가 검토 대상: 기타, 기타",
+  "summary": "📊 전체 성과 (2025-10-29 ~ 2025-11-27): ROAS 179.45%, 전환수 945, 전환값 36,217,202원\n📉 트렌드: ROAS -7.2%p 하락 예상\n⚠️ 월 예산 대비 100.9% 소진 (2025-11-27 기준)\n\n🚨 주의: channel '메타_트래픽'의 전환수이(가) 52.0% 하락할 것으로 예측됩니다.\n💡 권장: channel '메타_전환'에 예산 유지 및 모니터링을 권장합니다. (ROAS 195.58%로 높은 효율, CVR 3.28%)\n   예상 효과: 현 성과 유지\n🔍 추가 검토 대상: 기타, 기타",
   "details": {
     "total_segment_alerts": 5,
     "high_severity_alerts": 1,
@@ -179,8 +178,8 @@
       "product": 1,
       "promotion": 1
     },
-    "overall_roas": 175.86,
-    "forecast_roas": 174.01
+    "overall_roas": 179.45,
+    "forecast_roas": 172.23
   },
   "performance_trends": {
     "improvements_7d": [],

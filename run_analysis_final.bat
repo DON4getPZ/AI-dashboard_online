@@ -107,7 +107,7 @@ set /p CONFIRM="This may use 2-4 GB of memory. Continue? (Y/N): "
 if /i not "%CONFIRM%"=="Y" goto END
 
 echo.
-echo [1/9] Processing main data...
+echo [1/10] Processing main data...
 set INPUT_CSV_PATH=raw_data.csv
 python scripts\process_marketing_data.py
 
@@ -118,7 +118,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [2/9] Processing segments...
+echo [2/10] Processing segments...
 python scripts\segment_processor.py
 
 if errorlevel 1 (
@@ -126,7 +126,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [3/9] Generating insights...
+echo [3/10] Generating insights...
 python scripts\insight_generator.py
 
 if errorlevel 1 (
@@ -134,7 +134,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [4/9] Creating business visualizations...
+echo [4/10] Creating business visualizations...
 python scripts\visualization_generator.py
 
 if errorlevel 1 (
@@ -168,7 +168,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [7/9] Generating dimension-level detail analysis...
+echo [8/10] Generating dimension-level detail analysis...
 python scripts\multi_analysis_dimension_detail.py
 
 if errorlevel 1 (
@@ -176,7 +176,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [8/9] Running Prophet time-series forecasting...
+echo [9/10] Running Prophet time-series forecasting...
 python scripts\multi_analysis_prophet_forecast.py
 
 if errorlevel 1 (
@@ -184,7 +184,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [9/9] Generating type insights (brand/product/promotion)...
+echo [10/10] Generating type insights (brand/product/promotion)...
 python scripts\generate_type_insights.py
 
 if errorlevel 1 (
