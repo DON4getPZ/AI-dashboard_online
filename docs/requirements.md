@@ -23,10 +23,8 @@
 
 | 분석 모드 | RAM | 처리 시간 | 권장 환경 |
 |----------|-----|----------|----------|
-| LITE MODE | 200-500 MB | 30-60초 | 저사양 PC |
-| OPTIMIZED MODE | 500MB-1GB | 3-7분 | 일반 PC (4-8GB RAM) |
-| FULL MODE | 1-3 GB | 5-10분 | 고사양 PC (8GB+ RAM) |
-| SEGMENT MODE | 2-4 GB | 10-20분 | 고사양 PC (16GB+ RAM) |
+| BASIC (다운로드만) | 200-500 MB | 1-2분 | 저사양 PC |
+| SEGMENT ANALYSIS | 2-4 GB | 10-20분 | 고사양 PC (8GB+ RAM) |
 
 ---
 
@@ -114,10 +112,7 @@ requirements.txt (전체 분석용)
 
 | 분석 모드 | 필수 패키지 | 선택 패키지 |
 |----------|-------------|------------|
-| LITE MODE | pandas, numpy | - |
-| OPTIMIZED MODE | pandas, numpy, prophet, cmdstanpy | scipy |
-| FULL MODE | pandas, numpy, prophet, cmdstanpy | scipy, statsmodels |
-| SEGMENT MODE | **전체 패키지 필요** | matplotlib, seaborn, plotly |
+| SEGMENT ANALYSIS | **전체 패키지 필요** | - |
 
 ### 스크립트별 패키지 의존성
 
@@ -129,8 +124,6 @@ scripts/
 ├── fetch_creative_url.py       → gspread, oauth2client
 ├── fetch_ga4_sheets.py         → gspread, oauth2client
 ├── process_marketing_data.py   → pandas, numpy, prophet, cmdstanpy
-├── process_marketing_data_lite.py → pandas, numpy
-├── process_marketing_data_optimized.py → pandas, numpy, prophet
 ├── segment_processor.py        → pandas, numpy
 ├── insight_generator.py        → pandas, numpy
 ├── visualization_generator.py  → pandas, matplotlib, seaborn, plotly
@@ -146,23 +139,28 @@ scripts/
 
 ## 설치 가이드
 
-### 1. 기본 설치 (데이터 다운로드만)
+### 자동 설치 (권장)
+
+```bash
+# install_packages.bat 실행
+install_packages.bat
+
+# 옵션 선택:
+# [1] BASIC MODE - 데이터 다운로드만
+# [2] FULL MODE - 전체 분석 (Prophet 포함)
+# [3] CHECK ONLY - 설치 상태 확인
+```
+
+### 수동 설치
+
+#### 1. 기본 설치 (데이터 다운로드만)
 
 ```bash
 # Google Sheets 연동 패키지만 설치
-pip install gspread>=5.12.0 oauth2client>=4.1.3
+pip install gspread>=5.12.0 oauth2client>=4.1.3 pandas>=2.2.0
 ```
 
-### 2. Lite 분석 설치 (Prophet 제외)
-
-```bash
-# 데이터 처리 + 기본 시각화
-pip install pandas>=2.2.0 numpy>=2.0.0
-pip install gspread>=5.12.0 oauth2client>=4.1.3
-pip install matplotlib>=3.9.0 plotly>=5.18.0
-```
-
-### 3. 전체 설치 (Prophet 포함)
+#### 2. 전체 설치 (SEGMENT ANALYSIS)
 
 ```bash
 # 방법 1: requirements.txt 사용
@@ -186,7 +184,7 @@ pip install matplotlib>=3.9.0 seaborn>=0.13.0 plotly>=5.18.0
 pip install python-dateutil>=2.8.2 pytz>=2024.1
 ```
 
-### 4. 가상환경 사용 (권장)
+### 가상환경 사용 (권장)
 
 ```bash
 # 가상환경 생성
@@ -219,15 +217,15 @@ python -c "import cmdstanpy; cmdstanpy.install_cmdstan()"
 # 해결 1: Visual Studio Build Tools 설치
 # https://visualstudio.microsoft.com/visual-cpp-build-tools/
 
-# 해결 2: Prophet 대신 Lite 모드 사용
-python scripts/process_marketing_data_lite.py
+# 해결 2: Prophet 없이 분석 실행
+# 스크립트가 자동으로 단순 예측 방법을 사용합니다
 ```
 
 ### 메모리 부족 오류
 
 ```bash
-# 해결: Lite 또는 Optimized 모드 사용
-# run_analysis_final.bat 실행 후 옵션 1 또는 2 선택
+# 해결: 시스템 메모리 확인 후 불필요한 프로그램 종료
+# run_analysis_final.bat 실행 후 [2] CHECK SYSTEM MEMORY 선택
 ```
 
 ### 패키지 버전 충돌
@@ -284,4 +282,4 @@ pip install -r requirements.txt
 ---
 
 **최종 업데이트**: 2025-11-27
-**버전**: 1.0.0
+**버전**: 1.1.0
