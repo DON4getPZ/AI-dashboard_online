@@ -127,7 +127,11 @@ def fetch_google_sheets_data():
             print(f"   └ 헤더: {', '.join(data[0][:5])}{'...' if len(data[0]) > 5 else ''}")
 
         # CSV로 저장 (csv 라이브러리 사용)
-        output_file = 'raw_data.csv'
+        # data/raw 디렉토리 생성
+        output_dir = os.path.join(os.getcwd(), 'data', 'raw')
+        os.makedirs(output_dir, exist_ok=True)
+
+        output_file = os.path.join(output_dir, 'raw_data.csv')
         output_file_abs = os.path.abspath(output_file)
 
         print(f"\n💾 CSV 파일 저장 중...")

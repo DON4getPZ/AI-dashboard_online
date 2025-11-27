@@ -151,9 +151,9 @@ if errorlevel 1 (
 )
 
 REM raw_data.csv 확인
-if not exist raw_data.csv (
+if not exist data\raw\raw_data.csv (
     echo.
-    echo [ERROR] raw_data.csv not created
+    echo [ERROR] data\raw\raw_data.csv not created
     goto DOWNLOAD_FAILED
 )
 
@@ -161,19 +161,9 @@ echo.
 echo [OK] Data fetch successful!
 
 REM 파일 크기 확인
-for %%F in (raw_data.csv) do set FILE_SIZE=%%~zF
-echo    - File: raw_data.csv
+for %%F in (data\raw\raw_data.csv) do set FILE_SIZE=%%~zF
+echo    - File: data\raw\raw_data.csv
 echo    - Size: !FILE_SIZE! bytes
-
-REM raw_data.csv를 data\raw\에 복사
-echo.
-echo [Step 3] Saving raw_data.csv to data\raw\...
-copy raw_data.csv data\raw\raw_data.csv >nul
-if errorlevel 1 (
-    echo [WARNING] Failed to copy raw_data.csv to data\raw\
-) else (
-    echo [OK] raw_data.csv saved to data\raw\raw_data.csv
-)
 
 REM 성공
 echo.
@@ -181,9 +171,8 @@ echo ====================================================================
 echo [SUCCESS] Raw data downloaded successfully!
 echo ====================================================================
 echo.
-echo Generated files:
-echo    - raw_data.csv (root directory)
-echo    - data\raw\raw_data.csv (backup copy)
+echo Generated file:
+echo    - data\raw\raw_data.csv
 echo.
 goto SETUP_COMPLETE
 

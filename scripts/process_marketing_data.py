@@ -160,66 +160,6 @@ def calculate_metrics(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def split_by_month(df: pd.DataFrame) -> Dict[str, pd.DataFrame]:
-    """월별로 데이터 분리"""
-    print("\n📅 월별 데이터 분리 중...")
-    
-    monthly_data = {}
-    df['year_month'] = df['일 구분'].dt.to_period('M')
-    
-    for period, group in df.groupby('year_month'):
-        month_str = str(period)
-        monthly_data[month_str] = group.copy()
-        print(f"   ├ {month_str}: {len(group):,}행")
-    
-    return monthly_data
-
-
-def save_monthly_csv(monthly_data: Dict[str, pd.DataFrame]) -> List[Dict]:
-    """월별 CSV 저장"""
-    print("\n💾 월별 CSV 저장 중...")
-    
-    month_info = []
-    
-    for month_str, df_month in monthly_data.items():
-        # year_month 컬럼 제거
-        df_save = df_month.drop(columns=['year_month'], errors='ignore')
-        
-        # 파일명 생성
-        filename = f"{month_str}.csv"
-        filepath = RAW_DIR / filename
-        
-        # CSV 저장 (UTF-8)
-        df_save.to_csv(filepath, index=False, encoding='utf-8')
-        
-        file_size = filepath.stat().st_size / 1024  # KB
-        
-        # 월별 메트릭 계산
-        metrics = {
-            'total_cost': float(df_month['비용'].sum()),
-            'total_impressions': int(df_month['노출'].sum()),
-            'total_clicks': int(df_month['클릭'].sum()),
-            'total_conversions': int(df_month['전환수'].sum()),
-            'total_revenue': float(df_month['전환값'].sum())
-        }
-        
-        month_info.append({
-            'month': month_str,
-            'filename': filename,
-            'rows': len(df_month),
-            'size_kb': round(file_size, 1),
-            'date_range': {
-                'start': df_month['일 구분'].min().strftime('%Y-%m-%d'),
-                'end': df_month['일 구분'].max().strftime('%Y-%m-%d')
-            },
-            'metrics': metrics
-        })
-        
-        print(f"   ├ {filename} ({file_size:.1f} KB)")
-    
-    return month_info
-
-
 def calculate_statistics(df: pd.DataFrame) -> Dict[str, Any]:
     """통계 분석"""
     print("\n📈 통계 분석 중...")
@@ -1317,10 +1257,10 @@ def generate_html_dashboard(df: pd.DataFrame, forecast_data: Dict[str, Any], sta
     print(f"   📂 위치: {html_file.absolute()}")
 
 
-def generate_metadata(df: pd.DataFrame, month_info: List[Dict]) -> Dict[str, Any]:
+def generate_metadata(df: pd.DataFrame, month_info: List[Dict] = None) -> Dict[str, Any]:
     """메타데이터 생성"""
     print("\n📋 메타데이터 생성 중...")
-    
+
     total_metrics = {
         'cost': float(df['비용'].sum()),
         'impressions': int(df['노출'].sum()),
@@ -1328,7 +1268,7 @@ def generate_metadata(df: pd.DataFrame, month_info: List[Dict]) -> Dict[str, Any
         'conversions': int(df['전환수'].sum()),
         'revenue': float(df['전환값'].sum())
     }
-    
+
     # 전체 KPI
     kpis = {
         'ctr': round(total_metrics['clicks'] / total_metrics['impressions'] * 100, 2) if total_metrics['impressions'] > 0 else 0,
@@ -1337,7 +1277,7 @@ def generate_metadata(df: pd.DataFrame, month_info: List[Dict]) -> Dict[str, Any
         'cvr': round(total_metrics['conversions'] / total_metrics['clicks'] * 100, 2) if total_metrics['clicks'] > 0 else 0,
         'roas': round(total_metrics['revenue'] / total_metrics['cost'] * 100, 0) if total_metrics['cost'] > 0 else 0
     }
-    
+
     metadata = {
         'last_updated': datetime.now().isoformat(),
         'total_rows': len(df),
@@ -1345,7 +1285,6 @@ def generate_metadata(df: pd.DataFrame, month_info: List[Dict]) -> Dict[str, Any
             'start': df['일 구분'].min().strftime('%Y-%m-%d'),
             'end': df['일 구분'].max().strftime('%Y-%m-%d')
         },
-        'months': sorted(month_info, key=lambda x: x['month'], reverse=True),
         'total_metrics': total_metrics,
         'kpis': kpis
     }
@@ -1370,8 +1309,8 @@ def main():
     print("🚀 마케팅 데이터 전처리 시작 v2.0")
     print("="*80)
     
-    # 입력 파일 경로
-    input_file = os.environ.get('INPUT_CSV_PATH', 'raw_data.csv')
+    # 입력 파일 경로 (data/raw/raw_data.csv 기본값)
+    input_file = os.environ.get('INPUT_CSV_PATH', 'data/raw/raw_data.csv')
     
     if not os.path.exists(input_file):
         print(f"\n❌ 오류: 입력 파일을 찾을 수 없습니다: {input_file}")
@@ -1386,37 +1325,31 @@ def main():
         
         # 3. 지표 계산
         df = calculate_metrics(df)
-        
-        # 4. 월별 분리
-        monthly_data = split_by_month(df)
-        
-        # 5. 월별 CSV 저장
-        month_info = save_monthly_csv(monthly_data)
-        
-        # 6. 통계 분석
+
+        # 4. 통계 분석
         statistics = calculate_statistics(df)
-        
-        # 7. 일별 통계
+
+        # 5. 일별 통계
         calculate_daily_statistics(df, statistics)
-        
-        # 8. 기본 예측 데이터 생성 (단순 버전)
+
+        # 6. 기본 예측 데이터 생성 (단순 버전)
         simple_forecast(df)
 
-        # 9. 상세 예측 데이터 생성 (SARIMAX - 전체 데이터 활용)
+        # 7. 상세 예측 데이터 생성 (Prophet - 전체 데이터 활용)
         forecast_data = advanced_detailed_forecast(df, days=30)
 
-        # 10. 주별/월별 예측 생성
+        # 8. 주별/월별 예측 생성
         generate_weekly_predictions(forecast_data['predictions'])
         generate_monthly_predictions(forecast_data['predictions'])
 
-        # 11. 시각화 생성
+        # 9. 시각화 생성
         visualize_analysis(df, forecast_data)
 
-        # 12. HTML 대시보드 생성
+        # 10. HTML 대시보드 생성
         generate_html_dashboard(df, forecast_data, statistics)
 
-        # 13. 메타데이터 생성
-        generate_metadata(df, month_info)
+        # 11. 메타데이터 생성
+        generate_metadata(df)
 
         print("\n" + "="*80)
         print("✅ 모든 처리 완료!")
