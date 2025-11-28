@@ -69,9 +69,8 @@ csv_paths = [
     'GA4/2025-11.csv'
 ]
 
-# Add monthly raw CSV files
-for month in range(1, 12):
-    csv_paths.append(f'raw/2025-{month:02d}.csv')
+# Add raw data CSV file
+csv_paths.append('raw/raw_data.csv')
 
 for csv_path in csv_paths:
     full_path = DATA_DIR / csv_path

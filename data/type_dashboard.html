@@ -290,6 +290,155 @@
             padding: 24px;
         }
 
+        /* 인라인 접기/펼치기 토글 (통일된 스타일) */
+        .inline-toggle {
+            padding: 10px 16px;
+            background: var(--primary-light);
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--grey-200);
+            transition: all 0.2s ease;
+            margin-top: 12px;
+        }
+
+        .inline-toggle:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: var(--primary-main);
+        }
+
+        .inline-toggle:hover .inline-toggle-label,
+        .inline-toggle:hover .inline-toggle-action {
+            color: white;
+        }
+
+        .inline-toggle-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .inline-toggle-badge {
+            padding: 2px 8px;
+            background: white;
+            color: var(--primary-main);
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .inline-toggle-action {
+            font-size: 12px;
+            color: var(--primary-main);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 500;
+        }
+
+        /* 경고 스타일 토글 (빨강) */
+        .inline-toggle.warning-style {
+            background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%);
+            border-color: #ffcdd2;
+        }
+
+        .inline-toggle.warning-style .inline-toggle-label {
+            color: #d32f2f;
+        }
+
+        .inline-toggle.warning-style .inline-toggle-badge {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
+        .inline-toggle.warning-style .inline-toggle-action {
+            color: #d32f2f;
+        }
+
+        .inline-toggle.warning-style:hover {
+            background: #ef5350;
+        }
+
+        /* 주의 스타일 토글 (주황) */
+        .inline-toggle.caution-style {
+            background: linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%);
+            border-color: #ffe0b2;
+        }
+
+        .inline-toggle.caution-style .inline-toggle-label {
+            color: #e65100;
+        }
+
+        .inline-toggle.caution-style .inline-toggle-badge {
+            background: #ffe0b2;
+            color: #e65100;
+        }
+
+        .inline-toggle.caution-style .inline-toggle-action {
+            color: #e65100;
+        }
+
+        .inline-toggle.caution-style:hover {
+            background: #ff9800;
+        }
+
+        .inline-toggle-content {
+            display: none;
+            padding: 12px 0;
+            margin-top: 8px;
+        }
+
+        .inline-toggle-content.expanded {
+            display: block;
+        }
+
+        /* 더 보기/접기 버튼 (간소화) */
+        .show-more-btn {
+            padding: 8px 20px;
+            background: var(--grey-100);
+            color: var(--grey-700);
+            border: 1px solid var(--grey-300);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 12px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .show-more-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary-main);
+            border-color: var(--primary-main);
+        }
+
+        .show-more-btn.warning-style {
+            background: #fff5f5;
+            color: #d32f2f;
+            border-color: #ffcdd2;
+        }
+
+        .show-more-btn.warning-style:hover {
+            background: #ffebee;
+            border-color: #ef5350;
+        }
+
+        .show-more-btn.caution-style {
+            background: #fff8f0;
+            color: #e65100;
+            border-color: #ffe0b2;
+        }
+
+        .show-more-btn.caution-style:hover {
+            background: #fff3e0;
+            border-color: #ff9800;
+        }
+
         /* 뷰 타입 선택 섹션 */
         .view-type-section {
             display: flex;
@@ -3706,6 +3855,8 @@
         // 탭 0: 오늘의 요약 (새로운 메인 탭)
         function renderSummaryTab() {
             const summary = insightsData.summary || {};
+            const summaryCard = insightsData.summary_card || null;
+            const topRecommendations = insightsData.top_recommendations || [];
             const topCategories = insightsData.top_categories || [];
             const productPerformance = insightsData.product_performance || [];
             const genderData = (insightsData.gender_performance || []).filter(g => isValidGender(g.gender));
@@ -3751,6 +3902,34 @@
             }
 
             let html = '';
+
+            // 0. AI 컨설턴트 종합 진단 카드 (summary_card)
+            if (summaryCard) {
+                html += `
+                    <div style="margin-bottom: 20px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+                        <div style="display: flex; align-items: flex-start; gap: 16px;">
+                            <div style="font-size: 48px; line-height: 1;">🤖</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">${summaryCard.title || '마케팅 종합 진단'}</div>
+                                <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+                                    <div style="padding: 6px 14px; background: rgba(255,255,255,0.2); border-radius: 20px; font-size: 13px; font-weight: 600;">
+                                        ${summaryCard.total_roas_formatted || 'ROAS ' + formatPercent(avgRoas)}
+                                    </div>
+                                    <div style="padding: 6px 14px; background: rgba(255,255,255,0.2); border-radius: 20px; font-size: 13px; font-weight: 600;">
+                                        매출 ${summaryCard.total_revenue_formatted || formatCurrency(totalRevenue)}
+                                    </div>
+                                    <div style="padding: 6px 14px; background: rgba(255,255,255,0.2); border-radius: 20px; font-size: 13px; font-weight: 600;">
+                                        비용 ${summaryCard.total_cost_formatted || formatCurrency(totalCost)}
+                                    </div>
+                                </div>
+                                <div style="font-size: 14px; opacity: 0.95; line-height: 1.7; padding: 12px; background: rgba(255,255,255,0.15); border-radius: 10px;">
+                                    ${summaryCard.message || ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
 
             // 1. 핵심 지표 대시보드 (카드 형태) - 호버 툴팁 적용
             html += `
@@ -3819,13 +3998,41 @@
                 </div>
             `;
 
-            // 3. 지금 해야 할 일 3가지
+            // 2.5. 액션 가이드 섹션 (하위 탭: 지금 바로 할 수 있는 일 / AI 핵심 추천)
+            const hasRecommendations = topRecommendations && topRecommendations.length > 0;
+
+            // Severity 기준 정렬 (high가 가장 상위)
+            const recsSeverityOrder = { 'high': 0, 'warning': 1, 'opportunity': 2, 'info': 3 };
+            const sortBySeverity = (a, b) => {
+                const orderA = recsSeverityOrder[a.severity] !== undefined ? recsSeverityOrder[a.severity] : 4;
+                const orderB = recsSeverityOrder[b.severity] !== undefined ? recsSeverityOrder[b.severity] : 4;
+                return orderA - orderB;
+            };
+
+            const urgentRecs = topRecommendations
+                .filter(r => r.priority === 'high' || r.severity === 'high')
+                .sort(sortBySeverity);
+            const otherRecs = topRecommendations
+                .filter(r => r.priority !== 'high' && r.severity !== 'high')
+                .sort(sortBySeverity);
+
             html += `
-                <div style="margin-bottom: 20px;">
-                    <div style="font-size: 14px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 18px;">✅</span> 지금 바로 할 수 있는 일
+                <div style="margin-bottom: 20px; border: 1px solid var(--grey-200); border-radius: 12px; overflow: hidden;">
+                    <!-- 하위 탭 헤더 -->
+                    <div style="display: flex; background: #f8f9fa; border-bottom: 1px solid var(--grey-200);">
+                        <button class="action-guide-tab active" data-action-tab="quickAction"
+                                style="flex: 1; padding: 12px 16px; font-size: 12px; font-weight: 600; border: none; background: white; color: var(--primary-main); cursor: pointer; border-bottom: 2px solid var(--primary-main); transition: all 0.2s;">
+                            ✅ 지금 바로 할 수 있는 일
+                        </button>
+                        <button class="action-guide-tab" data-action-tab="aiRecommend"
+                                style="flex: 1; padding: 12px 16px; font-size: 12px; font-weight: 600; border: none; background: #f8f9fa; color: var(--grey-600); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s;">
+                            🎯 AI 핵심 추천 ${urgentRecs.length > 0 ? '<span style="padding: 2px 6px; background: #ff5722; color: white; border-radius: 8px; font-size: 10px; margin-left: 4px;">' + urgentRecs.length + '</span>' : ''}
+                        </button>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+
+                    <!-- 탭 1: 지금 바로 할 수 있는 일 -->
+                    <div id="quickActionContent" class="action-guide-content" style="padding: 16px;">
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
             `;
 
             // 액션 1: 확대할 채널
@@ -3888,6 +4095,84 @@
 
             html += `</div></div>`;
 
+            // 탭 2: AI 핵심 추천 (접기/펼치기)
+            html += `<div id="aiRecommendContent" class="action-guide-content" style="padding: 16px; display: none;">`;
+
+            if (hasRecommendations) {
+                // 긴급 카드 (항상 표시, 최대 3개)
+                const urgentToShow = urgentRecs.slice(0, 3);
+                const remainingRecs = [...urgentRecs.slice(3), ...otherRecs];
+
+                if (urgentToShow.length > 0) {
+                    html += `<div style="display: flex; flex-direction: column; gap: 10px;">`;
+                    urgentToShow.forEach((rec, idx) => {
+                        html += renderRecommendationCard(rec, idx);
+                    });
+                    html += `</div>`;
+                }
+
+                // 나머지 추천 (접기/펼치기) - 더보기/접기 버튼 분리
+                if (remainingRecs.length > 0) {
+                    const recsToggleId = 'recsToggle_' + Date.now();
+                    html += `
+                        <div id="${recsToggleId}_showMore" style="text-align: center; margin-top: 12px;">
+                            <button class="show-more-btn" onclick="document.getElementById('${recsToggleId}_content').style.display='block'; document.getElementById('${recsToggleId}_showMore').style.display='none';">
+                                더 보기 (${remainingRecs.length}건)
+                            </button>
+                        </div>
+                        <div id="${recsToggleId}_content" style="display: none; margin-top: 12px;">
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                    `;
+                    remainingRecs.forEach((rec, idx) => {
+                        html += renderRecommendationCard(rec, idx + urgentToShow.length);
+                    });
+                    html += `
+                            </div>
+                            <div style="text-align: center; margin-top: 12px;">
+                                <button class="show-more-btn" onclick="document.getElementById('${recsToggleId}_content').style.display='none'; document.getElementById('${recsToggleId}_showMore').style.display='block';">
+                                    접기
+                                </button>
+                            </div>
+                        </div>`;
+                }
+
+                if (urgentToShow.length === 0 && remainingRecs.length === 0) {
+                    html += `<div style="text-align: center; padding: 20px; color: var(--grey-500);">현재 AI 추천 사항이 없습니다.</div>`;
+                }
+            } else {
+                html += `<div style="text-align: center; padding: 20px; color: var(--grey-500);">현재 AI 추천 사항이 없습니다.</div>`;
+            }
+
+            html += `</div></div>`;
+
+            // 추천 카드 렌더링 헬퍼 함수
+            function renderRecommendationCard(rec, idx) {
+                const severityConfig = {
+                    'high': { border: '#ef5350', bg: '#ffebee', icon: '🚨' },
+                    'warning': { border: '#ff9800', bg: '#fff3e0', icon: '⚠️' },
+                    'opportunity': { border: '#4caf50', bg: '#e8f5e9', icon: '🚀' },
+                    'info': { border: '#2196f3', bg: '#e3f2fd', icon: '💡' }
+                };
+                const config = severityConfig[rec.severity] || severityConfig['info'];
+                const priorityBadge = rec.priority === 'high' ? '<span style="padding: 2px 8px; background: #ff5722; color: white; border-radius: 10px; font-size: 9px; font-weight: 700; margin-left: 8px;">긴급</span>' : '';
+
+                return `
+                    <div style="padding: 14px 16px; background: ${config.bg}; border-radius: 12px; border-left: 4px solid ${config.border};">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                            <div style="font-size: 13px; font-weight: 700; color: var(--grey-900);">
+                                ${rec.title || config.icon + ' 추천 ' + (idx + 1)}${priorityBadge}
+                            </div>
+                            ${rec.category ? '<span style="padding: 2px 8px; background: rgba(0,0,0,0.08); border-radius: 10px; font-size: 10px; color: var(--grey-600);">' + rec.category + '</span>' : ''}
+                        </div>
+                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6; margin-bottom: 8px;">
+                            ${rec.message || ''}
+                        </div>
+                        ${rec.action ? '<div style="padding: 10px 12px; background: rgba(255,255,255,0.7); border-radius: 8px; border: 1px dashed ' + config.border + ';"><div style="font-size: 10px; color: ' + config.border + '; font-weight: 600; margin-bottom: 4px;">💡 실행 가이드</div><div style="font-size: 11px; color: var(--grey-800); line-height: 1.5;">' + rec.action + '</div></div>' : ''}
+                        ${rec.expected_impact ? '<div style="margin-top: 8px; font-size: 10px; color: #2e7d32; font-weight: 600;">📈 기대 효과: ' + rec.expected_impact + '</div>' : ''}
+                    </div>
+                `;
+            }
+
             // 4. 채널 성과 순위 (컴팩트 테이블) - 호버 툴팁 적용
             if (topCategories.length > 0) {
                 html += `
@@ -3941,6 +4226,45 @@
             }
 
             document.getElementById('summaryContent').innerHTML = html;
+
+            // 액션 가이드 탭 이벤트 초기화
+            initActionGuideTabs();
+        }
+
+        // 액션 가이드 하위 탭 이벤트 핸들러
+        function initActionGuideTabs() {
+            const tabs = document.querySelectorAll('.action-guide-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetTab = this.dataset.actionTab;
+
+                    // 모든 탭 비활성화
+                    tabs.forEach(t => {
+                        t.classList.remove('active');
+                        t.style.background = '#f8f9fa';
+                        t.style.color = 'var(--grey-600)';
+                        t.style.borderBottom = '2px solid transparent';
+                    });
+
+                    // 클릭한 탭 활성화
+                    this.classList.add('active');
+                    this.style.background = 'white';
+                    this.style.color = 'var(--primary-main)';
+                    this.style.borderBottom = '2px solid var(--primary-main)';
+
+                    // 모든 컨텐츠 숨기기
+                    document.querySelectorAll('.action-guide-content').forEach(content => {
+                        content.style.display = 'none';
+                    });
+
+                    // 해당 컨텐츠 표시
+                    const contentId = targetTab === 'quickAction' ? 'quickActionContent' : 'aiRecommendContent';
+                    const targetContent = document.getElementById(contentId);
+                    if (targetContent) {
+                        targetContent.style.display = 'block';
+                    }
+                });
+            });
         }
 
         // 탭 1: 성과 기회 분석 (컴팩트 + 스토리텔링)
@@ -4050,8 +4374,11 @@
                 html += `</div></div>`;
             }
 
-            // 3. TOP 광고세트 (간단히)
+            // 3. TOP 광고세트 (데이터 색상 스케일 포함)
             if (topAdsets.length > 0) {
+                // ROAS 최대값 계산 (스케일 바용)
+                const maxRoas = Math.max(...topAdsets.slice(0, 5).map(a => a.roas || 0));
+
                 html += `
                     <div style="border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden;">
                         <div style="padding: 10px 14px; background: #fafafa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
@@ -4060,16 +4387,78 @@
                             <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▶</span>
                         </div>
                         <div style="display: none; padding: 12px;">
+                            <!-- 색상 범례 -->
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding: 8px 12px; background: #f8f9fa; border-radius: 6px; flex-wrap: wrap;">
+                                <span style="font-size: 10px; color: var(--grey-600); font-weight: 600;">ROAS 스케일:</span>
+                                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                                    <div style="display: flex; align-items: center; gap: 3px;">
+                                        <div style="width: 14px; height: 14px; background: linear-gradient(90deg, #4caf50, #81c784); border-radius: 3px;"></div>
+                                        <span style="font-size: 10px; color: #2e7d32; font-weight: 600;">500%+</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 3px;">
+                                        <div style="width: 14px; height: 14px; background: linear-gradient(90deg, #8bc34a, #aed581); border-radius: 3px;"></div>
+                                        <span style="font-size: 10px; color: #558b2f; font-weight: 600;">300%</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 3px;">
+                                        <div style="width: 14px; height: 14px; background: linear-gradient(90deg, #ffeb3b, #fff176); border-radius: 3px;"></div>
+                                        <span style="font-size: 10px; color: #f57f17; font-weight: 600;">200%</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 3px;">
+                                        <div style="width: 14px; height: 14px; background: linear-gradient(90deg, #ff9800, #ffb74d); border-radius: 3px;"></div>
+                                        <span style="font-size: 10px; color: #e65100; font-weight: 600;">100%</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 3px;">
+                                        <div style="width: 14px; height: 14px; background: linear-gradient(90deg, #ef5350, #e57373); border-radius: 3px;"></div>
+                                        <span style="font-size: 10px; color: #c62828; font-weight: 600;">&lt;100%</span>
+                                    </div>
+                                </div>
+                            </div>
                 `;
 
                 topAdsets.slice(0, 5).forEach((adset, idx) => {
+                    // ROAS 기반 색상 계산
+                    const roas = adset.roas || 0;
+                    let barColor, textColor, barWidth;
+
+                    if (roas >= 500) {
+                        barColor = 'linear-gradient(90deg, #4caf50, #81c784)';
+                        textColor = '#2e7d32';
+                    } else if (roas >= 300) {
+                        barColor = 'linear-gradient(90deg, #8bc34a, #aed581)';
+                        textColor = '#558b2f';
+                    } else if (roas >= 200) {
+                        barColor = 'linear-gradient(90deg, #ffeb3b, #fff176)';
+                        textColor = '#f57f17';
+                    } else if (roas >= 100) {
+                        barColor = 'linear-gradient(90deg, #ff9800, #ffb74d)';
+                        textColor = '#e65100';
+                    } else {
+                        barColor = 'linear-gradient(90deg, #ef5350, #e57373)';
+                        textColor = '#c62828';
+                    }
+
+                    // 스케일 바 너비 계산 (최대 100%)
+                    barWidth = Math.min((roas / maxRoas) * 100, 100);
+
                     html += `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                            <div style="flex: 1;">
-                                <div style="font-size: 11px; font-weight: 600; color: var(--grey-800);">${idx + 1}. ${adset.adset}</div>
-                                <div style="font-size: 10px; color: var(--grey-500);">${adset.category}</div>
+                        <div style="margin-bottom: 10px; padding: 10px 12px; background: #fafafa; border-radius: 8px; position: relative; overflow: hidden;">
+                            <!-- 배경 스케일 바 -->
+                            <div style="position: absolute; top: 0; left: 0; height: 100%; width: ${barWidth}%; background: ${barColor}; opacity: 0.15; border-radius: 8px;"></div>
+                            <div style="position: relative; z-index: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 11px; font-weight: 600; color: var(--grey-800); display: flex; align-items: center; gap: 6px;">
+                                            <span style="width: 18px; height: 18px; background: ${barColor}; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 700;">${idx + 1}</span>
+                                            ${adset.adset}
+                                        </div>
+                                        <div style="font-size: 10px; color: var(--grey-500); margin-top: 2px; margin-left: 24px;">${adset.category}</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 14px; font-weight: 800; color: ${textColor};">${formatPercent(roas)}</div>
+                                        <div style="font-size: 9px; color: var(--grey-500);">ROAS</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div style="font-size: 13px; font-weight: 700; color: #2e7d32;">${formatPercent(adset.roas)}</div>
                         </div>
                     `;
                 });
@@ -4253,7 +4642,8 @@
 
         // 탭 2: 주의 필요 (경고) - 사용자 친화적 버전
         function renderWarningTab() {
-            const warnings = (insightsData.alerts || []).filter(a => a.severity === 'warning' || a.severity === 'high');
+            const allAlerts = insightsData.alerts || [];
+            const warnings = allAlerts.filter(a => a.severity === 'warning' || a.severity === 'high');
             const topCategories = insightsData.top_categories || [];
             const summary = insightsData.summary || {};
             const productPerformance = insightsData.product_performance || [];
@@ -4262,7 +4652,7 @@
             const highCpaCategories = topCategories.filter(cat => cat.cpa > avgCpa * 1.5);
             const lowRoasCategories = topCategories.filter(cat => cat.roas < 100);
             const lowRoasProducts = productPerformance.filter(prod => prod.roas < 100);
-            const totalIssues = highCpaCategories.length + lowRoasCategories.length + lowRoasProducts.length;
+            const totalIssues = highCpaCategories.length + lowRoasCategories.length + lowRoasProducts.length + warnings.length;
 
             let html = '';
 
@@ -4302,16 +4692,31 @@
                 </div>
             `;
 
-            // 서브탭 구현 - CPA 높음, 비효율 상품
+            // 서브탭 구현 - AI 분석 경고, CPA 높음, 비효율 상품
+            const hasAiAlerts = warnings.length > 0;
             const hasHighCpa = highCpaCategories.length > 0;
             const hasLowRoasProducts = lowRoasProducts.length > 0;
-            const firstActiveTab = hasHighCpa ? 'cpa' : (hasLowRoasProducts ? 'products' : 'cpa');
+            const firstActiveTab = hasAiAlerts ? 'aiAlert' : (hasHighCpa ? 'cpa' : (hasLowRoasProducts ? 'products' : 'cpa'));
 
             html += `
                 <div style="margin-bottom: 16px;">
-                    <div style="display: flex; gap: 8px; border-bottom: 2px solid var(--grey-200); padding-bottom: 0;">
+                    <div style="display: flex; gap: 8px; border-bottom: 2px solid var(--grey-200); padding-bottom: 0; flex-wrap: wrap;">
             `;
 
+            // AI 분석 경고 탭
+            if (hasAiAlerts) {
+                html += `
+                    <button class="warning-subtab ${firstActiveTab === 'aiAlert' ? 'active' : ''}" data-warning-tab="aiAlert"
+                            style="padding: 10px 16px; font-size: 12px; font-weight: 600; border: none; background: ${firstActiveTab === 'aiAlert' ? '#ffebee' : 'transparent'};
+                                   color: ${firstActiveTab === 'aiAlert' ? '#d32f2f' : 'var(--grey-600)'}; cursor: pointer; border-radius: 8px 8px 0 0;
+                                   border-bottom: ${firstActiveTab === 'aiAlert' ? '3px solid #d32f2f' : '3px solid transparent'}; margin-bottom: -2px;
+                                   transition: all 0.2s ease;">
+                        🚨 AI 분석 경고 ${warnings.length}개
+                    </button>
+                `;
+            }
+
+            // CPA 높음 탭
             if (hasHighCpa) {
                 html += `
                     <button class="warning-subtab ${firstActiveTab === 'cpa' ? 'active' : ''}" data-warning-tab="cpa"
@@ -4324,6 +4729,7 @@
                 `;
             }
 
+            // 비효율 상품 탭
             if (hasLowRoasProducts) {
                 html += `
                     <button class="warning-subtab ${firstActiveTab === 'products' ? 'active' : ''}" data-warning-tab="products"
@@ -4341,8 +4747,123 @@
                 </div>
             `;
 
-            // CPA 높은 채널 컨텐츠
+            // AI 분석 경고 컨텐츠 (default 3개 노출 + 접기/펼치기)
+            if (hasAiAlerts) {
+                // severity 기준 정렬 (high > warning > 기타)
+                const severityOrder = { 'high': 0, 'warning': 1 };
+                const sortedWarnings = [...warnings].sort((a, b) => {
+                    const orderA = severityOrder[a.severity] !== undefined ? severityOrder[a.severity] : 2;
+                    const orderB = severityOrder[b.severity] !== undefined ? severityOrder[b.severity] : 2;
+                    return orderA - orderB;
+                });
+                const visibleAlerts = sortedWarnings.slice(0, 3);
+                const hiddenAlerts = sortedWarnings.slice(3);
+
+                html += `<div id="warningTabAiAlert" class="warning-tab-content" style="display: ${firstActiveTab === 'aiAlert' ? 'block' : 'none'};">`;
+                html += `
+                    <div style="padding: 14px; background: white; border-radius: 10px; border: 1px solid #ffcdd2;">
+                        <div style="font-size: 12px; font-weight: 700; color: #d32f2f; margin-bottom: 12px;">
+                            🚨 AI가 감지한 경고 알림
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                `;
+
+                // 헬퍼 함수: 경고 카드 렌더링
+                function renderAlertCard(alert) {
+                    const severityConfig = {
+                        'high': { border: '#d32f2f', bg: '#ffebee', badge: '긴급', badgeBg: '#d32f2f' },
+                        'warning': { border: '#f57c00', bg: '#fff3e0', badge: '주의', badgeBg: '#f57c00' }
+                    };
+                    const config = severityConfig[alert.severity] || severityConfig['warning'];
+
+                    let cardHtml = `
+                        <div style="padding: 14px 16px; background: ${config.bg}; border-radius: 12px; border-left: 4px solid ${config.border};">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                                <div style="font-size: 13px; font-weight: 700; color: var(--grey-900);">
+                                    ${alert.title || alert.type || '⚠️ 경고'}
+                                </div>
+                                <span style="padding: 2px 8px; background: ${config.badgeBg}; color: white; border-radius: 10px; font-size: 10px; font-weight: 600;">${config.badge}</span>
+                            </div>
+                            <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6; margin-bottom: 10px;">
+                                ${alert.message || ''}
+                            </div>
+                    `;
+
+                    // Financial Impact 표시
+                    if (alert.financial_impact) {
+                        const fi = alert.financial_impact;
+                        cardHtml += `
+                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                ${fi.loss_amount ? `
+                                    <div style="flex: 1; padding: 8px 10px; background: rgba(211, 47, 47, 0.1); border-radius: 8px; text-align: center;">
+                                        <div style="font-size: 10px; color: #d32f2f; font-weight: 600;">예상 손실</div>
+                                        <div style="font-size: 14px; font-weight: 800; color: #d32f2f;">${fi.loss_amount}</div>
+                                    </div>
+                                ` : ''}
+                                ${fi.potential_uplift ? `
+                                    <div style="flex: 1; padding: 8px 10px; background: rgba(46, 125, 50, 0.1); border-radius: 8px; text-align: center;">
+                                        <div style="font-size: 10px; color: #2e7d32; font-weight: 600;">개선시 기대 수익</div>
+                                        <div style="font-size: 14px; font-weight: 800; color: #2e7d32;">${fi.potential_uplift}</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }
+
+                    // Action 가이드 표시
+                    if (alert.action) {
+                        cardHtml += `
+                            <div style="padding: 10px 12px; background: rgba(255,255,255,0.8); border-radius: 8px; border: 1px dashed ${config.border};">
+                                <div style="font-size: 10px; color: ${config.border}; font-weight: 600; margin-bottom: 4px;">💡 실행 가이드</div>
+                                <div style="font-size: 11px; color: var(--grey-800); line-height: 1.5;">${alert.action}</div>
+                            </div>
+                        `;
+                    }
+
+                    cardHtml += `</div>`;
+                    return cardHtml;
+                }
+
+                // 기본 노출 카드 (3개)
+                visibleAlerts.forEach((alert) => {
+                    html += renderAlertCard(alert);
+                });
+
+                html += `</div>`;
+
+                // 추가 카드 (접기/펼치기) - 더보기/접기 버튼 분리
+                if (hiddenAlerts.length > 0) {
+                    const alertsToggleId = 'alertsToggle_' + Date.now();
+                    html += `
+                        <div id="${alertsToggleId}_showMore" style="text-align: center; margin-top: 12px;">
+                            <button class="show-more-btn warning-style" onclick="document.getElementById('${alertsToggleId}_content').style.display='block'; document.getElementById('${alertsToggleId}_showMore').style.display='none';">
+                                더 보기 (${hiddenAlerts.length}건)
+                            </button>
+                        </div>
+                        <div id="${alertsToggleId}_content" style="display: none; margin-top: 12px;">
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                    `;
+                    hiddenAlerts.forEach((alert) => {
+                        html += renderAlertCard(alert);
+                    });
+                    html += `
+                            </div>
+                            <div style="text-align: center; margin-top: 12px;">
+                                <button class="show-more-btn warning-style" onclick="document.getElementById('${alertsToggleId}_content').style.display='none'; document.getElementById('${alertsToggleId}_showMore').style.display='block';">
+                                    접기
+                                </button>
+                            </div>
+                        </div>`;
+                }
+
+                html += `</div></div>`;
+            }
+
+            // CPA 높은 채널 컨텐츠 (default 3개 노출 + 접기/펼치기)
             if (hasHighCpa) {
+                const visibleCpa = highCpaCategories.slice(0, 3);
+                const hiddenCpa = highCpaCategories.slice(3);
+
                 html += `<div id="warningTabCpa" class="warning-tab-content" style="display: ${firstActiveTab === 'cpa' ? 'block' : 'none'};">`;
                 html += `
                     <div class="hoverable-card"
@@ -4356,9 +4877,10 @@
                         </div>
                 `;
 
-                highCpaCategories.forEach(cat => {
+                // 헬퍼 함수: CPA 카드 렌더링
+                function renderCpaCard(cat) {
                     const cpaRatio = ((cat.cpa / avgCpa - 1) * 100).toFixed(0);
-                    html += `
+                    return `
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f5f5f5;">
                             <div>
                                 <div style="font-size: 12px; font-weight: 600; color: var(--grey-800);">${cat.name}</div>
@@ -4369,7 +4891,35 @@
                             </div>
                         </div>
                     `;
+                }
+
+                // 기본 노출 (3개)
+                visibleCpa.forEach(cat => {
+                    html += renderCpaCard(cat);
                 });
+
+                // 추가 항목 (접기/펼치기) - 더보기/접기 버튼 분리
+                if (hiddenCpa.length > 0) {
+                    const cpaToggleId = 'cpaToggle_' + Date.now();
+                    html += `
+                        <div id="${cpaToggleId}_showMore" style="text-align: center; margin-top: 12px;">
+                            <button class="show-more-btn caution-style" onclick="document.getElementById('${cpaToggleId}_content').style.display='block'; document.getElementById('${cpaToggleId}_showMore').style.display='none';">
+                                더 보기 (${hiddenCpa.length}건)
+                            </button>
+                        </div>
+                        <div id="${cpaToggleId}_content" style="display: none; margin-top: 8px;">
+                    `;
+                    hiddenCpa.forEach(cat => {
+                        html += renderCpaCard(cat);
+                    });
+                    html += `
+                            <div style="text-align: center; margin-top: 12px;">
+                                <button class="show-more-btn caution-style" onclick="document.getElementById('${cpaToggleId}_content').style.display='none'; document.getElementById('${cpaToggleId}_showMore').style.display='block';">
+                                    접기
+                                </button>
+                            </div>
+                        </div>`;
+                }
 
                 html += `
                         <div style="margin-top: 10px; padding: 10px; background: #fff8f0; border-radius: 8px;">
@@ -4447,7 +4997,11 @@
 
                     // 클릭한 탭 활성화
                     this.classList.add('active');
-                    if (targetTab === 'cpa') {
+                    if (targetTab === 'aiAlert') {
+                        this.style.background = '#ffebee';
+                        this.style.color = '#d32f2f';
+                        this.style.borderBottom = '3px solid #d32f2f';
+                    } else if (targetTab === 'cpa') {
                         this.style.background = '#fff3e0';
                         this.style.color = '#e65100';
                         this.style.borderBottom = '3px solid #e65100';
@@ -4463,7 +5017,12 @@
                     });
 
                     // 해당 컨텐츠 표시
-                    const contentId = targetTab === 'cpa' ? 'warningTabCpa' : 'warningTabProducts';
+                    const contentIdMap = {
+                        'aiAlert': 'warningTabAiAlert',
+                        'cpa': 'warningTabCpa',
+                        'products': 'warningTabProducts'
+                    };
+                    const contentId = contentIdMap[targetTab] || 'warningTabCpa';
                     const targetContent = document.getElementById(contentId);
                     if (targetContent) {
                         targetContent.style.display = 'block';
@@ -4477,6 +5036,9 @@
             const genderData = (insightsData.gender_performance || []).filter(g => isValidGender(g.gender));
             const platformData = (insightsData.platform_performance || []).filter(p =>
                 p.platform && p.platform.toLowerCase() !== 'uncategorized'
+            );
+            const deviceData = (insightsData.device_performance || []).filter(d =>
+                d.device && d.device.toLowerCase() !== 'uncategorized' && d.device.toLowerCase() !== 'unknown'
             );
             const ageGenderData = (insightsData.age_gender_combinations || []).filter(item =>
                 isValidGender(item.gender) && isValidAge(item.age)
@@ -4592,8 +5154,59 @@
                 html += `</div></div>`;
             }
 
-            // 3. 플랫폼/기기별 (컴팩트)
+            // 3. 디바이스 유형별 성과 (모바일/PC) - 첫 번째
+            if (deviceData.length > 0) {
+                const maxDeviceRoas = Math.max(...deviceData.map(d => d.roas || 0));
+                html += `
+                    <div style="border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden; margin-bottom: 12px;">
+                        <div style="padding: 10px 14px; background: #fafafa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
+                             onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
+                            <span style="font-size: 12px; font-weight: 600; color: var(--grey-800);">💻 디바이스 유형별 성과 (모바일/PC)</span>
+                            <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▶</span>
+                        </div>
+                        <div style="display: none; padding: 12px;">
+                            <div style="font-size: 10px; color: var(--grey-600); margin-bottom: 10px; padding: 8px; background: #e3f2fd; border-radius: 6px;">
+                                💡 모바일과 PC에서의 광고 반응 차이를 파악하세요
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
+                `;
+
+                const sortedDevices = [...deviceData].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                sortedDevices.forEach((d, idx) => {
+                    const cpa = d.conversions > 0 ? d.cost / d.conversions : 0;
+                    const isTop = idx === 0;
+                    const deviceIcon = d.device.toLowerCase().includes('mobile') ? '📱' :
+                                      d.device.toLowerCase().includes('desktop') || d.device.toLowerCase().includes('pc') ? '💻' :
+                                      d.device.toLowerCase().includes('tablet') ? '📟' : '🖥️';
+                    // ROAS 색상 스케일
+                    const roas = d.roas || 0;
+                    let roasColor = '#c62828';
+                    if (roas >= 500) roasColor = '#2e7d32';
+                    else if (roas >= 300) roasColor = '#558b2f';
+                    else if (roas >= 200) roasColor = '#f57f17';
+                    else if (roas >= 100) roasColor = '#e65100';
+
+                    html += `
+                        <div style="padding: 12px; background: ${isTop ? '#e8f5e9' : '#f5f5f5'}; border-radius: 8px; ${isTop ? 'border: 2px solid #4caf50;' : ''}">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-size: 13px; font-weight: 700; color: var(--grey-800);">${deviceIcon} ${d.device}</span>
+                                ${isTop ? '<span style="font-size: 10px; padding: 2px 6px; background: #4caf50; color: white; border-radius: 8px;">추천</span>' : ''}
+                            </div>
+                            <div style="font-size: 18px; font-weight: 800; color: ${roasColor}; margin-bottom: 4px;">${formatPercent(d.roas || 0)}</div>
+                            <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--grey-500);">
+                                <span>전환당 ${formatCurrency(cpa)}</span>
+                                <span>비용 ${formatCurrency(d.cost || 0)}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `</div></div></div>`;
+            }
+
+            // 4. 기기/플랫폼별 성과 - 두 번째
             if (platformData.length > 0) {
+                const maxPlatformRoas = Math.max(...platformData.map(p => p.roas || 0));
                 html += `
                     <div style="border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden; margin-bottom: 12px;">
                         <div style="padding: 10px 14px; background: #fafafa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
@@ -4607,10 +5220,21 @@
                 const sortedPlatform = [...platformData].sort((a, b) => b.roas - a.roas);
                 sortedPlatform.slice(0, 5).forEach((p, idx) => {
                     const cpa = p.conversions > 0 ? p.cost / p.conversions : 0;
+                    // ROAS 색상 스케일
+                    const roas = p.roas || 0;
+                    let roasColor = '#c62828';
+                    if (roas >= 500) roasColor = '#2e7d32';
+                    else if (roas >= 300) roasColor = '#558b2f';
+                    else if (roas >= 200) roasColor = '#f57f17';
+                    else if (roas >= 100) roasColor = '#e65100';
+                    // 배경 스케일 바
+                    const barWidth = Math.min((roas / maxPlatformRoas) * 100, 100);
+
                     html += `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                            <div style="font-size: 12px; font-weight: 500; color: var(--grey-800);">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`} ${p.platform}</div>
-                            <div style="font-size: 12px; font-weight: 700; color: ${p.roas >= 150 ? '#2e7d32' : '#f57c00'};">${formatPercent(p.roas)}</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; margin-bottom: 6px; background: #fafafa; border-radius: 8px; position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; height: 100%; width: ${barWidth}%; background: linear-gradient(90deg, ${roasColor}22, ${roasColor}11); border-radius: 8px;"></div>
+                            <div style="position: relative; z-index: 1; font-size: 12px; font-weight: 600; color: var(--grey-800);">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`} ${p.platform}</div>
+                            <div style="position: relative; z-index: 1; font-size: 13px; font-weight: 700; color: ${roasColor};">${formatPercent(p.roas)}</div>
                         </div>
                     `;
                 });
@@ -4618,8 +5242,9 @@
                 html += `</div></div>`;
             }
 
-            // 4. 연령×성별 TOP 5 (접기)
+            // 5. 연령+성별 조합 TOP 5 - 세 번째
             if (ageGenderData.length > 0) {
+                const maxAgeGenderRoas = Math.max(...ageGenderData.slice(0, 5).map(item => item.roas || 0));
                 html += `
                     <div style="border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden;">
                         <div style="padding: 10px 14px; background: #fafafa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
@@ -4636,13 +5261,24 @@
                 ageGenderData.slice(0, 5).forEach((item, idx) => {
                     const normalizedGender = normalizeGender(item.gender) || item.gender;
                     const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`;
+                    // ROAS 색상 스케일
+                    const roas = item.roas || 0;
+                    let roasColor = '#c62828';
+                    if (roas >= 500) roasColor = '#2e7d32';
+                    else if (roas >= 300) roasColor = '#558b2f';
+                    else if (roas >= 200) roasColor = '#f57f17';
+                    else if (roas >= 100) roasColor = '#e65100';
+                    // 배경 스케일 바
+                    const barWidth = Math.min((roas / maxAgeGenderRoas) * 100, 100);
+
                     html += `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
-                            <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; margin-bottom: 6px; background: #fafafa; border-radius: 8px; position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; height: 100%; width: ${barWidth}%; background: linear-gradient(90deg, ${roasColor}22, ${roasColor}11); border-radius: 8px;"></div>
+                            <div style="position: relative; z-index: 1;">
                                 <span style="font-size: 14px;">${medal}</span>
                                 <span style="font-size: 12px; font-weight: 600; margin-left: 8px; color: var(--grey-800);">${item.age} ${normalizedGender}</span>
                             </div>
-                            <div style="font-size: 14px; font-weight: 800; color: #2e7d32;">${formatPercent(item.roas)}</div>
+                            <div style="position: relative; z-index: 1; font-size: 14px; font-weight: 800; color: ${roasColor};">${formatPercent(item.roas)}</div>
                         </div>
                     `;
                 });

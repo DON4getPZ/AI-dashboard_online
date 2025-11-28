@@ -234,11 +234,14 @@ marketing-dashboard/
 │
 ├── data/                             # 클라이언트별 원본 데이터
 │   ├── clientA/
-│   │   ├── raw/
-│   │   ├── type/
-│   │   ├── forecast/
-│   │   ├── funnel/
-│   │   └── creative/
+│   │   ├── raw/                     # 광고 성과 원본
+│   │   ├── type/                    # 채널별 통합 데이터
+│   │   ├── forecast/                # Prophet 예측 결과
+│   │   ├── funnel/                  # 퍼널 분석 결과
+│   │   ├── creative/                # 크리에이티브 데이터
+│   │   ├── GA4/                     # GA4 원본 데이터
+│   │   ├── statistics/              # 통계 데이터
+│   │   └── visualizations/          # 차트 이미지
 │   └── clientB/
 │       └── ...
 │
@@ -291,6 +294,9 @@ marketing-dashboard/
 │  ║                                                                       ║ │
 │  ║  fetch_creative_sheets.py --client clientA                            ║ │
 │  ║  └── data/clientA/creative/creative_data.csv                          ║ │
+│  ║                                                                       ║ │
+│  ║  fetch_creative_url.py --client clientA                               ║ │
+│  ║  └── data/clientA/creative/creative_url.csv                           ║ │
 │  ║                                                                       ║ │
 │  ║  fetch_ga4_sheets.py --client clientA                                 ║ │
 │  ║  └── data/clientA/GA4/*.csv                                           ║ │
@@ -389,54 +395,109 @@ marketing-dashboard/
 ### 4.3 파일 의존성 다이어그램
 
 ```
-config/clients.json
-        │
-        ├──────────────────────────────────────────────────────────────┐
-        │                                                              │
-        ↓                                                              ↓
-┌───────────────────┐                                    ┌───────────────────┐
-│ fetch_google_     │                                    │ fetch_sheets_     │
-│ sheets.py         │                                    │ multi.py          │
-└─────────┬─────────┘                                    └─────────┬─────────┘
-          │                                                        │
-          ↓                                                        ↓
-┌───────────────────┐                                    ┌───────────────────┐
-│ data/{client}/    │                                    │ data/{client}/    │
-│ raw/raw_data.csv  │                                    │ type/merged_data  │
-└─────────┬─────────┘                                    └─────────┬─────────┘
-          │                                                        │
-          ├────────────────────┬───────────────────────────────────┤
-          │                    │                                   │
-          ↓                    ↓                                   ↓
-┌─────────────────┐  ┌─────────────────┐                ┌─────────────────┐
-│ process_        │  │ segment_        │                │ run_multi_      │
-│ marketing_data  │  │ processor.py    │                │ analysis.py     │
-│ .py             │  │                 │                │                 │
-└────────┬────────┘  └────────┬────────┘                └────────┬────────┘
-         │                    │                                   │
-         ↓                    ↓                                   ↓
-┌─────────────────┐  ┌─────────────────┐                ┌─────────────────┐
-│ forecast/       │  │ forecast/       │                │ type/           │
-│ predictions_*   │  │ segment_*.csv   │                │ analysis_*.csv  │
-└────────┬────────┘  └────────┬────────┘                └────────┬────────┘
-         │                    │                                   │
-         └────────────────────┼───────────────────────────────────┘
-                              │
-                              ↓
-                    ┌─────────────────┐
-                    │ export_json.py  │
-                    └────────┬────────┘
-                             │
-                             ↓
-                    ┌─────────────────┐
-                    │ public/data/    │
-                    │ {client}/*.json │
-                    └────────┬────────┘
-                             │
-                             ↓
-                    ┌─────────────────┐
-                    │ vercel deploy   │
-                    └─────────────────┘
+                                config/clients.json
+                                        │
+        ┌───────────────┬───────────────┼───────────────┬───────────────┐
+        │               │               │               │               │
+        ↓               ↓               ↓               ↓               ↓
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│ fetch_google │ │ fetch_sheets │ │ fetch_       │ │ fetch_       │ │ fetch_ga4_   │
+│ _sheets.py   │ │ _multi.py    │ │ creative_    │ │ creative_    │ │ sheets.py    │
+│              │ │              │ │ sheets.py    │ │ url.py       │ │              │
+└──────┬───────┘ └──────┬───────┘ └──────┬───────┘ └──────┬───────┘ └──────┬───────┘
+       │                │                │                │                │
+       ↓                ↓                ↓                ↓                ↓
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│ data/{client}│ │ data/{client}│ │ data/{client}│ │ data/{client}│ │ data/{client}│
+│ /raw/        │ │ /type/       │ │ /creative/   │ │ /creative/   │ │ /GA4/        │
+│ raw_data.csv │ │ merged_data  │ │ creative_    │ │ *_url.csv    │ │ *.csv        │
+└──────┬───────┘ └──────┬───────┘ │ data.csv     │ └──────┬───────┘ └──────┬───────┘
+       │                │         └──────┬───────┘        │                │
+       │                │                │                │                │
+       │                │                └────────┬───────┘                │
+       │                │                         │                        │
+       ↓                ↓                         ↓                        ↓
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                              2단계: 데이터 분석                                   │
+├──────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                  │
+│  raw_data.csv 기반:                    merged_data 기반:                         │
+│  ┌─────────────────┐                   ┌─────────────────┐                      │
+│  │ process_        │                   │ run_multi_      │                      │
+│  │ marketing_data  │                   │ analysis.py     │                      │
+│  │ .py (Prophet)   │                   └────────┬────────┘                      │
+│  └────────┬────────┘                            │                               │
+│           │                            ┌────────┴────────┐                      │
+│           ↓                            ↓                 ↓                      │
+│  ┌─────────────────┐          ┌─────────────────┐ ┌─────────────────┐          │
+│  │ segment_        │          │ multi_analysis_ │ │ multi_analysis_ │          │
+│  │ processor.py    │          │ dimension_      │ │ prophet_        │          │
+│  └────────┬────────┘          │ detail.py       │ │ forecast.py     │          │
+│           │                   └────────┬────────┘ └────────┬────────┘          │
+│           ↓                            │                   │                    │
+│  ┌─────────────────┐                   ↓                   ↓                    │
+│  │ insight_        │          ┌─────────────────┐ ┌─────────────────┐          │
+│  │ generator.py    │          │ type/dimension_ │ │ type/prophet_   │          │
+│  └────────┬────────┘          │ type*.csv       │ │ *.csv           │          │
+│           │                   └─────────────────┘ └─────────────────┘          │
+│           ↓                                                                     │
+│  ┌─────────────────┐                                                           │
+│  │ forecast/       │                                                           │
+│  │ predictions_*   │                                                           │
+│  │ segment_*.csv   │                                                           │
+│  │ insights.json   │                                                           │
+│  └─────────────────┘                                                           │
+│                                                                                  │
+│  GA4 데이터 기반:                       Creative 데이터:                         │
+│  ┌─────────────────┐                   ┌─────────────────┐                      │
+│  │ generate_       │                   │ (직접 JSON 변환)│                      │
+│  │ funnel_data.py  │                   │ creative_data   │                      │
+│  └────────┬────────┘                   │ + creative_url  │                      │
+│           │                            └────────┬────────┘                      │
+│           ↓                                     │                               │
+│  ┌─────────────────┐                            │                               │
+│  │ generate_       │                            │                               │
+│  │ engagement_     │                            │                               │
+│  │ data.py         │                            │                               │
+│  └────────┬────────┘                            │                               │
+│           │                                     │                               │
+│           ↓                                     │                               │
+│  ┌─────────────────┐                            │                               │
+│  │ funnel/         │                            │                               │
+│  │ daily_funnel    │                            │                               │
+│  │ channel_funnel  │                            │                               │
+│  │ engagement.csv  │                            │                               │
+│  │ insights.json   │                            │                               │
+│  └─────────────────┘                            │                               │
+│                                                 │                               │
+└──────────────────────────────────────────────────────────────────────────────────┘
+                                        │
+                                        ↓
+                    ┌───────────────────────────────────────┐
+                    │           export_json.py              │
+                    │                                       │
+                    │  입력:                                │
+                    │  ├── forecast/*.csv, insights.json    │
+                    │  ├── type/*.csv, insights.json        │
+                    │  ├── funnel/*.csv, insights.json      │
+                    │  └── creative/*.csv                   │
+                    │                                       │
+                    │  출력: public/data/{client}/          │
+                    │  ├── kpi.json                         │
+                    │  ├── forecast.json                    │
+                    │  ├── funnel.json                      │
+                    │  ├── creative.json                    │
+                    │  ├── segments.json                    │
+                    │  ├── dimensions.json                  │
+                    │  ├── insights.json                    │
+                    │  └── meta.json                        │
+                    └───────────────────┬───────────────────┘
+                                        │
+                                        ↓
+                              ┌─────────────────┐
+                              │ vercel deploy   │
+                              │ --prod --yes    │
+                              └─────────────────┘
 ```
 
 ---
@@ -641,6 +702,71 @@ deploy_all.bat
 □ 월간: Vercel 사용량, Cloudflare 로그
 ```
 
+### 8.5 로컬 PC 의존 완화 방안
+
+현재 아키텍처는 로컬 PC에서 데이터 파이프라인을 실행합니다. 이 의존성을 완화하는 옵션들:
+
+| 옵션 | 설명 | 비용 | 복잡도 |
+|------|------|------|--------|
+| **A. 전용 PC** | 항상 켜둔 전용 PC + Windows 작업 스케줄러 | $0 | 낮음 |
+| **B. 클라우드 VM** | AWS EC2/Azure VM에서 스케줄 실행 | $5-20/월 | 중간 |
+| **C. GitHub Actions** | 프라이빗 레포에서 Cron 실행 | $0 (2000분/월) | 중간 |
+| **D. 하이브리드** | 로컬 PC (주) + GitHub Actions (백업) | $0 | 높음 |
+
+#### 옵션 C: GitHub Actions 예시
+
+```yaml
+# .github/workflows/daily-deploy.yml
+name: Daily Dashboard Deploy
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # UTC 00:00 = KST 09:00
+  workflow_dispatch:      # 수동 트리거
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run pipeline
+        run: python scripts/run_all_clients.py
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: Deploy to Vercel
+        run: vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+```
+
+**주의**: GitHub Actions에서 Prophet 실행 시 빌드 시간이 길어질 수 있음 (5-10분)
+
+### 8.6 데이터 백업
+
+```
+권장 백업 정책:
+
+1. 로컬 data/ 폴더
+   └── 주 1회 외장 드라이브 또는 클라우드 스토리지 백업
+
+2. config/clients.json
+   └── Git 버전 관리 (민감 정보 제외)
+
+3. public/data/ (JSON)
+   └── Vercel 배포 히스토리로 자동 보관 (최근 10개)
+
+4. Google Sheets 원본
+   └── Google 자체 버전 히스토리 활용
+```
+
 ---
 
 ## 부록
@@ -674,6 +800,166 @@ deploy_all.bat
 - [Vercel 배포 가이드](https://vercel.com/docs)
 - [Cloudflare Access 설정](https://developers.cloudflare.com/cloudflare-one/policies/access/)
 - [Prophet 문서](https://facebook.github.io/prophet/docs/)
+
+### D. JSON 출력 스키마
+
+#### kpi.json
+```json
+{
+  "daily": [
+    {
+      "date": "2025-01-15",
+      "cost": 1500000,
+      "revenue": 4500000,
+      "conversions": 45,
+      "clicks": 1200,
+      "impressions": 50000,
+      "roas": 3.0,
+      "cpa": 33333,
+      "ctr": 2.4
+    }
+  ],
+  "weekly": [...],
+  "monthly": [...],
+  "summary": {
+    "totalCost": 45000000,
+    "totalRevenue": 135000000,
+    "totalConversions": 1350,
+    "avgROAS": 3.0,
+    "avgCPA": 33333,
+    "dataPoints": 30,
+    "dateRange": {
+      "start": "2025-01-01",
+      "end": "2025-01-30"
+    }
+  }
+}
+```
+
+#### forecast.json
+```json
+{
+  "predictions": [
+    {
+      "date": "2025-02-01",
+      "actual": null,
+      "predicted": 4800000,
+      "lower": 4200000,
+      "upper": 5400000,
+      "trend": 4500000,
+      "weekly_seasonality": 1.05,
+      "yearly_seasonality": 0.98
+    }
+  ],
+  "byMetric": {
+    "cost": [...],
+    "revenue": [...],
+    "conversions": [...]
+  }
+}
+```
+
+#### funnel.json
+```json
+{
+  "daily": [
+    {
+      "date": "2025-01-15",
+      "stage": "session_start",
+      "users": 10000,
+      "conversionRate": 100
+    },
+    {
+      "date": "2025-01-15",
+      "stage": "view_item",
+      "users": 5000,
+      "conversionRate": 50
+    }
+  ],
+  "channel": [...],
+  "engagement": [
+    {
+      "channel": "organic_search",
+      "sessions": 5000,
+      "avgSessionDuration": 180,
+      "bounceRate": 45.2,
+      "pagesPerSession": 3.5
+    }
+  ],
+  "insights": {
+    "topChannel": "paid_search",
+    "conversionBottleneck": "add_to_cart"
+  }
+}
+```
+
+#### meta.json
+```json
+{
+  "clientId": "clientA",
+  "clientName": "A 회사",
+  "lastUpdated": "2025-01-15T09:00:00+09:00",
+  "timezone": "Asia/Seoul",
+  "currency": "KRW",
+  "files": [
+    "kpi.json",
+    "forecast.json",
+    "funnel.json",
+    "creative.json",
+    "segments.json",
+    "dimensions.json",
+    "insights.json",
+    "meta.json"
+  ],
+  "version": "1.0.0"
+}
+```
+
+### E. clients.json 스키마
+
+```json
+{
+  "clients": [
+    {
+      "id": "clientA",
+      "name": "A 회사",
+      "subdomain": "clienta",
+      "sheets": {
+        "raw": {
+          "sheetId": "1ABC_SHEET_ID",
+          "worksheet": "data_integration"
+        },
+        "multi": {
+          "sheetId": "1DEF_SHEET_ID",
+          "worksheets": ["meta_ads", "google_ads", "kakao_moment"]
+        },
+        "creative": {
+          "sheetId": "1GHI_SHEET_ID",
+          "worksheet": "creative_data"
+        },
+        "creativeUrl": {
+          "sheetId": "1JKL_SHEET_ID",
+          "worksheet": "creative_url"
+        },
+        "ga4": {
+          "sheetId": "1MNO_SHEET_ID",
+          "worksheet": "ga4_funnel"
+        }
+      },
+      "accessPolicy": {
+        "allowedDomains": ["clienta.com"],
+        "allowedEmails": ["external@gmail.com"]
+      }
+    }
+  ],
+  "defaults": {
+    "timezone": "Asia/Seoul",
+    "currency": "KRW",
+    "dateFormat": "YYYY-MM-DD",
+    "forecastDays": 90
+  }
+}
+```
 
 ---
 

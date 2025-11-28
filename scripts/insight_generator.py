@@ -1,12 +1,19 @@
 """
-마케팅 인사이트 생성 모듈 v1.0
+마케팅 인사이트 생성 모듈 v2.0 (AI Consultant Edition)
 
 기능:
 1. 세그먼트별 예측 데이터 분석
-2. KPI 하락 예측 감지
+2. KPI 하락 예측 감지 (Financial Impact 포함)
 3. 최적 투자 대상 추천 (효율성/성장성/안정성 기반)
-4. 자연어 인사이트 생성
-5. data/forecast/insights.json 저장
+4. 숨은 기회 발굴 (Opportunities)
+5. AI 비서 톤의 자연어 인사이트 생성
+6. data/forecast/insights.json 저장
+
+v2.0 업데이트:
+- AI Consultant Persona: 친화적이고 직관적인 메시지
+- Action-First Architecture: 즉시 실행 가능한 액션 제안
+- Financial Impact: 예상 손실액/기대 수익 계산
+- Risk & Opportunity Matrix: 방어/공격 전략 동시 수립
 
 의존성:
 - segment_processor.py가 먼저 실행되어야 함
@@ -38,9 +45,93 @@ BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / 'data'
 FORECAST_DIR = DATA_DIR / 'forecast'
 
+# ============================================================================
+# 분석 임계값 설정 (업종에 맞게 튜닝 가능)
+# ============================================================================
+THRESHOLDS = {
+    'high_roas': 300.0,       # 고효율 기준 (%)
+    'low_roas': 150.0,        # 저효율 기준 (%)
+    'growth_star': 10.0,      # 고성장 기준 (%)
+    'risk_critical': -20.0,   # 위험 경고 기준 (%)
+    'risk_warning': -10.0,    # 주의 필요 기준 (%)
+    'budget_alert': 90.0,     # 예산 소진 경고 (%)
+    'opportunity_roas': 200.0 # 기회 발굴 기준 (%)
+}
+
+# ============================================================================
+# AI 컨설턴트 액션 가이드 (Action-First Architecture)
+# ============================================================================
+ACTION_GUIDES = {
+    'roas_decline': "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+    'conversion_drop': "유입은 되는데 구매를 안 하네요. 상세페이지 로딩 속도나 품절 옵션을 체크하고, 장바구니 리타겟팅을 강화하세요.",
+    'cost_surge': "지출이 급증하고 있습니다. 자동 입찰 전략이 오작동하는지 확인하고, 일예산 상한선(Cap)을 점검하세요.",
+    'opportunity': "물 들어올 때 노 저으세요! 성과가 좋은 이 영역에 예산을 20% 증액하여 매출 볼륨을 키우세요.",
+    'hidden_gem': "아직 예산은 적지만 효율이 터지고 있습니다. 테스트 예산을 2배로 늘려 트래픽을 모아보세요.",
+    'budget_warning': "예산 소진이 빠릅니다. 월말까지 페이싱을 조절하거나, 추가 예산 확보를 검토하세요.",
+    'maintain': "현재 전략이 잘 작동하고 있습니다. 큰 변경 없이 모니터링을 유지하세요."
+}
+
+# ============================================================================
+# 친화적 메시지 템플릿
+# ============================================================================
+FRIENDLY_TITLES = {
+    'revenue_drop': "📉 {target} 매출 급락 경보",
+    'roas_drop': "💸 {target} 효율 저하 주의",
+    'conversion_drop': "🛒 {target} 전환율 하락",
+    'cost_surge': "🔥 {target} 비용 급증",
+    'budget_alert': "💰 예산 소진 경고",
+    'growth_acceleration': "🚀 성장 가속화",
+    'stable_growth': "⚖️ 외형 성장 중 (효율 주의)",
+    'declining': "📉 하락세 감지",
+    'stable': "⚓ 안정적 유지",
+    'scale_up': "🚀 강력 추천: 예산 증액",
+    'hidden_gem': "💎 숨은 보석 발견"
+}
+
+# ============================================================================
+# 헬퍼 함수
+# ============================================================================
+def format_currency(value):
+    """원화 포맷팅 (예: 1,500만 원)"""
+    if pd.isna(value) or value == 0:
+        return "0원"
+    val = float(value)
+    if abs(val) >= 100000000:
+        return f"{val/100000000:.1f}억 원"
+    elif abs(val) >= 10000:
+        return f"{val/10000:,.0f}만 원"
+    else:
+        return f"{int(val):,}원"
+
+def safe_div(numerator, denominator):
+    """안전한 나눗셈 (0 division 방지)"""
+    return numerator / denominator if denominator and denominator != 0 else 0
+
+def safe_float(val):
+    """JSON 직렬화를 위한 안전한 float 변환"""
+    if pd.isna(val) or np.isinf(val):
+        return 0.0
+    return float(val)
+
+# JSON 인코더 (NaN, Inf, numpy 타입 안전 처리)
+class NpEncoder(json.JSONEncoder):
+    """numpy 타입과 NaN/Inf를 JSON 안전하게 변환하는 인코더"""
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            if np.isnan(obj) or np.isinf(obj):
+                return None
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        if pd.isna(obj):
+            return None
+        return super(NpEncoder, self).default(obj)
+
 
 class InsightGenerator:
-    """마케팅 인사이트 생성 클래스"""
+    """마케팅 인사이트 생성 클래스 (AI Consultant Edition)"""
 
     def __init__(self):
         """초기화"""
@@ -50,29 +141,33 @@ class InsightGenerator:
         self.predictions_data = {}  # predictions_*.csv 데이터
         self.insights = {
             'generated_at': datetime.now().isoformat(),
-            'overall': {},  # 전체 성과 분석 추가
+            'summary_card': {},  # 🆕 AI 비서 스타일 요약 카드
+            'overall': {},  # 전체 성과 분석
             'segments': {
                 'alerts': [],
                 'recommendations': []
             },
+            'opportunities': [],  # 🆕 숨은 기회 발굴 (공격 전략)
             'summary': '',
-            'details': {}
+            'details': {},
+            'performance_trends': {}  # 7d/30d 트렌드
         }
 
-        # KPI 임계값 설정
+        # KPI 임계값 설정 (글로벌 THRESHOLDS와 병합)
         self.thresholds = {
-            'decline_alert_pct': 10,  # 10% 이상 하락 시 경고
+            'decline_alert_pct': abs(THRESHOLDS['risk_warning']),  # 10% 이상 하락 시 경고
+            'critical_decline_pct': abs(THRESHOLDS['risk_critical']),  # 20% 이상 심각 경고
             'efficiency_top_pct': 20,  # 상위 20% 효율
-            'growth_threshold': 0,  # 성장률 임계값
+            'growth_threshold': THRESHOLDS['growth_star'],  # 성장률 임계값
             'stability_cv': 0.3  # 변동계수 임계값
         }
 
     def load_data(self) -> bool:
         """세그먼트 데이터 로드"""
         print("\n" + "="*60)
-        print("Insight Generator v1.0")
+        print("🧠 AI Marketing Insight Generator v2.0")
         print("="*60)
-        print("\n[1/5] Loading segment data...")
+        print("\n[1/6] Loading segment data...")
 
         # 세그먼트별 예측 데이터 로드
         segment_files = {
@@ -285,7 +380,53 @@ class InsightGenerator:
 
             overall_insights['trend'] = trend
 
-        # Overall alerts 생성
+        # ================================================================
+        # Summary Card 생성 (AI 비서 톤)
+        # ================================================================
+        if 'current_period' in overall_insights and 'forecast_period' in overall_insights:
+            current = overall_insights['current_period']
+            forecast_p = overall_insights['forecast_period']
+
+            # 향후 7일 데이터로 트렌드 판단
+            rev_change = safe_div(forecast_p['total_revenue'] - current['total_revenue'], current['total_revenue']) * 100
+            roas_change = forecast_p['roas'] - current['roas']
+
+            # 상태 결정
+            if rev_change > 5 and roas_change > 0:
+                status_key = 'growth_acceleration'
+                status_msg = "매출과 효율이 모두 오르고 있습니다. 아주 훌륭해요!"
+                status_color = "green"
+            elif rev_change > 5 and roas_change < -10:
+                status_key = 'stable_growth'
+                status_msg = "매출은 늘지만 이익률이 떨어지고 있어요. 마진을 체크하세요."
+                status_color = "orange"
+            elif rev_change < -5:
+                status_key = 'declining'
+                status_msg = "향후 매출 감소가 예상됩니다. 긴급 점검이 필요해요."
+                status_color = "red"
+            else:
+                status_key = 'stable'
+                status_msg = "큰 변동 없이 안정적인 흐름을 보이고 있습니다."
+                status_color = "blue"
+
+            self.insights['summary_card'] = {
+                'status_title': FRIENDLY_TITLES.get(status_key, "📊 성과 분석"),
+                'status_message': status_msg,
+                'status_color': status_color,
+                'metrics': {
+                    'current_revenue': format_currency(current['total_revenue']),
+                    'forecast_revenue': format_currency(forecast_p['total_revenue']),
+                    'revenue_change_pct': round(rev_change, 1),
+                    'current_roas': round(current['roas'], 0),
+                    'forecast_roas': round(forecast_p['roas'], 0),
+                    'roas_change_val': round(roas_change, 1)
+                },
+                'period': f"예측 기간: {forecast_p.get('start_date', 'N/A')} ~ {forecast_p.get('end_date', 'N/A')}"
+            }
+
+        # ================================================================
+        # Overall alerts 생성 (친화적 메시지 + Action)
+        # ================================================================
         alerts = []
         if 'current_period' in overall_insights:
             current = overall_insights['current_period']
@@ -294,17 +435,23 @@ class InsightGenerator:
             monthly_budget = 20000000
             if current['total_cost'] > 0:
                 budget_used_pct = (current['total_cost'] / monthly_budget) * 100
-                if budget_used_pct > 90:
+                if budget_used_pct > THRESHOLDS['budget_alert']:
                     alerts.append({
                         'type': 'budget_alert',
                         'severity': 'high',
-                        'message': f"월 예산 대비 {round(budget_used_pct, 1)}% 소진 ({current['end_date']} 기준)"
+                        'title': FRIENDLY_TITLES['budget_alert'],
+                        'message': f"월 예산 대비 {round(budget_used_pct, 1)}% 소진! ({current['end_date']} 기준)",
+                        'action': ACTION_GUIDES['budget_warning'],
+                        'financial_impact': f"남은 예산: {format_currency(monthly_budget - current['total_cost'])}"
                     })
                 elif budget_used_pct > 75:
                     alerts.append({
                         'type': 'budget_alert',
                         'severity': 'medium',
-                        'message': f"월 예산 대비 {round(budget_used_pct, 1)}% 소진 ({current['end_date']} 기준)"
+                        'title': "💰 예산 소진 주의",
+                        'message': f"월 예산 대비 {round(budget_used_pct, 1)}% 소진 ({current['end_date']} 기준)",
+                        'action': "페이싱을 모니터링하고, 필요시 일예산을 조정하세요.",
+                        'financial_impact': f"남은 예산: {format_currency(monthly_budget - current['total_cost'])}"
                     })
 
         overall_insights['alerts'] = alerts
@@ -519,35 +666,58 @@ class InsightGenerator:
         print(f"   30-day improvements: {len(improvements_30d)}, declines: {len(declines_30d)}")
 
     def detect_alerts(self) -> None:
-        """KPI 하락 경고 감지"""
-        print("\n[3/5] Detecting alerts...")
+        """KPI 하락 경고 감지 (Financial Impact 포함)"""
+        print("\n[3/6] Detecting alerts (Risk Management)...")
 
         alerts = []
 
         for segment_name, analysis in self.forecasts.items():
             for segment_value, data in analysis.items():
                 changes = data['changes']
+                actual_avg = data.get('actual_avg', {})
+                forecast_avg = data.get('forecast_avg', {})
 
                 # 전환수 하락 감지
-                if changes.get('전환수', 0) < -self.thresholds['decline_alert_pct']:
+                conv_change = changes.get('전환수', 0)
+                if conv_change < -self.thresholds['decline_alert_pct']:
+                    # 예상 손실 계산
+                    actual_conv = actual_avg.get('전환수', 0) * 7  # 7일 기준
+                    forecast_conv = forecast_avg.get('전환수', 0) * 7
+                    loss_conversions = actual_conv - forecast_conv
+
                     alerts.append({
                         'type': 'conversion_decline',
                         'segment_type': segment_name,
                         'segment_value': segment_value,
                         'metric': '전환수',
-                        'change_pct': changes['전환수'],
-                        'severity': 'high' if changes['전환수'] < -20 else 'medium'
+                        'change_pct': conv_change,
+                        'severity': 'high' if conv_change < -self.thresholds['critical_decline_pct'] else 'medium',
+                        'title': FRIENDLY_TITLES['conversion_drop'].format(target=segment_value),
+                        'message': f"다음 주 전환수가 {abs(conv_change):.1f}% 감소할 것으로 예상됩니다.",
+                        'action': ACTION_GUIDES['conversion_drop'],
+                        'financial_impact': f"예상 손실 전환: {int(loss_conversions):,}건"
                     })
 
-                # 전환값 하락 감지
-                if changes.get('전환값', 0) < -self.thresholds['decline_alert_pct']:
+                # 전환값(매출) 하락 감지
+                rev_change = changes.get('전환값', 0)
+                if rev_change < -self.thresholds['decline_alert_pct']:
+                    # 예상 손실액 계산
+                    actual_rev = actual_avg.get('전환값', 0) * 7
+                    forecast_rev = forecast_avg.get('전환값', 0) * 7
+                    loss_amount = actual_rev - forecast_rev
+
                     alerts.append({
                         'type': 'revenue_decline',
                         'segment_type': segment_name,
                         'segment_value': segment_value,
                         'metric': '전환값',
-                        'change_pct': changes['전환값'],
-                        'severity': 'high' if changes['전환값'] < -20 else 'medium'
+                        'change_pct': rev_change,
+                        'severity': 'high' if rev_change < -self.thresholds['critical_decline_pct'] else 'medium',
+                        'title': FRIENDLY_TITLES['revenue_drop'].format(target=segment_value),
+                        'message': f"다음 주 매출이 {abs(rev_change):.1f}% 빠질 것으로 예상됩니다.",
+                        'action': ACTION_GUIDES['conversion_drop'],
+                        'financial_impact': f"예상 손실액: {format_currency(loss_amount)}",
+                        'loss_amount': safe_float(loss_amount)
                     })
 
                 # ROAS 하락 감지
@@ -559,19 +729,116 @@ class InsightGenerator:
                         'segment_value': segment_value,
                         'metric': 'ROAS',
                         'change_pct': round(roas_change, 1),
-                        'severity': 'high' if roas_change < -20 else 'medium'
+                        'severity': 'high' if roas_change < -self.thresholds['critical_decline_pct'] else 'medium',
+                        'title': FRIENDLY_TITLES['roas_drop'].format(target=segment_value),
+                        'message': f"ROAS가 {data['actual_roas']:.0f}%에서 {data['forecast_roas']:.0f}%로 떨어질 전망입니다.",
+                        'action': ACTION_GUIDES['roas_decline'],
+                        'actual_roas': data['actual_roas'],
+                        'forecast_roas': data['forecast_roas']
                     })
 
+        # 심각도 순 정렬 (high > medium)
+        alerts = sorted(alerts, key=lambda x: (x['severity'] == 'high', abs(x.get('change_pct', 0))), reverse=True)
+
         self.insights['segments']['alerts'] = alerts
-        print(f"   Detected {len(alerts)} segment alerts")
+        print(f"   Detected {len(alerts)} segment alerts (Risk signals)")
 
         for alert in alerts[:5]:  # 상위 5개만 출력
-            print(f"      - {alert['segment_type']}/{alert['segment_value']}: "
-                  f"{alert['metric']} {alert['change_pct']}%")
+            print(f"      - {alert.get('title', alert['segment_value'])}: {alert['metric']} {alert['change_pct']:.1f}%")
+
+    def find_opportunities(self) -> None:
+        """숨은 기회 발굴 (Growth Hacking) - Financial Impact 포함"""
+        print("\n[4/6] Finding opportunities (Growth Hacking)...")
+
+        opportunities = []
+
+        # 채널/상품/브랜드 포트폴리오 분석
+        for segment_name in ['channel', 'product', 'brand']:
+            if segment_name not in self.segment_stats:
+                continue
+
+            stats = self.segment_stats[segment_name]
+
+            for segment_value, segment_data in stats.items():
+                roas = segment_data.get('roas', 0)
+                total_cost = segment_data.get('total_cost', 0)
+                total_revenue = segment_data.get('total_revenue', 0)
+
+                # 예측 데이터에서 트렌드 확인
+                forecast_data = self.forecasts.get(segment_name, {}).get(segment_value, {})
+                forecast_avg = forecast_data.get('forecast_avg', {})
+                changes = forecast_data.get('changes', {})
+
+                # ================================================================
+                # Opportunity 1: High ROAS (Star/Cash Cow) - 강력 추천
+                # ================================================================
+                if roas > THRESHOLDS['high_roas']:
+                    # 예상 추가 매출 (예산 20% 증액 시)
+                    potential_uplift = total_revenue * 0.2  # 선형 가정
+
+                    opportunities.append({
+                        'type': 'scale_up',
+                        'tag': FRIENDLY_TITLES['scale_up'],
+                        'segment_type': segment_name,
+                        'segment_value': segment_value,
+                        'title': f"🚀 {segment_value}: 수익성 최고조!",
+                        'message': f"예상 ROAS가 {roas:.0f}%로 매우 높습니다. 물 들어올 때 노 저으세요!",
+                        'action': ACTION_GUIDES['opportunity'],
+                        'financial_impact': f"예산 20% 증액 시, 약 {format_currency(potential_uplift)} 추가 매출 기대",
+                        'potential_uplift': safe_float(potential_uplift),
+                        'roas': roas,
+                        'priority': 1
+                    })
+
+                # ================================================================
+                # Opportunity 2: Hidden Gem (저예산 고효율) - 숨은 보석
+                # ================================================================
+                elif roas > THRESHOLDS['opportunity_roas'] and total_cost < 1000000:  # 100만원 미만
+                    opportunities.append({
+                        'type': 'hidden_gem',
+                        'tag': FRIENDLY_TITLES['hidden_gem'],
+                        'segment_type': segment_name,
+                        'segment_value': segment_value,
+                        'title': f"💎 숨은 보석 발견: {segment_value}",
+                        'message': f"아직 예산은 {format_currency(total_cost)}이지만 ROAS {roas:.0f}%로 효율이 터지고 있어요!",
+                        'action': ACTION_GUIDES['hidden_gem'],
+                        'financial_impact': "예산 2배 증액 시, 매출 2배 성장 가능 (ROAS 유지 가정)",
+                        'potential_uplift': safe_float(total_revenue),  # 2배 기대
+                        'roas': roas,
+                        'priority': 2
+                    })
+
+                # ================================================================
+                # Opportunity 3: 성장 가속 (전환수 증가 + 양호한 ROAS)
+                # ================================================================
+                elif changes.get('전환수', 0) > THRESHOLDS['growth_star'] and roas > THRESHOLDS['low_roas']:
+                    growth_pct = changes.get('전환수', 0)
+                    opportunities.append({
+                        'type': 'growth_momentum',
+                        'tag': "📈 성장 모멘텀",
+                        'segment_type': segment_name,
+                        'segment_value': segment_value,
+                        'title': f"📈 {segment_value}: 성장 가속 중!",
+                        'message': f"전환수가 {growth_pct:.1f}% 증가하면서 ROAS {roas:.0f}%를 유지하고 있어요.",
+                        'action': "현재 전략을 유지하고, 예산을 10% 증액하여 성장을 가속화하세요.",
+                        'financial_impact': f"예상 추가 전환: {int(forecast_avg.get('전환수', 0) * 7 * 0.1):,}건/주",
+                        'roas': roas,
+                        'priority': 3
+                    })
+
+        # ROAS 높은 순 + 우선순위 순 정렬
+        opportunities = sorted(opportunities, key=lambda x: (x.get('priority', 99), -x.get('roas', 0)))
+
+        # 상위 5개만 저장
+        self.insights['opportunities'] = opportunities[:5]
+        print(f"   Found {len(opportunities)} opportunities (Growth signals)")
+
+        for opp in opportunities[:3]:
+            print(f"      - {opp.get('title', opp['segment_value'])}: ROAS {opp['roas']:.0f}%")
 
     def generate_recommendations(self) -> None:
-        """투자 권장 세그먼트 도출"""
-        print("\n[4/5] Generating recommendations...")
+        """투자 권장 세그먼트 도출 (Action-First)"""
+        print("\n[5/6] Generating recommendations...")
 
         recommendations = []
 
@@ -644,11 +911,12 @@ class InsightGenerator:
             print(f"      - {rec['target']['type']}/{rec['target']['value']}: {rec['action']}")
 
     def generate_summary(self) -> None:
-        """자연어 요약 생성"""
-        print("\n[5/5] Generating natural language summary...")
+        """자연어 요약 생성 (AI 컨설턴트 톤)"""
+        print("\n[6/6] Generating natural language summary...")
 
         alerts = self.insights['segments']['alerts']
         recommendations = self.insights['segments']['recommendations']
+        opportunities = self.insights.get('opportunities', [])
         overall = self.insights.get('overall', {})
 
         # 요약 텍스트 생성
@@ -745,16 +1013,16 @@ class InsightGenerator:
             return obj
 
     def save_insights(self) -> None:
-        """인사이트 저장"""
+        """인사이트 저장 (NpEncoder로 안전한 JSON 직렬화)"""
         output_file = FORECAST_DIR / 'insights.json'
 
-        # pandas 타입을 Python 네이티브 타입으로 변환
+        # pandas 타입을 Python 네이티브 타입으로 변환 후 NpEncoder로 저장
         insights_converted = self.convert_to_native_types(self.insights)
 
         with open(output_file, 'w', encoding='utf-8') as f:
-            json.dump(insights_converted, f, ensure_ascii=False, indent=2)
+            json.dump(insights_converted, f, cls=NpEncoder, ensure_ascii=False, indent=2)
 
-        print(f"\n   Saved: {output_file.name}")
+        print(f"\n   ✅ Saved: {output_file.name}")
 
     def generate(self) -> Dict[str, Any]:
         """전체 인사이트 생성 실행"""
@@ -771,8 +1039,11 @@ class InsightGenerator:
         # 성과 트렌드 분석 (7일/30일)
         self.analyze_performance_trends()
 
-        # 경고 감지
+        # 경고 감지 (Risk Management)
         self.detect_alerts()
+
+        # 🆕 기회 발굴 (Growth Hacking)
+        self.find_opportunities()
 
         # 권장 생성
         self.generate_recommendations()
@@ -784,15 +1055,20 @@ class InsightGenerator:
         self.save_insights()
 
         print("\n" + "="*60)
-        print("Insight generation completed successfully!")
+        print("🎯 AI Marketing Insight Generator v2.0 완료!")
         print("="*60)
-        print("\nGenerated file:")
-        print("   - data/forecast/insights.json")
-        print("\nInsight structure:")
-        print("   - overall: 전체 성과 분석 (predictions_*.csv 기반)")
-        print("   - segments: 세그먼트별 인사이트 (segment_*.csv 기반)")
-        print("   - summary: 통합 요약")
-        print("   - details: 메타데이터")
+        print("\n[v2.0 신규 기능]")
+        print("   ✓ AI Consultant Persona: 친화적이고 직관적인 메시지")
+        print("   ✓ Action-First Architecture: 즉시 실행 가능한 액션")
+        print("   ✓ Financial Impact: 예상 손실액/기대 수익 계산")
+        print("   ✓ Risk & Opportunity Matrix: 방어/공격 전략 동시 수립")
+        print("\n📁 Generated file: data/forecast/insights.json")
+        print("\n📊 Insight structure:")
+        print("   - summary_card: AI 비서 스타일 요약 카드")
+        print("   - overall: 전체 성과 분석")
+        print("   - segments: 세그먼트별 경고 및 추천")
+        print("   - opportunities: 숨은 기회 발굴")
+        print("   - performance_trends: 7d/30d 트렌드")
 
         return self.insights
 

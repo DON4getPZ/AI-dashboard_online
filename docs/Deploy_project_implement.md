@@ -15,6 +15,8 @@
 5. [5단계: 배포 스크립트 작성](#5단계-배포-스크립트-작성)
 6. [6단계: Vercel 및 Cloudflare 설정](#6단계-vercel-및-cloudflare-설정)
 7. [7단계: 테스트 및 검증](#7단계-테스트-및-검증)
+8. [8단계: GitHub Actions 백업 설정](#8단계-github-actions-백업-설정)
+9. [9단계: 데이터 백업 구성](#9단계-데이터-백업-구성)
 
 ---
 
@@ -2399,6 +2401,348 @@ public/data/
 접근 URL:
 - https://clienta.dashboard.yourdomain.com → Client A 대시보드
 - https://clientb.dashboard.yourdomain.com → Client B 대시보드
+```
+
+---
+
+## 8단계: GitHub Actions 백업 설정
+
+로컬 PC 의존성을 완화하기 위한 GitHub Actions 백업 파이프라인입니다.
+
+### 8.1 GitHub Actions Workflow 파일
+
+**파일**: `.github/workflows/daily-deploy.yml`
+
+```yaml
+name: Daily Dashboard Deploy
+
+on:
+  schedule:
+    # UTC 00:00 = KST 09:00
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      client_id:
+        description: '특정 클라이언트만 실행 (비우면 전체)'
+        required: false
+        default: ''
+
+env:
+  PYTHON_VERSION: '3.10'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Setup Google Credentials
+        run: |
+          echo '${{ secrets.GOOGLE_CREDENTIALS }}' > config/google-credentials.json
+
+      - name: Run pipeline (all clients)
+        if: ${{ github.event.inputs.client_id == '' }}
+        run: python scripts/run_all_clients.py
+
+      - name: Run pipeline (specific client)
+        if: ${{ github.event.inputs.client_id != '' }}
+        run: |
+          python scripts/fetch_google_sheets.py --client ${{ github.event.inputs.client_id }}
+          python scripts/process_marketing_data.py --client ${{ github.event.inputs.client_id }}
+          python scripts/export_json.py --client ${{ github.event.inputs.client_id }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Deploy to Vercel
+        run: vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::배포 파이프라인 실패"
+          # 슬랙/이메일 알림 추가 가능
+```
+
+### 8.2 GitHub Secrets 설정
+
+GitHub 레포지토리 Settings → Secrets and variables → Actions에서 다음 시크릿 추가:
+
+| Secret Name | 설명 | 획득 방법 |
+|------------|------|----------|
+| `GOOGLE_CREDENTIALS` | Service Account JSON 전체 내용 | Google Cloud Console |
+| `VERCEL_TOKEN` | Vercel API 토큰 | Vercel Dashboard → Settings → Tokens |
+| `VERCEL_ORG_ID` | Vercel 조직 ID | `.vercel/project.json` 참조 |
+| `VERCEL_PROJECT_ID` | Vercel 프로젝트 ID | `.vercel/project.json` 참조 |
+
+### 8.3 Vercel 프로젝트 연결
+
+```bash
+# 로컬에서 Vercel 연결 후 .vercel/project.json 확인
+vercel link
+
+# project.json 예시
+{
+  "orgId": "team_xxxxxxxxxxxx",
+  "projectId": "prj_xxxxxxxxxxxx"
+}
+```
+
+### 8.4 수동 실행
+
+```bash
+# GitHub CLI로 수동 트리거
+gh workflow run daily-deploy.yml
+
+# 특정 클라이언트만 실행
+gh workflow run daily-deploy.yml -f client_id=clientA
+```
+
+### 8.5 Prophet 빌드 시간 최적화
+
+GitHub Actions에서 Prophet 설치는 시간이 오래 걸립니다. 캐싱으로 최적화:
+
+```yaml
+      - name: Cache Prophet build
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cmdstan
+            ~/.cache/pip
+          key: ${{ runner.os }}-prophet-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-prophet-
+```
+
+### 8.6 로컬 + GitHub Actions 하이브리드 전략
+
+```
+평일 (월~금)
+├── 로컬 PC: 09:00 자동 실행 (주 실행)
+└── GitHub Actions: 09:30 대기 (백업)
+    └── 로컬 실행 성공 시 Skip (조건부 실행)
+
+주말 (토~일)
+└── GitHub Actions: 09:00 자동 실행
+    └── 로컬 PC 끄고 퇴근 가능
+```
+
+**조건부 실행 예시** (meta.json의 lastUpdated 확인):
+
+```yaml
+      - name: Check if already deployed today
+        id: check
+        run: |
+          LAST_UPDATE=$(curl -s https://clienta.dashboard.yourdomain.com/data/clientA/meta.json | jq -r '.lastUpdated')
+          TODAY=$(date -u +%Y-%m-%d)
+          if [[ "$LAST_UPDATE" == *"$TODAY"* ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run pipeline
+        if: steps.check.outputs.skip != 'true'
+        run: python scripts/run_all_clients.py
+```
+
+---
+
+## 9단계: 데이터 백업 구성
+
+### 9.1 백업 정책
+
+| 데이터 | 백업 주기 | 백업 방법 | 보관 기간 |
+|-------|---------|----------|----------|
+| `data/` 폴더 (CSV) | 주 1회 | 로컬 외장드라이브 + 클라우드 | 3개월 |
+| `config/clients.json` | 변경 시 | Git 버전 관리 | 영구 |
+| `public/data/` (JSON) | 자동 | Vercel 배포 히스토리 | 최근 10개 |
+| Google Sheets 원본 | 자동 | Google 버전 히스토리 | 영구 |
+
+### 9.2 로컬 백업 스크립트
+
+**파일**: `backup.bat`
+
+```batch
+@echo off
+chcp 65001 > nul
+setlocal enabledelayedexpansion
+
+set BACKUP_DIR=D:\backup\marketing-dashboard
+set DATE_STR=%date:~0,4%%date:~5,2%%date:~8,2%
+
+echo.
+echo ╔════════════════════════════════════════════════════════════════╗
+echo ║                    데이터 백업                                  ║
+echo ║                    %date% %time%                               ║
+echo ╚════════════════════════════════════════════════════════════════╝
+echo.
+
+:: 백업 디렉토리 생성
+if not exist "%BACKUP_DIR%" mkdir "%BACKUP_DIR%"
+
+:: 1. data/ 폴더 백업
+echo [1/3] data/ 폴더 백업...
+set DATA_BACKUP=%BACKUP_DIR%\data_%DATE_STR%
+xcopy /E /I /Y "data" "%DATA_BACKUP%\data"
+echo   → %DATA_BACKUP%\data
+
+:: 2. config/ 폴더 백업 (credentials 제외)
+echo [2/3] config/ 폴더 백업...
+xcopy /E /I /Y "config\*.json" "%DATA_BACKUP%\config" /EXCLUDE:backup_exclude.txt
+echo   → %DATA_BACKUP%\config
+
+:: 3. 압축 (7-Zip 사용 시)
+echo [3/3] 압축 생성...
+if exist "C:\Program Files\7-Zip\7z.exe" (
+    "C:\Program Files\7-Zip\7z.exe" a -tzip "%DATA_BACKUP%.zip" "%DATA_BACKUP%\*" -mx=5
+    rmdir /S /Q "%DATA_BACKUP%"
+    echo   → %DATA_BACKUP%.zip
+) else (
+    echo   (7-Zip 미설치, 폴더로 백업됨)
+)
+
+:: 4. 오래된 백업 삭제 (90일 이상)
+echo.
+echo [정리] 90일 이상 된 백업 삭제...
+forfiles /P "%BACKUP_DIR%" /M "*.zip" /D -90 /C "cmd /c del @path" 2>nul
+echo   완료
+
+echo.
+echo ╔════════════════════════════════════════════════════════════════╗
+echo ║                    백업 완료!                                   ║
+echo ╚════════════════════════════════════════════════════════════════╝
+
+endlocal
+```
+
+**파일**: `backup_exclude.txt`
+
+```
+google-credentials.json
+*credentials*.json
+*.secret
+```
+
+### 9.3 클라우드 백업 (선택사항)
+
+#### Google Drive 백업 (rclone 사용)
+
+```bash
+# rclone 설치 후 구성
+rclone config
+# → Google Drive 원격 스토리지 설정 (이름: gdrive)
+
+# 백업 실행
+rclone sync ./data gdrive:marketing-dashboard-backup/data --exclude "*.tmp"
+```
+
+**파일**: `backup_cloud.bat`
+
+```batch
+@echo off
+echo 클라우드 백업 중...
+
+:: rclone이 설치되어 있고 gdrive 원격이 설정된 경우
+rclone sync ".\data" "gdrive:marketing-dashboard-backup\data" --exclude "*.tmp" --progress
+
+echo 클라우드 백업 완료
+```
+
+### 9.4 Vercel 배포 히스토리 활용
+
+Vercel은 자동으로 배포 히스토리를 보관합니다:
+
+```bash
+# 이전 배포 목록 확인
+vercel ls
+
+# 특정 배포로 롤백
+vercel rollback [deployment-url]
+
+# 예시: 이전 프로덕션 배포로 롤백
+vercel rollback --yes
+```
+
+### 9.5 백업 자동화 (Windows 작업 스케줄러)
+
+```batch
+:: 매주 일요일 23:00 백업 실행
+schtasks /create /tn "MarketingDashboard_WeeklyBackup" /tr "%~dp0backup.bat" /sc weekly /d SUN /st 23:00 /f
+
+:: 확인
+schtasks /query /tn "MarketingDashboard_WeeklyBackup"
+```
+
+### 9.6 복구 절차
+
+#### 로컬 데이터 복구
+
+```batch
+@echo off
+echo 백업에서 데이터 복구...
+
+set BACKUP_FILE=D:\backup\marketing-dashboard\data_20250115.zip
+
+:: 압축 해제
+"C:\Program Files\7-Zip\7z.exe" x "%BACKUP_FILE%" -o".\restore_temp" -y
+
+:: 현재 데이터 백업 (안전)
+move ".\data" ".\data_old_%date:~0,4%%date:~5,2%%date:~8,2%"
+
+:: 복구
+move ".\restore_temp\data" ".\data"
+
+echo 복구 완료. data_old_* 폴더는 확인 후 삭제하세요.
+```
+
+#### Vercel 배포 롤백
+
+```bash
+# 최근 배포 목록 확인
+vercel ls --limit 10
+
+# 특정 배포 URL로 롤백
+vercel rollback https://marketing-dashboard-abc123.vercel.app
+```
+
+### 9.7 백업 검증 체크리스트
+
+```
+□ 주간 백업
+  □ backup.bat 실행 성공
+  □ 백업 파일 크기 확인 (이전 주와 비교)
+  □ 임의 파일 열어서 내용 확인
+
+□ 월간 점검
+  □ 클라우드 백업 용량 확인
+  □ 오래된 백업 정리 확인
+  □ 복구 테스트 (테스트 폴더에 복원)
+
+□ 분기별 점검
+  □ 전체 복구 드릴 (새 폴더에 전체 복원 후 파이프라인 실행)
 ```
 
 ---

@@ -1283,25 +1283,36 @@
                     </div>
                 </div>
 
+                <!-- 0. 성과 요약 배너 -->
+                <div id="summaryCardBanner" style="display: none; margin-bottom: 24px; padding: 20px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                        <div>
+                            <div id="summaryCardTitle" style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">이번 달 성과 요약</div>
+                            <div id="summaryCardMessage" style="font-size: 15px; opacity: 0.95;"></div>
+                        </div>
+                        <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 11px; opacity: 0.8; margin-bottom: 4px;">방문자</div>
+                                <div id="summaryCardVisitors" style="font-size: 20px; font-weight: 700;"></div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 11px; opacity: 0.8; margin-bottom: 4px;">구매자</div>
+                                <div id="summaryCardPurchasers" style="font-size: 20px; font-weight: 700;"></div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 11px; opacity: 0.8; margin-bottom: 4px;">전환율</div>
+                                <div id="summaryCardCVR" style="font-size: 20px; font-weight: 700;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 1. 핵심 KPI 요약 -->
                 <div class="kpi-summary-grid" id="kpiSummaryGrid">
                     <!-- JS로 동적 생성 -->
                 </div>
 
-                <!-- 2. 주요 인사이트 -->
-                <div class="insight-section card">
-                    <div class="insight-header">💡 지금 집중해야 할 포인트</div>
-                    <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px; padding: 0 24px;">
-                        현재 데이터에서 발견된 핵심 개선 기회와 잘하고 있는 부분을 보여드립니다.
-                    </div>
-                    <div class="insight-content" id="insightContent">
-                        <div class="insight-card neutral">
-                            <div class="insight-text">데이터를 불러오는 중...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3. 인터랙티브 퍼널 시각화 (D3.js) -->
+                <!-- 2. 인터랙티브 퍼널 시각화 (D3.js) - KPI 바로 다음 배치 -->
                 <div class="chart-section card">
                     <div class="chart-header">
                         📊 고객 구매 여정 5단계
@@ -1382,6 +1393,65 @@
                             <button id="closeFunnelCompare" class="view-btn" style="font-size: 14px; padding: 8px 20px;">
                                 단일 뷰로 돌아가기
                             </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. 통합 인사이트 & 전략 섹션 -->
+                <div class="chart-section card" style="margin-bottom: 24px;">
+                    <div class="chart-header">
+                        💡 인사이트 & 채널 전략
+                    </div>
+                    <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px;">
+                        퍼널 분석 결과를 바탕으로 <strong>지금 바로 실행할 수 있는 개선 포인트</strong>와 <strong>채널별 투자 전략</strong>을 확인하세요.
+                    </div>
+
+                    <!-- 통합 탭 버튼 -->
+                    <div class="view-type-section" style="margin-bottom: 20px;">
+                        <button class="view-btn insight-strategy-tab-btn active" data-tab="summary">📊 핵심 요약</button>
+                        <button class="view-btn insight-strategy-tab-btn" data-tab="urgent">🚨 긴급 개선 <span id="urgentTotalCount" style="font-size: 11px; opacity: 0.8;"></span></button>
+                        <button class="view-btn insight-strategy-tab-btn" data-tab="bcg">📈 채널 전략</button>
+                    </div>
+
+                    <!-- 탭 1: 핵심 요약 -->
+                    <div class="insight-strategy-tab-content active" id="summaryTabContent">
+                        <div class="insight-content" id="insightContent">
+                            <div class="insight-card neutral">
+                                <div class="insight-text">데이터를 불러오는 중...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 탭 2: 긴급 개선 포인트 -->
+                    <div class="insight-strategy-tab-content" id="urgentTabContent" style="display: none;">
+                        <!-- 서브탭: 즉시 조치 / 개선 권장 -->
+                        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                            <button class="view-btn urgent-alert-tab-btn active" data-tab="high" style="font-size: 13px;">⚠️ 즉시 조치 필요 <span id="highAlertCount" style="font-size: 11px; opacity: 0.8;"></span></button>
+                            <button class="view-btn urgent-alert-tab-btn" data-tab="medium" style="font-size: 13px;">📌 개선 권장 <span id="mediumAlertCount" style="font-size: 11px; opacity: 0.8;"></span></button>
+                        </div>
+                        <!-- 즉시 조치 필요 -->
+                        <div id="highAlertsTab" class="urgent-alert-tab-content active">
+                            <div id="highAlertsCards" style="display: grid; gap: 12px;"></div>
+                            <div id="highAlertsToggleContainer" style="text-align: center; margin-top: 12px; display: none;">
+                                <button id="highAlertsToggleBtn" class="view-btn" style="font-size: 13px; padding: 8px 20px;">더 보기</button>
+                            </div>
+                        </div>
+                        <!-- 개선 권장 -->
+                        <div id="mediumAlertsTab" class="urgent-alert-tab-content" style="display: none;">
+                            <div id="mediumAlertsCards" style="display: grid; gap: 12px;"></div>
+                            <div id="mediumAlertsToggleContainer" style="text-align: center; margin-top: 12px; display: none;">
+                                <button id="mediumAlertsToggleBtn" class="view-btn" style="font-size: 13px; padding: 8px 20px;">더 보기</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 탭 3: BCG Matrix 채널 전략 -->
+                    <div class="insight-strategy-tab-content" id="bcgTabContent" style="display: none;">
+                        <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px;">
+                            트래픽과 전환율을 기준으로 각 채널을 4가지 유형으로 분류했습니다.
+                        </div>
+                        <div id="bcgMatrixContent" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                            <!-- JS로 동적 생성 -->
                         </div>
                     </div>
                 </div>
@@ -2653,9 +2723,13 @@
             console.log('========================================\n');
 
             updateAnalysisPeriod();
+            updateSummaryCardBanner();
             updateKPISummary();
-            updateInsights();
             updateFunnelChart();
+            updateInsights();
+            updateUrgentAlerts();
+            updateBCGMatrix();
+            setupInsightStrategyTabs();
             updateAdvancedAnalysis();
             updateKpiChart('cvr');
             updateChurnChart();
@@ -2674,6 +2748,219 @@
 
             const { start_date, end_date } = insightsData.overall.current_period;
             document.getElementById('analysisPeriod').textContent = `(${start_date} ~ ${end_date})`;
+        }
+
+        // summary_card 배너 업데이트
+        function updateSummaryCardBanner() {
+            if (!insightsData || !insightsData.summary_card) return;
+
+            const banner = document.getElementById('summaryCardBanner');
+            const card = insightsData.summary_card;
+
+            document.getElementById('summaryCardTitle').textContent = card.title || '이번 달 성과 요약';
+            document.getElementById('summaryCardMessage').textContent = card.status_message || '';
+            document.getElementById('summaryCardVisitors').textContent = card.visitors_text || '-';
+            document.getElementById('summaryCardPurchasers').textContent = card.purchasers_text || '-';
+            document.getElementById('summaryCardCVR').textContent = card.cvr_text || '-';
+
+            banner.style.display = 'block';
+        }
+
+        // urgent_alerts 섹션 업데이트
+        let urgentAlertsData = { high: [], medium: [] };
+        let urgentAlertsExpanded = { high: false, medium: false };
+
+        function updateUrgentAlerts() {
+            const alerts = insightsData?.urgent_alerts || [];
+
+            // 심각도별로 그룹화
+            urgentAlertsData.high = alerts.filter(a => a.severity === 'high');
+            urgentAlertsData.medium = alerts.filter(a => a.severity === 'medium');
+
+            // 탭 카운트 업데이트
+            const totalCount = alerts.length;
+            const urgentTotalEl = document.getElementById('urgentTotalCount');
+            if (urgentTotalEl) {
+                urgentTotalEl.textContent = totalCount > 0 ? `(${totalCount}건)` : '';
+            }
+
+            const highCountEl = document.getElementById('highAlertCount');
+            const mediumCountEl = document.getElementById('mediumAlertCount');
+            if (highCountEl) highCountEl.textContent = `(${urgentAlertsData.high.length}건)`;
+            if (mediumCountEl) mediumCountEl.textContent = `(${urgentAlertsData.medium.length}건)`;
+
+            // 카드 렌더링
+            renderUrgentAlertCards('high');
+            renderUrgentAlertCards('medium');
+
+            // 서브탭 버튼 이벤트 등록
+            document.querySelectorAll('.urgent-alert-tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetTab = this.dataset.tab;
+
+                    // 버튼 활성화 상태 변경
+                    document.querySelectorAll('.urgent-alert-tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // 탭 컨텐츠 표시/숨김
+                    document.querySelectorAll('.urgent-alert-tab-content').forEach(content => {
+                        content.style.display = 'none';
+                    });
+                    document.getElementById(targetTab + 'AlertsTab').style.display = 'block';
+                });
+            });
+        }
+
+        function renderUrgentAlertCards(type) {
+            const alerts = urgentAlertsData[type];
+            const cardsContainer = document.getElementById(type + 'AlertsCards');
+            const toggleContainer = document.getElementById(type + 'AlertsToggleContainer');
+            const toggleBtn = document.getElementById(type + 'AlertsToggleBtn');
+            const isExpanded = urgentAlertsExpanded[type];
+            const displayCount = isExpanded ? alerts.length : 3;
+
+            const bgColor = type === 'high' ? 'var(--error-light)' : 'var(--warning-light)';
+            const borderColor = type === 'high' ? 'var(--error-main)' : 'var(--warning-main)';
+
+            if (alerts.length === 0) {
+                cardsContainer.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: var(--grey-500);">
+                        ${type === 'high' ? '즉시 조치가 필요한 항목이 없습니다.' : '개선 권장 항목이 없습니다.'}
+                    </div>
+                `;
+                toggleContainer.style.display = 'none';
+                return;
+            }
+
+            cardsContainer.innerHTML = alerts.slice(0, displayCount).map(alert => `
+                <div style="padding: 16px; background: ${bgColor}; border-radius: 8px; border-left: 4px solid ${borderColor};">
+                    <div style="font-size: 15px; font-weight: 600; color: var(--grey-900); margin-bottom: 8px;">
+                        ${alert.title}
+                    </div>
+                    <div style="font-size: 13px; color: var(--grey-700); margin-bottom: 8px;">
+                        ${alert.message}
+                    </div>
+                    ${alert.reason ? `
+                        <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 8px;">
+                            <strong>원인:</strong> ${alert.reason}
+                        </div>
+                    ` : ''}
+                    <div style="padding: 10px; background: white; border-radius: 6px; font-size: 13px; color: var(--grey-900);">
+                        💡 <strong>추천 액션:</strong> ${alert.action}
+                    </div>
+                </div>
+            `).join('');
+
+            // 접기/펼치기 버튼 처리
+            if (alerts.length > 3) {
+                toggleContainer.style.display = 'block';
+                const hiddenCount = alerts.length - 3;
+                toggleBtn.textContent = isExpanded ? '접기' : `더 보기 (${hiddenCount}건)`;
+
+                // 이벤트 리스너 재등록 (중복 방지를 위해 클론 후 교체)
+                const newBtn = toggleBtn.cloneNode(true);
+                toggleBtn.parentNode.replaceChild(newBtn, toggleBtn);
+                newBtn.addEventListener('click', function() {
+                    urgentAlertsExpanded[type] = !urgentAlertsExpanded[type];
+                    renderUrgentAlertCards(type);
+                });
+            } else {
+                toggleContainer.style.display = 'none';
+            }
+        }
+
+        // BCG Matrix 채널 전략 업데이트
+        function updateBCGMatrix() {
+            const content = document.getElementById('bcgMatrixContent');
+            if (!content) return;
+
+            if (!insightsData || !insightsData.channel_strategy || insightsData.channel_strategy.status !== 'success') {
+                content.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--grey-500);">채널 전략 데이터가 없습니다.</div>';
+                return;
+            }
+            const strategy = insightsData.channel_strategy;
+
+            // 채널들을 BCG 유형별로 그룹화
+            const quadrants = {
+                cash_cow: { channels: [], color: '#4caf50', bgColor: '#e8f5e9', title: '👑 Cash Cow (효자 채널)', desc: '트래픽도 많고 전환율도 높음 - 투자 유지' },
+                hidden_gem: { channels: [], color: '#2196f3', bgColor: '#e3f2fd', title: '💎 Hidden Gem (숨은 보석)', desc: '전환율은 높지만 트래픽이 적음 - 투자 확대' },
+                money_pit: { channels: [], color: '#ff9800', bgColor: '#fff3e0', title: '💸 Money Pit (밑 빠진 독)', desc: '트래픽은 많지만 전환율이 낮음 - 최적화 필요' },
+                dog: { channels: [], color: '#9e9e9e', bgColor: '#fafafa', title: '🤔 Dog (재검토 필요)', desc: '트래픽도 전환율도 낮음 - 전략 재고' }
+            };
+
+            // 채널 분류
+            Object.entries(strategy.channels).forEach(([name, data]) => {
+                const quadrant = data.bcg_matrix.quadrant;
+                if (quadrants[quadrant]) {
+                    quadrants[quadrant].channels.push({
+                        name,
+                        ...data.stats,
+                        action: data.bcg_matrix.action
+                    });
+                }
+            });
+
+            // HTML 생성
+            let html = '';
+            Object.entries(quadrants).forEach(([key, q]) => {
+                if (q.channels.length > 0) {
+                    html += `
+                        <div style="padding: 16px; background: ${q.bgColor}; border-radius: 12px; border-left: 4px solid ${q.color};">
+                            <div style="font-size: 15px; font-weight: 700; color: var(--grey-900); margin-bottom: 4px;">
+                                ${q.title}
+                            </div>
+                            <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 12px;">
+                                ${q.desc}
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                                ${q.channels.map(ch => `
+                                    <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: white; border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--grey-800);">
+                                        ${ch.name}
+                                        <span style="font-size: 11px; color: ${q.color};">(CVR ${ch.cvr}%)</span>
+                                    </span>
+                                `).join('')}
+                            </div>
+                            ${q.channels[0] ? `
+                                <div style="font-size: 12px; color: var(--grey-700); padding: 10px; background: white; border-radius: 6px;">
+                                    ${q.channels[0].action}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }
+            });
+
+            content.innerHTML = html || '<div style="padding: 20px; text-align: center; color: var(--grey-500);">분류된 채널이 없습니다.</div>';
+        }
+
+        // 통합 인사이트 & 전략 탭 설정
+        function setupInsightStrategyTabs() {
+            const tabBtns = document.querySelectorAll('.insight-strategy-tab-btn');
+            const tabContents = document.querySelectorAll('.insight-strategy-tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetTab = this.dataset.tab;
+
+                    // 버튼 활성화 상태 변경
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // 탭 컨텐츠 표시/숨김
+                    tabContents.forEach(content => {
+                        content.style.display = 'none';
+                    });
+
+                    // 해당 탭 표시
+                    if (targetTab === 'summary') {
+                        document.getElementById('summaryTabContent').style.display = 'block';
+                    } else if (targetTab === 'urgent') {
+                        document.getElementById('urgentTabContent').style.display = 'block';
+                    } else if (targetTab === 'bcg') {
+                        document.getElementById('bcgTabContent').style.display = 'block';
+                    }
+                });
+            });
         }
 
         // KPI 요약 업데이트 (일별 데이터 사용)
@@ -3448,6 +3735,43 @@
                 clusterContainer.innerHTML = '<p style="color: var(--grey-500);">클러스터링 결과가 없습니다.</p>';
             }
 
+            // 2.5 A/B 테스트 통계 결과 (유의미한 채널 비교만 표시)
+            if (insightsData.ab_test_results && insightsData.ab_test_results.length > 0) {
+                const significantTests = insightsData.ab_test_results.filter(t => t.significant === true);
+                if (significantTests.length > 0) {
+                    const abStatsHTML = `
+                        <div style="margin-top: 24px; padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid var(--success-main);">
+                            <div style="font-size: 14px; font-weight: 600; color: var(--success-main); margin-bottom: 12px;">
+                                📊 통계적으로 유의미한 채널 비교 (${significantTests.length}건)
+                            </div>
+                            <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 12px;">
+                                p-value < 0.05로 통계적으로 유의미한 전환율 차이가 확인된 채널 조합입니다.
+                            </div>
+                            <div style="display: grid; gap: 8px;">
+                                ${significantTests.map(test => `
+                                    <div style="padding: 12px; background: white; border-radius: 6px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <span style="font-weight: 600; color: var(--grey-800);">${test.group_a}</span>
+                                            <span style="font-size: 12px; color: ${test.cvr_a < test.cvr_b ? 'var(--error-main)' : 'var(--success-main)'};">(${test.cvr_a}%)</span>
+                                        </div>
+                                        <span style="color: var(--grey-400);">vs</span>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <span style="font-weight: 600; color: var(--grey-800);">${test.group_b}</span>
+                                            <span style="font-size: 12px; color: ${test.cvr_b < test.cvr_a ? 'var(--error-main)' : 'var(--success-main)'};">(${test.cvr_b}%)</span>
+                                        </div>
+                                        <span style="font-size: 11px; color: var(--grey-500); margin-left: auto;">p=${test.p_value.toFixed(4)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div style="margin-top: 12px; padding: 10px; background: #f5f5f5; border-radius: 6px; font-size: 12px; color: var(--grey-700);">
+                                💡 <strong>활용 방법:</strong> 전환율이 높은 채널의 전략을 전환율이 낮은 채널에 적용해보세요.
+                            </div>
+                        </div>
+                    `;
+                    clusterContainer.insertAdjacentHTML('afterend', abStatsHTML);
+                }
+            }
+
             // 3. 이탈 위험 경고 (기본 7일)
             updateChurnPredictions('7d');
 
@@ -3557,6 +3881,39 @@
                         <p style="font-size: 14px; color: var(--grey-600);">모든 퍼널 단계가 안정적입니다.</p>
                     </div>
                 `;
+            }
+
+            // CRM 액션 가이드 표시
+            if (insightsData.crm_actions && insightsData.crm_actions.length > 0) {
+                const crmHTML = `
+                    <div style="margin-top: 24px; padding: 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 4px solid var(--secondary-main);">
+                        <div style="font-size: 14px; font-weight: 600; color: var(--secondary-main); margin-bottom: 12px;">
+                            📋 CRM 액션 가이드
+                        </div>
+                        <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 12px;">
+                            이탈 위험을 방지하기 위한 구체적인 CRM 액션입니다.
+                        </div>
+                        <div style="display: grid; gap: 10px;">
+                            ${insightsData.crm_actions.map(action => `
+                                <div style="padding: 12px; background: white; border-radius: 6px;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-900); margin-bottom: 6px;">
+                                        📍 ${action.stage}
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-700); margin-bottom: 4px;">
+                                        ${action.trend}
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 8px;">
+                                        <em>${action.diagnosis}</em>
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-900); padding: 8px; background: #f5f5f5; border-radius: 4px;">
+                                        💊 <strong>처방:</strong> ${action.prescription}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                churnContainer.insertAdjacentHTML('beforeend', crmHTML);
             }
         }
 

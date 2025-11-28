@@ -3,6 +3,12 @@ Type 분석 기반 인사이트 생성
 
 analysis_*.csv와 dimension_type*.csv 파일들을 분석하여
 사용자 친화적인 인사이트를 JSON으로 생성합니다.
+
+v2.0 업데이트:
+- AI 비서 톤앤매너: 친화적인 제목과 이모지 사용
+- 맥락 기반 액션: PERSONA_ACTIONS 딕셔너리를 통한 마케팅 솔루션 제공
+- 우선순위(Score) 시스템: top_recommendations 상위 5개 핵심 제안
+- 안전성: NpEncoder 클래스로 JSON 에러 원천 차단
 """
 
 import pandas as pd
@@ -11,6 +17,106 @@ import json
 import re
 from datetime import datetime
 from pathlib import Path
+
+# ============================================================================
+# 분석 임계값 설정 (업종에 맞게 튜닝 가능)
+# ============================================================================
+THRESHOLDS = {
+    'high_roas': 500.0,      # 성과 우수 기준 (%)
+    'low_roas': 100.0,       # 성과 저조 기준 (%)
+    'growth_signal': 20.0,   # 급상승 기준 (%)
+    'drop_signal': -20.0,    # 급락 기준 (%)
+    'high_cpa': 50000,       # CPA 경고 기준 (원)
+    'excellent_roas': 1000.0 # 매우 우수 기준 (%)
+}
+
+# 업종별 임계값 프리셋 (필요시 활성화)
+CATEGORY_THRESHOLDS = {
+    'fashion': {'high_roas': 400.0, 'low_roas': 80.0, 'high_cpa': 40000},
+    'food': {'high_roas': 300.0, 'low_roas': 60.0, 'high_cpa': 20000},
+    'electronics': {'high_roas': 600.0, 'low_roas': 120.0, 'high_cpa': 80000},
+    'beauty': {'high_roas': 450.0, 'low_roas': 90.0, 'high_cpa': 35000}
+}
+
+# ============================================================================
+# 마케팅 페르소나 매핑 (연령/성별/플랫폼별 추천 액션)
+# ============================================================================
+PERSONA_ACTIONS = {
+    # 연령 + 성별 조합
+    '20대_여성': "트렌드에 민감한 20대 여성이 반응하고 있습니다. 인스타그램 릴스나 감성적인 이미지 소재를 늘려보세요.",
+    '20대_남성': "20대 남성은 유튜브와 숏폼 콘텐츠에 반응합니다. 재미있는 영상 광고나 밈 형태의 소재를 시도해보세요.",
+    '30대_여성': "구매력이 높은 30대 여성입니다. 실용적인 혜택(무료배송, 1+1)을 강조하면 전환율이 오를 거예요.",
+    '30대_남성': "30대 남성은 가성비와 리뷰를 중시합니다. 사용자 후기와 비교 데이터를 활용하세요.",
+    '40대_여성': "40대 여성은 품질과 신뢰를 중요시합니다. 브랜드 스토리와 품질 보증을 강조하세요.",
+    '40대_남성': "기능과 스펙을 중시하는 40대 남성입니다. 상세페이지에서 제품의 성능 데이터를 확실하게 보여주세요.",
+    '50대_여성': "50대 여성은 건강과 웰빙에 관심이 높습니다. 제품의 안전성과 건강 혜택을 부각하세요.",
+    '50대_남성': "50대 남성은 프리미엄 제품에 투자할 여력이 있습니다. 고급스러운 이미지와 A/S 보장을 강조하세요.",
+
+    # 기기/플랫폼 기반
+    '모바일_iOS': "아이폰 유저들의 구매율이 높습니다. 결제 과정이 매끄러운지(애플페이 등) 확인해보세요.",
+    '모바일_Android': "안드로이드 유저가 많습니다. 다양한 결제 옵션(카카오페이, 네이버페이)을 제공하세요.",
+    '데스크톱_웹': "PC 사용자는 꼼꼼히 비교하는 경향이 있습니다. 상세한 제품 정보와 리뷰를 제공하세요.",
+
+    # 성별 단독
+    '남성': "남성 타겟의 반응이 좋습니다. 간결하고 직관적인 메시지로 핵심 가치를 전달하세요.",
+    '여성': "여성 타겟의 반응이 좋습니다. 감성적인 스토리텔링과 비주얼에 투자하세요."
+}
+
+# ============================================================================
+# 친화적 메시지 템플릿
+# ============================================================================
+FRIENDLY_MESSAGES = {
+    'high_roas_opportunity': {
+        'title': "🎯 우리 브랜드의 찐팬은 '{target}' 입니다!",
+        'message': "{target}의 ROAS가 {roas:.0f}%로 압도적입니다.",
+        'action': "이번 주 광고 예산의 70%를 {target} 타겟에 집중해보세요."
+    },
+    'low_roas_warning': {
+        'title': "⚠️ '{target}' 캠페인 점검이 필요해요",
+        'message': "{target}의 ROAS가 {roas:.0f}%로 낮습니다.",
+        'action': "소재를 교체하거나, 타겟팅을 좁혀보세요."
+    },
+    'gender_opportunity': {
+        'title': "🎯 {gender} 고객이 열광하고 있어요!",
+        'message': "{gender} 타겟팅의 ROAS가 {roas:.0f}%로 우수합니다.",
+        'action': "{gender} 대상 광고 비중을 높이세요."
+    },
+    'revenue_growth': {
+        'title': "📈 매출이 쑥쑥 오르고 있어요!",
+        'message': "최근 30일 매출이 이전 대비 {change:.1f}% 증가했습니다!",
+        'action': "현재 전략을 유지하면서 성과 요인을 분석해보세요."
+    },
+    'revenue_decline': {
+        'title': "📉 매출이 주춤하고 있어요",
+        'message': "최근 30일 매출이 이전 대비 {change:.1f}% 감소했습니다.",
+        'action': "캠페인 소재와 타겟팅을 점검해주세요."
+    },
+    'best_day': {
+        'title': "📅 황금 요일은 '{day}' 입니다!",
+        'message': "{day}에는 평균적으로 {roas:.0f}%의 수익률을 기록하고 있어요.",
+        'action': "{day} 전날 저녁부터 광고 입찰가를 20% 상향 조정하세요."
+    },
+    'worst_day': {
+        'title': "💸 '{day}'에는 잠시 쉬어가도 좋아요",
+        'message': "효율이 낮은 {day}에는 예산을 줄이는 게 이득입니다.",
+        'action': "자동 규칙을 설정해 해당 요일 예산을 30% 감액하세요."
+    },
+    'forecast_positive': {
+        'title': "🔮 다음 30일, 맑음이 예상됩니다!",
+        'message': "AI가 분석한 결과, 약 {forecast}의 매출이 예상됩니다.",
+        'action': "재고 부족이 발생하지 않도록 미리 물류를 점검해주세요."
+    },
+    'brand_opportunity': {
+        'title': "⭐ '{brand}' 브랜드가 대세예요!",
+        'message': "{brand} 브랜드의 ROAS가 {roas:.0f}%로 가장 높습니다.",
+        'action': "해당 브랜드 광고 비중을 확대하세요."
+    },
+    'product_opportunity': {
+        'title': "🚀 라이징 스타: '{product}'",
+        'message': "{product} 상품의 ROAS가 {roas:.0f}%로 가장 효율적입니다.",
+        'action': "이 상품을 메인 배너 가장 잘 보이는 곳에 배치하세요."
+    }
+}
 
 # ============================================================================
 # 성별/연령 데이터 정규화 및 필터링 함수
@@ -93,6 +199,54 @@ def clean_dict_for_json(obj):
         return obj
     else:
         return obj
+
+def format_korean_currency(value):
+    """숫자를 읽기 쉬운 한국 화폐 단위로 변환"""
+    if value is None or pd.isna(value):
+        return "0원"
+    val = float(value)
+    if val >= 100000000:  # 1억 이상
+        return f"{val/100000000:.1f}억 원"
+    elif val >= 10000:    # 1만 이상
+        return f"{val/10000:,.0f}만 원"
+    else:
+        return f"{int(val):,}원"
+
+def get_persona_action(age=None, gender=None, device=None, platform=None):
+    """페르소나 기반 추천 액션 조회"""
+    # 연령 + 성별 조합 우선
+    if age and gender:
+        key = f"{age}_{gender}"
+        if key in PERSONA_ACTIONS:
+            return PERSONA_ACTIONS[key]
+
+    # 기기 + 플랫폼 조합
+    if device and platform:
+        key = f"{device}_{platform}"
+        if key in PERSONA_ACTIONS:
+            return PERSONA_ACTIONS[key]
+
+    # 성별만
+    if gender and gender in PERSONA_ACTIONS:
+        return PERSONA_ACTIONS[gender]
+
+    return None
+
+# JSON 인코더 (NaN, Inf, numpy 타입 안전 처리)
+class NpEncoder(json.JSONEncoder):
+    """numpy 타입과 NaN/Inf를 JSON 안전하게 변환하는 인코더"""
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            if np.isnan(obj) or np.isinf(obj):
+                return None
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        if pd.isna(obj):
+            return None
+        return super(NpEncoder, self).default(obj)
 
 # 경로 설정 (동적 경로)
 BASE_DIR = Path(__file__).parent.parent
@@ -1357,43 +1511,61 @@ if len(growing_products_weekly) > 0:
     })
 
 # ============================================================================
-# 알림 및 추천사항
+# 알림 및 추천사항 (AI 비서 톤앤매너 적용)
 # ============================================================================
-print("알림 및 추천사항 생성 중...")
+print("알림 및 추천사항 생성 중... (친화적 메시지 적용)")
 
 alerts = []
 
 # 1. 최고 성과 유형구분 강조
 if len(top_categories_list) > 0:
     best_category = top_categories_list[0]
-    if best_category['roas'] > 1000:
+    if best_category['roas'] > THRESHOLDS['excellent_roas']:
         alerts.append({
             "type": "high_roas_opportunity",
-            "message": f"{best_category['name']}의 ROAS가 {best_category['roas']:.1f}%로 매우 높습니다. 예산 증액을 고려하세요.",
+            "title": f"🎯 우리 브랜드의 찐팬은 '{best_category['name']}' 입니다!",
+            "message": f"{best_category['name']}의 ROAS가 {best_category['roas']:.0f}%로 압도적입니다.",
+            "action": f"이번 주 광고 예산의 70%를 {best_category['name']} 타겟에 집중해보세요.",
             "severity": "opportunity",
+            "category": "타겟팅",
+            "score": 5,
             "value": best_category['roas']
         })
 
 # 2. 저성과 유형구분 경고
-low_roas_categories = paid_categories[paid_categories['ROAS'] < 50]
+low_roas_categories = paid_categories[paid_categories['ROAS'] < THRESHOLDS['low_roas']]
 if len(low_roas_categories) > 0:
-    for _, cat in low_roas_categories.iterrows():
+    for idx, (_, cat) in enumerate(low_roas_categories.iterrows()):
+        if idx >= 3:  # 최대 3개만
+            break
         alerts.append({
             "type": "low_roas_warning",
-            "message": f"{cat['유형구분']}의 ROAS가 {cat['ROAS']:.1f}%로 낮습니다. 캠페인 최적화가 필요합니다.",
+            "title": f"⚠️ '{cat['유형구분']}' 캠페인 점검이 필요해요",
+            "message": f"{cat['유형구분']}의 ROAS가 {cat['ROAS']:.0f}%로 낮습니다.",
+            "action": "소재를 교체하거나, 타겟팅을 좁혀보세요.",
             "severity": "warning",
-            "category": cat['유형구분'],
+            "category": "효율 개선",
+            "score": 4,
+            "target": cat['유형구분'],
             "value": float(cat['ROAS'])
         })
 
 # 3. 성별 타겟팅 추천
 if len(gender_insights) > 0:
     best_gender = max(gender_insights, key=lambda x: x['roas'])
-    if best_gender['roas'] > 1000:
+    if best_gender['roas'] > THRESHOLDS['high_roas']:
+        # 페르소나 기반 액션 조회
+        persona_action = get_persona_action(gender=best_gender['gender'])
+        action_text = persona_action if persona_action else f"{best_gender['gender']} 대상 광고 비중을 높이세요."
+
         alerts.append({
             "type": "gender_targeting_opportunity",
-            "message": f"{best_gender['gender']} 타겟팅의 ROAS가 {best_gender['roas']:.1f}%로 우수합니다. 해당 성별 집중 광고를 추천합니다.",
+            "title": f"🎯 {best_gender['gender']} 고객이 열광하고 있어요!",
+            "message": f"{best_gender['gender']} 타겟팅의 ROAS가 {best_gender['roas']:.0f}%로 우수합니다.",
+            "action": action_text,
             "severity": "opportunity",
+            "category": "타겟팅",
+            "score": 5,
             "gender": best_gender['gender'],
             "value": best_gender['roas']
         })
@@ -1408,23 +1580,31 @@ previous_revenue = previous_30days['전환값'].sum()
 if previous_revenue > 0:
     revenue_change = ((recent_revenue - previous_revenue) / previous_revenue * 100)
 
-    if revenue_change < -20:
+    if revenue_change < THRESHOLDS['drop_signal']:
         alerts.append({
             "type": "revenue_decline",
-            "message": f"최근 30일 매출이 이전 대비 {revenue_change:.1f}% 감소했습니다. 캠페인 점검이 필요합니다.",
+            "title": "📉 매출이 주춤하고 있어요",
+            "message": f"최근 30일 매출이 이전 대비 {revenue_change:.1f}% 감소했습니다.",
+            "action": "캠페인 소재와 타겟팅을 점검해주세요.",
             "severity": "high",
+            "category": "매출 분석",
+            "score": 5,
             "value": revenue_change
         })
-    elif revenue_change > 20:
+    elif revenue_change > THRESHOLDS['growth_signal']:
         alerts.append({
             "type": "revenue_growth",
-            "message": f"최근 30일 매출이 이전 대비 {revenue_change:.1f}% 증가했습니다! 현재 전략을 유지하세요.",
+            "title": "📈 매출이 쑥쑥 오르고 있어요!",
+            "message": f"최근 30일 매출이 이전 대비 {revenue_change:.1f}% 증가했습니다!",
+            "action": "현재 전략을 유지하면서 성과 요인을 분석해보세요.",
             "severity": "positive",
+            "category": "매출 분석",
+            "score": 4,
             "value": revenue_change
         })
 
 # ============================================================================
-# 추천사항
+# 추천사항 (Score 시스템 적용 - 상위 5개를 top_recommendations로 추출)
 # ============================================================================
 recommendations = []
 
@@ -1434,9 +1614,12 @@ if len(top_categories_list) >= 2:
     second = top_categories_list[1]
 
     recommendations.append({
-        "title": "예산 재배분 제안",
-        "description": f"{best['name']} (ROAS {best['roas']:.1f}%)의 예산을 늘리고, {second['name']} (ROAS {second['roas']:.1f}%)의 예산을 유지하세요.",
+        "title": "💰 예산 재배분으로 효율 UP!",
+        "description": f"{best['name']} (ROAS {best['roas']:.0f}%)의 예산을 늘리고, {second['name']}의 예산을 유지하세요.",
+        "action": f"{best['name']}에 예산 30% 증액을 권장합니다.",
         "priority": "high",
+        "category": "예산 전략",
+        "score": 5,
         "expected_impact": "ROAS 10-20% 개선 예상"
     })
 
@@ -1445,10 +1628,17 @@ if len(gender_insights) >= 2:
     sorted_genders = sorted(gender_insights, key=lambda x: x['roas'], reverse=True)
     best_gender = sorted_genders[0]
 
+    # 페르소나 기반 액션
+    persona_action = get_persona_action(gender=best_gender['gender'])
+    action_text = persona_action if persona_action else f"{best_gender['gender']} 대상 광고 비중을 높이세요."
+
     recommendations.append({
-        "title": "성별 타겟팅 최적화",
-        "description": f"{best_gender['gender']} 타겟 광고의 비중을 높이세요. 현재 ROAS {best_gender['roas']:.1f}%로 가장 높습니다.",
-        "priority": "medium",
+        "title": f"🎯 {best_gender['gender']} 타겟팅 강화하기",
+        "description": f"{best_gender['gender']} 타겟 광고의 비중을 높이세요. 현재 ROAS {best_gender['roas']:.0f}%로 가장 높습니다.",
+        "action": action_text,
+        "priority": "high",
+        "category": "타겟팅",
+        "score": 5,
         "expected_impact": "CPA 15-25% 절감 가능"
     })
 
@@ -1456,46 +1646,62 @@ if len(gender_insights) >= 2:
 if len(platform_insights) > 0:
     best_platform = max(platform_insights, key=lambda x: x['roas'])
 
+    # 플랫폼 기반 페르소나 액션
+    platform_action = get_persona_action(platform=best_platform['platform'])
+    action_text = platform_action if platform_action else f"{best_platform['platform']} 플랫폼 광고에 집중하세요."
+
     recommendations.append({
-        "title": "기기 플랫폼 최적화",
-        "description": f"{best_platform['platform']} 플랫폼 광고에 집중하세요. ROAS {best_platform['roas']:.1f}%로 가장 효율적입니다.",
+        "title": f"📱 {best_platform['platform']} 플랫폼이 효자예요!",
+        "description": f"{best_platform['platform']} 플랫폼 광고에 집중하세요. ROAS {best_platform['roas']:.0f}%로 가장 효율적입니다.",
+        "action": action_text,
         "priority": "medium",
+        "category": "플랫폼",
+        "score": 4,
         "expected_impact": "전환율 10-15% 개선 예상"
     })
 
 # ============================================================================
-# 브랜드/상품/프로모션 추천사항 추가
+# 브랜드/상품/프로모션 추천사항 (친화적 메시지)
 # ============================================================================
 # 최고 성과 브랜드 추천
 if len(brand_insights) > 0:
     best_brand = brand_insights[0]
-    if best_brand['roas'] > 100:  # 조건 완화: 100% 이상
+    if best_brand['roas'] > THRESHOLDS['low_roas']:
         recommendations.append({
-            "title": "브랜드 집중 전략",
-            "description": f"{best_brand['brand']} 브랜드의 ROAS가 {best_brand['roas']:.1f}%로 가장 높습니다. 해당 브랜드 광고 비중을 확대하세요.",
+            "title": f"⭐ '{best_brand['brand']}' 브랜드가 대세예요!",
+            "description": f"{best_brand['brand']} 브랜드의 ROAS가 {best_brand['roas']:.0f}%로 가장 높습니다.",
+            "action": "해당 브랜드 광고 비중을 확대하세요.",
             "priority": "high",
+            "category": "브랜드",
+            "score": 5,
             "expected_impact": "ROAS 15-30% 개선 가능"
         })
 
 # 최고 성과 상품 추천
 if len(product_insights) > 0:
     best_product = product_insights[0]
-    if best_product['roas'] > 100:  # 조건 완화: 100% 이상
+    if best_product['roas'] > THRESHOLDS['low_roas']:
         recommendations.append({
-            "title": "상품 포트폴리오 최적화",
-            "description": f"{best_product['product']} 상품의 ROAS가 {best_product['roas']:.1f}%로 가장 효율적입니다. 주력 상품으로 설정하세요.",
+            "title": f"🚀 라이징 스타: '{best_product['product']}'",
+            "description": f"{best_product['product']} 상품의 ROAS가 {best_product['roas']:.0f}%로 가장 효율적입니다.",
+            "action": "이 상품을 메인 배너 가장 잘 보이는 곳에 배치하세요.",
             "priority": "high",
+            "category": "상품 전략",
+            "score": 5,
             "expected_impact": "매출 20-35% 증가 예상"
         })
 
 # 최고 성과 프로모션 추천
 if len(promotion_insights) > 0:
     best_promotion = promotion_insights[0]
-    if best_promotion['roas'] > 100:  # 조건 완화: 100% 이상
+    if best_promotion['roas'] > THRESHOLDS['low_roas']:
         recommendations.append({
-            "title": "프로모션 전략 강화",
-            "description": f"{best_promotion['promotion']} 프로모션의 ROAS가 {best_promotion['roas']:.1f}%입니다. 유사한 프로모션 기획을 추천합니다.",
+            "title": f"🎁 '{best_promotion['promotion']}' 프로모션 대박!",
+            "description": f"{best_promotion['promotion']} 프로모션의 ROAS가 {best_promotion['roas']:.0f}%입니다.",
+            "action": "유사한 프로모션을 기획하여 성공 패턴을 복제하세요.",
             "priority": "medium",
+            "category": "프로모션",
+            "score": 4,
             "expected_impact": "전환율 10-20% 개선 예상"
         })
 
@@ -2158,10 +2364,67 @@ print(f"  - 리타겟팅 노출기기 분석: {len(retargeting_analysis['by_devi
 print(f"  - 리타겟팅 인사이트: {len(retargeting_insights)}개")
 
 # ============================================================================
-# 최종 JSON 생성
+# 최종 JSON 생성 (top_recommendations 추가)
 # ============================================================================
+
+# 모든 알림 + 추천사항에서 score 기준 상위 5개 추출
+all_scored_items = []
+
+# alerts에서 score가 있는 항목 수집
+for alert in alerts + prophet_alerts:
+    if 'score' in alert:
+        all_scored_items.append({
+            "source": "alert",
+            "title": alert.get('title', alert.get('type', '')),
+            "message": alert.get('message', ''),
+            "action": alert.get('action', ''),
+            "category": alert.get('category', '알림'),
+            "score": alert.get('score', 0),
+            "severity": alert.get('severity', 'info')
+        })
+
+# recommendations에서 score가 있는 항목 수집
+for rec in recommendations + prophet_recommendations:
+    if 'score' in rec:
+        all_scored_items.append({
+            "source": "recommendation",
+            "title": rec.get('title', ''),
+            "message": rec.get('description', ''),
+            "action": rec.get('action', ''),
+            "category": rec.get('category', '추천'),
+            "score": rec.get('score', 0),
+            "priority": rec.get('priority', 'medium'),
+            "expected_impact": rec.get('expected_impact', '')
+        })
+
+# score 기준 내림차순 정렬, 상위 5개 선택
+all_scored_items.sort(key=lambda x: x.get('score', 0), reverse=True)
+top_recommendations = all_scored_items[:5]
+
+# Summary Card 생성 (AI 비서 톤)
+overall_roas = summary["overall_roas"]
+if overall_roas > THRESHOLDS['excellent_roas']:
+    summary_message = "전반적으로 성과가 매우 우수합니다! 🔥 지금 전략을 유지하면서 스케일업을 고려하세요."
+elif overall_roas > THRESHOLDS['high_roas']:
+    summary_message = "성과가 좋습니다! 😊 약간의 최적화로 더 좋은 결과를 낼 수 있어요."
+elif overall_roas > THRESHOLDS['low_roas']:
+    summary_message = "기본적인 성과는 나오고 있어요. 🧐 타겟팅과 소재를 점검해보세요."
+else:
+    summary_message = "효율 개선이 필요한 시점입니다. 💡 추천 액션을 확인해주세요."
+
+summary_card = {
+    "title": "마케팅 종합 진단",
+    "total_roas": f"{overall_roas:.1f}%",
+    "total_roas_formatted": f"ROAS {overall_roas:.0f}%",
+    "total_revenue_formatted": format_korean_currency(summary["total_revenue"]),
+    "total_cost_formatted": format_korean_currency(summary["total_cost"]),
+    "message": summary_message
+}
+
 insights = {
     "summary": summary,
+    "summary_card": summary_card,  # AI 비서 스타일 요약 카드
+    "top_recommendations": top_recommendations,  # Score 기반 상위 5개 핵심 제안
     "top_categories": top_categories_list,
     "gender_performance": gender_insights,
     "top_adsets": top_adsets[:10] if len(top_adsets) > 0 else [],
@@ -2208,10 +2471,13 @@ insights = {
             "start_date": summary["analysis_period"]["start_date"],
             "end_date": summary["analysis_period"]["end_date"],
             "total_cost": summary["total_cost"],
+            "total_cost_formatted": format_korean_currency(summary["total_cost"]),
             "total_conversions": summary["total_conversions"],
             "total_revenue": summary["total_revenue"],
+            "total_revenue_formatted": format_korean_currency(summary["total_revenue"]),
             "overall_roas": summary["overall_roas"],
-            "overall_cpa": summary["overall_cpa"]
+            "overall_cpa": summary["overall_cpa"],
+            "overall_cpa_formatted": format_korean_currency(summary["overall_cpa"])
         },
         "trend": {
             "direction": "growing" if revenue_change > 10 else "stable" if revenue_change > -10 else "declining",
@@ -2225,6 +2491,7 @@ insights = {
         "analysis_period_days": summary["analysis_period"]["total_days"],
         "alerts_count": len(alerts) + len(prophet_alerts),
         "recommendations_count": len(recommendations) + len(prophet_recommendations),
+        "top_recommendations_count": len(top_recommendations),
         "timeseries_insights_count": len(timeseries_insights),
         "prophet_forecast_available": len(prophet_forecasts) > 0
     },
@@ -2234,23 +2501,25 @@ insights = {
     "seasonality_insights": seasonality_insights
 }
 
-# JSON 파일 저장 (NaN/Inf 값을 null로 변환)
+# JSON 파일 저장 (NpEncoder로 NaN/Inf/numpy 타입 안전 처리)
 output_file = data_dir / 'insights.json'
 insights_cleaned = clean_dict_for_json(insights)
 with open(output_file, 'w', encoding='utf-8') as f:
-    json.dump(insights_cleaned, f, ensure_ascii=False, indent=2)
+    json.dump(insights_cleaned, f, cls=NpEncoder, ensure_ascii=False, indent=2)
 
 print(f"\n✓ 인사이트 생성 완료: {output_file}")
 
 # 요약 출력
 print("\n" + "=" * 100)
-print("생성된 인사이트 요약")
+print("생성된 인사이트 요약 (AI 비서 톤앤매너 적용)")
 print("=" * 100)
-print(f"\n전체 ROAS: {summary['overall_roas']:.1f}%")
-print(f"전체 CPA: {summary['overall_cpa']:,.0f}원")
-print(f"\n상위 유형구분: {len(top_categories_list)}개")
-print(f"알림: {len(alerts)}개")
-print(f"추천사항: {len(recommendations)}개")
+print(f"\n📊 전체 ROAS: {summary['overall_roas']:.1f}%")
+print(f"💰 전체 CPA: {summary['overall_cpa']:,.0f}원")
+print(f"📈 전체 매출: {format_korean_currency(summary['total_revenue'])}")
+print(f"\n🏆 상위 유형구분: {len(top_categories_list)}개")
+print(f"🔔 알림: {len(alerts)}개 (친화적 메시지 포함)")
+print(f"💡 추천사항: {len(recommendations)}개 (Score 시스템 적용)")
+print(f"⭐ Top Recommendations: {len(top_recommendations)}개 (대시보드 상단 표시용)")
 
 print("\n[시계열 분석 - 월별]")
 print(f"  - 월별 트렌드: {len(monthly_trend)}개월")
@@ -2300,5 +2569,12 @@ print(f"  - 노출기기 (Type7): {len(retargeting_analysis['by_device_platform'
 print(f"  - 리타겟팅 인사이트: {len(retargeting_insights)}개")
 
 print("\n" + "=" * 100)
-print("인사이트 생성 완료!")
+print("인사이트 생성 완료! (v2.0 - AI 비서 톤앤매너)")
+print("=" * 100)
+print("\n[v2.0 신규 기능]")
+print("  ✓ AI 비서 톤앤매너: 이모지와 친화적인 제목 사용")
+print("  ✓ PERSONA_ACTIONS: 연령/성별/플랫폼별 맞춤 액션 제안")
+print("  ✓ Score 시스템: 우선순위 기반 top_recommendations 5개")
+print("  ✓ format_korean_currency: 억 원, 만 원 단위 표시")
+print("  ✓ NpEncoder: NaN/Inf JSON 에러 원천 차단")
 print("=" * 100)

@@ -1171,16 +1171,63 @@
                     </div>
                 </div>
 
+                <!-- 0. AI 상태 요약 카드 (summary_card) -->
+                <div id="summaryCardContainer" class="card" style="margin-bottom: 24px; display: none;">
+                    <div style="padding: 24px;">
+                        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                            <div id="summaryCardStatus" style="font-size: 24px; font-weight: 700;"></div>
+                            <div>
+                                <div id="summaryCardMessage" style="font-size: 14px; color: var(--grey-700);"></div>
+                                <div id="summaryCardPeriod" style="font-size: 12px; color: var(--grey-500); margin-top: 4px;"></div>
+                            </div>
+                        </div>
+                        <div id="summaryCardMetrics" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
+                            <!-- JS로 동적 생성 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 0.5 AI 요약 메시지 -->
+                <div id="aiSummaryContainer" class="card" style="margin-bottom: 24px; display: none;">
+                    <div style="padding: 20px 24px;">
+                        <div style="display: flex; align-items: flex-start; gap: 12px;">
+                            <span style="font-size: 24px;">🤖</span>
+                            <div>
+                                <div style="font-size: 13px; font-weight: 600; color: var(--primary-main); margin-bottom: 8px;">AI 분석 요약</div>
+                                <div id="aiSummaryText" style="font-size: 13px; color: var(--grey-800); line-height: 1.8; white-space: pre-line;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 1. 핵심 KPI 요약 (제일 위, 펼쳐진 상태) -->
                 <div class="kpi-summary-grid" id="kpiSummaryGrid">
                     <!-- JS로 동적 생성 -->
+                </div>
+
+                <!-- 1.5 오늘 실적 vs 예측 비교 (daily_comparison) -->
+                <div id="dailyComparisonContainer" class="card" style="margin-bottom: 24px; display: none;">
+                    <div style="padding: 20px 24px;">
+                        <div style="font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            📊 오늘의 실적 vs 예측
+                            <span id="dailyComparisonDate" style="font-size: 12px; color: var(--grey-500); font-weight: 400;"></span>
+                        </div>
+                        <div id="dailyComparisonContent" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+                            <!-- JS로 동적 생성 -->
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 2. 통합 인사이트 대시보드 -->
                 <div class="insight-section card" style="margin-bottom: 24px;">
                     <!-- 탭 버튼 -->
                     <div class="view-type-section" style="margin-bottom: 0; padding: 20px 24px 0 24px; border-bottom: 1px solid var(--grey-200);">
-                        <button class="view-btn insights-tab-btn active" data-insights-tab="alerts">경고 및 추천</button>
+                        <button class="view-btn insights-tab-btn active" data-insights-tab="alerts">
+                            경고 및 추천 <span id="alertsBadge" style="display: none; padding: 2px 8px; background: #ef5350; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
+                        </button>
+                        <button class="view-btn insights-tab-btn" data-insights-tab="opportunities">
+                            기회 요소 <span id="opportunitiesBadge" style="display: none; padding: 2px 8px; background: #4caf50; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
+                        </button>
                         <button class="view-btn insights-tab-btn" data-insights-tab="trends">성과 트렌드</button>
                     </div>
 
@@ -1189,7 +1236,7 @@
                         <div class="compact-grid-2" style="margin-bottom: 0;">
                             <!-- 주요 경고 -->
                             <div style="padding: 24px;">
-                                <div class="insight-header">🚨 주요 경고</div>
+                                <div class="insight-header">🚨 주요 경고 <span id="alertsCountBadge" style="font-size: 12px; color: var(--grey-500); font-weight: 400;"></span></div>
                                 <div class="insight-content" id="insightContent">
                                     <!-- JS로 동적 생성 -->
                                 </div>
@@ -1197,7 +1244,7 @@
 
                             <!-- 투자 추천 -->
                             <div style="padding: 24px;">
-                                <div class="insight-header">💡 투자 추천</div>
+                                <div class="insight-header">💡 투자 추천 <span id="recommendationsCountBadge" style="font-size: 12px; color: var(--grey-500); font-weight: 400;"></span></div>
                                 <div class="insight-content recommendation-list" id="recommendationContent">
                                     <div class="insight-card neutral">
                                         <div class="insight-text">데이터를 불러오는 중...</div>
@@ -1207,7 +1254,23 @@
                         </div>
                     </div>
 
-                    <!-- 탭 2: 성과 트렌드 -->
+                    <!-- 탭 2: 기회 요소 (opportunities) -->
+                    <div id="opportunitiesTab" class="insights-tab-content" style="display: none;">
+                        <div style="padding: 24px;">
+                            <div style="font-size: 13px; color: var(--grey-700); padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); line-height: 1.7; border-radius: 8px; margin-bottom: 16px;">
+                                <strong style="color: #2e7d32;">💡 기회 요소란?</strong><br>
+                                AI가 분석한 데이터에서 <strong>성장 가능성이 높은 영역</strong>을 보여드립니다.<br>
+                                이 기회를 활용하면 광고 성과를 더 높일 수 있습니다.
+                            </div>
+                            <div id="opportunitiesContent" class="insight-content">
+                                <div class="insight-card neutral">
+                                    <div class="insight-text">현재 발견된 기회 요소가 없습니다.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 탭 3: 성과 트렌드 -->
                     <div id="trendsTab" class="insights-tab-content" style="display: none;">
                         <div class="compact-grid-2" style="margin-bottom: 0;">
                             <!-- 성과 개선 분석 -->
@@ -2281,9 +2344,14 @@
                 segmentStatsData = await segmentResponse.json();
 
                 // 인사이트 업데이트
+                updateSummaryCard();
+                updateAiSummary();
+                updateDailyComparison();
                 updateOverallInsights();
                 updateInsightsFromData();
                 updateRecommendations();
+                updateOpportunities();
+                updateInsightsBadges();
                 updatePerformanceTrends();
                 updateSegmentAnalysis();
             } catch (error) {
@@ -2939,6 +3007,190 @@
                     </div>
                 </div>
             `;
+        }
+
+        // Summary Card 업데이트 (summary_card)
+        function updateSummaryCard() {
+            const container = document.getElementById('summaryCardContainer');
+            if (!container || !insightsData || !insightsData.summary_card) {
+                return;
+            }
+
+            const card = insightsData.summary_card;
+            container.style.display = 'block';
+
+            // 상태 색상 설정
+            const colorMap = {
+                'blue': { bg: '#e3f2fd', border: '#2196f3', text: '#1565c0' },
+                'green': { bg: '#e8f5e9', border: '#4caf50', text: '#2e7d32' },
+                'yellow': { bg: '#fff8e1', border: '#ffc107', text: '#f57f17' },
+                'red': { bg: '#ffebee', border: '#f44336', text: '#c62828' }
+            };
+            const colors = colorMap[card.status_color] || colorMap['blue'];
+            container.style.background = colors.bg;
+            container.style.borderLeft = `4px solid ${colors.border}`;
+
+            document.getElementById('summaryCardStatus').textContent = card.status_title || '';
+            document.getElementById('summaryCardStatus').style.color = colors.text;
+            document.getElementById('summaryCardMessage').textContent = card.status_message || '';
+            document.getElementById('summaryCardPeriod').textContent = card.period || '';
+
+            // 메트릭스 표시
+            if (card.metrics) {
+                const m = card.metrics;
+                const metricsHtml = `
+                    <div style="padding: 12px; background: rgba(255,255,255,0.7); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 11px; color: var(--grey-600);">현재 매출</div>
+                        <div style="font-size: 18px; font-weight: 700; color: var(--grey-900);">${m.current_revenue || '-'}</div>
+                    </div>
+                    <div style="padding: 12px; background: rgba(255,255,255,0.7); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 11px; color: var(--grey-600);">예측 매출</div>
+                        <div style="font-size: 18px; font-weight: 700; color: var(--primary-main);">${m.forecast_revenue || '-'}</div>
+                        <div style="font-size: 11px; color: ${m.revenue_change_pct >= 0 ? '#2e7d32' : '#c62828'};">${m.revenue_change_pct >= 0 ? '▲' : '▼'} ${Math.abs(m.revenue_change_pct || 0).toFixed(1)}%</div>
+                    </div>
+                    <div style="padding: 12px; background: rgba(255,255,255,0.7); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 11px; color: var(--grey-600);">현재 ROAS</div>
+                        <div style="font-size: 18px; font-weight: 700; color: var(--grey-900);">${(m.current_roas || 0).toFixed(0)}%</div>
+                    </div>
+                    <div style="padding: 12px; background: rgba(255,255,255,0.7); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 11px; color: var(--grey-600);">예측 ROAS</div>
+                        <div style="font-size: 18px; font-weight: 700; color: var(--primary-main);">${(m.forecast_roas || 0).toFixed(0)}%</div>
+                        <div style="font-size: 11px; color: ${m.roas_change_val >= 0 ? '#2e7d32' : '#c62828'};">${m.roas_change_val >= 0 ? '▲' : '▼'} ${Math.abs(m.roas_change_val || 0).toFixed(1)}%p</div>
+                    </div>
+                `;
+                document.getElementById('summaryCardMetrics').innerHTML = metricsHtml;
+            }
+        }
+
+        // AI 요약 메시지 업데이트 (summary)
+        function updateAiSummary() {
+            const container = document.getElementById('aiSummaryContainer');
+            if (!container || !insightsData || !insightsData.summary) {
+                return;
+            }
+
+            container.style.display = 'block';
+            document.getElementById('aiSummaryText').textContent = insightsData.summary;
+        }
+
+        // 오늘 실적 vs 예측 비교 업데이트 (daily_comparison)
+        function updateDailyComparison() {
+            const container = document.getElementById('dailyComparisonContainer');
+            if (!container || !insightsData || !insightsData.overall || !insightsData.overall.daily_comparison) {
+                return;
+            }
+
+            const comparison = insightsData.overall.daily_comparison;
+            container.style.display = 'block';
+
+            document.getElementById('dailyComparisonDate').textContent = `(${comparison.date})`;
+
+            const actual = comparison.actual || {};
+            const forecast = comparison.forecast || {};
+
+            const formatNum = (n) => n ? n.toLocaleString() : '-';
+
+            const html = `
+                <div style="padding: 16px; background: #f5f5f5; border-radius: 10px;">
+                    <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 8px;">💰 비용</div>
+                    <div style="font-size: 20px; font-weight: 700; color: var(--grey-900);">${formatNum(actual.cost)}원</div>
+                </div>
+                <div style="padding: 16px; background: #e8f5e9; border-radius: 10px;">
+                    <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 8px;">🛒 전환수</div>
+                    <div style="font-size: 20px; font-weight: 700; color: #2e7d32;">${formatNum(actual.conversions)}건</div>
+                </div>
+                <div style="padding: 16px; background: #e3f2fd; border-radius: 10px;">
+                    <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 8px;">💵 매출</div>
+                    <div style="font-size: 20px; font-weight: 700; color: #1565c0;">${formatNum(actual.revenue)}원</div>
+                </div>
+            `;
+            document.getElementById('dailyComparisonContent').innerHTML = html;
+        }
+
+        // 기회 요소 업데이트 (opportunities)
+        function updateOpportunities() {
+            const container = document.getElementById('opportunitiesContent');
+            const badge = document.getElementById('opportunitiesBadge');
+            if (!container || !insightsData) {
+                return;
+            }
+
+            const opportunities = insightsData.opportunities || [];
+
+            if (opportunities.length === 0) {
+                container.innerHTML = `
+                    <div class="insight-card neutral">
+                        <div class="insight-text">현재 발견된 기회 요소가 없습니다.</div>
+                    </div>
+                `;
+                if (badge) badge.style.display = 'none';
+                return;
+            }
+
+            if (badge) {
+                badge.textContent = opportunities.length;
+                badge.style.display = 'inline';
+            }
+
+            const html = opportunities.map((opp, idx) => `
+                <div class="insight-card positive" style="margin-bottom: 12px;">
+                    <div style="display: flex; align-items: flex-start; gap: 12px;">
+                        <span style="font-size: 20px;">🚀</span>
+                        <div style="flex: 1;">
+                            <div style="font-size: 13px; font-weight: 600; color: var(--grey-900); margin-bottom: 4px;">${opp.title || '기회 요소 ' + (idx + 1)}</div>
+                            <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">${opp.message || ''}</div>
+                            ${opp.action ? `<div style="margin-top: 8px; padding: 8px 12px; background: rgba(76,175,80,0.1); border-radius: 6px; font-size: 11px; color: #2e7d32;"><strong>💡 추천 액션:</strong> ${opp.action}</div>` : ''}
+                            ${opp.expected_impact ? `<div style="margin-top: 6px; font-size: 11px; color: #2e7d32;"><strong>📈 기대 효과:</strong> ${opp.expected_impact}</div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        // 탭 배지 업데이트 (details)
+        function updateInsightsBadges() {
+            if (!insightsData) return;
+
+            // 경고 배지
+            const alertsBadge = document.getElementById('alertsBadge');
+            const alertsCountBadge = document.getElementById('alertsCountBadge');
+            let totalAlerts = 0;
+
+            if (insightsData.details) {
+                totalAlerts = (insightsData.details.total_segment_alerts || 0) + (insightsData.details.total_overall_alerts || 0);
+            } else if (insightsData.segments && insightsData.segments.alerts) {
+                totalAlerts = insightsData.segments.alerts.length;
+            }
+
+            if (alertsBadge && totalAlerts > 0) {
+                alertsBadge.textContent = totalAlerts;
+                alertsBadge.style.display = 'inline';
+                // 긴급 경고가 있으면 빨간색
+                if (insightsData.details && insightsData.details.high_severity_alerts > 0) {
+                    alertsBadge.style.background = '#ef5350';
+                } else {
+                    alertsBadge.style.background = '#ff9800';
+                }
+            }
+
+            if (alertsCountBadge) {
+                alertsCountBadge.textContent = totalAlerts > 0 ? `(${totalAlerts}건)` : '';
+            }
+
+            // 추천 배지
+            const recommendationsCountBadge = document.getElementById('recommendationsCountBadge');
+            let totalRecs = 0;
+            if (insightsData.details) {
+                totalRecs = insightsData.details.total_recommendations || 0;
+            } else if (insightsData.segments && insightsData.segments.recommendations) {
+                totalRecs = insightsData.segments.recommendations.length;
+            }
+
+            if (recommendationsCountBadge) {
+                recommendationsCountBadge.textContent = totalRecs > 0 ? `(${totalRecs}건)` : '';
+            }
         }
 
         // Overall 인사이트 업데이트
@@ -3873,6 +4125,8 @@
                     // 선택된 탭 표시
                     if (targetTab === 'alerts') {
                         document.getElementById('alertsTab').style.display = 'block';
+                    } else if (targetTab === 'opportunities') {
+                        document.getElementById('opportunitiesTab').style.display = 'block';
                     } else if (targetTab === 'trends') {
                         document.getElementById('trendsTab').style.display = 'block';
                     }
