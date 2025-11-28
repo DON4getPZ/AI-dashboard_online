@@ -251,13 +251,6 @@
   ],
   "platform_performance": [
     {
-      "platform": "PC",
-      "cost": 1169058.0,
-      "conversions": 32.0,
-      "revenue": 5349900.0,
-      "roas": 457.6248569360972
-    },
-    {
       "platform": "Uncategorized",
       "cost": 1.0,
       "conversions": 10.0,
@@ -280,10 +273,10 @@
     },
     {
       "platform": "웹",
-      "cost": 272806.0,
-      "conversions": 32.0,
-      "revenue": 996200.0,
-      "roas": 365.16792152665266
+      "cost": 1441864.0,
+      "conversions": 64.0,
+      "revenue": 6346100.0,
+      "roas": 440.13166290302
     }
   ],
   "brand_performance": [
@@ -2790,20 +2783,12 @@
         "total_forecast_cost": 4617249.529021572
       },
       {
-        "platform": "PC",
-        "total_30day_forecast": 3299353.716089307,
-        "avg_daily_forecast": 109978.45720297689,
-        "avg_forecast_roas": 624.7409549922374,
-        "avg_forecast_cpa": 14474.19503248666,
-        "total_forecast_cost": 582123.6872678834
-      },
-      {
         "platform": "웹",
-        "total_30day_forecast": 1248741.3785995138,
-        "avg_daily_forecast": 41624.712619983795,
-        "avg_forecast_roas": 3110.3063949015727,
-        "avg_forecast_cpa": 1336.0203937761123,
-        "total_forecast_cost": 49211.11754665698
+        "total_30day_forecast": 5803000.458570421,
+        "avg_daily_forecast": 193433.34861901402,
+        "avg_forecast_roas": 1336.047690424208,
+        "avg_forecast_cpa": 12522.851361494306,
+        "total_forecast_cost": 470477.2865316368
       }
     ],
     "by_promotion": [
@@ -3120,7 +3105,7 @@
       "based_on": "prophet_forecast"
     }
   ],
-  "generated_at": "2025-11-27T18:56:14.510859",
+  "generated_at": "2025-11-28T11:23:47.463551",
   "overall": {
     "current_period": {
       "start_date": "2024-09-25",

@@ -90,7 +90,9 @@ DEVICE_MAP = {
 PLATFORM_MAP = {
     'Mobile app': '앱',
     'Mobile web': '모바일',
-    'Desktop': '웹'
+    'Desktop': '웹',
+    'PC': '웹',
+    'pc': '웹'
 }
 
 def apply_gender_mapping(df):

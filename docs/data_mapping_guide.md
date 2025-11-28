@@ -160,15 +160,19 @@ df['기기유형_통합'] = df['기기유형'].replace(device_map)
 |--------|----------|------|
 | **앱** | `Mobile app` | 모바일 앱 |
 | **모바일** | `Mobile web` | 모바일 브라우저 |
-| **웹** | `Desktop` | PC 브라우저 |
+| **웹** | `Desktop`, `PC`, `pc` | PC 브라우저 |
 
 ### 4.3 코드 예시
 
 ```python
 platform_map = {
+    # 모바일
     'Mobile app': '앱',
     'Mobile web': '모바일',
+     # 웹
     'Desktop': '웹'
+    'PC': '웹'
+    'pc': '웹'
 }
 
 df['기기플랫폼_통합'] = df['기기플랫폼'].replace(platform_map)
