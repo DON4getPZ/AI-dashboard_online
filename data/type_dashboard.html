@@ -469,6 +469,25 @@
             border-color: var(--primary-main);
         }
 
+        /* 기간 필터 적용/미적용 탭 스타일 */
+        .decision-tool-tab-btn.period-filter-disabled {
+            background: #f5f5f5;
+            border-color: #bdbdbd;
+            border-style: dashed;
+        }
+
+        .decision-tool-tab-btn.period-filter-disabled:hover {
+            background: #eeeeee;
+            border-color: #9e9e9e;
+        }
+
+        .decision-tool-tab-btn.period-filter-disabled.active {
+            background: #78909c;
+            color: white;
+            border-color: #78909c;
+            border-style: solid;
+        }
+
         /* 탭 컨텐츠 스타일 */
         .trend-analysis-tab-content {
             display: none;
@@ -1177,26 +1196,64 @@
                             </div>
                         </div>
 
+                        <!-- 기간 필터 버튼 -->
+                        <div style="margin-bottom: 12px; padding: 12px 16px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 10px; border: 1px solid #dee2e6;">
+                            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                <span style="font-size: 12px; font-weight: 600; color: #495057;">📅 분석 기간:</span>
+                                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                    <button class="period-filter-btn active" data-period="full" onclick="switchPeriod('full')"
+                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #1a73e8; color: white;">
+                                        전체 기간
+                                    </button>
+                                    <button class="period-filter-btn" data-period="180d" onclick="switchPeriod('180d')"
+                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                                        최근 180일
+                                    </button>
+                                    <button class="period-filter-btn" data-period="90d" onclick="switchPeriod('90d')"
+                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                                        최근 90일
+                                    </button>
+                                    <button class="period-filter-btn" data-period="30d" onclick="switchPeriod('30d')"
+                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                                        최근 30일
+                                    </button>
+                                </div>
+                                <span id="periodDateRange" style="font-size: 11px; color: #6c757d; margin-left: auto;"></span>
+                            </div>
+                        </div>
+
                         <!-- 메인 탭 버튼 (컴팩트) -->
-                        <div class="view-type-section" style="margin-bottom: 16px; flex-wrap: wrap; gap: 6px;">
-                            <button class="view-btn decision-tool-tab-btn active" data-tab="summary" style="padding: 8px 14px; font-size: 12px;">
+                        <div class="view-type-section" style="margin-bottom: 16px; flex-wrap: wrap; gap: 6px; align-items: center;">
+                            <button class="view-btn decision-tool-tab-btn period-filter-enabled active" data-tab="summary" style="padding: 8px 14px; font-size: 12px;" title="선택한 기간 필터가 적용됩니다">
                                 📋 오늘의 요약
                             </button>
-                            <button class="view-btn decision-tool-tab-btn" data-tab="opportunity" style="padding: 8px 14px; font-size: 12px;">
+                            <button class="view-btn decision-tool-tab-btn period-filter-enabled" data-tab="opportunity" style="padding: 8px 14px; font-size: 12px;" title="선택한 기간 필터가 적용됩니다">
                                 🎯 성과 기회
                             </button>
-                            <button class="view-btn decision-tool-tab-btn" data-tab="warning" style="padding: 8px 14px; font-size: 12px;">
+                            <button class="view-btn decision-tool-tab-btn period-filter-enabled" data-tab="warning" style="padding: 8px 14px; font-size: 12px;" title="선택한 기간 필터가 적용됩니다">
                                 ⚠️ 주의 필요
                             </button>
-                            <button class="view-btn decision-tool-tab-btn" data-tab="targeting" style="padding: 8px 14px; font-size: 12px;">
+                            <button class="view-btn decision-tool-tab-btn period-filter-enabled" data-tab="targeting" style="padding: 8px 14px; font-size: 12px;" title="선택한 기간 필터가 적용됩니다">
                                 👥 타겟 분석
                             </button>
-                            <button class="view-btn decision-tool-tab-btn" data-tab="dayAnalysis" style="padding: 8px 14px; font-size: 12px;">
-                                📊 계절성 분석
-                            </button>
-                            <button class="view-btn decision-tool-tab-btn" data-tab="forecast" style="padding: 8px 14px; font-size: 12px;">
+                            <button class="view-btn decision-tool-tab-btn period-filter-enabled" data-tab="forecast" style="padding: 8px 14px; font-size: 12px;" title="선택한 기간 필터가 적용됩니다">
                                 🔮 AI 예측
                             </button>
+                            <button class="view-btn decision-tool-tab-btn period-filter-disabled" data-tab="dayAnalysis" style="padding: 8px 14px; font-size: 12px; position: relative;" title="전체 기간 데이터만 사용됩니다 (기간 필터 미적용)">
+                                📊 계절성 분석
+                                <span style="position: absolute; top: -6px; right: -6px; background: #78909c; color: white; font-size: 8px; padding: 2px 4px; border-radius: 8px; font-weight: 600;">전체</span>
+                            </button>
+                            <!-- 범례 -->
+                            <div style="margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 10px; color: #6c757d;">
+                                <span style="display: flex; align-items: center; gap: 4px;">
+                                    <span style="width: 8px; height: 8px; background: #1a73e8; border-radius: 2px;"></span>
+                                    기간 필터 적용
+                                </span>
+                                <span style="display: flex; align-items: center; gap: 4px;">
+                                    <span style="width: 8px; height: 8px; background: #78909c; border-radius: 2px;"></span>
+                                    전체 기간 고정
+                                </span>
+                            </div>
                         </div>
 
                         <!-- 탭 0: 오늘의 요약 (새로운 메인 탭) -->
@@ -1229,18 +1286,25 @@
 
                         <!-- 탭 4: 요일별 분석 -->
                         <div class="decision-tool-tab-content" id="dayAnalysisTab" style="display: none;">
+                            <!-- 전체 기간 안내 배너 -->
+                            <div style="display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: linear-gradient(135deg, #eceff1 0%, #cfd8dc 100%); border-bottom: 1px solid #b0bec5;">
+                                <span style="font-size: 14px;">🔒</span>
+                                <span style="font-size: 11px; color: #546e7a; font-weight: 500;">
+                                    이 탭은 <strong style="color: #37474f;">전체 기간</strong> 데이터를 사용합니다. 장기 트렌드 분석을 위해 기간 필터가 적용되지 않습니다.
+                                </span>
+                            </div>
                             <!-- 서브탭 버튼 -->
                             <div style="display: flex; flex-wrap: wrap; gap: 8px; padding: 16px; background: #f8f9fa; border-bottom: 1px solid #e9ecef;">
                                 <button class="day-analysis-subtab active" data-day-tab="quarterlyTrend"
-                                        style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: none; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #1a73e8; color: white;">
+                                        style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: none; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #78909c; color: white;">
                                     📈 분기별 추이
                                 </button>
                                 <button class="day-analysis-subtab" data-day-tab="dayConversion"
-                                        style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                                        style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #b0bec5; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #546e7a;">
                                     📅 요일별 분석
                                 </button>
                                 <button class="day-analysis-subtab" data-day-tab="channelDay"
-                                        style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                                        style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: 1px solid #b0bec5; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #546e7a;">
                                     📊 채널별 요일
                                 </button>
                             </div>
@@ -3333,6 +3397,24 @@
         let insightsData = null;
         let dailyData = null;
         let dimensionData = null;
+        let currentPeriod = 'full';  // 기간 필터: 'full', '180d', '90d', '30d'
+
+        // 현재 선택된 기간의 데이터 반환
+        function getPeriodData() {
+            if (!insightsData || !insightsData.by_period) {
+                return insightsData;  // 이전 구조 호환
+            }
+            return insightsData.by_period[currentPeriod] || insightsData.by_period['full'];
+        }
+
+        // 분기별 추이 데이터 (전체 기간만 사용)
+        function getSeasonalityData() {
+            if (!insightsData) return null;
+            return insightsData.seasonality || {
+                seasonality_analysis: getSeasonalityData().seasonality_analysis,
+                seasonality_insights: getSeasonalityData().seasonality_insights
+            };
+        }
         let currentTimeseriesPeriod = 'daily';
         let currentTimeseriesMetric = 'roas';
         let timeseriesFilters = {
@@ -3575,14 +3657,16 @@
 
         // 기간 정보 업데이트
         function updatePeriodInfo() {
-            const period = insightsData.summary.analysis_period;
+            const periodData = getPeriodData();
+            const period = periodData.summary.analysis_period;
             document.getElementById('period-info').textContent =
                 `분석 기간: ${period.start_date} ~ ${period.end_date} (${period.total_days}일)`;
         }
 
         // KPI 카드 렌더링
         function renderKPICards() {
-            const overall = insightsData.overall;
+            const periodData = getPeriodData();
+            const overall = periodData.overall;
 
             // adsetDimensionData(dimension_type1_campaign_adset.csv)에서 KPI 합계 계산
             let totalCost = 0;
@@ -3701,6 +3785,51 @@
             initDecisionToolTabs();
             initDecisionTooltips();
             initCardHoverTooltips();
+            updatePeriodDateRange();
+        }
+
+        // 기간 전환 함수
+        function switchPeriod(period) {
+            currentPeriod = period;
+
+            // 버튼 스타일 업데이트
+            document.querySelectorAll('.period-filter-btn').forEach(btn => {
+                if (btn.dataset.period === period) {
+                    btn.style.background = '#1a73e8';
+                    btn.style.color = 'white';
+                    btn.style.borderColor = '#1a73e8';
+                    btn.classList.add('active');
+                } else {
+                    btn.style.background = 'white';
+                    btn.style.color = '#495057';
+                    btn.style.borderColor = '#dee2e6';
+                    btn.classList.remove('active');
+                }
+            });
+
+            // 날짜 범위 표시 업데이트
+            updatePeriodDateRange();
+
+            // 모든 탭 다시 렌더링 (분기별 추이 제외)
+            renderSummaryTab();
+            renderOpportunityTab();
+            renderWarningTab();
+            renderTargetingTab();
+            renderForecastTab();
+            renderBudgetGuideTab();
+            // 계절성 분석은 전체 기간 데이터만 사용하므로 다시 렌더링하지 않음
+        }
+
+        // 선택된 기간의 날짜 범위 표시
+        function updatePeriodDateRange() {
+            const periodData = getPeriodData();
+            if (periodData && periodData.summary && periodData.summary.analysis_period) {
+                const ap = periodData.summary.analysis_period;
+                const dateRangeEl = document.getElementById('periodDateRange');
+                if (dateRangeEl) {
+                    dateRangeEl.textContent = `${ap.start_date} ~ ${ap.end_date} (${ap.total_days}일)`;
+                }
+            }
         }
 
         // 툴팁 초기화
@@ -3854,13 +3983,14 @@
 
         // 탭 0: 오늘의 요약 (새로운 메인 탭)
         function renderSummaryTab() {
-            const summary = insightsData.summary || {};
-            const summaryCard = insightsData.summary_card || null;
-            const topRecommendations = insightsData.top_recommendations || [];
-            const topCategories = insightsData.top_categories || [];
-            const productPerformance = insightsData.product_performance || [];
-            const genderData = (insightsData.gender_performance || []).filter(g => isValidGender(g.gender));
-            const timeseries = insightsData.timeseries || {};
+            const periodData = getPeriodData();
+            const summary = periodData.summary || {};
+            const summaryCard = periodData.summary_card || null;
+            const topRecommendations = periodData.top_recommendations || [];
+            const topCategories = periodData.top_categories || [];
+            const productPerformance = periodData.product_performance || [];
+            const genderData = (periodData.gender_performance || []).filter(g => isValidGender(g.gender));
+            const timeseries = periodData.timeseries || {};
 
             const avgRoas = summary.overall_roas || 0;
             const avgCpa = summary.overall_cpa || 0;
@@ -4269,10 +4399,11 @@
 
         // 탭 1: 성과 기회 분석 (컴팩트 + 스토리텔링)
         function renderOpportunityTab() {
-            const topCategories = insightsData.top_categories || [];
-            const summary = insightsData.summary || {};
-            const productPerformance = insightsData.product_performance || [];
-            const topAdsets = insightsData.top_adsets || [];
+            const periodData = getPeriodData();
+            const topCategories = periodData.top_categories || [];
+            const summary = periodData.summary || {};
+            const productPerformance = periodData.product_performance || [];
+            const topAdsets = periodData.top_adsets || [];
 
             const avgCpa = summary.overall_cpa || 0;
             const avgRoas = summary.overall_roas || 0;
@@ -4483,11 +4614,12 @@
 
         // 탭 2: 예산 투자 가이드 (Compact + ROAS/CPA 인사이트)
         function renderBudgetGuideTab() {
-            const recommendations = insightsData.recommendations || [];
-            const forecast = insightsData.prophet_forecast || null;
-            const topCategories = insightsData.top_categories || [];
-            const productPerformance = insightsData.product_performance || [];
-            const summary = insightsData.summary || {};
+            const periodData = getPeriodData();
+            const recommendations = periodData.recommendations || [];
+            const forecast = periodData.prophet_forecast || null;
+            const topCategories = periodData.top_categories || [];
+            const productPerformance = periodData.product_performance || [];
+            const summary = periodData.summary || {};
 
             let html = '';
             const avgCpa = summary.overall_cpa || 0;
@@ -4642,11 +4774,12 @@
 
         // 탭 2: 주의 필요 (경고) - 사용자 친화적 버전
         function renderWarningTab() {
-            const allAlerts = insightsData.alerts || [];
+            const periodData = getPeriodData();
+            const allAlerts = periodData.alerts || [];
             const warnings = allAlerts.filter(a => a.severity === 'warning' || a.severity === 'high');
-            const topCategories = insightsData.top_categories || [];
-            const summary = insightsData.summary || {};
-            const productPerformance = insightsData.product_performance || [];
+            const topCategories = periodData.top_categories || [];
+            const summary = periodData.summary || {};
+            const productPerformance = periodData.product_performance || [];
 
             const avgCpa = summary.overall_cpa || 0;
             const highCpaCategories = topCategories.filter(cat => cat.cpa > avgCpa * 1.5);
@@ -5033,17 +5166,18 @@
 
         // 탭 3: 타겟 분석 - 사용자 친화적 버전
         function renderTargetingTab() {
-            const genderData = (insightsData.gender_performance || []).filter(g => isValidGender(g.gender));
-            const platformData = (insightsData.platform_performance || []).filter(p =>
+            const periodData = getPeriodData();
+            const genderData = (periodData.gender_performance || []).filter(g => isValidGender(g.gender));
+            const platformData = (periodData.platform_performance || []).filter(p =>
                 p.platform && p.platform.toLowerCase() !== 'uncategorized'
             );
-            const deviceData = (insightsData.device_performance || []).filter(d =>
+            const deviceData = (periodData.device_performance || []).filter(d =>
                 d.device && d.device.toLowerCase() !== 'uncategorized' && d.device.toLowerCase() !== 'unknown'
             );
-            const ageGenderData = (insightsData.age_gender_combinations || []).filter(item =>
+            const ageGenderData = (periodData.age_gender_combinations || []).filter(item =>
                 isValidGender(item.gender) && isValidAge(item.age)
             );
-            const summary = insightsData.summary || {};
+            const summary = periodData.summary || {};
             const avgCpa = summary.overall_cpa || 0;
 
             let html = '';
@@ -5303,7 +5437,8 @@
 
         // 탭 5: AI 예측 (Prophet Forecast)
         function renderForecastTab() {
-            const forecast = insightsData.prophet_forecast || null;
+            const periodData = getPeriodData();
+            const forecast = periodData.prophet_forecast || null;
             let html = '';
 
             // forecast 데이터가 없어도 insightsData 기반 AI 분석 표시
@@ -5324,9 +5459,9 @@
                     </div>
                 `;
 
-                // 핵심 성과 요약 (insightsData 기반)
-                if (insightsData && insightsData.summary) {
-                    const summary = insightsData.summary;
+                // 핵심 성과 요약 (periodData 기반)
+                if (periodData && periodData.summary) {
+                    const summary = periodData.summary;
                     const overallRoas = summary.overall_roas || 0;
                     const overallCpa = summary.overall_cpa || 0;
                     const isPositiveRoas = overallRoas >= 100;
@@ -5355,8 +5490,8 @@
                 html += `<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">`;
 
                 // 최적 채널
-                if (insightsData && insightsData.top_categories && insightsData.top_categories.length > 0) {
-                    const sorted = [...insightsData.top_categories].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                if (periodData && periodData.top_categories && periodData.top_categories.length > 0) {
+                    const sorted = [...periodData.top_categories].sort((a, b) => (b.roas || 0) - (a.roas || 0));
                     const top = sorted[0];
                     if (top) {
                         html += `
@@ -5370,8 +5505,8 @@
                 }
 
                 // 최적 성별
-                if (insightsData && insightsData.gender_performance && insightsData.gender_performance.length > 0) {
-                    const validGenders = insightsData.gender_performance.filter(function(g) { return g.cost > 0 && isValidGender(g.gender); });
+                if (periodData && periodData.gender_performance && periodData.gender_performance.length > 0) {
+                    const validGenders = periodData.gender_performance.filter(function(g) { return g.cost > 0 && isValidGender(g.gender); });
                     if (validGenders.length > 0) {
                         const sorted = [...validGenders].sort((a, b) => (b.roas || 0) - (a.roas || 0));
                         const top = sorted[0];
@@ -5389,8 +5524,8 @@
                 }
 
                 // 최적 상품
-                if (insightsData && insightsData.product_performance && insightsData.product_performance.length > 0) {
-                    const sorted = [...insightsData.product_performance].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                if (periodData && periodData.product_performance && periodData.product_performance.length > 0) {
+                    const sorted = [...periodData.product_performance].sort((a, b) => (b.roas || 0) - (a.roas || 0));
                     const top = sorted[0];
                     if (top) {
                         html += `
@@ -5405,8 +5540,8 @@
                 html += '</div>';
 
                 // 채널별 ROAS 순위 (컴팩트 테이블)
-                if (insightsData && insightsData.top_categories && insightsData.top_categories.length > 1) {
-                    const sorted = [...insightsData.top_categories].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                if (periodData && periodData.top_categories && periodData.top_categories.length > 1) {
+                    const sorted = [...periodData.top_categories].sort((a, b) => (b.roas || 0) - (a.roas || 0));
                     html += `
                         <div style="margin-bottom: 12px; padding: 12px; background: white; border: 1px solid var(--grey-200); border-radius: 10px;">
                             <div style="font-size: 11px; font-weight: 700; color: #333; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
@@ -5553,8 +5688,8 @@
                 const avgRoas = overall.avg_forecast_roas || 0;
                 const avgCpa = overall.avg_forecast_cpa || 0;
                 const isPositiveRoas = avgRoas >= 100;
-                // 예측 비용: forecast에서 가져오거나 insightsData에서 계산
-                const forecastCost = overall.total_forecast_cost || overall.avg_forecast_cost || (insightsData && insightsData.summary ? insightsData.summary.total_cost / 12 : 0);
+                // 예측 비용: forecast에서 가져오거나 periodData에서 계산
+                const forecastCost = overall.total_forecast_cost || overall.avg_forecast_cost || (periodData && periodData.summary ? periodData.summary.total_cost / 12 : 0);
 
                 html += `
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px;">
@@ -5796,14 +5931,15 @@
             }
         }
 
-        // AI가 발견한 기회 데이터 생성 (5개) - insightsData 기반
+        // AI가 발견한 기회 데이터 생성 (5개) - periodData 기반
         function generateAIOpportunities(forecast) {
             const opportunities = [];
+            const periodData = getPeriodData();
 
             try {
                 // 1. 최고 성과 플랫폼 기회
-                if (insightsData && insightsData.platform_performance && insightsData.platform_performance.length > 0) {
-                    const validPlatforms = insightsData.platform_performance.filter(p => p.cost > 0 && p.platform !== 'Uncategorized');
+                if (periodData && periodData.platform_performance && periodData.platform_performance.length > 0) {
+                    const validPlatforms = periodData.platform_performance.filter(p => p.cost > 0 && p.platform !== 'Uncategorized');
                     if (validPlatforms.length > 0) {
                         const sorted = [...validPlatforms].sort((a, b) => (b.roas || 0) - (a.roas || 0));
                         const top = sorted[0];
@@ -5819,8 +5955,8 @@
                 }
 
                 // 2. 고성과 채널 기회
-                if (insightsData && insightsData.top_categories && insightsData.top_categories.length > 0) {
-                    const sorted = [...insightsData.top_categories].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                if (periodData && periodData.top_categories && periodData.top_categories.length > 0) {
+                    const sorted = [...periodData.top_categories].sort((a, b) => (b.roas || 0) - (a.roas || 0));
                     const top = sorted[0];
                     if (top && (top.roas || 0) >= 100) {
                         opportunities.push({
@@ -5833,8 +5969,8 @@
                 }
 
                 // 3. 최적 성별 기회
-                if (insightsData && insightsData.gender_performance && insightsData.gender_performance.length > 0) {
-                    const validGenders = insightsData.gender_performance.filter(function(g) { return g.cost > 0 && isValidGender(g.gender); });
+                if (periodData && periodData.gender_performance && periodData.gender_performance.length > 0) {
+                    const validGenders = periodData.gender_performance.filter(function(g) { return g.cost > 0 && isValidGender(g.gender); });
                     if (validGenders.length > 0) {
                         const sorted = [...validGenders].sort((a, b) => (b.roas || 0) - (a.roas || 0));
                         const top = sorted[0];
@@ -5851,8 +5987,8 @@
                 }
 
                 // 4. 고성과 상품 기회
-                if (insightsData && insightsData.product_performance && insightsData.product_performance.length > 0) {
-                    const sorted = [...insightsData.product_performance].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                if (periodData && periodData.product_performance && periodData.product_performance.length > 0) {
+                    const sorted = [...periodData.product_performance].sort((a, b) => (b.roas || 0) - (a.roas || 0));
                     const top = sorted[0];
                     if (top && (top.roas || 0) >= 100) {
                         opportunities.push({
@@ -5865,8 +6001,8 @@
                 }
 
                 // 5. 전체 성과 기회
-                if (insightsData && insightsData.summary) {
-                    const overallRoas = insightsData.summary.overall_roas || 0;
+                if (periodData && periodData.summary) {
+                    const overallRoas = periodData.summary.overall_roas || 0;
                     if (overallRoas >= 100) {
                         opportunities.push({
                             icon: '📈',
@@ -5898,14 +6034,15 @@
             return opportunities.slice(0, 5);
         }
 
-        // AI 추천 액션 데이터 생성 (5개) - insightsData 기반
+        // AI 추천 액션 데이터 생성 (5개) - periodData 기반
         function generateAIActions(forecast) {
             const actions = [];
+            const periodData = getPeriodData();
 
             try {
                 // 1. 저효율 상품 개선 액션
-                if (insightsData && insightsData.product_performance && insightsData.product_performance.length > 0) {
-                    const sorted = [...insightsData.product_performance].sort((a, b) => (a.roas || 0) - (b.roas || 0));
+                if (periodData && periodData.product_performance && periodData.product_performance.length > 0) {
+                    const sorted = [...periodData.product_performance].sort((a, b) => (a.roas || 0) - (b.roas || 0));
                     const worst = sorted[0];
                     if (worst && (worst.roas || 0) < 100) {
                         actions.push({
@@ -5919,8 +6056,8 @@
                 }
 
                 // 2. 고효율 플랫폼 예산 확대 액션
-                if (insightsData && insightsData.platform_performance && insightsData.platform_performance.length > 0) {
-                    const validPlatforms = insightsData.platform_performance.filter(function(p) { return p.cost > 0 && p.platform !== 'Uncategorized'; });
+                if (periodData && periodData.platform_performance && periodData.platform_performance.length > 0) {
+                    const validPlatforms = periodData.platform_performance.filter(function(p) { return p.cost > 0 && p.platform !== 'Uncategorized'; });
                     if (validPlatforms.length > 0) {
                         const sorted = [...validPlatforms].sort((a, b) => (b.roas || 0) - (a.roas || 0));
                         const top = sorted[0];
@@ -5937,8 +6074,8 @@
                 }
 
                 // 3. 고효율 채널 집중 액션
-                if (insightsData && insightsData.top_categories && insightsData.top_categories.length > 0) {
-                    const sorted = [...insightsData.top_categories].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                if (periodData && periodData.top_categories && periodData.top_categories.length > 0) {
+                    const sorted = [...periodData.top_categories].sort((a, b) => (b.roas || 0) - (a.roas || 0));
                     const top = sorted[0];
                     if (top) {
                         actions.push({
@@ -5952,8 +6089,8 @@
                 }
 
                 // 4. 저효율 플랫폼 개선 또는 축소 액션
-                if (insightsData && insightsData.platform_performance && insightsData.platform_performance.length > 1) {
-                    const validPlatforms = insightsData.platform_performance.filter(function(p) { return p.cost > 10000 && p.platform !== 'Uncategorized'; });
+                if (periodData && periodData.platform_performance && periodData.platform_performance.length > 1) {
+                    const validPlatforms = periodData.platform_performance.filter(function(p) { return p.cost > 10000 && p.platform !== 'Uncategorized'; });
                     if (validPlatforms.length > 0) {
                         const sorted = [...validPlatforms].sort((a, b) => (a.roas || 0) - (b.roas || 0));
                         const worst = sorted[0];
@@ -5970,8 +6107,8 @@
                 }
 
                 // 5. 전체 전략 액션
-                if (insightsData && insightsData.summary) {
-                    const avgCpa = insightsData.summary.overall_cpa || 0;
+                if (periodData && periodData.summary) {
+                    const avgCpa = periodData.summary.overall_cpa || 0;
                     actions.push({
                         icon: '📋',
                         title: 'CPA 기반 입찰 전략 최적화',
@@ -6195,13 +6332,13 @@
         function initDayAnalysisSubtabs() {
             document.querySelectorAll('.day-analysis-subtab').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    // 버튼 스타일 변경
+                    // 버튼 스타일 변경 (회색 테마 - 전체 기간 고정 탭)
                     document.querySelectorAll('.day-analysis-subtab').forEach(b => {
                         b.style.background = 'white';
-                        b.style.color = '#495057';
-                        b.style.border = '1px solid #dee2e6';
+                        b.style.color = '#546e7a';
+                        b.style.border = '1px solid #b0bec5';
                     });
-                    this.style.background = '#1a73e8';
+                    this.style.background = '#78909c';
                     this.style.color = 'white';
                     this.style.border = 'none';
 
@@ -6242,8 +6379,9 @@
 
         // 성별 차트
         function renderGenderChart() {
+            const periodData = getPeriodData();
             // 알수없음 필터링 및 비용 > 0 필터 적용
-            const genders = insightsData.gender_performance
+            const genders = periodData.gender_performance
                 .filter(g => g.cost > 0 && isValidGender(g.gender))
                 .map(g => ({
                     ...g,
@@ -6294,7 +6432,8 @@
 
         // 플랫폼 차트
         function renderPlatformChart() {
-            const platforms = insightsData.platform_performance;
+            const periodData = getPeriodData();
+            const platforms = periodData.platform_performance;
 
             const ctx = document.getElementById('platformChart').getContext('2d');
             new Chart(ctx, {
@@ -6368,7 +6507,8 @@
 
         // 자연어 인사이트 생성
         function generateBrandInsight() {
-            const brands = insightsData.brand_performance;
+            const periodData = getPeriodData();
+            const brands = periodData.brand_performance;
             if (!brands || brands.length === 0) return;
 
             const sorted = [...brands].sort((a, b) => b.roas - a.roas);
@@ -6396,7 +6536,8 @@
         }
 
         function generateProductInsight() {
-            const products = insightsData.product_performance;
+            const periodData = getPeriodData();
+            const products = periodData.product_performance;
             if (!products || products.length === 0) return;
 
             const sorted = [...products].sort((a, b) => b.roas - a.roas);
@@ -6427,7 +6568,8 @@
         }
 
         function generatePromotionInsight() {
-            const promotions = insightsData.promotion_performance;
+            const periodData = getPeriodData();
+            const promotions = periodData.promotion_performance;
             if (!promotions || promotions.length === 0) return;
 
             const sorted = [...promotions].sort((a, b) => b.roas - a.roas);
@@ -7065,9 +7207,10 @@
 
         // 성별/연령 리타겟팅 테이블 렌더링
         function renderAgeGenderRetargetTable() {
-            const retargeting = insightsData.retargeting_analysis || {};
+            const periodData = getPeriodData();
+            const retargeting = periodData.retargeting_analysis || {};
             const data = retargeting.by_age_gender || [];
-            const insights = insightsData.retargeting_insights || [];
+            const insights = periodData.retargeting_insights || [];
             const tbody = document.getElementById('ageGenderRetargetTableBody');
 
             if (!tbody || data.length === 0) {
@@ -7118,9 +7261,10 @@
 
         // 기기별 리타겟팅 테이블 렌더링
         function renderDeviceRetargetTable() {
-            const retargeting = insightsData.retargeting_analysis || {};
+            const periodData = getPeriodData();
+            const retargeting = periodData.retargeting_analysis || {};
             const data = retargeting.by_device || [];
-            const insights = insightsData.retargeting_insights || [];
+            const insights = periodData.retargeting_insights || [];
             const tbody = document.getElementById('deviceRetargetTableBody');
 
             if (!tbody || data.length === 0) {
@@ -7171,9 +7315,10 @@
 
         // 플랫폼별 리타겟팅 테이블 렌더링
         function renderPlatformRetargetTable() {
-            const retargeting = insightsData.retargeting_analysis || {};
+            const periodData = getPeriodData();
+            const retargeting = periodData.retargeting_analysis || {};
             const data = retargeting.by_platform || [];
-            const insights = insightsData.retargeting_insights || [];
+            const insights = periodData.retargeting_insights || [];
             const tbody = document.getElementById('platformRetargetTableBody');
 
             if (!tbody || data.length === 0) {
@@ -7223,9 +7368,10 @@
 
         // 노출기기별 리타겟팅 테이블 렌더링
         function renderDevicePlatformRetargetTable() {
-            const retargeting = insightsData.retargeting_analysis || {};
+            const periodData = getPeriodData();
+            const retargeting = periodData.retargeting_analysis || {};
             const data = retargeting.by_device_platform || [];
-            const insights = insightsData.retargeting_insights || [];
+            const insights = periodData.retargeting_insights || [];
             const tbody = document.getElementById('devicePlatformRetargetTableBody');
 
             if (!tbody || data.length === 0) {
@@ -7289,9 +7435,9 @@
 
         // 분기별 추이 차트 렌더링
         function renderQuarterlyTrendChart() {
-            const seasonality = insightsData.seasonality_analysis || {};
+            const seasonality = getSeasonalityData().seasonality_analysis || {};
             const quarterlyData = seasonality.quarterly_overall || [];
-            const insights = insightsData.seasonality_insights || [];
+            const insights = getSeasonalityData().seasonality_insights || [];
 
             if (quarterlyData.length === 0) return;
 
@@ -7549,7 +7695,7 @@
 
         // 분기별 테이블 렌더링
         function renderQuarterlyTable() {
-            const seasonality = insightsData.seasonality_analysis || {};
+            const seasonality = getSeasonalityData().seasonality_analysis || {};
             const quarterlyData = seasonality.quarterly_overall || [];
             const tbody = document.getElementById('quarterlyTableBody');
 
@@ -7619,9 +7765,9 @@
 
         // 요일별 전환 테이블 렌더링
         function renderSeasonalityTable() {
-            const seasonality = insightsData.seasonality_analysis || {};
+            const seasonality = getSeasonalityData().seasonality_analysis || {};
             const data = seasonality.overall || [];
-            const insights = insightsData.seasonality_insights || [];
+            const insights = getSeasonalityData().seasonality_insights || [];
             const tbody = document.getElementById('seasonalityTableBody');
 
             if (!tbody || data.length === 0) {
@@ -7719,7 +7865,7 @@
 
         // 채널별 KPI 카드 렌더링
         function renderChannelDayKpiCards() {
-            const seasonality = insightsData.seasonality_analysis || {};
+            const seasonality = getSeasonalityData().seasonality_analysis || {};
             const byCategory = seasonality.by_category || {};
             const container = document.getElementById('channelDayKpiCards');
 
@@ -7798,7 +7944,7 @@
         // 채널별 요일 ROAS 비교 차트 렌더링
         let channelDayRoasChartInstance = null;
         function renderChannelDayRoasChart() {
-            const seasonality = insightsData.seasonality_analysis || {};
+            const seasonality = getSeasonalityData().seasonality_analysis || {};
             const byCategory = seasonality.by_category || {};
             const canvas = document.getElementById('channelDayRoasChart');
 
@@ -7894,7 +8040,7 @@
         let channelDaySelectorInitialized = false;
 
         function renderSeasonalityCategoryTable() {
-            const seasonality = insightsData.seasonality_analysis || {};
+            const seasonality = getSeasonalityData().seasonality_analysis || {};
             const byCategory = seasonality.by_category || {};
             const selector = document.getElementById('channelDaySelector');
             const tbody = document.getElementById('seasonalityCategoryTableBody');
@@ -7938,7 +8084,7 @@
 
         // 선택된 채널의 요일별 데이터 렌더링
         function renderChannelDayTableForCategory(category) {
-            const seasonality = insightsData.seasonality_analysis || {};
+            const seasonality = getSeasonalityData().seasonality_analysis || {};
             const byCategory = seasonality.by_category || {};
             const tbody = document.getElementById('seasonalityCategoryTableBody');
 
@@ -8002,9 +8148,9 @@
 
         // 채널별 요일 인사이트 렌더링 (강화)
         function renderChannelDayInsight() {
-            const seasonality = insightsData.seasonality_analysis || {};
+            const seasonality = getSeasonalityData().seasonality_analysis || {};
             const byCategory = seasonality.by_category || {};
-            const insights = insightsData.seasonality_insights || [];
+            const insights = getSeasonalityData().seasonality_insights || [];
             const insightText = document.getElementById('seasonalityCategoryInsightText');
 
             if (!insightText) return;
