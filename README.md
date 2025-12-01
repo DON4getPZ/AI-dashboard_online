@@ -331,6 +331,12 @@ pip install prophet
 
 ## 문제 해결
 
+### 실행 불가 문제
+```bash
+- 언어 설정 -> 기본 언어 설정-> beta. 세계 언어 지원을 위해 Unicode UTF-8 사용
+- window 10 환경은 저장 방식 LF -> CRLF 로 변경
+```
+
 ### 한글 깨짐
 ```bash
 # UTF-8 인코딩 확인 (Linux/Mac)
