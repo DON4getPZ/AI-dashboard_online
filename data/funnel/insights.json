@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-12-01T11:28:59.279802",
+  "generated_at": "2025-12-01T14:11:52.442050",
   "category": "default",
   "thresholds_used": {
     "activation_rate_warning": 50.0,
@@ -15,7 +15,7 @@
     "potential_uplift_min": 100000
   },
   "meta": {
-    "generated_at": "2025-12-01 11:28",
+    "generated_at": "2025-12-01 14:11",
     "analysis_period": "2025-02-12 ~ 2025-12-01",
     "category": "default"
   },
@@ -289,7 +289,7 @@
   "channel_strategy": {
     "status": "success",
     "avg_traffic": 2264,
-    "avg_cvr": 0.64,
+    "avg_cvr": 0.65,
     "channels": {
       "Direct": {
         "stats": {
@@ -428,11 +428,11 @@
           "revenue_formatted": "0원"
         },
         "bcg_matrix": {
-          "quadrant": "cash_cow",
-          "type": "Cash Cow (효자 채널)",
-          "icon": "👑",
-          "message": "방문자도 많고 구매도 잘해요! 우리 쇼핑몰의 기둥입니다.",
-          "action": "👉 지금 고객들에게 '세트 상품'을 추천해서 객단가를 더 높여보세요."
+          "quadrant": "money_pit",
+          "type": "Money Pit (밑 빠진 독)",
+          "icon": "💸",
+          "message": "사람만 북적이고 실속이 없어요. 헛돈 쓰고 있을 수 있습니다.",
+          "action": "👉 타겟이 너무 넓어요. '제외 키워드'를 설정해서 허수를 걸러내세요."
         }
       },
       "브런치": {
