@@ -105,13 +105,8 @@ def fetch_url_data():
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        # 워크시트 이름으로 파일명 생성 (*_url.csv 형식)
-        # 파일명에 사용할 수 없는 문자 제거
-        safe_name = worksheet_name.replace('/', '_').replace('\\', '_').replace(':', '_')
-        safe_name = safe_name.replace('*', '_').replace('?', '_').replace('"', '_')
-        safe_name = safe_name.replace('<', '_').replace('>', '_').replace('|', '_')
-
-        output_filename = f"{safe_name}_url.csv"
+        # 고정 파일명 사용 (overwrite 방식)
+        output_filename = "Creative_data.csv"
         output_path = os.path.join(output_dir, output_filename)
 
         # CSV로 저장

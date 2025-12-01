@@ -745,7 +745,7 @@ def generate_funnel_insights(category='default', ga4_file=None):
 
     # 데이터 로드
     if ga4_file is None:
-        ga4_file = GA4_DIR / '2025-11.csv'
+        ga4_file = GA4_DIR / 'GA4_data.csv'
 
     if not os.path.exists(ga4_file):
         print(f"❌ {INSUFFICIENT_DATA_MESSAGES['no_file']}")

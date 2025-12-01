@@ -103,9 +103,8 @@ def fetch_ga4_sheets_data():
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        # 현재 년-월로 파일명 생성
-        current_date = datetime.now()
-        output_filename = f"{current_date.strftime('%Y-%m')}.csv"
+        # 고정 파일명 사용 (overwrite 방식)
+        output_filename = "GA4_data.csv"
         output_path = os.path.join(output_dir, output_filename)
 
         # CSV로 저장
