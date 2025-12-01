@@ -240,11 +240,23 @@ if len(type2_data) > 0:
     # Pivot 테이블 생성 (광고세트별로)
     for adset in type2_analysis['광고세트'].unique()[:5]:  # 상위 5개만 출력
         adset_data = type2_analysis[type2_analysis['광고세트'] == adset]
-        pivot = adset_data.pivot_table(
+
+        # ROAS는 mean이 아닌, 비용/전환값을 각각 sum한 후 재계산
+        adset_agg = adset_data.groupby(['연령', '성별']).agg({
+            '비용': 'sum',
+            '전환값': 'sum'
+        }).reset_index()
+        adset_agg['ROAS'] = np.where(
+            adset_agg['비용'] > 0,
+            (adset_agg['전환값'] / adset_agg['비용']) * 100,
+            0
+        )
+
+        pivot = adset_agg.pivot_table(
             values='ROAS',
             index='연령',
             columns='성별',
-            aggfunc='mean',
+            aggfunc='first',  # 이미 집계된 값이므로 first 사용
             fill_value=0
         )
         print(f"\n[{adset}] 연령x성별 ROAS:")

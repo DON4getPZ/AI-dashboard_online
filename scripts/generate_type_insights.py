@@ -15,8 +15,42 @@ import pandas as pd
 import numpy as np
 import json
 import re
-from datetime import datetime
+import argparse
+from datetime import datetime, timedelta
 from pathlib import Path
+
+# ============================================================================
+# 명령줄 인자 파싱
+# ============================================================================
+parser = argparse.ArgumentParser(description='Type 분석 기반 인사이트 생성')
+parser.add_argument('--days', type=int, default=0,
+                    help='최근 N일 데이터만 사용 (0=전체기간, 30/90/180 등)')
+args = parser.parse_args()
+
+def filter_by_days(df, days, date_column='일'):
+    """
+    최근 N일 데이터만 필터링
+
+    Args:
+        df: DataFrame
+        days: 필터링할 일수 (0이면 전체 데이터 반환)
+        date_column: 날짜 컬럼명
+
+    Returns:
+        필터링된 DataFrame
+    """
+    if days <= 0:
+        return df
+
+    if date_column not in df.columns:
+        return df
+
+    df_copy = df.copy()
+    df_copy[date_column] = pd.to_datetime(df_copy[date_column])
+    max_date = df_copy[date_column].max()
+    cutoff_date = max_date - timedelta(days=days)
+
+    return df_copy[df_copy[date_column] >= cutoff_date].copy()
 
 # ============================================================================
 # 분석 임계값 설정 (업종에 맞게 튜닝 가능)
@@ -287,7 +321,34 @@ for key, filename in dimension_files.items():
         dimensions[key] = pd.read_csv(file_path)
         print(f"✓ {filename} 로드 완료")
 
-# Prophet 예측 파일들 로드
+# ============================================================================
+# 날짜 필터링 적용 (--days 파라미터)
+# 주의: 분기별 추이 분석은 prophet_forecasts['seasonality']를 사용하므로 필터링 제외
+# ============================================================================
+if args.days > 0:
+    print(f"\n⏰ 최근 {args.days}일 데이터로 필터링 적용 중...")
+
+    # daily_summary 필터링
+    original_daily_count = len(daily_summary)
+    daily_summary = filter_by_days(daily_summary, args.days, '일')
+    print(f"  - daily_summary: {original_daily_count:,}행 → {len(daily_summary):,}행")
+
+    # dimensions 필터링
+    for key in dimensions:
+        if '일' in dimensions[key].columns:
+            original_count = len(dimensions[key])
+            dimensions[key] = filter_by_days(dimensions[key], args.days, '일')
+            print(f"  - {key}: {original_count:,}행 → {len(dimensions[key]):,}행")
+
+    # 필터링된 날짜 범위 출력
+    if '일' in daily_summary.columns and len(daily_summary) > 0:
+        min_date = daily_summary['일'].min().strftime('%Y-%m-%d')
+        max_date = daily_summary['일'].max().strftime('%Y-%m-%d')
+        print(f"  ✓ 필터링 완료: {min_date} ~ {max_date}")
+else:
+    print("\n📊 전체 기간 데이터 사용")
+
+# Prophet 예측 파일들 로드 (분기별 추이 포함 - 필터링 제외)
 print("\nProphet 예측 데이터 로딩 중...")
 prophet_files = {
     'overall': 'prophet_forecast_overall.csv',
@@ -314,13 +375,14 @@ for key, filename in prophet_files.items():
         print(f"✓ {filename} 로드 완료")
 
 # ============================================================================
-# 전체 요약
+# 전체 요약 (필터링된 daily_summary 기반)
 # ============================================================================
 print("\n전체 요약 생성 중...")
 
-total_cost = category_summary['비용'].sum()
-total_conversions = category_summary['전환수'].sum()
-total_revenue = category_summary['전환값'].sum()
+# 필터링된 daily_summary에서 총합 계산 (기간 필터링 적용)
+total_cost = daily_summary['비용'].sum()
+total_conversions = daily_summary['전환수'].sum()
+total_revenue = daily_summary['전환값'].sum()
 overall_roas = (total_revenue / total_cost * 100) if total_cost > 0 else 0
 overall_cpa = (total_cost / total_conversions) if total_conversions > 0 else 0
 
@@ -338,13 +400,38 @@ summary = {
 }
 
 # ============================================================================
-# 상위 유형구분
+# 상위 유형구분 (필터링된 dimensions['type1']에서 재계산)
 # ============================================================================
 print("상위 유형구분 분석 중...")
 
-# 비용이 있는 유형구분만 필터링
-paid_categories = category_summary[category_summary['비용'] > 0].copy()
-top_categories = paid_categories.nlargest(5, 'ROAS')[['유형구분', '비용', '전환수', '전환값', 'ROAS', 'CPA']].to_dict('records')
+# 필터링된 dimensions['type1']에서 유형구분별 집계
+if 'type1' in dimensions and '유형구분' in dimensions['type1'].columns:
+    type1_df = dimensions['type1'].copy()
+    category_agg = type1_df.groupby('유형구분').agg({
+        '비용': 'sum',
+        '전환수': 'sum',
+        '전환값': 'sum'
+    }).reset_index()
+
+    # ROAS, CPA 재계산 (총합 기준)
+    category_agg['ROAS'] = np.where(
+        category_agg['비용'] > 0,
+        (category_agg['전환값'] / category_agg['비용']) * 100,
+        0
+    )
+    category_agg['CPA'] = np.where(
+        category_agg['전환수'] > 0,
+        category_agg['비용'] / category_agg['전환수'],
+        0
+    )
+
+    # 비용이 있는 유형구분만 필터링
+    paid_categories = category_agg[category_agg['비용'] > 0].copy()
+    top_categories = paid_categories.nlargest(5, 'ROAS')[['유형구분', '비용', '전환수', '전환값', 'ROAS', 'CPA']].to_dict('records')
+else:
+    # fallback: 기존 category_summary 사용 (필터링 불가)
+    paid_categories = category_summary[category_summary['비용'] > 0].copy()
+    top_categories = paid_categories.nlargest(5, 'ROAS')[['유형구분', '비용', '전환수', '전환값', 'ROAS', 'CPA']].to_dict('records')
 
 top_categories_list = []
 for cat in top_categories:
@@ -381,9 +468,15 @@ if 'type4' in dimensions:
     gender_summary = type4_df.groupby('성별_정규화').agg({
         '비용': 'sum',
         '전환수': 'sum',
-        '전환값': 'sum',
-        'ROAS': 'mean'
+        '전환값': 'sum'
     }).reset_index()
+
+    # ROAS 재계산 (전체 기간 기준) - 평균이 아닌 총합 기준
+    gender_summary['ROAS'] = np.where(
+        gender_summary['비용'] > 0,
+        (gender_summary['전환값'] / gender_summary['비용']) * 100,
+        0
+    )
 
     # 성별별 성과가 있는 것만
     gender_summary = gender_summary[gender_summary['전환수'] > 0]
@@ -420,9 +513,30 @@ top_adsets = []
 if 'type1' in dimensions:
     type1_df = dimensions['type1']
 
-    # ROAS 기준 상위 10개
-    type1_df_filtered = type1_df[type1_df['전환수'] > 0].copy()
-    top_10_adsets = type1_df_filtered.nlargest(10, 'ROAS')
+    # 광고세트별로 전체 기간 데이터 집계 (일별 데이터를 합산)
+    adset_agg = type1_df.groupby(['캠페인이름', '광고세트', '유형구분']).agg({
+        '비용': 'sum',
+        '전환수': 'sum',
+        '전환값': 'sum'
+    }).reset_index()
+
+    # ROAS 재계산 (전체 기간 기준)
+    adset_agg['ROAS'] = np.where(
+        adset_agg['비용'] > 0,
+        (adset_agg['전환값'] / adset_agg['비용']) * 100,
+        0
+    )
+
+    # CPA 계산
+    adset_agg['CPA'] = np.where(
+        adset_agg['전환수'] > 0,
+        adset_agg['비용'] / adset_agg['전환수'],
+        0
+    )
+
+    # 전환수 > 0인 것만 필터링하고 ROAS 기준 상위 10개
+    adset_filtered = adset_agg[adset_agg['전환수'] > 0].copy()
+    top_10_adsets = adset_filtered.nlargest(10, 'ROAS')
 
     for _, row in top_10_adsets.iterrows():
         top_adsets.append({
@@ -459,8 +573,23 @@ if 'type2' in dimensions:
     type2_df = type2_df[type2_df[age_col].apply(is_valid_age)]
     type2_df['연령_정규화'] = type2_df[age_col]
 
-    # 광고세트별 최고 성과 연령x성별 조합 찾기
-    top_combinations = type2_df.nlargest(5, 'ROAS')
+    # 연령x성별 조합별로 전체 기간 데이터 집계 (일별 데이터를 합산)
+    age_gender_agg = type2_df.groupby(['광고세트', '연령_정규화', '성별_정규화']).agg({
+        '비용': 'sum',
+        '전환수': 'sum',
+        '전환값': 'sum'
+    }).reset_index()
+
+    # ROAS 재계산 (전체 기간 기준)
+    age_gender_agg['ROAS'] = np.where(
+        age_gender_agg['비용'] > 0,
+        (age_gender_agg['전환값'] / age_gender_agg['비용']) * 100,
+        0
+    )
+
+    # 전환수 > 0인 것만 필터링하고 ROAS 기준 상위 5개
+    age_gender_filtered = age_gender_agg[age_gender_agg['전환수'] > 0].copy()
+    top_combinations = age_gender_filtered.nlargest(5, 'ROAS')
 
     for _, row in top_combinations.iterrows():
         age_gender_insights.append({
@@ -1022,18 +1151,22 @@ print("\nProphet 예측 인사이트 생성 중...")
 forecast_summary = {}
 if 'overall' in prophet_forecasts:
     overall_df = prophet_forecasts['overall']
+    # ROAS는 mean이 아닌 sum(전환값)/sum(비용)*100으로 계산
+    overall_total_cost = float(overall_df['예측_비용'].sum()) if '예측_비용' in overall_df.columns else 0
+    overall_total_revenue = float(overall_df['예측_전환값'].sum())
+    overall_total_conversions = float(overall_df['예측_전환수'].sum()) if '예측_전환수' in overall_df.columns else 0
     forecast_summary['overall'] = {
         "forecast_period": {
             "start_date": overall_df['일자'].min().strftime('%Y-%m-%d'),
             "end_date": overall_df['일자'].max().strftime('%Y-%m-%d'),
             "total_days": len(overall_df)
         },
-        "total_forecast_revenue": float(overall_df['예측_전환값'].sum()),
+        "total_forecast_revenue": overall_total_revenue,
         "avg_daily_forecast": float(overall_df['예측_전환값'].mean()),
-        "avg_forecast_roas": float(overall_df['예측_ROAS'].mean()) if '예측_ROAS' in overall_df.columns else 0,
-        "avg_forecast_cpa": float(overall_df['예측_CPA'].mean()) if '예측_CPA' in overall_df.columns else 0,
-        "total_forecast_cost": float(overall_df['예측_비용'].sum()) if '예측_비용' in overall_df.columns else 0,
-        "total_forecast_conversions": float(overall_df['예측_전환수'].sum()) if '예측_전환수' in overall_df.columns else 0
+        "avg_forecast_roas": float((overall_total_revenue / overall_total_cost * 100) if overall_total_cost > 0 else 0),
+        "avg_forecast_cpa": float((overall_total_cost / overall_total_conversions) if overall_total_conversions > 0 else 0),
+        "total_forecast_cost": overall_total_cost,
+        "total_forecast_conversions": overall_total_conversions
     }
 
 # 유형구분별 예측
@@ -1050,6 +1183,10 @@ if 'category' in prophet_forecasts:
         last_week = cat_data.tail(7)['예측_전환값'].mean()
         trend_direction = "상승" if last_week > first_week * 1.1 else "하락" if last_week < first_week * 0.9 else "유지"
 
+        # ROAS/CPA는 sum 기반으로 계산
+        cat_total_cost = float(cat_data['예측_비용'].sum()) if '예측_비용' in cat_data.columns else 0
+        cat_total_conversions = float(cat_data['예측_전환수'].sum()) if '예측_전환수' in cat_data.columns else 0
+
         category_forecast_insights.append({
             "category": category,
             "total_30day_forecast": float(total_forecast),
@@ -1057,8 +1194,8 @@ if 'category' in prophet_forecasts:
             "trend_direction": trend_direction,
             "first_week_avg": float(first_week),
             "last_week_avg": float(last_week),
-            "avg_forecast_roas": float(cat_data['예측_ROAS'].mean()) if '예측_ROAS' in cat_data.columns else 0,
-            "avg_forecast_cpa": float(cat_data['예측_CPA'].mean()) if '예측_CPA' in cat_data.columns else 0
+            "avg_forecast_roas": float((total_forecast / cat_total_cost * 100) if cat_total_cost > 0 else 0),
+            "avg_forecast_cpa": float((cat_total_cost / cat_total_conversions) if cat_total_conversions > 0 else 0)
         })
 
 # 브랜드별 예측
@@ -1070,13 +1207,17 @@ if 'brand' in prophet_forecasts:
         total_forecast = brand_data['예측_전환값'].sum()
         avg_forecast = brand_data['예측_전환값'].mean()
 
+        # ROAS/CPA는 sum 기반으로 계산
+        brand_total_cost = float(brand_data['예측_비용'].sum()) if '예측_비용' in brand_data.columns else 0
+        brand_total_conversions = float(brand_data['예측_전환수'].sum()) if '예측_전환수' in brand_data.columns else 0
+
         brand_forecast_insights.append({
             "brand": brand,
             "total_30day_forecast": float(total_forecast),
             "avg_daily_forecast": float(avg_forecast),
-            "avg_forecast_roas": float(brand_data['예측_ROAS'].mean()) if '예측_ROAS' in brand_data.columns else 0,
-            "avg_forecast_cpa": float(brand_data['예측_CPA'].mean()) if '예측_CPA' in brand_data.columns else 0,
-            "total_forecast_cost": float(brand_data['예측_비용'].sum()) if '예측_비용' in brand_data.columns else 0
+            "avg_forecast_roas": float((total_forecast / brand_total_cost * 100) if brand_total_cost > 0 else 0),
+            "avg_forecast_cpa": float((brand_total_cost / brand_total_conversions) if brand_total_conversions > 0 else 0),
+            "total_forecast_cost": brand_total_cost
         })
 
     # 예측 매출 기준 정렬
@@ -1091,13 +1232,17 @@ if 'product' in prophet_forecasts:
         total_forecast = product_data['예측_전환값'].sum()
         avg_forecast = product_data['예측_전환값'].mean()
 
+        # ROAS/CPA는 sum 기반으로 계산
+        product_total_cost = float(product_data['예측_비용'].sum()) if '예측_비용' in product_data.columns else 0
+        product_total_conversions = float(product_data['예측_전환수'].sum()) if '예측_전환수' in product_data.columns else 0
+
         product_forecast_insights.append({
             "product": product,
             "total_30day_forecast": float(total_forecast),
             "avg_daily_forecast": float(avg_forecast),
-            "avg_forecast_roas": float(product_data['예측_ROAS'].mean()) if '예측_ROAS' in product_data.columns else 0,
-            "avg_forecast_cpa": float(product_data['예측_CPA'].mean()) if '예측_CPA' in product_data.columns else 0,
-            "total_forecast_cost": float(product_data['예측_비용'].sum()) if '예측_비용' in product_data.columns else 0
+            "avg_forecast_roas": float((total_forecast / product_total_cost * 100) if product_total_cost > 0 else 0),
+            "avg_forecast_cpa": float((product_total_cost / product_total_conversions) if product_total_conversions > 0 else 0),
+            "total_forecast_cost": product_total_cost
         })
 
     product_forecast_insights = sorted(product_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
@@ -1119,13 +1264,17 @@ if 'gender' in prophet_forecasts:
         total_forecast = gender_data['예측_전환값'].sum()
         avg_forecast = gender_data['예측_전환값'].mean()
 
+        # ROAS/CPA는 sum 기반으로 계산
+        gender_total_cost = float(gender_data['예측_비용'].sum()) if '예측_비용' in gender_data.columns else 0
+        gender_total_conversions = float(gender_data['예측_전환수'].sum()) if '예측_전환수' in gender_data.columns else 0
+
         gender_forecast_insights.append({
             "gender": gender,
             "total_30day_forecast": float(total_forecast),
             "avg_daily_forecast": float(avg_forecast),
-            "avg_forecast_roas": float(gender_data['예측_ROAS'].mean()) if '예측_ROAS' in gender_data.columns else 0,
-            "avg_forecast_cpa": float(gender_data['예측_CPA'].mean()) if '예측_CPA' in gender_data.columns else 0,
-            "total_forecast_cost": float(gender_data['예측_비용'].sum()) if '예측_비용' in gender_data.columns else 0
+            "avg_forecast_roas": float((total_forecast / gender_total_cost * 100) if gender_total_cost > 0 else 0),
+            "avg_forecast_cpa": float((gender_total_cost / gender_total_conversions) if gender_total_conversions > 0 else 0),
+            "total_forecast_cost": gender_total_cost
         })
 
     gender_forecast_insights = sorted(gender_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
@@ -1146,13 +1295,17 @@ if 'age' in prophet_forecasts:
         total_forecast = age_data['예측_전환값'].sum()
         avg_forecast = age_data['예측_전환값'].mean()
 
+        # ROAS/CPA는 sum 기반으로 계산
+        age_total_cost = float(age_data['예측_비용'].sum()) if '예측_비용' in age_data.columns else 0
+        age_total_conversions = float(age_data['예측_전환수'].sum()) if '예측_전환수' in age_data.columns else 0
+
         age_forecast_insights.append({
             "age": age,
             "total_30day_forecast": float(total_forecast),
             "avg_daily_forecast": float(avg_forecast),
-            "avg_forecast_roas": float(age_data['예측_ROAS'].mean()) if '예측_ROAS' in age_data.columns else 0,
-            "avg_forecast_cpa": float(age_data['예측_CPA'].mean()) if '예측_CPA' in age_data.columns else 0,
-            "total_forecast_cost": float(age_data['예측_비용'].sum()) if '예측_비용' in age_data.columns else 0
+            "avg_forecast_roas": float((total_forecast / age_total_cost * 100) if age_total_cost > 0 else 0),
+            "avg_forecast_cpa": float((age_total_cost / age_total_conversions) if age_total_conversions > 0 else 0),
+            "total_forecast_cost": age_total_cost
         })
 
     age_forecast_insights = sorted(age_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
@@ -1168,13 +1321,17 @@ if 'platform' in prophet_forecasts:
         total_forecast = platform_data['예측_전환값'].sum()
         avg_forecast = platform_data['예측_전환값'].mean()
 
+        # ROAS/CPA는 sum 기반으로 계산
+        platform_total_cost = float(platform_data['예측_비용'].sum()) if '예측_비용' in platform_data.columns else 0
+        platform_total_conversions = float(platform_data['예측_전환수'].sum()) if '예측_전환수' in platform_data.columns else 0
+
         platform_forecast_insights.append({
             "platform": platform,
             "total_30day_forecast": float(total_forecast),
             "avg_daily_forecast": float(avg_forecast),
-            "avg_forecast_roas": float(platform_data['예측_ROAS'].mean()) if '예측_ROAS' in platform_data.columns else 0,
-            "avg_forecast_cpa": float(platform_data['예측_CPA'].mean()) if '예측_CPA' in platform_data.columns else 0,
-            "total_forecast_cost": float(platform_data['예측_비용'].sum()) if '예측_비용' in platform_data.columns else 0
+            "avg_forecast_roas": float((total_forecast / platform_total_cost * 100) if platform_total_cost > 0 else 0),
+            "avg_forecast_cpa": float((platform_total_cost / platform_total_conversions) if platform_total_conversions > 0 else 0),
+            "total_forecast_cost": platform_total_cost
         })
 
     platform_forecast_insights = sorted(platform_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
@@ -1190,13 +1347,17 @@ if 'device' in prophet_forecasts:
         total_forecast = device_data['예측_전환값'].sum()
         avg_forecast = device_data['예측_전환값'].mean()
 
+        # ROAS/CPA는 sum 기반으로 계산
+        device_total_cost = float(device_data['예측_비용'].sum()) if '예측_비용' in device_data.columns else 0
+        device_total_conversions = float(device_data['예측_전환수'].sum()) if '예측_전환수' in device_data.columns else 0
+
         device_forecast_insights.append({
             "device": device,
             "total_30day_forecast": float(total_forecast),
             "avg_daily_forecast": float(avg_forecast),
-            "avg_forecast_roas": float(device_data['예측_ROAS'].mean()) if '예측_ROAS' in device_data.columns else 0,
-            "avg_forecast_cpa": float(device_data['예측_CPA'].mean()) if '예측_CPA' in device_data.columns else 0,
-            "total_forecast_cost": float(device_data['예측_비용'].sum()) if '예측_비용' in device_data.columns else 0
+            "avg_forecast_roas": float((total_forecast / device_total_cost * 100) if device_total_cost > 0 else 0),
+            "avg_forecast_cpa": float((device_total_cost / device_total_conversions) if device_total_conversions > 0 else 0),
+            "total_forecast_cost": device_total_cost
         })
 
     device_forecast_insights = sorted(device_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
@@ -1210,13 +1371,17 @@ if 'promotion' in prophet_forecasts:
         total_forecast = promotion_data['예측_전환값'].sum()
         avg_forecast = promotion_data['예측_전환값'].mean()
 
+        # ROAS/CPA는 sum 기반으로 계산
+        promotion_total_cost = float(promotion_data['예측_비용'].sum()) if '예측_비용' in promotion_data.columns else 0
+        promotion_total_conversions = float(promotion_data['예측_전환수'].sum()) if '예측_전환수' in promotion_data.columns else 0
+
         promotion_forecast_insights.append({
             "promotion": promotion,
             "total_30day_forecast": float(total_forecast),
             "avg_daily_forecast": float(avg_forecast),
-            "avg_forecast_roas": float(promotion_data['예측_ROAS'].mean()) if '예측_ROAS' in promotion_data.columns else 0,
-            "avg_forecast_cpa": float(promotion_data['예측_CPA'].mean()) if '예측_CPA' in promotion_data.columns else 0,
-            "total_forecast_cost": float(promotion_data['예측_비용'].sum()) if '예측_비용' in promotion_data.columns else 0
+            "avg_forecast_roas": float((total_forecast / promotion_total_cost * 100) if promotion_total_cost > 0 else 0),
+            "avg_forecast_cpa": float((promotion_total_cost / promotion_total_conversions) if promotion_total_conversions > 0 else 0),
+            "total_forecast_cost": promotion_total_cost
         })
 
     promotion_forecast_insights = sorted(promotion_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
@@ -1233,16 +1398,20 @@ if 'age_gender' in prophet_forecasts:
             total_forecast = group_data['예측_전환값'].sum()
             avg_forecast = group_data['예측_전환값'].mean()
 
+            # ROAS/CPA는 sum 기반으로 계산
+            ag_total_cost = float(group_data['예측_비용'].sum()) if '예측_비용' in group_data.columns else 0
+            ag_total_conversions = float(group_data['예측_전환수'].sum()) if '예측_전환수' in group_data.columns else 0
+
             age_gender_forecast_insights.append({
                 "age_gender": f"{age}_{gender}",
                 "age": age,
                 "gender": gender,
                 "total_30day_forecast": float(total_forecast),
                 "avg_daily_forecast": float(avg_forecast),
-                "avg_forecast_roas": float(group_data['예측_ROAS'].mean()) if '예측_ROAS' in group_data.columns else 0,
-                "avg_forecast_cpa": float(group_data['예측_CPA'].mean()) if '예측_CPA' in group_data.columns else 0,
-                "total_forecast_cost": float(group_data['예측_비용'].sum()) if '예측_비용' in group_data.columns else 0,
-                "total_forecast_conversions": float(group_data['예측_전환수'].sum()) if '예측_전환수' in group_data.columns else 0
+                "avg_forecast_roas": float((total_forecast / ag_total_cost * 100) if ag_total_cost > 0 else 0),
+                "avg_forecast_cpa": float((ag_total_cost / ag_total_conversions) if ag_total_conversions > 0 else 0),
+                "total_forecast_cost": ag_total_cost,
+                "total_forecast_conversions": ag_total_conversions
             })
     else:
         # 기존 컬럼 구조 (연령_성별_통합 또는 연령_성별)
@@ -1257,16 +1426,20 @@ if 'age_gender' in prophet_forecasts:
             age_part = parts[0] if len(parts) >= 1 else age_gender
             gender_part = parts[1] if len(parts) >= 2 else ''
 
+            # ROAS/CPA는 sum 기반으로 계산
+            ag_total_cost = float(age_gender_data['예측_비용'].sum()) if '예측_비용' in age_gender_data.columns else 0
+            ag_total_conversions = float(age_gender_data['예측_전환수'].sum()) if '예측_전환수' in age_gender_data.columns else 0
+
             age_gender_forecast_insights.append({
                 "age_gender": age_gender,
                 "age": age_part,
                 "gender": gender_part,
                 "total_30day_forecast": float(total_forecast),
                 "avg_daily_forecast": float(avg_forecast),
-                "avg_forecast_roas": float(age_gender_data['예측_ROAS'].mean()) if '예측_ROAS' in age_gender_data.columns else 0,
-                "avg_forecast_cpa": float(age_gender_data['예측_CPA'].mean()) if '예측_CPA' in age_gender_data.columns else 0,
-                "total_forecast_cost": float(age_gender_data['예측_비용'].sum()) if '예측_비용' in age_gender_data.columns else 0,
-                "total_forecast_conversions": float(age_gender_data['예측_전환수'].sum()) if '예측_전환수' in age_gender_data.columns else 0
+                "avg_forecast_roas": float((total_forecast / ag_total_cost * 100) if ag_total_cost > 0 else 0),
+                "avg_forecast_cpa": float((ag_total_cost / ag_total_conversions) if ag_total_conversions > 0 else 0),
+                "total_forecast_cost": ag_total_cost,
+                "total_forecast_conversions": ag_total_conversions
             })
 
     age_gender_forecast_insights = sorted(age_gender_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
@@ -2466,6 +2639,11 @@ insights = {
     "alerts": alerts + prophet_alerts,
     "recommendations": recommendations + prophet_recommendations,
     "generated_at": datetime.now().isoformat(),
+    "filter_info": {
+        "days": args.days,
+        "label": "전체 기간" if args.days == 0 else f"최근 {args.days}일",
+        "is_filtered": args.days > 0
+    },
     "overall": {
         "current_period": {
             "start_date": summary["analysis_period"]["start_date"],
@@ -2485,7 +2663,7 @@ insights = {
         }
     },
     "details": {
-        "total_categories": len(category_summary),
+        "total_categories": len(category_agg) if 'type1' in dimensions and '유형구분' in dimensions['type1'].columns else len(category_summary),
         "paid_categories": len(paid_categories),
         "top_roas_category": top_categories_list[0]['name'] if len(top_categories_list) > 0 else None,
         "analysis_period_days": summary["analysis_period"]["total_days"],

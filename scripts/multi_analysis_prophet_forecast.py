@@ -195,7 +195,11 @@ print("\n주요 지표 (일평균):")
 print(f"  평균 일 광고비: {daily_data['비용'].mean():,.0f}원")
 print(f"  평균 일 전환수: {daily_data['전환수'].mean():,.1f}건")
 print(f"  평균 일 전환값: {daily_data['전환값'].mean():,.0f}원")
-print(f"  평균 ROAS: {daily_data['ROAS'].mean():.1f}%")
+# ROAS는 mean이 아닌 sum 기반으로 계산
+total_cost_actual = daily_data['비용'].sum()
+total_revenue_actual = daily_data['전환값'].sum()
+actual_roas = (total_revenue_actual / total_cost_actual * 100) if total_cost_actual > 0 else 0
+print(f"  평균 ROAS: {actual_roas:.1f}%")
 
 print("\n" + "=" * 100)
 print("유형구분별 데이터 현황")
@@ -235,11 +239,15 @@ if PROPHET_AVAILABLE:
             col = f'예측_{metric}'
             if col in overall_result.columns:
                 print(f"  {metric}: {overall_result[col].sum():,.0f}")
-        if '예측_ROAS' in overall_result.columns:
-            avg_roas = overall_result['예측_ROAS'].mean()
+        # ROAS/CPA는 sum 기반으로 계산
+        forecast_total_cost = overall_result['예측_비용'].sum() if '예측_비용' in overall_result.columns else 0
+        forecast_total_revenue = overall_result['예측_전환값'].sum() if '예측_전환값' in overall_result.columns else 0
+        forecast_total_conversions = overall_result['예측_전환수'].sum() if '예측_전환수' in overall_result.columns else 0
+        if forecast_total_cost > 0:
+            avg_roas = (forecast_total_revenue / forecast_total_cost * 100)
             print(f"  평균 ROAS: {avg_roas:.1f}%")
-        if '예측_CPA' in overall_result.columns:
-            avg_cpa = overall_result['예측_CPA'].mean()
+        if forecast_total_conversions > 0:
+            avg_cpa = (forecast_total_cost / forecast_total_conversions)
             print(f"  평균 CPA: {avg_cpa:,.0f}원")
 
         # 전체 예측 결과 저장
@@ -285,8 +293,12 @@ if PROPHET_AVAILABLE:
             category_forecast_results.append(cat_result)
             if '예측_전환값' in cat_result.columns:
                 print(f"향후 30일 예상 총 전환값: {cat_result['예측_전환값'].sum():,.0f}원")
-            if '예측_ROAS' in cat_result.columns:
-                print(f"평균 예측 ROAS: {cat_result['예측_ROAS'].mean():.1f}%")
+            # ROAS는 sum 기반으로 계산
+            if '예측_비용' in cat_result.columns and '예측_전환값' in cat_result.columns:
+                cat_f_cost = cat_result['예측_비용'].sum()
+                cat_f_revenue = cat_result['예측_전환값'].sum()
+                if cat_f_cost > 0:
+                    print(f"평균 예측 ROAS: {(cat_f_revenue / cat_f_cost * 100):.1f}%")
 
     # 유형구분별 예측 결과 통합 저장
     if category_forecast_results:
@@ -683,8 +695,12 @@ if PROPHET_AVAILABLE:
                 brand_forecast_results.append(brand_result)
                 if '예측_전환값' in brand_result.columns:
                     print(f"향후 30일 예상 총 전환값: {brand_result['예측_전환값'].sum():,.0f}원")
-                if '예측_ROAS' in brand_result.columns:
-                    print(f"평균 예측 ROAS: {brand_result['예측_ROAS'].mean():.1f}%")
+                # ROAS는 sum 기반으로 계산
+                if '예측_비용' in brand_result.columns and '예측_전환값' in brand_result.columns:
+                    brand_f_cost = brand_result['예측_비용'].sum()
+                    brand_f_revenue = brand_result['예측_전환값'].sum()
+                    if brand_f_cost > 0:
+                        print(f"평균 예측 ROAS: {(brand_f_revenue / brand_f_cost * 100):.1f}%")
 
     # 브랜드별 예측 결과 저장
     if brand_forecast_results:
@@ -738,8 +754,12 @@ if PROPHET_AVAILABLE:
                 product_forecast_results.append(product_result)
                 if '예측_전환값' in product_result.columns:
                     print(f"향후 30일 예상 총 전환값: {product_result['예측_전환값'].sum():,.0f}원")
-                if '예측_ROAS' in product_result.columns:
-                    print(f"평균 예측 ROAS: {product_result['예측_ROAS'].mean():.1f}%")
+                # ROAS는 sum 기반으로 계산
+                if '예측_비용' in product_result.columns and '예측_전환값' in product_result.columns:
+                    product_f_cost = product_result['예측_비용'].sum()
+                    product_f_revenue = product_result['예측_전환값'].sum()
+                    if product_f_cost > 0:
+                        print(f"평균 예측 ROAS: {(product_f_revenue / product_f_cost * 100):.1f}%")
 
     # 상품별 예측 결과 저장
     if product_forecast_results:
@@ -801,8 +821,12 @@ if PROPHET_AVAILABLE:
                 gender_forecast_results.append(gender_result)
                 if '예측_전환값' in gender_result.columns:
                     print(f"향후 30일 예상 총 전환값: {gender_result['예측_전환값'].sum():,.0f}원")
-                if '예측_ROAS' in gender_result.columns:
-                    print(f"평균 예측 ROAS: {gender_result['예측_ROAS'].mean():.1f}%")
+                # ROAS는 sum 기반으로 계산
+                if '예측_비용' in gender_result.columns and '예측_전환값' in gender_result.columns:
+                    gender_f_cost = gender_result['예측_비용'].sum()
+                    gender_f_revenue = gender_result['예측_전환값'].sum()
+                    if gender_f_cost > 0:
+                        print(f"평균 예측 ROAS: {(gender_f_revenue / gender_f_cost * 100):.1f}%")
 
         # 성별 예측 결과 저장
         if gender_forecast_results:
@@ -868,8 +892,12 @@ if PROPHET_AVAILABLE:
                 age_forecast_results.append(age_result)
                 if '예측_전환값' in age_result.columns:
                     print(f"향후 30일 예상 총 전환값: {age_result['예측_전환값'].sum():,.0f}원")
-                if '예측_ROAS' in age_result.columns:
-                    print(f"평균 예측 ROAS: {age_result['예측_ROAS'].mean():.1f}%")
+                # ROAS는 sum 기반으로 계산
+                if '예측_비용' in age_result.columns and '예측_전환값' in age_result.columns:
+                    age_f_cost = age_result['예측_비용'].sum()
+                    age_f_revenue = age_result['예측_전환값'].sum()
+                    if age_f_cost > 0:
+                        print(f"평균 예측 ROAS: {(age_f_revenue / age_f_cost * 100):.1f}%")
 
         # 연령별 예측 결과 저장
         if age_forecast_results:
@@ -936,7 +964,10 @@ if PROPHET_AVAILABLE:
                 if '예측_전환값' in platform_result.columns:
                     print(f"향후 30일 예상 총 전환값: {platform_result['예측_전환값'].sum():,.0f}원")
                 if '예측_ROAS' in platform_result.columns:
-                    print(f"평균 예측 ROAS: {platform_result['예측_ROAS'].mean():.1f}%")
+                    platform_total_cost = platform_result['예측_비용'].sum() if '예측_비용' in platform_result.columns else 0
+                    platform_total_revenue = platform_result['예측_전환값'].sum() if '예측_전환값' in platform_result.columns else 0
+                    platform_roas = (platform_total_revenue / platform_total_cost * 100) if platform_total_cost > 0 else 0
+                    print(f"평균 예측 ROAS: {platform_roas:.1f}%")
 
         # 기기플랫폼별 예측 결과 저장
         if platform_forecast_results:
@@ -1003,7 +1034,10 @@ if PROPHET_AVAILABLE:
                 if '예측_전환값' in device_result.columns:
                     print(f"향후 30일 예상 총 전환값: {device_result['예측_전환값'].sum():,.0f}원")
                 if '예측_ROAS' in device_result.columns:
-                    print(f"평균 예측 ROAS: {device_result['예측_ROAS'].mean():.1f}%")
+                    device_total_cost = device_result['예측_비용'].sum() if '예측_비용' in device_result.columns else 0
+                    device_total_revenue = device_result['예측_전환값'].sum() if '예측_전환값' in device_result.columns else 0
+                    device_roas = (device_total_revenue / device_total_cost * 100) if device_total_cost > 0 else 0
+                    print(f"평균 예측 ROAS: {device_roas:.1f}%")
 
         # 기기유형별 예측 결과 저장
         if device_forecast_results:
@@ -1062,7 +1096,10 @@ if PROPHET_AVAILABLE:
                 if '예측_전환값' in promotion_result.columns:
                     print(f"향후 30일 예상 총 전환값: {promotion_result['예측_전환값'].sum():,.0f}원")
                 if '예측_ROAS' in promotion_result.columns:
-                    print(f"평균 예측 ROAS: {promotion_result['예측_ROAS'].mean():.1f}%")
+                    promotion_total_cost = promotion_result['예측_비용'].sum() if '예측_비용' in promotion_result.columns else 0
+                    promotion_total_revenue = promotion_result['예측_전환값'].sum() if '예측_전환값' in promotion_result.columns else 0
+                    promotion_roas = (promotion_total_revenue / promotion_total_cost * 100) if promotion_total_cost > 0 else 0
+                    print(f"평균 예측 ROAS: {promotion_roas:.1f}%")
 
     # 프로모션별 예측 결과 저장
     if promotion_forecast_results:
@@ -1141,7 +1178,10 @@ if PROPHET_AVAILABLE:
                 if '예측_전환값' in combo_result.columns:
                     print(f"향후 30일 예상 총 전환값: {combo_result['예측_전환값'].sum():,.0f}원")
                 if '예측_ROAS' in combo_result.columns:
-                    print(f"평균 예측 ROAS: {combo_result['예측_ROAS'].mean():.1f}%")
+                    combo_total_cost = combo_result['예측_비용'].sum() if '예측_비용' in combo_result.columns else 0
+                    combo_total_revenue = combo_result['예측_전환값'].sum() if '예측_전환값' in combo_result.columns else 0
+                    combo_roas = (combo_total_revenue / combo_total_cost * 100) if combo_total_cost > 0 else 0
+                    print(f"평균 예측 ROAS: {combo_roas:.1f}%")
 
         # 연령+성별 조합별 예측 결과 저장
         if age_gender_forecast_results:

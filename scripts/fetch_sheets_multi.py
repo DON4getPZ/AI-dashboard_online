@@ -130,10 +130,8 @@ def save_individual_csv(data, output_dir, sheet_info, sheet_index):
     if not data:
         return None
 
-    # 파일명 생성 (sheet_id의 일부 사용)
-    sheet_id_short = sheet_info['sheet_id'][:8]
-    current_date = datetime.now()
-    output_filename = f"{current_date.strftime('%Y-%m')}_{sheet_id_short}.csv"
+    # 파일명 생성 (순서 기반 고정 파일명 - overwrite 방식)
+    output_filename = f"multi_{sheet_index}.csv"
     output_path = os.path.join(output_dir, output_filename)
 
     # CSV로 저장

@@ -6,11 +6,13 @@ GA4 데이터를 기반으로 AARRR 퍼널 분석 데이터 생성
 - 카이제곱 A/B 테스트 + 매출 임팩트 환산
 - 7일/30일 이탈 예측 + CRM 레시피
 - 카테고리별 임계값 설정
+- 다중 기간 필터링 지원 (--days 파라미터)
 """
 import pandas as pd
 import json
 import os
 import numpy as np
+import argparse
 from pathlib import Path
 from datetime import datetime, timedelta
 from scipy import stats
@@ -18,6 +20,42 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 import warnings
 warnings.filterwarnings('ignore')
+
+# ============================================================================
+# 커맨드라인 인자 파싱 (기간 필터링용)
+# ============================================================================
+parser = argparse.ArgumentParser(description='GA4 퍼널 분석 인사이트 생성')
+parser.add_argument('--days', type=int, default=0,
+                    help='최근 N일 데이터만 사용 (0=전체기간, 30/90/180 등)')
+parser.add_argument('--category', type=str, default=None,
+                    help='비즈니스 카테고리 (default/fashion/food/electronics)')
+args, unknown = parser.parse_known_args()
+
+
+def filter_by_days(df, days, date_column='Day'):
+    """
+    최근 N일 데이터만 필터링
+
+    Args:
+        df: DataFrame
+        days: 필터링할 일수 (0이면 전체)
+        date_column: 날짜 컬럼명
+
+    Returns:
+        필터링된 DataFrame
+    """
+    if days <= 0:
+        return df
+    if date_column not in df.columns:
+        return df
+
+    df_copy = df.copy()
+    df_copy[date_column] = pd.to_datetime(df_copy[date_column])
+    max_date = df_copy[date_column].max()
+    cutoff_date = max_date - timedelta(days=days)
+    filtered = df_copy[df_copy[date_column] >= cutoff_date].copy()
+
+    return filtered
 
 
 # ============================================================================
@@ -394,7 +432,11 @@ def analyze_bcg_matrix(channel_funnel_pivot, thresholds):
 
     # 전체 평균 계산
     avg_traffic = channel_funnel_pivot['유입'].mean() if '유입' in channel_funnel_pivot.columns else 0
-    avg_cvr = channel_funnel_pivot['CVR'].mean() if 'CVR' in channel_funnel_pivot.columns else 0
+
+    # CVR은 단순 평균이 아닌, 전체 구매/전체 유입으로 계산 (트래픽 가중 평균)
+    total_acquisition = channel_funnel_pivot['유입'].sum() if '유입' in channel_funnel_pivot.columns else 0
+    total_purchase = channel_funnel_pivot['구매완료'].sum() if '구매완료' in channel_funnel_pivot.columns else 0
+    avg_cvr = (total_purchase / total_acquisition * 100) if total_acquisition > 0 else 0
 
     for _, row in channel_funnel_pivot.iterrows():
         channel = row['channel']
@@ -768,6 +810,23 @@ def generate_funnel_insights(category='default', ga4_file=None):
     if 'week' in df.columns:
         df['week'] = pd.to_datetime(df['week'])
 
+    # ========================================
+    # 날짜 필터링 적용 (--days 파라미터)
+    # ========================================
+    filter_days = args.days
+    original_count = len(df)
+    original_start = df['Day'].min()
+    original_end = df['Day'].max()
+
+    if filter_days > 0:
+        print(f"\n⏰ 최근 {filter_days}일 데이터로 필터링 적용 중...")
+        df = filter_by_days(df, filter_days, 'Day')
+        print(f"   - 전체 데이터: {original_count:,}행 → {len(df):,}행")
+        if len(df) > 0:
+            print(f"   - 필터링 기간: {df['Day'].min().strftime('%Y-%m-%d')} ~ {df['Day'].max().strftime('%Y-%m-%d')}")
+    else:
+        print("\n📊 전체 기간 데이터 사용")
+
     # 데이터 충분성 체크
     data_issues = check_data_sufficiency(df, thresholds)
     if any(issue['type'] in ['empty_data', 'no_conversion'] for issue in data_issues):
@@ -979,6 +1038,13 @@ def generate_funnel_insights(category='default', ga4_file=None):
         'generated_at': datetime.now().isoformat(),
         'category': category,
         'thresholds_used': thresholds,
+
+        # 기간 필터 정보
+        'filter_info': {
+            'days': filter_days,
+            'label': '전체 기간' if filter_days == 0 else f'최근 {filter_days}일',
+            'is_filtered': filter_days > 0
+        },
 
         # 메타 정보 (친절한 버전)
         'meta': {

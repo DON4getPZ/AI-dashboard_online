@@ -9,7 +9,7 @@ from pathlib import Path
 
 # 데이터 경로 설정 (scripts 디렉토리에서 상위의 data 디렉토리 참조)
 BASE_DIR = Path(__file__).parent.parent / 'data'
-GA4_FILE = BASE_DIR / 'GA4' / '2025-11.csv'
+GA4_FILE = BASE_DIR / 'GA4' / 'GA4_data.csv'
 NEW_VS_RETURNING_FILE = BASE_DIR / 'funnel' / 'new_vs_returning.csv'
 CHANNEL_FUNNEL_FILE = BASE_DIR / 'funnel' / 'channel_funnel.csv'
 
