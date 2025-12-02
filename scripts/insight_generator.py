@@ -1,5 +1,5 @@
 """
-마케팅 인사이트 생성 모듈 v2.0 (AI Consultant Edition)
+마케팅 인사이트 생성 모듈 v2.1 (AI Consultant Edition + Multi-Period)
 
 기능:
 1. 세그먼트별 예측 데이터 분석
@@ -8,6 +8,10 @@
 4. 숨은 기회 발굴 (Opportunities)
 5. AI 비서 톤의 자연어 인사이트 생성
 6. data/forecast/insights.json 저장
+
+v2.1 업데이트:
+- Multi-Period 지원: --days 파라미터로 기간 필터링 (full, 180, 90, 30)
+- 기간별 인사이트 생성 지원
 
 v2.0 업데이트:
 - AI Consultant Persona: 친화적이고 직관적인 메시지
@@ -24,9 +28,10 @@ v2.0 업데이트:
 import os
 import sys
 import json
+import argparse
 from pathlib import Path
-from datetime import datetime
-from typing import Dict, List, Any, Tuple
+from datetime import datetime, timedelta
+from typing import Dict, List, Any, Tuple, Optional
 import warnings
 
 # UTF-8 출력 설정 (Windows 콘솔 호환)
@@ -131,23 +136,30 @@ class NpEncoder(json.JSONEncoder):
 
 
 class InsightGenerator:
-    """마케팅 인사이트 생성 클래스 (AI Consultant Edition)"""
+    """마케팅 인사이트 생성 클래스 (AI Consultant Edition + Multi-Period)"""
 
-    def __init__(self):
-        """초기화"""
+    def __init__(self, days: Optional[int] = None):
+        """초기화
+
+        Args:
+            days: 분석 기간 (None=전체, 180, 90, 30)
+        """
+        self.days = days
+        self.period_label = 'full' if days is None else f'{days}d'
         self.segment_data = {}
         self.segment_stats = {}
         self.forecasts = {}
         self.predictions_data = {}  # predictions_*.csv 데이터
         self.insights = {
             'generated_at': datetime.now().isoformat(),
-            'summary_card': {},  # 🆕 AI 비서 스타일 요약 카드
+            'period': self.period_label,  # 분석 기간 표시
+            'summary_card': {},  # AI 비서 스타일 요약 카드
             'overall': {},  # 전체 성과 분석
             'segments': {
                 'alerts': [],
                 'recommendations': []
             },
-            'opportunities': [],  # 🆕 숨은 기회 발굴 (공격 전략)
+            'opportunities': [],  # 숨은 기회 발굴 (공격 전략)
             'summary': '',
             'details': {},
             'performance_trends': {}  # 7d/30d 트렌드
@@ -162,11 +174,50 @@ class InsightGenerator:
             'stability_cv': 0.3  # 변동계수 임계값
         }
 
+    def filter_by_days(self, df: pd.DataFrame, date_column: str = '일 구분') -> pd.DataFrame:
+        """데이터프레임을 days 기준으로 필터링
+
+        Args:
+            df: 필터링할 데이터프레임
+            date_column: 날짜 컬럼명
+
+        Returns:
+            필터링된 데이터프레임
+        """
+        if self.days is None or df.empty:
+            return df
+
+        if date_column not in df.columns:
+            return df
+
+        try:
+            # 날짜 컬럼을 datetime으로 변환
+            df = df.copy()
+            df[date_column] = pd.to_datetime(df[date_column], errors='coerce')
+
+            # 최신 날짜 기준으로 필터링
+            max_date = df[date_column].max()
+            if pd.isna(max_date):
+                return df
+
+            cutoff_date = max_date - timedelta(days=self.days)
+            filtered_df = df[df[date_column] >= cutoff_date]
+
+            # 날짜를 다시 문자열로 변환 (원래 형식 유지)
+            filtered_df[date_column] = filtered_df[date_column].dt.strftime('%Y-%m-%d')
+
+            return filtered_df
+        except Exception as e:
+            print(f"   Warning: Date filtering failed - {e}")
+            return df
+
     def load_data(self) -> bool:
-        """세그먼트 데이터 로드"""
+        """세그먼트 데이터 로드 및 기간 필터링"""
         print("\n" + "="*60)
-        print("🧠 AI Marketing Insight Generator v2.0")
+        print("🧠 AI Marketing Insight Generator v2.1 (Multi-Period)")
         print("="*60)
+        period_display = "전체" if self.days is None else f"최근 {self.days}일"
+        print(f"   📅 분석 기간: {period_display}")
         print("\n[1/6] Loading segment data...")
 
         # 세그먼트별 예측 데이터 로드
@@ -180,13 +231,20 @@ class InsightGenerator:
         loaded_count = 0
         for name, filepath in segment_files.items():
             if filepath.exists():
-                self.segment_data[name] = pd.read_csv(filepath, encoding='utf-8')
+                df = pd.read_csv(filepath, encoding='utf-8')
+                # 기간 필터링 적용
+                self.segment_data[name] = self.filter_by_days(df)
                 loaded_count += 1
-                print(f"   Loaded: {filepath.name}")
+                original_len = len(df)
+                filtered_len = len(self.segment_data[name])
+                if self.days and original_len != filtered_len:
+                    print(f"   Loaded: {filepath.name} ({filtered_len}/{original_len} rows)")
+                else:
+                    print(f"   Loaded: {filepath.name}")
             else:
                 print(f"   Warning: {filepath.name} not found")
 
-        # 세그먼트 통계 로드
+        # 세그먼트 통계 로드 (JSON은 필터링 불가, 전체 데이터 사용)
         stats_file = FORECAST_DIR / 'segment_stats.json'
         if stats_file.exists():
             with open(stats_file, 'r', encoding='utf-8') as f:
@@ -204,8 +262,15 @@ class InsightGenerator:
 
         for name, filepath in predictions_files.items():
             if filepath.exists():
-                self.predictions_data[name] = pd.read_csv(filepath, encoding='utf-8')
-                print(f"   Loaded: {filepath.name}")
+                df = pd.read_csv(filepath, encoding='utf-8')
+                # 기간 필터링 적용
+                self.predictions_data[name] = self.filter_by_days(df)
+                original_len = len(df)
+                filtered_len = len(self.predictions_data[name])
+                if self.days and original_len != filtered_len:
+                    print(f"   Loaded: {filepath.name} ({filtered_len}/{original_len} rows)")
+                else:
+                    print(f"   Loaded: {filepath.name}")
             else:
                 print(f"   Info: {filepath.name} not found (optional)")
 
@@ -1024,8 +1089,12 @@ class InsightGenerator:
 
         print(f"\n   ✅ Saved: {output_file.name}")
 
-    def generate(self) -> Dict[str, Any]:
-        """전체 인사이트 생성 실행"""
+    def generate(self, save: bool = True) -> Dict[str, Any]:
+        """전체 인사이트 생성 실행
+
+        Args:
+            save: True면 JSON 파일 저장, False면 저장 안 함 (래퍼 스크립트용)
+        """
         # 데이터 로드
         if not self.load_data():
             return self.insights
@@ -1042,7 +1111,7 @@ class InsightGenerator:
         # 경고 감지 (Risk Management)
         self.detect_alerts()
 
-        # 🆕 기회 발굴 (Growth Hacking)
+        # 기회 발굴 (Growth Hacking)
         self.find_opportunities()
 
         # 권장 생성
@@ -1051,19 +1120,23 @@ class InsightGenerator:
         # 요약 생성
         self.generate_summary()
 
-        # 저장
-        self.save_insights()
+        # 저장 (옵션)
+        if save:
+            self.save_insights()
 
+        period_display = "전체" if self.days is None else f"최근 {self.days}일"
         print("\n" + "="*60)
-        print("🎯 AI Marketing Insight Generator v2.0 완료!")
+        print(f"🎯 AI Marketing Insight Generator v2.1 완료! ({period_display})")
         print("="*60)
-        print("\n[v2.0 신규 기능]")
+        print("\n[v2.1 신규 기능]")
+        print("   ✓ Multi-Period 지원: --days 파라미터로 기간 필터링")
         print("   ✓ AI Consultant Persona: 친화적이고 직관적인 메시지")
         print("   ✓ Action-First Architecture: 즉시 실행 가능한 액션")
         print("   ✓ Financial Impact: 예상 손실액/기대 수익 계산")
         print("   ✓ Risk & Opportunity Matrix: 방어/공격 전략 동시 수립")
-        print("\n📁 Generated file: data/forecast/insights.json")
+        print(f"\n📁 Generated file: data/forecast/insights.json")
         print("\n📊 Insight structure:")
+        print("   - period: 분석 기간")
         print("   - summary_card: AI 비서 스타일 요약 카드")
         print("   - overall: 전체 성과 분석")
         print("   - segments: 세그먼트별 경고 및 추천")
@@ -1074,8 +1147,21 @@ class InsightGenerator:
 
 
 def main():
-    """메인 실행 함수"""
-    generator = InsightGenerator()
+    """메인 실행 함수 (커맨드라인 인자 지원)"""
+    parser = argparse.ArgumentParser(
+        description='마케팅 인사이트 생성 모듈 v2.1 (Multi-Period 지원)'
+    )
+    parser.add_argument(
+        '--days',
+        type=int,
+        choices=[180, 90, 30],
+        default=None,
+        help='분석 기간 (일 수). 미지정시 전체 기간 분석. 예: --days 30'
+    )
+
+    args = parser.parse_args()
+
+    generator = InsightGenerator(days=args.days)
 
     try:
         insights = generator.generate()

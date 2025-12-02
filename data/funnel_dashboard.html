@@ -1556,6 +1556,8 @@
                             <div id="channelClusters" style="padding: 20px;">
                                 <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
                             </div>
+                            <!-- A/B 테스트 통계 결과 컨테이너 -->
+                            <div id="abTestStatsContainer" style="padding: 0 20px 20px 20px;"></div>
                         </div>
                         </div>
 
@@ -3613,17 +3615,22 @@
             const periodData = getPeriodData();
             if (!periodData) return;
 
-            // 1. 예산 투자 가이드 (투자 대비 기대 성과 분석)
+            // 1. 예산 투자 가이드 (투자 대비 기대 성과 분석) - 기간 필터 적용
             const abTestContainer = document.getElementById('abTestResults');
 
-            // 채널 데이터가 있는 경우
-            if (channelData && channelData.length > 0) {
+            // 기간별 channel_strategy 데이터 사용
+            const channelStrategy = periodData.channel_strategy;
+            if (channelStrategy && channelStrategy.status === 'success' && channelStrategy.channels) {
+                const channelEntries = Object.entries(channelStrategy.channels);
+
                 // 각 채널의 투자 효율성 계산
-                const channelInvestmentScores = channelData.map(channel => {
-                    const acquisition = parseFloat(channel['유입']) || 0;
-                    const purchase = parseFloat(channel['구매완료']) || 0;
-                    const revenue = parseFloat(channel['Revenue']) || 0;
-                    const cvr = parseFloat(channel['CVR']) || 0;
+                const channelInvestmentScores = channelEntries.map(([channelName, channelInfo]) => {
+                    const stats = channelInfo.stats || {};
+                    const acquisition = parseFloat(stats.users) || 0;
+                    const cvr = parseFloat(stats.cvr) || 0;
+                    const revenue = parseFloat(stats.revenue) || 0;
+                    // purchase는 users * cvr / 100으로 계산
+                    const purchase = Math.round(acquisition * cvr / 100);
 
                     // 신뢰도: 데이터 샘플 수 기반 (유입 수가 많을수록 높음)
                     let confidence = '낮음';
@@ -3646,17 +3653,17 @@
                     const arpu = purchase > 0 ? revenue / purchase : 0;
 
                     // 채널 타입 분류 (광고 vs 오가닉)
-                    const channelName = channel['channel'].toLowerCase();
+                    const channelNameLower = channelName.toLowerCase();
                     let channelType = 'organic';
                     let estimatedCPA = 0; // 방문자 1명당 유입 비용
 
-                    if (channelName.includes('광고') || channelName.includes('ad') || channelName.includes('paid')) {
+                    if (channelNameLower.includes('광고') || channelNameLower.includes('ad') || channelNameLower.includes('paid')) {
                         channelType = 'paid';
                         estimatedCPA = 1500; // 유료 광고 평균 CPA (원/방문자)
-                    } else if (channelName.includes('direct') || channelName === 'direct') {
+                    } else if (channelNameLower.includes('direct') || channelNameLower === 'direct') {
                         channelType = 'direct';
                         estimatedCPA = 0; // Direct는 자연 유입, 투자 불가
-                    } else if (channelName.includes('organic') || channelName.includes('쇼핑') || channelName.includes('블로그')) {
+                    } else if (channelNameLower.includes('organic') || channelNameLower.includes('쇼핑') || channelNameLower.includes('블로그')) {
                         channelType = 'organic_optimizable';
                         estimatedCPA = 300; // 오가닉 최적화 비용 (SEO, 콘텐츠 등)
                     } else {
@@ -3685,7 +3692,7 @@
                     }
 
                     return {
-                        channel: channel['channel'],
+                        channel: channelName,
                         cvr: cvr,
                         revenue: revenue,
                         purchase: purchase,
@@ -3892,10 +3899,10 @@
                         }
                     }
                 } else {
-                    abTestContainer.innerHTML = '<p style="color: var(--grey-500);">분석 가능한 채널 데이터가 없습니다.</p>';
+                    abTestContainer.innerHTML = '<p style="color: var(--grey-500);">선택한 기간에 분석 가능한 채널 데이터가 없습니다.</p>';
                 }
             } else {
-                abTestContainer.innerHTML = '<p style="color: var(--grey-500);">채널 데이터를 불러오는 중...</p>';
+                abTestContainer.innerHTML = '<p style="color: var(--grey-500);">채널 전략 데이터가 없습니다.</p>';
             }
 
             // 2. 채널 클러스터링 (기간 필터 적용)
@@ -3932,11 +3939,12 @@
             }
 
             // 2.5 A/B 테스트 통계 결과 (유의미한 채널 비교만 표시)
+            const abStatsContainer = document.getElementById('abTestStatsContainer');
             if (periodData.ab_test_results && periodData.ab_test_results.length > 0) {
                 const significantTests = periodData.ab_test_results.filter(t => t.significant === true);
                 if (significantTests.length > 0) {
-                    const abStatsHTML = `
-                        <div style="margin-top: 24px; padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid var(--success-main);">
+                    abStatsContainer.innerHTML = `
+                        <div style="padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid var(--success-main);">
                             <div style="font-size: 14px; font-weight: 600; color: var(--success-main); margin-bottom: 12px;">
                                 📊 통계적으로 유의미한 채널 비교 (${significantTests.length}건)
                             </div>
@@ -3964,8 +3972,11 @@
                             </div>
                         </div>
                     `;
-                    clusterContainer.insertAdjacentHTML('afterend', abStatsHTML);
+                } else {
+                    abStatsContainer.innerHTML = '';
                 }
+            } else {
+                abStatsContainer.innerHTML = '';
             }
 
             // 3. 이탈 위험 경고 (기본 7일)

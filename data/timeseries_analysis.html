@@ -1169,6 +1169,14 @@
                         <h1>시계열 데이터 분석</h1>
                         <div class="header-subtitle">AI 기반 예측 모델을 통한 광고 성과 예측 및 인사이트 <span id="analysisPeriod" style="color: var(--primary-main); font-weight: 600;"></span></div>
                     </div>
+                    <!-- 분석 기간 필터 -->
+                    <div class="view-type-section" style="margin-bottom: 0;">
+                        <span style="font-size: 12px; color: var(--grey-500); margin-right: 8px;">분석 기간:</span>
+                        <button class="view-btn period-btn active" data-period="full" onclick="switchPeriod('full')">전체</button>
+                        <button class="view-btn period-btn" data-period="180d" onclick="switchPeriod('180d')">180일</button>
+                        <button class="view-btn period-btn" data-period="90d" onclick="switchPeriod('90d')">90일</button>
+                        <button class="view-btn period-btn" data-period="30d" onclick="switchPeriod('30d')">30일</button>
+                    </div>
                 </div>
 
                 <!-- 0. AI 상태 요약 카드 (summary_card) -->
@@ -2224,6 +2232,77 @@
         let forecastChart = null;
         let insightsData = null;
         let segmentStatsData = null;
+        let currentPeriod = 'full';  // 분석 기간 (full, 180d, 90d, 30d)
+
+        // ============================================================================
+        // 기간 필터링 헬퍼 함수
+        // ============================================================================
+
+        /**
+         * 현재 선택된 기간의 인사이트 데이터 반환
+         * @returns {Object} 기간별 인사이트 데이터
+         */
+        function getPeriodData() {
+            if (!insightsData) return null;
+
+            // by_period 구조인 경우
+            if (insightsData.by_period) {
+                return insightsData.by_period[currentPeriod] || insightsData.by_period['full'];
+            }
+
+            // 단일 구조인 경우 (이전 버전 호환)
+            return insightsData;
+        }
+
+        /**
+         * 기간 전환 함수
+         * @param {string} period - 기간 (full, 180d, 90d, 30d)
+         */
+        function switchPeriod(period) {
+            currentPeriod = period;
+
+            // 버튼 활성화 상태 변경
+            document.querySelectorAll('.period-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.period === period) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // 기간 표시 업데이트
+            const periodLabels = {
+                'full': '전체 기간',
+                '180d': '최근 180일',
+                '90d': '최근 90일',
+                '30d': '최근 30일'
+            };
+            const periodSpan = document.getElementById('analysisPeriod');
+            if (periodSpan) {
+                periodSpan.textContent = `(${periodLabels[period]})`;
+            }
+
+            // 인사이트 데이터가 있으면 업데이트
+            if (insightsData) {
+                updateAllInsights();
+            }
+
+            console.log(`기간 전환: ${period}`);
+        }
+
+        /**
+         * 모든 인사이트 섹션 업데이트
+         */
+        function updateAllInsights() {
+            updateSummaryCard();
+            updateAiSummary();
+            updateDailyComparison();
+            updateOpportunities();
+            updateInsightsBadges();
+            updateOverallInsights();
+            updateInsightsFromData();  // 경고 알림 업데이트
+            updateRecommendations();
+            updatePerformanceTrends();
+        }
 
         // 세그먼트 관련 전역 변수
         let segmentData = {
@@ -3012,11 +3091,12 @@
         // Summary Card 업데이트 (summary_card)
         function updateSummaryCard() {
             const container = document.getElementById('summaryCardContainer');
-            if (!container || !insightsData || !insightsData.summary_card) {
+            const periodData = getPeriodData();
+            if (!container || !periodData || !periodData.summary_card) {
                 return;
             }
 
-            const card = insightsData.summary_card;
+            const card = periodData.summary_card;
             container.style.display = 'block';
 
             // 상태 색상 설정
@@ -3065,22 +3145,24 @@
         // AI 요약 메시지 업데이트 (summary)
         function updateAiSummary() {
             const container = document.getElementById('aiSummaryContainer');
-            if (!container || !insightsData || !insightsData.summary) {
+            const periodData = getPeriodData();
+            if (!container || !periodData || !periodData.summary) {
                 return;
             }
 
             container.style.display = 'block';
-            document.getElementById('aiSummaryText').textContent = insightsData.summary;
+            document.getElementById('aiSummaryText').textContent = periodData.summary;
         }
 
         // 오늘 실적 vs 예측 비교 업데이트 (daily_comparison)
         function updateDailyComparison() {
             const container = document.getElementById('dailyComparisonContainer');
-            if (!container || !insightsData || !insightsData.overall || !insightsData.overall.daily_comparison) {
+            const periodData = getPeriodData();
+            if (!container || !periodData || !periodData.overall || !periodData.overall.daily_comparison) {
                 return;
             }
 
-            const comparison = insightsData.overall.daily_comparison;
+            const comparison = periodData.overall.daily_comparison;
             container.style.display = 'block';
 
             document.getElementById('dailyComparisonDate').textContent = `(${comparison.date})`;
@@ -3111,11 +3193,12 @@
         function updateOpportunities() {
             const container = document.getElementById('opportunitiesContent');
             const badge = document.getElementById('opportunitiesBadge');
-            if (!container || !insightsData) {
+            const periodData = getPeriodData();
+            if (!container || !periodData) {
                 return;
             }
 
-            const opportunities = insightsData.opportunities || [];
+            const opportunities = periodData.opportunities || [];
 
             if (opportunities.length === 0) {
                 container.innerHTML = `
@@ -3151,24 +3234,25 @@
 
         // 탭 배지 업데이트 (details)
         function updateInsightsBadges() {
-            if (!insightsData) return;
+            const periodData = getPeriodData();
+            if (!periodData) return;
 
             // 경고 배지
             const alertsBadge = document.getElementById('alertsBadge');
             const alertsCountBadge = document.getElementById('alertsCountBadge');
             let totalAlerts = 0;
 
-            if (insightsData.details) {
-                totalAlerts = (insightsData.details.total_segment_alerts || 0) + (insightsData.details.total_overall_alerts || 0);
-            } else if (insightsData.segments && insightsData.segments.alerts) {
-                totalAlerts = insightsData.segments.alerts.length;
+            if (periodData.details) {
+                totalAlerts = (periodData.details.total_segment_alerts || 0) + (periodData.details.total_overall_alerts || 0);
+            } else if (periodData.segments && periodData.segments.alerts) {
+                totalAlerts = periodData.segments.alerts.length;
             }
 
             if (alertsBadge && totalAlerts > 0) {
                 alertsBadge.textContent = totalAlerts;
                 alertsBadge.style.display = 'inline';
                 // 긴급 경고가 있으면 빨간색
-                if (insightsData.details && insightsData.details.high_severity_alerts > 0) {
+                if (periodData.details && periodData.details.high_severity_alerts > 0) {
                     alertsBadge.style.background = '#ef5350';
                 } else {
                     alertsBadge.style.background = '#ff9800';
@@ -3182,10 +3266,10 @@
             // 추천 배지
             const recommendationsCountBadge = document.getElementById('recommendationsCountBadge');
             let totalRecs = 0;
-            if (insightsData.details) {
-                totalRecs = insightsData.details.total_recommendations || 0;
-            } else if (insightsData.segments && insightsData.segments.recommendations) {
-                totalRecs = insightsData.segments.recommendations.length;
+            if (periodData.details) {
+                totalRecs = periodData.details.total_recommendations || 0;
+            } else if (periodData.segments && periodData.segments.recommendations) {
+                totalRecs = periodData.segments.recommendations.length;
             }
 
             if (recommendationsCountBadge) {
@@ -3201,7 +3285,8 @@
                 return;
             }
 
-            if (!insightsData || !insightsData.overall) {
+            const periodData = getPeriodData();
+            if (!periodData || !periodData.overall) {
                 overallContainer.innerHTML = `
                     <div class="insight-card neutral">
                         <div class="insight-text">전체 성과 데이터를 불러올 수 없습니다.</div>
@@ -3210,7 +3295,7 @@
                 return;
             }
 
-            const overall = insightsData.overall;
+            const overall = periodData.overall;
             const cards = [];
 
             // Current Period 카드
@@ -3308,12 +3393,13 @@
                 return;
             }
 
-            if (!insightsData || !insightsData.segments || !insightsData.segments.alerts) {
+            const periodData = getPeriodData();
+            if (!periodData || !periodData.segments || !periodData.segments.alerts) {
                 updateInsights(); // 폴백: 기존 로직 사용
                 return;
             }
 
-            const alerts = insightsData.segments.alerts.slice(0, 5); // 상위 5개만 표시
+            const alerts = periodData.segments.alerts.slice(0, 5); // 상위 5개만 표시
 
             if (alerts.length === 0) {
                 insightContainer.innerHTML = `
@@ -3376,7 +3462,8 @@
                 return;
             }
 
-            if (!insightsData || !insightsData.segments || !insightsData.segments.recommendations) {
+            const periodData = getPeriodData();
+            if (!periodData || !periodData.segments || !periodData.segments.recommendations) {
                 console.log('Insights data not available yet');
                 recommendationContainer.innerHTML = `
                     <div class="insight-card neutral">
@@ -3386,7 +3473,7 @@
                 return;
             }
 
-            const recommendations = insightsData.segments.recommendations;
+            const recommendations = periodData.segments.recommendations;
             console.log('Recommendations count:', recommendations.length);
 
             if (recommendations.length === 0) {
@@ -3437,12 +3524,13 @@
 
         // 성과 트렌드 분석 업데이트 (7일/30일)
         function updatePerformanceTrends(improvementPeriod = '7d', declinePeriod = '7d') {
-            if (!insightsData || !insightsData.performance_trends) {
+            const periodData = getPeriodData();
+            if (!periodData || !periodData.performance_trends) {
                 console.log('Performance trends data not available');
                 return;
             }
 
-            const trends = insightsData.performance_trends;
+            const trends = periodData.performance_trends;
 
             // 개선 항목 업데이트
             updateImprovementTrends(improvementPeriod, trends);
@@ -4089,8 +4177,9 @@
                     const period = this.dataset.period;
 
                     // 개선 트렌드만 업데이트
-                    if (insightsData && insightsData.performance_trends) {
-                        updateImprovementTrends(period, insightsData.performance_trends);
+                    const periodData = getPeriodData();
+                    if (periodData && periodData.performance_trends) {
+                        updateImprovementTrends(period, periodData.performance_trends);
                     }
                 });
             });
@@ -4103,8 +4192,9 @@
                     const period = this.dataset.period;
 
                     // 하락 트렌드만 업데이트
-                    if (insightsData && insightsData.performance_trends) {
-                        updateDeclineTrends(period, insightsData.performance_trends);
+                    const periodData = getPeriodData();
+                    if (periodData && periodData.performance_trends) {
+                        updateDeclineTrends(period, periodData.performance_trends);
                     }
                 });
             });
