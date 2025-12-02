@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python generate_standalone.py:*)"
+      "Bash(python generate_standalone.py:*)",
+      "Bash(python -c:*)",
+      "Bash(python scripts/generate_insights_multiperiod.py:*)"
     ],
     "deny": [],
     "ask": []
