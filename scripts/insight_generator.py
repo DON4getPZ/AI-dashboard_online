@@ -34,11 +34,19 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any, Tuple, Optional
 import warnings
 
-# UTF-8 출력 설정 (Windows 콘솔 호환)
+# UTF-8 출력 설정 (Windows 콘솔 호환, 중복 래핑 방지)
 if sys.platform == 'win32':
     import io
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+    if not isinstance(sys.stdout, io.TextIOWrapper) or sys.stdout.encoding != 'utf-8':
+        try:
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+        except AttributeError:
+            pass  # 이미 래핑됨
+    if not isinstance(sys.stderr, io.TextIOWrapper) or sys.stderr.encoding != 'utf-8':
+        try:
+            sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+        except AttributeError:
+            pass  # 이미 래핑됨
 
 import pandas as pd
 import numpy as np

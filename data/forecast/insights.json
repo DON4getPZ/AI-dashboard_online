@@ -1,232 +1,907 @@
 {
-  "generated_at": "2025-12-01T14:50:50.072205",
-  "summary_card": {
-    "status_title": "⚖️ 외형 성장 중 (효율 주의)",
-    "status_message": "매출은 늘지만 이익률이 떨어지고 있어요. 마진을 체크하세요.",
-    "status_color": "orange",
-    "metrics": {
-      "current_revenue": "3,683만 원",
-      "forecast_revenue": "4,999만 원",
-      "revenue_change_pct": 35.7,
-      "current_roas": 184.0,
-      "forecast_roas": 173.0,
-      "roas_change_val": -11.1
-    },
-    "period": "예측 기간: 2025-11-29 ~ 2025-12-28"
-  },
-  "overall": {
-    "current_period": {
-      "start_date": "2025-10-30",
-      "end_date": "2025-11-28",
-      "total_cost": 20051781.0,
-      "total_conversions": 949.0,
-      "total_revenue": 36825502.0,
-      "total_clicks": 26940.0,
-      "total_impressions": 1393898.0,
-      "roas": 183.65,
-      "avg_cpa": 21129.38,
-      "cvr": 3.52,
-      "ctr": 1.93
-    },
-    "forecast_period": {
-      "start_date": "2025-11-29",
-      "end_date": "2025-12-28",
-      "total_cost": 28972950.4,
-      "total_conversions": 1441.14,
-      "total_revenue": 49987157.8,
-      "total_clicks": 32382.0,
-      "total_impressions": 1688965.0,
-      "roas": 172.53,
-      "avg_cpa": 20104.19,
-      "cvr": 4.45,
-      "ctr": 1.92
-    },
-    "trend": {
-      "roas_change": -11.12,
-      "conversion_change": 51.86,
-      "direction": "declining"
-    },
-    "alerts": [
-      {
-        "type": "budget_alert",
-        "severity": "high",
-        "title": "💰 예산 소진 경고",
-        "message": "월 예산 대비 100.3% 소진! (2025-11-28 기준)",
-        "action": "예산 소진이 빠릅니다. 월말까지 페이싱을 조절하거나, 추가 예산 확보를 검토하세요.",
-        "financial_impact": "남은 예산: -5만 원"
+  "generated_at": "2025-12-02T10:26:48.207581",
+  "by_period": {
+    "full": {
+      "generated_at": "2025-12-02T10:26:48.207837",
+      "summary_card": {
+        "status_title": "⚖️ 외형 성장 중 (효율 주의)",
+        "status_message": "매출은 늘지만 이익률이 떨어지고 있어요. 마진을 체크하세요.",
+        "status_color": "orange",
+        "metrics": {
+          "current_revenue": "3,683만 원",
+          "forecast_revenue": "4,999만 원",
+          "revenue_change_pct": 35.7,
+          "current_roas": 184.0,
+          "forecast_roas": 173.0,
+          "roas_change_val": -11.1
+        },
+        "period": "예측 기간: 2025-11-29 ~ 2025-12-28"
+      },
+      "overall": {
+        "current_period": {
+          "start_date": "2025-10-30",
+          "end_date": "2025-11-28",
+          "total_cost": 20051781.0,
+          "total_conversions": 949.0,
+          "total_revenue": 36825502.0,
+          "total_clicks": 26940.0,
+          "total_impressions": 1393898.0,
+          "roas": 183.65,
+          "avg_cpa": 21129.38,
+          "cvr": 3.52,
+          "ctr": 1.93
+        },
+        "forecast_period": {
+          "start_date": "2025-11-29",
+          "end_date": "2025-12-28",
+          "total_cost": 28972950.4,
+          "total_conversions": 1441.14,
+          "total_revenue": 49987157.8,
+          "total_clicks": 32382.0,
+          "total_impressions": 1688965.0,
+          "roas": 172.53,
+          "avg_cpa": 20104.19,
+          "cvr": 4.45,
+          "ctr": 1.92
+        },
+        "trend": {
+          "roas_change": -11.12,
+          "conversion_change": 51.86,
+          "direction": "declining"
+        },
+        "alerts": [
+          {
+            "type": "budget_alert",
+            "severity": "high",
+            "title": "💰 예산 소진 경고",
+            "message": "월 예산 대비 100.3% 소진! (2025-11-28 기준)",
+            "action": "예산 소진이 빠릅니다. 월말까지 페이싱을 조절하거나, 추가 예산 확보를 검토하세요.",
+            "financial_impact": "남은 예산: -5만 원"
+          }
+        ],
+        "daily_comparison": {
+          "date": "2025-11-28",
+          "actual": {
+            "cost": 57497.0,
+            "conversions": 2.0,
+            "revenue": 59600.0
+          }
+        }
+      },
+      "segments": {
+        "alerts": [
+          {
+            "type": "conversion_decline",
+            "segment_type": "channel",
+            "segment_value": "메타_트래픽",
+            "metric": "전환수",
+            "change_pct": -52.0,
+            "severity": "high",
+            "title": "🛒 메타_트래픽 전환율 하락",
+            "message": "다음 주 전환수가 52.0% 감소할 것으로 예상됩니다.",
+            "action": "유입은 되는데 구매를 안 하네요. 상세페이지 로딩 속도나 품절 옵션을 체크하고, 장바구니 리타겟팅을 강화하세요.",
+            "financial_impact": "예상 손실 전환: 0건"
+          },
+          {
+            "type": "roas_decline",
+            "segment_type": "channel",
+            "segment_value": "메타_전환",
+            "metric": "ROAS",
+            "change_pct": -20.9,
+            "severity": "high",
+            "title": "💸 메타_전환 효율 저하 주의",
+            "message": "ROAS가 200%에서 180%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 179.5
+          },
+          {
+            "type": "roas_decline",
+            "segment_type": "brand",
+            "segment_value": "기타",
+            "metric": "ROAS",
+            "change_pct": -15.7,
+            "severity": "medium",
+            "title": "💸 기타 효율 저하 주의",
+            "message": "ROAS가 200%에서 185%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 184.7
+          },
+          {
+            "type": "roas_decline",
+            "segment_type": "product",
+            "segment_value": "기타",
+            "metric": "ROAS",
+            "change_pct": -15.7,
+            "severity": "medium",
+            "title": "💸 기타 효율 저하 주의",
+            "message": "ROAS가 200%에서 185%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 184.7
+          },
+          {
+            "type": "roas_decline",
+            "segment_type": "promotion",
+            "segment_value": "기타",
+            "metric": "ROAS",
+            "change_pct": -15.7,
+            "severity": "medium",
+            "title": "💸 기타 효율 저하 주의",
+            "message": "ROAS가 200%에서 185%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 184.7
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": 1,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "channel",
+              "value": "메타_전환"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          },
+          {
+            "priority": 2,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "product",
+              "value": "기타"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          },
+          {
+            "priority": 3,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "brand",
+              "value": "기타"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          },
+          {
+            "priority": 4,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "promotion",
+              "value": "기타"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          }
+        ]
+      },
+      "opportunities": [],
+      "summary": "📊 전체 성과 (2025-10-30 ~ 2025-11-28): ROAS 183.65%, 전환수 949, 전환값 36,825,502원\n📉 트렌드: ROAS -11.1%p 하락 예상\n⚠️ 월 예산 대비 100.3% 소진! (2025-11-28 기준)\n\n🚨 주의: channel '메타_트래픽'의 전환수이(가) 52.0% 하락할 것으로 예측됩니다.\n💡 권장: channel '메타_전환'에 예산 30% 증액을 권장합니다. (ROAS 200.41%로 높은 효율, CVR 3.39%)\n   예상 효과: 전환값 25-30% 증가 예상\n🔍 추가 검토 대상: 기타, 기타",
+      "details": {
+        "total_segment_alerts": 5,
+        "high_severity_alerts": 2,
+        "total_overall_alerts": 1,
+        "total_recommendations": 4,
+        "analyzed_segments": {
+          "brand": 1,
+          "channel": 3,
+          "product": 1,
+          "promotion": 1
+        },
+        "overall_roas": 183.65,
+        "forecast_roas": 172.53
+      },
+      "performance_trends": {
+        "improvements_7d": [],
+        "improvements_30d": [],
+        "declines_7d": [],
+        "declines_30d": []
       }
-    ],
-    "daily_comparison": {
-      "date": "2025-11-28",
-      "actual": {
-        "cost": 57497.0,
-        "conversions": 2.0,
-        "revenue": 59600.0
+    },
+    "180d": {
+      "generated_at": "2025-12-02T10:26:48.250952",
+      "summary_card": {
+        "status_title": "⚖️ 외형 성장 중 (효율 주의)",
+        "status_message": "매출은 늘지만 이익률이 떨어지고 있어요. 마진을 체크하세요.",
+        "status_color": "orange",
+        "metrics": {
+          "current_revenue": "3,683만 원",
+          "forecast_revenue": "4,999만 원",
+          "revenue_change_pct": 35.7,
+          "current_roas": 184.0,
+          "forecast_roas": 173.0,
+          "roas_change_val": -11.1
+        },
+        "period": "예측 기간: 2025-11-29 ~ 2025-12-28"
+      },
+      "overall": {
+        "current_period": {
+          "start_date": "2025-10-30",
+          "end_date": "2025-11-28",
+          "total_cost": 20051781.0,
+          "total_conversions": 949.0,
+          "total_revenue": 36825502.0,
+          "total_clicks": 26940.0,
+          "total_impressions": 1393898.0,
+          "roas": 183.65,
+          "avg_cpa": 21129.38,
+          "cvr": 3.52,
+          "ctr": 1.93
+        },
+        "forecast_period": {
+          "start_date": "2025-11-29",
+          "end_date": "2025-12-28",
+          "total_cost": 28972950.4,
+          "total_conversions": 1441.14,
+          "total_revenue": 49987157.8,
+          "total_clicks": 32382.0,
+          "total_impressions": 1688965.0,
+          "roas": 172.53,
+          "avg_cpa": 20104.19,
+          "cvr": 4.45,
+          "ctr": 1.92
+        },
+        "trend": {
+          "roas_change": -11.12,
+          "conversion_change": 51.86,
+          "direction": "declining"
+        },
+        "alerts": [
+          {
+            "type": "budget_alert",
+            "severity": "high",
+            "title": "💰 예산 소진 경고",
+            "message": "월 예산 대비 100.3% 소진! (2025-11-28 기준)",
+            "action": "예산 소진이 빠릅니다. 월말까지 페이싱을 조절하거나, 추가 예산 확보를 검토하세요.",
+            "financial_impact": "남은 예산: -5만 원"
+          }
+        ],
+        "daily_comparison": {
+          "date": "2025-11-28",
+          "actual": {
+            "cost": 57497.0,
+            "conversions": 2.0,
+            "revenue": 59600.0
+          }
+        }
+      },
+      "segments": {
+        "alerts": [
+          {
+            "type": "conversion_decline",
+            "segment_type": "channel",
+            "segment_value": "메타_트래픽",
+            "metric": "전환수",
+            "change_pct": -52.0,
+            "severity": "high",
+            "title": "🛒 메타_트래픽 전환율 하락",
+            "message": "다음 주 전환수가 52.0% 감소할 것으로 예상됩니다.",
+            "action": "유입은 되는데 구매를 안 하네요. 상세페이지 로딩 속도나 품절 옵션을 체크하고, 장바구니 리타겟팅을 강화하세요.",
+            "financial_impact": "예상 손실 전환: 0건"
+          },
+          {
+            "type": "roas_decline",
+            "segment_type": "channel",
+            "segment_value": "메타_전환",
+            "metric": "ROAS",
+            "change_pct": -20.9,
+            "severity": "high",
+            "title": "💸 메타_전환 효율 저하 주의",
+            "message": "ROAS가 200%에서 180%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 179.5
+          },
+          {
+            "type": "roas_decline",
+            "segment_type": "brand",
+            "segment_value": "기타",
+            "metric": "ROAS",
+            "change_pct": -15.7,
+            "severity": "medium",
+            "title": "💸 기타 효율 저하 주의",
+            "message": "ROAS가 200%에서 185%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 184.7
+          },
+          {
+            "type": "roas_decline",
+            "segment_type": "product",
+            "segment_value": "기타",
+            "metric": "ROAS",
+            "change_pct": -15.7,
+            "severity": "medium",
+            "title": "💸 기타 효율 저하 주의",
+            "message": "ROAS가 200%에서 185%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 184.7
+          },
+          {
+            "type": "roas_decline",
+            "segment_type": "promotion",
+            "segment_value": "기타",
+            "metric": "ROAS",
+            "change_pct": -15.7,
+            "severity": "medium",
+            "title": "💸 기타 효율 저하 주의",
+            "message": "ROAS가 200%에서 185%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 184.7
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": 1,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "channel",
+              "value": "메타_전환"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          },
+          {
+            "priority": 2,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "product",
+              "value": "기타"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          },
+          {
+            "priority": 3,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "brand",
+              "value": "기타"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          },
+          {
+            "priority": 4,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "promotion",
+              "value": "기타"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          }
+        ]
+      },
+      "opportunities": [],
+      "summary": "📊 전체 성과 (2025-10-30 ~ 2025-11-28): ROAS 183.65%, 전환수 949, 전환값 36,825,502원\n📉 트렌드: ROAS -11.1%p 하락 예상\n⚠️ 월 예산 대비 100.3% 소진! (2025-11-28 기준)\n\n🚨 주의: channel '메타_트래픽'의 전환수이(가) 52.0% 하락할 것으로 예측됩니다.\n💡 권장: channel '메타_전환'에 예산 30% 증액을 권장합니다. (ROAS 200.41%로 높은 효율, CVR 3.39%)\n   예상 효과: 전환값 25-30% 증가 예상\n🔍 추가 검토 대상: 기타, 기타",
+      "details": {
+        "total_segment_alerts": 5,
+        "high_severity_alerts": 2,
+        "total_overall_alerts": 1,
+        "total_recommendations": 4,
+        "analyzed_segments": {
+          "brand": 1,
+          "channel": 3,
+          "product": 1,
+          "promotion": 1
+        },
+        "overall_roas": 183.65,
+        "forecast_roas": 172.53
+      },
+      "performance_trends": {
+        "improvements_7d": [],
+        "improvements_30d": [],
+        "declines_7d": [],
+        "declines_30d": []
       }
+    },
+    "90d": {
+      "generated_at": "2025-12-02T10:26:48.277314",
+      "summary_card": {
+        "status_title": "⚖️ 외형 성장 중 (효율 주의)",
+        "status_message": "매출은 늘지만 이익률이 떨어지고 있어요. 마진을 체크하세요.",
+        "status_color": "orange",
+        "metrics": {
+          "current_revenue": "3,683만 원",
+          "forecast_revenue": "4,999만 원",
+          "revenue_change_pct": 35.7,
+          "current_roas": 184.0,
+          "forecast_roas": 173.0,
+          "roas_change_val": -11.1
+        },
+        "period": "예측 기간: 2025-11-29 ~ 2025-12-28"
+      },
+      "overall": {
+        "current_period": {
+          "start_date": "2025-10-30",
+          "end_date": "2025-11-28",
+          "total_cost": 20051781.0,
+          "total_conversions": 949.0,
+          "total_revenue": 36825502.0,
+          "total_clicks": 26940.0,
+          "total_impressions": 1393898.0,
+          "roas": 183.65,
+          "avg_cpa": 21129.38,
+          "cvr": 3.52,
+          "ctr": 1.93
+        },
+        "forecast_period": {
+          "start_date": "2025-11-29",
+          "end_date": "2025-12-28",
+          "total_cost": 28972950.4,
+          "total_conversions": 1441.14,
+          "total_revenue": 49987157.8,
+          "total_clicks": 32382.0,
+          "total_impressions": 1688965.0,
+          "roas": 172.53,
+          "avg_cpa": 20104.19,
+          "cvr": 4.45,
+          "ctr": 1.92
+        },
+        "trend": {
+          "roas_change": -11.12,
+          "conversion_change": 51.86,
+          "direction": "declining"
+        },
+        "alerts": [
+          {
+            "type": "budget_alert",
+            "severity": "high",
+            "title": "💰 예산 소진 경고",
+            "message": "월 예산 대비 100.3% 소진! (2025-11-28 기준)",
+            "action": "예산 소진이 빠릅니다. 월말까지 페이싱을 조절하거나, 추가 예산 확보를 검토하세요.",
+            "financial_impact": "남은 예산: -5만 원"
+          }
+        ],
+        "daily_comparison": {
+          "date": "2025-11-28",
+          "actual": {
+            "cost": 57497.0,
+            "conversions": 2.0,
+            "revenue": 59600.0
+          }
+        }
+      },
+      "segments": {
+        "alerts": [
+          {
+            "type": "conversion_decline",
+            "segment_type": "channel",
+            "segment_value": "메타_트래픽",
+            "metric": "전환수",
+            "change_pct": -52.0,
+            "severity": "high",
+            "title": "🛒 메타_트래픽 전환율 하락",
+            "message": "다음 주 전환수가 52.0% 감소할 것으로 예상됩니다.",
+            "action": "유입은 되는데 구매를 안 하네요. 상세페이지 로딩 속도나 품절 옵션을 체크하고, 장바구니 리타겟팅을 강화하세요.",
+            "financial_impact": "예상 손실 전환: 0건"
+          },
+          {
+            "type": "roas_decline",
+            "segment_type": "channel",
+            "segment_value": "메타_전환",
+            "metric": "ROAS",
+            "change_pct": -20.9,
+            "severity": "high",
+            "title": "💸 메타_전환 효율 저하 주의",
+            "message": "ROAS가 200%에서 180%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 179.5
+          },
+          {
+            "type": "roas_decline",
+            "segment_type": "brand",
+            "segment_value": "기타",
+            "metric": "ROAS",
+            "change_pct": -15.7,
+            "severity": "medium",
+            "title": "💸 기타 효율 저하 주의",
+            "message": "ROAS가 200%에서 185%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 184.7
+          },
+          {
+            "type": "roas_decline",
+            "segment_type": "product",
+            "segment_value": "기타",
+            "metric": "ROAS",
+            "change_pct": -15.7,
+            "severity": "medium",
+            "title": "💸 기타 효율 저하 주의",
+            "message": "ROAS가 200%에서 185%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 184.7
+          },
+          {
+            "type": "roas_decline",
+            "segment_type": "promotion",
+            "segment_value": "기타",
+            "metric": "ROAS",
+            "change_pct": -15.7,
+            "severity": "medium",
+            "title": "💸 기타 효율 저하 주의",
+            "message": "ROAS가 200%에서 185%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 184.7
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": 1,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "channel",
+              "value": "메타_전환"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          },
+          {
+            "priority": 2,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "product",
+              "value": "기타"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          },
+          {
+            "priority": 3,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "brand",
+              "value": "기타"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          },
+          {
+            "priority": 4,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "promotion",
+              "value": "기타"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          }
+        ]
+      },
+      "opportunities": [],
+      "summary": "📊 전체 성과 (2025-10-30 ~ 2025-11-28): ROAS 183.65%, 전환수 949, 전환값 36,825,502원\n📉 트렌드: ROAS -11.1%p 하락 예상\n⚠️ 월 예산 대비 100.3% 소진! (2025-11-28 기준)\n\n🚨 주의: channel '메타_트래픽'의 전환수이(가) 52.0% 하락할 것으로 예측됩니다.\n💡 권장: channel '메타_전환'에 예산 30% 증액을 권장합니다. (ROAS 200.41%로 높은 효율, CVR 3.39%)\n   예상 효과: 전환값 25-30% 증가 예상\n🔍 추가 검토 대상: 기타, 기타",
+      "details": {
+        "total_segment_alerts": 5,
+        "high_severity_alerts": 2,
+        "total_overall_alerts": 1,
+        "total_recommendations": 4,
+        "analyzed_segments": {
+          "brand": 1,
+          "channel": 3,
+          "product": 1,
+          "promotion": 1
+        },
+        "overall_roas": 183.65,
+        "forecast_roas": 172.53
+      },
+      "performance_trends": {
+        "improvements_7d": [],
+        "improvements_30d": [],
+        "declines_7d": [],
+        "declines_30d": []
+      }
+    },
+    "30d": {
+      "generated_at": "2025-12-02T10:26:48.302997",
+      "summary_card": {
+        "status_title": "🚀 성장 가속화",
+        "status_message": "매출과 효율이 모두 오르고 있습니다. 아주 훌륭해요!",
+        "status_color": "green",
+        "metrics": {
+          "current_revenue": "6만 원",
+          "forecast_revenue": "4,999만 원",
+          "revenue_change_pct": 83771.1,
+          "current_roas": 104.0,
+          "forecast_roas": 173.0,
+          "roas_change_val": 68.9
+        },
+        "period": "예측 기간: 2025-11-29 ~ 2025-12-28"
+      },
+      "overall": {
+        "current_period": {
+          "start_date": "2025-11-28",
+          "end_date": "2025-11-28",
+          "total_cost": 57497.0,
+          "total_conversions": 2.0,
+          "total_revenue": 59600.0,
+          "total_clicks": 87.0,
+          "total_impressions": 3789.0,
+          "roas": 103.66,
+          "avg_cpa": 28748.5,
+          "cvr": 2.3,
+          "ctr": 2.3
+        },
+        "forecast_period": {
+          "start_date": "2025-11-29",
+          "end_date": "2025-12-28",
+          "total_cost": 28972950.4,
+          "total_conversions": 1441.14,
+          "total_revenue": 49987157.8,
+          "total_clicks": 32382.0,
+          "total_impressions": 1688965.0,
+          "roas": 172.53,
+          "avg_cpa": 20104.19,
+          "cvr": 4.45,
+          "ctr": 1.92
+        },
+        "trend": {
+          "roas_change": 68.87,
+          "conversion_change": 71957.0,
+          "direction": "improving"
+        },
+        "alerts": [],
+        "daily_comparison": {
+          "date": "2025-11-28",
+          "actual": {
+            "cost": 57497.0,
+            "conversions": 2.0,
+            "revenue": 59600.0
+          }
+        }
+      },
+      "segments": {
+        "alerts": [
+          {
+            "type": "roas_decline",
+            "segment_type": "channel",
+            "segment_value": "메타_전환",
+            "metric": "ROAS",
+            "change_pct": -20.9,
+            "severity": "high",
+            "title": "💸 메타_전환 효율 저하 주의",
+            "message": "ROAS가 200%에서 180%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 179.5
+          },
+          {
+            "type": "roas_decline",
+            "segment_type": "brand",
+            "segment_value": "기타",
+            "metric": "ROAS",
+            "change_pct": -15.7,
+            "severity": "medium",
+            "title": "💸 기타 효율 저하 주의",
+            "message": "ROAS가 200%에서 185%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 184.7
+          },
+          {
+            "type": "roas_decline",
+            "segment_type": "product",
+            "segment_value": "기타",
+            "metric": "ROAS",
+            "change_pct": -15.7,
+            "severity": "medium",
+            "title": "💸 기타 효율 저하 주의",
+            "message": "ROAS가 200%에서 185%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 184.7
+          },
+          {
+            "type": "roas_decline",
+            "segment_type": "promotion",
+            "segment_value": "기타",
+            "metric": "ROAS",
+            "change_pct": -15.7,
+            "severity": "medium",
+            "title": "💸 기타 효율 저하 주의",
+            "message": "ROAS가 200%에서 185%로 떨어질 전망입니다.",
+            "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
+            "actual_roas": 200.4,
+            "forecast_roas": 184.7
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": 1,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "channel",
+              "value": "메타_전환"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          },
+          {
+            "priority": 2,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "product",
+              "value": "기타"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          },
+          {
+            "priority": 3,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "brand",
+              "value": "기타"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          },
+          {
+            "priority": 4,
+            "action": "예산 30% 증액",
+            "target": {
+              "type": "promotion",
+              "value": "기타"
+            },
+            "reasons": [
+              "ROAS 200.41%로 높은 효율",
+              "CVR 3.39%"
+            ],
+            "expected_impact": "전환값 25-30% 증가 예상",
+            "metrics": {
+              "roas": 200.41,
+              "cvr": 3.39,
+              "cpa": 21018.59
+            }
+          }
+        ]
+      },
+      "opportunities": [],
+      "summary": "📊 전체 성과 (2025-11-28 ~ 2025-11-28): ROAS 103.66%, 전환수 2, 전환값 59,600원\n📈 트렌드: ROAS +68.9%p 개선 예상\n\n🚨 주의: channel '메타_전환'의 ROAS이(가) 20.9% 하락할 것으로 예측됩니다.\n💡 권장: channel '메타_전환'에 예산 30% 증액을 권장합니다. (ROAS 200.41%로 높은 효율, CVR 3.39%)\n   예상 효과: 전환값 25-30% 증가 예상\n🔍 추가 검토 대상: 기타, 기타",
+      "details": {
+        "total_segment_alerts": 4,
+        "high_severity_alerts": 1,
+        "total_overall_alerts": 0,
+        "total_recommendations": 4,
+        "analyzed_segments": {
+          "brand": 1,
+          "channel": 1,
+          "product": 1,
+          "promotion": 1
+        },
+        "overall_roas": 103.66,
+        "forecast_roas": 172.53
+      },
+      "performance_trends": {}
     }
-  },
-  "segments": {
-    "alerts": [
-      {
-        "type": "conversion_decline",
-        "segment_type": "channel",
-        "segment_value": "메타_트래픽",
-        "metric": "전환수",
-        "change_pct": -52.0,
-        "severity": "high",
-        "title": "🛒 메타_트래픽 전환율 하락",
-        "message": "다음 주 전환수가 52.0% 감소할 것으로 예상됩니다.",
-        "action": "유입은 되는데 구매를 안 하네요. 상세페이지 로딩 속도나 품절 옵션을 체크하고, 장바구니 리타겟팅을 강화하세요.",
-        "financial_impact": "예상 손실 전환: 0건"
-      },
-      {
-        "type": "roas_decline",
-        "segment_type": "channel",
-        "segment_value": "메타_전환",
-        "metric": "ROAS",
-        "change_pct": -20.9,
-        "severity": "high",
-        "title": "💸 메타_전환 효율 저하 주의",
-        "message": "ROAS가 200%에서 180%로 떨어질 전망입니다.",
-        "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
-        "actual_roas": 200.4,
-        "forecast_roas": 179.5
-      },
-      {
-        "type": "roas_decline",
-        "segment_type": "brand",
-        "segment_value": "기타",
-        "metric": "ROAS",
-        "change_pct": -15.7,
-        "severity": "medium",
-        "title": "💸 기타 효율 저하 주의",
-        "message": "ROAS가 200%에서 185%로 떨어질 전망입니다.",
-        "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
-        "actual_roas": 200.4,
-        "forecast_roas": 184.7
-      },
-      {
-        "type": "roas_decline",
-        "segment_type": "product",
-        "segment_value": "기타",
-        "metric": "ROAS",
-        "change_pct": -15.7,
-        "severity": "medium",
-        "title": "💸 기타 효율 저하 주의",
-        "message": "ROAS가 200%에서 185%로 떨어질 전망입니다.",
-        "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
-        "actual_roas": 200.4,
-        "forecast_roas": 184.7
-      },
-      {
-        "type": "roas_decline",
-        "segment_type": "promotion",
-        "segment_value": "기타",
-        "metric": "ROAS",
-        "change_pct": -15.7,
-        "severity": "medium",
-        "title": "💸 기타 효율 저하 주의",
-        "message": "ROAS가 200%에서 185%로 떨어질 전망입니다.",
-        "action": "경쟁사 입찰 단가(CPC)가 상승했거나, 광고 소재의 피로도가 높아졌을 수 있습니다. 소재를 교체하거나 제외 타겟을 설정해보세요.",
-        "actual_roas": 200.4,
-        "forecast_roas": 184.7
-      }
-    ],
-    "recommendations": [
-      {
-        "priority": 1,
-        "action": "예산 30% 증액",
-        "target": {
-          "type": "channel",
-          "value": "메타_전환"
-        },
-        "reasons": [
-          "ROAS 200.41%로 높은 효율",
-          "CVR 3.39%"
-        ],
-        "expected_impact": "전환값 25-30% 증가 예상",
-        "metrics": {
-          "roas": 200.41,
-          "cvr": 3.39,
-          "cpa": 21018.59
-        }
-      },
-      {
-        "priority": 2,
-        "action": "예산 30% 증액",
-        "target": {
-          "type": "product",
-          "value": "기타"
-        },
-        "reasons": [
-          "ROAS 200.41%로 높은 효율",
-          "CVR 3.39%"
-        ],
-        "expected_impact": "전환값 25-30% 증가 예상",
-        "metrics": {
-          "roas": 200.41,
-          "cvr": 3.39,
-          "cpa": 21018.59
-        }
-      },
-      {
-        "priority": 3,
-        "action": "예산 30% 증액",
-        "target": {
-          "type": "brand",
-          "value": "기타"
-        },
-        "reasons": [
-          "ROAS 200.41%로 높은 효율",
-          "CVR 3.39%"
-        ],
-        "expected_impact": "전환값 25-30% 증가 예상",
-        "metrics": {
-          "roas": 200.41,
-          "cvr": 3.39,
-          "cpa": 21018.59
-        }
-      },
-      {
-        "priority": 4,
-        "action": "예산 30% 증액",
-        "target": {
-          "type": "promotion",
-          "value": "기타"
-        },
-        "reasons": [
-          "ROAS 200.41%로 높은 효율",
-          "CVR 3.39%"
-        ],
-        "expected_impact": "전환값 25-30% 증가 예상",
-        "metrics": {
-          "roas": 200.41,
-          "cvr": 3.39,
-          "cpa": 21018.59
-        }
-      }
-    ]
-  },
-  "opportunities": [],
-  "summary": "📊 전체 성과 (2025-10-30 ~ 2025-11-28): ROAS 183.65%, 전환수 949, 전환값 36,825,502원\n📉 트렌드: ROAS -11.1%p 하락 예상\n⚠️ 월 예산 대비 100.3% 소진! (2025-11-28 기준)\n\n🚨 주의: channel '메타_트래픽'의 전환수이(가) 52.0% 하락할 것으로 예측됩니다.\n💡 권장: channel '메타_전환'에 예산 30% 증액을 권장합니다. (ROAS 200.41%로 높은 효율, CVR 3.39%)\n   예상 효과: 전환값 25-30% 증가 예상\n🔍 추가 검토 대상: 기타, 기타",
-  "details": {
-    "total_segment_alerts": 5,
-    "high_severity_alerts": 2,
-    "total_overall_alerts": 1,
-    "total_recommendations": 4,
-    "analyzed_segments": {
-      "brand": 1,
-      "channel": 3,
-      "product": 1,
-      "promotion": 1
-    },
-    "overall_roas": 183.65,
-    "forecast_roas": 172.53
-  },
-  "performance_trends": {
-    "improvements_7d": [],
-    "improvements_30d": [],
-    "declines_7d": [],
-    "declines_30d": []
   }
 }

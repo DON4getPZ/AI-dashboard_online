@@ -31,16 +31,11 @@ import json
 from pathlib import Path
 from datetime import datetime
 
-# UTF-8 출력 설정 (Windows 콘솔 호환)
-if sys.platform == 'win32':
-    import io
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
-
 # 스크립트 디렉토리를 path에 추가
 SCRIPT_DIR = Path(__file__).parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
+# insight_generator를 먼저 import (UTF-8 설정 포함)
 from insight_generator import InsightGenerator, NpEncoder
 
 # 디렉토리 설정

@@ -24,15 +24,6 @@
       "top_recommendations": [
         {
           "source": "alert",
-          "title": "🎯 우리 브랜드의 찐팬은 '네이버_신제품검색광고' 입니다!",
-          "message": "네이버_신제품검색광고의 ROAS가 6975%로 압도적입니다.",
-          "action": "이번 주 광고 예산의 70%를 네이버_신제품검색광고 타겟에 집중해보세요.",
-          "category": "타겟팅",
-          "score": 5,
-          "severity": "opportunity"
-        },
-        {
-          "source": "alert",
           "title": "📉 매출이 주춤하고 있어요",
           "message": "최근 30일 매출이 이전 대비 -27.4% 감소했습니다.",
           "action": "캠페인 소재와 타겟팅을 점검해주세요.",
@@ -43,8 +34,8 @@
         {
           "source": "recommendation",
           "title": "💰 예산 재배분으로 효율 UP!",
-          "message": "네이버_신제품검색광고 (ROAS 6975%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
-          "action": "네이버_신제품검색광고에 예산 30% 증액을 권장합니다.",
+          "message": "네이버_브랜드검색광고 (ROAS 503%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
+          "action": "네이버_브랜드검색광고에 예산 30% 증액을 권장합니다.",
           "category": "예산 전략",
           "score": 5,
           "priority": "high",
@@ -69,16 +60,26 @@
           "score": 5,
           "priority": "high",
           "expected_impact": "ROAS 15-30% 개선 가능"
+        },
+        {
+          "source": "recommendation",
+          "title": "🚀 라이징 스타: '기타'",
+          "message": "기타 상품의 ROAS가 189%로 가장 효율적입니다.",
+          "action": "이 상품을 메인 배너 가장 잘 보이는 곳에 배치하세요.",
+          "category": "상품 전략",
+          "score": 5,
+          "priority": "high",
+          "expected_impact": "매출 20-35% 증가 예상"
         }
       ],
       "top_categories": [
         {
-          "name": "네이버_신제품검색광고",
-          "cost": 714994.0,
-          "conversions": 328.0,
-          "revenue": 49870900.0,
-          "roas": 6975.0095804999755,
-          "cpa": 2179.859756097561
+          "name": "네이버_브랜드검색광고",
+          "cost": 9844980.0,
+          "conversions": 326.0,
+          "revenue": 49500400.0,
+          "roas": 502.7983804944245,
+          "cpa": 30199.325153374233
         },
         {
           "name": "네이버_파워링크",
@@ -205,6 +206,15 @@
           "roas": 1437.5675258527551
         },
         {
+          "campaign": "브랜드검색",
+          "adset": "브랜드검색-MO",
+          "category": "네이버_브랜드검색광고",
+          "cost": 2639970.0,
+          "conversions": 220.0,
+          "revenue": 34460400.0,
+          "roas": 1305.3330151478995
+        },
+        {
           "campaign": "쇼핑검색-기타",
           "adset": "001.외출용품",
           "category": "네이버_쇼핑검색",
@@ -212,15 +222,6 @@
           "conversions": 32.0,
           "revenue": 4340200.0,
           "roas": 767.5140763376057
-        },
-        {
-          "campaign": "파워링크-듀엘백",
-          "adset": "02.메인-듀엘백-기저귀가방백팩-PC",
-          "category": "네이버_파워링크",
-          "cost": 31856.0,
-          "conversions": 1.0,
-          "revenue": 197500.0,
-          "roas": 619.9773982923153
         }
       ],
       "age_gender_combinations": [
@@ -3126,25 +3127,15 @@
       },
       "alerts": [
         {
-          "type": "high_roas_opportunity",
-          "title": "🎯 우리 브랜드의 찐팬은 '네이버_신제품검색광고' 입니다!",
-          "message": "네이버_신제품검색광고의 ROAS가 6975%로 압도적입니다.",
-          "action": "이번 주 광고 예산의 70%를 네이버_신제품검색광고 타겟에 집중해보세요.",
-          "severity": "opportunity",
-          "category": "타겟팅",
-          "score": 5,
-          "value": 6975.0095804999755
-        },
-        {
           "type": "low_roas_warning",
-          "title": "⚠️ '네이버_브랜드검색광고' 캠페인 점검이 필요해요",
-          "message": "네이버_브랜드검색광고의 ROAS가 0%로 낮습니다.",
+          "title": "⚠️ '네이버_신제품검색광고' 캠페인 점검이 필요해요",
+          "message": "네이버_신제품검색광고의 ROAS가 52%로 낮습니다.",
           "action": "소재를 교체하거나, 타겟팅을 좁혀보세요.",
           "severity": "warning",
           "category": "효율 개선",
           "score": 4,
-          "target": "네이버_브랜드검색광고",
-          "value": 0.0
+          "target": "네이버_신제품검색광고",
+          "value": 51.81861665972022
         },
         {
           "type": "low_roas_warning",
@@ -3212,8 +3203,8 @@
       "recommendations": [
         {
           "title": "💰 예산 재배분으로 효율 UP!",
-          "description": "네이버_신제품검색광고 (ROAS 6975%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
-          "action": "네이버_신제품검색광고에 예산 30% 증액을 권장합니다.",
+          "description": "네이버_브랜드검색광고 (ROAS 503%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
+          "action": "네이버_브랜드검색광고에 예산 30% 증액을 권장합니다.",
           "priority": "high",
           "category": "예산 전략",
           "score": 5,
@@ -3286,7 +3277,7 @@
           "based_on": "prophet_forecast"
         }
       ],
-      "generated_at": "2025-12-01T16:57:07.385260",
+      "generated_at": "2025-12-02T10:27:41.571219",
       "filter_info": {
         "days": 0,
         "label": "전체 기간",
@@ -3313,9 +3304,9 @@
       "details": {
         "total_categories": 9,
         "paid_categories": 9,
-        "top_roas_category": "네이버_신제품검색광고",
+        "top_roas_category": "네이버_브랜드검색광고",
         "analysis_period_days": 433,
-        "alerts_count": 9,
+        "alerts_count": 8,
         "recommendations_count": 9,
         "top_recommendations_count": 5,
         "timeseries_insights_count": 2,
@@ -3725,9 +3716,9 @@
       "top_recommendations": [
         {
           "source": "alert",
-          "title": "🎯 우리 브랜드의 찐팬은 '네이버_신제품검색광고' 입니다!",
-          "message": "네이버_신제품검색광고의 ROAS가 6975%로 압도적입니다.",
-          "action": "이번 주 광고 예산의 70%를 네이버_신제품검색광고 타겟에 집중해보세요.",
+          "title": "🎯 우리 브랜드의 찐팬은 '네이버_브랜드검색광고' 입니다!",
+          "message": "네이버_브랜드검색광고의 ROAS가 1136%로 압도적입니다.",
+          "action": "이번 주 광고 예산의 70%를 네이버_브랜드검색광고 타겟에 집중해보세요.",
           "category": "타겟팅",
           "score": 5,
           "severity": "opportunity"
@@ -3744,8 +3735,8 @@
         {
           "source": "recommendation",
           "title": "💰 예산 재배분으로 효율 UP!",
-          "message": "네이버_신제품검색광고 (ROAS 6975%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
-          "action": "네이버_신제품검색광고에 예산 30% 증액을 권장합니다.",
+          "message": "네이버_브랜드검색광고 (ROAS 1136%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
+          "action": "네이버_브랜드검색광고에 예산 30% 증액을 권장합니다.",
           "category": "예산 전략",
           "score": 5,
           "priority": "high",
@@ -3774,12 +3765,12 @@
       ],
       "top_categories": [
         {
-          "name": "네이버_신제품검색광고",
-          "cost": 714994.0,
-          "conversions": 328.0,
-          "revenue": 49870900.0,
-          "roas": 6975.0095804999755,
-          "cpa": 2179.859756097561
+          "name": "네이버_브랜드검색광고",
+          "cost": 4355970.0,
+          "conversions": 326.0,
+          "revenue": 49500400.0,
+          "roas": 1136.3806454130768,
+          "cpa": 13361.871165644172
         },
         {
           "name": "네이버_파워링크",
@@ -3906,22 +3897,22 @@
           "roas": 1437.5675258527551
         },
         {
-          "campaign": "쇼핑검색-기타",
-          "adset": "001.외출용품",
-          "category": "네이버_쇼핑검색",
-          "cost": 565488.0,
-          "conversions": 32.0,
-          "revenue": 4340200.0,
-          "roas": 767.5140763376057
+          "campaign": "브랜드검색",
+          "adset": "브랜드검색-MO",
+          "category": "네이버_브랜드검색광고",
+          "cost": 2639970.0,
+          "conversions": 220.0,
+          "revenue": 34460400.0,
+          "roas": 1305.3330151478995
         },
         {
-          "campaign": "파워링크-듀엘백",
-          "adset": "02.메인-듀엘백-기저귀가방백팩-PC",
-          "category": "네이버_파워링크",
-          "cost": 31856.0,
-          "conversions": 1.0,
-          "revenue": 197500.0,
-          "roas": 619.9773982923153
+          "campaign": "브랜드검색",
+          "adset": "NEW 브랜드검색_MO",
+          "category": "네이버_브랜드검색광고",
+          "cost": 1716000.0,
+          "conversions": 106.0,
+          "revenue": 15040000.0,
+          "roas": 876.4568764568764
         }
       ],
       "age_gender_combinations": [
@@ -6205,13 +6196,13 @@
       "alerts": [
         {
           "type": "high_roas_opportunity",
-          "title": "🎯 우리 브랜드의 찐팬은 '네이버_신제품검색광고' 입니다!",
-          "message": "네이버_신제품검색광고의 ROAS가 6975%로 압도적입니다.",
-          "action": "이번 주 광고 예산의 70%를 네이버_신제품검색광고 타겟에 집중해보세요.",
+          "title": "🎯 우리 브랜드의 찐팬은 '네이버_브랜드검색광고' 입니다!",
+          "message": "네이버_브랜드검색광고의 ROAS가 1136%로 압도적입니다.",
+          "action": "이번 주 광고 예산의 70%를 네이버_브랜드검색광고 타겟에 집중해보세요.",
           "severity": "opportunity",
           "category": "타겟팅",
           "score": 5,
-          "value": 6975.0095804999755
+          "value": 1136.3806454130768
         },
         {
           "type": "low_roas_warning",
@@ -6226,14 +6217,14 @@
         },
         {
           "type": "low_roas_warning",
-          "title": "⚠️ '네이버_브랜드검색광고' 캠페인 점검이 필요해요",
-          "message": "네이버_브랜드검색광고의 ROAS가 0%로 낮습니다.",
+          "title": "⚠️ '네이버_신제품검색광고' 캠페인 점검이 필요해요",
+          "message": "네이버_신제품검색광고의 ROAS가 52%로 낮습니다.",
           "action": "소재를 교체하거나, 타겟팅을 좁혀보세요.",
           "severity": "warning",
           "category": "효율 개선",
           "score": 4,
-          "target": "네이버_브랜드검색광고",
-          "value": 0.0
+          "target": "네이버_신제품검색광고",
+          "value": 51.81861665972022
         },
         {
           "type": "low_roas_warning",
@@ -6290,8 +6281,8 @@
       "recommendations": [
         {
           "title": "💰 예산 재배분으로 효율 UP!",
-          "description": "네이버_신제품검색광고 (ROAS 6975%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
-          "action": "네이버_신제품검색광고에 예산 30% 증액을 권장합니다.",
+          "description": "네이버_브랜드검색광고 (ROAS 1136%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
+          "action": "네이버_브랜드검색광고에 예산 30% 증액을 권장합니다.",
           "priority": "high",
           "category": "예산 전략",
           "score": 5,
@@ -6364,7 +6355,7 @@
           "based_on": "prophet_forecast"
         }
       ],
-      "generated_at": "2025-12-01T16:57:09.822855",
+      "generated_at": "2025-12-02T10:27:43.235832",
       "filter_info": {
         "days": 180,
         "label": "최근 180일",
@@ -6391,7 +6382,7 @@
       "details": {
         "total_categories": 9,
         "paid_categories": 9,
-        "top_roas_category": "네이버_신제품검색광고",
+        "top_roas_category": "네이버_브랜드검색광고",
         "analysis_period_days": 181,
         "alerts_count": 9,
         "recommendations_count": 9,
@@ -6803,9 +6794,9 @@
       "top_recommendations": [
         {
           "source": "alert",
-          "title": "🎯 우리 브랜드의 찐팬은 '네이버_신제품검색광고' 입니다!",
-          "message": "네이버_신제품검색광고의 ROAS가 4379%로 압도적입니다.",
-          "action": "이번 주 광고 예산의 70%를 네이버_신제품검색광고 타겟에 집중해보세요.",
+          "title": "🎯 우리 브랜드의 찐팬은 '네이버_브랜드검색광고' 입니다!",
+          "message": "네이버_브랜드검색광고의 ROAS가 1335%로 압도적입니다.",
+          "action": "이번 주 광고 예산의 70%를 네이버_브랜드검색광고 타겟에 집중해보세요.",
           "category": "타겟팅",
           "score": 5,
           "severity": "opportunity"
@@ -6822,8 +6813,8 @@
         {
           "source": "recommendation",
           "title": "💰 예산 재배분으로 효율 UP!",
-          "message": "네이버_신제품검색광고 (ROAS 4379%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
-          "action": "네이버_신제품검색광고에 예산 30% 증액을 권장합니다.",
+          "message": "네이버_브랜드검색광고 (ROAS 1335%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
+          "action": "네이버_브랜드검색광고에 예산 30% 증액을 권장합니다.",
           "category": "예산 전략",
           "score": 5,
           "priority": "high",
@@ -6852,12 +6843,12 @@
       ],
       "top_categories": [
         {
-          "name": "네이버_신제품검색광고",
-          "cost": 714994.0,
-          "conversions": 199.0,
-          "revenue": 31306600.0,
-          "roas": 4378.58219789257,
-          "cpa": 3592.934673366834
+          "name": "네이버_브랜드검색광고",
+          "cost": 2317307.0,
+          "conversions": 197.0,
+          "revenue": 30936100.0,
+          "roas": 1335.00222456498,
+          "cpa": 11762.979695431472
         },
         {
           "name": "네이버_파워링크",
@@ -6984,6 +6975,15 @@
           "roas": 1577.0969362129583
         },
         {
+          "campaign": "브랜드검색",
+          "adset": "브랜드검색-MO",
+          "category": "네이버_브랜드검색광고",
+          "cost": 2317307.0,
+          "conversions": 197.0,
+          "revenue": 30936100.0,
+          "roas": 1335.00222456498
+        },
+        {
           "campaign": "쇼핑검색-낮잠이불",
           "adset": "0. 브랜드명-메인",
           "category": "네이버_쇼핑검색",
@@ -6991,15 +6991,6 @@
           "conversions": 4.0,
           "revenue": 917000.0,
           "roas": 904.0628604667212
-        },
-        {
-          "campaign": "쇼핑검색-기저귀가방",
-          "adset": "0. 브랜드명-메인",
-          "category": "네이버_쇼핑검색",
-          "cost": 677677.0,
-          "conversions": 37.0,
-          "revenue": 5513000.0,
-          "roas": 813.5144028792478
         }
       ],
       "age_gender_combinations": [
@@ -8918,13 +8909,13 @@
       "alerts": [
         {
           "type": "high_roas_opportunity",
-          "title": "🎯 우리 브랜드의 찐팬은 '네이버_신제품검색광고' 입니다!",
-          "message": "네이버_신제품검색광고의 ROAS가 4379%로 압도적입니다.",
-          "action": "이번 주 광고 예산의 70%를 네이버_신제품검색광고 타겟에 집중해보세요.",
+          "title": "🎯 우리 브랜드의 찐팬은 '네이버_브랜드검색광고' 입니다!",
+          "message": "네이버_브랜드검색광고의 ROAS가 1335%로 압도적입니다.",
+          "action": "이번 주 광고 예산의 70%를 네이버_브랜드검색광고 타겟에 집중해보세요.",
           "severity": "opportunity",
           "category": "타겟팅",
           "score": 5,
-          "value": 4378.58219789257
+          "value": 1335.00222456498
         },
         {
           "type": "low_roas_warning",
@@ -8939,14 +8930,14 @@
         },
         {
           "type": "low_roas_warning",
-          "title": "⚠️ '네이버_브랜드검색광고' 캠페인 점검이 필요해요",
-          "message": "네이버_브랜드검색광고의 ROAS가 0%로 낮습니다.",
+          "title": "⚠️ '네이버_신제품검색광고' 캠페인 점검이 필요해요",
+          "message": "네이버_신제품검색광고의 ROAS가 52%로 낮습니다.",
           "action": "소재를 교체하거나, 타겟팅을 좁혀보세요.",
           "severity": "warning",
           "category": "효율 개선",
           "score": 4,
-          "target": "네이버_브랜드검색광고",
-          "value": 0.0
+          "target": "네이버_신제품검색광고",
+          "value": 51.81861665972022
         },
         {
           "type": "low_roas_warning",
@@ -9003,8 +8994,8 @@
       "recommendations": [
         {
           "title": "💰 예산 재배분으로 효율 UP!",
-          "description": "네이버_신제품검색광고 (ROAS 4379%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
-          "action": "네이버_신제품검색광고에 예산 30% 증액을 권장합니다.",
+          "description": "네이버_브랜드검색광고 (ROAS 1335%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
+          "action": "네이버_브랜드검색광고에 예산 30% 증액을 권장합니다.",
           "priority": "high",
           "category": "예산 전략",
           "score": 5,
@@ -9077,7 +9068,7 @@
           "based_on": "prophet_forecast"
         }
       ],
-      "generated_at": "2025-12-01T16:57:11.859499",
+      "generated_at": "2025-12-02T10:27:44.715991",
       "filter_info": {
         "days": 90,
         "label": "최근 90일",
@@ -9104,7 +9095,7 @@
       "details": {
         "total_categories": 9,
         "paid_categories": 9,
-        "top_roas_category": "네이버_신제품검색광고",
+        "top_roas_category": "네이버_브랜드검색광고",
         "analysis_period_days": 91,
         "alerts_count": 9,
         "recommendations_count": 9,
@@ -9516,9 +9507,9 @@
       "top_recommendations": [
         {
           "source": "alert",
-          "title": "🎯 우리 브랜드의 찐팬은 '네이버_신제품검색광고' 입니다!",
-          "message": "네이버_신제품검색광고의 ROAS가 2080%로 압도적입니다.",
-          "action": "이번 주 광고 예산의 70%를 네이버_신제품검색광고 타겟에 집중해보세요.",
+          "title": "🎯 우리 브랜드의 찐팬은 '네이버_브랜드검색광고' 입니다!",
+          "message": "네이버_브랜드검색광고의 ROAS가 2602%로 압도적입니다.",
+          "action": "이번 주 광고 예산의 70%를 네이버_브랜드검색광고 타겟에 집중해보세요.",
           "category": "타겟팅",
           "score": 5,
           "severity": "opportunity"
@@ -9526,8 +9517,8 @@
         {
           "source": "recommendation",
           "title": "💰 예산 재배분으로 효율 UP!",
-          "message": "네이버_신제품검색광고 (ROAS 2080%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
-          "action": "네이버_신제품검색광고에 예산 30% 증액을 권장합니다.",
+          "message": "네이버_브랜드검색광고 (ROAS 2602%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
+          "action": "네이버_브랜드검색광고에 예산 30% 증액을 권장합니다.",
           "category": "예산 전략",
           "score": 5,
           "priority": "high",
@@ -9566,12 +9557,12 @@
       ],
       "top_categories": [
         {
-          "name": "네이버_신제품검색광고",
-          "cost": 714994.0,
-          "conversions": 81.0,
-          "revenue": 14871200.0,
-          "roas": 2079.90556564111,
-          "cpa": 8827.086419753086
+          "name": "네이버_브랜드검색광고",
+          "cost": 557327.0,
+          "conversions": 79.0,
+          "revenue": 14500700.0,
+          "roas": 2601.829805482239,
+          "cpa": 7054.772151898735
         },
         {
           "name": "네이버_파워링크",
@@ -9662,6 +9653,15 @@
           "roas": 3267.615918218328
         },
         {
+          "campaign": "브랜드검색",
+          "adset": "브랜드검색-MO",
+          "category": "네이버_브랜드검색광고",
+          "cost": 557327.0,
+          "conversions": 79.0,
+          "revenue": 14500700.0,
+          "roas": 2601.829805482239
+        },
+        {
           "campaign": "쇼검-03.낮잠이불",
           "adset": "03.낮잠이불-어린이이불세트-스스-PC 1위 1800",
           "category": "네이버_쇼핑검색",
@@ -9705,15 +9705,6 @@
           "conversions": 1.0,
           "revenue": 197500.0,
           "roas": 619.9773982923153
-        },
-        {
-          "campaign": "쇼핑검색-기저귀가방",
-          "adset": "4. 보냉기저귀가방-메인",
-          "category": "네이버_쇼핑검색",
-          "cost": 46134.0,
-          "conversions": 1.0,
-          "revenue": 204000.0,
-          "roas": 442.1901417609572
         }
       ],
       "age_gender_combinations": [
@@ -11075,13 +11066,13 @@
       "alerts": [
         {
           "type": "high_roas_opportunity",
-          "title": "🎯 우리 브랜드의 찐팬은 '네이버_신제품검색광고' 입니다!",
-          "message": "네이버_신제품검색광고의 ROAS가 2080%로 압도적입니다.",
-          "action": "이번 주 광고 예산의 70%를 네이버_신제품검색광고 타겟에 집중해보세요.",
+          "title": "🎯 우리 브랜드의 찐팬은 '네이버_브랜드검색광고' 입니다!",
+          "message": "네이버_브랜드검색광고의 ROAS가 2602%로 압도적입니다.",
+          "action": "이번 주 광고 예산의 70%를 네이버_브랜드검색광고 타겟에 집중해보세요.",
           "severity": "opportunity",
           "category": "타겟팅",
           "score": 5,
-          "value": 2079.90556564111
+          "value": 2601.829805482239
         },
         {
           "type": "low_roas_warning",
@@ -11107,14 +11098,14 @@
         },
         {
           "type": "low_roas_warning",
-          "title": "⚠️ '네이버_브랜드검색광고' 캠페인 점검이 필요해요",
-          "message": "네이버_브랜드검색광고의 ROAS가 0%로 낮습니다.",
+          "title": "⚠️ '네이버_신제품검색광고' 캠페인 점검이 필요해요",
+          "message": "네이버_신제품검색광고의 ROAS가 52%로 낮습니다.",
           "action": "소재를 교체하거나, 타겟팅을 좁혀보세요.",
           "severity": "warning",
           "category": "효율 개선",
           "score": 4,
-          "target": "네이버_브랜드검색광고",
-          "value": 0.0
+          "target": "네이버_신제품검색광고",
+          "value": 51.81861665972022
         },
         {
           "type": "brand_forecast_leader",
@@ -11150,8 +11141,8 @@
       "recommendations": [
         {
           "title": "💰 예산 재배분으로 효율 UP!",
-          "description": "네이버_신제품검색광고 (ROAS 2080%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
-          "action": "네이버_신제품검색광고에 예산 30% 증액을 권장합니다.",
+          "description": "네이버_브랜드검색광고 (ROAS 2602%)의 예산을 늘리고, 네이버_파워링크의 예산을 유지하세요.",
+          "action": "네이버_브랜드검색광고에 예산 30% 증액을 권장합니다.",
           "priority": "high",
           "category": "예산 전략",
           "score": 5,
@@ -11224,7 +11215,7 @@
           "based_on": "prophet_forecast"
         }
       ],
-      "generated_at": "2025-12-01T16:57:13.469214",
+      "generated_at": "2025-12-02T10:27:46.234737",
       "filter_info": {
         "days": 30,
         "label": "최근 30일",
@@ -11251,7 +11242,7 @@
       "details": {
         "total_categories": 8,
         "paid_categories": 8,
-        "top_roas_category": "네이버_신제품검색광고",
+        "top_roas_category": "네이버_브랜드검색광고",
         "analysis_period_days": 31,
         "alerts_count": 8,
         "recommendations_count": 9,
@@ -16434,7 +16425,7 @@
       }
     ]
   },
-  "generated_at": "2025-12-01T16:57:13.589401",
+  "generated_at": "2025-12-02T10:27:46.378963",
   "available_periods": [
     {
       "key": "full",

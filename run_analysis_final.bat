@@ -60,11 +60,11 @@ if errorlevel 1 (
 )
 
 echo.
-echo [3/10] Generating insights...
-python scripts\insight_generator.py
+echo [3/10] Generating multi-period insights (forecast)...
+python scripts\generate_insights_multiperiod.py
 
 if errorlevel 1 (
-    echo [WARNING] Insight generation failed
+    echo [WARNING] Multi-period insight generation failed
 )
 
 echo.
@@ -76,13 +76,13 @@ if errorlevel 1 (
 )
 
 echo.
-echo [5/10] Generating AARRR funnel analysis with advanced analytics...
+echo [5/10] Generating multi-period AARRR funnel analysis...
 cd scripts
-python generate_funnel_data.py
+python generate_funnel_data_multiperiod.py
 cd ..
 
 if errorlevel 1 (
-    echo [WARNING] Funnel analysis generation failed
+    echo [WARNING] Multi-period funnel analysis generation failed
 )
 
 echo.
@@ -118,11 +118,11 @@ if errorlevel 1 (
 )
 
 echo.
-echo [10/10] Generating type insights (brand/product/promotion)...
-python scripts\generate_type_insights.py
+echo [10/10] Generating multi-period type insights (brand/product/promotion)...
+python scripts\generate_type_insights_multiperiod.py
 
 if errorlevel 1 (
-    echo [WARNING] Type insights generation failed
+    echo [WARNING] Multi-period type insights generation failed
 )
 
 echo.
