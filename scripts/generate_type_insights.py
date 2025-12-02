@@ -365,14 +365,51 @@ prophet_files = {
 }
 
 prophet_forecasts = {}
+prophet_actuals = {}  # 실제 데이터 저장용
+
 for key, filename in prophet_files.items():
     file_path = data_dir / filename
     if file_path.exists():
-        prophet_forecasts[key] = pd.read_csv(file_path)
+        df = pd.read_csv(file_path)
         # seasonality 파일은 일자 컬럼이 없음
-        if key != 'seasonality' and '일자' in prophet_forecasts[key].columns:
-            prophet_forecasts[key]['일자'] = pd.to_datetime(prophet_forecasts[key]['일자'])
-        print(f"✓ {filename} 로드 완료")
+        if key != 'seasonality' and '일자' in df.columns:
+            df['일자'] = pd.to_datetime(df['일자'])
+
+        # type 컬럼이 있으면 actual/forecast 분리
+        if 'type' in df.columns:
+            prophet_actuals[key] = df[df['type'] == 'actual'].copy()
+            prophet_forecasts[key] = df[df['type'] == 'forecast'].copy()
+            print(f"✓ {filename} 로드 완료 (actual: {len(prophet_actuals[key])}행, forecast: {len(prophet_forecasts[key])}행)")
+        else:
+            # type 컬럼이 없으면 전체를 forecast로 처리 (이전 버전 호환)
+            prophet_forecasts[key] = df
+            print(f"✓ {filename} 로드 완료 ({len(df)}행)")
+
+
+def get_prophet_data(key, data_type='forecast'):
+    """Prophet 데이터 조회 헬퍼 함수
+
+    Args:
+        key: 데이터 키 (overall, category, brand 등)
+        data_type: 'forecast', 'actual', 'all'
+
+    Returns:
+        DataFrame 또는 None
+    """
+    if data_type == 'actual' and key in prophet_actuals:
+        return prophet_actuals[key]
+    elif data_type == 'forecast' and key in prophet_forecasts:
+        return prophet_forecasts[key]
+    elif data_type == 'all':
+        # actual + forecast 결합
+        parts = []
+        if key in prophet_actuals:
+            parts.append(prophet_actuals[key])
+        if key in prophet_forecasts:
+            parts.append(prophet_forecasts[key])
+        if parts:
+            return pd.concat(parts, ignore_index=True)
+    return prophet_forecasts.get(key)
 
 # ============================================================================
 # 전체 요약 (필터링된 daily_summary 기반)

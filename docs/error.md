@@ -1,12 +1,64 @@
-============================================================
-Segment processing completed successfully!
-============================================================
-
-[3/10] Generating multi-period insights (forecast)...
-object address  : 000001CF90F29F00
-object refcount : 3
-object type     : 00007FFA711BCA80
-object type name: ValueError
-object repr     : ValueError('I/O operation on closed file.')
-lost sys.stderr
-[WARNING] Multi-period insight generation failed
+Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1209:229)Understand this error
+type_dashboard.html:4793 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1213:229)Understand this error
+type_dashboard.html:4793 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1209:229)Understand this error
+type_dashboard.html:4793 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1213:229)Understand this error
+type_dashboard.html:4793 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1209:229)Understand this error
+type_dashboard.html:4793 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1213:229)Understand this error
+type_dashboard.html:4793 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1209:229)Understand this error
+type_dashboard.html:4793 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1213:229)Understand this error
+type_dashboard.html:4793 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1209:229)Understand this error
+type_dashboard.html:4793 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1213:229)Understand this error
+type_dashboard.html:4793 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1209:229)Understand this error
+type_dashboard.html:4793 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1213:229)Understand this error
+type_dashboard.html:4793 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1209:229)Understand this error
+type_dashboard.html:4793 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1213:229)Understand this error
+3type_dashboard.html:4793 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1209:229)Understand this error
+type_dashboard.html:4793 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
+    at renderBudgetGuideTab (type_dashboard.html:4793:69)
+    at switchPeriod (type_dashboard.html:3826:13)
+    at HTMLButtonElement.onclick (type_dashboard.html:1213:229)

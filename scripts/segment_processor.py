@@ -13,6 +13,7 @@
 
 import os
 import sys
+import argparse
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Tuple
@@ -46,8 +47,18 @@ FORECAST_DIR = DATA_DIR / 'forecast'
 # 디렉토리 생성
 FORECAST_DIR.mkdir(parents=True, exist_ok=True)
 
-# 학습 기간 설정 (일)
-TRAINING_DAYS = 365
+# 명령줄 인자 파싱
+parser = argparse.ArgumentParser(description='세그먼트별 Prophet 예측 - 기간별 학습 지원')
+parser.add_argument('--days', type=int, default=0,
+                    help='학습 데이터 기간 (0=전체/365일, 180=최근180일, 90=최근90일)')
+parser.add_argument('--output-days', type=int, default=30,
+                    help='예측 기간 (기본 30일)')
+args = parser.parse_args()
+
+# 학습 기간 설정 (일) - 명령줄 인자 또는 기본값
+TRAINING_DAYS = args.days if args.days > 0 else 365
+# 출력 기간 설정 (일) - 예측 데이터
+OUTPUT_DAYS = args.output_days
 
 
 class SegmentProcessor:
@@ -69,7 +80,7 @@ class SegmentProcessor:
             {'name': 'promotion', 'column': '프로모션', 'min_days': 7}
         ]
         self.metrics = ['비용', '노출', '클릭', '전환수', '전환값']
-        self.forecast_days = 14
+        self.forecast_days = OUTPUT_DAYS
 
     def load_data(self) -> pd.DataFrame:
         """데이터 로드"""
@@ -275,8 +286,8 @@ class SegmentProcessor:
             if not forecasts:
                 continue
 
-            # 실제 데이터 (최근 14일)
-            actual = daily.tail(14).copy()
+            # 실제 데이터 (최근 OUTPUT_DAYS일)
+            actual = daily.tail(OUTPUT_DAYS).copy()
             for _, row in actual.iterrows():
                 all_forecasts.append({
                     '일 구분': row['일 구분'].strftime('%Y-%m-%d'),

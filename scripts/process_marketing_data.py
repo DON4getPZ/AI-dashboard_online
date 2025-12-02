@@ -16,6 +16,7 @@
 import os
 import sys
 import json
+import argparse
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Any
@@ -63,8 +64,18 @@ for dir_path in [RAW_DIR, META_DIR, FORECAST_DIR, STATS_DIR, VISUAL_DIR]:
 plt.rcParams['font.family'] = 'Malgun Gothic'
 plt.rcParams['axes.unicode_minus'] = False
 
-# 학습 기간 설정 (일)
-TRAINING_DAYS = 365
+# 명령줄 인자 파싱
+parser = argparse.ArgumentParser(description='마케팅 데이터 전처리 및 Prophet 예측 - 기간별 학습 지원')
+parser.add_argument('--days', type=int, default=0,
+                    help='학습 데이터 기간 (0=전체/365일, 180=최근180일, 90=최근90일)')
+parser.add_argument('--output-days', type=int, default=30,
+                    help='예측 기간 (기본 30일)')
+args = parser.parse_args()
+
+# 학습 기간 설정 (일) - 명령줄 인자 또는 기본값
+TRAINING_DAYS = args.days if args.days > 0 else 365
+# 출력 기간 설정 (일) - 예측 데이터
+OUTPUT_DAYS = args.output_days
 
 
 def load_and_clean_data(file_path: str) -> pd.DataFrame:
@@ -257,7 +268,7 @@ def calculate_daily_statistics(df: pd.DataFrame, statistics: Dict) -> None:
     print(f"   ✅ {daily_csv.name} 저장 완료 ({len(daily_stats):,}행)")
 
 
-def simple_forecast(df: pd.DataFrame, days: int = 30) -> pd.DataFrame:
+def simple_forecast(df: pd.DataFrame, days: int = OUTPUT_DAYS) -> pd.DataFrame:
     """최근 90일 데이터 기반 예측 (주간 패턴 반영)"""
     print(f"\n🔮 시계열 예측 중 ({days}일)...")
 
@@ -330,8 +341,8 @@ def simple_forecast(df: pd.DataFrame, days: int = 30) -> pd.DataFrame:
 
         predictions.append(pred_row)
 
-    # 실제 데이터 추가
-    actual = daily.tail(30).copy()
+    # 실제 데이터 추가 (OUTPUT_DAYS만큼)
+    actual = daily.tail(OUTPUT_DAYS).copy()
     actual['type'] = 'actual'
     actual = actual.rename(columns={
         '비용': '비용_예측',
@@ -356,7 +367,7 @@ def simple_forecast(df: pd.DataFrame, days: int = 30) -> pd.DataFrame:
     return forecast_df
 
 
-def advanced_detailed_forecast(df: pd.DataFrame, days: int = 30) -> Dict[str, pd.DataFrame]:
+def advanced_detailed_forecast(df: pd.DataFrame, days: int = OUTPUT_DAYS) -> Dict[str, pd.DataFrame]:
     """상세 시계열 분석 및 예측 (Prophet 사용, 최근 365일 데이터 활용)"""
     print(f"\n🔬 상세 시계열 분석 시작 ({days}일 예측)...")
 
@@ -496,8 +507,8 @@ def advanced_detailed_forecast(df: pd.DataFrame, days: int = 30) -> Dict[str, pd
         'type': 'forecast'
     })
 
-    # 실제 데이터 (최근 30일)
-    actual = daily_indexed.tail(30).reset_index()
+    # 실제 데이터 (최근 OUTPUT_DAYS일)
+    actual = daily_indexed.tail(OUTPUT_DAYS).reset_index()
     actual['type'] = 'actual'
     actual = actual.rename(columns={
         '비용': '비용_예측',
@@ -524,7 +535,7 @@ def advanced_detailed_forecast(df: pd.DataFrame, days: int = 30) -> Dict[str, pd
     }
 
 
-def simple_forecast_as_detailed(df: pd.DataFrame, days: int = 30) -> Dict[str, pd.DataFrame]:
+def simple_forecast_as_detailed(df: pd.DataFrame, days: int = OUTPUT_DAYS) -> Dict[str, pd.DataFrame]:
     """Prophet 미설치 시 단순 예측으로 대체"""
     # 일별 집계
     daily = df.groupby('일 구분').agg({
@@ -570,8 +581,8 @@ def simple_forecast_as_detailed(df: pd.DataFrame, days: int = 30) -> Dict[str, p
         'type': 'forecast'
     })
 
-    # 실제 데이터
-    actual = daily_indexed.tail(30).reset_index()
+    # 실제 데이터 (최근 OUTPUT_DAYS일)
+    actual = daily_indexed.tail(OUTPUT_DAYS).reset_index()
     actual['type'] = 'actual'
     actual = actual.rename(columns={
         '비용': '비용_예측',

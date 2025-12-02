@@ -106,7 +106,7 @@ def fetch_url_data():
             os.makedirs(output_dir)
 
         # 고정 파일명 사용 (overwrite 방식)
-        output_filename = "Creative_data.csv"
+        output_filename = "Creative_url.csv"
         output_path = os.path.join(output_dir, output_filename)
 
         # CSV로 저장

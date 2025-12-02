@@ -1167,15 +1167,7 @@
                 <div class="header">
                     <div>
                         <h1>시계열 데이터 분석</h1>
-                        <div class="header-subtitle">AI 기반 예측 모델을 통한 광고 성과 예측 및 인사이트 <span id="analysisPeriod" style="color: var(--primary-main); font-weight: 600;"></span></div>
-                    </div>
-                    <!-- 분석 기간 필터 -->
-                    <div class="view-type-section" style="margin-bottom: 0;">
-                        <span style="font-size: 12px; color: var(--grey-500); margin-right: 8px;">분석 기간:</span>
-                        <button class="view-btn period-btn active" data-period="full" onclick="switchPeriod('full')">전체</button>
-                        <button class="view-btn period-btn" data-period="180d" onclick="switchPeriod('180d')">180일</button>
-                        <button class="view-btn period-btn" data-period="90d" onclick="switchPeriod('90d')">90일</button>
-                        <button class="view-btn period-btn" data-period="30d" onclick="switchPeriod('30d')">30일</button>
+                        <div class="header-subtitle">AI 기반 예측 모델을 통한 광고 성과 예측 및 인사이트</div>
                     </div>
                 </div>
 
@@ -1228,15 +1220,26 @@
 
                 <!-- 2. 통합 인사이트 대시보드 -->
                 <div class="insight-section card" style="margin-bottom: 24px;">
-                    <!-- 탭 버튼 -->
-                    <div class="view-type-section" style="margin-bottom: 0; padding: 20px 24px 0 24px; border-bottom: 1px solid var(--grey-200);">
-                        <button class="view-btn insights-tab-btn active" data-insights-tab="alerts">
-                            경고 및 추천 <span id="alertsBadge" style="display: none; padding: 2px 8px; background: #ef5350; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
-                        </button>
-                        <button class="view-btn insights-tab-btn" data-insights-tab="opportunities">
-                            기회 요소 <span id="opportunitiesBadge" style="display: none; padding: 2px 8px; background: #4caf50; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
-                        </button>
-                        <button class="view-btn insights-tab-btn" data-insights-tab="trends">성과 트렌드</button>
+                    <!-- 분석 기간 필터 + 탭 버튼 -->
+                    <div style="padding: 20px 24px 0 24px; border-bottom: 1px solid var(--grey-200);">
+                        <!-- 분석 기간 필터 -->
+                        <div class="view-type-section" style="margin-bottom: 12px; justify-content: flex-start; gap: 8px; flex-wrap: wrap;">
+                            <span style="font-weight: 500; color: var(--grey-700); margin-right: 8px;">분석 기간:</span>
+                            <button class="view-btn period-btn active" data-period="full" onclick="switchPeriod('full')">전체</button>
+                            <button class="view-btn period-btn" data-period="180d" onclick="switchPeriod('180d')">180일</button>
+                            <button class="view-btn period-btn" data-period="90d" onclick="switchPeriod('90d')">90일</button>
+                            <span id="actualPeriodIndicator" style="font-size: 12px; color: var(--grey-500); margin-left: 12px; display: flex; align-items: center;"></span>
+                        </div>
+                        <!-- 탭 버튼 -->
+                        <div class="view-type-section" style="margin-bottom: 0;">
+                            <button class="view-btn insights-tab-btn active" data-insights-tab="alerts">
+                                경고 및 추천 <span id="alertsBadge" style="display: none; padding: 2px 8px; background: #ef5350; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
+                            </button>
+                            <button class="view-btn insights-tab-btn" data-insights-tab="opportunities">
+                                기회 요소 <span id="opportunitiesBadge" style="display: none; padding: 2px 8px; background: #4caf50; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
+                            </button>
+                            <button class="view-btn insights-tab-btn" data-insights-tab="trends">성과 트렌드</button>
+                        </div>
                     </div>
 
                     <!-- 탭 1: 경고 및 추천 -->
@@ -2232,7 +2235,7 @@
         let forecastChart = null;
         let insightsData = null;
         let segmentStatsData = null;
-        let currentPeriod = 'full';  // 분석 기간 (full, 180d, 90d, 30d)
+        let currentPeriod = 'full';  // 분석 기간 (full, 180d, 90d)
 
         // ============================================================================
         // 기간 필터링 헬퍼 함수
@@ -2256,7 +2259,7 @@
 
         /**
          * 기간 전환 함수
-         * @param {string} period - 기간 (full, 180d, 90d, 30d)
+         * @param {string} period - 기간 (full, 180d, 90d)
          */
         function switchPeriod(period) {
             currentPeriod = period;
@@ -2269,24 +2272,37 @@
                 }
             });
 
-            // 기간 표시 업데이트
-            const periodLabels = {
-                'full': '전체 기간',
-                '180d': '최근 180일',
-                '90d': '최근 90일',
-                '30d': '최근 30일'
-            };
-            const periodSpan = document.getElementById('analysisPeriod');
-            if (periodSpan) {
-                periodSpan.textContent = `(${periodLabels[period]})`;
-            }
-
             // 인사이트 데이터가 있으면 업데이트
             if (insightsData) {
                 updateAllInsights();
+                updatePeriodIndicator();
             }
 
             console.log(`기간 전환: ${period}`);
+        }
+
+        /**
+         * 실제 데이터 기간 표시 업데이트
+         */
+        function updatePeriodIndicator() {
+            const indicator = document.getElementById('actualPeriodIndicator');
+            if (!indicator) return;
+
+            const periodData = getPeriodData();
+            if (!periodData || !periodData.overall || !periodData.overall.current_period) {
+                indicator.textContent = '';
+                return;
+            }
+
+            const current = periodData.overall.current_period;
+            const startDate = current.start_date || '';
+            const endDate = current.end_date || '';
+
+            if (startDate && endDate) {
+                indicator.innerHTML = `<span style="margin-right: 4px;">📅</span> 실제 분석: ${startDate} ~ ${endDate}`;
+            } else {
+                indicator.textContent = '';
+            }
         }
 
         /**
@@ -2433,6 +2449,7 @@
                 updateInsightsBadges();
                 updatePerformanceTrends();
                 updateSegmentAnalysis();
+                updatePeriodIndicator();
             } catch (error) {
                 console.error('인사이트 데이터 로드 실패:', error);
 
@@ -4122,6 +4139,9 @@
         // 테이블 업데이트
         function updateTable() {
             const tbody = document.getElementById('tableBody');
+
+            // tableBody 요소가 없으면 종료
+            if (!tbody) return;
 
             // 유형 레이블 결정
             function getTypeLabel(type) {

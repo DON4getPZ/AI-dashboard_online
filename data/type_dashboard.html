@@ -1190,7 +1190,7 @@
                                 <div style="flex: 1;">
                                     <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">오늘의 광고 성과, 한눈에 파악하세요</div>
                                     <div style="font-size: 13px; opacity: 0.9; line-height: 1.6;">
-                                        복잡한 데이터를 쉽게 이해할 수 있도록 정리했습니다. 아래 탭에서 <strong>지금 해야 할 일</strong>을 확인하세요.
+                                        AI가 30일 이후 데이터를 예측했어요. 아래 탭에서 <strong>지금 해야 할 일</strong>을 확인하세요.
                                     </div>
                                 </div>
                             </div>
@@ -1212,10 +1212,6 @@
                                     <button class="period-filter-btn" data-period="90d" onclick="switchPeriod('90d')"
                                             style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
                                         최근 90일
-                                    </button>
-                                    <button class="period-filter-btn" data-period="30d" onclick="switchPeriod('30d')"
-                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
-                                        최근 30일
                                     </button>
                                 </div>
                                 <span id="periodDateRange" style="font-size: 11px; color: #6c757d; margin-left: auto;"></span>
@@ -3397,7 +3393,7 @@
         let insightsData = null;
         let dailyData = null;
         let dimensionData = null;
-        let currentPeriod = 'full';  // 기간 필터: 'full', '180d', '90d', '30d'
+        let currentPeriod = 'full';  // 기간 필터: 'full', '180d', '90d'
 
         // 현재 선택된 기간의 데이터 반환
         function getPeriodData() {
@@ -3410,9 +3406,14 @@
         // 분기별 추이 데이터 (전체 기간만 사용)
         function getSeasonalityData() {
             if (!insightsData) return null;
-            return insightsData.seasonality || {
-                seasonality_analysis: getSeasonalityData().seasonality_analysis,
-                seasonality_insights: getSeasonalityData().seasonality_insights
+            // insightsData.seasonality가 있으면 반환, 없으면 최상위 레벨에서 찾기
+            if (insightsData.seasonality) {
+                return insightsData.seasonality;
+            }
+            // 최상위 레벨에 seasonality_analysis, seasonality_insights가 있는 경우
+            return {
+                seasonality_analysis: insightsData.seasonality_analysis || null,
+                seasonality_insights: insightsData.seasonality_insights || []
             };
         }
         let currentTimeseriesPeriod = 'daily';
@@ -3494,7 +3495,8 @@
         // 데이터 로딩
         async function loadData() {
             try {
-                const response = await fetch('type/insights.json');
+                // 캐시 방지를 위한 타임스탬프 추가
+                const response = await fetch('type/insights.json?t=' + Date.now());
                 insightsData = await response.json();
 
                 // 차원 데이터 로딩 (merged_data.csv - 일별 데이터 포함)
@@ -4031,6 +4033,10 @@
                 }
             }
 
+            // 선택된 기간 정보
+            const periodLabels = {'full': '전체 기간', '180d': '최근 180일', '90d': '최근 90일'};
+            const currentPeriodLabel = periodLabels[currentPeriod] || '전체 기간';
+
             let html = '';
 
             // 0. AI 컨설턴트 종합 진단 카드 (summary_card)
@@ -4040,7 +4046,10 @@
                         <div style="display: flex; align-items: flex-start; gap: 16px;">
                             <div style="font-size: 48px; line-height: 1;">🤖</div>
                             <div style="flex: 1;">
-                                <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">${summaryCard.title || '마케팅 종합 진단'}</div>
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                    <span style="font-size: 18px; font-weight: 700;">${summaryCard.title || '마케팅 종합 진단'}</span>
+                                    <span style="font-size: 11px; background: rgba(255,255,255,0.25); padding: 3px 10px; border-radius: 12px; margin-left: auto;">${currentPeriodLabel} 기준</span>
+                                </div>
                                 <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
                                     <div style="padding: 6px 14px; background: rgba(255,255,255,0.2); border-radius: 20px; font-size: 13px; font-weight: 600;">
                                         ${summaryCard.total_roas_formatted || 'ROAS ' + formatPercent(avgRoas)}
@@ -4408,6 +4417,10 @@
             const avgCpa = summary.overall_cpa || 0;
             const avgRoas = summary.overall_roas || 0;
 
+            // 선택된 기간 정보
+            const periodLabels = {'full': '전체 기간', '180d': '최근 180일', '90d': '최근 90일'};
+            const currentPeriodLabel = periodLabels[currentPeriod] || '전체 기간';
+
             // ROAS 높은 순으로 정렬
             const sortedByRoas = [...topCategories].sort((a, b) => b.roas - a.roas);
             const goodChannels = sortedByRoas.filter(c => c.roas >= 200);
@@ -4416,7 +4429,7 @@
 
             let html = '';
 
-            // 인트로 메시지 - 호버 툴팁 적용
+            // 인트로 메시지 - 호버 툴팁 적용 (기간 표시 추가)
             html += `
                 <div class="hoverable-card"
                      data-tooltip-title="예산 확대 기회"
@@ -4426,8 +4439,11 @@
                      style="margin-bottom: 16px; padding: 16px 20px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 12px; border-left: 4px solid #4caf50;">
                     <div style="display: flex; align-items: flex-start; gap: 12px;">
                         <span style="font-size: 28px;">🎯</span>
-                        <div>
-                            <div style="font-size: 14px; font-weight: 700; color: #2e7d32; margin-bottom: 4px;">성과가 좋은 곳에 더 투자하세요</div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                <span style="font-size: 14px; font-weight: 700; color: #2e7d32;">성과가 좋은 곳에 더 투자하세요</span>
+                                <span style="font-size: 10px; color: #4caf50; background: rgba(76, 175, 80, 0.1); padding: 2px 8px; border-radius: 10px; margin-left: auto;">${currentPeriodLabel} 기준</span>
+                            </div>
                             <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6;">
                                 아래는 <strong>예산을 늘리면 더 좋은 성과</strong>를 낼 수 있는 채널과 상품입니다.
                             </div>
@@ -4769,12 +4785,17 @@
                 </div>
             `;
 
-            document.getElementById('budgetGuideContent').innerHTML = html;
+            const budgetGuideEl = document.getElementById('budgetGuideContent');
+            if (budgetGuideEl) {
+                budgetGuideEl.innerHTML = html;
+            }
         }
 
         // 탭 2: 주의 필요 (경고) - 사용자 친화적 버전
         function renderWarningTab() {
             const periodData = getPeriodData();
+            if (!periodData) return;
+
             const allAlerts = periodData.alerts || [];
             const warnings = allAlerts.filter(a => a.severity === 'warning' || a.severity === 'high');
             const topCategories = periodData.top_categories || [];
@@ -4805,7 +4826,11 @@
                 return;
             }
 
-            // 경고 있을 때 인트로 - 호버 툴팁 적용
+            // 선택된 기간 정보
+            const periodLabels = {'full': '전체 기간', '180d': '최근 180일', '90d': '최근 90일'};
+            const currentPeriodLabel = periodLabels[currentPeriod] || '전체 기간';
+
+            // 경고 있을 때 인트로 - 호버 툴팁 적용 (기간 표시 추가)
             html += `
                 <div class="hoverable-card"
                      data-tooltip-title="주의 필요 항목"
@@ -4815,8 +4840,11 @@
                      style="margin-bottom: 16px; padding: 16px 20px; background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-radius: 12px; border-left: 4px solid #ef5350;">
                     <div style="display: flex; align-items: flex-start; gap: 12px;">
                         <span style="font-size: 28px;">⚠️</span>
-                        <div>
-                            <div style="font-size: 14px; font-weight: 700; color: #c62828; margin-bottom: 4px;">확인이 필요한 항목이 있어요</div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                <span style="font-size: 14px; font-weight: 700; color: #c62828;">확인이 필요한 항목이 있어요</span>
+                                <span style="font-size: 10px; color: #ef5350; background: rgba(239, 83, 80, 0.1); padding: 2px 8px; border-radius: 10px; margin-left: auto;">${currentPeriodLabel} 기준</span>
+                            </div>
                             <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6;">
                                 아래 항목들은 <strong>예산 낭비</strong>가 발생할 수 있어요. 빨리 조치하면 손실을 줄일 수 있습니다.
                             </div>
@@ -5180,9 +5208,13 @@
             const summary = periodData.summary || {};
             const avgCpa = summary.overall_cpa || 0;
 
+            // 선택된 기간 정보
+            const periodLabels = {'full': '전체 기간', '180d': '최근 180일', '90d': '최근 90일'};
+            const currentPeriodLabel = periodLabels[currentPeriod] || '전체 기간';
+
             let html = '';
 
-            // 인트로 메시지 - 호버 툴팁 적용
+            // 인트로 메시지 - 호버 툴팁 적용 (기간 표시 추가)
             html += `
                 <div class="hoverable-card"
                      data-tooltip-title="타겟 분석"
@@ -5192,8 +5224,11 @@
                      style="margin-bottom: 16px; padding: 16px 20px; background: linear-gradient(135deg, #e8eaf6 0%, #f5f5ff 100%); border-radius: 12px; border-left: 4px solid #5c6bc0;">
                     <div style="display: flex; align-items: flex-start; gap: 12px;">
                         <span style="font-size: 28px;">👥</span>
-                        <div>
-                            <div style="font-size: 14px; font-weight: 700; color: #3949ab; margin-bottom: 4px;">누구에게 광고를 보여줘야 효과적일까요?</div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                <span style="font-size: 14px; font-weight: 700; color: #3949ab;">누구에게 광고를 보여줘야 효과적일까요?</span>
+                                <span style="font-size: 10px; color: #5c6bc0; background: rgba(92, 107, 192, 0.1); padding: 2px 8px; border-radius: 10px; margin-left: auto;">${currentPeriodLabel} 기준</span>
+                            </div>
                             <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6;">
                                 성별, 연령, 기기별로 <strong>어떤 고객이 가장 잘 반응하는지</strong> 분석했습니다.
                             </div>
@@ -5667,7 +5702,11 @@
             // forecast 데이터가 있는 경우
             html = '';
 
-            // 인트로 메시지 - 호버 툴팁 적용
+            // 선택된 기간 정보 가져오기
+            const periodLabels = {'full': '전체 기간', '180d': '최근 180일', '90d': '최근 90일'};
+            const currentPeriodLabel = periodLabels[currentPeriod] || '전체 기간';
+
+            // 인트로 메시지 - 호버 툴팁 적용 (기간 표시 추가)
             html += `
                 <div class="hoverable-card"
                      data-tooltip-title="AI 예측 분석"
@@ -5677,83 +5716,100 @@
                      style="margin-bottom: 16px; padding: 14px 18px; background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); border-radius: 12px; border-left: 4px solid #7c4dff;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span style="font-size: 18px;">🔮</span>
-                        <span style="font-size: 13px; font-weight: 700; color: #5e35b1;">AI가 분석한 향후 30일 예측</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #5e35b1;">AI 분석 인사이트</span>
+                        <span style="font-size: 10px; color: #7c4dff; background: rgba(124, 77, 255, 0.1); padding: 2px 8px; border-radius: 10px; margin-left: auto;">${currentPeriodLabel} 기준</span>
                     </div>
                 </div>
             `;
 
-            // 1. 핵심 예측 요약 (예측 ROAS, CPA, 기간) - 1행
-            if (forecast.summary && forecast.summary.overall) {
-                const overall = forecast.summary.overall;
-                const avgRoas = overall.avg_forecast_roas || 0;
-                const avgCpa = overall.avg_forecast_cpa || 0;
-                const isPositiveRoas = avgRoas >= 100;
-                // 예측 비용: forecast에서 가져오거나 periodData에서 계산
-                const forecastCost = overall.total_forecast_cost || overall.avg_forecast_cost || (periodData && periodData.summary ? periodData.summary.total_cost / 12 : 0);
+            // 1. 핵심 성과 요약 (선택된 기간의 실제 데이터) - 기간별로 다른 데이터 표시
+            if (periodData && periodData.summary) {
+                const summary = periodData.summary;
+                const actualRoas = summary.overall_roas || 0;
+                const actualCpa = summary.overall_cpa || 0;
+                const isPositiveRoas = actualRoas >= 100;
+                const totalConversions = summary.total_conversions || 0;
 
                 html += `
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px;">
                         <div style="padding: 14px; background: ${isPositiveRoas ? 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)' : 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)'}; border-radius: 10px; text-align: center;">
                             <div style="font-size: 10px; color: ${isPositiveRoas ? '#2e7d32' : '#c62828'}; font-weight: 600; margin-bottom: 2px;">
-                                ${isPositiveRoas ? '📈 예측 ROAS' : '📉 예측 ROAS'}
+                                ${isPositiveRoas ? '📈 현재 ROAS' : '📉 현재 ROAS'}
                             </div>
-                            <div style="font-size: 22px; font-weight: 800; color: ${isPositiveRoas ? '#1b5e20' : '#b71c1c'};">${avgRoas.toFixed(0)}%</div>
+                            <div style="font-size: 22px; font-weight: 800; color: ${isPositiveRoas ? '#1b5e20' : '#b71c1c'};">${actualRoas.toFixed(0)}%</div>
                         </div>
                         <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 10px; text-align: center;">
-                            <div style="font-size: 10px; color: #1565c0; font-weight: 600; margin-bottom: 2px;">💰 예측 CPA</div>
-                            <div style="font-size: 18px; font-weight: 800; color: #0d47a1;">${formatCurrency(avgCpa)}</div>
+                            <div style="font-size: 10px; color: #1565c0; font-weight: 600; margin-bottom: 2px;">💰 현재 CPA</div>
+                            <div style="font-size: 18px; font-weight: 800; color: #0d47a1;">${formatCurrency(actualCpa)}</div>
                         </div>
                         <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-radius: 10px; text-align: center;">
-                            <div style="font-size: 10px; color: #e65100; font-weight: 600; margin-bottom: 2px;">💵 예측 비용</div>
-                            <div style="font-size: 16px; font-weight: 700; color: #bf360c;">${formatCurrency(forecastCost)}</div>
+                            <div style="font-size: 10px; color: #e65100; font-weight: 600; margin-bottom: 2px;">🎯 전환 수</div>
+                            <div style="font-size: 16px; font-weight: 700; color: #bf360c;">${formatNumber(totalConversions)}</div>
                         </div>
                     </div>
                 `;
             }
 
-            // 2. 최적 타겟 (플랫폼, 성별, 연령) - 2행
+            // 2. 최적 타겟 (선택된 기간의 실제 데이터 사용) - 기간별로 다른 데이터 표시
             html += `<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">`;
 
-            // 최적 플랫폼
-            if (forecast.by_platform && forecast.by_platform.length > 0) {
-                const sortedPlatforms = [...forecast.by_platform].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
-                const topPlatform = sortedPlatforms[0];
-                html += `
-                    <div style="padding: 12px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 10px; text-align: center;">
-                        <div style="font-size: 9px; color: #1565c0; font-weight: 600; margin-bottom: 2px;">📱 최적 플랫폼</div>
-                        <div style="font-size: 12px; font-weight: 700; color: #0d47a1;">${topPlatform.platform}</div>
-                        <div style="font-size: 10px; color: #1565c0;">ROAS ${(topPlatform.avg_forecast_roas || 0).toFixed(0)}%</div>
-                    </div>
-                `;
-            }
-
-            // 최적 성별
-            if (forecast.by_gender && forecast.by_gender.length > 0) {
-                const validGenders = forecast.by_gender.filter(g => isValidGender(g.gender));
-                if (validGenders.length > 0) {
-                    const sorted = [...validGenders].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
-                    const top = sorted[0];
+            // 최적 플랫폼 (periodData 사용)
+            if (periodData && periodData.platform_performance && periodData.platform_performance.length > 0) {
+                const validPlatforms = periodData.platform_performance.filter(p => p.cost > 0 && p.platform !== 'Uncategorized');
+                if (validPlatforms.length > 0) {
+                    const sortedPlatforms = [...validPlatforms].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                    const topPlatform = sortedPlatforms[0];
                     html += `
-                        <div style="padding: 12px; background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); border-radius: 10px; text-align: center;">
-                            <div style="font-size: 9px; color: #c2185b; font-weight: 600; margin-bottom: 2px;">👫 최적 성별</div>
-                            <div style="font-size: 12px; font-weight: 700; color: #880e4f;">${normalizeGender(top.gender) || top.gender}</div>
-                            <div style="font-size: 10px; color: #c2185b;">ROAS ${(top.avg_forecast_roas || 0).toFixed(0)}%</div>
+                        <div style="padding: 12px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 10px; text-align: center;">
+                            <div style="font-size: 9px; color: #1565c0; font-weight: 600; margin-bottom: 2px;">📱 최적 플랫폼</div>
+                            <div style="font-size: 12px; font-weight: 700; color: #0d47a1;">${topPlatform.platform}</div>
+                            <div style="font-size: 10px; color: #1565c0;">ROAS ${(topPlatform.roas || 0).toFixed(0)}%</div>
                         </div>
                     `;
                 }
             }
 
-            // 최적 연령
-            if (forecast.by_age && forecast.by_age.length > 0) {
-                const validAges = forecast.by_age.filter(a => isValidAge(a.age));
-                if (validAges.length > 0) {
-                    const sorted = [...validAges].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
+            // 최적 성별 (periodData 사용)
+            if (periodData && periodData.gender_performance && periodData.gender_performance.length > 0) {
+                const validGenders = periodData.gender_performance.filter(g => g.cost > 0 && isValidGender(g.gender));
+                if (validGenders.length > 0) {
+                    const sorted = [...validGenders].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                    const top = sorted[0];
+                    html += `
+                        <div style="padding: 12px; background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); border-radius: 10px; text-align: center;">
+                            <div style="font-size: 9px; color: #c2185b; font-weight: 600; margin-bottom: 2px;">👫 최적 성별</div>
+                            <div style="font-size: 12px; font-weight: 700; color: #880e4f;">${normalizeGender(top.gender) || top.gender}</div>
+                            <div style="font-size: 10px; color: #c2185b;">ROAS ${(top.roas || 0).toFixed(0)}%</div>
+                        </div>
+                    `;
+                }
+            }
+
+            // 최적 연령 (periodData 사용) - age_gender_combinations에서 추출
+            if (periodData && periodData.age_gender_combinations && periodData.age_gender_combinations.length > 0) {
+                // 연령별로 그룹핑하여 ROAS 계산
+                const ageGroups = {};
+                periodData.age_gender_combinations.forEach(item => {
+                    const age = item.age;
+                    if (!ageGroups[age]) {
+                        ageGroups[age] = {age: age, totalRevenue: 0, totalCost: 0};
+                    }
+                    ageGroups[age].totalRevenue += item.revenue || 0;
+                    ageGroups[age].totalCost += item.cost || 0;
+                });
+                const agePerformance = Object.values(ageGroups).map(g => ({
+                    age: g.age,
+                    roas: g.totalCost > 0 ? (g.totalRevenue / g.totalCost * 100) : 0
+                })).filter(a => isValidAge(a.age) && a.roas > 0);
+
+                if (agePerformance.length > 0) {
+                    const sorted = agePerformance.sort((a, b) => b.roas - a.roas);
                     const top = sorted[0];
                     html += `
                         <div style="padding: 12px; background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%); border-radius: 10px; text-align: center;">
                             <div style="font-size: 9px; color: #3949ab; font-weight: 600; margin-bottom: 2px;">👤 최적 연령</div>
                             <div style="font-size: 11px; font-weight: 700; color: #1a237e;">${top.age}</div>
-                            <div style="font-size: 10px; color: #3949ab;">ROAS ${(top.avg_forecast_roas || 0).toFixed(0)}%</div>
+                            <div style="font-size: 10px; color: #3949ab;">ROAS ${top.roas.toFixed(0)}%</div>
                         </div>
                     `;
                 }

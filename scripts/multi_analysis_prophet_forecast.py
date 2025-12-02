@@ -14,6 +14,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from pathlib import Path
+import argparse
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -32,10 +33,20 @@ DATA_TYPE_DIR = BASE_DIR / 'data' / 'type'
 # 예측 대상 지표 목록
 FORECAST_METRICS = ['비용', '노출', '클릭', '전환수', '전환값']
 
-# 학습 기간 설정 (일)
-TRAINING_DAYS = 365
+# 명령줄 인자 파싱
+parser = argparse.ArgumentParser(description='Prophet 시계열 예측 - 기간별 학습 지원')
+parser.add_argument('--days', type=int, default=0,
+                    help='학습 데이터 기간 (0=전체/365일, 180=최근180일, 90=최근90일)')
+parser.add_argument('--output-days', type=int, default=30,
+                    help='예측 기간 (기본 30일)')
+args = parser.parse_args()
 
-def forecast_multiple_metrics(daily_data, metrics=FORECAST_METRICS, periods=30):
+# 학습 기간 설정 (일) - 명령줄 인자 또는 기본값
+TRAINING_DAYS = args.days if args.days > 0 else 365
+# 출력 기간 설정 (일) - 예측 데이터
+OUTPUT_DAYS = args.output_days
+
+def forecast_multiple_metrics(daily_data, metrics=FORECAST_METRICS, periods=OUTPUT_DAYS):
     """
     여러 지표를 동시에 예측하는 함수 (최근 365일 데이터 사용)
 
@@ -82,7 +93,13 @@ def forecast_multiple_metrics(daily_data, metrics=FORECAST_METRICS, periods=30):
         model.fit(prophet_df)
         future = model.make_future_dataframe(periods=periods)
         forecast = model.predict(future)
-        forecasts[metric] = forecast.tail(periods)[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].copy()
+
+        # 음수 값을 0으로 클리핑 (비용, 전환 등은 음수가 될 수 없음)
+        forecast_result = forecast.tail(periods)[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].copy()
+        forecast_result['yhat'] = forecast_result['yhat'].clip(lower=0)
+        forecast_result['yhat_lower'] = forecast_result['yhat_lower'].clip(lower=0)
+        forecast_result['yhat_upper'] = forecast_result['yhat_upper'].clip(lower=0)
+        forecasts[metric] = forecast_result
 
     return forecasts
 
@@ -110,18 +127,94 @@ def combine_metric_forecasts(forecasts, key_column=None, key_value=None):
     for metric, forecast_df in forecasts.items():
         result[f'예측_{metric}'] = forecast_df['yhat'].values
 
-    # 예측 ROAS, CPA 계산
+    # 모든 예측 지표에 음수 클리핑 적용
+    for col in result.columns:
+        if col.startswith('예측_') and result[col].dtype in ['int64', 'float64']:
+            result[col] = result[col].clip(lower=0)
+
+    # 예측 ROAS, CPA 계산 (음수 클리핑 후 계산)
     if '예측_전환값' in result.columns and '예측_비용' in result.columns:
         result['예측_ROAS'] = (result['예측_전환값'] / result['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+        result['예측_ROAS'] = result['예측_ROAS'].clip(lower=0)
 
     if '예측_비용' in result.columns and '예측_전환수' in result.columns:
         result['예측_CPA'] = (result['예측_비용'] / result['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+        result['예측_CPA'] = result['예측_CPA'].clip(lower=0)
 
     # 키 컬럼 추가
     if key_column and key_value:
         result[key_column] = key_value
 
     return result
+
+
+def create_actual_data(daily_data, key_column=None, key_value=None):
+    """
+    실제 데이터를 예측 결과와 동일한 형식으로 변환 (최근 OUTPUT_DAYS일)
+
+    Args:
+        daily_data: 일별 집계 데이터 (DataFrame)
+        key_column: 그룹 키 컬럼명 (예: '브랜드명', '성별')
+        key_value: 그룹 키 값
+
+    Returns:
+        DataFrame: 실제 데이터 (예측 형식과 동일)
+    """
+    # 최근 OUTPUT_DAYS일 데이터 추출
+    actual = daily_data.tail(OUTPUT_DAYS).copy()
+
+    # 컬럼명 변환 (예측 형식과 일치)
+    result = pd.DataFrame()
+    result['일자'] = actual['일'].dt.strftime('%Y-%m-%d')
+
+    for metric in FORECAST_METRICS:
+        if metric in actual.columns:
+            result[f'예측_{metric}'] = actual[metric].values
+
+    # ROAS, CPA 계산
+    if '예측_전환값' in result.columns and '예측_비용' in result.columns:
+        result['예측_ROAS'] = (result['예측_전환값'] / result['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+
+    if '예측_비용' in result.columns and '예측_전환수' in result.columns:
+        result['예측_CPA'] = (result['예측_비용'] / result['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+
+    # 타입 표시
+    result['type'] = 'actual'
+
+    # 키 컬럼 추가
+    if key_column and key_value:
+        result[key_column] = key_value
+
+    return result
+
+
+def combine_actual_and_forecast(actual_df, forecast_df):
+    """
+    실제 데이터와 예측 데이터를 결합
+
+    Args:
+        actual_df: 실제 데이터 DataFrame
+        forecast_df: 예측 데이터 DataFrame
+
+    Returns:
+        DataFrame: 결합된 데이터 (actual + forecast)
+    """
+    if forecast_df is None:
+        return actual_df
+
+    # 예측 데이터에 type 추가
+    forecast_df = forecast_df.copy()
+    forecast_df['type'] = 'forecast'
+
+    # 일자 형식 통일
+    if 'forecast_df' in dir() and '일자' in forecast_df.columns:
+        forecast_df['일자'] = pd.to_datetime(forecast_df['일자']).dt.strftime('%Y-%m-%d')
+
+    # 결합
+    combined = pd.concat([actual_df, forecast_df], ignore_index=True)
+
+    return combined
+
 
 # CSV 파일 읽기
 file_path = DATA_TYPE_DIR / 'merged_data.csv'
@@ -221,28 +314,37 @@ for _, row in category_summary.iterrows():
 
 if PROPHET_AVAILABLE:
     print("\n" + "=" * 100)
-    print("1. 전체 다중 지표 예측 (향후 30일)")
+    print(f"1. 전체 다중 지표 예측 (실제 {OUTPUT_DAYS}일 + 예측 {OUTPUT_DAYS}일)")
     print("=" * 100)
 
     print("\nProphet 모델 학습 중... (비용, 노출, 클릭, 전환수, 전환값)")
 
     # 전체 다중 지표 예측
     overall_forecasts = forecast_multiple_metrics(daily_data)
-    overall_result = combine_metric_forecasts(overall_forecasts)
+    overall_forecast_result = combine_metric_forecasts(overall_forecasts)
+
+    # 실제 데이터 생성
+    overall_actual_result = create_actual_data(daily_data)
+
+    # 실제 + 예측 결합
+    overall_result = combine_actual_and_forecast(overall_actual_result, overall_forecast_result)
 
     if overall_result is not None:
-        print("\n향후 30일 예측 (상위 10일):")
-        print(overall_result.head(10).to_string(index=False))
+        print(f"\n데이터 구성:")
+        print(f"  - 실제 데이터: {len(overall_result[overall_result['type'] == 'actual'])}일")
+        print(f"  - 예측 데이터: {len(overall_result[overall_result['type'] == 'forecast'])}일")
 
-        print(f"\n예측 요약 (30일 총합):")
+        # 예측 데이터만 요약
+        forecast_only = overall_result[overall_result['type'] == 'forecast']
+        print(f"\n예측 요약 ({len(forecast_only)}일 총합):")
         for metric in FORECAST_METRICS:
             col = f'예측_{metric}'
-            if col in overall_result.columns:
-                print(f"  {metric}: {overall_result[col].sum():,.0f}")
+            if col in forecast_only.columns:
+                print(f"  {metric}: {forecast_only[col].sum():,.0f}")
         # ROAS/CPA는 sum 기반으로 계산
-        forecast_total_cost = overall_result['예측_비용'].sum() if '예측_비용' in overall_result.columns else 0
-        forecast_total_revenue = overall_result['예측_전환값'].sum() if '예측_전환값' in overall_result.columns else 0
-        forecast_total_conversions = overall_result['예측_전환수'].sum() if '예측_전환수' in overall_result.columns else 0
+        forecast_total_cost = forecast_only['예측_비용'].sum() if '예측_비용' in forecast_only.columns else 0
+        forecast_total_revenue = forecast_only['예측_전환값'].sum() if '예측_전환값' in forecast_only.columns else 0
+        forecast_total_conversions = forecast_only['예측_전환수'].sum() if '예측_전환수' in forecast_only.columns else 0
         if forecast_total_cost > 0:
             avg_roas = (forecast_total_revenue / forecast_total_cost * 100)
             print(f"  평균 ROAS: {avg_roas:.1f}%")
@@ -250,13 +352,13 @@ if PROPHET_AVAILABLE:
             avg_cpa = (forecast_total_cost / forecast_total_conversions)
             print(f"  평균 CPA: {avg_cpa:,.0f}원")
 
-        # 전체 예측 결과 저장
+        # 전체 예측 결과 저장 (actual + forecast)
         overall_result.to_csv(DATA_TYPE_DIR / 'prophet_forecast_overall.csv',
                               index=False, encoding='utf-8-sig')
         print("\n✓ 전체 예측 결과 저장: data/type/prophet_forecast_overall.csv")
 
     print("\n" + "=" * 100)
-    print("2. 주요 유형구분별 다중 지표 예측 (향후 30일)")
+    print(f"2. 주요 유형구분별 다중 지표 예측 (실제 {OUTPUT_DAYS}일 + 예측 {OUTPUT_DAYS}일)")
     print("=" * 100)
 
     # 주요 유형구분 (상위 3개)
@@ -265,7 +367,7 @@ if PROPHET_AVAILABLE:
     category_forecast_results = []
 
     for category in top_categories:
-        category_data = df[df['유형구분'] == category]
+        category_data = df[(df['data_type'] == 'Type1_캠페인+광고세트') & (df['유형구분'] == category)]
 
         if len(category_data) < 10:
             print(f"\n[{category}]: 데이터 부족 (건수: {len(category_data)})")
@@ -286,21 +388,29 @@ if PROPHET_AVAILABLE:
         print(f"\n[{category}] 다중 지표 예측")
         print(f"학습 데이터: {len(daily_category)}일")
 
+        # 예측 데이터 생성
         cat_forecasts = forecast_multiple_metrics(daily_category)
-        cat_result = combine_metric_forecasts(cat_forecasts, '유형구분', category)
+        cat_forecast_result = combine_metric_forecasts(cat_forecasts, '유형구분', category)
+
+        # 실제 데이터 생성
+        cat_actual_result = create_actual_data(daily_category, '유형구분', category)
+
+        # 실제 + 예측 결합
+        cat_result = combine_actual_and_forecast(cat_actual_result, cat_forecast_result)
 
         if cat_result is not None:
             category_forecast_results.append(cat_result)
-            if '예측_전환값' in cat_result.columns:
-                print(f"향후 30일 예상 총 전환값: {cat_result['예측_전환값'].sum():,.0f}원")
+            forecast_only = cat_result[cat_result['type'] == 'forecast']
+            if '예측_전환값' in forecast_only.columns:
+                print(f"향후 {len(forecast_only)}일 예상 총 전환값: {forecast_only['예측_전환값'].sum():,.0f}원")
             # ROAS는 sum 기반으로 계산
-            if '예측_비용' in cat_result.columns and '예측_전환값' in cat_result.columns:
-                cat_f_cost = cat_result['예측_비용'].sum()
-                cat_f_revenue = cat_result['예측_전환값'].sum()
+            if '예측_비용' in forecast_only.columns and '예측_전환값' in forecast_only.columns:
+                cat_f_cost = forecast_only['예측_비용'].sum()
+                cat_f_revenue = forecast_only['예측_전환값'].sum()
                 if cat_f_cost > 0:
                     print(f"평균 예측 ROAS: {(cat_f_revenue / cat_f_cost * 100):.1f}%")
 
-    # 유형구분별 예측 결과 통합 저장
+    # 유형구분별 예측 결과 통합 저장 (actual + forecast)
     if category_forecast_results:
         combined_category = pd.concat(category_forecast_results, ignore_index=True)
         # 컬럼 순서 정리
@@ -309,7 +419,8 @@ if PROPHET_AVAILABLE:
             cols.append('예측_ROAS')
         if '예측_CPA' in combined_category.columns:
             cols.append('예측_CPA')
-        combined_category = combined_category[cols]
+        cols.append('type')
+        combined_category = combined_category[[c for c in cols if c in combined_category.columns]]
         combined_category.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_category.csv',
                                   index=False, encoding='utf-8-sig')
         print("\n✓ 유형구분별 예측 결과 저장: data/type/prophet_forecast_by_category.csv")
@@ -360,10 +471,10 @@ if PROPHET_AVAILABLE:
     print("4. 계절성 예측 분석 (Prophet 기반) - 다중 지표")
     print("=" * 100)
 
-    # 하이브리드 방식: 과거 데이터 fitted 값 + 단기 예측(90일)
-    SEASONALITY_FORECAST_DAYS = 90  # 단기 예측만 (신뢰도 높음)
+    # 하이브리드 방식: 과거 데이터 fitted 값 + 예측(OUTPUT_DAYS일)
+    SEASONALITY_FORECAST_DAYS = OUTPUT_DAYS  # 출력 기간과 동일하게 설정
 
-    def forecast_seasonality_metrics(data, forecast_days=365):
+    def forecast_seasonality_metrics(data, forecast_days=OUTPUT_DAYS):
         """Prophet으로 365일 미래 예측 반환 (개별 유형구분용)"""
         forecasts = {}
 
@@ -400,7 +511,7 @@ if PROPHET_AVAILABLE:
 
         return forecasts
 
-    def forecast_seasonality_with_history(data, forecast_days=90):
+    def forecast_seasonality_with_history(data, forecast_days=OUTPUT_DAYS):
         """Prophet으로 과거 fitted 값 + 단기 예측 반환 (계절성 분석용)"""
         forecasts_history = {}  # 과거 데이터 fitted 값
         forecasts_future = {}   # 미래 예측값
@@ -659,7 +770,7 @@ if PROPHET_AVAILABLE:
     # 6. 브랜드별 다중 지표 예측 (Type1 데이터 기반)
     # ============================================================================
     print("\n" + "=" * 100)
-    print("6. 브랜드별 다중 지표 예측 (향후 30일)")
+    print(f"6. 브랜드별 다중 지표 예측 (실제 {OUTPUT_DAYS}일 + 예측 {OUTPUT_DAYS}일)")
     print("=" * 100)
 
     type1_data = df[df['data_type'] == 'Type1_캠페인+광고세트']
@@ -688,21 +799,29 @@ if PROPHET_AVAILABLE:
             print(f"\n[{brand}] 다중 지표 예측")
             print(f"학습 데이터: {len(daily_brand)}일")
 
+            # 예측 데이터 생성
             brand_forecasts = forecast_multiple_metrics(daily_brand)
-            brand_result = combine_metric_forecasts(brand_forecasts, '브랜드명', brand)
+            brand_forecast_result = combine_metric_forecasts(brand_forecasts, '브랜드명', brand)
+
+            # 실제 데이터 생성
+            brand_actual_result = create_actual_data(daily_brand, '브랜드명', brand)
+
+            # 실제 + 예측 결합
+            brand_result = combine_actual_and_forecast(brand_actual_result, brand_forecast_result)
 
             if brand_result is not None:
                 brand_forecast_results.append(brand_result)
-                if '예측_전환값' in brand_result.columns:
-                    print(f"향후 30일 예상 총 전환값: {brand_result['예측_전환값'].sum():,.0f}원")
+                forecast_only = brand_result[brand_result['type'] == 'forecast']
+                if '예측_전환값' in forecast_only.columns:
+                    print(f"향후 {len(forecast_only)}일 예상 총 전환값: {forecast_only['예측_전환값'].sum():,.0f}원")
                 # ROAS는 sum 기반으로 계산
-                if '예측_비용' in brand_result.columns and '예측_전환값' in brand_result.columns:
-                    brand_f_cost = brand_result['예측_비용'].sum()
-                    brand_f_revenue = brand_result['예측_전환값'].sum()
+                if '예측_비용' in forecast_only.columns and '예측_전환값' in forecast_only.columns:
+                    brand_f_cost = forecast_only['예측_비용'].sum()
+                    brand_f_revenue = forecast_only['예측_전환값'].sum()
                     if brand_f_cost > 0:
                         print(f"평균 예측 ROAS: {(brand_f_revenue / brand_f_cost * 100):.1f}%")
 
-    # 브랜드별 예측 결과 저장
+    # 브랜드별 예측 결과 저장 (actual + forecast)
     if brand_forecast_results:
         combined_brand = pd.concat(brand_forecast_results, ignore_index=True)
         cols = ['브랜드명', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_brand.columns]
@@ -710,7 +829,8 @@ if PROPHET_AVAILABLE:
             cols.append('예측_ROAS')
         if '예측_CPA' in combined_brand.columns:
             cols.append('예측_CPA')
-        combined_brand = combined_brand[cols]
+        cols.append('type')
+        combined_brand = combined_brand[[c for c in cols if c in combined_brand.columns]]
         combined_brand.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_brand.csv',
                                 index=False, encoding='utf-8-sig')
         print("\n✓ 브랜드별 예측 결과 저장: data/type/prophet_forecast_by_brand.csv")
@@ -719,7 +839,7 @@ if PROPHET_AVAILABLE:
     # 7. 상품별 다중 지표 예측 (Type1 데이터 기반)
     # ============================================================================
     print("\n" + "=" * 100)
-    print("7. 상품별 다중 지표 예측 (향후 30일)")
+    print(f"7. 상품별 다중 지표 예측 (실제 {OUTPUT_DAYS}일 + 예측 {OUTPUT_DAYS}일)")
     print("=" * 100)
 
     product_forecast_results = []
@@ -747,21 +867,29 @@ if PROPHET_AVAILABLE:
             print(f"\n[{product}] 다중 지표 예측")
             print(f"학습 데이터: {len(daily_product)}일")
 
+            # 예측 데이터 생성
             product_forecasts = forecast_multiple_metrics(daily_product)
-            product_result = combine_metric_forecasts(product_forecasts, '상품명', product)
+            product_forecast_result = combine_metric_forecasts(product_forecasts, '상품명', product)
+
+            # 실제 데이터 생성
+            product_actual_result = create_actual_data(daily_product, '상품명', product)
+
+            # 실제 + 예측 결합
+            product_result = combine_actual_and_forecast(product_actual_result, product_forecast_result)
 
             if product_result is not None:
                 product_forecast_results.append(product_result)
-                if '예측_전환값' in product_result.columns:
-                    print(f"향후 30일 예상 총 전환값: {product_result['예측_전환값'].sum():,.0f}원")
+                forecast_only = product_result[product_result['type'] == 'forecast']
+                if '예측_전환값' in forecast_only.columns:
+                    print(f"향후 {len(forecast_only)}일 예상 총 전환값: {forecast_only['예측_전환값'].sum():,.0f}원")
                 # ROAS는 sum 기반으로 계산
-                if '예측_비용' in product_result.columns and '예측_전환값' in product_result.columns:
-                    product_f_cost = product_result['예측_비용'].sum()
-                    product_f_revenue = product_result['예측_전환값'].sum()
+                if '예측_비용' in forecast_only.columns and '예측_전환값' in forecast_only.columns:
+                    product_f_cost = forecast_only['예측_비용'].sum()
+                    product_f_revenue = forecast_only['예측_전환값'].sum()
                     if product_f_cost > 0:
                         print(f"평균 예측 ROAS: {(product_f_revenue / product_f_cost * 100):.1f}%")
 
-    # 상품별 예측 결과 저장
+    # 상품별 예측 결과 저장 (actual + forecast)
     if product_forecast_results:
         combined_product = pd.concat(product_forecast_results, ignore_index=True)
         cols = ['상품명', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_product.columns]
@@ -769,7 +897,8 @@ if PROPHET_AVAILABLE:
             cols.append('예측_ROAS')
         if '예측_CPA' in combined_product.columns:
             cols.append('예측_CPA')
-        combined_product = combined_product[cols]
+        cols.append('type')
+        combined_product = combined_product[[c for c in cols if c in combined_product.columns]]
         combined_product.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_product.csv',
                                   index=False, encoding='utf-8-sig')
         print("\n✓ 상품별 예측 결과 저장: data/type/prophet_forecast_by_product.csv")
@@ -778,7 +907,7 @@ if PROPHET_AVAILABLE:
     # 8. 성별 다중 지표 예측 (dimension_type4 CSV 활용 - 이미 매핑된 데이터)
     # ============================================================================
     print("\n" + "=" * 100)
-    print("8. 성별 다중 지표 예측 (향후 30일) - dimension_type4 CSV 활용")
+    print(f"8. 성별 다중 지표 예측 (실제 {OUTPUT_DAYS}일 + 예측 {OUTPUT_DAYS}일) - dimension_type4 CSV 활용")
     print("=" * 100)
 
     # dimension_type4 CSV 파일 로드 (이미 성별_통합 컬럼 포함)
@@ -814,21 +943,29 @@ if PROPHET_AVAILABLE:
             print(f"\n[{gender}] 다중 지표 예측")
             print(f"학습 데이터: {len(daily_gender)}일")
 
+            # 예측 데이터 생성
             gender_forecasts = forecast_multiple_metrics(daily_gender)
-            gender_result = combine_metric_forecasts(gender_forecasts, '성별_통합', gender)
+            gender_forecast_result = combine_metric_forecasts(gender_forecasts, '성별_통합', gender)
+
+            # 실제 데이터 생성
+            gender_actual_result = create_actual_data(daily_gender, '성별_통합', gender)
+
+            # 실제 + 예측 결합
+            gender_result = combine_actual_and_forecast(gender_actual_result, gender_forecast_result)
 
             if gender_result is not None:
                 gender_forecast_results.append(gender_result)
-                if '예측_전환값' in gender_result.columns:
-                    print(f"향후 30일 예상 총 전환값: {gender_result['예측_전환값'].sum():,.0f}원")
+                forecast_only = gender_result[gender_result['type'] == 'forecast']
+                if '예측_전환값' in forecast_only.columns:
+                    print(f"향후 {len(forecast_only)}일 예상 총 전환값: {forecast_only['예측_전환값'].sum():,.0f}원")
                 # ROAS는 sum 기반으로 계산
-                if '예측_비용' in gender_result.columns and '예측_전환값' in gender_result.columns:
-                    gender_f_cost = gender_result['예측_비용'].sum()
-                    gender_f_revenue = gender_result['예측_전환값'].sum()
+                if '예측_비용' in forecast_only.columns and '예측_전환값' in forecast_only.columns:
+                    gender_f_cost = forecast_only['예측_비용'].sum()
+                    gender_f_revenue = forecast_only['예측_전환값'].sum()
                     if gender_f_cost > 0:
                         print(f"평균 예측 ROAS: {(gender_f_revenue / gender_f_cost * 100):.1f}%")
 
-        # 성별 예측 결과 저장
+        # 성별 예측 결과 저장 (actual + forecast)
         if gender_forecast_results:
             combined_gender = pd.concat(gender_forecast_results, ignore_index=True)
             cols = ['성별_통합', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_gender.columns]
@@ -836,7 +973,8 @@ if PROPHET_AVAILABLE:
                 cols.append('예측_ROAS')
             if '예측_CPA' in combined_gender.columns:
                 cols.append('예측_CPA')
-            combined_gender = combined_gender[cols]
+            cols.append('type')
+            combined_gender = combined_gender[[c for c in cols if c in combined_gender.columns]]
             combined_gender.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_gender.csv',
                                      index=False, encoding='utf-8-sig')
             print("\n✓ 성별 예측 결과 저장: data/type/prophet_forecast_by_gender.csv")
@@ -849,7 +987,7 @@ if PROPHET_AVAILABLE:
     # 9. 연령별 다중 지표 예측 (dimension_type3 CSV 활용 - 이미 매핑된 데이터)
     # ============================================================================
     print("\n" + "=" * 100)
-    print("9. 연령별 다중 지표 예측 (향후 30일) - dimension_type3 CSV 활용")
+    print(f"9. 연령별 다중 지표 예측 (실제 {OUTPUT_DAYS}일 + 예측 {OUTPUT_DAYS}일) - dimension_type3 CSV 활용")
     print("=" * 100)
 
     # dimension_type3 CSV 파일 로드 (이미 연령_통합 컬럼 포함)
@@ -885,21 +1023,29 @@ if PROPHET_AVAILABLE:
             print(f"\n[{age}] 다중 지표 예측")
             print(f"학습 데이터: {len(daily_age)}일")
 
+            # 예측 데이터 생성
             age_forecasts = forecast_multiple_metrics(daily_age)
-            age_result = combine_metric_forecasts(age_forecasts, '연령_통합', age)
+            age_forecast_result = combine_metric_forecasts(age_forecasts, '연령_통합', age)
+
+            # 실제 데이터 생성
+            age_actual_result = create_actual_data(daily_age, '연령_통합', age)
+
+            # 실제 + 예측 결합
+            age_result = combine_actual_and_forecast(age_actual_result, age_forecast_result)
 
             if age_result is not None:
                 age_forecast_results.append(age_result)
-                if '예측_전환값' in age_result.columns:
-                    print(f"향후 30일 예상 총 전환값: {age_result['예측_전환값'].sum():,.0f}원")
+                forecast_only = age_result[age_result['type'] == 'forecast']
+                if '예측_전환값' in forecast_only.columns:
+                    print(f"향후 {len(forecast_only)}일 예상 총 전환값: {forecast_only['예측_전환값'].sum():,.0f}원")
                 # ROAS는 sum 기반으로 계산
-                if '예측_비용' in age_result.columns and '예측_전환값' in age_result.columns:
-                    age_f_cost = age_result['예측_비용'].sum()
-                    age_f_revenue = age_result['예측_전환값'].sum()
+                if '예측_비용' in forecast_only.columns and '예측_전환값' in forecast_only.columns:
+                    age_f_cost = forecast_only['예측_비용'].sum()
+                    age_f_revenue = forecast_only['예측_전환값'].sum()
                     if age_f_cost > 0:
                         print(f"평균 예측 ROAS: {(age_f_revenue / age_f_cost * 100):.1f}%")
 
-        # 연령별 예측 결과 저장
+        # 연령별 예측 결과 저장 (actual + forecast)
         if age_forecast_results:
             combined_age = pd.concat(age_forecast_results, ignore_index=True)
             cols = ['연령_통합', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_age.columns]
@@ -907,7 +1053,8 @@ if PROPHET_AVAILABLE:
                 cols.append('예측_ROAS')
             if '예측_CPA' in combined_age.columns:
                 cols.append('예측_CPA')
-            combined_age = combined_age[cols]
+            cols.append('type')
+            combined_age = combined_age[[c for c in cols if c in combined_age.columns]]
             combined_age.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_age.csv',
                                   index=False, encoding='utf-8-sig')
             print("\n✓ 연령별 예측 결과 저장: data/type/prophet_forecast_by_age.csv")
@@ -920,7 +1067,7 @@ if PROPHET_AVAILABLE:
     # 10. 기기플랫폼별 다중 지표 예측 (dimension_type7 CSV 활용 - 이미 매핑된 데이터)
     # ============================================================================
     print("\n" + "=" * 100)
-    print("10. 기기플랫폼별 다중 지표 예측 (향후 30일) - dimension_type7 CSV 활용")
+    print(f"10. 기기플랫폼별 다중 지표 예측 (실제 {OUTPUT_DAYS}일 + 예측 {OUTPUT_DAYS}일) - dimension_type7 CSV 활용")
     print("=" * 100)
 
     # dimension_type7 CSV 파일 로드 (이미 기기플랫폼_통합 컬럼 포함)
@@ -956,20 +1103,27 @@ if PROPHET_AVAILABLE:
             print(f"\n[{platform}] 다중 지표 예측")
             print(f"학습 데이터: {len(daily_platform)}일")
 
+            # 예측 데이터 생성
             platform_forecasts = forecast_multiple_metrics(daily_platform)
-            platform_result = combine_metric_forecasts(platform_forecasts, '기기플랫폼_통합', platform)
+            platform_forecast_result = combine_metric_forecasts(platform_forecasts, '기기플랫폼_통합', platform)
+
+            # 실제 데이터 생성
+            platform_actual_result = create_actual_data(daily_platform, '기기플랫폼_통합', platform)
+
+            # 실제 + 예측 결합
+            platform_result = combine_actual_and_forecast(platform_actual_result, platform_forecast_result)
 
             if platform_result is not None:
                 platform_forecast_results.append(platform_result)
-                if '예측_전환값' in platform_result.columns:
-                    print(f"향후 30일 예상 총 전환값: {platform_result['예측_전환값'].sum():,.0f}원")
-                if '예측_ROAS' in platform_result.columns:
-                    platform_total_cost = platform_result['예측_비용'].sum() if '예측_비용' in platform_result.columns else 0
-                    platform_total_revenue = platform_result['예측_전환값'].sum() if '예측_전환값' in platform_result.columns else 0
-                    platform_roas = (platform_total_revenue / platform_total_cost * 100) if platform_total_cost > 0 else 0
-                    print(f"평균 예측 ROAS: {platform_roas:.1f}%")
+                forecast_only = platform_result[platform_result['type'] == 'forecast']
+                if '예측_전환값' in forecast_only.columns:
+                    print(f"향후 {len(forecast_only)}일 예상 총 전환값: {forecast_only['예측_전환값'].sum():,.0f}원")
+                platform_total_cost = forecast_only['예측_비용'].sum() if '예측_비용' in forecast_only.columns else 0
+                platform_total_revenue = forecast_only['예측_전환값'].sum() if '예측_전환값' in forecast_only.columns else 0
+                platform_roas = (platform_total_revenue / platform_total_cost * 100) if platform_total_cost > 0 else 0
+                print(f"평균 예측 ROAS: {platform_roas:.1f}%")
 
-        # 기기플랫폼별 예측 결과 저장
+        # 기기플랫폼별 예측 결과 저장 (actual + forecast)
         if platform_forecast_results:
             combined_platform = pd.concat(platform_forecast_results, ignore_index=True)
             cols = ['기기플랫폼_통합', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_platform.columns]
@@ -977,7 +1131,8 @@ if PROPHET_AVAILABLE:
                 cols.append('예측_ROAS')
             if '예측_CPA' in combined_platform.columns:
                 cols.append('예측_CPA')
-            combined_platform = combined_platform[cols]
+            cols.append('type')
+            combined_platform = combined_platform[[c for c in cols if c in combined_platform.columns]]
             combined_platform.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_platform.csv',
                                        index=False, encoding='utf-8-sig')
             print("\n✓ 기기플랫폼별 예측 결과 저장: data/type/prophet_forecast_by_platform.csv")
@@ -990,7 +1145,7 @@ if PROPHET_AVAILABLE:
     # 10-2. 기기유형별 다중 지표 예측 (dimension_type5 CSV 활용 - 이미 매핑된 데이터)
     # ============================================================================
     print("\n" + "=" * 100)
-    print("10-2. 기기유형별 다중 지표 예측 (향후 30일) - dimension_type5 CSV 활용")
+    print(f"10-2. 기기유형별 다중 지표 예측 (실제 {OUTPUT_DAYS}일 + 예측 {OUTPUT_DAYS}일) - dimension_type5 CSV 활용")
     print("=" * 100)
 
     # dimension_type5 CSV 파일 로드 (이미 기기유형_통합 컬럼 포함)
@@ -1026,20 +1181,27 @@ if PROPHET_AVAILABLE:
             print(f"\n[{device}] 다중 지표 예측")
             print(f"학습 데이터: {len(daily_device)}일")
 
+            # 예측 데이터 생성
             device_forecasts = forecast_multiple_metrics(daily_device)
-            device_result = combine_metric_forecasts(device_forecasts, '기기유형_통합', device)
+            device_forecast_result = combine_metric_forecasts(device_forecasts, '기기유형_통합', device)
+
+            # 실제 데이터 생성
+            device_actual_result = create_actual_data(daily_device, '기기유형_통합', device)
+
+            # 실제 + 예측 결합
+            device_result = combine_actual_and_forecast(device_actual_result, device_forecast_result)
 
             if device_result is not None:
                 device_forecast_results.append(device_result)
-                if '예측_전환값' in device_result.columns:
-                    print(f"향후 30일 예상 총 전환값: {device_result['예측_전환값'].sum():,.0f}원")
-                if '예측_ROAS' in device_result.columns:
-                    device_total_cost = device_result['예측_비용'].sum() if '예측_비용' in device_result.columns else 0
-                    device_total_revenue = device_result['예측_전환값'].sum() if '예측_전환값' in device_result.columns else 0
-                    device_roas = (device_total_revenue / device_total_cost * 100) if device_total_cost > 0 else 0
-                    print(f"평균 예측 ROAS: {device_roas:.1f}%")
+                forecast_only = device_result[device_result['type'] == 'forecast']
+                if '예측_전환값' in forecast_only.columns:
+                    print(f"향후 {len(forecast_only)}일 예상 총 전환값: {forecast_only['예측_전환값'].sum():,.0f}원")
+                device_total_cost = forecast_only['예측_비용'].sum() if '예측_비용' in forecast_only.columns else 0
+                device_total_revenue = forecast_only['예측_전환값'].sum() if '예측_전환값' in forecast_only.columns else 0
+                device_roas = (device_total_revenue / device_total_cost * 100) if device_total_cost > 0 else 0
+                print(f"평균 예측 ROAS: {device_roas:.1f}%")
 
-        # 기기유형별 예측 결과 저장
+        # 기기유형별 예측 결과 저장 (actual + forecast)
         if device_forecast_results:
             combined_device = pd.concat(device_forecast_results, ignore_index=True)
             cols = ['기기유형_통합', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_device.columns]
@@ -1047,7 +1209,8 @@ if PROPHET_AVAILABLE:
                 cols.append('예측_ROAS')
             if '예측_CPA' in combined_device.columns:
                 cols.append('예측_CPA')
-            combined_device = combined_device[cols]
+            cols.append('type')
+            combined_device = combined_device[[c for c in cols if c in combined_device.columns]]
             combined_device.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_device.csv',
                                      index=False, encoding='utf-8-sig')
             print("\n✓ 기기유형별 예측 결과 저장: data/type/prophet_forecast_by_device.csv")
@@ -1060,7 +1223,7 @@ if PROPHET_AVAILABLE:
     # 11. 프로모션별 다중 지표 예측 (Type1 데이터 기반)
     # ============================================================================
     print("\n" + "=" * 100)
-    print("11. 프로모션별 다중 지표 예측 (향후 30일)")
+    print(f"11. 프로모션별 다중 지표 예측 (실제 {OUTPUT_DAYS}일 + 예측 {OUTPUT_DAYS}일)")
     print("=" * 100)
 
     promotion_forecast_results = []
@@ -1088,20 +1251,27 @@ if PROPHET_AVAILABLE:
             print(f"\n[{promotion}] 다중 지표 예측")
             print(f"학습 데이터: {len(daily_promotion)}일")
 
+            # 예측 데이터 생성
             promotion_forecasts = forecast_multiple_metrics(daily_promotion)
-            promotion_result = combine_metric_forecasts(promotion_forecasts, '프로모션', promotion)
+            promotion_forecast_result = combine_metric_forecasts(promotion_forecasts, '프로모션', promotion)
+
+            # 실제 데이터 생성
+            promotion_actual_result = create_actual_data(daily_promotion, '프로모션', promotion)
+
+            # 실제 + 예측 결합
+            promotion_result = combine_actual_and_forecast(promotion_actual_result, promotion_forecast_result)
 
             if promotion_result is not None:
                 promotion_forecast_results.append(promotion_result)
-                if '예측_전환값' in promotion_result.columns:
-                    print(f"향후 30일 예상 총 전환값: {promotion_result['예측_전환값'].sum():,.0f}원")
-                if '예측_ROAS' in promotion_result.columns:
-                    promotion_total_cost = promotion_result['예측_비용'].sum() if '예측_비용' in promotion_result.columns else 0
-                    promotion_total_revenue = promotion_result['예측_전환값'].sum() if '예측_전환값' in promotion_result.columns else 0
-                    promotion_roas = (promotion_total_revenue / promotion_total_cost * 100) if promotion_total_cost > 0 else 0
-                    print(f"평균 예측 ROAS: {promotion_roas:.1f}%")
+                forecast_only = promotion_result[promotion_result['type'] == 'forecast']
+                if '예측_전환값' in forecast_only.columns:
+                    print(f"향후 {len(forecast_only)}일 예상 총 전환값: {forecast_only['예측_전환값'].sum():,.0f}원")
+                promotion_total_cost = forecast_only['예측_비용'].sum() if '예측_비용' in forecast_only.columns else 0
+                promotion_total_revenue = forecast_only['예측_전환값'].sum() if '예측_전환값' in forecast_only.columns else 0
+                promotion_roas = (promotion_total_revenue / promotion_total_cost * 100) if promotion_total_cost > 0 else 0
+                print(f"평균 예측 ROAS: {promotion_roas:.1f}%")
 
-    # 프로모션별 예측 결과 저장
+    # 프로모션별 예측 결과 저장 (actual + forecast)
     if promotion_forecast_results:
         combined_promotion = pd.concat(promotion_forecast_results, ignore_index=True)
         cols = ['프로모션', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_promotion.columns]
@@ -1109,7 +1279,8 @@ if PROPHET_AVAILABLE:
             cols.append('예측_ROAS')
         if '예측_CPA' in combined_promotion.columns:
             cols.append('예측_CPA')
-        combined_promotion = combined_promotion[cols]
+        cols.append('type')
+        combined_promotion = combined_promotion[[c for c in cols if c in combined_promotion.columns]]
         combined_promotion.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_promotion.csv',
                                     index=False, encoding='utf-8-sig')
         print("\n✓ 프로모션별 예측 결과 저장: data/type/prophet_forecast_by_promotion.csv")
@@ -1167,23 +1338,38 @@ if PROPHET_AVAILABLE:
             print(f"\n[{combo_label}] 다중 지표 예측")
             print(f"학습 데이터: {len(daily_combo)}일")
 
+            # 예측 데이터 생성
             combo_forecasts = forecast_multiple_metrics(daily_combo)
-            combo_result = combine_metric_forecasts(combo_forecasts)
+            combo_forecast_result = combine_metric_forecasts(combo_forecasts)
+
+            # 실제 데이터 생성
+            combo_actual_result = create_actual_data(daily_combo)
+
+            # 연령_통합, 성별_통합 컬럼 개별 추가 (actual에도 추가)
+            if combo_actual_result is not None:
+                combo_actual_result['연령_통합'] = age
+                combo_actual_result['성별_통합'] = gender
+
+            if combo_forecast_result is not None:
+                combo_forecast_result['연령_통합'] = age
+                combo_forecast_result['성별_통합'] = gender
+
+            # 실제 + 예측 결합
+            combo_result = combine_actual_and_forecast(combo_actual_result, combo_forecast_result)
 
             if combo_result is not None:
-                # 연령_통합, 성별_통합 컬럼 개별 추가
-                combo_result['연령_통합'] = age
-                combo_result['성별_통합'] = gender
                 age_gender_forecast_results.append(combo_result)
-                if '예측_전환값' in combo_result.columns:
-                    print(f"향후 30일 예상 총 전환값: {combo_result['예측_전환값'].sum():,.0f}원")
-                if '예측_ROAS' in combo_result.columns:
-                    combo_total_cost = combo_result['예측_비용'].sum() if '예측_비용' in combo_result.columns else 0
-                    combo_total_revenue = combo_result['예측_전환값'].sum() if '예측_전환값' in combo_result.columns else 0
-                    combo_roas = (combo_total_revenue / combo_total_cost * 100) if combo_total_cost > 0 else 0
-                    print(f"평균 예측 ROAS: {combo_roas:.1f}%")
+                forecast_only = combo_result[combo_result['type'] == 'forecast']
+                if '예측_전환값' in forecast_only.columns:
+                    print(f"향후 {len(forecast_only)}일 예상 총 전환값: {forecast_only['예측_전환값'].sum():,.0f}원")
+                # ROAS는 sum 기반으로 계산
+                if '예측_비용' in forecast_only.columns and '예측_전환값' in forecast_only.columns:
+                    combo_f_cost = forecast_only['예측_비용'].sum()
+                    combo_f_revenue = forecast_only['예측_전환값'].sum()
+                    if combo_f_cost > 0:
+                        print(f"평균 예측 ROAS: {(combo_f_revenue / combo_f_cost * 100):.1f}%")
 
-        # 연령+성별 조합별 예측 결과 저장
+        # 연령+성별 조합별 예측 결과 저장 (actual + forecast)
         if age_gender_forecast_results:
             combined_age_gender = pd.concat(age_gender_forecast_results, ignore_index=True)
             cols = ['연령_통합', '성별_통합', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_age_gender.columns]
@@ -1191,7 +1377,8 @@ if PROPHET_AVAILABLE:
                 cols.append('예측_ROAS')
             if '예측_CPA' in combined_age_gender.columns:
                 cols.append('예측_CPA')
-            combined_age_gender = combined_age_gender[cols]
+            cols.append('type')
+            combined_age_gender = combined_age_gender[[c for c in cols if c in combined_age_gender.columns]]
             combined_age_gender.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_age_gender.csv',
                                          index=False, encoding='utf-8-sig')
             print("\n✓ 연령+성별 조합별 예측 결과 저장: data/type/prophet_forecast_by_age_gender.csv")
