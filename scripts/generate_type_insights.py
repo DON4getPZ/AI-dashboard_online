@@ -413,14 +413,42 @@ def get_prophet_data(key, data_type='forecast'):
     return prophet_forecasts.get(key)
 
 # ============================================================================
-# 전체 요약 (필터링된 daily_summary 기반)
+# 전체 요약 (캠페인+광고세트 기준 필터링된 데이터 사용 - KPI 카드와 동일)
 # ============================================================================
 print("\n전체 요약 생성 중...")
 
-# 필터링된 daily_summary에서 총합 계산 (기간 필터링 적용)
-total_cost = daily_summary['비용'].sum()
-total_conversions = daily_summary['전환수'].sum()
-total_revenue = daily_summary['전환값'].sum()
+# dimensions['type1'] 사용: 캠페인이름 + 광고세트가 존재하는 행만 집계 (KPI 카드와 동일한 기준)
+if 'type1' in dimensions and len(dimensions['type1']) > 0:
+    type1_for_summary = dimensions['type1']
+    total_cost = type1_for_summary['비용'].sum()
+    total_conversions = type1_for_summary['전환수'].sum()
+    total_revenue = type1_for_summary['전환값'].sum()
+    # 날짜 범위는 type1 데이터에서 가져옴
+    if '일' in type1_for_summary.columns:
+        start_date = type1_for_summary['일'].min()
+        end_date = type1_for_summary['일'].max()
+        if hasattr(start_date, 'strftime'):
+            start_date_str = start_date.strftime('%Y-%m-%d')
+            end_date_str = end_date.strftime('%Y-%m-%d')
+        else:
+            start_date_str = str(start_date)[:10]
+            end_date_str = str(end_date)[:10]
+        total_days = type1_for_summary['일'].nunique()
+    else:
+        start_date_str = daily_summary['일'].min().strftime('%Y-%m-%d')
+        end_date_str = daily_summary['일'].max().strftime('%Y-%m-%d')
+        total_days = len(daily_summary)
+    print(f"  - dimensions['type1'] 기준 집계: 비용={total_cost:,.0f}, 전환값={total_revenue:,.0f}")
+else:
+    # fallback: daily_summary 사용
+    total_cost = daily_summary['비용'].sum()
+    total_conversions = daily_summary['전환수'].sum()
+    total_revenue = daily_summary['전환값'].sum()
+    start_date_str = daily_summary['일'].min().strftime('%Y-%m-%d')
+    end_date_str = daily_summary['일'].max().strftime('%Y-%m-%d')
+    total_days = len(daily_summary)
+    print(f"  - daily_summary 기준 집계 (fallback)")
+
 overall_roas = (total_revenue / total_cost * 100) if total_cost > 0 else 0
 overall_cpa = (total_cost / total_conversions) if total_conversions > 0 else 0
 
@@ -431,9 +459,9 @@ summary = {
     "overall_roas": float(overall_roas),
     "overall_cpa": float(overall_cpa),
     "analysis_period": {
-        "start_date": daily_summary['일'].min().strftime('%Y-%m-%d'),
-        "end_date": daily_summary['일'].max().strftime('%Y-%m-%d'),
-        "total_days": len(daily_summary)
+        "start_date": start_date_str,
+        "end_date": end_date_str,
+        "total_days": total_days
     }
 }
 

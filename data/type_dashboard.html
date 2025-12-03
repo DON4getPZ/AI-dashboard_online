@@ -1176,12 +1176,12 @@
                             <span class="collapsible-icon">🔬</span>
                             <span>데이터 기반 의사결정 도구</span>
                         </div>
-                        <button class="collapsible-toggle expanded">
-                            <span>접기</span>
-                            <span class="collapsible-toggle-icon">▲</span>
+                        <button class="collapsible-toggle">
+                            <span>펼치기</span>
+                            <span class="collapsible-toggle-icon collapsed">▼</span>
                         </button>
                     </div>
-                    <div class="collapsible-content" style="display: block;">
+                    <div class="collapsible-content">
 
                         <!-- 스토리 기반 인트로 -->
                         <div style="margin-bottom: 20px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; color: white;">
@@ -1489,7 +1489,7 @@
                             <button class="view-btn trend-analysis-tab-btn" data-tab="age">연령 추이</button>
                             <button class="view-btn trend-analysis-tab-btn" data-tab="platform">플랫폼 추이</button>
                             <button class="view-btn trend-analysis-tab-btn" data-tab="device-platform">기기플랫폼 추이</button>
-                            <button class="view-btn trend-analysis-tab-btn" data-tab="device-type">기기유형 추이</button>
+                            <button class="view-btn trend-analysis-tab-btn" data-tab="device-type">기기 추이</button>
                             <button class="view-btn trend-analysis-tab-btn" data-tab="age-gender-pivot">성별 연령 PIVOT</button>
                         </div>
 
@@ -2592,7 +2592,7 @@
                             </div>
                         </div>
 
-                        <!-- 탭 6: 기기유형 추이 -->
+                        <!-- 탭 6: 기기 추이 -->
                         <div class="trend-analysis-tab-content" id="deviceTypeTab" style="display: none;">
                             <!-- 컴팩트 설명 섹션 -->
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
@@ -2603,7 +2603,7 @@
                                         <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
                                     </div>
                                     <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
-                                        시간에 따른 <strong style="color: #1565c0;">각 기기유형의 성과 변화</strong>를 추적하여<br>
+                                        시간에 따른 <strong style="color: #1565c0;">각 기기의 성과 변화</strong>를 추적하여<br>
                                         디바이스별 전략을 최적화할 수 있습니다
                                     </p>
                                 </div>
@@ -2617,7 +2617,7 @@
                                     <div style="font-size: 12px; color: #424242; line-height: 1.6;">
                                         <div style="display: flex; align-items: start; gap: 8px; margin-bottom: 4px;">
                                             <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">1</span>
-                                            <span>드롭다운에서 기기유형 선택 (최대 5개)</span>
+                                            <span>드롭다운에서 기기 선택 (최대 5개)</span>
                                         </div>
                                         <div style="display: flex; align-items: start; gap: 8px;">
                                             <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">2</span>
@@ -2631,9 +2631,9 @@
                                 <!-- 필터 타입 선택 (상단) -->
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
                                     <div>
-                                        <div class="card-title" style="margin-bottom: 4px;">시간에 따른 기기유형 성과 추이</div>
+                                        <div class="card-title" style="margin-bottom: 4px;">시간에 따른 기기 성과 추이</div>
                                         <p style="color: var(--grey-600); font-size: 13px; margin: 0;">
-                                            시간에 따른 각 기기유형의 성과 변화를 추적하여 트렌드를 파악할 수 있습니다.
+                                            시간에 따른 각 기기의 성과 변화를 추적하여 트렌드를 파악할 수 있습니다.
                                         </p>
                                     </div>
                                     <!-- 집계 단위 선택 버튼 -->
@@ -2680,7 +2680,7 @@
                                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
                                         <div style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 분류 기준</div>
                                         <div style="font-size: 12px; color: #2e7d32; font-weight: 600;">
-                                            🎯 <span id="filteredDeviceTypeCount">0</span>개 기기유형
+                                            🎯 <span id="filteredDeviceTypeCount">0</span>개 기기
                                         </div>
                                     </div>
 
@@ -2809,7 +2809,7 @@
                                         💡 트렌드 분석 팁
                                     </div>
                                     <div style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
-                                        상승 추세를 보이는 기기유형에 예산을 집중하고, 하락 추세를 보이는 기기유형의 문제점을 파악하여 개선하세요.
+                                        상승 추세를 보이는 기기에 예산을 집중하고, 하락 추세를 보이는 기기의 문제점을 파악하여 개선하세요.
                                     </div>
                                 </div>
                             </div>
@@ -4937,11 +4937,21 @@
                     };
                     const config = severityConfig[alert.severity] || severityConfig['warning'];
 
+                    // 타입별 한국어 제목 매핑
+                    const typeTitleMap = {
+                        'forecast_underperformance': '⚠️ 예측 대비 실적 미달',
+                        'low_roas': '📉 낮은 ROAS 경고',
+                        'high_cpa': '💰 높은 CPA 경고',
+                        'budget_waste': '💸 예산 낭비 가능성',
+                        'performance_drop': '📊 성과 하락 감지'
+                    };
+                    const alertTitle = alert.title || typeTitleMap[alert.type] || '⚠️ 경고';
+
                     let cardHtml = `
                         <div style="padding: 14px 16px; background: ${config.bg}; border-radius: 12px; border-left: 4px solid ${config.border};">
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
                                 <div style="font-size: 13px; font-weight: 700; color: var(--grey-900);">
-                                    ${alert.title || alert.type || '⚠️ 경고'}
+                                    ${alertTitle}
                                 </div>
                                 <span style="padding: 2px 8px; background: ${config.badgeBg}; color: white; border-radius: 10px; font-size: 10px; font-weight: 600;">${config.badge}</span>
                             </div>
@@ -5196,11 +5206,11 @@
         function renderTargetingTab() {
             const periodData = getPeriodData();
             const genderData = (periodData.gender_performance || []).filter(g => isValidGender(g.gender));
-            const platformData = (periodData.deviceplatform_performance || []).filter(p =>
-                p.deviceplatform && p.deviceplatform.toLowerCase() !== 'uncategorized'
-            );
             const deviceData = (periodData.device_performance || []).filter(d =>
                 d.device && d.device.toLowerCase() !== 'uncategorized' && d.device.toLowerCase() !== 'unknown'
+            );
+            const devicePlatformData = (periodData.deviceplatform_performance || []).filter(d =>
+                d.deviceplatform && d.deviceplatform.toLowerCase() !== 'uncategorized' && d.deviceplatform.toLowerCase() !== 'unknown'
             );
             const ageGenderData = (periodData.age_gender_combinations || []).filter(item =>
                 isValidGender(item.gender) && isValidAge(item.age)
@@ -5239,7 +5249,7 @@
 
             // 1. 핵심 타겟 요약 (큰 카드)
             const topGender = genderData.length > 0 ? [...genderData].sort((a, b) => b.roas - a.roas)[0] : null;
-            const topPlatform = platformData.length > 0 ? [...platformData].sort((a, b) => b.roas - a.roas)[0] : null;
+            const topDevice = deviceData.length > 0 ? [...deviceData].sort((a, b) => b.roas - a.roas)[0] : null;
             const topAgeGender = ageGenderData.length > 0 ? ageGenderData[0] : null;
 
             html += `
@@ -5261,14 +5271,14 @@
                 `;
             }
 
-            // 최고 기기플랫폼
-            if (topPlatform) {
+            // 최고 기기유형
+            if (topDevice) {
                 html += `
                     <div style="padding: 12px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 10px; text-align: center;">
                         <div style="font-size: 24px; margin-bottom: 4px;">📱</div>
-                        <div style="font-size: 10px; color: var(--grey-500); margin-bottom: 2px;">기기플랫폼</div>
-                        <div style="font-size: 16px; font-weight: 800; color: #1565c0;">${topPlatform.deviceplatform}</div>
-                        <div style="font-size: 11px; color: var(--grey-600); margin-top: 4px;">ROAS ${formatPercent(topPlatform.roas)}</div>
+                        <div style="font-size: 10px; color: var(--grey-500); margin-bottom: 2px;">기기</div>
+                        <div style="font-size: 16px; font-weight: 800; color: #1565c0;">${topDevice.device}</div>
+                        <div style="font-size: 11px; color: var(--grey-600); margin-top: 4px;">ROAS ${formatPercent(topDevice.roas)}</div>
                     </div>
                 `;
             }
@@ -5323,30 +5333,31 @@
                 html += `</div></div>`;
             }
 
-            // 3. 디바이스 유형별 성과 (모바일/PC) - 첫 번째
-            if (deviceData.length > 0) {
-                const maxDeviceRoas = Math.max(...deviceData.map(d => d.roas || 0));
+            // 3. 기기플랫폼별 성과 (웹/앱/모바일)
+            if (devicePlatformData.length > 0) {
+                const maxDevicePlatformRoas = Math.max(...devicePlatformData.map(d => d.roas || 0));
                 html += `
                     <div style="border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden; margin-bottom: 12px;">
                         <div style="padding: 10px 14px; background: #fafafa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
                              onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
-                            <span style="font-size: 12px; font-weight: 600; color: var(--grey-800);">💻 디바이스 유형별 성과 (모바일/PC)</span>
+                            <span style="font-size: 12px; font-weight: 600; color: var(--grey-800);">📱 기기플랫폼별 성과</span>
                             <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▶</span>
                         </div>
                         <div style="display: none; padding: 12px;">
                             <div style="font-size: 10px; color: var(--grey-600); margin-bottom: 10px; padding: 8px; background: #e3f2fd; border-radius: 6px;">
-                                💡 모바일과 PC에서의 광고 반응 차이를 파악하세요
+                                💡 웹, 앱, 모바일에서의 광고 반응 차이를 파악하세요
                             </div>
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
                 `;
 
-                const sortedDevices = [...deviceData].sort((a, b) => (b.roas || 0) - (a.roas || 0));
-                sortedDevices.forEach((d, idx) => {
+                const sortedDevicePlatforms = [...devicePlatformData].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                sortedDevicePlatforms.forEach((d, idx) => {
                     const cpa = d.conversions > 0 ? d.cost / d.conversions : 0;
                     const isTop = idx === 0;
-                    const deviceIcon = d.device.toLowerCase().includes('mobile') ? '📱' :
-                                      d.device.toLowerCase().includes('desktop') || d.device.toLowerCase().includes('pc') ? '💻' :
-                                      d.device.toLowerCase().includes('tablet') ? '📟' : '🖥️';
+                    const platformName = d.deviceplatform || '';
+                    const platformIcon = platformName.toLowerCase().includes('앱') ? '📲' :
+                                        platformName.toLowerCase().includes('웹') ? '🌐' :
+                                        platformName.toLowerCase().includes('모바일') ? '📱' : '🖥️';
                     // ROAS 색상 스케일
                     const roas = d.roas || 0;
                     let roasColor = '#c62828';
@@ -5358,7 +5369,7 @@
                     html += `
                         <div style="padding: 12px; background: ${isTop ? '#e8f5e9' : '#f5f5f5'}; border-radius: 8px; ${isTop ? 'border: 2px solid #4caf50;' : ''}">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <span style="font-size: 13px; font-weight: 700; color: var(--grey-800);">${deviceIcon} ${d.device}</span>
+                                <span style="font-size: 13px; font-weight: 700; color: var(--grey-800);">${platformIcon} ${platformName}</span>
                                 ${isTop ? '<span style="font-size: 10px; padding: 2px 6px; background: #4caf50; color: white; border-radius: 8px;">추천</span>' : ''}
                             </div>
                             <div style="font-size: 18px; font-weight: 800; color: ${roasColor}; margin-bottom: 4px;">${formatPercent(d.roas || 0)}</div>
@@ -5373,37 +5384,37 @@
                 html += `</div></div></div>`;
             }
 
-            // 4. 기기/플랫폼별 성과 - 두 번째
-            if (platformData.length > 0) {
-                const maxPlatformRoas = Math.max(...platformData.map(p => p.roas || 0));
+            // 4. 기기별 성과 (안드로이드/애플/웹)
+            if (deviceData.length > 0) {
+                const maxDeviceRoas = Math.max(...deviceData.map(d => d.roas || 0));
                 html += `
                     <div style="border: 1px solid var(--grey-200); border-radius: 10px; overflow: hidden; margin-bottom: 12px;">
                         <div style="padding: 10px 14px; background: #fafafa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
                              onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
-                            <span style="font-size: 12px; font-weight: 600; color: var(--grey-800);">📱 기기/플랫폼별 성과</span>
+                            <span style="font-size: 12px; font-weight: 600; color: var(--grey-800);">💻 기기별 성과</span>
                             <span class="toggle-icon" style="font-size: 10px; color: var(--grey-500);">▶</span>
                         </div>
                         <div style="display: none; padding: 12px;">
                 `;
 
-                const sortedPlatform = [...platformData].sort((a, b) => b.roas - a.roas);
-                sortedPlatform.slice(0, 5).forEach((p, idx) => {
-                    const cpa = p.conversions > 0 ? p.cost / p.conversions : 0;
+                const sortedDevice = [...deviceData].sort((a, b) => b.roas - a.roas);
+                sortedDevice.slice(0, 5).forEach((d, idx) => {
+                    const cpa = d.conversions > 0 ? d.cost / d.conversions : 0;
                     // ROAS 색상 스케일
-                    const roas = p.roas || 0;
+                    const roas = d.roas || 0;
                     let roasColor = '#c62828';
                     if (roas >= 500) roasColor = '#2e7d32';
                     else if (roas >= 300) roasColor = '#558b2f';
                     else if (roas >= 200) roasColor = '#f57f17';
                     else if (roas >= 100) roasColor = '#e65100';
                     // 배경 스케일 바
-                    const barWidth = Math.min((roas / maxPlatformRoas) * 100, 100);
+                    const barWidth = Math.min((roas / maxDeviceRoas) * 100, 100);
 
                     html += `
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; margin-bottom: 6px; background: #fafafa; border-radius: 8px; position: relative; overflow: hidden;">
                             <div style="position: absolute; top: 0; left: 0; height: 100%; width: ${barWidth}%; background: linear-gradient(90deg, ${roasColor}22, ${roasColor}11); border-radius: 8px;"></div>
-                            <div style="position: relative; z-index: 1; font-size: 12px; font-weight: 600; color: var(--grey-800);">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`} ${p.deviceplatform}</div>
-                            <div style="position: relative; z-index: 1; font-size: 13px; font-weight: 700; color: ${roasColor};">${formatPercent(p.roas)}</div>
+                            <div style="position: relative; z-index: 1; font-size: 12px; font-weight: 600; color: var(--grey-800);">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`} ${d.device}</div>
+                            <div style="position: relative; z-index: 1; font-size: 13px; font-weight: 700; color: ${roasColor};">${formatPercent(d.roas)}</div>
                         </div>
                     `;
                 });
@@ -5753,17 +5764,17 @@
             // 2. 최적 타겟 (선택된 기간의 실제 데이터 사용) - 기간별로 다른 데이터 표시
             html += `<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">`;
 
-            // 최적 플랫폼 (periodData 사용)
-            if (periodData && periodData.deviceplatform_performance && periodData.deviceplatform_performance.length > 0) {
-                const validPlatforms = periodData.deviceplatform_performance.filter(p => p.cost > 0 && p.deviceplatform !== 'Uncategorized');
-                if (validPlatforms.length > 0) {
-                    const sortedPlatforms = [...validPlatforms].sort((a, b) => (b.roas || 0) - (a.roas || 0));
-                    const topPlatform = sortedPlatforms[0];
+            // 최적 기기유형 (periodData 사용)
+            if (periodData && periodData.device_performance && periodData.device_performance.length > 0) {
+                const validDevices = periodData.device_performance.filter(d => d.cost > 0 && d.device !== 'Uncategorized' && d.device !== 'unknown');
+                if (validDevices.length > 0) {
+                    const sortedDevices = [...validDevices].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                    const topDevice = sortedDevices[0];
                     html += `
                         <div style="padding: 12px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 10px; text-align: center;">
-                            <div style="font-size: 9px; color: #1565c0; font-weight: 600; margin-bottom: 2px;">📱 최적 기기플랫폼</div>
-                            <div style="font-size: 12px; font-weight: 700; color: #0d47a1;">${topPlatform.deviceplatform}</div>
-                            <div style="font-size: 10px; color: #1565c0;">ROAS ${(topPlatform.roas || 0).toFixed(0)}%</div>
+                            <div style="font-size: 9px; color: #1565c0; font-weight: 600; margin-bottom: 2px;">📱 최적 기기</div>
+                            <div style="font-size: 12px; font-weight: 700; color: #0d47a1;">${topDevice.device}</div>
+                            <div style="font-size: 10px; color: #1565c0;">ROAS ${(topDevice.roas || 0).toFixed(0)}%</div>
                         </div>
                     `;
                 }
@@ -5822,7 +5833,7 @@
                     <div style="display: flex; border-bottom: 1px solid var(--grey-200); background: #f8f9fa;">
                         <button class="forecast-subtab active" data-subtab="product" style="flex: 1; padding: 10px 8px; font-size: 11px; font-weight: 600; border: none; background: none; cursor: pointer; color: var(--grey-600); border-bottom: 2px solid transparent;">🛍️ 상품별</button>
                         <button class="forecast-subtab" data-subtab="gender-age" style="flex: 1; padding: 10px 8px; font-size: 11px; font-weight: 600; border: none; background: none; cursor: pointer; color: var(--grey-600); border-bottom: 2px solid transparent;">👫 성별&연령</button>
-                        <button class="forecast-subtab" data-subtab="platform" style="flex: 1; padding: 10px 8px; font-size: 11px; font-weight: 600; border: none; background: none; cursor: pointer; color: var(--grey-600); border-bottom: 2px solid transparent;">📱 플랫폼</button>
+                        <button class="forecast-subtab" data-subtab="deviceplatform" style="flex: 1; padding: 10px 8px; font-size: 11px; font-weight: 600; border: none; background: none; cursor: pointer; color: var(--grey-600); border-bottom: 2px solid transparent;">📱 기기플랫폼</button>
                         <button class="forecast-subtab" data-subtab="category" style="flex: 1; padding: 10px 8px; font-size: 11px; font-weight: 600; border: none; background: none; cursor: pointer; color: var(--grey-600); border-bottom: 2px solid transparent;">📊 채널</button>
                     </div>
                     <div id="forecastSubtabContent" style="padding: 12px;"></div>
@@ -6273,17 +6284,18 @@
                     html += '</div>';
                 }
                 html += '</div>';
-            } else if (tab === 'platform') {
-                // 플랫폼 예측
-                if (forecast.by_platform && forecast.by_platform.length > 0) {
-                    const sorted = [...forecast.by_platform].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
+            } else if (tab === 'deviceplatform') {
+                // 기기플랫폼 예측
+                if (forecast.by_deviceplatform && forecast.by_deviceplatform.length > 0) {
+                    const sorted = [...forecast.by_deviceplatform].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
                     html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px;">`;
-                    sorted.forEach((plat, idx) => {
-                        const roas = plat.avg_forecast_roas || 0;
+                    sorted.forEach((dev, idx) => {
+                        const roas = dev.avg_forecast_roas || 0;
                         const isTop = idx === 0;
+                        const platformName = dev.deviceplatform || dev.device || '';
                         html += `
                             <div style="padding: 10px; background: ${isTop ? 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)' : '#f5f5f5'}; border-radius: 8px; text-align: center; ${isTop ? 'border: 2px solid #1976d2;' : ''}">
-                                <div style="font-size: 9px; color: var(--grey-600); margin-bottom: 2px;">${plat.deviceplatform}</div>
+                                <div style="font-size: 9px; color: var(--grey-600); margin-bottom: 2px;">${platformName}</div>
                                 <div style="font-size: 14px; font-weight: 700; color: ${roas >= 100 ? '#1565c0' : '#c62828'};">${roas.toFixed(0)}%</div>
                                 ${isTop ? '<div style="font-size: 8px; color: #1976d2; margin-top: 2px;">🏆 1위</div>' : ''}
                             </div>

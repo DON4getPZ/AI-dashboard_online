@@ -87,9 +87,10 @@ DEVICE_MAP = {
 }
 
 # 기기플랫폼 통합 매핑 (data_mapping_guide.md 기준)
+# 기기유형 '모바일'과 혼동 방지를 위해 'Mobile web' → '모바일웹'으로 명명
 PLATFORM_MAP = {
     'Mobile app': '앱',
-    'Mobile web': '모바일',
+    'Mobile web': '모바일웹',
     'Desktop': '웹',
     'PC': '웹',
     'pc': '웹'

@@ -159,19 +159,22 @@ df['기기유형_통합'] = df['기기유형'].replace(device_map)
 | 통합값 | 매핑 대상 | 비고 |
 |--------|----------|------|
 | **앱** | `Mobile app` | 모바일 앱 |
-| **모바일** | `Mobile web` | 모바일 브라우저 |
+| **모바일웹** | `Mobile web` | 모바일 브라우저 (기기유형 '모바일'과 혼동 방지) |
 | **웹** | `Desktop`, `PC`, `pc` | PC 브라우저 |
+
+> **주의**: 기기유형의 `모바일`(Google Ads Mobile phones/Tablets)과 기기플랫폼의 `모바일웹`(Mobile web 브라우저)은 서로 다른 개념입니다.
 
 ### 4.3 코드 예시
 
 ```python
 platform_map = {
-    # 모바일
+    # 앱
     'Mobile app': '앱',
-    'Mobile web': '모바일',
-     # 웹
-    'Desktop': '웹'
-    'PC': '웹'
+    # 모바일웹 (기기유형 '모바일'과 혼동 방지를 위해 '모바일웹'으로 명명)
+    'Mobile web': '모바일웹',
+    # 웹
+    'Desktop': '웹',
+    'PC': '웹',
     'pc': '웹'
 }
 
@@ -188,8 +191,10 @@ df['기기플랫폼_통합'] = df['기기플랫폼'].replace(platform_map)
 |------|------------------|-------------------|
 | **의미** | 기기 종류 + OS | 접속 환경 |
 | **질문** | "어떤 기기로 봤나?" | "앱으로 봤나, 웹으로 봤나?" |
-| **통합값** | 안드로이드, 애플, 모바일, 웹, TV | 앱, 모바일, 웹 |
+| **통합값** | 안드로이드, 애플, 모바일, 웹, TV | 앱, 모바일웹, 웹 |
 | **데이터 출처** | Google Ads + Meta | Meta |
+
+> **혼동 방지**: 기기유형의 `모바일`과 기기플랫폼의 `모바일웹`은 이름이 비슷하지만 완전히 다른 개념입니다.
 
 ---
 
@@ -364,7 +369,7 @@ const platform = row['기기플랫폼_통합'] || row['기기플랫폼'];
 │                                                             │
 │  dimension_type7_adset_deviceplatform.csv                   │
 │  └── Type7 데이터 (기기플랫폼_통합 있음)                     │
-│      (앱/모바일/웹으로 통합)                                 │
+│      (앱/모바일웹/웹으로 통합)                               │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -389,10 +394,10 @@ const platform = row['기기플랫폼_통합'] || row['기기플랫폼'];
 │  └── 컬럼: 연령_통합, 성별_통합, 일자, 예측_비용, ...        │
 │      (개별 컬럼으로 분리, 조합 컬럼 아님)                    │
 │                                                             │
-│  prophet_forecast_by_platform.csv                           │
+│  prophet_forecast_by_deviceplatform.csv                     │
 │  └── dimension_type7 참조 (Type7)                           │
 │  └── 컬럼: 기기플랫폼_통합, 일자, 예측_비용, 예측_전환수, ... │
-│      (앱/모바일/웹 별 예측)                                  │
+│      (앱/모바일웹/웹 별 예측)                                │
 │                                                             │
 │  prophet_forecast_by_device.csv                             │
 │  └── dimension_type5 참조 (Type5)                           │
@@ -428,7 +433,7 @@ merged_data.csv
       ├─► prophet_forecast_by_gender.csv (dimension_type4 참조, 성별_통합)
       ├─► prophet_forecast_by_age.csv (dimension_type3 참조, 연령_통합)
       ├─► prophet_forecast_by_age_gender.csv (dimension_type2 참조, 연령_통합+성별_통합)
-      ├─► prophet_forecast_by_platform.csv (dimension_type7 참조, 기기플랫폼_통합)
+      ├─► prophet_forecast_by_deviceplatform.csv (dimension_type7 참조, 기기플랫폼_통합)
       └─► prophet_forecast_by_device.csv (dimension_type5 참조, 기기유형_통합)
       │
       ▼
@@ -521,6 +526,7 @@ print(f"미매핑 성별 값: {unmapped}")
 | 2025-11-27 | v3.1 | multi_analysis_dimension_detail.py, multi_analysis_prophet_forecast.py에 기기유형_통합, 기기플랫폼_통합 적용 |
 | 2025-11-27 | v3.2 | Fallback 적용 위치에 기기유형/기기플랫폼 항목 추가, Prophet 예측 CSV 구조 및 데이터 흐름도 업데이트 |
 | 2025-11-27 | v3.3 | multi_analysis_prophet_forecast.py에 기기유형별 예측(섹션 10-2) 구현, generate_type_insights.py에 기기유형 분석 및 예측 인사이트 추가 |
+| 2025-12-03 | v3.4 | 기기플랫폼 매핑 변경: `Mobile web` → `모바일웹` (기기유형 `모바일`과 혼동 방지) |
 
 ---
 
@@ -540,6 +546,6 @@ print(f"미매핑 성별 값: {unmapped}")
 | `data/type/prophet_forecast_by_gender.csv` | 성별별 예측 결과 (성별_통합) |
 | `data/type/prophet_forecast_by_age.csv` | 연령별 예측 결과 (연령_통합) |
 | `data/type/prophet_forecast_by_age_gender.csv` | 연령+성별 예측 결과 (연령_통합+성별_통합) |
-| `data/type/prophet_forecast_by_platform.csv` | 기기플랫폼별 예측 결과 (기기플랫폼_통합) |
+| `data/type/prophet_forecast_by_deviceplatform.csv` | 기기플랫폼별 예측 결과 (기기플랫폼_통합) |
 | `data/type/prophet_forecast_by_device.csv` | 기기유형별 예측 결과 (기기유형_통합) |
 | `data/type/insights.json` | 생성된 인사이트 데이터 |
