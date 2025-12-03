@@ -2995,6 +2995,844 @@
                 </div>
             </div>
 
+            <!-- 성과 상세 분석 (통합 탭) - 독립적 섹션 -->
+            <div class="collapsible-section">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📊</span>
+                        <span>성과 상세 분석 - 차원별 성과를 비교하세요</span>
+                    </div>
+                    <button class="collapsible-toggle">
+                        <span>펼치기</span>
+                        <span class="collapsible-toggle-icon collapsed">▼</span>
+                    </button>
+                </div>
+                <div class="collapsible-content">
+                    <!-- 탭 버튼 -->
+                    <div class="view-type-section" style="margin-bottom: 24px;">
+                        <button class="view-btn detail-analysis-tab-btn active" data-tab="detail-adset">광고세트</button>
+                        <button class="view-btn detail-analysis-tab-btn" data-tab="detail-gender">성별</button>
+                        <button class="view-btn detail-analysis-tab-btn" data-tab="detail-age">연령</button>
+                        <button class="view-btn detail-analysis-tab-btn" data-tab="detail-platform">플랫폼</button>
+                        <button class="view-btn detail-analysis-tab-btn" data-tab="detail-device-platform">기기플랫폼</button>
+                        <button class="view-btn detail-analysis-tab-btn" data-tab="detail-device-type">기기</button>
+                    </div>
+
+                    <!-- 탭 1: 광고세트 -->
+                    <div class="detail-analysis-tab-content active" id="detailAdsetTab">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">📊</span>
+                                    <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
+                                </div>
+                                <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
+                                    <strong style="color: #1565c0;">광고세트별 성과</strong>를 비교하여<br>
+                                    최적의 광고세트를 파악할 수 있습니다
+                                </p>
+                            </div>
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">💡</span>
+                                    <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
+                                </div>
+                                <div style="font-size: 12px; color: #424242; line-height: 1.6;">
+                                    <div style="display: flex; align-items: start; gap: 8px; margin-bottom: 4px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">1</span>
+                                        <span>드롭다운에서 필터 선택</span>
+                                    </div>
+                                    <div style="display: flex; align-items: start; gap: 8px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">2</span>
+                                        <span>막대 차트로 성과 비교</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                <div>
+                                    <div class="card-title" style="margin-bottom: 4px;">광고세트별 성과 비교</div>
+                                    <p style="color: var(--grey-600); font-size: 13px; margin: 0;">
+                                        각 광고세트의 성과를 비교하여 최적의 세트를 파악하세요.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                                <div style="flex: 0 0 auto;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
+                                    <select id="detailAdsetMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                        <option value="roas">ROAS</option>
+                                        <option value="cost">비용</option>
+                                        <option value="revenue">전환값</option>
+                                        <option value="conversions">전환수</option>
+                                        <option value="impressions">노출수</option>
+                                        <option value="clicks">클릭수</option>
+                                        <option value="cpm">CPM</option>
+                                        <option value="cpc">CPC</option>
+                                        <option value="cpa">CPA</option>
+                                        <option value="ctr">CTR</option>
+                                        <option value="cvr">전환율</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 0 0 auto; margin-left: auto;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="date" id="detailAdsetStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;">
+                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                        <input type="date" id="detailAdsetEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 분류 기준</div>
+                                    <div style="font-size: 12px; color: #2e7d32; font-weight: 600;">
+                                        🎯 <span id="detailFilteredAdsetCount">0</span>개 광고세트
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap;">
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-filter-dropdown-btn" data-filter="channel" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">채널_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-filter-dropdown-list" data-filter="channel" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-filter-select-all" data-filter="channel" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailFilterChannelList" class="detail-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-filter-dropdown-btn" data-filter="product" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">제품_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-filter-dropdown-list" data-filter="product" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-filter-select-all" data-filter="product" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailFilterProductList" class="detail-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-filter-dropdown-btn" data-filter="brand" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">브랜드_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-filter-dropdown-list" data-filter="brand" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-filter-select-all" data-filter="brand" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailFilterBrandList" class="detail-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-filter-dropdown-btn" data-filter="promotion" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">프로모션_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-filter-dropdown-list" data-filter="promotion" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-filter-select-all" data-filter="promotion" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailFilterPromotionList" class="detail-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chart-container" style="height: 400px;">
+                                <canvas id="detailAdsetBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 탭 2: 성별 -->
+                    <div class="detail-analysis-tab-content" id="detailGenderTab" style="display: none;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">📊</span>
+                                    <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
+                                </div>
+                                <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
+                                    <strong style="color: #1565c0;">성별 성과</strong>를 비교하여 타겟팅을 최적화합니다
+                                </p>
+                            </div>
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">💡</span>
+                                    <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
+                                </div>
+                                <div style="font-size: 12px; color: #424242;">지표와 필터를 선택하여 성별 성과를 비교하세요</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                <div>
+                                    <div class="card-title" style="margin-bottom: 4px;">성별 성과 비교</div>
+                                    <p style="color: var(--grey-600); font-size: 13px; margin: 0;">각 성별의 성과를 비교합니다.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                                <div style="flex: 0 0 auto;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
+                                    <select id="detailGenderMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <option value="roas">ROAS</option>
+                                        <option value="cost">비용</option>
+                                        <option value="revenue">전환값</option>
+                                        <option value="conversions">전환수</option>
+                                        <option value="impressions">노출수</option>
+                                        <option value="clicks">클릭수</option>
+                                        <option value="cpm">CPM</option>
+                                        <option value="cpc">CPC</option>
+                                        <option value="cpa">CPA</option>
+                                        <option value="ctr">CTR</option>
+                                        <option value="cvr">전환율</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 0 0 auto; margin-left: auto;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="date" id="detailGenderStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                        <input type="date" id="detailGenderEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 14px;">📊 분류 기준</div>
+                                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-gender-filter-dropdown-btn" data-filter="channel" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">채널_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-gender-filter-dropdown-list" data-filter="channel" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-gender-filter-select-all" data-filter="channel" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailGenderFilterChannelList" class="detail-gender-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-gender-filter-dropdown-btn" data-filter="product" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">제품_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-gender-filter-dropdown-list" data-filter="product" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-gender-filter-select-all" data-filter="product" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailGenderFilterProductList" class="detail-gender-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-gender-filter-dropdown-btn" data-filter="brand" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">브랜드_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-gender-filter-dropdown-list" data-filter="brand" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-gender-filter-select-all" data-filter="brand" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailGenderFilterBrandList" class="detail-gender-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-gender-filter-dropdown-btn" data-filter="promotion" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">프로모션_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-gender-filter-dropdown-list" data-filter="promotion" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-gender-filter-select-all" data-filter="promotion" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailGenderFilterPromotionList" class="detail-gender-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="detailGenderBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 탭 3: 연령 -->
+                    <div class="detail-analysis-tab-content" id="detailAgeTab" style="display: none;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">📊</span>
+                                    <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
+                                </div>
+                                <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
+                                    <strong style="color: #1565c0;">연령대별 성과</strong>를 비교하여 타겟팅을 최적화합니다
+                                </p>
+                            </div>
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">💡</span>
+                                    <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
+                                </div>
+                                <div style="font-size: 12px; color: #424242;">지표와 필터를 선택하여 연령대 성과를 비교하세요</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                <div>
+                                    <div class="card-title" style="margin-bottom: 4px;">연령대별 성과 비교</div>
+                                    <p style="color: var(--grey-600); font-size: 13px; margin: 0;">각 연령대의 성과를 비교합니다.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                                <div style="flex: 0 0 auto;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
+                                    <select id="detailAgeMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <option value="roas">ROAS</option>
+                                        <option value="cost">비용</option>
+                                        <option value="revenue">전환값</option>
+                                        <option value="conversions">전환수</option>
+                                        <option value="impressions">노출수</option>
+                                        <option value="clicks">클릭수</option>
+                                        <option value="cpm">CPM</option>
+                                        <option value="cpc">CPC</option>
+                                        <option value="cpa">CPA</option>
+                                        <option value="ctr">CTR</option>
+                                        <option value="cvr">전환율</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 0 0 auto; margin-left: auto;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="date" id="detailAgeStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                        <input type="date" id="detailAgeEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 14px;">📊 분류 기준</div>
+                                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-age-filter-dropdown-btn" data-filter="channel" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">채널_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-age-filter-dropdown-list" data-filter="channel" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-age-filter-select-all" data-filter="channel" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailAgeFilterChannelList" class="detail-age-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-age-filter-dropdown-btn" data-filter="product" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">제품_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-age-filter-dropdown-list" data-filter="product" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-age-filter-select-all" data-filter="product" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailAgeFilterProductList" class="detail-age-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-age-filter-dropdown-btn" data-filter="brand" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">브랜드_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-age-filter-dropdown-list" data-filter="brand" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-age-filter-select-all" data-filter="brand" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailAgeFilterBrandList" class="detail-age-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-age-filter-dropdown-btn" data-filter="promotion" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">프로모션_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-age-filter-dropdown-list" data-filter="promotion" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-age-filter-select-all" data-filter="promotion" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailAgeFilterPromotionList" class="detail-age-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-container" style="height: 350px;">
+                                <canvas id="detailAgeBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 탭 4: 플랫폼 -->
+                    <div class="detail-analysis-tab-content" id="detailPlatformTab" style="display: none;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">📊</span>
+                                    <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
+                                </div>
+                                <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
+                                    <strong style="color: #1565c0;">플랫폼별 성과</strong>를 비교합니다
+                                </p>
+                            </div>
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">💡</span>
+                                    <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
+                                </div>
+                                <div style="font-size: 12px; color: #424242;">지표와 필터를 선택하여 플랫폼 성과를 비교하세요</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                <div>
+                                    <div class="card-title" style="margin-bottom: 4px;">플랫폼별 성과 비교</div>
+                                    <p style="color: var(--grey-600); font-size: 13px; margin: 0;">각 플랫폼의 성과를 비교합니다.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                                <div style="flex: 0 0 auto;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
+                                    <select id="detailPlatformMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <option value="roas">ROAS</option>
+                                        <option value="cost">비용</option>
+                                        <option value="revenue">전환값</option>
+                                        <option value="conversions">전환수</option>
+                                        <option value="impressions">노출수</option>
+                                        <option value="clicks">클릭수</option>
+                                        <option value="cpm">CPM</option>
+                                        <option value="cpc">CPC</option>
+                                        <option value="cpa">CPA</option>
+                                        <option value="ctr">CTR</option>
+                                        <option value="cvr">전환율</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 0 0 auto; margin-left: auto;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="date" id="detailPlatformStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                        <input type="date" id="detailPlatformEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 14px;">📊 분류 기준</div>
+                                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-platform-filter-dropdown-btn" data-filter="channel" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">채널_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-platform-filter-dropdown-list" data-filter="channel" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-platform-filter-select-all" data-filter="channel" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailPlatformFilterChannelList" class="detail-platform-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-platform-filter-dropdown-btn" data-filter="product" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">제품_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-platform-filter-dropdown-list" data-filter="product" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-platform-filter-select-all" data-filter="product" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailPlatformFilterProductList" class="detail-platform-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-platform-filter-dropdown-btn" data-filter="brand" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">브랜드_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-platform-filter-dropdown-list" data-filter="brand" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-platform-filter-select-all" data-filter="brand" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailPlatformFilterBrandList" class="detail-platform-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-platform-filter-dropdown-btn" data-filter="promotion" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">프로모션_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-platform-filter-dropdown-list" data-filter="promotion" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-platform-filter-select-all" data-filter="promotion" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailPlatformFilterPromotionList" class="detail-platform-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="detailPlatformBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 탭 5: 기기플랫폼 -->
+                    <div class="detail-analysis-tab-content" id="detailDevicePlatformTab" style="display: none;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">📊</span>
+                                    <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
+                                </div>
+                                <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
+                                    <strong style="color: #1565c0;">기기플랫폼별 성과</strong>를 비교합니다
+                                </p>
+                            </div>
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">💡</span>
+                                    <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
+                                </div>
+                                <div style="font-size: 12px; color: #424242;">지표와 필터를 선택하여 기기플랫폼 성과를 비교하세요</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                <div>
+                                    <div class="card-title" style="margin-bottom: 4px;">기기플랫폼별 성과 비교</div>
+                                    <p style="color: var(--grey-600); font-size: 13px; margin: 0;">각 기기플랫폼의 성과를 비교합니다.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                                <div style="flex: 0 0 auto;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
+                                    <select id="detailDevicePlatformMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <option value="roas">ROAS</option>
+                                        <option value="cost">비용</option>
+                                        <option value="revenue">전환값</option>
+                                        <option value="conversions">전환수</option>
+                                        <option value="impressions">노출수</option>
+                                        <option value="clicks">클릭수</option>
+                                        <option value="cpm">CPM</option>
+                                        <option value="cpc">CPC</option>
+                                        <option value="cpa">CPA</option>
+                                        <option value="ctr">CTR</option>
+                                        <option value="cvr">전환율</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 0 0 auto; margin-left: auto;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="date" id="detailDevicePlatformStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                        <input type="date" id="detailDevicePlatformEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 14px;">📊 분류 기준</div>
+                                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-device-platform-filter-dropdown-btn" data-filter="channel" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">채널_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-device-platform-filter-dropdown-list" data-filter="channel" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-device-platform-filter-select-all" data-filter="channel" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailDevicePlatformFilterChannelList" class="detail-device-platform-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-device-platform-filter-dropdown-btn" data-filter="product" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">제품_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-device-platform-filter-dropdown-list" data-filter="product" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-device-platform-filter-select-all" data-filter="product" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailDevicePlatformFilterProductList" class="detail-device-platform-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-device-platform-filter-dropdown-btn" data-filter="brand" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">브랜드_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-device-platform-filter-dropdown-list" data-filter="brand" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-device-platform-filter-select-all" data-filter="brand" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailDevicePlatformFilterBrandList" class="detail-device-platform-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-device-platform-filter-dropdown-btn" data-filter="promotion" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">프로모션_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-device-platform-filter-dropdown-list" data-filter="promotion" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-device-platform-filter-select-all" data-filter="promotion" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailDevicePlatformFilterPromotionList" class="detail-device-platform-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="detailDevicePlatformBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 탭 6: 기기 -->
+                    <div class="detail-analysis-tab-content" id="detailDeviceTypeTab" style="display: none;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">📊</span>
+                                    <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
+                                </div>
+                                <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
+                                    <strong style="color: #1565c0;">기기별 성과</strong>를 비교합니다
+                                </p>
+                            </div>
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">💡</span>
+                                    <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
+                                </div>
+                                <div style="font-size: 12px; color: #424242;">지표와 필터를 선택하여 기기 성과를 비교하세요</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                <div>
+                                    <div class="card-title" style="margin-bottom: 4px;">기기별 성과 비교</div>
+                                    <p style="color: var(--grey-600); font-size: 13px; margin: 0;">각 기기의 성과를 비교합니다.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                                <div style="flex: 0 0 auto;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
+                                    <select id="detailDeviceTypeMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <option value="roas">ROAS</option>
+                                        <option value="cost">비용</option>
+                                        <option value="revenue">전환값</option>
+                                        <option value="conversions">전환수</option>
+                                        <option value="impressions">노출수</option>
+                                        <option value="clicks">클릭수</option>
+                                        <option value="cpm">CPM</option>
+                                        <option value="cpc">CPC</option>
+                                        <option value="cpa">CPA</option>
+                                        <option value="ctr">CTR</option>
+                                        <option value="cvr">전환율</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 0 0 auto; margin-left: auto;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="date" id="detailDeviceTypeStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                        <input type="date" id="detailDeviceTypeEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 14px;">📊 분류 기준</div>
+                                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-device-type-filter-dropdown-btn" data-filter="channel" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">채널_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-device-type-filter-dropdown-list" data-filter="channel" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-device-type-filter-select-all" data-filter="channel" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailDeviceTypeFilterChannelList" class="detail-device-type-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-device-type-filter-dropdown-btn" data-filter="product" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">제품_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-device-type-filter-dropdown-list" data-filter="product" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-device-type-filter-select-all" data-filter="product" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailDeviceTypeFilterProductList" class="detail-device-type-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-device-type-filter-dropdown-btn" data-filter="brand" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">브랜드_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-device-type-filter-dropdown-list" data-filter="brand" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-device-type-filter-select-all" data-filter="brand" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailDeviceTypeFilterBrandList" class="detail-device-type-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="detail-device-type-filter-dropdown-btn" data-filter="promotion" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">프로모션_전체</span>
+                                            <span style="font-size: 10px;">▼</span>
+                                        </button>
+                                        <div class="detail-device-type-filter-dropdown-list" data-filter="promotion" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div style="padding: 8px;">
+                                                <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px;">
+                                                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                        <input type="checkbox" class="detail-device-type-filter-select-all" data-filter="promotion" style="margin-right: 10px; width: 16px; height: 16px;">
+                                                        전체 선택
+                                                    </label>
+                                                </div>
+                                                <div id="detailDeviceTypeFilterPromotionList" class="detail-device-type-filter-checkbox-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="detailDeviceTypeBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- 1. 성과 분석 (브랜드/상품/프로모션/타겟팅) -->
             <div class="collapsible-section">
                 <div class="collapsible-header">
@@ -3492,6 +4330,49 @@
         let pivotDropdownsInitialized = false;
         let pivotDimensionData = null;  // 성별연령 PIVOT 전용 데이터
 
+        // ========== 성과 상세 분석 섹션 변수 (독립적) ==========
+        // 광고세트 상세
+        let detailAdsetFilters = { channel: [], product: [], brand: [], promotion: [] };
+        let detailAdsetMetric = 'roas';
+        let detailAdsetStartDate = '';
+        let detailAdsetEndDate = '';
+        let detailAdsetBarChart = null;
+
+        // 성별 상세
+        let detailGenderFilters = { channel: [], product: [], brand: [], promotion: [] };
+        let detailGenderMetric = 'roas';
+        let detailGenderStartDate = '';
+        let detailGenderEndDate = '';
+        let detailGenderBarChart = null;
+
+        // 연령 상세
+        let detailAgeFilters = { channel: [], product: [], brand: [], promotion: [] };
+        let detailAgeMetric = 'roas';
+        let detailAgeStartDate = '';
+        let detailAgeEndDate = '';
+        let detailAgeBarChart = null;
+
+        // 플랫폼 상세
+        let detailPlatformFilters = { channel: [], product: [], brand: [], promotion: [] };
+        let detailPlatformMetric = 'roas';
+        let detailPlatformStartDate = '';
+        let detailPlatformEndDate = '';
+        let detailPlatformBarChart = null;
+
+        // 기기플랫폼 상세
+        let detailDevicePlatformFilters = { channel: [], product: [], brand: [], promotion: [] };
+        let detailDevicePlatformMetric = 'roas';
+        let detailDevicePlatformStartDate = '';
+        let detailDevicePlatformEndDate = '';
+        let detailDevicePlatformBarChart = null;
+
+        // 기기 상세
+        let detailDeviceTypeFilters = { channel: [], product: [], brand: [], promotion: [] };
+        let detailDeviceTypeMetric = 'roas';
+        let detailDeviceTypeStartDate = '';
+        let detailDeviceTypeEndDate = '';
+        let detailDeviceTypeBarChart = null;
+
         // 데이터 로딩
         async function loadData() {
             try {
@@ -3655,6 +4536,7 @@
             initPivotDropdowns();
             initPerformanceCharts();
             initRetargetingAnalysis();
+            initDetailAnalysis();
         }
 
         // 기간 정보 업데이트
@@ -3821,6 +4703,8 @@
             renderBudgetGuideTab();
             // 계절성 분석은 전체 기간 데이터만 사용하므로 다시 렌더링하지 않음
         }
+        // 인라인 onclick에서 접근할 수 있도록 전역 스코프에 노출
+        window.switchPeriod = switchPeriod;
 
         // 선택된 기간의 날짜 범위 표시
         function updatePeriodDateRange() {
@@ -6391,6 +7275,16 @@
             if (defaultBtn) {
                 defaultBtn.click();
             }
+
+            // 기간 필터 버튼 이벤트 리스너 추가
+            document.querySelectorAll('.period-filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const period = this.dataset.period;
+                    if (period) {
+                        switchPeriod(period);
+                    }
+                });
+            });
 
             // 요일별 분석 서브탭 이벤트 초기화
             initDayAnalysisSubtabs();
@@ -9096,6 +9990,9 @@
                     genderEndDate = formatDateForInput(maxDate);
                 }
             }
+
+            // 초기 차트 렌더링 (필터 미선택 상태 메시지 표시)
+            renderGenderTrendChart();
         }
 
         function updateGenderFilterButtonText(filterKey) {
@@ -9421,6 +10318,9 @@
                     ageEndDate = formatDateForInput(maxDate);
                 }
             }
+
+            // 초기 차트 렌더링 (필터 미선택 상태 메시지 표시)
+            renderAgeTrendChart();
         }
 
         function updateAgeFilterButtonText(filterKey) {
@@ -9753,6 +10653,9 @@
                     platformEndDate = formatDateForInput(maxDate);
                 }
             }
+
+            // 초기 차트 렌더링 (필터 미선택 상태 메시지 표시)
+            renderPlatformTrendChart();
         }
 
         function updatePlatformFilterButtonText(filterKey) {
@@ -9997,6 +10900,9 @@
                     pivotEndDate = formatDateForInput(maxDate);
                 }
             }
+
+            // 초기 테이블 렌더링 (필터 미선택 상태 메시지 표시)
+            renderAgeGenderPivotTable();
         }
 
         function updatePivotFilterButtonText(filterKey) {
@@ -10487,7 +11393,10 @@
                 }
             });
 
-            if (gendersToShow.size === 0) {
+            // 모든 필터가 비어있는지 확인
+            const allFiltersEmpty = Object.values(currentGenderFilters).every(arr => !arr || arr.length === 0);
+
+            if (allFiltersEmpty || gendersToShow.size === 0) {
                 const ctx = canvas.getContext('2d');
                 genderTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -10497,7 +11406,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: { display: true, position: 'top' },
-                            title: { display: true, text: '필터 조건에 맞는 데이터가 없습니다' }
+                            title: { display: true, text: allFiltersEmpty ? '필터를 선택해주세요' : '필터 조건에 맞는 데이터가 없습니다' }
                         }
                     }
                 });
@@ -10845,7 +11754,10 @@
                 }
             });
 
-            if (agesToShow.size === 0) {
+            // 모든 필터가 비어있는지 확인
+            const allFiltersEmpty = Object.values(currentAgeFilters).every(arr => !arr || arr.length === 0);
+
+            if (allFiltersEmpty || agesToShow.size === 0) {
                 const ctx = canvas.getContext('2d');
                 ageTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -10855,7 +11767,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: { display: true, position: 'top' },
-                            title: { display: true, text: '필터 조건에 맞는 데이터가 없습니다' }
+                            title: { display: true, text: allFiltersEmpty ? '필터를 선택해주세요' : '필터 조건에 맞는 데이터가 없습니다' }
                         }
                     }
                 });
@@ -11201,7 +12113,10 @@
                 }
             });
 
-            if (platformsToShow.size === 0) {
+            // 모든 필터가 비어있는지 확인
+            const allFiltersEmpty = Object.values(currentPlatformFilters).every(arr => !arr || arr.length === 0);
+
+            if (allFiltersEmpty || platformsToShow.size === 0) {
                 const ctx = canvas.getContext('2d');
                 platformTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -11211,7 +12126,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: { display: true, position: 'top' },
-                            title: { display: true, text: '필터 조건에 맞는 데이터가 없습니다' }
+                            title: { display: true, text: allFiltersEmpty ? '필터를 선택해주세요' : '필터 조건에 맞는 데이터가 없습니다' }
                         }
                     }
                 });
@@ -11604,8 +12519,9 @@
                 }
             }
 
-            // 초기 차트 렌더링
+            // 초기 차트 렌더링 (필터 미선택 상태 메시지 표시)
             updateDevicePlatformFilters();
+            renderDevicePlatformTrendChart();
         }
 
         function updateDevicePlatformFilterButtonText(filterKey) {
@@ -11853,8 +12769,9 @@
                 }
             }
 
-            // 초기 차트 렌더링
+            // 초기 차트 렌더링 (필터 미선택 상태 메시지 표시)
             updateDeviceTypeFilters();
+            renderDeviceTypeTrendChart();
         }
 
         function updateDeviceTypeFilterButtonText(filterKey) {
@@ -12055,7 +12972,10 @@
                 }
             });
 
-            if (devicePlatformsToShow.size === 0) {
+            // 모든 필터가 비어있는지 확인
+            const allFiltersEmpty = Object.values(currentDevicePlatformFilters).every(arr => !arr || arr.length === 0);
+
+            if (allFiltersEmpty || devicePlatformsToShow.size === 0) {
                 const ctx = canvas.getContext('2d');
                 devicePlatformTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -12065,7 +12985,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: { display: true, position: 'top' },
-                            title: { display: true, text: '필터 조건에 맞는 데이터가 없습니다' }
+                            title: { display: true, text: allFiltersEmpty ? '필터를 선택해주세요' : '필터 조건에 맞는 데이터가 없습니다' }
                         }
                     }
                 });
@@ -12411,7 +13331,10 @@
                 }
             });
 
-            if (deviceTypesToShow.size === 0) {
+            // 모든 필터가 비어있는지 확인
+            const allFiltersEmpty = Object.values(currentDeviceTypeFilters).every(arr => !arr || arr.length === 0);
+
+            if (allFiltersEmpty || deviceTypesToShow.size === 0) {
                 const ctx = canvas.getContext('2d');
                 deviceTypeTrendChart = new Chart(ctx, {
                     type: 'line',
@@ -12421,7 +13344,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: { display: true, position: 'top' },
-                            title: { display: true, text: '필터 조건에 맞는 데이터가 없습니다' }
+                            title: { display: true, text: allFiltersEmpty ? '필터를 선택해주세요' : '필터 조건에 맞는 데이터가 없습니다' }
                         }
                     }
                 });
@@ -12839,14 +13762,17 @@
             // Unknown 제외하고 남성, 여성만 사용 (normalizeGender가 반환하는 값)
             genders = genders.filter(g => g === '남성' || g === '여성');
 
+            // 모든 필터가 비어있는지 확인
+            const allFiltersEmpty = Object.values(currentPivotFilters).every(arr => !arr || arr.length === 0);
+
             // 데이터가 없으면 안내 메시지 표시
-            if (Object.keys(pivotData).length === 0 || genders.length === 0 || ages.length === 0) {
+            if (allFiltersEmpty || Object.keys(pivotData).length === 0 || genders.length === 0 || ages.length === 0) {
                 container.innerHTML = `
                     <div style="text-align: center; padding: 60px 20px; color: var(--grey-500);">
                         <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
-                        <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">데이터를 표시할 수 없습니다</div>
+                        <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">${allFiltersEmpty ? '필터를 선택해주세요' : '데이터를 표시할 수 없습니다'}</div>
                         <div style="font-size: 13px; color: var(--grey-400);">
-                            위의 분류 기준에서 하나 이상의 항목을 선택해주세요.
+                            ${allFiltersEmpty ? '위의 분류 기준에서 하나 이상의 항목을 선택해주세요.' : '필터 조건에 맞는 데이터가 없습니다.'}
                         </div>
                     </div>
                 `;
@@ -13008,6 +13934,1336 @@
             `;
 
             container.innerHTML = tableHTML + statsHTML;
+        }
+
+        // ========== 성과 상세 분석 섹션 함수들 ==========
+
+        // 공통 헬퍼: 지표 값 계산
+        function calculateMetricValue(data, metric) {
+            const cost = data.cost || 0;
+            const revenue = data.revenue || 0;
+            const conversions = data.conversions || 0;
+            const impressions = data.impressions || 0;
+            const clicks = data.clicks || 0;
+
+            switch(metric) {
+                case 'roas': return cost > 0 ? (revenue / cost * 100) : 0;
+                case 'cost': return cost;
+                case 'revenue': return revenue;
+                case 'conversions': return conversions;
+                case 'impressions': return impressions;
+                case 'clicks': return clicks;
+                case 'cpm': return impressions > 0 ? (cost / impressions * 1000) : 0;
+                case 'cpc': return clicks > 0 ? (cost / clicks) : 0;
+                case 'cpa': return conversions > 0 ? (cost / conversions) : 0;
+                case 'ctr': return impressions > 0 ? (clicks / impressions * 100) : 0;
+                case 'cvr': return clicks > 0 ? (conversions / clicks * 100) : 0;
+                default: return 0;
+            }
+        }
+
+        // 공통 헬퍼: 지표 포맷팅
+        function formatMetricValue(value, metric) {
+            switch(metric) {
+                case 'roas':
+                case 'ctr':
+                case 'cvr':
+                    return value.toFixed(1) + '%';
+                case 'cost':
+                case 'revenue':
+                case 'cpm':
+                case 'cpc':
+                case 'cpa':
+                    return formatCurrency(value);
+                default:
+                    return value.toLocaleString();
+            }
+        }
+
+        // 공통 Bar 차트 렌더링 함수 (수평 막대) - 단순 버전
+        function renderDetailBarChart(canvasId, chartVar, labels, values, metric, chartTitle) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return null;
+
+            if (chartVar) {
+                chartVar.destroy();
+            }
+
+            const colors = [
+                'rgba(33, 150, 243, 0.8)',
+                'rgba(76, 175, 80, 0.8)',
+                'rgba(255, 152, 0, 0.8)',
+                'rgba(156, 39, 176, 0.8)',
+                'rgba(244, 67, 54, 0.8)',
+                'rgba(0, 188, 212, 0.8)',
+                'rgba(255, 87, 34, 0.8)',
+                'rgba(63, 81, 181, 0.8)',
+                'rgba(139, 195, 74, 0.8)',
+                'rgba(255, 193, 7, 0.8)'
+            ];
+
+            const metricLabels = {
+                'roas': 'ROAS (%)',
+                'cost': '비용 (원)',
+                'revenue': '전환값 (원)',
+                'conversions': '전환수',
+                'impressions': '노출수',
+                'clicks': '클릭수',
+                'cpm': 'CPM (원)',
+                'cpc': 'CPC (원)',
+                'cpa': 'CPA (원)',
+                'ctr': 'CTR (%)',
+                'cvr': '전환율 (%)'
+            };
+
+            const ctx = canvas.getContext('2d');
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: metricLabels[metric] || metric,
+                        data: values,
+                        backgroundColor: labels.map((_, i) => colors[i % colors.length]),
+                        borderColor: labels.map((_, i) => colors[i % colors.length].replace('0.8', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: !!chartTitle,
+                            text: chartTitle || ''
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return formatMetricValue(context.raw, metric);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: metricLabels[metric] || metric
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                font: { size: 11 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 누적 바 차트 렌더링 함수 (분류기준별 색상)
+        function renderDetailStackedBarChart(canvasId, chartVar, dimensionLabels, stackedData, metric) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return null;
+
+            if (chartVar) {
+                chartVar.destroy();
+            }
+
+            const stackColors = [
+                'rgba(33, 150, 243, 0.8)',   // 파랑
+                'rgba(76, 175, 80, 0.8)',    // 초록
+                'rgba(255, 152, 0, 0.8)',    // 주황
+                'rgba(156, 39, 176, 0.8)',   // 보라
+                'rgba(244, 67, 54, 0.8)',    // 빨강
+                'rgba(0, 188, 212, 0.8)',    // 청록
+                'rgba(255, 87, 34, 0.8)',    // 딥오렌지
+                'rgba(63, 81, 181, 0.8)',    // 인디고
+                'rgba(139, 195, 74, 0.8)',   // 라이트그린
+                'rgba(255, 193, 7, 0.8)'     // 앰버
+            ];
+
+            const metricLabels = {
+                'roas': 'ROAS (%)',
+                'cost': '비용 (원)',
+                'revenue': '전환값 (원)',
+                'conversions': '전환수',
+                'impressions': '노출수',
+                'clicks': '클릭수',
+                'cpm': 'CPM (원)',
+                'cpc': 'CPC (원)',
+                'cpa': 'CPA (원)',
+                'ctr': 'CTR (%)',
+                'cvr': '전환율 (%)'
+            };
+
+            // stackedData 형식: { '채널A': [val1, val2, ...], '채널B': [val1, val2, ...] }
+            const datasets = Object.entries(stackedData).map(([stackLabel, values], idx) => ({
+                label: stackLabel,
+                data: values,
+                backgroundColor: stackColors[idx % stackColors.length],
+                borderColor: stackColors[idx % stackColors.length].replace('0.8', '1'),
+                borderWidth: 1
+            }));
+
+            const ctx = canvas.getContext('2d');
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dimensionLabels,
+                    datasets: datasets
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: { font: { size: 11 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${formatMetricValue(context.raw, metric)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: metricLabels[metric] || metric
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            ticks: { font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 광고세트 상세 필터 초기화
+        function initDetailAdsetDropdowns() {
+            if (!adsetDimensionData) return;
+
+            const filterMap = {
+                'channel': '유형구분',
+                'product': '상품명',
+                'brand': '브랜드명',
+                'promotion': '프로모션'
+            };
+
+            Object.keys(filterMap).forEach(filterKey => {
+                const column = filterMap[filterKey];
+                const uniqueValues = [...new Set(adsetDimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                uniqueValues.sort();
+
+                const listId = `detailFilter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}List`;
+                const listContainer = document.getElementById(listId);
+                if (!listContainer) return;
+
+                listContainer.innerHTML = uniqueValues.map(value => `
+                    <label style="display: flex; align-items: center; padding: 6px 10px; cursor: pointer; font-size: 12px; border-radius: 4px; transition: background 0.2s;">
+                        <input type="checkbox" class="detail-filter-checkbox" data-filter="${filterKey}" data-value="${value}" style="margin-right: 10px; width: 14px; height: 14px; cursor: pointer;">
+                        ${value}
+                    </label>
+                `).join('');
+            });
+
+            // 드롭다운 토글 이벤트
+            document.querySelectorAll('.detail-filter-dropdown-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const filter = this.dataset.filter;
+                    document.querySelectorAll('.detail-filter-dropdown-list').forEach(list => {
+                        if (list.dataset.filter === filter) {
+                            list.style.display = list.style.display === 'none' ? 'block' : 'none';
+                        } else {
+                            list.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // 체크박스 변경 이벤트
+            document.querySelectorAll('.detail-filter-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const filter = this.dataset.filter;
+                    const value = this.dataset.value;
+                    if (this.checked) {
+                        if (!detailAdsetFilters[filter].includes(value)) {
+                            detailAdsetFilters[filter].push(value);
+                        }
+                    } else {
+                        detailAdsetFilters[filter] = detailAdsetFilters[filter].filter(v => v !== value);
+                    }
+                    updateDetailAdsetCount();
+                    renderDetailAdsetBarChart();
+                });
+            });
+
+            // 전체 선택 이벤트
+            document.querySelectorAll('.detail-filter-select-all').forEach(selectAll => {
+                selectAll.addEventListener('change', function() {
+                    const filter = this.dataset.filter;
+                    const checkboxes = document.querySelectorAll(`.detail-filter-checkbox[data-filter="${filter}"]`);
+                    checkboxes.forEach(cb => {
+                        cb.checked = this.checked;
+                        const value = cb.dataset.value;
+                        if (this.checked) {
+                            if (!detailAdsetFilters[filter].includes(value)) {
+                                detailAdsetFilters[filter].push(value);
+                            }
+                        } else {
+                            detailAdsetFilters[filter] = [];
+                        }
+                    });
+                    updateDetailAdsetCount();
+                    renderDetailAdsetBarChart();
+                });
+            });
+
+            // 외부 클릭 시 드롭다운 닫기
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.detail-filter-dropdown-btn') && !e.target.closest('.detail-filter-dropdown-list')) {
+                    document.querySelectorAll('.detail-filter-dropdown-list').forEach(list => {
+                        list.style.display = 'none';
+                    });
+                }
+            });
+        }
+
+        function updateDetailAdsetCount() {
+            if (!adsetDimensionData) return;
+            const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' };
+            const hasActiveFilters = Object.values(detailAdsetFilters).some(arr => arr.length > 0);
+
+            const matchedAdsets = new Set();
+            adsetDimensionData.forEach(row => {
+                const adset = row['광고세트'];
+                if (!adset || adset === '' || adset === '-') return;
+                let matches = true;
+                Object.keys(filterMap).forEach(filterKey => {
+                    const column = filterMap[filterKey];
+                    const selectedValues = detailAdsetFilters[filterKey];
+                    if (selectedValues && selectedValues.length > 0) {
+                        if (!selectedValues.includes(row[column])) {
+                            matches = false;
+                        }
+                    }
+                });
+                if (matches && hasActiveFilters) matchedAdsets.add(adset);
+            });
+
+            const countEl = document.getElementById('detailFilteredAdsetCount');
+            if (countEl) countEl.textContent = matchedAdsets.size;
+        }
+
+        // 광고세트 상세 Bar 차트 렌더링
+        function renderDetailAdsetBarChart() {
+            if (!adsetDimensionData) {
+                detailAdsetBarChart = renderDetailBarChart('detailAdsetBarChart', detailAdsetBarChart, [], [], detailAdsetMetric, '데이터를 로드 중...');
+                return;
+            }
+
+            const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' };
+            const hasActiveFilters = Object.values(detailAdsetFilters).some(arr => arr.length > 0);
+
+            // 활성화된 필터 찾기
+            let activeFilterKey = null;
+            let activeFilterValues = [];
+            for (const [key, values] of Object.entries(detailAdsetFilters)) {
+                if (values && values.length > 0) {
+                    activeFilterKey = key;
+                    activeFilterValues = values;
+                    break;
+                }
+            }
+
+            if (hasActiveFilters && activeFilterKey) {
+                // 스택 바 차트: 필터 분류 기준별로 그룹화
+                const stackedDataMap = {}; // { adset: { stackValue: {metrics} } }
+
+                adsetDimensionData.forEach(row => {
+                    const adset = row['광고세트'];
+                    if (!adset || adset === '' || adset === '-') return;
+
+                    // 필터 매칭 확인
+                    let matches = true;
+                    Object.keys(filterMap).forEach(filterKey => {
+                        const column = filterMap[filterKey];
+                        const selectedValues = detailAdsetFilters[filterKey];
+                        if (selectedValues && selectedValues.length > 0) {
+                            if (!selectedValues.includes(row[column])) matches = false;
+                        }
+                    });
+                    if (!matches) return;
+
+                    const date = row['일'];
+                    if (detailAdsetStartDate || detailAdsetEndDate) {
+                        const rowDate = new Date(date);
+                        if (isNaN(rowDate)) return;
+                        if (detailAdsetStartDate && rowDate < new Date(detailAdsetStartDate)) return;
+                        if (detailAdsetEndDate && rowDate > new Date(detailAdsetEndDate)) return;
+                    }
+
+                    const stackValue = row[filterMap[activeFilterKey]] || '기타';
+
+                    if (!stackedDataMap[adset]) {
+                        stackedDataMap[adset] = {};
+                    }
+                    if (!stackedDataMap[adset][stackValue]) {
+                        stackedDataMap[adset][stackValue] = { cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 };
+                    }
+
+                    stackedDataMap[adset][stackValue].cost += parseFloat(row['비용']?.toString().replace(/,/g, '') || 0) || 0;
+                    stackedDataMap[adset][stackValue].revenue += parseFloat(row['전환값']?.toString().replace(/,/g, '') || 0) || 0;
+                    stackedDataMap[adset][stackValue].conversions += parseFloat(row['전환수']?.toString().replace(/,/g, '') || 0) || 0;
+                    stackedDataMap[adset][stackValue].impressions += parseFloat(row['노출']?.toString().replace(/,/g, '') || 0) || 0;
+                    stackedDataMap[adset][stackValue].clicks += parseFloat(row['클릭']?.toString().replace(/,/g, '') || 0) || 0;
+                });
+
+                // 광고세트 합계로 정렬
+                const adsetTotals = {};
+                Object.entries(stackedDataMap).forEach(([adset, stacks]) => {
+                    let total = 0;
+                    Object.values(stacks).forEach(data => {
+                        total += calculateMetricValue(data, detailAdsetMetric);
+                    });
+                    adsetTotals[adset] = total;
+                });
+                const sortedAdsets = Object.keys(adsetTotals).sort((a, b) => adsetTotals[b] - adsetTotals[a]).slice(0, 15);
+
+                // 모든 스택 값 수집
+                const allStackValues = new Set();
+                Object.values(stackedDataMap).forEach(stacks => {
+                    Object.keys(stacks).forEach(sv => allStackValues.add(sv));
+                });
+                const stackValuesList = Array.from(allStackValues);
+
+                // 스택 데이터 구조 변환
+                const stackedData = {};
+                stackValuesList.forEach(sv => {
+                    stackedData[sv] = sortedAdsets.map(adset => {
+                        if (stackedDataMap[adset] && stackedDataMap[adset][sv]) {
+                            return calculateMetricValue(stackedDataMap[adset][sv], detailAdsetMetric);
+                        }
+                        return 0;
+                    });
+                });
+
+                detailAdsetBarChart = renderDetailStackedBarChart('detailAdsetBarChart', detailAdsetBarChart, sortedAdsets, stackedData, detailAdsetMetric);
+            } else {
+                // 필터 없을 때: 초기화 상태 메시지 표시
+                detailAdsetBarChart = renderDetailBarChart('detailAdsetBarChart', detailAdsetBarChart, [], [], detailAdsetMetric, '필터를 선택해주세요');
+            }
+        }
+
+        // 성별 상세 필터 초기화 및 차트 렌더링
+        function initDetailGenderDropdowns() {
+            if (!genderDimensionData) return;
+
+            const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' };
+
+            Object.keys(filterMap).forEach(filterKey => {
+                const column = filterMap[filterKey];
+                const uniqueValues = [...new Set(genderDimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                uniqueValues.sort();
+
+                const listId = `detailGenderFilter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}List`;
+                const listContainer = document.getElementById(listId);
+                if (!listContainer) return;
+
+                listContainer.innerHTML = uniqueValues.map(value => `
+                    <label style="display: flex; align-items: center; padding: 6px 10px; cursor: pointer; font-size: 12px;">
+                        <input type="checkbox" class="detail-gender-filter-checkbox" data-filter="${filterKey}" data-value="${value}" style="margin-right: 10px; width: 14px; height: 14px;">
+                        ${value}
+                    </label>
+                `).join('');
+            });
+
+            document.querySelectorAll('.detail-gender-filter-dropdown-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const filter = this.dataset.filter;
+                    document.querySelectorAll('.detail-gender-filter-dropdown-list').forEach(list => {
+                        list.style.display = list.dataset.filter === filter ? (list.style.display === 'none' ? 'block' : 'none') : 'none';
+                    });
+                });
+            });
+
+            document.querySelectorAll('.detail-gender-filter-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const filter = this.dataset.filter;
+                    const value = this.dataset.value;
+                    if (this.checked) {
+                        if (!detailGenderFilters[filter].includes(value)) detailGenderFilters[filter].push(value);
+                    } else {
+                        detailGenderFilters[filter] = detailGenderFilters[filter].filter(v => v !== value);
+                    }
+                    renderDetailGenderBarChart();
+                });
+            });
+
+            document.querySelectorAll('.detail-gender-filter-select-all').forEach(selectAll => {
+                selectAll.addEventListener('change', function() {
+                    const filter = this.dataset.filter;
+                    document.querySelectorAll(`.detail-gender-filter-checkbox[data-filter="${filter}"]`).forEach(cb => {
+                        cb.checked = this.checked;
+                        const value = cb.dataset.value;
+                        if (this.checked) {
+                            if (!detailGenderFilters[filter].includes(value)) detailGenderFilters[filter].push(value);
+                        }
+                    });
+                    if (!this.checked) detailGenderFilters[filter] = [];
+                    renderDetailGenderBarChart();
+                });
+            });
+        }
+
+        function renderDetailGenderBarChart() {
+            if (!genderDimensionData) {
+                detailGenderBarChart = renderDetailBarChart('detailGenderBarChart', detailGenderBarChart, [], [], detailGenderMetric, '데이터 로딩 중...');
+                return;
+            }
+
+            const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' };
+            const hasActiveFilters = Object.values(detailGenderFilters).some(arr => arr.length > 0);
+
+            // 어떤 필터가 활성화되어 있는지 확인
+            let activeFilterKey = null;
+            let activeFilterColumn = null;
+            Object.keys(filterMap).forEach(filterKey => {
+                if (detailGenderFilters[filterKey] && detailGenderFilters[filterKey].length > 0) {
+                    activeFilterKey = filterKey;
+                    activeFilterColumn = filterMap[filterKey];
+                }
+            });
+
+            // 성별_통합 컬럼 사용
+            const genderColumn = '성별_통합';
+
+            if (hasActiveFilters && activeFilterKey) {
+                // 누적 바 차트: 성별별로 분류기준별 데이터 집계
+                const genderStackData = {};  // { '남성': { '채널A': {}, '채널B': {} }, ... }
+
+                genderDimensionData.forEach(row => {
+                    const rawGender = row[genderColumn] || row['성별'];
+                    if (!rawGender || rawGender === '' || rawGender === '-' || rawGender === 'unknown') return;
+
+                    const stackValue = row[activeFilterColumn];
+                    if (!stackValue || stackValue === '' || stackValue === '-') return;
+                    if (!detailGenderFilters[activeFilterKey].includes(stackValue)) return;
+
+                    // 기간 필터링
+                    const date = row['일'];
+                    if (detailGenderStartDate || detailGenderEndDate) {
+                        const rowDate = new Date(date);
+                        if (isNaN(rowDate)) return;
+                        if (detailGenderStartDate && rowDate < new Date(detailGenderStartDate)) return;
+                        if (detailGenderEndDate && rowDate > new Date(detailGenderEndDate)) return;
+                    }
+
+                    if (!genderStackData[rawGender]) genderStackData[rawGender] = {};
+                    if (!genderStackData[rawGender][stackValue]) {
+                        genderStackData[rawGender][stackValue] = { cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 };
+                    }
+
+                    genderStackData[rawGender][stackValue].cost += parseFloat(row['비용']?.toString().replace(/,/g, '') || 0) || 0;
+                    genderStackData[rawGender][stackValue].revenue += parseFloat(row['전환값']?.toString().replace(/,/g, '') || 0) || 0;
+                    genderStackData[rawGender][stackValue].conversions += parseFloat(row['전환수']?.toString().replace(/,/g, '') || 0) || 0;
+                    genderStackData[rawGender][stackValue].impressions += parseFloat(row['노출']?.toString().replace(/,/g, '') || 0) || 0;
+                    genderStackData[rawGender][stackValue].clicks += parseFloat(row['클릭']?.toString().replace(/,/g, '') || 0) || 0;
+                });
+
+                // 누적 바 차트 데이터 구성
+                const genderLabels = Object.keys(genderStackData).sort();
+                const stackLabels = detailGenderFilters[activeFilterKey];
+                const stackedData = {};
+
+                stackLabels.forEach(stackLabel => {
+                    stackedData[stackLabel] = genderLabels.map(gender => {
+                        const data = genderStackData[gender]?.[stackLabel];
+                        return data ? calculateMetricValue(data, detailGenderMetric) : 0;
+                    });
+                });
+
+                detailGenderBarChart = renderDetailStackedBarChart('detailGenderBarChart', detailGenderBarChart, genderLabels, stackedData, detailGenderMetric);
+            } else {
+                // 필터 없을 때: 초기화 상태 메시지 표시
+                detailGenderBarChart = renderDetailBarChart('detailGenderBarChart', detailGenderBarChart, [], [], detailGenderMetric, '필터를 선택해주세요');
+            }
+        }
+
+        // 연령 상세 필터 초기화 및 차트 렌더링
+        function initDetailAgeDropdowns() {
+            if (!ageDimensionData) return;
+
+            const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' };
+
+            Object.keys(filterMap).forEach(filterKey => {
+                const column = filterMap[filterKey];
+                const uniqueValues = [...new Set(ageDimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                uniqueValues.sort();
+
+                const listId = `detailAgeFilter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}List`;
+                const listContainer = document.getElementById(listId);
+                if (!listContainer) return;
+
+                listContainer.innerHTML = uniqueValues.map(value => `
+                    <label style="display: flex; align-items: center; padding: 6px 10px; cursor: pointer; font-size: 12px;">
+                        <input type="checkbox" class="detail-age-filter-checkbox" data-filter="${filterKey}" data-value="${value}" style="margin-right: 10px; width: 14px; height: 14px;">
+                        ${value}
+                    </label>
+                `).join('');
+            });
+
+            document.querySelectorAll('.detail-age-filter-dropdown-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const filter = this.dataset.filter;
+                    document.querySelectorAll('.detail-age-filter-dropdown-list').forEach(list => {
+                        list.style.display = list.dataset.filter === filter ? (list.style.display === 'none' ? 'block' : 'none') : 'none';
+                    });
+                });
+            });
+
+            document.querySelectorAll('.detail-age-filter-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const filter = this.dataset.filter;
+                    const value = this.dataset.value;
+                    if (this.checked) {
+                        if (!detailAgeFilters[filter].includes(value)) detailAgeFilters[filter].push(value);
+                    } else {
+                        detailAgeFilters[filter] = detailAgeFilters[filter].filter(v => v !== value);
+                    }
+                    renderDetailAgeBarChart();
+                });
+            });
+
+            document.querySelectorAll('.detail-age-filter-select-all').forEach(selectAll => {
+                selectAll.addEventListener('change', function() {
+                    const filter = this.dataset.filter;
+                    document.querySelectorAll(`.detail-age-filter-checkbox[data-filter="${filter}"]`).forEach(cb => {
+                        cb.checked = this.checked;
+                        const value = cb.dataset.value;
+                        if (this.checked) {
+                            if (!detailAgeFilters[filter].includes(value)) detailAgeFilters[filter].push(value);
+                        }
+                    });
+                    if (!this.checked) detailAgeFilters[filter] = [];
+                    renderDetailAgeBarChart();
+                });
+            });
+        }
+
+        function renderDetailAgeBarChart() {
+            if (!ageDimensionData) {
+                detailAgeBarChart = renderDetailBarChart('detailAgeBarChart', detailAgeBarChart, [], [], detailAgeMetric, '데이터 로딩 중...');
+                return;
+            }
+
+            const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' };
+            const hasActiveFilters = Object.values(detailAgeFilters).some(arr => arr.length > 0);
+
+            // 어떤 필터가 활성화되어 있는지 확인
+            let activeFilterKey = null;
+            let activeFilterColumn = null;
+            Object.keys(filterMap).forEach(filterKey => {
+                if (detailAgeFilters[filterKey] && detailAgeFilters[filterKey].length > 0) {
+                    activeFilterKey = filterKey;
+                    activeFilterColumn = filterMap[filterKey];
+                }
+            });
+
+            // 연령_통합 컬럼 사용
+            const ageColumn = '연령_통합';
+
+            if (hasActiveFilters && activeFilterKey) {
+                // 누적 바 차트: 연령별로 분류기준별 데이터 집계
+                const ageStackData = {};
+
+                ageDimensionData.forEach(row => {
+                    const rawAge = row[ageColumn] || row['연령'];
+                    if (!rawAge || rawAge === '' || rawAge === '-' || rawAge === 'unknown') return;
+
+                    const stackValue = row[activeFilterColumn];
+                    if (!stackValue || stackValue === '' || stackValue === '-') return;
+                    if (!detailAgeFilters[activeFilterKey].includes(stackValue)) return;
+
+                    // 기간 필터링
+                    const date = row['일'];
+                    if (detailAgeStartDate || detailAgeEndDate) {
+                        const rowDate = new Date(date);
+                        if (isNaN(rowDate)) return;
+                        if (detailAgeStartDate && rowDate < new Date(detailAgeStartDate)) return;
+                        if (detailAgeEndDate && rowDate > new Date(detailAgeEndDate)) return;
+                    }
+
+                    if (!ageStackData[rawAge]) ageStackData[rawAge] = {};
+                    if (!ageStackData[rawAge][stackValue]) {
+                        ageStackData[rawAge][stackValue] = { cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 };
+                    }
+
+                    ageStackData[rawAge][stackValue].cost += parseFloat(row['비용']?.toString().replace(/,/g, '') || 0) || 0;
+                    ageStackData[rawAge][stackValue].revenue += parseFloat(row['전환값']?.toString().replace(/,/g, '') || 0) || 0;
+                    ageStackData[rawAge][stackValue].conversions += parseFloat(row['전환수']?.toString().replace(/,/g, '') || 0) || 0;
+                    ageStackData[rawAge][stackValue].impressions += parseFloat(row['노출']?.toString().replace(/,/g, '') || 0) || 0;
+                    ageStackData[rawAge][stackValue].clicks += parseFloat(row['클릭']?.toString().replace(/,/g, '') || 0) || 0;
+                });
+
+                // 누적 바 차트 데이터 구성
+                const ageLabels = Object.keys(ageStackData).sort();
+                const stackLabels = detailAgeFilters[activeFilterKey];
+                const stackedData = {};
+
+                stackLabels.forEach(stackLabel => {
+                    stackedData[stackLabel] = ageLabels.map(age => {
+                        const data = ageStackData[age]?.[stackLabel];
+                        return data ? calculateMetricValue(data, detailAgeMetric) : 0;
+                    });
+                });
+
+                detailAgeBarChart = renderDetailStackedBarChart('detailAgeBarChart', detailAgeBarChart, ageLabels, stackedData, detailAgeMetric);
+            } else {
+                // 필터 없을 때: 초기화 상태 메시지 표시
+                detailAgeBarChart = renderDetailBarChart('detailAgeBarChart', detailAgeBarChart, [], [], detailAgeMetric, '필터를 선택해주세요');
+            }
+        }
+
+        // 플랫폼 상세 필터 초기화 및 차트 렌더링
+        function initDetailPlatformDropdowns() {
+            if (!platformDimensionData) return;
+
+            const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' };
+
+            Object.keys(filterMap).forEach(filterKey => {
+                const column = filterMap[filterKey];
+                const uniqueValues = [...new Set(platformDimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                uniqueValues.sort();
+
+                const listId = `detailPlatformFilter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}List`;
+                const listContainer = document.getElementById(listId);
+                if (!listContainer) return;
+
+                listContainer.innerHTML = uniqueValues.map(value => `
+                    <label style="display: flex; align-items: center; padding: 6px 10px; cursor: pointer; font-size: 12px;">
+                        <input type="checkbox" class="detail-platform-filter-checkbox" data-filter="${filterKey}" data-value="${value}" style="margin-right: 10px; width: 14px; height: 14px;">
+                        ${value}
+                    </label>
+                `).join('');
+            });
+
+            document.querySelectorAll('.detail-platform-filter-dropdown-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const filter = this.dataset.filter;
+                    document.querySelectorAll('.detail-platform-filter-dropdown-list').forEach(list => {
+                        list.style.display = list.dataset.filter === filter ? (list.style.display === 'none' ? 'block' : 'none') : 'none';
+                    });
+                });
+            });
+
+            document.querySelectorAll('.detail-platform-filter-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const filter = this.dataset.filter;
+                    const value = this.dataset.value;
+                    if (this.checked) {
+                        if (!detailPlatformFilters[filter].includes(value)) detailPlatformFilters[filter].push(value);
+                    } else {
+                        detailPlatformFilters[filter] = detailPlatformFilters[filter].filter(v => v !== value);
+                    }
+                    renderDetailPlatformBarChart();
+                });
+            });
+
+            document.querySelectorAll('.detail-platform-filter-select-all').forEach(selectAll => {
+                selectAll.addEventListener('change', function() {
+                    const filter = this.dataset.filter;
+                    document.querySelectorAll(`.detail-platform-filter-checkbox[data-filter="${filter}"]`).forEach(cb => {
+                        cb.checked = this.checked;
+                        const value = cb.dataset.value;
+                        if (this.checked) {
+                            if (!detailPlatformFilters[filter].includes(value)) detailPlatformFilters[filter].push(value);
+                        }
+                    });
+                    if (!this.checked) detailPlatformFilters[filter] = [];
+                    renderDetailPlatformBarChart();
+                });
+            });
+        }
+
+        function renderDetailPlatformBarChart() {
+            if (!platformDimensionData) {
+                detailPlatformBarChart = renderDetailBarChart('detailPlatformBarChart', detailPlatformBarChart, [], [], detailPlatformMetric, '데이터 로딩 중...');
+                return;
+            }
+
+            const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' };
+            const hasActiveFilters = Object.values(detailPlatformFilters).some(arr => arr.length > 0);
+
+            // 어떤 필터가 활성화되어 있는지 확인
+            let activeFilterKey = null;
+            let activeFilterColumn = null;
+            Object.keys(filterMap).forEach(filterKey => {
+                if (detailPlatformFilters[filterKey] && detailPlatformFilters[filterKey].length > 0) {
+                    activeFilterKey = filterKey;
+                    activeFilterColumn = filterMap[filterKey];
+                }
+            });
+
+            // 플랫폼_통합 컬럼 사용
+            const platformColumn = '플랫폼_통합';
+
+            if (hasActiveFilters && activeFilterKey) {
+                // 누적 바 차트
+                const platformStackData = {};
+
+                platformDimensionData.forEach(row => {
+                    const rawPlatform = row[platformColumn] || row['플랫폼'];
+                    if (!rawPlatform || rawPlatform === '' || rawPlatform === '-' || rawPlatform === 'unknown') return;
+
+                    const stackValue = row[activeFilterColumn];
+                    if (!stackValue || stackValue === '' || stackValue === '-') return;
+                    if (!detailPlatformFilters[activeFilterKey].includes(stackValue)) return;
+
+                    const date = row['일'];
+                    if (detailPlatformStartDate || detailPlatformEndDate) {
+                        const rowDate = new Date(date);
+                        if (isNaN(rowDate)) return;
+                        if (detailPlatformStartDate && rowDate < new Date(detailPlatformStartDate)) return;
+                        if (detailPlatformEndDate && rowDate > new Date(detailPlatformEndDate)) return;
+                    }
+
+                    if (!platformStackData[rawPlatform]) platformStackData[rawPlatform] = {};
+                    if (!platformStackData[rawPlatform][stackValue]) {
+                        platformStackData[rawPlatform][stackValue] = { cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 };
+                    }
+
+                    platformStackData[rawPlatform][stackValue].cost += parseFloat(row['비용']?.toString().replace(/,/g, '') || 0) || 0;
+                    platformStackData[rawPlatform][stackValue].revenue += parseFloat(row['전환값']?.toString().replace(/,/g, '') || 0) || 0;
+                    platformStackData[rawPlatform][stackValue].conversions += parseFloat(row['전환수']?.toString().replace(/,/g, '') || 0) || 0;
+                    platformStackData[rawPlatform][stackValue].impressions += parseFloat(row['노출']?.toString().replace(/,/g, '') || 0) || 0;
+                    platformStackData[rawPlatform][stackValue].clicks += parseFloat(row['클릭']?.toString().replace(/,/g, '') || 0) || 0;
+                });
+
+                const platformLabels = Object.keys(platformStackData).sort();
+                const stackLabels = detailPlatformFilters[activeFilterKey];
+                const stackedData = {};
+
+                stackLabels.forEach(stackLabel => {
+                    stackedData[stackLabel] = platformLabels.map(platform => {
+                        const data = platformStackData[platform]?.[stackLabel];
+                        return data ? calculateMetricValue(data, detailPlatformMetric) : 0;
+                    });
+                });
+
+                detailPlatformBarChart = renderDetailStackedBarChart('detailPlatformBarChart', detailPlatformBarChart, platformLabels, stackedData, detailPlatformMetric);
+            } else {
+                // 필터 없을 때: 초기화 상태 메시지 표시
+                detailPlatformBarChart = renderDetailBarChart('detailPlatformBarChart', detailPlatformBarChart, [], [], detailPlatformMetric, '필터를 선택해주세요');
+            }
+        }
+
+        // 기기플랫폼 상세 필터 초기화 및 차트 렌더링
+        function initDetailDevicePlatformDropdowns() {
+            if (!devicePlatformDimensionData) return;
+
+            const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' };
+
+            Object.keys(filterMap).forEach(filterKey => {
+                const column = filterMap[filterKey];
+                const uniqueValues = [...new Set(devicePlatformDimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                uniqueValues.sort();
+
+                const listId = `detailDevicePlatformFilter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}List`;
+                const listContainer = document.getElementById(listId);
+                if (!listContainer) return;
+
+                listContainer.innerHTML = uniqueValues.map(value => `
+                    <label style="display: flex; align-items: center; padding: 6px 10px; cursor: pointer; font-size: 12px;">
+                        <input type="checkbox" class="detail-device-platform-filter-checkbox" data-filter="${filterKey}" data-value="${value}" style="margin-right: 10px; width: 14px; height: 14px;">
+                        ${value}
+                    </label>
+                `).join('');
+            });
+
+            document.querySelectorAll('.detail-device-platform-filter-dropdown-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const filter = this.dataset.filter;
+                    document.querySelectorAll('.detail-device-platform-filter-dropdown-list').forEach(list => {
+                        list.style.display = list.dataset.filter === filter ? (list.style.display === 'none' ? 'block' : 'none') : 'none';
+                    });
+                });
+            });
+
+            document.querySelectorAll('.detail-device-platform-filter-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const filter = this.dataset.filter;
+                    const value = this.dataset.value;
+                    if (this.checked) {
+                        if (!detailDevicePlatformFilters[filter].includes(value)) detailDevicePlatformFilters[filter].push(value);
+                    } else {
+                        detailDevicePlatformFilters[filter] = detailDevicePlatformFilters[filter].filter(v => v !== value);
+                    }
+                    renderDetailDevicePlatformBarChart();
+                });
+            });
+
+            document.querySelectorAll('.detail-device-platform-filter-select-all').forEach(selectAll => {
+                selectAll.addEventListener('change', function() {
+                    const filter = this.dataset.filter;
+                    document.querySelectorAll(`.detail-device-platform-filter-checkbox[data-filter="${filter}"]`).forEach(cb => {
+                        cb.checked = this.checked;
+                        const value = cb.dataset.value;
+                        if (this.checked) {
+                            if (!detailDevicePlatformFilters[filter].includes(value)) detailDevicePlatformFilters[filter].push(value);
+                        }
+                    });
+                    if (!this.checked) detailDevicePlatformFilters[filter] = [];
+                    renderDetailDevicePlatformBarChart();
+                });
+            });
+        }
+
+        function renderDetailDevicePlatformBarChart() {
+            if (!devicePlatformDimensionData) {
+                detailDevicePlatformBarChart = renderDetailBarChart('detailDevicePlatformBarChart', detailDevicePlatformBarChart, [], [], detailDevicePlatformMetric, '데이터를 로드 중...');
+                return;
+            }
+
+            const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' };
+            const hasActiveFilters = Object.values(detailDevicePlatformFilters).some(arr => arr.length > 0);
+
+            // 활성화된 필터 찾기
+            let activeFilterKey = null;
+            let activeFilterValues = [];
+            for (const [key, values] of Object.entries(detailDevicePlatformFilters)) {
+                if (values && values.length > 0) {
+                    activeFilterKey = key;
+                    activeFilterValues = values;
+                    break;
+                }
+            }
+
+            // 기기플랫폼_통합 컬럼 사용
+            const devicePlatformColumn = '기기플랫폼_통합';
+
+            if (hasActiveFilters && activeFilterKey) {
+                // 스택 바 차트: 필터 분류 기준별로 그룹화
+                const stackedDataMap = {}; // { devicePlatform: { stackValue: {metrics} } }
+
+                devicePlatformDimensionData.forEach(row => {
+                    const rawDevicePlatform = row[devicePlatformColumn] || row['기기플랫폼'];
+                    if (!rawDevicePlatform || rawDevicePlatform === '' || rawDevicePlatform === '-') return;
+
+                    // 필터 매칭 확인
+                    let matches = true;
+                    Object.keys(filterMap).forEach(filterKey => {
+                        const column = filterMap[filterKey];
+                        const selectedValues = detailDevicePlatformFilters[filterKey];
+                        if (selectedValues && selectedValues.length > 0) {
+                            if (!selectedValues.includes(row[column])) matches = false;
+                        }
+                    });
+                    if (!matches) return;
+
+                    const date = row['일'];
+                    if (detailDevicePlatformStartDate || detailDevicePlatformEndDate) {
+                        const rowDate = new Date(date);
+                        if (isNaN(rowDate)) return;
+                        if (detailDevicePlatformStartDate && rowDate < new Date(detailDevicePlatformStartDate)) return;
+                        if (detailDevicePlatformEndDate && rowDate > new Date(detailDevicePlatformEndDate)) return;
+                    }
+
+                    const stackValue = row[filterMap[activeFilterKey]] || '기타';
+
+                    if (!stackedDataMap[rawDevicePlatform]) {
+                        stackedDataMap[rawDevicePlatform] = {};
+                    }
+                    if (!stackedDataMap[rawDevicePlatform][stackValue]) {
+                        stackedDataMap[rawDevicePlatform][stackValue] = { cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 };
+                    }
+
+                    stackedDataMap[rawDevicePlatform][stackValue].cost += parseFloat(row['비용']?.toString().replace(/,/g, '') || 0) || 0;
+                    stackedDataMap[rawDevicePlatform][stackValue].revenue += parseFloat(row['전환값']?.toString().replace(/,/g, '') || 0) || 0;
+                    stackedDataMap[rawDevicePlatform][stackValue].conversions += parseFloat(row['전환수']?.toString().replace(/,/g, '') || 0) || 0;
+                    stackedDataMap[rawDevicePlatform][stackValue].impressions += parseFloat(row['노출']?.toString().replace(/,/g, '') || 0) || 0;
+                    stackedDataMap[rawDevicePlatform][stackValue].clicks += parseFloat(row['클릭']?.toString().replace(/,/g, '') || 0) || 0;
+                });
+
+                // 기기플랫폼 합계로 정렬
+                const devicePlatformTotals = {};
+                Object.entries(stackedDataMap).forEach(([dp, stacks]) => {
+                    let total = 0;
+                    Object.values(stacks).forEach(data => {
+                        total += calculateMetricValue(data, detailDevicePlatformMetric);
+                    });
+                    devicePlatformTotals[dp] = total;
+                });
+                const sortedDevicePlatforms = Object.keys(devicePlatformTotals).sort((a, b) => devicePlatformTotals[b] - devicePlatformTotals[a]);
+
+                // 모든 스택 값 수집
+                const allStackValues = new Set();
+                Object.values(stackedDataMap).forEach(stacks => {
+                    Object.keys(stacks).forEach(sv => allStackValues.add(sv));
+                });
+                const stackValuesList = Array.from(allStackValues);
+
+                // 스택 데이터 구조 변환
+                const stackedData = {};
+                stackValuesList.forEach(sv => {
+                    stackedData[sv] = sortedDevicePlatforms.map(dp => {
+                        if (stackedDataMap[dp] && stackedDataMap[dp][sv]) {
+                            return calculateMetricValue(stackedDataMap[dp][sv], detailDevicePlatformMetric);
+                        }
+                        return 0;
+                    });
+                });
+
+                detailDevicePlatformBarChart = renderDetailStackedBarChart('detailDevicePlatformBarChart', detailDevicePlatformBarChart, sortedDevicePlatforms, stackedData, detailDevicePlatformMetric);
+            } else {
+                // 필터 없을 때: 초기화 상태 메시지 표시
+                detailDevicePlatformBarChart = renderDetailBarChart('detailDevicePlatformBarChart', detailDevicePlatformBarChart, [], [], detailDevicePlatformMetric, '필터를 선택해주세요');
+            }
+        }
+
+        // 기기 상세 필터 초기화 및 차트 렌더링
+        function initDetailDeviceTypeDropdowns() {
+            if (!deviceTypeDimensionData) return;
+
+            const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' };
+
+            Object.keys(filterMap).forEach(filterKey => {
+                const column = filterMap[filterKey];
+                const uniqueValues = [...new Set(deviceTypeDimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
+                uniqueValues.sort();
+
+                const listId = `detailDeviceTypeFilter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}List`;
+                const listContainer = document.getElementById(listId);
+                if (!listContainer) return;
+
+                listContainer.innerHTML = uniqueValues.map(value => `
+                    <label style="display: flex; align-items: center; padding: 6px 10px; cursor: pointer; font-size: 12px;">
+                        <input type="checkbox" class="detail-device-type-filter-checkbox" data-filter="${filterKey}" data-value="${value}" style="margin-right: 10px; width: 14px; height: 14px;">
+                        ${value}
+                    </label>
+                `).join('');
+            });
+
+            document.querySelectorAll('.detail-device-type-filter-dropdown-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const filter = this.dataset.filter;
+                    document.querySelectorAll('.detail-device-type-filter-dropdown-list').forEach(list => {
+                        list.style.display = list.dataset.filter === filter ? (list.style.display === 'none' ? 'block' : 'none') : 'none';
+                    });
+                });
+            });
+
+            document.querySelectorAll('.detail-device-type-filter-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const filter = this.dataset.filter;
+                    const value = this.dataset.value;
+                    if (this.checked) {
+                        if (!detailDeviceTypeFilters[filter].includes(value)) detailDeviceTypeFilters[filter].push(value);
+                    } else {
+                        detailDeviceTypeFilters[filter] = detailDeviceTypeFilters[filter].filter(v => v !== value);
+                    }
+                    renderDetailDeviceTypeBarChart();
+                });
+            });
+
+            document.querySelectorAll('.detail-device-type-filter-select-all').forEach(selectAll => {
+                selectAll.addEventListener('change', function() {
+                    const filter = this.dataset.filter;
+                    document.querySelectorAll(`.detail-device-type-filter-checkbox[data-filter="${filter}"]`).forEach(cb => {
+                        cb.checked = this.checked;
+                        const value = cb.dataset.value;
+                        if (this.checked) {
+                            if (!detailDeviceTypeFilters[filter].includes(value)) detailDeviceTypeFilters[filter].push(value);
+                        }
+                    });
+                    if (!this.checked) detailDeviceTypeFilters[filter] = [];
+                    renderDetailDeviceTypeBarChart();
+                });
+            });
+        }
+
+        function renderDetailDeviceTypeBarChart() {
+            if (!deviceTypeDimensionData) {
+                detailDeviceTypeBarChart = renderDetailBarChart('detailDeviceTypeBarChart', detailDeviceTypeBarChart, [], [], detailDeviceTypeMetric, '데이터를 로드 중...');
+                return;
+            }
+
+            const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' };
+            const hasActiveFilters = Object.values(detailDeviceTypeFilters).some(arr => arr.length > 0);
+
+            // 활성화된 필터 찾기
+            let activeFilterKey = null;
+            let activeFilterValues = [];
+            for (const [key, values] of Object.entries(detailDeviceTypeFilters)) {
+                if (values && values.length > 0) {
+                    activeFilterKey = key;
+                    activeFilterValues = values;
+                    break;
+                }
+            }
+
+            // 기기유형_통합 컬럼 사용
+            const deviceTypeColumn = '기기유형_통합';
+
+            if (hasActiveFilters && activeFilterKey) {
+                // 스택 바 차트: 필터 분류 기준별로 그룹화
+                const stackedDataMap = {}; // { deviceType: { stackValue: {metrics} } }
+
+                deviceTypeDimensionData.forEach(row => {
+                    const rawDeviceType = row[deviceTypeColumn] || row['기기유형'];
+                    if (!rawDeviceType || rawDeviceType === '' || rawDeviceType === '-') return;
+
+                    // 필터 매칭 확인
+                    let matches = true;
+                    Object.keys(filterMap).forEach(filterKey => {
+                        const column = filterMap[filterKey];
+                        const selectedValues = detailDeviceTypeFilters[filterKey];
+                        if (selectedValues && selectedValues.length > 0) {
+                            if (!selectedValues.includes(row[column])) matches = false;
+                        }
+                    });
+                    if (!matches) return;
+
+                    const date = row['일'];
+                    if (detailDeviceTypeStartDate || detailDeviceTypeEndDate) {
+                        const rowDate = new Date(date);
+                        if (isNaN(rowDate)) return;
+                        if (detailDeviceTypeStartDate && rowDate < new Date(detailDeviceTypeStartDate)) return;
+                        if (detailDeviceTypeEndDate && rowDate > new Date(detailDeviceTypeEndDate)) return;
+                    }
+
+                    const stackValue = row[filterMap[activeFilterKey]] || '기타';
+
+                    if (!stackedDataMap[rawDeviceType]) {
+                        stackedDataMap[rawDeviceType] = {};
+                    }
+                    if (!stackedDataMap[rawDeviceType][stackValue]) {
+                        stackedDataMap[rawDeviceType][stackValue] = { cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 };
+                    }
+
+                    stackedDataMap[rawDeviceType][stackValue].cost += parseFloat(row['비용']?.toString().replace(/,/g, '') || 0) || 0;
+                    stackedDataMap[rawDeviceType][stackValue].revenue += parseFloat(row['전환값']?.toString().replace(/,/g, '') || 0) || 0;
+                    stackedDataMap[rawDeviceType][stackValue].conversions += parseFloat(row['전환수']?.toString().replace(/,/g, '') || 0) || 0;
+                    stackedDataMap[rawDeviceType][stackValue].impressions += parseFloat(row['노출']?.toString().replace(/,/g, '') || 0) || 0;
+                    stackedDataMap[rawDeviceType][stackValue].clicks += parseFloat(row['클릭']?.toString().replace(/,/g, '') || 0) || 0;
+                });
+
+                // 기기유형 합계로 정렬
+                const deviceTypeTotals = {};
+                Object.entries(stackedDataMap).forEach(([dt, stacks]) => {
+                    let total = 0;
+                    Object.values(stacks).forEach(data => {
+                        total += calculateMetricValue(data, detailDeviceTypeMetric);
+                    });
+                    deviceTypeTotals[dt] = total;
+                });
+                const sortedDeviceTypes = Object.keys(deviceTypeTotals).sort((a, b) => deviceTypeTotals[b] - deviceTypeTotals[a]);
+
+                // 모든 스택 값 수집
+                const allStackValues = new Set();
+                Object.values(stackedDataMap).forEach(stacks => {
+                    Object.keys(stacks).forEach(sv => allStackValues.add(sv));
+                });
+                const stackValuesList = Array.from(allStackValues);
+
+                // 스택 데이터 구조 변환
+                const stackedData = {};
+                stackValuesList.forEach(sv => {
+                    stackedData[sv] = sortedDeviceTypes.map(dt => {
+                        if (stackedDataMap[dt] && stackedDataMap[dt][sv]) {
+                            return calculateMetricValue(stackedDataMap[dt][sv], detailDeviceTypeMetric);
+                        }
+                        return 0;
+                    });
+                });
+
+                detailDeviceTypeBarChart = renderDetailStackedBarChart('detailDeviceTypeBarChart', detailDeviceTypeBarChart, sortedDeviceTypes, stackedData, detailDeviceTypeMetric);
+            } else {
+                // 필터 없을 때: 초기화 상태 메시지 표시
+                detailDeviceTypeBarChart = renderDetailBarChart('detailDeviceTypeBarChart', detailDeviceTypeBarChart, [], [], detailDeviceTypeMetric, '필터를 선택해주세요');
+            }
+        }
+
+        // 성과 상세 분석 탭 전환 이벤트 설정
+        function setupDetailAnalysisTabEvents() {
+            document.querySelectorAll('.detail-analysis-tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.detail-analysis-tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const targetTab = this.dataset.tab;
+                    document.querySelectorAll('.detail-analysis-tab-content').forEach(content => {
+                        content.style.display = 'none';
+                        content.classList.remove('active');
+                    });
+
+                    const tabMap = {
+                        'detail-adset': 'detailAdsetTab',
+                        'detail-gender': 'detailGenderTab',
+                        'detail-age': 'detailAgeTab',
+                        'detail-platform': 'detailPlatformTab',
+                        'detail-device-platform': 'detailDevicePlatformTab',
+                        'detail-device-type': 'detailDeviceTypeTab'
+                    };
+
+                    const selectedTab = document.getElementById(tabMap[targetTab]);
+                    if (selectedTab) {
+                        selectedTab.style.display = 'block';
+                        selectedTab.classList.add('active');
+                    }
+                });
+            });
+
+            // 지표 드롭다운 이벤트
+            const metricDropdowns = [
+                { id: 'detailAdsetMetricDropdown', varName: 'detailAdsetMetric', renderFn: renderDetailAdsetBarChart },
+                { id: 'detailGenderMetricDropdown', varName: 'detailGenderMetric', renderFn: renderDetailGenderBarChart },
+                { id: 'detailAgeMetricDropdown', varName: 'detailAgeMetric', renderFn: renderDetailAgeBarChart },
+                { id: 'detailPlatformMetricDropdown', varName: 'detailPlatformMetric', renderFn: renderDetailPlatformBarChart },
+                { id: 'detailDevicePlatformMetricDropdown', varName: 'detailDevicePlatformMetric', renderFn: renderDetailDevicePlatformBarChart },
+                { id: 'detailDeviceTypeMetricDropdown', varName: 'detailDeviceTypeMetric', renderFn: renderDetailDeviceTypeBarChart }
+            ];
+
+            metricDropdowns.forEach(({ id, varName, renderFn }) => {
+                const dropdown = document.getElementById(id);
+                if (dropdown) {
+                    dropdown.addEventListener('change', function() {
+                        window[varName] = this.value;
+                        if (varName === 'detailAdsetMetric') detailAdsetMetric = this.value;
+                        else if (varName === 'detailGenderMetric') detailGenderMetric = this.value;
+                        else if (varName === 'detailAgeMetric') detailAgeMetric = this.value;
+                        else if (varName === 'detailPlatformMetric') detailPlatformMetric = this.value;
+                        else if (varName === 'detailDevicePlatformMetric') detailDevicePlatformMetric = this.value;
+                        else if (varName === 'detailDeviceTypeMetric') detailDeviceTypeMetric = this.value;
+                        renderFn();
+                    });
+                }
+            });
+
+            // 날짜 입력 이벤트
+            const dateInputs = [
+                { startId: 'detailAdsetStartDate', endId: 'detailAdsetEndDate', startVar: 'detailAdsetStartDate', endVar: 'detailAdsetEndDate', renderFn: renderDetailAdsetBarChart },
+                { startId: 'detailGenderStartDate', endId: 'detailGenderEndDate', startVar: 'detailGenderStartDate', endVar: 'detailGenderEndDate', renderFn: renderDetailGenderBarChart },
+                { startId: 'detailAgeStartDate', endId: 'detailAgeEndDate', startVar: 'detailAgeStartDate', endVar: 'detailAgeEndDate', renderFn: renderDetailAgeBarChart },
+                { startId: 'detailPlatformStartDate', endId: 'detailPlatformEndDate', startVar: 'detailPlatformStartDate', endVar: 'detailPlatformEndDate', renderFn: renderDetailPlatformBarChart },
+                { startId: 'detailDevicePlatformStartDate', endId: 'detailDevicePlatformEndDate', startVar: 'detailDevicePlatformStartDate', endVar: 'detailDevicePlatformEndDate', renderFn: renderDetailDevicePlatformBarChart },
+                { startId: 'detailDeviceTypeStartDate', endId: 'detailDeviceTypeEndDate', startVar: 'detailDeviceTypeStartDate', endVar: 'detailDeviceTypeEndDate', renderFn: renderDetailDeviceTypeBarChart }
+            ];
+
+            dateInputs.forEach(({ startId, endId, startVar, endVar, renderFn }) => {
+                const startInput = document.getElementById(startId);
+                const endInput = document.getElementById(endId);
+                if (startInput) {
+                    startInput.addEventListener('change', function() {
+                        if (startVar === 'detailAdsetStartDate') detailAdsetStartDate = this.value;
+                        else if (startVar === 'detailGenderStartDate') detailGenderStartDate = this.value;
+                        else if (startVar === 'detailAgeStartDate') detailAgeStartDate = this.value;
+                        else if (startVar === 'detailPlatformStartDate') detailPlatformStartDate = this.value;
+                        else if (startVar === 'detailDevicePlatformStartDate') detailDevicePlatformStartDate = this.value;
+                        else if (startVar === 'detailDeviceTypeStartDate') detailDeviceTypeStartDate = this.value;
+                        renderFn();
+                    });
+                }
+                if (endInput) {
+                    endInput.addEventListener('change', function() {
+                        if (endVar === 'detailAdsetEndDate') detailAdsetEndDate = this.value;
+                        else if (endVar === 'detailGenderEndDate') detailGenderEndDate = this.value;
+                        else if (endVar === 'detailAgeEndDate') detailAgeEndDate = this.value;
+                        else if (endVar === 'detailPlatformEndDate') detailPlatformEndDate = this.value;
+                        else if (endVar === 'detailDevicePlatformEndDate') detailDevicePlatformEndDate = this.value;
+                        else if (endVar === 'detailDeviceTypeEndDate') detailDeviceTypeEndDate = this.value;
+                        renderFn();
+                    });
+                }
+            });
+        }
+
+        // 성과 상세 분석 초기화 함수
+        function initDetailAnalysis() {
+            initDetailAdsetDropdowns();
+            initDetailGenderDropdowns();
+            initDetailAgeDropdowns();
+            initDetailPlatformDropdowns();
+            initDetailDevicePlatformDropdowns();
+            initDetailDeviceTypeDropdowns();
+            setupDetailAnalysisTabEvents();
+
+            // 기본 날짜 설정 (데이터에서 min/max 날짜 추출)
+            setDetailAnalysisDefaultDates();
+
+            // 초기 차트 렌더링
+            renderDetailAdsetBarChart();
+            renderDetailGenderBarChart();
+            renderDetailAgeBarChart();
+            renderDetailPlatformBarChart();
+            renderDetailDevicePlatformBarChart();
+            renderDetailDeviceTypeBarChart();
+        }
+
+        // 성과 상세 분석 기본 날짜 설정
+        function setDetailAnalysisDefaultDates() {
+            // 데이터에서 날짜 범위 추출 (adsetDimensionData 사용)
+            const sourceData = adsetDimensionData || genderDimensionData || ageDimensionData || platformDimensionData || devicePlatformDimensionData || deviceTypeDimensionData;
+            if (!sourceData || sourceData.length === 0) return;
+
+            const dates = sourceData.map(row => new Date(row['일'])).filter(d => !isNaN(d));
+            if (dates.length === 0) return;
+
+            const minDate = new Date(Math.min(...dates));
+            const maxDate = new Date(Math.max(...dates));
+
+            const formatDateForInput = (date) => {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            };
+
+            const minDateStr = formatDateForInput(minDate);
+            const maxDateStr = formatDateForInput(maxDate);
+
+            // 각 탭의 날짜 입력 필드 설정
+            const dateInputs = [
+                { startId: 'detailAdsetStartDate', endId: 'detailAdsetEndDate', setStart: (v) => { detailAdsetStartDate = v; }, setEnd: (v) => { detailAdsetEndDate = v; } },
+                { startId: 'detailGenderStartDate', endId: 'detailGenderEndDate', setStart: (v) => { detailGenderStartDate = v; }, setEnd: (v) => { detailGenderEndDate = v; } },
+                { startId: 'detailAgeStartDate', endId: 'detailAgeEndDate', setStart: (v) => { detailAgeStartDate = v; }, setEnd: (v) => { detailAgeEndDate = v; } },
+                { startId: 'detailPlatformStartDate', endId: 'detailPlatformEndDate', setStart: (v) => { detailPlatformStartDate = v; }, setEnd: (v) => { detailPlatformEndDate = v; } },
+                { startId: 'detailDevicePlatformStartDate', endId: 'detailDevicePlatformEndDate', setStart: (v) => { detailDevicePlatformStartDate = v; }, setEnd: (v) => { detailDevicePlatformEndDate = v; } },
+                { startId: 'detailDeviceTypeStartDate', endId: 'detailDeviceTypeEndDate', setStart: (v) => { detailDeviceTypeStartDate = v; }, setEnd: (v) => { detailDeviceTypeEndDate = v; } }
+            ];
+
+            dateInputs.forEach(({ startId, endId, setStart, setEnd }) => {
+                const startInput = document.getElementById(startId);
+                const endInput = document.getElementById(endId);
+                if (startInput) {
+                    startInput.value = minDateStr;
+                    setStart(minDateStr);
+                }
+                if (endInput) {
+                    endInput.value = maxDateStr;
+                    setEnd(maxDateStr);
+                }
+            });
         }
 
         window.addEventListener('DOMContentLoaded', loadData);
