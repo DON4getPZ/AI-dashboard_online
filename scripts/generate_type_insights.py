@@ -358,6 +358,7 @@ prophet_files = {
     'gender': 'prophet_forecast_by_gender.csv',
     'age': 'prophet_forecast_by_age.csv',
     'platform': 'prophet_forecast_by_platform.csv',
+    'deviceplatform': 'prophet_forecast_by_deviceplatform.csv',
     'device': 'prophet_forecast_by_device.csv',
     'promotion': 'prophet_forecast_by_promotion.csv',
     'age_gender': 'prophet_forecast_by_age_gender.csv',
@@ -673,25 +674,25 @@ if 'type5' in dimensions:
 # ============================================================================
 print("기기플랫폼 인사이트 생성 중...")
 
-platform_insights = []
+deviceplatform_insights = []
 if 'type7' in dimensions:
     type7_df = dimensions['type7']
 
     # 기기플랫폼_통합 컬럼 사용 (fallback: 기기플랫폼)
-    platform_col = '기기플랫폼_통합' if '기기플랫폼_통합' in type7_df.columns else '기기플랫폼'
+    deviceplatform_col = '기기플랫폼_통합' if '기기플랫폼_통합' in type7_df.columns else '기기플랫폼'
 
-    platform_summary = type7_df.groupby(platform_col).agg({
+    deviceplatform_summary = type7_df.groupby(deviceplatform_col).agg({
         '비용': 'sum',
         '전환수': 'sum',
         '전환값': 'sum'
     }).reset_index()
 
-    platform_summary['ROAS'] = (platform_summary['전환값'] / platform_summary['비용'] * 100).replace([np.inf, -np.inf], 0)
-    platform_summary = platform_summary[platform_summary['전환수'] > 0]
+    deviceplatform_summary['ROAS'] = (deviceplatform_summary['전환값'] / deviceplatform_summary['비용'] * 100).replace([np.inf, -np.inf], 0)
+    deviceplatform_summary = deviceplatform_summary[deviceplatform_summary['전환수'] > 0]
 
-    for _, row in platform_summary.iterrows():
-        platform_insights.append({
-            "platform": row[platform_col],
+    for _, row in deviceplatform_summary.iterrows():
+        deviceplatform_insights.append({
+            "deviceplatform": row[deviceplatform_col],
             "cost": float(row['비용']),
             "conversions": float(row['전환수']),
             "revenue": float(row['전환값']),
@@ -1348,30 +1349,57 @@ if 'age' in prophet_forecasts:
     age_forecast_insights = sorted(age_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
 
 # 기기플랫폼별 예측
+deviceplatform_forecast_insights = []
+if 'deviceplatform' in prophet_forecasts:
+    deviceplatform_df = prophet_forecasts['deviceplatform']
+    # 기기플랫폼_통합 컬럼 사용 (fallback: 기기플랫폼)
+    deviceplatform_col = '기기플랫폼_통합' if '기기플랫폼_통합' in deviceplatform_df.columns else '기기플랫폼'
+    for deviceplatform in deviceplatform_df[deviceplatform_col].unique():
+        deviceplatform_data = deviceplatform_df[deviceplatform_df[deviceplatform_col] == deviceplatform]
+        total_forecast = deviceplatform_data['예측_전환값'].sum()
+        avg_forecast = deviceplatform_data['예측_전환값'].mean()
+
+        # ROAS/CPA는 sum 기반으로 계산
+        deviceplatform_total_cost = float(deviceplatform_data['예측_비용'].sum()) if '예측_비용' in deviceplatform_data.columns else 0
+        deviceplatform_total_conversions = float(deviceplatform_data['예측_전환수'].sum()) if '예측_전환수' in deviceplatform_data.columns else 0
+
+        deviceplatform_forecast_insights.append({
+            "deviceplatform": deviceplatform,
+            "total_30day_forecast": float(total_forecast),
+            "avg_daily_forecast": float(avg_forecast),
+            "avg_forecast_roas": float((total_forecast / deviceplatform_total_cost * 100) if deviceplatform_total_cost > 0 else 0),
+            "avg_forecast_cpa": float((deviceplatform_total_cost / deviceplatform_total_conversions) if deviceplatform_total_conversions > 0 else 0),
+            "total_forecast_cost": deviceplatform_total_cost
+        })
+
+    deviceplatform_forecast_insights = sorted(deviceplatform_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
+
+# 플랫폼별 예측 (Type6 기반)
 platform_forecast_insights = []
 if 'platform' in prophet_forecasts:
     platform_df = prophet_forecasts['platform']
-    # 기기플랫폼_통합 컬럼 사용 (fallback: 기기플랫폼)
-    platform_col = '기기플랫폼_통합' if '기기플랫폼_통합' in platform_df.columns else '기기플랫폼'
-    for platform in platform_df[platform_col].unique():
-        platform_data = platform_df[platform_df[platform_col] == platform]
-        total_forecast = platform_data['예측_전환값'].sum()
-        avg_forecast = platform_data['예측_전환값'].mean()
+    # 플랫폼 컬럼 사용
+    platform_col = '플랫폼' if '플랫폼' in platform_df.columns else None
+    if platform_col:
+        for platform in platform_df[platform_col].unique():
+            platform_data = platform_df[platform_df[platform_col] == platform]
+            total_forecast = platform_data['예측_전환값'].sum()
+            avg_forecast = platform_data['예측_전환값'].mean()
 
-        # ROAS/CPA는 sum 기반으로 계산
-        platform_total_cost = float(platform_data['예측_비용'].sum()) if '예측_비용' in platform_data.columns else 0
-        platform_total_conversions = float(platform_data['예측_전환수'].sum()) if '예측_전환수' in platform_data.columns else 0
+            # ROAS/CPA는 sum 기반으로 계산
+            platform_total_cost = float(platform_data['예측_비용'].sum()) if '예측_비용' in platform_data.columns else 0
+            platform_total_conversions = float(platform_data['예측_전환수'].sum()) if '예측_전환수' in platform_data.columns else 0
 
-        platform_forecast_insights.append({
-            "platform": platform,
-            "total_30day_forecast": float(total_forecast),
-            "avg_daily_forecast": float(avg_forecast),
-            "avg_forecast_roas": float((total_forecast / platform_total_cost * 100) if platform_total_cost > 0 else 0),
-            "avg_forecast_cpa": float((platform_total_cost / platform_total_conversions) if platform_total_conversions > 0 else 0),
-            "total_forecast_cost": platform_total_cost
-        })
+            platform_forecast_insights.append({
+                "platform": platform,
+                "total_30day_forecast": float(total_forecast),
+                "avg_daily_forecast": float(avg_forecast),
+                "avg_forecast_roas": float((total_forecast / platform_total_cost * 100) if platform_total_cost > 0 else 0),
+                "avg_forecast_cpa": float((platform_total_cost / platform_total_conversions) if platform_total_conversions > 0 else 0),
+                "total_forecast_cost": platform_total_cost
+            })
 
-    platform_forecast_insights = sorted(platform_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
+        platform_forecast_insights = sorted(platform_forecast_insights, key=lambda x: x['total_30day_forecast'], reverse=True)
 
 # 기기유형별 예측
 device_forecast_insights = []
@@ -1602,13 +1630,13 @@ if len(gender_forecast_insights) > 0 and len(age_forecast_insights) > 0:
             "based_on": "prophet_forecast"
         })
 
-# 4. 플랫폼 최적화 추천
-if len(platform_forecast_insights) > 0:
-    best_platform = platform_forecast_insights[0]
-    if best_platform['total_30day_forecast'] > 0:
+# 4. 기기플랫폼 최적화 추천
+if len(deviceplatform_forecast_insights) > 0:
+    best_deviceplatform = deviceplatform_forecast_insights[0]
+    if best_deviceplatform['total_30day_forecast'] > 0:
         prophet_recommendations.append({
-            "title": "플랫폼 집중 전략 (예측 기반)",
-            "description": f"{best_platform['platform']} 플랫폼에서 향후 30일간 {best_platform['total_30day_forecast']:,.0f}원의 전환이 예상됩니다. 해당 플랫폼 광고에 집중하세요.",
+            "title": "기기플랫폼 집중 전략 (예측 기반)",
+            "description": f"{best_deviceplatform['deviceplatform']} 기기플랫폼에서 향후 30일간 {best_deviceplatform['total_30day_forecast']:,.0f}원의 전환이 예상됩니다. 해당 기기플랫폼 광고에 집중하세요.",
             "priority": "medium",
             "expected_impact": "ROAS 10-20% 개선 예상",
             "based_on": "prophet_forecast"
@@ -1852,20 +1880,20 @@ if len(gender_insights) >= 2:
         "expected_impact": "CPA 15-25% 절감 가능"
     })
 
-# 3. 플랫폼 최적화
-if len(platform_insights) > 0:
-    best_platform = max(platform_insights, key=lambda x: x['roas'])
+# 3. 기기플랫폼 최적화
+if len(deviceplatform_insights) > 0:
+    best_deviceplatform = max(deviceplatform_insights, key=lambda x: x['roas'])
 
-    # 플랫폼 기반 페르소나 액션
-    platform_action = get_persona_action(platform=best_platform['platform'])
-    action_text = platform_action if platform_action else f"{best_platform['platform']} 플랫폼 광고에 집중하세요."
+    # 기기플랫폼 기반 페르소나 액션
+    deviceplatform_action = get_persona_action(platform=best_deviceplatform['deviceplatform'])
+    action_text = deviceplatform_action if deviceplatform_action else f"{best_deviceplatform['deviceplatform']} 기기플랫폼 광고에 집중하세요."
 
     recommendations.append({
-        "title": f"📱 {best_platform['platform']} 플랫폼이 효자예요!",
-        "description": f"{best_platform['platform']} 플랫폼 광고에 집중하세요. ROAS {best_platform['roas']:.0f}%로 가장 효율적입니다.",
+        "title": f"📱 {best_deviceplatform['deviceplatform']} 기기플랫폼이 효자예요!",
+        "description": f"{best_deviceplatform['deviceplatform']} 기기플랫폼 광고에 집중하세요. ROAS {best_deviceplatform['roas']:.0f}%로 가장 효율적입니다.",
         "action": action_text,
         "priority": "medium",
-        "category": "플랫폼",
+        "category": "기기플랫폼",
         "score": 4,
         "expected_impact": "전환율 10-15% 개선 예상"
     })
@@ -2640,7 +2668,7 @@ insights = {
     "top_adsets": top_adsets[:10] if len(top_adsets) > 0 else [],
     "age_gender_combinations": age_gender_insights,
     "device_performance": device_insights,
-    "platform_performance": platform_insights,
+    "deviceplatform_performance": deviceplatform_insights,
     "brand_performance": brand_insights[:10] if len(brand_insights) > 0 else [],
     "product_performance": product_insights[:10] if len(product_insights) > 0 else [],
     "promotion_performance": promotion_insights[:10] if len(promotion_insights) > 0 else [],
@@ -2668,6 +2696,7 @@ insights = {
         "by_age": age_forecast_insights,
         "by_device": device_forecast_insights,
         "by_platform": platform_forecast_insights,
+        "by_deviceplatform": deviceplatform_forecast_insights,
         "by_promotion": promotion_forecast_insights[:10] if len(promotion_forecast_insights) > 0 else [],
         "by_age_gender": age_gender_forecast_insights[:10] if len(age_gender_forecast_insights) > 0 else [],
         "alerts": prophet_alerts,
@@ -2766,6 +2795,7 @@ print(f"  - 성별 예측: {len(gender_forecast_insights)}개")
 print(f"  - 연령별 예측: {len(age_forecast_insights)}개")
 print(f"  - 기기유형별 예측: {len(device_forecast_insights)}개")
 print(f"  - 플랫폼별 예측: {len(platform_forecast_insights)}개")
+print(f"  - 기기플랫폼별 예측: {len(deviceplatform_forecast_insights)}개")
 print(f"  - 프로모션별 예측: {len(promotion_forecast_insights)}개")
 print(f"  - 연령+성별 조합별 예측: {len(age_gender_forecast_insights)}개")
 print(f"  - Prophet 알림: {len(prophet_alerts)}개")

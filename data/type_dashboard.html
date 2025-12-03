@@ -5196,8 +5196,8 @@
         function renderTargetingTab() {
             const periodData = getPeriodData();
             const genderData = (periodData.gender_performance || []).filter(g => isValidGender(g.gender));
-            const platformData = (periodData.platform_performance || []).filter(p =>
-                p.platform && p.platform.toLowerCase() !== 'uncategorized'
+            const platformData = (periodData.deviceplatform_performance || []).filter(p =>
+                p.deviceplatform && p.deviceplatform.toLowerCase() !== 'uncategorized'
             );
             const deviceData = (periodData.device_performance || []).filter(d =>
                 d.device && d.device.toLowerCase() !== 'uncategorized' && d.device.toLowerCase() !== 'unknown'
@@ -5261,13 +5261,13 @@
                 `;
             }
 
-            // 최고 플랫폼
+            // 최고 기기플랫폼
             if (topPlatform) {
                 html += `
                     <div style="padding: 12px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 10px; text-align: center;">
                         <div style="font-size: 24px; margin-bottom: 4px;">📱</div>
-                        <div style="font-size: 10px; color: var(--grey-500); margin-bottom: 2px;">기기</div>
-                        <div style="font-size: 16px; font-weight: 800; color: #1565c0;">${topPlatform.platform}</div>
+                        <div style="font-size: 10px; color: var(--grey-500); margin-bottom: 2px;">기기플랫폼</div>
+                        <div style="font-size: 16px; font-weight: 800; color: #1565c0;">${topPlatform.deviceplatform}</div>
                         <div style="font-size: 11px; color: var(--grey-600); margin-top: 4px;">ROAS ${formatPercent(topPlatform.roas)}</div>
                     </div>
                 `;
@@ -5402,7 +5402,7 @@
                     html += `
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; margin-bottom: 6px; background: #fafafa; border-radius: 8px; position: relative; overflow: hidden;">
                             <div style="position: absolute; top: 0; left: 0; height: 100%; width: ${barWidth}%; background: linear-gradient(90deg, ${roasColor}22, ${roasColor}11); border-radius: 8px;"></div>
-                            <div style="position: relative; z-index: 1; font-size: 12px; font-weight: 600; color: var(--grey-800);">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`} ${p.platform}</div>
+                            <div style="position: relative; z-index: 1; font-size: 12px; font-weight: 600; color: var(--grey-800);">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`} ${p.deviceplatform}</div>
                             <div style="position: relative; z-index: 1; font-size: 13px; font-weight: 700; color: ${roasColor};">${formatPercent(p.roas)}</div>
                         </div>
                     `;
@@ -5754,15 +5754,15 @@
             html += `<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">`;
 
             // 최적 플랫폼 (periodData 사용)
-            if (periodData && periodData.platform_performance && periodData.platform_performance.length > 0) {
-                const validPlatforms = periodData.platform_performance.filter(p => p.cost > 0 && p.platform !== 'Uncategorized');
+            if (periodData && periodData.deviceplatform_performance && periodData.deviceplatform_performance.length > 0) {
+                const validPlatforms = periodData.deviceplatform_performance.filter(p => p.cost > 0 && p.deviceplatform !== 'Uncategorized');
                 if (validPlatforms.length > 0) {
                     const sortedPlatforms = [...validPlatforms].sort((a, b) => (b.roas || 0) - (a.roas || 0));
                     const topPlatform = sortedPlatforms[0];
                     html += `
                         <div style="padding: 12px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 10px; text-align: center;">
-                            <div style="font-size: 9px; color: #1565c0; font-weight: 600; margin-bottom: 2px;">📱 최적 플랫폼</div>
-                            <div style="font-size: 12px; font-weight: 700; color: #0d47a1;">${topPlatform.platform}</div>
+                            <div style="font-size: 9px; color: #1565c0; font-weight: 600; margin-bottom: 2px;">📱 최적 기기플랫폼</div>
+                            <div style="font-size: 12px; font-weight: 700; color: #0d47a1;">${topPlatform.deviceplatform}</div>
                             <div style="font-size: 10px; color: #1565c0;">ROAS ${(topPlatform.roas || 0).toFixed(0)}%</div>
                         </div>
                     `;
@@ -5993,17 +5993,17 @@
             const periodData = getPeriodData();
 
             try {
-                // 1. 최고 성과 플랫폼 기회
-                if (periodData && periodData.platform_performance && periodData.platform_performance.length > 0) {
-                    const validPlatforms = periodData.platform_performance.filter(p => p.cost > 0 && p.platform !== 'Uncategorized');
+                // 1. 최고 성과 기기플랫폼 기회
+                if (periodData && periodData.deviceplatform_performance && periodData.deviceplatform_performance.length > 0) {
+                    const validPlatforms = periodData.deviceplatform_performance.filter(p => p.cost > 0 && p.deviceplatform !== 'Uncategorized');
                     if (validPlatforms.length > 0) {
                         const sorted = [...validPlatforms].sort((a, b) => (b.roas || 0) - (a.roas || 0));
                         const top = sorted[0];
                         if (top && (top.roas || 0) >= 100) {
                             opportunities.push({
                                 icon: '📱',
-                                title: top.platform + ' 플랫폼 고효율 기회',
-                                description: top.platform + '에서 ROAS ' + (top.roas || 0).toFixed(0) + '%로 가장 높은 효율을 보이고 있습니다. 해당 플랫폼의 예산을 확대하면 전체 캠페인 성과 개선이 기대됩니다.',
+                                title: top.deviceplatform + ' 기기플랫폼 고효율 기회',
+                                description: top.deviceplatform + '에서 ROAS ' + (top.roas || 0).toFixed(0) + '%로 가장 높은 효율을 보이고 있습니다. 해당 기기플랫폼의 예산을 확대하면 전체 캠페인 성과 개선이 기대됩니다.',
                                 metric: 'ROAS ' + (top.roas || 0).toFixed(0) + '%'
                             });
                         }
@@ -6111,17 +6111,17 @@
                     }
                 }
 
-                // 2. 고효율 플랫폼 예산 확대 액션
-                if (periodData && periodData.platform_performance && periodData.platform_performance.length > 0) {
-                    const validPlatforms = periodData.platform_performance.filter(function(p) { return p.cost > 0 && p.platform !== 'Uncategorized'; });
+                // 2. 고효율 기기플랫폼 예산 확대 액션
+                if (periodData && periodData.deviceplatform_performance && periodData.deviceplatform_performance.length > 0) {
+                    const validPlatforms = periodData.deviceplatform_performance.filter(function(p) { return p.cost > 0 && p.deviceplatform !== 'Uncategorized'; });
                     if (validPlatforms.length > 0) {
                         const sorted = [...validPlatforms].sort((a, b) => (b.roas || 0) - (a.roas || 0));
                         const top = sorted[0];
                         if (top && (top.roas || 0) >= 150) {
                             actions.push({
                                 icon: '💵',
-                                title: top.platform + ' 예산 20% 증액',
-                                description: top.platform + '의 ROAS가 ' + (top.roas || 0).toFixed(0) + '%로 매우 높습니다. 해당 플랫폼 예산을 20% 증액하여 성과를 극대화하세요.',
+                                title: top.deviceplatform + ' 예산 20% 증액',
+                                description: top.deviceplatform + '의 ROAS가 ' + (top.roas || 0).toFixed(0) + '%로 매우 높습니다. 해당 기기플랫폼 예산을 20% 증액하여 성과를 극대화하세요.',
                                 priority: 'high',
                                 expectedEffect: '매출 증가 기대'
                             });
@@ -6144,17 +6144,17 @@
                     }
                 }
 
-                // 4. 저효율 플랫폼 개선 또는 축소 액션
-                if (periodData && periodData.platform_performance && periodData.platform_performance.length > 1) {
-                    const validPlatforms = periodData.platform_performance.filter(function(p) { return p.cost > 10000 && p.platform !== 'Uncategorized'; });
+                // 4. 저효율 기기플랫폼 개선 또는 축소 액션
+                if (periodData && periodData.deviceplatform_performance && periodData.deviceplatform_performance.length > 1) {
+                    const validPlatforms = periodData.deviceplatform_performance.filter(function(p) { return p.cost > 10000 && p.deviceplatform !== 'Uncategorized'; });
                     if (validPlatforms.length > 0) {
                         const sorted = [...validPlatforms].sort((a, b) => (a.roas || 0) - (b.roas || 0));
                         const worst = sorted[0];
                         if (worst && (worst.roas || 0) < 100) {
                             actions.push({
                                 icon: '⚠️',
-                                title: worst.platform + ' 예산 재검토',
-                                description: worst.platform + '의 ROAS가 ' + (worst.roas || 0).toFixed(0) + '%로 손익분기점 미달입니다. 타겟 및 소재 최적화 후에도 개선되지 않으면 예산 축소를 고려하세요.',
+                                title: worst.deviceplatform + ' 예산 재검토',
+                                description: worst.deviceplatform + '의 ROAS가 ' + (worst.roas || 0).toFixed(0) + '%로 손익분기점 미달입니다. 타겟 및 소재 최적화 후에도 개선되지 않으면 예산 축소를 고려하세요.',
                                 priority: 'medium',
                                 expectedEffect: '비용 효율화'
                             });
@@ -6283,7 +6283,7 @@
                         const isTop = idx === 0;
                         html += `
                             <div style="padding: 10px; background: ${isTop ? 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)' : '#f5f5f5'}; border-radius: 8px; text-align: center; ${isTop ? 'border: 2px solid #1976d2;' : ''}">
-                                <div style="font-size: 9px; color: var(--grey-600); margin-bottom: 2px;">${plat.platform}</div>
+                                <div style="font-size: 9px; color: var(--grey-600); margin-bottom: 2px;">${plat.deviceplatform}</div>
                                 <div style="font-size: 14px; font-weight: 700; color: ${roas >= 100 ? '#1565c0' : '#c62828'};">${roas.toFixed(0)}%</div>
                                 ${isTop ? '<div style="font-size: 8px; color: #1976d2; margin-top: 2px;">🏆 1위</div>' : ''}
                             </div>
@@ -6489,13 +6489,13 @@
         // 플랫폼 차트
         function renderPlatformChart() {
             const periodData = getPeriodData();
-            const platforms = periodData.platform_performance;
+            const platforms = periodData.deviceplatform_performance;
 
             const ctx = document.getElementById('platformChart').getContext('2d');
             new Chart(ctx, {
                 type: 'pie',
                 data: {
-                    labels: platforms.map(p => p.platform),
+                    labels: platforms.map(p => p.deviceplatform),
                     datasets: [{
                         data: platforms.map(p => p.revenue),
                         backgroundColor: [
@@ -6521,7 +6521,7 @@
                                 label: function(context) {
                                     const item = platforms[context.dataIndex];
                                     return [
-                                        `${item.platform}`,
+                                        `${item.deviceplatform}`,
                                         `전환값: ${formatCurrency(item.revenue)}`,
                                         `ROAS: ${formatPercent(item.roas)}`,
                                         `전환수: ${formatNumber(item.conversions)}`
@@ -7393,13 +7393,13 @@
 
             let html = '';
             sortedData.forEach(item => {
-                const platformIcon = getPlatformIcon(item.platform);
+                const platformIcon = getPlatformIcon(item.deviceplatform);
                 const roasColor = item.roas >= 150 ? '#2e7d32' : item.roas >= 50 ? '#1565c0' : item.roas > 0 ? '#e65100' : '#9e9e9e';
                 const efficiencyGrade = item.roas > 0 ? getEfficiencyGrade(item.roas, maxRoas) : '<span style="background: #f5f5f5; color: #9e9e9e; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">-</span>';
 
                 html += `
                     <tr>
-                        <td style="font-weight: 500;">${platformIcon} ${item.platform}</td>
+                        <td style="font-weight: 500;">${platformIcon} ${item.deviceplatform}</td>
                         <td style="text-align: right; font-weight: 700; color: ${roasColor};">${item.roas > 0 ? formatPercent(item.roas) : '-'}</td>
                         <td style="text-align: right;">${item.cpa > 0 ? formatCurrency(item.cpa) : '-'}</td>
                         <td style="text-align: right;">${formatCurrency(item.cost)}</td>
@@ -7413,12 +7413,12 @@
             tbody.innerHTML = html;
 
             // 인사이트 업데이트
-            const platformInsight = insights.find(i => i.type === 'retargeting_best_platform');
+            const platformInsight = insights.find(i => i.type === 'retargeting_best_deviceplatform');
             const insightText = document.getElementById('platformRetargetInsightText');
             if (insightText && platformInsight) {
                 insightText.innerHTML = platformInsight.message;
             } else if (insightText && sortedData.length > 0 && sortedData[0].roas > 0) {
-                insightText.innerHTML = `<strong>${sortedData[0].platform}</strong> 플랫폼이 ROAS <strong>${formatPercent(sortedData[0].roas)}</strong>로 가장 높은 효율을 기록 중입니다.`;
+                insightText.innerHTML = `<strong>${sortedData[0].deviceplatform}</strong> 기기플랫폼이 ROAS <strong>${formatPercent(sortedData[0].roas)}</strong>로 가장 높은 효율을 기록 중입니다.`;
             }
         }
 

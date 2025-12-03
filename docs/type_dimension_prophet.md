@@ -20,8 +20,8 @@
 | `dimension_type3_adset_age.csv` | `Type3` **OR** `Type2` | `prophet_forecast_by_age.csv` | dimension_type3 CSV 로드 |
 | `dimension_type4_adset_gender.csv` | `Type4` **OR** `Type2` | `prophet_forecast_by_gender.csv` | dimension_type4 CSV 로드 |
 | `dimension_type5_adset_device.csv` | `Type5_광고세트+기기유형` | `prophet_forecast_by_device.csv` | dimension_type5 CSV 로드 |
-| `dimension_type6_adset_platform.csv` | `Type6_광고세트+플랫폼` | *(없음)* | - |
-| `dimension_type7_adset_deviceplatform.csv` | `Type7_광고세트+기기플랫폼` | `prophet_forecast_by_platform.csv` | dimension_type7 CSV 로드 |
+| `dimension_type6_adset_platform.csv` | `Type6_광고세트+플랫폼` | `prophet_forecast_by_platform.csv` | dimension_type6 CSV 로드 |
+| `dimension_type7_adset_deviceplatform.csv` | `Type7_광고세트+기기플랫폼` | `prophet_forecast_by_deviceplatform.csv` | dimension_type7 CSV 로드 |
 | *(merged_data 전체)* | 전체 | `prophet_forecast_overall.csv` | 전체 |
 | *(merged_data 전체)* | 전체 | `prophet_forecast_by_seasonality.csv` | 전체 |
 
@@ -32,7 +32,7 @@
 `merged_data.csv`의 각 행은 다음 조건에 따라 data_type이 분류됩니다:
 
 | data_type | 캠페인 | 광고세트 | 연령 | 성별 | 기기유형 | 플랫폼 | 기기플랫폼 |
-|-----------|--------|---------|------|------|---------|--------|-----------|
+|-----------|:------:|:-------:|:----:|:----:|:-------:|:------:|:---------:|
 | Type1_캠페인+광고세트 | O | O | X | X | X | X | X |
 | Type2_광고세트+연령+성별 | X | O | O | O | X | X | X |
 | Type3_광고세트+연령 | X | O | O | X | X | X | X |
@@ -96,7 +96,8 @@ merged_data.csv
                  │     ├── prophet_forecast_by_age.csv ← type3
                  │     ├── prophet_forecast_by_gender.csv ← type4
                  │     ├── prophet_forecast_by_device.csv ← type5
-                 │     ├── prophet_forecast_by_platform.csv ← type7
+                 │     ├── prophet_forecast_by_platform.csv ← type6
+                 │     ├── prophet_forecast_by_deviceplatform.csv ← type7
                  │     └── prophet_forecast_by_age_gender.csv ← type2
                  │
                  └── [전체 데이터]
@@ -119,4 +120,6 @@ merged_data.csv
 
 | 날짜 | 변경 내용 |
 |------|----------|
+| 2025-12-03 | Type6(플랫폼) → `prophet_forecast_by_platform.csv` 신규 추가 |
+| 2025-12-03 | Type7(기기플랫폼) → `prophet_forecast_by_deviceplatform.csv` 이름 변경 |
 | 2025-12-02 | `prophet_forecast_by_category.csv` 필터에 `Type1_캠페인+광고세트` 조건 추가 |

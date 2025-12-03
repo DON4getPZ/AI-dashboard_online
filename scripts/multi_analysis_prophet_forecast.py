@@ -1133,13 +1133,91 @@ if PROPHET_AVAILABLE:
                 cols.append('예측_CPA')
             cols.append('type')
             combined_platform = combined_platform[[c for c in cols if c in combined_platform.columns]]
-            combined_platform.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_platform.csv',
+            combined_platform.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_deviceplatform.csv',
                                        index=False, encoding='utf-8-sig')
-            print("\n✓ 기기플랫폼별 예측 결과 저장: data/type/prophet_forecast_by_platform.csv")
+            print("\n✓ 기기플랫폼별 예측 결과 저장: data/type/prophet_forecast_by_deviceplatform.csv")
 
     except Exception as e:
         print(f"\n기기플랫폼 예측 오류: {e}")
         print("dimension_type7 CSV 파일을 확인해주세요.")
+
+    # ============================================================================
+    # 10-1. 플랫폼별 다중 지표 예측 (dimension_type6 CSV 활용)
+    # ============================================================================
+    print("\n" + "=" * 100)
+    print(f"10-1. 플랫폼별 다중 지표 예측 (실제 {OUTPUT_DAYS}일 + 예측 {OUTPUT_DAYS}일) - dimension_type6 CSV 활용")
+    print("=" * 100)
+
+    # dimension_type6 CSV 파일 로드
+    type6_csv_path = DATA_TYPE_DIR / 'dimension_type6_adset_platform.csv'
+    platform6_forecast_results = []
+
+    try:
+        type6_data = pd.read_csv(type6_csv_path, thousands=',', low_memory=False)
+        type6_data['일'] = pd.to_datetime(type6_data['일'])
+        for col in numeric_cols:
+            if col in type6_data.columns:
+                type6_data[col] = pd.to_numeric(type6_data[col], errors='coerce').fillna(0)
+        print(f"dimension_type6 CSV 로드 완료: {len(type6_data):,}행")
+        print("플랫폼 컬럼 활용")
+
+        # 플랫폼 목록 (플랫폼 컬럼 사용)
+        platforms6 = type6_data[type6_data['플랫폼'] != '-']['플랫폼'].unique()
+
+        for platform6 in platforms6:
+            platform6_data = type6_data[type6_data['플랫폼'] == platform6]
+            daily_platform6 = platform6_data.groupby('일').agg({
+                '비용': 'sum',
+                '노출': 'sum',
+                '클릭': 'sum',
+                '전환수': 'sum',
+                '전환값': 'sum'
+            }).reset_index()
+
+            if len(daily_platform6) < 10:
+                print(f"\n[{platform6}]: 데이터 부족 ({len(daily_platform6)}일)")
+                continue
+
+            print(f"\n[{platform6}] 다중 지표 예측")
+            print(f"학습 데이터: {len(daily_platform6)}일")
+
+            # 예측 데이터 생성
+            platform6_forecasts = forecast_multiple_metrics(daily_platform6)
+            platform6_forecast_result = combine_metric_forecasts(platform6_forecasts, '플랫폼', platform6)
+
+            # 실제 데이터 생성
+            platform6_actual_result = create_actual_data(daily_platform6, '플랫폼', platform6)
+
+            # 실제 + 예측 결합
+            platform6_result = combine_actual_and_forecast(platform6_actual_result, platform6_forecast_result)
+
+            if platform6_result is not None:
+                platform6_forecast_results.append(platform6_result)
+                forecast_only = platform6_result[platform6_result['type'] == 'forecast']
+                if '예측_전환값' in forecast_only.columns:
+                    print(f"향후 {len(forecast_only)}일 예상 총 전환값: {forecast_only['예측_전환값'].sum():,.0f}원")
+                platform6_total_cost = forecast_only['예측_비용'].sum() if '예측_비용' in forecast_only.columns else 0
+                platform6_total_revenue = forecast_only['예측_전환값'].sum() if '예측_전환값' in forecast_only.columns else 0
+                platform6_roas = (platform6_total_revenue / platform6_total_cost * 100) if platform6_total_cost > 0 else 0
+                print(f"평균 예측 ROAS: {platform6_roas:.1f}%")
+
+        # 플랫폼별 예측 결과 저장 (actual + forecast)
+        if platform6_forecast_results:
+            combined_platform6 = pd.concat(platform6_forecast_results, ignore_index=True)
+            cols = ['플랫폼', '일자'] + [f'예측_{m}' for m in FORECAST_METRICS if f'예측_{m}' in combined_platform6.columns]
+            if '예측_ROAS' in combined_platform6.columns:
+                cols.append('예측_ROAS')
+            if '예측_CPA' in combined_platform6.columns:
+                cols.append('예측_CPA')
+            cols.append('type')
+            combined_platform6 = combined_platform6[[c for c in cols if c in combined_platform6.columns]]
+            combined_platform6.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_platform.csv',
+                                       index=False, encoding='utf-8-sig')
+            print("\n✓ 플랫폼별 예측 결과 저장: data/type/prophet_forecast_by_platform.csv")
+
+    except Exception as e:
+        print(f"\n플랫폼 예측 오류: {e}")
+        print("dimension_type6 CSV 파일을 확인해주세요.")
 
     # ============================================================================
     # 10-2. 기기유형별 다중 지표 예측 (dimension_type5 CSV 활용 - 이미 매핑된 데이터)
@@ -1417,7 +1495,8 @@ print("  6. prophet_forecast_by_brand.csv - 브랜드별 다중 지표 예측")
 print("  7. prophet_forecast_by_product.csv - 상품별 다중 지표 예측")
 print("  8. prophet_forecast_by_gender.csv - 성별 다중 지표 예측")
 print("  9. prophet_forecast_by_age.csv - 연령별 다중 지표 예측")
-print("  10. prophet_forecast_by_platform.csv - 기기플랫폼별 다중 지표 예측")
+print("  10. prophet_forecast_by_deviceplatform.csv - 기기플랫폼별 다중 지표 예측")
+print("  10-1. prophet_forecast_by_platform.csv - 플랫폼별 다중 지표 예측")
 print("  11. prophet_forecast_by_device.csv - 기기유형별 다중 지표 예측")
 print("  12. prophet_forecast_by_promotion.csv - 프로모션별 다중 지표 예측")
 print("  13. prophet_forecast_by_age_gender.csv - 연령+성별 조합별 다중 지표 예측")

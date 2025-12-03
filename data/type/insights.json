@@ -310,30 +310,30 @@
           "roas": 277.6423032232775
         }
       ],
-      "platform_performance": [
+      "deviceplatform_performance": [
         {
-          "platform": "Uncategorized",
+          "deviceplatform": "Uncategorized",
           "cost": 1.0,
           "conversions": 10.0,
           "revenue": 352851.0,
           "roas": 35285100.0
         },
         {
-          "platform": "모바일",
+          "deviceplatform": "모바일",
           "cost": 18957482.0,
           "conversions": 577.0,
           "revenue": 89613000.0,
           "roas": 472.7051831039587
         },
         {
-          "platform": "앱",
+          "deviceplatform": "앱",
           "cost": 190507435.0,
           "conversions": 10818.0,
           "revenue": 354326587.0,
           "roas": 185.99094938210678
         },
         {
-          "platform": "웹",
+          "deviceplatform": "웹",
           "cost": 1455814.0,
           "conversions": 65.0,
           "revenue": 6378900.0,
@@ -2923,7 +2923,57 @@
         ],
         "by_platform": [
           {
-            "platform": "앱",
+            "platform": "Instagram",
+            "total_30day_forecast": 25900071.693343025,
+            "avg_daily_forecast": 863335.7231114341,
+            "avg_forecast_roas": 164.12523892016583,
+            "avg_forecast_cpa": 28490.990065311296,
+            "total_forecast_cost": 15780675.698477669
+          },
+          {
+            "platform": "Cross-network",
+            "total_30day_forecast": 4979494.729451998,
+            "avg_daily_forecast": 165983.15764839994,
+            "avg_forecast_roas": 180.35540537358804,
+            "avg_forecast_cpa": 15947.675156087289,
+            "total_forecast_cost": 2760934.566467513
+          },
+          {
+            "platform": "Facebook",
+            "total_30day_forecast": 2782311.6517655803,
+            "avg_daily_forecast": 92743.72172551934,
+            "avg_forecast_roas": 391.5499128184722,
+            "avg_forecast_cpa": 9431.438234982352,
+            "total_forecast_cost": 710589.2660626124
+          },
+          {
+            "platform": "threads",
+            "total_30day_forecast": 1600548.4284473453,
+            "avg_daily_forecast": 53351.61428157818,
+            "avg_forecast_roas": 661.046373243476,
+            "avg_forecast_cpa": 5857.678750473344,
+            "total_forecast_cost": 242123.47170049945
+          },
+          {
+            "platform": "Audience Network",
+            "total_30day_forecast": 1068153.238224633,
+            "avg_daily_forecast": 35605.1079408211,
+            "avg_forecast_roas": 2034.579255867431,
+            "avg_forecast_cpa": 1840.7388428885881,
+            "total_forecast_cost": 52499.95718496757
+          },
+          {
+            "platform": "Messenger",
+            "total_30day_forecast": 0.0,
+            "avg_daily_forecast": null,
+            "avg_forecast_roas": 0.0,
+            "avg_forecast_cpa": 0.0,
+            "total_forecast_cost": 60.7413141666835
+          }
+        ],
+        "by_deviceplatform": [
+          {
+            "deviceplatform": "앱",
             "total_30day_forecast": 28259125.199091733,
             "avg_daily_forecast": 941970.8399697244,
             "avg_forecast_roas": 171.6918686833255,
@@ -2931,7 +2981,7 @@
             "total_forecast_cost": 16459209.98810599
           },
           {
-            "platform": "모바일",
+            "deviceplatform": "모바일",
             "total_30day_forecast": 26492062.519933637,
             "avg_daily_forecast": 883068.7506644545,
             "avg_forecast_roas": 737.7232783648495,
@@ -2939,7 +2989,7 @@
             "total_forecast_cost": 3591056.8768621236
           },
           {
-            "platform": "웹",
+            "deviceplatform": "웹",
             "total_30day_forecast": 5536507.451946998,
             "avg_daily_forecast": 184550.24839823326,
             "avg_forecast_roas": 1393.017041325274,
@@ -3110,8 +3160,8 @@
             "based_on": "prophet_forecast"
           },
           {
-            "title": "플랫폼 집중 전략 (예측 기반)",
-            "description": "앱 플랫폼에서 향후 30일간 28,259,125원의 전환이 예상됩니다. 해당 플랫폼 광고에 집중하세요.",
+            "title": "기기플랫폼 집중 전략 (예측 기반)",
+            "description": "앱 기기플랫폼에서 향후 30일간 28,259,125원의 전환이 예상됩니다. 해당 기기플랫폼 광고에 집중하세요.",
             "priority": "medium",
             "expected_impact": "ROAS 10-20% 개선 예상",
             "based_on": "prophet_forecast"
@@ -3220,11 +3270,11 @@
           "expected_impact": "CPA 15-25% 절감 가능"
         },
         {
-          "title": "📱 Uncategorized 플랫폼이 효자예요!",
-          "description": "Uncategorized 플랫폼 광고에 집중하세요. ROAS 35285100%로 가장 효율적입니다.",
-          "action": "Uncategorized 플랫폼 광고에 집중하세요.",
+          "title": "📱 Uncategorized 기기플랫폼이 효자예요!",
+          "description": "Uncategorized 기기플랫폼 광고에 집중하세요. ROAS 35285100%로 가장 효율적입니다.",
+          "action": "Uncategorized 기기플랫폼 광고에 집중하세요.",
           "priority": "medium",
-          "category": "플랫폼",
+          "category": "기기플랫폼",
           "score": 4,
           "expected_impact": "전환율 10-15% 개선 예상"
         },
@@ -3263,8 +3313,8 @@
           "based_on": "prophet_forecast"
         },
         {
-          "title": "플랫폼 집중 전략 (예측 기반)",
-          "description": "앱 플랫폼에서 향후 30일간 28,259,125원의 전환이 예상됩니다. 해당 플랫폼 광고에 집중하세요.",
+          "title": "기기플랫폼 집중 전략 (예측 기반)",
+          "description": "앱 기기플랫폼에서 향후 30일간 28,259,125원의 전환이 예상됩니다. 해당 기기플랫폼 광고에 집중하세요.",
           "priority": "medium",
           "expected_impact": "ROAS 10-20% 개선 예상",
           "based_on": "prophet_forecast"
@@ -3277,7 +3327,7 @@
           "based_on": "prophet_forecast"
         }
       ],
-      "generated_at": "2025-12-02T17:59:29.201863",
+      "generated_at": "2025-12-03T11:59:47.379191",
       "filter_info": {
         "days": 0,
         "label": "전체 기간",
@@ -4001,30 +4051,30 @@
           "roas": 279.14029748731053
         }
       ],
-      "platform_performance": [
+      "deviceplatform_performance": [
         {
-          "platform": "Uncategorized",
+          "deviceplatform": "Uncategorized",
           "cost": 1.0,
           "conversions": 10.0,
           "revenue": 352851.0,
           "roas": 35285100.0
         },
         {
-          "platform": "모바일",
+          "deviceplatform": "모바일",
           "cost": 18956446.0,
           "conversions": 577.0,
           "revenue": 89613000.0,
           "roas": 472.73101719594484
         },
         {
-          "platform": "앱",
+          "deviceplatform": "앱",
           "cost": 186117294.0,
           "conversions": 10589.0,
           "revenue": 347489087.0,
           "roas": 186.70435161173145
         },
         {
-          "platform": "웹",
+          "deviceplatform": "웹",
           "cost": 1451072.0,
           "conversions": 65.0,
           "revenue": 6378900.0,
@@ -5942,19 +5992,19 @@
         "by_device": [
           {
             "device": "안드로이드",
-            "total_30day_forecast": 16337073.00223807,
-            "avg_daily_forecast": 544569.1000746024,
-            "avg_forecast_roas": 216.95260738736891,
-            "avg_forecast_cpa": 24234.864758545653,
-            "total_forecast_cost": 7530249.670181757
+            "total_30day_forecast": 15864494.119643725,
+            "avg_daily_forecast": 528816.4706547909,
+            "avg_forecast_roas": 210.1851496525041,
+            "avg_forecast_cpa": 24424.447876689872,
+            "total_forecast_cost": 7547866.319705389
           },
           {
             "device": "애플",
-            "total_30day_forecast": 15352637.473078867,
-            "avg_daily_forecast": 511754.5824359622,
-            "avg_forecast_roas": 205.6945625969964,
-            "avg_forecast_cpa": 22078.72624167158,
-            "total_forecast_cost": 7463803.262100934
+            "total_30day_forecast": 15663270.1268679,
+            "avg_daily_forecast": 522109.00422893,
+            "avg_forecast_roas": 212.9130729211568,
+            "avg_forecast_cpa": 24599.947207298777,
+            "total_forecast_cost": 7356650.2572944965
           },
           {
             "device": "모바일",
@@ -5966,11 +6016,11 @@
           },
           {
             "device": "웹",
-            "total_30day_forecast": 1690564.783891125,
-            "avg_daily_forecast": 56352.1594630375,
-            "avg_forecast_roas": 754.7289703781573,
-            "avg_forecast_cpa": 4378.103114924439,
-            "total_forecast_cost": 223996.27551650317
+            "total_30day_forecast": 1342335.0296615898,
+            "avg_daily_forecast": 44744.50098871966,
+            "avg_forecast_roas": 650.2131159801492,
+            "avg_forecast_cpa": 4491.31864818335,
+            "total_forecast_cost": 206445.39408254123
           },
           {
             "device": "TV",
@@ -5991,28 +6041,78 @@
         ],
         "by_platform": [
           {
-            "platform": "앱",
-            "total_30day_forecast": 28259125.199091733,
-            "avg_daily_forecast": 941970.8399697244,
-            "avg_forecast_roas": 171.6918686833255,
-            "avg_forecast_cpa": 27648.51798342997,
-            "total_forecast_cost": 16459209.98810599
+            "platform": "Instagram",
+            "total_30day_forecast": 26040149.513403732,
+            "avg_daily_forecast": 868004.9837801245,
+            "avg_forecast_roas": 168.82267823468067,
+            "avg_forecast_cpa": 28542.976527810686,
+            "total_forecast_cost": 15424556.573617011
           },
           {
-            "platform": "모바일",
+            "platform": "Cross-network",
+            "total_30day_forecast": 4979494.729451998,
+            "avg_daily_forecast": 165983.15764839994,
+            "avg_forecast_roas": 180.35540537358804,
+            "avg_forecast_cpa": 15947.675156087289,
+            "total_forecast_cost": 2760934.566467513
+          },
+          {
+            "platform": "Facebook",
+            "total_30day_forecast": 2772706.71710155,
+            "avg_daily_forecast": 92423.55723671833,
+            "avg_forecast_roas": 414.7209030767346,
+            "avg_forecast_cpa": 8849.9259236372,
+            "total_forecast_cost": 668571.7301759743
+          },
+          {
+            "platform": "threads",
+            "total_30day_forecast": 1600548.4284473453,
+            "avg_daily_forecast": 53351.61428157818,
+            "avg_forecast_roas": 661.046373243476,
+            "avg_forecast_cpa": 5857.678750473344,
+            "total_forecast_cost": 242123.47170049945
+          },
+          {
+            "platform": "Audience Network",
+            "total_30day_forecast": 1068153.238224633,
+            "avg_daily_forecast": 35605.1079408211,
+            "avg_forecast_roas": 1394.2571699120538,
+            "avg_forecast_cpa": 2686.1106731455952,
+            "total_forecast_cost": 76610.9195114994
+          },
+          {
+            "platform": "Messenger",
+            "total_30day_forecast": 0.0,
+            "avg_daily_forecast": null,
+            "avg_forecast_roas": 0.0,
+            "avg_forecast_cpa": 0.0,
+            "total_forecast_cost": 60.7413141666835
+          }
+        ],
+        "by_deviceplatform": [
+          {
+            "deviceplatform": "앱",
+            "total_30day_forecast": 27739603.017105084,
+            "avg_daily_forecast": 924653.4339035028,
+            "avg_forecast_roas": 174.2597064763448,
+            "avg_forecast_cpa": 27228.39098755871,
+            "total_forecast_cost": 15918541.112010105
+          },
+          {
+            "deviceplatform": "모바일",
             "total_30day_forecast": 26492062.519933637,
             "avg_daily_forecast": 883068.7506644545,
-            "avg_forecast_roas": 737.7232783648495,
-            "avg_forecast_cpa": 24225.04393361745,
-            "total_forecast_cost": 3591056.8768621236
+            "avg_forecast_roas": 601.8910782298799,
+            "avg_forecast_cpa": 29692.04807255038,
+            "total_forecast_cost": 4401471.209349865
           },
           {
-            "platform": "웹",
+            "deviceplatform": "웹",
             "total_30day_forecast": 5536507.451946998,
             "avg_daily_forecast": 184550.24839823326,
-            "avg_forecast_roas": 1393.017041325274,
-            "avg_forecast_cpa": 10522.226146841005,
-            "total_forecast_cost": 397447.21620058094
+            "avg_forecast_roas": 1376.2752351848271,
+            "avg_forecast_cpa": 10650.22457754204,
+            "total_forecast_cost": 402281.9934853708
           }
         ],
         "by_promotion": [
@@ -6030,111 +6130,111 @@
             "age_gender": "45세 ~ 54세_여성",
             "age": "45세 ~ 54세",
             "gender": "여성",
-            "total_30day_forecast": 8988430.49333573,
-            "avg_daily_forecast": 299614.34977785766,
-            "avg_forecast_roas": 269.56372298095965,
-            "avg_forecast_cpa": 16995.62014612318,
-            "total_forecast_cost": 3334436.2490388285,
-            "total_forecast_conversions": 196.19385585052848
+            "total_30day_forecast": 10062949.044118581,
+            "avg_daily_forecast": 335431.6348039527,
+            "avg_forecast_roas": 290.34678489315627,
+            "avg_forecast_cpa": 18469.653415293735,
+            "total_forecast_cost": 3465837.945414691,
+            "total_forecast_conversions": 187.65040509882095
           },
           {
             "age_gender": "25세 ~ 34세_여성",
             "age": "25세 ~ 34세",
             "gender": "여성",
-            "total_30day_forecast": 6690486.935520618,
-            "avg_daily_forecast": 223016.2311840206,
-            "avg_forecast_roas": 217.75104482025952,
-            "avg_forecast_cpa": 27044.972371208045,
-            "total_forecast_cost": 3072539.5329529718,
-            "total_forecast_conversions": 113.6085291854091
+            "total_30day_forecast": 6990577.49903533,
+            "avg_daily_forecast": 233019.2499678443,
+            "avg_forecast_roas": 223.2311053221987,
+            "avg_forecast_cpa": 30650.72223798837,
+            "total_forecast_cost": 3131542.7520486177,
+            "total_forecast_conversions": 102.16864476254975
           },
           {
             "age_gender": "35세 ~ 44세_여성",
             "age": "35세 ~ 44세",
             "gender": "여성",
-            "total_30day_forecast": 5181341.510848921,
-            "avg_daily_forecast": 172711.38369496402,
-            "avg_forecast_roas": 230.93366928565322,
-            "avg_forecast_cpa": 32206.897921973792,
-            "total_forecast_cost": 2243649.237842345,
-            "total_forecast_conversions": 69.6636243353189
+            "total_30day_forecast": 5160080.866227579,
+            "avg_daily_forecast": 172002.69554091932,
+            "avg_forecast_roas": 232.96000401040016,
+            "avg_forecast_cpa": 35353.265052934556,
+            "total_forecast_cost": 2215007.201835906,
+            "total_forecast_conversions": 62.653539878689244
           },
           {
             "age_gender": "55세 ~ 64세_여성",
             "age": "55세 ~ 64세",
             "gender": "여성",
-            "total_30day_forecast": 4195950.82562866,
-            "avg_daily_forecast": 139865.02752095534,
-            "avg_forecast_roas": 561.2325715809166,
-            "avg_forecast_cpa": 7571.984888880056,
-            "total_forecast_cost": 747631.3810171837,
-            "total_forecast_conversions": 98.73651255103904
+            "total_30day_forecast": 4088966.064072781,
+            "avg_daily_forecast": 136298.86880242603,
+            "avg_forecast_roas": 522.4578501816022,
+            "avg_forecast_cpa": 8401.533366326403,
+            "total_forecast_cost": 782640.3723575956,
+            "total_forecast_conversions": 93.15446814678397
           },
           {
             "age_gender": "25세 ~ 34세_남성",
             "age": "25세 ~ 34세",
             "gender": "남성",
-            "total_30day_forecast": 3903040.9192933845,
-            "avg_daily_forecast": 130101.36397644615,
-            "avg_forecast_roas": 262.44195192597147,
-            "avg_forecast_cpa": 17846.63459182562,
-            "total_forecast_cost": 1487201.6042596493,
-            "total_forecast_conversions": 83.33232781831256
+            "total_30day_forecast": 3785540.39830962,
+            "avg_daily_forecast": 126184.679943654,
+            "avg_forecast_roas": 260.70965449098463,
+            "avg_forecast_cpa": 17183.73975123681,
+            "total_forecast_cost": 1452013.890970242,
+            "total_forecast_conversions": 84.49929479790522
           },
           {
             "age_gender": "19세 ~ 24세_여성",
             "age": "19세 ~ 24세",
             "gender": "여성",
-            "total_30day_forecast": 2591966.1315925857,
-            "avg_daily_forecast": 86398.87105308619,
-            "avg_forecast_roas": 176.45212191335767,
-            "avg_forecast_cpa": 17288.567197030177,
-            "total_forecast_cost": 1468934.5208698055,
-            "total_forecast_conversions": 84.96565991438194
+            "total_30day_forecast": 2572293.116828772,
+            "avg_daily_forecast": 85743.10389429239,
+            "avg_forecast_roas": 175.82392451641812,
+            "avg_forecast_cpa": 17509.106526609467,
+            "total_forecast_cost": 1462993.8012722358,
+            "total_forecast_conversions": 83.55616541876941
           },
           {
             "age_gender": "35세 ~ 44세_남성",
             "age": "35세 ~ 44세",
             "gender": "남성",
-            "total_30day_forecast": 2234447.0644525145,
-            "avg_daily_forecast": 74481.56881508381,
-            "avg_forecast_roas": 190.22139701874852,
-            "avg_forecast_cpa": 18941.494599762023,
-            "total_forecast_cost": 1174656.0058289783,
-            "total_forecast_conversions": 62.014958726843886
+            "total_30day_forecast": 2114725.20446788,
+            "avg_daily_forecast": 70490.84014892933,
+            "avg_forecast_roas": 186.06331799759917,
+            "avg_forecast_cpa": 18211.95746967409,
+            "total_forecast_cost": 1136562.1269288377,
+            "total_forecast_conversions": 62.40746656812707
           },
           {
             "age_gender": "45세 ~ 54세_남성",
             "age": "45세 ~ 54세",
             "gender": "남성",
-            "total_30day_forecast": 1764657.1548782657,
-            "avg_daily_forecast": 58821.905162608855,
-            "avg_forecast_roas": 278.1357313531246,
-            "avg_forecast_cpa": 12772.195615497289,
-            "total_forecast_cost": 634458.9910448561,
-            "total_forecast_conversions": 49.675013611209344
+            "total_30day_forecast": 1760694.7266187572,
+            "avg_daily_forecast": 58689.82422062524,
+            "avg_forecast_roas": 287.2835414096095,
+            "avg_forecast_cpa": 11879.438196307949,
+            "total_forecast_cost": 612876.9918316883,
+            "total_forecast_conversions": 51.59141212773568
           },
           {
             "age_gender": "55세 ~ 64세_남성",
             "age": "55세 ~ 64세",
             "gender": "남성",
-            "total_30day_forecast": 1505903.2129706875,
-            "avg_daily_forecast": 50196.773765689584,
-            "avg_forecast_roas": 694.0607226255809,
-            "avg_forecast_cpa": 6707.282846175876,
-            "total_forecast_cost": 216969.95145813265,
-            "total_forecast_conversions": 32.34841238010963
+            "total_30day_forecast": 1530778.3404635552,
+            "avg_daily_forecast": 51025.944682118505,
+            "avg_forecast_roas": 793.7059750369143,
+            "avg_forecast_cpa": 6030.748993831478,
+            "total_forecast_cost": 192864.6612988343,
+            "total_forecast_conversions": 31.980216967428916
           },
           {
             "age_gender": "19세 ~ 24세_남성",
             "age": "19세 ~ 24세",
             "gender": "남성",
-            "total_30day_forecast": 866358.8155857112,
-            "avg_daily_forecast": 28878.627186190373,
-            "avg_forecast_roas": 463.2734509163869,
-            "avg_forecast_cpa": 5548.789238324681,
-            "total_forecast_cost": 187008.08644915733,
-            "total_forecast_conversions": 33.70250308977671
+            "total_30day_forecast": 832207.2604975345,
+            "avg_daily_forecast": 27740.242016584485,
+            "avg_forecast_roas": 441.2231706115364,
+            "avg_forecast_cpa": 5903.587569060635,
+            "total_forecast_cost": 188613.680316039,
+            "total_forecast_conversions": 31.94899340606389
           }
         ],
         "alerts": [
@@ -6161,12 +6261,12 @@
           },
           {
             "type": "age_gender_forecast_opportunity",
-            "message": "45세 ~ 54세 여성 타겟이 향후 30일간 8,988,430원의 전환값이 예상됩니다.",
+            "message": "45세 ~ 54세 여성 타겟이 향후 30일간 10,062,949원의 전환값이 예상됩니다.",
             "severity": "opportunity",
             "age_gender": "45세 ~ 54세_여성",
             "age": "45세 ~ 54세",
             "gender": "여성",
-            "value": 8988430.49333573
+            "value": 10062949.044118581
           }
         ],
         "recommendations": [
@@ -6178,8 +6278,8 @@
             "based_on": "prophet_forecast"
           },
           {
-            "title": "플랫폼 집중 전략 (예측 기반)",
-            "description": "앱 플랫폼에서 향후 30일간 28,259,125원의 전환이 예상됩니다. 해당 플랫폼 광고에 집중하세요.",
+            "title": "기기플랫폼 집중 전략 (예측 기반)",
+            "description": "앱 기기플랫폼에서 향후 30일간 27,739,603원의 전환이 예상됩니다. 해당 기기플랫폼 광고에 집중하세요.",
             "priority": "medium",
             "expected_impact": "ROAS 10-20% 개선 예상",
             "based_on": "prophet_forecast"
@@ -6188,7 +6288,7 @@
             "title": "연령+성별 타겟팅 최적화 (예측 기반)",
             "description": "향후 30일 예측 매출 상위 타겟: 45세 ~ 54세 여성, 25세 ~ 34세 여성, 35세 ~ 44세 여성. 해당 타겟에 광고 예산을 집중 배분하세요.",
             "priority": "high",
-            "expected_impact": "예상 총 매출: 20,860,259원",
+            "expected_impact": "예상 총 매출: 22,213,607원",
             "based_on": "prophet_forecast"
           }
         ]
@@ -6270,12 +6370,12 @@
         },
         {
           "type": "age_gender_forecast_opportunity",
-          "message": "45세 ~ 54세 여성 타겟이 향후 30일간 8,988,430원의 전환값이 예상됩니다.",
+          "message": "45세 ~ 54세 여성 타겟이 향후 30일간 10,062,949원의 전환값이 예상됩니다.",
           "severity": "opportunity",
           "age_gender": "45세 ~ 54세_여성",
           "age": "45세 ~ 54세",
           "gender": "여성",
-          "value": 8988430.49333573
+          "value": 10062949.044118581
         }
       ],
       "recommendations": [
@@ -6298,11 +6398,11 @@
           "expected_impact": "CPA 15-25% 절감 가능"
         },
         {
-          "title": "📱 Uncategorized 플랫폼이 효자예요!",
-          "description": "Uncategorized 플랫폼 광고에 집중하세요. ROAS 35285100%로 가장 효율적입니다.",
-          "action": "Uncategorized 플랫폼 광고에 집중하세요.",
+          "title": "📱 Uncategorized 기기플랫폼이 효자예요!",
+          "description": "Uncategorized 기기플랫폼 광고에 집중하세요. ROAS 35285100%로 가장 효율적입니다.",
+          "action": "Uncategorized 기기플랫폼 광고에 집중하세요.",
           "priority": "medium",
-          "category": "플랫폼",
+          "category": "기기플랫폼",
           "score": 4,
           "expected_impact": "전환율 10-15% 개선 예상"
         },
@@ -6341,8 +6441,8 @@
           "based_on": "prophet_forecast"
         },
         {
-          "title": "플랫폼 집중 전략 (예측 기반)",
-          "description": "앱 플랫폼에서 향후 30일간 28,259,125원의 전환이 예상됩니다. 해당 플랫폼 광고에 집중하세요.",
+          "title": "기기플랫폼 집중 전략 (예측 기반)",
+          "description": "앱 기기플랫폼에서 향후 30일간 27,739,603원의 전환이 예상됩니다. 해당 기기플랫폼 광고에 집중하세요.",
           "priority": "medium",
           "expected_impact": "ROAS 10-20% 개선 예상",
           "based_on": "prophet_forecast"
@@ -6351,11 +6451,11 @@
           "title": "연령+성별 타겟팅 최적화 (예측 기반)",
           "description": "향후 30일 예측 매출 상위 타겟: 45세 ~ 54세 여성, 25세 ~ 34세 여성, 35세 ~ 44세 여성. 해당 타겟에 광고 예산을 집중 배분하세요.",
           "priority": "high",
-          "expected_impact": "예상 총 매출: 20,860,259원",
+          "expected_impact": "예상 총 매출: 22,213,607원",
           "based_on": "prophet_forecast"
         }
       ],
-      "generated_at": "2025-12-02T18:00:04.059434",
+      "generated_at": "2025-12-03T12:00:35.868385",
       "filter_info": {
         "days": 180,
         "label": "최근 180일",
@@ -7079,30 +7179,30 @@
           "roas": 212.06093105038542
         }
       ],
-      "platform_performance": [
+      "deviceplatform_performance": [
         {
-          "platform": "Uncategorized",
+          "deviceplatform": "Uncategorized",
           "cost": 1.0,
           "conversions": 8.0,
           "revenue": 281651.0,
           "roas": 28165100.0
         },
         {
-          "platform": "모바일",
+          "deviceplatform": "모바일",
           "cost": 10393489.0,
           "conversions": 356.0,
           "revenue": 56757800.0,
           "roas": 546.0899607436925
         },
         {
-          "platform": "앱",
+          "deviceplatform": "앱",
           "cost": 81793744.0,
           "conversions": 4071.0,
           "revenue": 143503523.0,
           "roas": 175.4455976486417
         },
         {
-          "platform": "웹",
+          "deviceplatform": "웹",
           "cost": 909414.0,
           "conversions": 34.0,
           "revenue": 3759600.0,
@@ -8589,51 +8689,51 @@
         "by_age": [
           {
             "age": "25세 ~ 34세",
-            "total_30day_forecast": 11255043.189261092,
-            "avg_daily_forecast": 375168.1063087031,
-            "avg_forecast_roas": 211.24061247196727,
-            "avg_forecast_cpa": 19652.304494821386,
-            "total_forecast_cost": 5328067.864201395
-          },
-          {
-            "age": "45세 ~ 54세",
-            "total_30day_forecast": 9925245.45614559,
-            "avg_daily_forecast": 330841.515204853,
-            "avg_forecast_roas": 298.932912042643,
-            "avg_forecast_cpa": 15092.490978334592,
-            "total_forecast_cost": 3320225.0593035226
+            "total_30day_forecast": 11994141.090772808,
+            "avg_daily_forecast": 399804.70302576025,
+            "avg_forecast_roas": 217.04866889962298,
+            "avg_forecast_cpa": 19293.82856356948,
+            "total_forecast_cost": 5526014.580775732
           },
           {
             "age": "35세 ~ 44세",
-            "total_30day_forecast": 7680584.352639093,
-            "avg_daily_forecast": 256019.4784213031,
-            "avg_forecast_roas": 202.95837037861574,
-            "avg_forecast_cpa": 23986.52369494654,
-            "total_forecast_cost": 3784315.147146225
+            "total_30day_forecast": 8080032.091266913,
+            "avg_daily_forecast": 269334.40304223046,
+            "avg_forecast_roas": 246.87473471436752,
+            "avg_forecast_cpa": 19078.879318324725,
+            "total_forecast_cost": 3272927.9084048267
+          },
+          {
+            "age": "45세 ~ 54세",
+            "total_30day_forecast": 7838465.703047268,
+            "avg_daily_forecast": 261282.1901015756,
+            "avg_forecast_roas": 273.07724078801175,
+            "avg_forecast_cpa": 17326.02918614277,
+            "total_forecast_cost": 2870420.7206825493
           },
           {
             "age": "55세 ~ 64세",
-            "total_30day_forecast": 4483664.416766213,
-            "avg_daily_forecast": 149455.48055887377,
-            "avg_forecast_roas": 534.0601233091735,
-            "avg_forecast_cpa": 8189.650525897092,
-            "total_forecast_cost": 839543.0066907596
+            "total_30day_forecast": 3790568.557645328,
+            "avg_daily_forecast": 126352.28525484426,
+            "avg_forecast_roas": 761.9777377283517,
+            "avg_forecast_cpa": 7302.264811455367,
+            "total_forecast_cost": 497464.4756611881
           },
           {
             "age": "19세 ~ 24세",
-            "total_30day_forecast": 2624871.0404982027,
-            "avg_daily_forecast": 87495.7013499401,
-            "avg_forecast_roas": 144.10258516617944,
-            "avg_forecast_cpa": 20283.80934197308,
-            "total_forecast_cost": 1821529.459357856
+            "total_30day_forecast": 3202363.9284054157,
+            "avg_daily_forecast": 106745.46428018053,
+            "avg_forecast_roas": 155.0078916498317,
+            "avg_forecast_cpa": 19604.261603152812,
+            "total_forecast_cost": 2065936.0593328173
           },
           {
             "age": "65세 이상",
-            "total_30day_forecast": 1518437.0855580168,
-            "avg_daily_forecast": 50614.56951860056,
-            "avg_forecast_roas": 862.6789725560952,
-            "avg_forecast_cpa": 4104.650763196232,
-            "total_forecast_cost": 176014.15287298907
+            "total_30day_forecast": 1817253.8669028077,
+            "avg_daily_forecast": 60575.12889676026,
+            "avg_forecast_roas": 10339.05297560991,
+            "avg_forecast_cpa": 353.44341466676826,
+            "total_forecast_cost": 17576.598854747685
           },
           {
             "age": "14세 ~ 18세",
@@ -8654,36 +8754,36 @@
         ],
         "by_device": [
           {
-            "device": "안드로이드",
-            "total_30day_forecast": 16337073.00223807,
-            "avg_daily_forecast": 544569.1000746024,
-            "avg_forecast_roas": 216.95260738736891,
-            "avg_forecast_cpa": 24234.864758545653,
-            "total_forecast_cost": 7530249.670181757
+            "device": "애플",
+            "total_30day_forecast": 17343197.8414407,
+            "avg_daily_forecast": 578106.59471469,
+            "avg_forecast_roas": 214.53600032925772,
+            "avg_forecast_cpa": 19019.210609516387,
+            "total_forecast_cost": 8084050.143017182
           },
           {
-            "device": "애플",
-            "total_30day_forecast": 15352637.473078867,
-            "avg_daily_forecast": 511754.5824359622,
-            "avg_forecast_roas": 205.6945625969964,
-            "avg_forecast_cpa": 22078.72624167158,
-            "total_forecast_cost": 7463803.262100934
+            "device": "안드로이드",
+            "total_30day_forecast": 13519903.708073953,
+            "avg_daily_forecast": 450663.45693579846,
+            "avg_forecast_roas": 203.36759351538802,
+            "avg_forecast_cpa": 25533.621525074013,
+            "total_forecast_cost": 6648012.829561735
           },
           {
             "device": "모바일",
-            "total_30day_forecast": 4353911.023323886,
-            "avg_daily_forecast": 145130.36744412954,
-            "avg_forecast_roas": 171.93720031726704,
-            "avg_forecast_cpa": 14915.281656963074,
-            "total_forecast_cost": 2532268.1858782354
+            "total_30day_forecast": 3390449.7753531053,
+            "avg_daily_forecast": 113014.99251177018,
+            "avg_forecast_roas": 144.62518470904274,
+            "avg_forecast_cpa": 19987.505609634165,
+            "total_forecast_cost": 2344301.08571617
           },
           {
             "device": "웹",
-            "total_30day_forecast": 1690564.783891125,
-            "avg_daily_forecast": 56352.1594630375,
-            "avg_forecast_roas": 754.7289703781573,
-            "avg_forecast_cpa": 4378.103114924439,
-            "total_forecast_cost": 223996.27551650317
+            "total_30day_forecast": 258387.61906211489,
+            "avg_daily_forecast": 8612.920635403829,
+            "avg_forecast_roas": 1330.6322201806352,
+            "avg_forecast_cpa": 5960.15222475359,
+            "total_forecast_cost": 19418.409921491184
           },
           {
             "device": "TV",
@@ -8691,7 +8791,7 @@
             "avg_daily_forecast": null,
             "avg_forecast_roas": 0.0,
             "avg_forecast_cpa": 0.0,
-            "total_forecast_cost": 9182.342822454
+            "total_forecast_cost": 9683.802576490352
           },
           {
             "device": "OTHER",
@@ -8704,28 +8804,78 @@
         ],
         "by_platform": [
           {
-            "platform": "앱",
-            "total_30day_forecast": 28259125.199091733,
-            "avg_daily_forecast": 941970.8399697244,
-            "avg_forecast_roas": 171.6918686833255,
-            "avg_forecast_cpa": 27648.51798342997,
-            "total_forecast_cost": 16459209.98810599
+            "platform": "Instagram",
+            "total_30day_forecast": 29836450.92117945,
+            "avg_daily_forecast": 994548.364039315,
+            "avg_forecast_roas": 207.82830391557496,
+            "avg_forecast_cpa": 22055.295300155376,
+            "total_forecast_cost": 14356298.136032406
           },
           {
-            "platform": "모바일",
-            "total_30day_forecast": 26492062.519933637,
-            "avg_daily_forecast": 883068.7506644545,
-            "avg_forecast_roas": 737.7232783648495,
-            "avg_forecast_cpa": 24225.04393361745,
-            "total_forecast_cost": 3591056.8768621236
+            "platform": "Facebook",
+            "total_30day_forecast": 2471191.4483648464,
+            "avg_daily_forecast": 82373.04827882821,
+            "avg_forecast_roas": 632.0889897523447,
+            "avg_forecast_cpa": 5437.0450689556465,
+            "total_forecast_cost": 390956.2559115403
           },
           {
-            "platform": "웹",
-            "total_30day_forecast": 5536507.451946998,
-            "avg_daily_forecast": 184550.24839823326,
-            "avg_forecast_roas": 1393.017041325274,
-            "avg_forecast_cpa": 10522.226146841005,
-            "total_forecast_cost": 397447.21620058094
+            "platform": "Cross-network",
+            "total_30day_forecast": 2276734.735556728,
+            "avg_daily_forecast": 75891.15785189094,
+            "avg_forecast_roas": 103.47241997498303,
+            "avg_forecast_cpa": 30771.766176967576,
+            "total_forecast_cost": 2200330.0358754382
+          },
+          {
+            "platform": "threads",
+            "total_30day_forecast": 1154182.2222543573,
+            "avg_daily_forecast": 38472.74074181191,
+            "avg_forecast_roas": 536.1096665139333,
+            "avg_forecast_cpa": 5834.654322648369,
+            "total_forecast_cost": 215288.45576679418
+          },
+          {
+            "platform": "Audience Network",
+            "total_30day_forecast": 0.0,
+            "avg_daily_forecast": null,
+            "avg_forecast_roas": 0.0,
+            "avg_forecast_cpa": 0.0,
+            "total_forecast_cost": 9.466404606505307
+          },
+          {
+            "platform": "Messenger",
+            "total_30day_forecast": 0.0,
+            "avg_daily_forecast": null,
+            "avg_forecast_roas": 0.0,
+            "avg_forecast_cpa": 0.0,
+            "total_forecast_cost": 37.590210159342206
+          }
+        ],
+        "by_deviceplatform": [
+          {
+            "deviceplatform": "모바일",
+            "total_30day_forecast": 31913581.92445773,
+            "avg_daily_forecast": 1063786.064148591,
+            "avg_forecast_roas": 888.476521976136,
+            "avg_forecast_cpa": 21785.19136949247,
+            "total_forecast_cost": 3591944.3153631142
+          },
+          {
+            "deviceplatform": "앱",
+            "total_30day_forecast": 30832562.13723725,
+            "avg_daily_forecast": 1027752.0712412416,
+            "avg_forecast_roas": 214.38110415264782,
+            "avg_forecast_cpa": 21025.6023538892,
+            "total_forecast_cost": 14382126.7546431
+          },
+          {
+            "deviceplatform": "웹",
+            "total_30day_forecast": 5621506.456997849,
+            "avg_daily_forecast": 187383.54856659498,
+            "avg_forecast_roas": 1302.2883041457878,
+            "avg_forecast_cpa": 16012.44471483843,
+            "total_forecast_cost": 431663.7444337007
           }
         ],
         "by_promotion": [
@@ -8867,10 +9017,10 @@
           },
           {
             "type": "age_forecast_opportunity",
-            "message": "25세 ~ 34세 연령대가 향후 30일간 11,255,043원의 전환값이 예상됩니다.",
+            "message": "25세 ~ 34세 연령대가 향후 30일간 11,994,141원의 전환값이 예상됩니다.",
             "severity": "opportunity",
             "age": "25세 ~ 34세",
-            "value": 11255043.189261092
+            "value": 11994141.090772808
           },
           {
             "type": "age_gender_forecast_opportunity",
@@ -8891,8 +9041,8 @@
             "based_on": "prophet_forecast"
           },
           {
-            "title": "플랫폼 집중 전략 (예측 기반)",
-            "description": "앱 플랫폼에서 향후 30일간 28,259,125원의 전환이 예상됩니다. 해당 플랫폼 광고에 집중하세요.",
+            "title": "기기플랫폼 집중 전략 (예측 기반)",
+            "description": "모바일 기기플랫폼에서 향후 30일간 31,913,582원의 전환이 예상됩니다. 해당 기기플랫폼 광고에 집중하세요.",
             "priority": "medium",
             "expected_impact": "ROAS 10-20% 개선 예상",
             "based_on": "prophet_forecast"
@@ -8976,10 +9126,10 @@
         },
         {
           "type": "age_forecast_opportunity",
-          "message": "25세 ~ 34세 연령대가 향후 30일간 11,255,043원의 전환값이 예상됩니다.",
+          "message": "25세 ~ 34세 연령대가 향후 30일간 11,994,141원의 전환값이 예상됩니다.",
           "severity": "opportunity",
           "age": "25세 ~ 34세",
-          "value": 11255043.189261092
+          "value": 11994141.090772808
         },
         {
           "type": "age_gender_forecast_opportunity",
@@ -9011,11 +9161,11 @@
           "expected_impact": "CPA 15-25% 절감 가능"
         },
         {
-          "title": "📱 Uncategorized 플랫폼이 효자예요!",
-          "description": "Uncategorized 플랫폼 광고에 집중하세요. ROAS 28165100%로 가장 효율적입니다.",
-          "action": "Uncategorized 플랫폼 광고에 집중하세요.",
+          "title": "📱 Uncategorized 기기플랫폼이 효자예요!",
+          "description": "Uncategorized 기기플랫폼 광고에 집중하세요. ROAS 28165100%로 가장 효율적입니다.",
+          "action": "Uncategorized 기기플랫폼 광고에 집중하세요.",
           "priority": "medium",
-          "category": "플랫폼",
+          "category": "기기플랫폼",
           "score": 4,
           "expected_impact": "전환율 10-15% 개선 예상"
         },
@@ -9054,8 +9204,8 @@
           "based_on": "prophet_forecast"
         },
         {
-          "title": "플랫폼 집중 전략 (예측 기반)",
-          "description": "앱 플랫폼에서 향후 30일간 28,259,125원의 전환이 예상됩니다. 해당 플랫폼 광고에 집중하세요.",
+          "title": "기기플랫폼 집중 전략 (예측 기반)",
+          "description": "모바일 기기플랫폼에서 향후 30일간 31,913,582원의 전환이 예상됩니다. 해당 기기플랫폼 광고에 집중하세요.",
           "priority": "medium",
           "expected_impact": "ROAS 10-20% 개선 예상",
           "based_on": "prophet_forecast"
@@ -9068,7 +9218,7 @@
           "based_on": "prophet_forecast"
         }
       ],
-      "generated_at": "2025-12-02T18:01:16.528252",
+      "generated_at": "2025-12-03T12:01:49.018859",
       "filter_info": {
         "days": 90,
         "label": "최근 90일",
@@ -13947,7 +14097,7 @@
       }
     ]
   },
-  "generated_at": "2025-12-02T18:01:16.637133",
+  "generated_at": "2025-12-03T12:01:49.124027",
   "available_periods": [
     {
       "key": "full",

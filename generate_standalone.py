@@ -64,9 +64,9 @@ csv_paths = [
     'type/dimension_type5_adset_device.csv',
     'type/dimension_type6_adset_platform.csv',
     'type/dimension_type7_adset_deviceplatform.csv',
-    'creative/2025-11.csv',
-    'creative/Meta-이미지-URL_url.csv',
-    'GA4/2025-11.csv'
+    'creative/Creative_data.csv',
+    'creative/Creative_url.csv',
+    'GA4/GA4_data.csv'
 ]
 
 # Add raw data CSV file
