@@ -3059,30 +3059,12 @@
                                 </div>
                             </div>
 
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
-                                <div style="flex: 0 0 auto;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
-                                    <select id="detailAdsetMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
-                                        <option value="roas">ROAS</option>
-                                        <option value="cost">비용</option>
-                                        <option value="revenue">전환값</option>
-                                        <option value="conversions">전환수</option>
-                                        <option value="impressions">노출수</option>
-                                        <option value="clicks">클릭수</option>
-                                        <option value="cpm">CPM</option>
-                                        <option value="cpc">CPC</option>
-                                        <option value="cpa">CPA</option>
-                                        <option value="ctr">CTR</option>
-                                        <option value="cvr">전환율</option>
-                                    </select>
-                                </div>
-                                <div style="flex: 0 0 auto; margin-left: auto;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <input type="date" id="detailAdsetStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;">
-                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
-                                        <input type="date" id="detailAdsetEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;">
-                                    </div>
+                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 20px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
+                                    <input type="date" id="detailAdsetStartDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;">
+                                    <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                    <input type="date" id="detailAdsetEndDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;">
                                 </div>
                             </div>
 
@@ -3165,7 +3147,30 @@
                                 </div>
                             </div>
 
-                            <div class="chart-container" style="height: 400px;">
+                            <!-- 지표 선택 + 정렬 컨트롤 (차트 내부) -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #fafafa; border: 1px solid var(--grey-200); border-radius: 8px 8px 0 0; margin-bottom: 0;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 12px; font-weight: 600; color: var(--grey-600);">📈 지표 선택</span>
+                                    <select id="detailAdsetMetricDropdown" style="padding: 6px 12px; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 12px; cursor: pointer; min-width: 100px;">
+                                        <option value="roas">ROAS</option>
+                                        <option value="cost">비용</option>
+                                        <option value="revenue">전환값</option>
+                                        <option value="conversions">전환수</option>
+                                        <option value="impressions">노출수</option>
+                                        <option value="clicks">클릭수</option>
+                                        <option value="cpm">CPM</option>
+                                        <option value="cpc">CPC</option>
+                                        <option value="cpa">CPA</option>
+                                        <option value="ctr">CTR</option>
+                                        <option value="cvr">전환율</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="detail-sort-btn active" data-tab="adset" data-sort="desc" style="padding: 6px 12px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: #f8f9fa; color: #495057;">↓ 내림차순</button>
+                                    <button class="detail-sort-btn" data-tab="adset" data-sort="asc" style="padding: 6px 12px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">↑ 오름차순</button>
+                                </div>
+                            </div>
+                            <div class="chart-container" style="height: 400px; border: 1px solid var(--grey-200); border-top: none; border-radius: 0 0 8px 8px; padding: 16px;">
                                 <canvas id="detailAdsetBarChart"></canvas>
                             </div>
                         </div>
@@ -3198,30 +3203,12 @@
                                     <p style="color: var(--grey-600); font-size: 13px; margin: 0;">각 성별의 성과를 비교합니다.</p>
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
-                                <div style="flex: 0 0 auto;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
-                                    <select id="detailGenderMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                        <option value="roas">ROAS</option>
-                                        <option value="cost">비용</option>
-                                        <option value="revenue">전환값</option>
-                                        <option value="conversions">전환수</option>
-                                        <option value="impressions">노출수</option>
-                                        <option value="clicks">클릭수</option>
-                                        <option value="cpm">CPM</option>
-                                        <option value="cpc">CPC</option>
-                                        <option value="cpa">CPA</option>
-                                        <option value="ctr">CTR</option>
-                                        <option value="cvr">전환율</option>
-                                    </select>
-                                </div>
-                                <div style="flex: 0 0 auto; margin-left: auto;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <input type="date" id="detailGenderStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
-                                        <input type="date" id="detailGenderEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                    </div>
+                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 20px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
+                                    <input type="date" id="detailGenderStartDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                    <input type="date" id="detailGenderEndDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
                                 </div>
                             </div>
                             <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
@@ -3314,7 +3301,30 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="chart-container" style="height: 300px;">
+                            <!-- 지표 선택 + 정렬 컨트롤 (차트 내부) -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #fafafa; border: 1px solid var(--grey-200); border-radius: 8px 8px 0 0; margin-bottom: 0;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 12px; font-weight: 600; color: var(--grey-600);">📈 지표 선택</span>
+                                    <select id="detailGenderMetricDropdown" style="padding: 6px 12px; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 12px; cursor: pointer; min-width: 100px;">
+                                        <option value="roas">ROAS</option>
+                                        <option value="cost">비용</option>
+                                        <option value="revenue">전환값</option>
+                                        <option value="conversions">전환수</option>
+                                        <option value="impressions">노출수</option>
+                                        <option value="clicks">클릭수</option>
+                                        <option value="cpm">CPM</option>
+                                        <option value="cpc">CPC</option>
+                                        <option value="cpa">CPA</option>
+                                        <option value="ctr">CTR</option>
+                                        <option value="cvr">전환율</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="detail-sort-btn active" data-tab="gender" data-sort="desc" style="padding: 6px 12px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: #f8f9fa; color: #495057;">↓ 내림차순</button>
+                                    <button class="detail-sort-btn" data-tab="gender" data-sort="asc" style="padding: 6px 12px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">↑ 오름차순</button>
+                                </div>
+                            </div>
+                            <div class="chart-container" style="height: 300px; border: 1px solid var(--grey-200); border-top: none; border-radius: 0 0 8px 8px; padding: 16px;">
                                 <canvas id="detailGenderBarChart"></canvas>
                             </div>
                         </div>
@@ -3347,30 +3357,12 @@
                                     <p style="color: var(--grey-600); font-size: 13px; margin: 0;">각 연령대의 성과를 비교합니다.</p>
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
-                                <div style="flex: 0 0 auto;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
-                                    <select id="detailAgeMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                        <option value="roas">ROAS</option>
-                                        <option value="cost">비용</option>
-                                        <option value="revenue">전환값</option>
-                                        <option value="conversions">전환수</option>
-                                        <option value="impressions">노출수</option>
-                                        <option value="clicks">클릭수</option>
-                                        <option value="cpm">CPM</option>
-                                        <option value="cpc">CPC</option>
-                                        <option value="cpa">CPA</option>
-                                        <option value="ctr">CTR</option>
-                                        <option value="cvr">전환율</option>
-                                    </select>
-                                </div>
-                                <div style="flex: 0 0 auto; margin-left: auto;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <input type="date" id="detailAgeStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
-                                        <input type="date" id="detailAgeEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                    </div>
+                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 20px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
+                                    <input type="date" id="detailAgeStartDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                    <input type="date" id="detailAgeEndDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
                                 </div>
                             </div>
                             <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
@@ -3463,7 +3455,30 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="chart-container" style="height: 350px;">
+                            <!-- 지표 선택 + 정렬 컨트롤 (차트 내부) -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #fafafa; border: 1px solid var(--grey-200); border-radius: 8px 8px 0 0; margin-bottom: 0;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 12px; font-weight: 600; color: var(--grey-600);">📈 지표 선택</span>
+                                    <select id="detailAgeMetricDropdown" style="padding: 6px 12px; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 12px; cursor: pointer; min-width: 100px;">
+                                        <option value="roas">ROAS</option>
+                                        <option value="cost">비용</option>
+                                        <option value="revenue">전환값</option>
+                                        <option value="conversions">전환수</option>
+                                        <option value="impressions">노출수</option>
+                                        <option value="clicks">클릭수</option>
+                                        <option value="cpm">CPM</option>
+                                        <option value="cpc">CPC</option>
+                                        <option value="cpa">CPA</option>
+                                        <option value="ctr">CTR</option>
+                                        <option value="cvr">전환율</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="detail-sort-btn active" data-tab="age" data-sort="desc" style="padding: 6px 12px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: #f8f9fa; color: #495057;">↓ 내림차순</button>
+                                    <button class="detail-sort-btn" data-tab="age" data-sort="asc" style="padding: 6px 12px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">↑ 오름차순</button>
+                                </div>
+                            </div>
+                            <div class="chart-container" style="height: 350px; border: 1px solid var(--grey-200); border-top: none; border-radius: 0 0 8px 8px; padding: 16px;">
                                 <canvas id="detailAgeBarChart"></canvas>
                             </div>
                         </div>
@@ -3496,30 +3511,12 @@
                                     <p style="color: var(--grey-600); font-size: 13px; margin: 0;">각 플랫폼의 성과를 비교합니다.</p>
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
-                                <div style="flex: 0 0 auto;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
-                                    <select id="detailPlatformMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                        <option value="roas">ROAS</option>
-                                        <option value="cost">비용</option>
-                                        <option value="revenue">전환값</option>
-                                        <option value="conversions">전환수</option>
-                                        <option value="impressions">노출수</option>
-                                        <option value="clicks">클릭수</option>
-                                        <option value="cpm">CPM</option>
-                                        <option value="cpc">CPC</option>
-                                        <option value="cpa">CPA</option>
-                                        <option value="ctr">CTR</option>
-                                        <option value="cvr">전환율</option>
-                                    </select>
-                                </div>
-                                <div style="flex: 0 0 auto; margin-left: auto;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <input type="date" id="detailPlatformStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
-                                        <input type="date" id="detailPlatformEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                    </div>
+                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 20px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
+                                    <input type="date" id="detailPlatformStartDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                    <input type="date" id="detailPlatformEndDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
                                 </div>
                             </div>
                             <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
@@ -3612,7 +3609,30 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="chart-container" style="height: 300px;">
+                            <!-- 지표 선택 + 정렬 컨트롤 (차트 내부) -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #fafafa; border: 1px solid var(--grey-200); border-radius: 8px 8px 0 0; margin-bottom: 0;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 12px; font-weight: 600; color: var(--grey-600);">📈 지표 선택</span>
+                                    <select id="detailPlatformMetricDropdown" style="padding: 6px 12px; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 12px; cursor: pointer; min-width: 100px;">
+                                        <option value="roas">ROAS</option>
+                                        <option value="cost">비용</option>
+                                        <option value="revenue">전환값</option>
+                                        <option value="conversions">전환수</option>
+                                        <option value="impressions">노출수</option>
+                                        <option value="clicks">클릭수</option>
+                                        <option value="cpm">CPM</option>
+                                        <option value="cpc">CPC</option>
+                                        <option value="cpa">CPA</option>
+                                        <option value="ctr">CTR</option>
+                                        <option value="cvr">전환율</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="detail-sort-btn active" data-tab="platform" data-sort="desc" style="padding: 6px 12px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: #f8f9fa; color: #495057;">↓ 내림차순</button>
+                                    <button class="detail-sort-btn" data-tab="platform" data-sort="asc" style="padding: 6px 12px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">↑ 오름차순</button>
+                                </div>
+                            </div>
+                            <div class="chart-container" style="height: 300px; border: 1px solid var(--grey-200); border-top: none; border-radius: 0 0 8px 8px; padding: 16px;">
                                 <canvas id="detailPlatformBarChart"></canvas>
                             </div>
                         </div>
@@ -3645,30 +3665,12 @@
                                     <p style="color: var(--grey-600); font-size: 13px; margin: 0;">각 기기플랫폼의 성과를 비교합니다.</p>
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
-                                <div style="flex: 0 0 auto;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
-                                    <select id="detailDevicePlatformMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                        <option value="roas">ROAS</option>
-                                        <option value="cost">비용</option>
-                                        <option value="revenue">전환값</option>
-                                        <option value="conversions">전환수</option>
-                                        <option value="impressions">노출수</option>
-                                        <option value="clicks">클릭수</option>
-                                        <option value="cpm">CPM</option>
-                                        <option value="cpc">CPC</option>
-                                        <option value="cpa">CPA</option>
-                                        <option value="ctr">CTR</option>
-                                        <option value="cvr">전환율</option>
-                                    </select>
-                                </div>
-                                <div style="flex: 0 0 auto; margin-left: auto;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <input type="date" id="detailDevicePlatformStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
-                                        <input type="date" id="detailDevicePlatformEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                    </div>
+                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 20px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
+                                    <input type="date" id="detailDevicePlatformStartDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                    <input type="date" id="detailDevicePlatformEndDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
                                 </div>
                             </div>
                             <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
@@ -3761,7 +3763,30 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="chart-container" style="height: 300px;">
+                            <!-- 지표 선택 + 정렬 컨트롤 (차트 내부) -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #fafafa; border: 1px solid var(--grey-200); border-radius: 8px 8px 0 0; margin-bottom: 0;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 12px; font-weight: 600; color: var(--grey-600);">📈 지표 선택</span>
+                                    <select id="detailDevicePlatformMetricDropdown" style="padding: 6px 12px; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 12px; cursor: pointer; min-width: 100px;">
+                                        <option value="roas">ROAS</option>
+                                        <option value="cost">비용</option>
+                                        <option value="revenue">전환값</option>
+                                        <option value="conversions">전환수</option>
+                                        <option value="impressions">노출수</option>
+                                        <option value="clicks">클릭수</option>
+                                        <option value="cpm">CPM</option>
+                                        <option value="cpc">CPC</option>
+                                        <option value="cpa">CPA</option>
+                                        <option value="ctr">CTR</option>
+                                        <option value="cvr">전환율</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="detail-sort-btn active" data-tab="devicePlatform" data-sort="desc" style="padding: 6px 12px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: #f8f9fa; color: #495057;">↓ 내림차순</button>
+                                    <button class="detail-sort-btn" data-tab="devicePlatform" data-sort="asc" style="padding: 6px 12px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">↑ 오름차순</button>
+                                </div>
+                            </div>
+                            <div class="chart-container" style="height: 300px; border: 1px solid var(--grey-200); border-top: none; border-radius: 0 0 8px 8px; padding: 16px;">
                                 <canvas id="detailDevicePlatformBarChart"></canvas>
                             </div>
                         </div>
@@ -3794,30 +3819,12 @@
                                     <p style="color: var(--grey-600); font-size: 13px; margin: 0;">각 기기의 성과를 비교합니다.</p>
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
-                                <div style="flex: 0 0 auto;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
-                                    <select id="detailDeviceTypeMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                        <option value="roas">ROAS</option>
-                                        <option value="cost">비용</option>
-                                        <option value="revenue">전환값</option>
-                                        <option value="conversions">전환수</option>
-                                        <option value="impressions">노출수</option>
-                                        <option value="clicks">클릭수</option>
-                                        <option value="cpm">CPM</option>
-                                        <option value="cpc">CPC</option>
-                                        <option value="cpa">CPA</option>
-                                        <option value="ctr">CTR</option>
-                                        <option value="cvr">전환율</option>
-                                    </select>
-                                </div>
-                                <div style="flex: 0 0 auto; margin-left: auto;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <input type="date" id="detailDeviceTypeStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
-                                        <input type="date" id="detailDeviceTypeEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                    </div>
+                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 20px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
+                                    <input type="date" id="detailDeviceTypeStartDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                    <input type="date" id="detailDeviceTypeEndDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
                                 </div>
                             </div>
                             <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
@@ -3910,7 +3917,30 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="chart-container" style="height: 300px;">
+                            <!-- 지표 선택 + 정렬 컨트롤 (차트 내부) -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #fafafa; border: 1px solid var(--grey-200); border-radius: 8px 8px 0 0; margin-bottom: 0;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 12px; font-weight: 600; color: var(--grey-600);">📈 지표 선택</span>
+                                    <select id="detailDeviceTypeMetricDropdown" style="padding: 6px 12px; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 12px; cursor: pointer; min-width: 100px;">
+                                        <option value="roas">ROAS</option>
+                                        <option value="cost">비용</option>
+                                        <option value="revenue">전환값</option>
+                                        <option value="conversions">전환수</option>
+                                        <option value="impressions">노출수</option>
+                                        <option value="clicks">클릭수</option>
+                                        <option value="cpm">CPM</option>
+                                        <option value="cpc">CPC</option>
+                                        <option value="cpa">CPA</option>
+                                        <option value="ctr">CTR</option>
+                                        <option value="cvr">전환율</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="detail-sort-btn active" data-tab="deviceType" data-sort="desc" style="padding: 6px 12px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: #f8f9fa; color: #495057;">↓ 내림차순</button>
+                                    <button class="detail-sort-btn" data-tab="deviceType" data-sort="asc" style="padding: 6px 12px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">↑ 오름차순</button>
+                                </div>
+                            </div>
+                            <div class="chart-container" style="height: 300px; border: 1px solid var(--grey-200); border-top: none; border-radius: 0 0 8px 8px; padding: 16px;">
                                 <canvas id="detailDeviceTypeBarChart"></canvas>
                             </div>
                         </div>
@@ -3931,6 +3961,38 @@
                     </button>
                 </div>
                 <div class="collapsible-content">
+                    <!-- 분석 목적/사용 방법 카드 -->
+                    <div style="display: flex; gap: 16px; padding: 20px 24px; background: #fafafa; border-bottom: 1px solid #e9ecef;">
+                        <!-- 분석 목적 카드 -->
+                        <div style="flex: 1; padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span style="font-size: 16px;">📊</span>
+                                <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
+                                <strong style="color: #1565c0;">브랜드/상품/프로모션/타겟팅별 성과</strong>를 비교하여<br>
+                                가장 효율적인 광고 요소를 파악할 수 있습니다
+                            </p>
+                        </div>
+                        <!-- 사용 방법 카드 -->
+                        <div style="flex: 1; padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span style="font-size: 16px;">💡</span>
+                                <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
+                            </div>
+                            <div style="font-size: 12px; color: #424242; line-height: 1.6;">
+                                <div style="display: flex; align-items: start; gap: 8px; margin-bottom: 4px;">
+                                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">1</span>
+                                    <span>상단 탭에서 분석할 항목 선택</span>
+                                </div>
+                                <div style="display: flex; align-items: start; gap: 8px;">
+                                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">2</span>
+                                    <span>KPI 버튼으로 지표 변경, 비교 버튼으로 기간 비교</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- 서브탭 버튼 -->
                     <div style="display: flex; gap: 8px; padding: 16px 24px; background: #f8f9fa; border-bottom: 1px solid #e9ecef;">
                         <button class="performance-subtab active" data-perf-tab="brand"
@@ -3953,30 +4015,67 @@
 
                     <!-- 브랜드 뷰 -->
                     <div class="performance-filter-content active" id="brandView">
-                        <!-- 자연어 인사이트 -->
-                        <div id="brandInsightText" style="padding: 20px 24px; background: linear-gradient(135deg, #e3f2fd 0%, #f5f9ff 100%); border-bottom: 1px solid #e9ecef;">
-                            <div style="font-size: 14px; color: #1565c0; font-weight: 600; margin-bottom: 8px;">💡 브랜드 성과 인사이트</div>
-                            <div style="font-size: 13px; color: #424242; line-height: 1.7;">로딩 중...</div>
-                        </div>
-
                         <div class="card" style="margin: 16px; border-radius: 12px;">
-                            <!-- 컨트롤 버튼 -->
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
-                                <div style="display: flex; gap: 6px;">
-                                    <button class="perf-kpi-btn active" data-category="brand" data-kpi="roas" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; background: #1a73e8; color: white;">ROAS</button>
-                                    <button class="perf-kpi-btn" data-category="brand" data-kpi="cpa" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">CPA</button>
-                                    <button class="perf-kpi-btn" data-category="brand" data-kpi="cost" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">비용</button>
-                                    <button class="perf-kpi-btn" data-category="brand" data-kpi="conversions" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">전환수</button>
-                                    <button class="perf-kpi-btn" data-category="brand" data-kpi="revenue" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">전환값</button>
+                            <!-- 지표 선택 + 정렬 + 기간 선택 -->
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                <!-- 좌측: 지표 선택 + 정렬 -->
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <span style="font-size: 12px; font-weight: 600; color: #555;">📊 지표 선택</span>
+                                    <div style="display: flex; gap: 10px;">
+                                        <select id="perfKpiSelect" class="perf-kpi-select" data-category="brand" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; min-width: 140px; background: white;">
+                                            <option value="roas">ROAS</option>
+                                            <option value="cpa">CPA</option>
+                                            <option value="cost">비용</option>
+                                            <option value="conversions">전환수</option>
+                                            <option value="revenue">전환값</option>
+                                        </select>
+                                        <select id="perfSortSelect" class="perf-sort-select" data-category="brand" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; min-width: 110px; background: white;">
+                                            <option value="desc">내림차순</option>
+                                            <option value="asc">오름차순</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div style="display: flex; gap: 6px;">
-                                    <button class="perf-sort-btn active" data-category="brand" data-sort="desc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: #f8f9fa; color: #495057;">↓ 내림차순</button>
-                                    <button class="perf-sort-btn" data-category="brand" data-sort="asc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">↑ 오름차순</button>
+                                <!-- 우측: 기간 선택 -->
+                                <div style="display: flex; flex-direction: column; align-items: center; padding: 10px 16px;">
+                                    <!-- 타이틀 + 비교 버튼 -->
+                                    <div style="display: flex; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 12px;">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="font-size: 13px;">📅</span>
+                                            <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
+                                        </div>
+                                        <button id="perfCompareBtn" style="position: absolute; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                    </div>
+                                    <!-- 기준 기간 행 -->
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #00C853; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select id="perfPeriodPreset" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" id="perfStartDate" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" id="perfEndDate" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
+                                    <!-- 비교 기간 행 -->
+                                    <div id="perfCompareDateRow" style="display: none; align-items: center; gap: 12px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #dee2e6; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select id="perfPeriodPresetComp" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" id="perfStartDateComp" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" id="perfEndDateComp" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
                                 </div>
                             </div>
                             <!-- 막대 그래프 -->
                             <div style="padding: 20px;">
-                                <div class="chart-container" style="height: 280px;">
+                                <div class="chart-container" style="height: 350px;">
                                     <canvas id="brandPerformanceChart"></canvas>
                                 </div>
                             </div>
@@ -3985,30 +4084,67 @@
 
                     <!-- 상품 뷰 -->
                     <div class="performance-filter-content" id="productView" style="display: none;">
-                        <!-- 자연어 인사이트 -->
-                        <div id="productInsightText" style="padding: 20px 24px; background: linear-gradient(135deg, #e8f5e9 0%, #f5fff5 100%); border-bottom: 1px solid #e9ecef;">
-                            <div style="font-size: 14px; color: #2e7d32; font-weight: 600; margin-bottom: 8px;">💡 상품 성과 인사이트</div>
-                            <div style="font-size: 13px; color: #424242; line-height: 1.7;">로딩 중...</div>
-                        </div>
-
                         <div class="card" style="margin: 16px; border-radius: 12px;">
-                            <!-- 컨트롤 버튼 -->
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
-                                <div style="display: flex; gap: 6px;">
-                                    <button class="perf-kpi-btn active" data-category="product" data-kpi="roas" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; background: #1a73e8; color: white;">ROAS</button>
-                                    <button class="perf-kpi-btn" data-category="product" data-kpi="cpa" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">CPA</button>
-                                    <button class="perf-kpi-btn" data-category="product" data-kpi="cost" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">비용</button>
-                                    <button class="perf-kpi-btn" data-category="product" data-kpi="conversions" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">전환수</button>
-                                    <button class="perf-kpi-btn" data-category="product" data-kpi="revenue" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">전환값</button>
+                            <!-- 지표 선택 + 정렬 + 기간 선택 -->
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                <!-- 좌측: 지표 선택 + 정렬 -->
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <span style="font-size: 12px; font-weight: 600; color: #555;">📊 지표 선택</span>
+                                    <div style="display: flex; gap: 10px;">
+                                        <select class="perf-kpi-select" data-category="product" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; min-width: 140px; background: white;">
+                                            <option value="roas">ROAS</option>
+                                            <option value="cpa">CPA</option>
+                                            <option value="cost">비용</option>
+                                            <option value="conversions">전환수</option>
+                                            <option value="revenue">전환값</option>
+                                        </select>
+                                        <select class="perf-sort-select" data-category="product" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; min-width: 110px; background: white;">
+                                            <option value="desc">내림차순</option>
+                                            <option value="asc">오름차순</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div style="display: flex; gap: 6px;">
-                                    <button class="perf-sort-btn active" data-category="product" data-sort="desc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: #f8f9fa; color: #495057;">↓ 내림차순</button>
-                                    <button class="perf-sort-btn" data-category="product" data-sort="asc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">↑ 오름차순</button>
+                                <!-- 우측: 기간 선택 -->
+                                <div style="display: flex; flex-direction: column; align-items: center; padding: 10px 16px;">
+                                    <!-- 타이틀 + 비교 버튼 -->
+                                    <div style="display: flex; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 12px;">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="font-size: 13px;">📅</span>
+                                            <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
+                                        </div>
+                                        <button class="perf-compare-btn" data-category="product" style="position: absolute; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                    </div>
+                                    <!-- 기준 기간 행 -->
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #00C853; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="perf-period-preset" data-category="product" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" class="perf-start-date" data-category="product" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" class="perf-end-date" data-category="product" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
+                                    <!-- 비교 기간 행 -->
+                                    <div class="perf-compare-row" data-category="product" style="display: none; align-items: center; gap: 12px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #dee2e6; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="perf-period-preset-comp" data-category="product" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" class="perf-start-date-comp" data-category="product" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" class="perf-end-date-comp" data-category="product" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
                                 </div>
                             </div>
                             <!-- 막대 그래프 -->
                             <div style="padding: 20px;">
-                                <div class="chart-container" style="height: 280px;">
+                                <div class="chart-container" style="height: 350px;">
                                     <canvas id="productPerformanceChart"></canvas>
                                 </div>
                             </div>
@@ -4017,30 +4153,67 @@
 
                     <!-- 프로모션 뷰 -->
                     <div class="performance-filter-content" id="promotionView" style="display: none;">
-                        <!-- 자연어 인사이트 -->
-                        <div id="promotionInsightText" style="padding: 20px 24px; background: linear-gradient(135deg, #fff3e0 0%, #fffaf5 100%); border-bottom: 1px solid #e9ecef;">
-                            <div style="font-size: 14px; color: #e65100; font-weight: 600; margin-bottom: 8px;">💡 프로모션 성과 인사이트</div>
-                            <div style="font-size: 13px; color: #424242; line-height: 1.7;">로딩 중...</div>
-                        </div>
-
                         <div class="card" style="margin: 16px; border-radius: 12px;">
-                            <!-- 컨트롤 버튼 -->
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
-                                <div style="display: flex; gap: 6px;">
-                                    <button class="perf-kpi-btn active" data-category="promotion" data-kpi="roas" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; background: #1a73e8; color: white;">ROAS</button>
-                                    <button class="perf-kpi-btn" data-category="promotion" data-kpi="cpa" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">CPA</button>
-                                    <button class="perf-kpi-btn" data-category="promotion" data-kpi="cost" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">비용</button>
-                                    <button class="perf-kpi-btn" data-category="promotion" data-kpi="conversions" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">전환수</button>
-                                    <button class="perf-kpi-btn" data-category="promotion" data-kpi="revenue" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">전환값</button>
+                            <!-- 지표 선택 + 정렬 + 기간 선택 -->
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                <!-- 좌측: 지표 선택 + 정렬 -->
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <span style="font-size: 12px; font-weight: 600; color: #555;">📊 지표 선택</span>
+                                    <div style="display: flex; gap: 10px;">
+                                        <select class="perf-kpi-select" data-category="promotion" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; min-width: 140px; background: white;">
+                                            <option value="roas">ROAS</option>
+                                            <option value="cpa">CPA</option>
+                                            <option value="cost">비용</option>
+                                            <option value="conversions">전환수</option>
+                                            <option value="revenue">전환값</option>
+                                        </select>
+                                        <select class="perf-sort-select" data-category="promotion" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; min-width: 110px; background: white;">
+                                            <option value="desc">내림차순</option>
+                                            <option value="asc">오름차순</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div style="display: flex; gap: 6px;">
-                                    <button class="perf-sort-btn active" data-category="promotion" data-sort="desc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: #f8f9fa; color: #495057;">↓ 내림차순</button>
-                                    <button class="perf-sort-btn" data-category="promotion" data-sort="asc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">↑ 오름차순</button>
+                                <!-- 우측: 기간 선택 -->
+                                <div style="display: flex; flex-direction: column; align-items: center; padding: 10px 16px;">
+                                    <!-- 타이틀 + 비교 버튼 -->
+                                    <div style="display: flex; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 12px;">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="font-size: 13px;">📅</span>
+                                            <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
+                                        </div>
+                                        <button class="perf-compare-btn" data-category="promotion" style="position: absolute; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                    </div>
+                                    <!-- 기준 기간 행 -->
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #00C853; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="perf-period-preset" data-category="promotion" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" class="perf-start-date" data-category="promotion" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" class="perf-end-date" data-category="promotion" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
+                                    <!-- 비교 기간 행 -->
+                                    <div class="perf-compare-row" data-category="promotion" style="display: none; align-items: center; gap: 12px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #dee2e6; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="perf-period-preset-comp" data-category="promotion" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" class="perf-start-date-comp" data-category="promotion" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" class="perf-end-date-comp" data-category="promotion" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
                                 </div>
                             </div>
                             <!-- 막대 그래프 -->
                             <div style="padding: 20px;">
-                                <div class="chart-container" style="height: 280px;">
+                                <div class="chart-container" style="height: 350px;">
                                     <canvas id="promotionPerformanceChart"></canvas>
                                 </div>
                             </div>
@@ -4049,30 +4222,67 @@
 
                     <!-- 타겟팅 뷰 -->
                     <div class="performance-filter-content" id="targetingView" style="display: none;">
-                        <!-- 자연어 인사이트 -->
-                        <div id="targetingInsightText" style="padding: 20px 24px; background: linear-gradient(135deg, #f3e5f5 0%, #faf5ff 100%); border-bottom: 1px solid #e9ecef;">
-                            <div style="font-size: 14px; color: #7b1fa2; font-weight: 600; margin-bottom: 8px;">💡 타겟팅 성과 인사이트</div>
-                            <div style="font-size: 13px; color: #424242; line-height: 1.7;">로딩 중...</div>
-                        </div>
-
                         <div class="card" style="margin: 16px; border-radius: 12px;">
-                            <!-- 컨트롤 버튼 -->
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
-                                <div style="display: flex; gap: 6px;">
-                                    <button class="perf-kpi-btn active" data-category="targeting" data-kpi="roas" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; background: #1a73e8; color: white;">ROAS</button>
-                                    <button class="perf-kpi-btn" data-category="targeting" data-kpi="cpa" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">CPA</button>
-                                    <button class="perf-kpi-btn" data-category="targeting" data-kpi="cost" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">비용</button>
-                                    <button class="perf-kpi-btn" data-category="targeting" data-kpi="conversions" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">전환수</button>
-                                    <button class="perf-kpi-btn" data-category="targeting" data-kpi="revenue" style="padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">전환값</button>
+                            <!-- 지표 선택 + 정렬 + 기간 선택 -->
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 16px 20px; border-bottom: 1px solid #e9ecef;">
+                                <!-- 좌측: 지표 선택 + 정렬 -->
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <span style="font-size: 12px; font-weight: 600; color: #555;">📊 지표 선택</span>
+                                    <div style="display: flex; gap: 10px;">
+                                        <select class="perf-kpi-select" data-category="targeting" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; min-width: 140px; background: white;">
+                                            <option value="roas">ROAS</option>
+                                            <option value="cpa">CPA</option>
+                                            <option value="cost">비용</option>
+                                            <option value="conversions">전환수</option>
+                                            <option value="revenue">전환값</option>
+                                        </select>
+                                        <select class="perf-sort-select" data-category="targeting" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; min-width: 110px; background: white;">
+                                            <option value="desc">내림차순</option>
+                                            <option value="asc">오름차순</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div style="display: flex; gap: 6px;">
-                                    <button class="perf-sort-btn active" data-category="targeting" data-sort="desc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: #f8f9fa; color: #495057;">↓ 내림차순</button>
-                                    <button class="perf-sort-btn" data-category="targeting" data-sort="asc" style="padding: 6px 10px; font-size: 11px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; background: white; color: #495057;">↑ 오름차순</button>
+                                <!-- 우측: 기간 선택 -->
+                                <div style="display: flex; flex-direction: column; align-items: center; padding: 10px 16px;">
+                                    <!-- 타이틀 + 비교 버튼 -->
+                                    <div style="display: flex; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 12px;">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="font-size: 13px;">📅</span>
+                                            <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
+                                        </div>
+                                        <button class="perf-compare-btn" data-category="targeting" style="position: absolute; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                    </div>
+                                    <!-- 기준 기간 행 -->
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #00C853; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="perf-period-preset" data-category="targeting" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" class="perf-start-date" data-category="targeting" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" class="perf-end-date" data-category="targeting" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
+                                    <!-- 비교 기간 행 -->
+                                    <div class="perf-compare-row" data-category="targeting" style="display: none; align-items: center; gap: 12px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #dee2e6; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="perf-period-preset-comp" data-category="targeting" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" class="perf-start-date-comp" data-category="targeting" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" class="perf-end-date-comp" data-category="targeting" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
                                 </div>
                             </div>
                             <!-- 막대 그래프 -->
                             <div style="padding: 20px;">
-                                <div class="chart-container" style="height: 280px;">
+                                <div class="chart-container" style="height: 350px;">
                                     <canvas id="targetingPerformanceChart"></canvas>
                                 </div>
                             </div>
@@ -7528,10 +7738,10 @@
         // 브랜드 성과 차트
         // 성과분석 차트 상태 관리
         let perfChartState = {
-            brand: { kpi: 'roas', sort: 'desc', chart: null },
-            product: { kpi: 'roas', sort: 'desc', chart: null },
-            promotion: { kpi: 'roas', sort: 'desc', chart: null },
-            targeting: { kpi: 'roas', sort: 'desc', chart: null }
+            brand: { kpi: 'roas', sort: 'desc', chart: null, startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '' },
+            product: { kpi: 'roas', sort: 'desc', chart: null, startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '' },
+            promotion: { kpi: 'roas', sort: 'desc', chart: null, startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '' },
+            targeting: { kpi: 'roas', sort: 'desc', chart: null, startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '' }
         };
 
         // KPI별 색상
@@ -7552,161 +7762,508 @@
             revenue: '전환값 (원)'
         };
 
-        // 자연어 인사이트 생성
-        function generateBrandInsight() {
-            const periodData = getPeriodData();
-            const brands = periodData.brand_performance;
-            if (!brands || brands.length === 0) return;
+        // 비교 기간 색상
+        const compareColors = {
+            current: { bg: 'rgba(0, 200, 83, 0.8)', border: 'rgba(0, 200, 83, 1)' },
+            previous: { bg: 'rgba(158, 158, 158, 0.5)', border: 'rgba(158, 158, 158, 1)' }
+        };
 
-            const sorted = [...brands].sort((a, b) => b.roas - a.roas);
-            const best = sorted[0];
-            const worst = sorted[sorted.length - 1];
-            const avgRoas = brands.reduce((sum, b) => sum + b.roas, 0) / brands.length;
-            const totalCost = brands.reduce((sum, b) => sum + b.cost, 0);
+        // 기간별 데이터 필터링 함수
+        function filterDataByDateRange(data, startDate, endDate) {
+            if (!startDate && !endDate) return data;
 
-            const highPerformers = brands.filter(b => b.roas >= 200);
-            const lowPerformers = brands.filter(b => b.roas < 100);
+            return data.filter(row => {
+                const rowDate = row['일'];
+                if (!rowDate) return true;
 
-            let insight = `<strong>${best.brand}</strong>가 ROAS <strong>${formatPercent(best.roas)}</strong>로 가장 높은 성과를 보이고 있습니다. `;
+                const date = new Date(rowDate);
+                if (isNaN(date)) return true;
 
-            if (highPerformers.length > 1) {
-                insight += `${highPerformers.length}개 브랜드가 ROAS 200% 이상의 우수한 성과를 내고 있어 예산 확대를 권장합니다. `;
-            }
-
-            if (lowPerformers.length > 0) {
-                insight += `<br><br>⚠️ <strong>${worst.brand}</strong> 등 ${lowPerformers.length}개 브랜드는 ROAS ${formatPercent(worst.roas)}로 효율이 낮습니다. 타겟팅 재설정이나 광고 소재 개선이 필요합니다.`;
-            }
-
-            insight += `<br><br>📊 전체 평균 ROAS는 <strong>${formatPercent(avgRoas)}</strong>이며, 총 광고비 <strong>${formatCurrency(totalCost)}</strong>가 집행되었습니다.`;
-
-            document.querySelector('#brandInsightText > div:last-child').innerHTML = insight;
+                if (startDate && date < new Date(startDate)) return false;
+                if (endDate && date > new Date(endDate)) return false;
+                return true;
+            });
         }
 
-        function generateProductInsight() {
-            const periodData = getPeriodData();
-            const products = periodData.product_performance;
-            if (!products || products.length === 0) return;
+        // 비교 기간 계산 함수
+        function getComparisonDateRange(startDate, endDate, compareMode) {
+            if (!startDate || !endDate || compareMode === 'none') return null;
 
-            const sorted = [...products].sort((a, b) => b.roas - a.roas);
-            const best = sorted[0];
-            const worst = sorted[sorted.length - 1];
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const daysDiff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
-            // 스타상품 (ROAS↑ 전환↑)
-            const avgConv = products.reduce((sum, p) => sum + p.conversions, 0) / products.length;
-            const starProducts = products.filter(p => p.roas >= 200 && p.conversions >= avgConv);
-            const hiddenGems = products.filter(p => p.roas >= 200 && p.conversions < avgConv);
-            const needsWork = products.filter(p => p.roas < 100);
+            let prevStart, prevEnd;
 
-            let insight = `<strong>${best.product}</strong>가 ROAS <strong>${formatPercent(best.roas)}</strong>로 최고 성과 상품입니다. `;
-
-            if (starProducts.length > 0) {
-                insight += `<br><br>⭐ <strong>스타 상품 ${starProducts.length}개</strong> (${starProducts.map(p => p.product).join(', ')}): ROAS와 전환수 모두 우수합니다. 재고 확보와 예산 확대를 최우선으로 진행하세요.`;
+            if (compareMode === 'wow') {
+                // 전주 대비: 7일 전 기간
+                prevEnd = new Date(start);
+                prevEnd.setDate(prevEnd.getDate() - 1);
+                prevStart = new Date(prevEnd);
+                prevStart.setDate(prevStart.getDate() - daysDiff);
+            } else if (compareMode === 'mom') {
+                // 전월 대비: 한 달 전 기간
+                prevEnd = new Date(start);
+                prevEnd.setDate(prevEnd.getDate() - 1);
+                prevStart = new Date(prevEnd);
+                prevStart.setMonth(prevStart.getMonth() - 1);
             }
 
-            if (hiddenGems.length > 0) {
-                insight += `<br><br>💎 <strong>숨은 보석 ${hiddenGems.length}개</strong> (${hiddenGems.map(p => p.product).join(', ')}): ROAS는 높지만 전환수가 적습니다. 광고 노출을 늘려 판매를 확대하세요.`;
-            }
-
-            if (needsWork.length > 0) {
-                insight += `<br><br>⛔ <strong>개선 필요 ${needsWork.length}개</strong>: ROAS 100% 미만으로 비효율적입니다. 프로모션 변경이나 광고 중단을 검토하세요.`;
-            }
-
-            document.querySelector('#productInsightText > div:last-child').innerHTML = insight;
+            return {
+                startDate: prevStart.toISOString().split('T')[0],
+                endDate: prevEnd.toISOString().split('T')[0]
+            };
         }
 
-        function generatePromotionInsight() {
-            const periodData = getPeriodData();
-            const promotions = periodData.promotion_performance;
-            if (!promotions || promotions.length === 0) return;
-
-            const sorted = [...promotions].sort((a, b) => b.roas - a.roas);
-            const best = sorted[0];
-
-            const successful = promotions.filter(p => p.roas >= 200);
-            const moderate = promotions.filter(p => p.roas >= 100 && p.roas < 200);
-            const failing = promotions.filter(p => p.roas < 50);
-
-            let insight = `<strong>${best.promotion}</strong> 프로모션이 ROAS <strong>${formatPercent(best.roas)}</strong>로 가장 효과적입니다. `;
-
-            if (successful.length > 0) {
-                insight += `<br><br>🎉 <strong>성공 프로모션 ${successful.length}개</strong>: ROAS 200% 이상으로 고객 반응이 매우 좋습니다. 유사한 프로모션을 반복 실행하세요.`;
-            }
-
-            if (moderate.length > 0) {
-                insight += `<br><br>📅 <strong>유지 프로모션 ${moderate.length}개</strong>: ROAS 100-200%로 수익이 발생하고 있습니다. 기간 연장이나 혜택 강화를 고려하세요.`;
-            }
-
-            if (failing.length > 0) {
-                insight += `<br><br>⛔ <strong>중단 권장 ${failing.length}개</strong> (${failing.map(p => p.promotion).join(', ')}): ROAS 50% 미만으로 손실이 발생하고 있습니다. 즉시 중단하고 원인을 분석하세요.`;
-            }
-
-            document.querySelector('#promotionInsightText > div:last-child').innerHTML = insight;
+        // 증감률 계산 함수
+        function calculateChangeRate(current, previous) {
+            if (!previous || previous === 0) return null;
+            return ((current - previous) / previous) * 100;
         }
 
-        function generateTargetingInsight() {
-            // adsetDimensionData에서 타겟팅별 집계
-            if (!adsetDimensionData || adsetDimensionData.length === 0) {
-                document.querySelector('#targetingInsightText > div:last-child').innerHTML = '타겟팅 데이터를 불러오는 중...';
-                return;
+        // 증감 화살표 HTML 생성
+        function getChangeArrowHtml(changeRate) {
+            if (changeRate === null || changeRate === undefined) return '';
+
+            const isPositive = changeRate >= 0;
+            const arrow = isPositive ? '▲' : '▼';
+            const color = isPositive ? '#2e7d32' : '#d32f2f';
+            const absRate = Math.abs(changeRate).toFixed(1);
+
+            return `<span style="font-size: 10px; font-weight: 600; color: ${color}; margin-left: 4px;">${arrow}${absRate}%</span>`;
+        }
+
+        // 성과분석 차트 날짜 초기화 (공통)
+        function initPerfChartDates() {
+            if (!adsetDimensionData || adsetDimensionData.length === 0) return;
+
+            // 데이터에서 최소/최대 날짜 찾기
+            const dates = adsetDimensionData
+                .map(row => row['일'])
+                .filter(d => d)
+                .map(d => new Date(d))
+                .filter(d => !isNaN(d));
+
+            if (dates.length === 0) return;
+
+            const minDate = new Date(Math.min(...dates));
+            const maxDate = new Date(Math.max(...dates));
+
+            const minStr = minDate.toISOString().split('T')[0];
+            const maxStr = maxDate.toISOString().split('T')[0];
+
+            // 공통 날짜 입력 초기화
+            const startInput = document.getElementById('perfStartDate');
+            const endInput = document.getElementById('perfEndDate');
+            const periodPreset = document.getElementById('perfPeriodPreset');
+
+            // 프리셋 기반 초기 날짜 계산 (최근 30일)
+            const presetDays = periodPreset ? parseInt(periodPreset.value) || 30 : 30;
+            const today = maxDate; // 데이터의 최대 날짜를 기준으로
+            const startDate = new Date(today);
+            startDate.setDate(today.getDate() - presetDays + 1);
+
+            // 데이터 범위 내로 조정
+            const adjustedStart = startDate < minDate ? minDate : startDate;
+            const startStr = adjustedStart.toISOString().split('T')[0];
+
+            if (startInput && endInput) {
+                startInput.value = startStr;
+                endInput.value = maxStr;
+                startInput.min = minStr;
+                startInput.max = maxStr;
+                endInput.min = minStr;
+                endInput.max = maxStr;
             }
 
-            const groupedData = {};
-            adsetDimensionData.forEach(row => {
-                const targeting = row['타겟팅'];
-                if (!targeting || targeting === '' || targeting === '-') return;
+            // 공통 상태 설정
+            perfCommonState.startDate = startStr;
+            perfCommonState.endDate = maxStr;
 
-                if (!groupedData[targeting]) {
-                    groupedData[targeting] = { targeting: targeting, cost: 0, conversions: 0, revenue: 0 };
+            // 모든 카테고리에 동일 적용
+            const categories = ['brand', 'product', 'promotion', 'targeting'];
+            categories.forEach(category => {
+                perfChartState[category].startDate = startStr;
+                perfChartState[category].endDate = maxStr;
+
+                // 상품/프로모션/타겟팅 뷰의 날짜 입력 필드 초기화
+                const catStartInput = document.querySelector(`.perf-start-date[data-category="${category}"]`);
+                const catEndInput = document.querySelector(`.perf-end-date[data-category="${category}"]`);
+                if (catStartInput) {
+                    catStartInput.value = startStr;
+                    catStartInput.min = minStr;
+                    catStartInput.max = maxStr;
                 }
-                groupedData[targeting].cost += parseFloat(row['비용']) || 0;
-                groupedData[targeting].conversions += parseFloat(row['전환수']) || 0;
-                groupedData[targeting].revenue += parseFloat(row['전환값']) || 0;
+                if (catEndInput) {
+                    catEndInput.value = maxStr;
+                    catEndInput.min = minStr;
+                    catEndInput.max = maxStr;
+                }
+            });
+        }
+
+        // 공통 성과분석 상태
+        let perfCommonState = {
+            kpi: 'roas',
+            startDate: '',
+            endDate: '',
+            compareActive: false,
+            startDateComp: '',
+            endDateComp: ''
+        };
+
+        // 성과분석 날짜/비교 이벤트 설정 (공통 UI)
+        function setupPerfChartDateEvents() {
+            const categories = ['brand', 'product', 'promotion', 'targeting'];
+
+            // 공통 UI 요소
+            const kpiSelect = document.getElementById('perfKpiSelect');
+            const startInput = document.getElementById('perfStartDate');
+            const endInput = document.getElementById('perfEndDate');
+            const compareBtn = document.getElementById('perfCompareBtn');
+            const compareDateRow = document.getElementById('perfCompareDateRow');
+            const startInputComp = document.getElementById('perfStartDateComp');
+            const endInputComp = document.getElementById('perfEndDateComp');
+
+            // KPI 선택 이벤트
+            if (kpiSelect) {
+                kpiSelect.addEventListener('change', function() {
+                    perfCommonState.kpi = this.value;
+                    categories.forEach(category => {
+                        perfChartState[category].kpi = this.value;
+                    });
+                    renderAllPerformanceCharts();
+                });
+            }
+
+            // 기간 선택 이벤트
+            const periodPresetEl = document.getElementById('perfPeriodPreset');
+            if (startInput) {
+                startInput.addEventListener('change', function() {
+                    perfCommonState.startDate = this.value;
+                    categories.forEach(category => {
+                        perfChartState[category].startDate = this.value;
+                    });
+                    // 수동 날짜 지정 시 프리셋을 '항목 선택'으로 초기화
+                    if (periodPresetEl) periodPresetEl.value = '';
+                    renderAllPerformanceCharts();
+                });
+            }
+
+            if (endInput) {
+                endInput.addEventListener('change', function() {
+                    perfCommonState.endDate = this.value;
+                    categories.forEach(category => {
+                        perfChartState[category].endDate = this.value;
+                    });
+                    // 수동 날짜 지정 시 프리셋을 '항목 선택'으로 초기화
+                    if (periodPresetEl) periodPresetEl.value = '';
+                    renderAllPerformanceCharts();
+                });
+            }
+
+            // 기간 프리셋 드롭다운 이벤트 (기준 기간)
+            const periodPreset = document.getElementById('perfPeriodPreset');
+            if (periodPreset && startInput && endInput) {
+                periodPreset.addEventListener('change', function() {
+                    const days = parseInt(this.value);
+                    // '항목 선택'인 경우 무시
+                    if (!this.value || isNaN(days)) return;
+
+                    const today = new Date();
+                    const startDate = new Date();
+                    startDate.setDate(today.getDate() - days + 1);
+
+                    const formatDate = (d) => d.toISOString().split('T')[0];
+                    startInput.value = formatDate(startDate);
+                    endInput.value = formatDate(today);
+
+                    perfCommonState.startDate = startInput.value;
+                    perfCommonState.endDate = endInput.value;
+                    categories.forEach(category => {
+                        perfChartState[category].startDate = startInput.value;
+                        perfChartState[category].endDate = endInput.value;
+                    });
+                    renderAllPerformanceCharts();
+                });
+            }
+
+            // 기간 프리셋 드롭다운 이벤트 (비교 기간)
+            const periodPresetComp = document.getElementById('perfPeriodPresetComp');
+            if (periodPresetComp && startInputComp && endInputComp) {
+                periodPresetComp.addEventListener('change', function() {
+                    const days = parseInt(this.value);
+                    // '항목 선택'인 경우 무시
+                    if (!this.value || isNaN(days)) return;
+
+                    // 기준 기간 시작일 기준으로 이전 기간 계산
+                    const baseStart = perfCommonState.startDate ? new Date(perfCommonState.startDate) : new Date();
+                    const endDate = new Date(baseStart);
+                    endDate.setDate(baseStart.getDate() - 1);
+                    const startDate = new Date(endDate);
+                    startDate.setDate(endDate.getDate() - days + 1);
+
+                    const formatDate = (d) => d.toISOString().split('T')[0];
+                    startInputComp.value = formatDate(startDate);
+                    endInputComp.value = formatDate(endDate);
+
+                    perfCommonState.startDateComp = startInputComp.value;
+                    perfCommonState.endDateComp = endInputComp.value;
+                    renderAllPerformanceCharts();
+                });
+            }
+
+            // 비교 버튼 토글 이벤트
+            if (compareBtn && compareDateRow) {
+                compareBtn.addEventListener('click', function() {
+                    perfCommonState.compareActive = !perfCommonState.compareActive;
+
+                    if (perfCommonState.compareActive) {
+                        // 비교 모드 활성화
+                        compareDateRow.style.display = 'flex';
+                        compareBtn.textContent = '취소';
+                        compareBtn.style.background = '#d32f2f';
+                        compareBtn.style.color = 'white';
+                        compareBtn.style.borderColor = '#d32f2f';
+
+                        // 비교 기간 기본값 설정 (기준 기간 직전 동일 기간)
+                        if (perfCommonState.startDate && perfCommonState.endDate) {
+                            const start = new Date(perfCommonState.startDate);
+                            const end = new Date(perfCommonState.endDate);
+                            const daysDiff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+
+                            const prevEnd = new Date(start);
+                            prevEnd.setDate(prevEnd.getDate() - 1);
+                            const prevStart = new Date(prevEnd);
+                            prevStart.setDate(prevStart.getDate() - daysDiff);
+
+                            perfCommonState.startDateComp = prevStart.toISOString().split('T')[0];
+                            perfCommonState.endDateComp = prevEnd.toISOString().split('T')[0];
+
+                            if (startInputComp) startInputComp.value = perfCommonState.startDateComp;
+                            if (endInputComp) endInputComp.value = perfCommonState.endDateComp;
+                        }
+                    } else {
+                        // 비교 모드 비활성화
+                        compareDateRow.style.display = 'none';
+                        compareBtn.textContent = '비교';
+                        compareBtn.style.background = 'white';
+                        compareBtn.style.color = '#1a73e8';
+                        compareBtn.style.borderColor = '#1a73e8';
+
+                        perfCommonState.startDateComp = '';
+                        perfCommonState.endDateComp = '';
+                    }
+
+                    // 모든 카테고리에 적용
+                    categories.forEach(category => {
+                        perfChartState[category].compareActive = perfCommonState.compareActive;
+                        perfChartState[category].startDateComp = perfCommonState.startDateComp;
+                        perfChartState[category].endDateComp = perfCommonState.endDateComp;
+                    });
+
+                    renderAllPerformanceCharts();
+                });
+            }
+
+            // 비교 기간 선택 이벤트
+            const periodPresetCompEl = document.getElementById('perfPeriodPresetComp');
+            if (startInputComp) {
+                startInputComp.addEventListener('change', function() {
+                    perfCommonState.startDateComp = this.value;
+                    categories.forEach(category => {
+                        perfChartState[category].startDateComp = this.value;
+                    });
+                    // 수동 날짜 지정 시 프리셋을 '항목 선택'으로 초기화
+                    if (periodPresetCompEl) periodPresetCompEl.value = '';
+                    renderAllPerformanceCharts();
+                });
+            }
+
+            if (endInputComp) {
+                endInputComp.addEventListener('change', function() {
+                    perfCommonState.endDateComp = this.value;
+                    categories.forEach(category => {
+                        perfChartState[category].endDateComp = this.value;
+                    });
+                    // 수동 날짜 지정 시 프리셋을 '항목 선택'으로 초기화
+                    if (periodPresetCompEl) periodPresetCompEl.value = '';
+                    renderAllPerformanceCharts();
+                });
+            }
+
+            // ========== 상품/프로모션/타겟팅 뷰 기간 선택 이벤트 ==========
+
+            // 기간 프리셋 드롭다운 이벤트 (클래스 기반)
+            document.querySelectorAll('.perf-period-preset').forEach(preset => {
+                preset.addEventListener('change', function() {
+                    const category = this.dataset.category;
+                    const days = parseInt(this.value);
+                    if (!this.value || isNaN(days)) return;
+
+                    const today = new Date();
+                    const startDate = new Date();
+                    startDate.setDate(today.getDate() - days + 1);
+
+                    const formatDate = (d) => d.toISOString().split('T')[0];
+                    const startInput = document.querySelector(`.perf-start-date[data-category="${category}"]`);
+                    const endInput = document.querySelector(`.perf-end-date[data-category="${category}"]`);
+
+                    if (startInput) startInput.value = formatDate(startDate);
+                    if (endInput) endInput.value = formatDate(today);
+
+                    perfChartState[category].startDate = formatDate(startDate);
+                    perfChartState[category].endDate = formatDate(today);
+                    renderPerformanceChart(category);
+                });
             });
 
-            const targetingData = Object.values(groupedData).map(g => ({
-                ...g,
-                roas: g.cost > 0 ? (g.revenue / g.cost) * 100 : 0,
-                cpa: g.conversions > 0 ? g.cost / g.conversions : 0
-            })).filter(g => g.cost > 0);
+            // 기간 프리셋 드롭다운 이벤트 - 비교 기간 (클래스 기반)
+            document.querySelectorAll('.perf-period-preset-comp').forEach(preset => {
+                preset.addEventListener('change', function() {
+                    const category = this.dataset.category;
+                    const days = parseInt(this.value);
+                    if (!this.value || isNaN(days)) return;
 
-            if (targetingData.length === 0) return;
+                    const baseStart = perfChartState[category].startDate ? new Date(perfChartState[category].startDate) : new Date();
+                    const endDate = new Date(baseStart);
+                    endDate.setDate(baseStart.getDate() - 1);
+                    const startDate = new Date(endDate);
+                    startDate.setDate(endDate.getDate() - days + 1);
 
-            const sorted = [...targetingData].sort((a, b) => b.roas - a.roas);
-            const best = sorted[0];
-            const totalCost = targetingData.reduce((sum, t) => sum + t.cost, 0);
+                    const formatDate = (d) => d.toISOString().split('T')[0];
+                    const startInputComp = document.querySelector(`.perf-start-date-comp[data-category="${category}"]`);
+                    const endInputComp = document.querySelector(`.perf-end-date-comp[data-category="${category}"]`);
 
-            const golden = targetingData.filter(c => c.roas >= 300);
-            const excellent = targetingData.filter(c => c.roas >= 150 && c.roas < 300);
-            const poor = targetingData.filter(c => c.roas < 50);
+                    if (startInputComp) startInputComp.value = formatDate(startDate);
+                    if (endInputComp) endInputComp.value = formatDate(endDate);
 
-            let insight = `<strong>${best.targeting}</strong> 타겟이 ROAS <strong>${formatPercent(best.roas)}</strong>로 가장 높은 수익을 내고 있습니다. `;
-            insight += `(비용: ${formatCurrency(best.cost)}, CPA: ${formatCurrency(best.cpa)})`;
+                    perfChartState[category].startDateComp = formatDate(startDate);
+                    perfChartState[category].endDateComp = formatDate(endDate);
+                    renderPerformanceChart(category);
+                });
+            });
 
-            if (golden.length > 0) {
-                insight += `<br><br>🎯 <strong>황금 타겟 ${golden.length}개</strong>: ROAS 300% 이상의 핵심 고객층입니다. 이 타겟 조합으로 새로운 광고세트를 추가 생성하여 공격적으로 확장하세요.`;
-            }
+            // 날짜 입력 이벤트 (클래스 기반)
+            document.querySelectorAll('.perf-start-date').forEach(input => {
+                input.addEventListener('change', function() {
+                    const category = this.dataset.category;
+                    perfChartState[category].startDate = this.value;
+                    // 수동 날짜 지정 시 프리셋 초기화
+                    const preset = document.querySelector(`.perf-period-preset[data-category="${category}"]`);
+                    if (preset) preset.value = '';
+                    renderPerformanceChart(category);
+                });
+            });
 
-            if (excellent.length > 0) {
-                insight += `<br><br>⭐ <strong>우수 타겟 ${excellent.length}개</strong>: 안정적인 수익을 내는 타겟입니다. 현재 예산을 유지하면서 점진적으로 확대하세요.`;
-            }
+            document.querySelectorAll('.perf-end-date').forEach(input => {
+                input.addEventListener('change', function() {
+                    const category = this.dataset.category;
+                    perfChartState[category].endDate = this.value;
+                    // 수동 날짜 지정 시 프리셋 초기화
+                    const preset = document.querySelector(`.perf-period-preset[data-category="${category}"]`);
+                    if (preset) preset.value = '';
+                    renderPerformanceChart(category);
+                });
+            });
 
-            if (poor.length > 0) {
-                const poorCost = poor.reduce((sum, p) => sum + p.cost, 0);
-                insight += `<br><br>🚫 <strong>제외 권장 ${poor.length}개</strong>: ROAS 50% 미만으로 총 <strong>${formatCurrency(poorCost)}</strong>가 비효율적으로 사용되고 있습니다. 과감히 타겟에서 제외하세요.`;
-            }
+            // 비교 기간 날짜 입력 이벤트 (클래스 기반)
+            document.querySelectorAll('.perf-start-date-comp').forEach(input => {
+                input.addEventListener('change', function() {
+                    const category = this.dataset.category;
+                    perfChartState[category].startDateComp = this.value;
+                    // 수동 날짜 지정 시 프리셋 초기화
+                    const preset = document.querySelector(`.perf-period-preset-comp[data-category="${category}"]`);
+                    if (preset) preset.value = '';
+                    renderPerformanceChart(category);
+                });
+            });
 
-            document.querySelector('#targetingInsightText > div:last-child').innerHTML = insight;
+            document.querySelectorAll('.perf-end-date-comp').forEach(input => {
+                input.addEventListener('change', function() {
+                    const category = this.dataset.category;
+                    perfChartState[category].endDateComp = this.value;
+                    // 수동 날짜 지정 시 프리셋 초기화
+                    const preset = document.querySelector(`.perf-period-preset-comp[data-category="${category}"]`);
+                    if (preset) preset.value = '';
+                    renderPerformanceChart(category);
+                });
+            });
+
+            // 비교 버튼 이벤트 (클래스 기반)
+            document.querySelectorAll('.perf-compare-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    const compareRow = document.querySelector(`.perf-compare-row[data-category="${category}"]`);
+
+                    perfChartState[category].compareActive = !perfChartState[category].compareActive;
+
+                    if (perfChartState[category].compareActive) {
+                        // 비교 모드 활성화
+                        if (compareRow) compareRow.style.display = 'flex';
+                        this.textContent = '취소';
+                        this.style.background = '#d32f2f';
+                        this.style.color = 'white';
+                        this.style.borderColor = '#d32f2f';
+
+                        // 비교 기간 기본값 설정
+                        if (perfChartState[category].startDate && perfChartState[category].endDate) {
+                            const start = new Date(perfChartState[category].startDate);
+                            const end = new Date(perfChartState[category].endDate);
+                            const daysDiff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+
+                            const prevEnd = new Date(start);
+                            prevEnd.setDate(prevEnd.getDate() - 1);
+                            const prevStart = new Date(prevEnd);
+                            prevStart.setDate(prevStart.getDate() - daysDiff);
+
+                            perfChartState[category].startDateComp = prevStart.toISOString().split('T')[0];
+                            perfChartState[category].endDateComp = prevEnd.toISOString().split('T')[0];
+
+                            const startInputComp = document.querySelector(`.perf-start-date-comp[data-category="${category}"]`);
+                            const endInputComp = document.querySelector(`.perf-end-date-comp[data-category="${category}"]`);
+                            if (startInputComp) startInputComp.value = perfChartState[category].startDateComp;
+                            if (endInputComp) endInputComp.value = perfChartState[category].endDateComp;
+                        }
+                    } else {
+                        // 비교 모드 비활성화
+                        if (compareRow) compareRow.style.display = 'none';
+                        this.textContent = '비교';
+                        this.style.background = 'white';
+                        this.style.color = '#1a73e8';
+                        this.style.borderColor = '#1a73e8';
+
+                        perfChartState[category].startDateComp = '';
+                        perfChartState[category].endDateComp = '';
+                    }
+
+                    renderPerformanceChart(category);
+                });
+            });
         }
+
+        // 모든 성과분석 차트 렌더링
+        function renderAllPerformanceCharts() {
+            renderBrandPerformanceChart();
+            renderProductPerformanceChart();
+            renderPromotionPerformanceChart();
+            renderTargetingPerformanceChart();
+        }
+
+        // 자연어 인사이트 생성 (UI 삭제로 빈 함수 유지)
+        function generateBrandInsight() { }
+        function generateProductInsight() { }
+        function generatePromotionInsight() { }
+        function generateTargetingInsight() { }
 
         // 브랜드 성과 차트 - adsetDimensionData(dimension_type1_campaign_adset.csv) 사용
         function renderBrandPerformanceChart() {
             const state = perfChartState.brand;
 
-            // adsetDimensionData에서 브랜드별 집계
-            let brandData = [];
-            if (adsetDimensionData && adsetDimensionData.length > 0) {
+            // 데이터 집계 헬퍼 함수
+            function aggregateBrandData(data) {
                 const groupedData = {};
-                adsetDimensionData.forEach(row => {
+                data.forEach(row => {
                     const brand = row['브랜드명'];
                     if (!brand) return;
                     if (!groupedData[brand]) {
@@ -7716,67 +8273,142 @@
                     groupedData[brand].conversions += parseFloat(row['전환수']) || 0;
                     groupedData[brand].revenue += parseFloat(row['전환값']) || 0;
                 });
-                brandData = Object.values(groupedData).map(g => ({
+                return Object.values(groupedData).map(g => ({
                     ...g,
                     roas: g.cost > 0 ? (g.revenue / g.cost) * 100 : 0,
                     cpa: g.conversions > 0 ? g.cost / g.conversions : 0
                 })).filter(g => g.cost > 0);
             }
 
-            // 정렬
+            // 현재 기간 데이터 필터링 및 집계
+            let brandData = [];
+            let prevBrandData = [];
+
+            if (adsetDimensionData && adsetDimensionData.length > 0) {
+                const filteredData = filterDataByDateRange(adsetDimensionData, state.startDate, state.endDate);
+                brandData = aggregateBrandData(filteredData);
+
+                // 비교 기간 데이터 처리
+                if (state.compareActive && state.startDateComp && state.endDateComp) {
+                    const prevFilteredData = filterDataByDateRange(adsetDimensionData, state.startDateComp, state.endDateComp);
+                    prevBrandData = aggregateBrandData(prevFilteredData);
+                }
+            }
+
+            // 정렬 (현재 기간 기준)
             let sorted = [...brandData].sort((a, b) => {
                 const aVal = a[state.kpi];
                 const bVal = b[state.kpi];
                 return state.sort === 'desc' ? bVal - aVal : aVal - bVal;
+            }).slice(0, 10);
+
+            // 비교 데이터 매핑
+            const prevDataMap = {};
+            prevBrandData.forEach(item => {
+                prevDataMap[item.brand] = item;
             });
 
-            const labels = sorted.map(b => b.brand);
-            const values = sorted.map(b => b[state.kpi]);
+            // 라벨에 증감 화살표 추가
+            const labels = sorted.map(b => {
+                if (state.compareActive && prevDataMap[b.brand]) {
+                    const changeRate = calculateChangeRate(b[state.kpi], prevDataMap[b.brand][state.kpi]);
+                    const arrow = changeRate !== null ? (changeRate >= 0 ? ' ▲' : ' ▼') : '';
+                    return b.brand + arrow;
+                }
+                return b.brand;
+            });
+
+            const currentValues = sorted.map(b => b[state.kpi]);
+            const prevValues = sorted.map(b => prevDataMap[b.brand] ? prevDataMap[b.brand][state.kpi] : 0);
 
             if (state.chart) state.chart.destroy();
 
             const ctx = document.getElementById('brandPerformanceChart').getContext('2d');
+
+            // 데이터셋 구성
+            const datasets = [];
+
+            if (state.compareActive && prevBrandData.length > 0) {
+                // 비교 모드: 누적 바 차트
+                datasets.push({
+                    label: '이전 기간',
+                    data: prevValues,
+                    backgroundColor: compareColors.previous.bg,
+                    borderColor: compareColors.previous.border,
+                    borderWidth: 1,
+                    borderRadius: 4
+                });
+                datasets.push({
+                    label: '현재 기간',
+                    data: currentValues,
+                    backgroundColor: kpiColors[state.kpi].bg,
+                    borderColor: kpiColors[state.kpi].border,
+                    borderWidth: 1,
+                    borderRadius: 4
+                });
+            } else {
+                // 일반 모드: 단일 바 차트
+                datasets.push({
+                    label: kpiLabels[state.kpi],
+                    data: currentValues,
+                    backgroundColor: kpiColors[state.kpi].bg,
+                    borderColor: kpiColors[state.kpi].border,
+                    borderWidth: 1,
+                    borderRadius: 4
+                });
+            }
+
             state.chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
-                    datasets: [{
-                        label: kpiLabels[state.kpi],
-                        data: values,
-                        backgroundColor: kpiColors[state.kpi].bg,
-                        borderColor: kpiColors[state.kpi].border,
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     indexAxis: 'y',
                     plugins: {
-                        legend: { display: false },
+                        legend: { display: state.compareActive },
                         tooltip: {
                             callbacks: {
-                                label: function(context) {
-                                    const item = sorted[context.dataIndex];
-                                    return [
+                                afterLabel: function(context) {
+                                    const idx = context.dataIndex;
+                                    const item = sorted[idx];
+                                    const prevItem = prevDataMap[item.brand];
+
+                                    let lines = [
                                         `ROAS: ${formatPercent(item.roas)}`,
                                         `비용: ${formatCurrency(item.cost)}`,
                                         `CPA: ${formatCurrency(item.cpa)}`,
                                         `전환수: ${formatNumber(item.conversions)}`
                                     ];
+
+                                    if (state.compareActive && prevItem) {
+                                        const changeRate = calculateChangeRate(item[state.kpi], prevItem[state.kpi]);
+                                        if (changeRate !== null) {
+                                            const sign = changeRate >= 0 ? '+' : '';
+                                            lines.push(`변화율: ${sign}${changeRate.toFixed(1)}%`);
+                                        }
+                                    }
+
+                                    return lines;
                                 }
                             }
                         }
                     },
                     scales: {
-                        x: { beginAtZero: true },
+                        x: {
+                            beginAtZero: true,
+                            stacked: false
+                        },
                         y: {
+                            stacked: false,
                             ticks: {
                                 font: { size: 11 },
                                 callback: function(value) {
                                     const label = this.getLabelForValue(value);
-                                    return label.length > 12 ? label.substring(0, 12) + '...' : label;
+                                    return label.length > 15 ? label.substring(0, 15) + '...' : label;
                                 }
                             }
                         }
@@ -7791,11 +8423,10 @@
         function renderProductPerformanceChart() {
             const state = perfChartState.product;
 
-            // adsetDimensionData에서 상품별 집계
-            let productData = [];
-            if (adsetDimensionData && adsetDimensionData.length > 0) {
+            // 데이터 집계 헬퍼 함수
+            function aggregateProductData(data) {
                 const groupedData = {};
-                adsetDimensionData.forEach(row => {
+                data.forEach(row => {
                     const product = row['상품명'];
                     if (!product) return;
                     if (!groupedData[product]) {
@@ -7805,66 +8436,130 @@
                     groupedData[product].conversions += parseFloat(row['전환수']) || 0;
                     groupedData[product].revenue += parseFloat(row['전환값']) || 0;
                 });
-                productData = Object.values(groupedData).map(g => ({
+                return Object.values(groupedData).map(g => ({
                     ...g,
                     roas: g.cost > 0 ? (g.revenue / g.cost) * 100 : 0,
                     cpa: g.conversions > 0 ? g.cost / g.conversions : 0
                 })).filter(g => g.cost > 0);
             }
 
+            let productData = [];
+            let prevProductData = [];
+
+            if (adsetDimensionData && adsetDimensionData.length > 0) {
+                const filteredData = filterDataByDateRange(adsetDimensionData, state.startDate, state.endDate);
+                productData = aggregateProductData(filteredData);
+
+                if (state.compareActive && state.startDateComp && state.endDateComp) {
+                    const prevFilteredData = filterDataByDateRange(adsetDimensionData, state.startDateComp, state.endDateComp);
+                    prevProductData = aggregateProductData(prevFilteredData);
+                }
+            }
+
             let sorted = [...productData].sort((a, b) => {
                 const aVal = a[state.kpi];
                 const bVal = b[state.kpi];
                 return state.sort === 'desc' ? bVal - aVal : aVal - bVal;
+            }).slice(0, 10);
+
+            const prevDataMap = {};
+            prevProductData.forEach(item => {
+                prevDataMap[item.product] = item;
             });
 
-            const labels = sorted.map(p => p.product);
-            const values = sorted.map(p => p[state.kpi]);
+            const labels = sorted.map(p => {
+                if (state.compareActive && prevDataMap[p.product]) {
+                    const changeRate = calculateChangeRate(p[state.kpi], prevDataMap[p.product][state.kpi]);
+                    const arrow = changeRate !== null ? (changeRate >= 0 ? ' ▲' : ' ▼') : '';
+                    return p.product + arrow;
+                }
+                return p.product;
+            });
+
+            const currentValues = sorted.map(p => p[state.kpi]);
+            const prevValues = sorted.map(p => prevDataMap[p.product] ? prevDataMap[p.product][state.kpi] : 0);
 
             if (state.chart) state.chart.destroy();
 
             const ctx = document.getElementById('productPerformanceChart').getContext('2d');
+
+            const datasets = [];
+            if (state.compareActive && prevProductData.length > 0) {
+                datasets.push({
+                    label: '이전 기간',
+                    data: prevValues,
+                    backgroundColor: compareColors.previous.bg,
+                    borderColor: compareColors.previous.border,
+                    borderWidth: 1,
+                    borderRadius: 4
+                });
+                datasets.push({
+                    label: '현재 기간',
+                    data: currentValues,
+                    backgroundColor: kpiColors[state.kpi].bg,
+                    borderColor: kpiColors[state.kpi].border,
+                    borderWidth: 1,
+                    borderRadius: 4
+                });
+            } else {
+                datasets.push({
+                    label: kpiLabels[state.kpi],
+                    data: currentValues,
+                    backgroundColor: kpiColors[state.kpi].bg,
+                    borderColor: kpiColors[state.kpi].border,
+                    borderWidth: 1,
+                    borderRadius: 4
+                });
+            }
+
             state.chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
-                    datasets: [{
-                        label: kpiLabels[state.kpi],
-                        data: values,
-                        backgroundColor: kpiColors[state.kpi].bg,
-                        borderColor: kpiColors[state.kpi].border,
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     indexAxis: 'y',
                     plugins: {
-                        legend: { display: false },
+                        legend: { display: state.compareActive },
                         tooltip: {
                             callbacks: {
-                                label: function(context) {
-                                    const item = sorted[context.dataIndex];
-                                    return [
+                                afterLabel: function(context) {
+                                    const idx = context.dataIndex;
+                                    const item = sorted[idx];
+                                    const prevItem = prevDataMap[item.product];
+
+                                    let lines = [
                                         `ROAS: ${formatPercent(item.roas)}`,
                                         `비용: ${formatCurrency(item.cost)}`,
                                         `CPA: ${formatCurrency(item.cpa)}`,
                                         `전환수: ${formatNumber(item.conversions)}`
                                     ];
+
+                                    if (state.compareActive && prevItem) {
+                                        const changeRate = calculateChangeRate(item[state.kpi], prevItem[state.kpi]);
+                                        if (changeRate !== null) {
+                                            const sign = changeRate >= 0 ? '+' : '';
+                                            lines.push(`변화율: ${sign}${changeRate.toFixed(1)}%`);
+                                        }
+                                    }
+
+                                    return lines;
                                 }
                             }
                         }
                     },
                     scales: {
-                        x: { beginAtZero: true },
+                        x: { beginAtZero: true, stacked: false },
                         y: {
+                            stacked: false,
                             ticks: {
                                 font: { size: 11 },
                                 callback: function(value) {
                                     const label = this.getLabelForValue(value);
-                                    return label.length > 12 ? label.substring(0, 12) + '...' : label;
+                                    return label.length > 15 ? label.substring(0, 15) + '...' : label;
                                 }
                             }
                         }
@@ -7879,11 +8574,10 @@
         function renderPromotionPerformanceChart() {
             const state = perfChartState.promotion;
 
-            // adsetDimensionData에서 프로모션별 집계
-            let promotionData = [];
-            if (adsetDimensionData && adsetDimensionData.length > 0) {
+            // 데이터 집계 헬퍼 함수
+            function aggregatePromotionData(data) {
                 const groupedData = {};
-                adsetDimensionData.forEach(row => {
+                data.forEach(row => {
                     const promotion = row['프로모션'];
                     if (!promotion) return;
                     if (!groupedData[promotion]) {
@@ -7893,61 +8587,125 @@
                     groupedData[promotion].conversions += parseFloat(row['전환수']) || 0;
                     groupedData[promotion].revenue += parseFloat(row['전환값']) || 0;
                 });
-                promotionData = Object.values(groupedData).map(g => ({
+                return Object.values(groupedData).map(g => ({
                     ...g,
                     roas: g.cost > 0 ? (g.revenue / g.cost) * 100 : 0,
                     cpa: g.conversions > 0 ? g.cost / g.conversions : 0
                 })).filter(g => g.cost > 0);
             }
 
+            let promotionData = [];
+            let prevPromotionData = [];
+
+            if (adsetDimensionData && adsetDimensionData.length > 0) {
+                const filteredData = filterDataByDateRange(adsetDimensionData, state.startDate, state.endDate);
+                promotionData = aggregatePromotionData(filteredData);
+
+                if (state.compareActive && state.startDateComp && state.endDateComp) {
+                    const prevFilteredData = filterDataByDateRange(adsetDimensionData, state.startDateComp, state.endDateComp);
+                    prevPromotionData = aggregatePromotionData(prevFilteredData);
+                }
+            }
+
             let sorted = [...promotionData].sort((a, b) => {
                 const aVal = a[state.kpi];
                 const bVal = b[state.kpi];
                 return state.sort === 'desc' ? bVal - aVal : aVal - bVal;
+            }).slice(0, 10);
+
+            const prevDataMap = {};
+            prevPromotionData.forEach(item => {
+                prevDataMap[item.promotion] = item;
             });
 
-            const labels = sorted.map(p => p.promotion);
-            const values = sorted.map(p => p[state.kpi]);
+            const labels = sorted.map(p => {
+                if (state.compareActive && prevDataMap[p.promotion]) {
+                    const changeRate = calculateChangeRate(p[state.kpi], prevDataMap[p.promotion][state.kpi]);
+                    const arrow = changeRate !== null ? (changeRate >= 0 ? ' ▲' : ' ▼') : '';
+                    return p.promotion + arrow;
+                }
+                return p.promotion;
+            });
+
+            const currentValues = sorted.map(p => p[state.kpi]);
+            const prevValues = sorted.map(p => prevDataMap[p.promotion] ? prevDataMap[p.promotion][state.kpi] : 0);
 
             if (state.chart) state.chart.destroy();
 
             const ctx = document.getElementById('promotionPerformanceChart').getContext('2d');
+
+            const datasets = [];
+            if (state.compareActive && prevPromotionData.length > 0) {
+                datasets.push({
+                    label: '이전 기간',
+                    data: prevValues,
+                    backgroundColor: compareColors.previous.bg,
+                    borderColor: compareColors.previous.border,
+                    borderWidth: 1,
+                    borderRadius: 4
+                });
+                datasets.push({
+                    label: '현재 기간',
+                    data: currentValues,
+                    backgroundColor: kpiColors[state.kpi].bg,
+                    borderColor: kpiColors[state.kpi].border,
+                    borderWidth: 1,
+                    borderRadius: 4
+                });
+            } else {
+                datasets.push({
+                    label: kpiLabels[state.kpi],
+                    data: currentValues,
+                    backgroundColor: kpiColors[state.kpi].bg,
+                    borderColor: kpiColors[state.kpi].border,
+                    borderWidth: 1,
+                    borderRadius: 4
+                });
+            }
+
             state.chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
-                    datasets: [{
-                        label: kpiLabels[state.kpi],
-                        data: values,
-                        backgroundColor: kpiColors[state.kpi].bg,
-                        borderColor: kpiColors[state.kpi].border,
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     indexAxis: 'y',
                     plugins: {
-                        legend: { display: false },
+                        legend: { display: state.compareActive },
                         tooltip: {
                             callbacks: {
-                                label: function(context) {
-                                    const item = sorted[context.dataIndex];
-                                    return [
+                                afterLabel: function(context) {
+                                    const idx = context.dataIndex;
+                                    const item = sorted[idx];
+                                    const prevItem = prevDataMap[item.promotion];
+
+                                    let lines = [
                                         `ROAS: ${formatPercent(item.roas)}`,
                                         `비용: ${formatCurrency(item.cost)}`,
                                         `CPA: ${formatCurrency(item.cpa)}`,
                                         `전환수: ${formatNumber(item.conversions)}`
                                     ];
+
+                                    if (state.compareActive && prevItem) {
+                                        const changeRate = calculateChangeRate(item[state.kpi], prevItem[state.kpi]);
+                                        if (changeRate !== null) {
+                                            const sign = changeRate >= 0 ? '+' : '';
+                                            lines.push(`변화율: ${sign}${changeRate.toFixed(1)}%`);
+                                        }
+                                    }
+
+                                    return lines;
                                 }
                             }
                         }
                     },
                     scales: {
-                        x: { beginAtZero: true },
+                        x: { beginAtZero: true, stacked: false },
                         y: {
+                            stacked: false,
                             ticks: {
                                 font: { size: 11 },
                                 callback: function(value) {
@@ -7967,12 +8725,10 @@
         function renderTargetingPerformanceChart() {
             const state = perfChartState.targeting;
 
-            // adsetDimensionData에서 타겟팅별 집계
-            let targetingData = [];
-
-            if (adsetDimensionData && adsetDimensionData.length > 0) {
+            // 데이터 집계 헬퍼 함수
+            function aggregateTargetingData(data) {
                 const groupedData = {};
-                adsetDimensionData.forEach(row => {
+                data.forEach(row => {
                     const targeting = row['타겟팅'];
                     if (!targeting || targeting === '' || targeting === '-') return;
 
@@ -7984,8 +8740,7 @@
                     groupedData[targeting].revenue += parseFloat(row['전환값']) || 0;
                 });
 
-                // ROAS, CPA 계산
-                targetingData = Object.values(groupedData).map(g => ({
+                return Object.values(groupedData).map(g => ({
                     ...g,
                     roas: g.cost > 0 ? (g.revenue / g.cost) * 100 : 0,
                     cpa: g.conversions > 0 ? g.cost / g.conversions : 0,
@@ -7993,55 +8748,118 @@
                 })).filter(g => g.cost > 0);
             }
 
-            // 정렬
+            let targetingData = [];
+            let prevTargetingData = [];
+
+            if (adsetDimensionData && adsetDimensionData.length > 0) {
+                const filteredData = filterDataByDateRange(adsetDimensionData, state.startDate, state.endDate);
+                targetingData = aggregateTargetingData(filteredData);
+
+                if (state.compareActive && state.startDateComp && state.endDateComp) {
+                    const prevFilteredData = filterDataByDateRange(adsetDimensionData, state.startDateComp, state.endDateComp);
+                    prevTargetingData = aggregateTargetingData(prevFilteredData);
+                }
+            }
+
             let sorted = [...targetingData].sort((a, b) => {
                 const aVal = a[state.kpi];
                 const bVal = b[state.kpi];
                 return state.sort === 'desc' ? bVal - aVal : aVal - bVal;
             }).slice(0, 10);
 
-            const labels = sorted.map(c => c.label);
-            const values = sorted.map(c => c[state.kpi]);
+            const prevDataMap = {};
+            prevTargetingData.forEach(item => {
+                prevDataMap[item.targeting] = item;
+            });
+
+            const labels = sorted.map(t => {
+                if (state.compareActive && prevDataMap[t.targeting]) {
+                    const changeRate = calculateChangeRate(t[state.kpi], prevDataMap[t.targeting][state.kpi]);
+                    const arrow = changeRate !== null ? (changeRate >= 0 ? ' ▲' : ' ▼') : '';
+                    return t.label + arrow;
+                }
+                return t.label;
+            });
+
+            const currentValues = sorted.map(t => t[state.kpi]);
+            const prevValues = sorted.map(t => prevDataMap[t.targeting] ? prevDataMap[t.targeting][state.kpi] : 0);
 
             if (state.chart) state.chart.destroy();
 
             const ctx = document.getElementById('targetingPerformanceChart').getContext('2d');
+
+            const datasets = [];
+            if (state.compareActive && prevTargetingData.length > 0) {
+                datasets.push({
+                    label: '이전 기간',
+                    data: prevValues,
+                    backgroundColor: compareColors.previous.bg,
+                    borderColor: compareColors.previous.border,
+                    borderWidth: 1,
+                    borderRadius: 4
+                });
+                datasets.push({
+                    label: '현재 기간',
+                    data: currentValues,
+                    backgroundColor: kpiColors[state.kpi].bg,
+                    borderColor: kpiColors[state.kpi].border,
+                    borderWidth: 1,
+                    borderRadius: 4
+                });
+            } else {
+                datasets.push({
+                    label: kpiLabels[state.kpi],
+                    data: currentValues,
+                    backgroundColor: kpiColors[state.kpi].bg,
+                    borderColor: kpiColors[state.kpi].border,
+                    borderWidth: 1,
+                    borderRadius: 4
+                });
+            }
+
             state.chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
-                    datasets: [{
-                        label: kpiLabels[state.kpi],
-                        data: values,
-                        backgroundColor: kpiColors[state.kpi].bg,
-                        borderColor: kpiColors[state.kpi].border,
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     indexAxis: 'y',
                     plugins: {
-                        legend: { display: false },
+                        legend: { display: state.compareActive },
                         tooltip: {
                             callbacks: {
-                                label: function(context) {
-                                    const item = sorted[context.dataIndex];
-                                    return [
+                                afterLabel: function(context) {
+                                    const idx = context.dataIndex;
+                                    const item = sorted[idx];
+                                    const prevItem = prevDataMap[item.targeting];
+
+                                    let lines = [
                                         `ROAS: ${formatPercent(item.roas)}`,
                                         `비용: ${formatCurrency(item.cost)}`,
                                         `CPA: ${formatCurrency(item.cpa)}`,
                                         `전환수: ${formatNumber(item.conversions)}`
                                     ];
+
+                                    if (state.compareActive && prevItem) {
+                                        const changeRate = calculateChangeRate(item[state.kpi], prevItem[state.kpi]);
+                                        if (changeRate !== null) {
+                                            const sign = changeRate >= 0 ? '+' : '';
+                                            lines.push(`변화율: ${sign}${changeRate.toFixed(1)}%`);
+                                        }
+                                    }
+
+                                    return lines;
                                 }
                             }
                         }
                     },
                     scales: {
-                        x: { beginAtZero: true },
+                        x: { beginAtZero: true, stacked: false },
                         y: {
+                            stacked: false,
                             ticks: { font: { size: 11 } }
                         }
                     }
@@ -8051,45 +8869,13 @@
             generateTargetingInsight();
         }
 
-        // 성과분석 KPI/정렬 버튼 이벤트
+        // 성과분석 KPI/정렬 드롭다운 이벤트
         function setupPerformanceControls() {
-            // KPI 버튼
-            document.querySelectorAll('.perf-kpi-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+            // 정렬 드롭다운
+            document.querySelectorAll('.perf-sort-select').forEach(select => {
+                select.addEventListener('change', function() {
                     const category = this.dataset.category;
-                    const kpi = this.dataset.kpi;
-
-                    // 버튼 스타일 변경
-                    document.querySelectorAll(`.perf-kpi-btn[data-category="${category}"]`).forEach(b => {
-                        b.style.background = 'white';
-                        b.style.color = '#495057';
-                        b.style.border = '1px solid #dee2e6';
-                        b.classList.remove('active');
-                    });
-                    this.style.background = '#1a73e8';
-                    this.style.color = 'white';
-                    this.style.border = 'none';
-                    this.classList.add('active');
-
-                    // 상태 업데이트 및 차트 재렌더링
-                    perfChartState[category].kpi = kpi;
-                    renderPerformanceChart(category);
-                });
-            });
-
-            // 정렬 버튼
-            document.querySelectorAll('.perf-sort-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const category = this.dataset.category;
-                    const sort = this.dataset.sort;
-
-                    // 버튼 스타일 변경
-                    document.querySelectorAll(`.perf-sort-btn[data-category="${category}"]`).forEach(b => {
-                        b.style.background = 'white';
-                        b.classList.remove('active');
-                    });
-                    this.style.background = '#f8f9fa';
-                    this.classList.add('active');
+                    const sort = this.value;
 
                     // 상태 업데이트 및 차트 재렌더링
                     perfChartState[category].sort = sort;
@@ -8110,10 +8896,14 @@
 
         // 모든 성과분석 차트 초기화
         function initPerformanceCharts() {
-            renderBrandPerformanceChart();
-            renderProductPerformanceChart();
-            renderPromotionPerformanceChart();
-            renderTargetingPerformanceChart();
+            // 공통 날짜 초기화
+            initPerfChartDates();
+
+            // 날짜/비교 이벤트 설정
+            setupPerfChartDateEvents();
+
+            // 차트 렌더링
+            renderAllPerformanceCharts();
             setupPerformanceControls();
         }
 
