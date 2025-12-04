@@ -7644,25 +7644,23 @@
         }
 
         function generateTargetingInsight() {
-            // pivotDimensionData에서 연령×성별 집계
-            if (!pivotDimensionData || pivotDimensionData.length === 0) {
+            // adsetDimensionData에서 타겟팅별 집계
+            if (!adsetDimensionData || adsetDimensionData.length === 0) {
                 document.querySelector('#targetingInsightText > div:last-child').innerHTML = '타겟팅 데이터를 불러오는 중...';
                 return;
             }
 
             const groupedData = {};
-            pivotDimensionData.forEach(row => {
-                const age = row['연령_통합'] || row['연령'];
-                const gender = row['성별_통합'] || row['성별'];
-                if (!age || !gender || gender === '알 수 없음' || age === '알 수 없음') return;
+            adsetDimensionData.forEach(row => {
+                const targeting = row['타겟팅'];
+                if (!targeting || targeting === '' || targeting === '-') return;
 
-                const key = `${age}_${gender}`;
-                if (!groupedData[key]) {
-                    groupedData[key] = { age, gender, cost: 0, conversions: 0, revenue: 0 };
+                if (!groupedData[targeting]) {
+                    groupedData[targeting] = { targeting: targeting, cost: 0, conversions: 0, revenue: 0 };
                 }
-                groupedData[key].cost += parseFloat(row['비용']) || 0;
-                groupedData[key].conversions += parseFloat(row['전환수']) || 0;
-                groupedData[key].revenue += parseFloat(row['전환값']) || 0;
+                groupedData[targeting].cost += parseFloat(row['비용']) || 0;
+                groupedData[targeting].conversions += parseFloat(row['전환수']) || 0;
+                groupedData[targeting].revenue += parseFloat(row['전환값']) || 0;
             });
 
             const targetingData = Object.values(groupedData).map(g => ({
@@ -7681,7 +7679,7 @@
             const excellent = targetingData.filter(c => c.roas >= 150 && c.roas < 300);
             const poor = targetingData.filter(c => c.roas < 50);
 
-            let insight = `<strong>${best.age} ${best.gender}</strong> 타겟이 ROAS <strong>${formatPercent(best.roas)}</strong>로 가장 높은 수익을 내고 있습니다. `;
+            let insight = `<strong>${best.targeting}</strong> 타겟이 ROAS <strong>${formatPercent(best.roas)}</strong>로 가장 높은 수익을 내고 있습니다. `;
             insight += `(비용: ${formatCurrency(best.cost)}, CPA: ${formatCurrency(best.cpa)})`;
 
             if (golden.length > 0) {
@@ -7965,36 +7963,25 @@
             generatePromotionInsight();
         }
 
-        // 타겟팅 성과 차트 - pivotDimensionData(dimension_type2_adset_age_gender.csv) 사용
+        // 타겟팅 성과 차트 - adsetDimensionData(dimension_type1_campaign_adset.csv)의 '타겟팅' 컬럼 사용
         function renderTargetingPerformanceChart() {
             const state = perfChartState.targeting;
 
-            // pivotDimensionData에서 연령×성별 집계
+            // adsetDimensionData에서 타겟팅별 집계
             let targetingData = [];
 
-            if (pivotDimensionData && pivotDimensionData.length > 0) {
-                // 연령_통합 × 성별_통합 으로 그룹핑
+            if (adsetDimensionData && adsetDimensionData.length > 0) {
                 const groupedData = {};
-                pivotDimensionData.forEach(row => {
-                    const age = row['연령_통합'] || row['연령'];
-                    const gender = row['성별_통합'] || row['성별'];
+                adsetDimensionData.forEach(row => {
+                    const targeting = row['타겟팅'];
+                    if (!targeting || targeting === '' || targeting === '-') return;
 
-                    // 알 수 없음 제외
-                    if (!age || !gender || gender === '알 수 없음' || age === '알 수 없음') return;
-
-                    const key = `${age}_${gender}`;
-                    if (!groupedData[key]) {
-                        groupedData[key] = {
-                            age: age,
-                            gender: gender,
-                            cost: 0,
-                            conversions: 0,
-                            revenue: 0
-                        };
+                    if (!groupedData[targeting]) {
+                        groupedData[targeting] = { targeting: targeting, cost: 0, conversions: 0, revenue: 0 };
                     }
-                    groupedData[key].cost += parseFloat(row['비용']) || 0;
-                    groupedData[key].conversions += parseFloat(row['전환수']) || 0;
-                    groupedData[key].revenue += parseFloat(row['전환값']) || 0;
+                    groupedData[targeting].cost += parseFloat(row['비용']) || 0;
+                    groupedData[targeting].conversions += parseFloat(row['전환수']) || 0;
+                    groupedData[targeting].revenue += parseFloat(row['전환값']) || 0;
                 });
 
                 // ROAS, CPA 계산
@@ -8002,8 +7989,8 @@
                     ...g,
                     roas: g.cost > 0 ? (g.revenue / g.cost) * 100 : 0,
                     cpa: g.conversions > 0 ? g.cost / g.conversions : 0,
-                    label: `${g.age} ${g.gender}`
-                })).filter(g => g.cost > 0); // 비용 있는 것만
+                    label: g.targeting
+                })).filter(g => g.cost > 0);
             }
 
             // 정렬
