@@ -3059,12 +3059,43 @@
                                 </div>
                             </div>
 
-                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 20px;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
-                                    <input type="date" id="detailAdsetStartDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;">
-                                    <span style="color: var(--grey-600); font-weight: 500;">~</span>
-                                    <input type="date" id="detailAdsetEndDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;">
+                            <!-- 기간 선택 -->
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                                <div style="display: flex; flex-direction: column; align-items: center; padding: 10px 16px;">
+                                    <!-- 타이틀 + 비교 버튼 -->
+                                    <div style="display: flex; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 12px;">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="font-size: 13px;">📅</span>
+                                            <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
+                                        </div>
+                                        <button type="button" class="detail-compare-btn" data-tab="adset" style="position: absolute; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                    </div>
+                                    <!-- 기준 기간 행 -->
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #4DABF5; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="detail-period-preset" data-tab="adset" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" id="detailAdsetStartDate" class="detail-start-date" data-tab="adset" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" id="detailAdsetEndDate" class="detail-end-date" data-tab="adset" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
+                                    <!-- 비교 기간 행 -->
+                                    <div class="detail-compare-row" data-tab="adset" style="display: none; align-items: center; gap: 12px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #dee2e6; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="detail-period-preset-comp" data-tab="adset" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" id="detailAdsetStartDateComp" class="detail-start-date-comp" data-tab="adset" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" id="detailAdsetEndDateComp" class="detail-end-date-comp" data-tab="adset" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
                                 </div>
                             </div>
 
@@ -3203,12 +3234,43 @@
                                     <p style="color: var(--grey-600); font-size: 13px; margin: 0;">각 성별의 성과를 비교합니다.</p>
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 20px;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
-                                    <input type="date" id="detailGenderStartDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                    <span style="color: var(--grey-600); font-weight: 500;">~</span>
-                                    <input type="date" id="detailGenderEndDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                            <!-- 기간 선택 -->
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                                <div style="display: flex; flex-direction: column; align-items: center; padding: 10px 16px;">
+                                    <!-- 타이틀 + 비교 버튼 -->
+                                    <div style="display: flex; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 12px;">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="font-size: 13px;">📅</span>
+                                            <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
+                                        </div>
+                                        <button type="button" class="detail-compare-btn" data-tab="gender" style="position: absolute; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                    </div>
+                                    <!-- 기준 기간 행 -->
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #4DABF5; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="detail-period-preset" data-tab="gender" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" id="detailGenderStartDate" class="detail-start-date" data-tab="gender" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" id="detailGenderEndDate" class="detail-end-date" data-tab="gender" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
+                                    <!-- 비교 기간 행 -->
+                                    <div class="detail-compare-row" data-tab="gender" style="display: none; align-items: center; gap: 12px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #dee2e6; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="detail-period-preset-comp" data-tab="gender" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" id="detailGenderStartDateComp" class="detail-start-date-comp" data-tab="gender" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" id="detailGenderEndDateComp" class="detail-end-date-comp" data-tab="gender" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
                                 </div>
                             </div>
                             <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
@@ -3357,12 +3419,40 @@
                                     <p style="color: var(--grey-600); font-size: 13px; margin: 0;">각 연령대의 성과를 비교합니다.</p>
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 20px;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
-                                    <input type="date" id="detailAgeStartDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                    <span style="color: var(--grey-600); font-weight: 500;">~</span>
-                                    <input type="date" id="detailAgeEndDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                            <!-- 기간 선택 -->
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                                <div style="display: flex; flex-direction: column; align-items: center; padding: 10px 16px;">
+                                    <div style="display: flex; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 12px;">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="font-size: 13px;">📅</span>
+                                            <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
+                                        </div>
+                                        <button type="button" class="detail-compare-btn" data-tab="age" style="position: absolute; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #4DABF5; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="detail-period-preset" data-tab="age" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" id="detailAgeStartDate" class="detail-start-date" data-tab="age" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" id="detailAgeEndDate" class="detail-end-date" data-tab="age" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
+                                    <div class="detail-compare-row" data-tab="age" style="display: none; align-items: center; gap: 12px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #dee2e6; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="detail-period-preset-comp" data-tab="age" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" id="detailAgeStartDateComp" class="detail-start-date-comp" data-tab="age" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" id="detailAgeEndDateComp" class="detail-end-date-comp" data-tab="age" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
                                 </div>
                             </div>
                             <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
@@ -3511,12 +3601,43 @@
                                     <p style="color: var(--grey-600); font-size: 13px; margin: 0;">각 플랫폼의 성과를 비교합니다.</p>
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 20px;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
-                                    <input type="date" id="detailPlatformStartDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                    <span style="color: var(--grey-600); font-weight: 500;">~</span>
-                                    <input type="date" id="detailPlatformEndDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                            <!-- 기간 선택 -->
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                                <div style="display: flex; flex-direction: column; align-items: center; padding: 10px 16px;">
+                                    <!-- 타이틀 + 비교 버튼 -->
+                                    <div style="display: flex; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 12px;">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="font-size: 13px;">📅</span>
+                                            <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
+                                        </div>
+                                        <button type="button" class="detail-compare-btn" data-tab="platform" style="position: absolute; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                    </div>
+                                    <!-- 기준 기간 행 -->
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #4DABF5; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="detail-period-preset" data-tab="platform" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" id="detailPlatformStartDate" class="detail-start-date" data-tab="platform" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" id="detailPlatformEndDate" class="detail-end-date" data-tab="platform" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
+                                    <!-- 비교 기간 행 -->
+                                    <div class="detail-compare-row" data-tab="platform" style="display: none; align-items: center; gap: 12px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #dee2e6; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="detail-period-preset-comp" data-tab="platform" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" id="detailPlatformStartDateComp" class="detail-start-date-comp" data-tab="platform" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" id="detailPlatformEndDateComp" class="detail-end-date-comp" data-tab="platform" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
                                 </div>
                             </div>
                             <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
@@ -3665,12 +3786,43 @@
                                     <p style="color: var(--grey-600); font-size: 13px; margin: 0;">각 기기플랫폼의 성과를 비교합니다.</p>
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 20px;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
-                                    <input type="date" id="detailDevicePlatformStartDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                    <span style="color: var(--grey-600); font-weight: 500;">~</span>
-                                    <input type="date" id="detailDevicePlatformEndDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                            <!-- 기간 선택 -->
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                                <div style="display: flex; flex-direction: column; align-items: center; padding: 10px 16px;">
+                                    <!-- 타이틀 + 비교 버튼 -->
+                                    <div style="display: flex; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 12px;">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="font-size: 13px;">📅</span>
+                                            <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
+                                        </div>
+                                        <button type="button" class="detail-compare-btn" data-tab="device-platform" style="position: absolute; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                    </div>
+                                    <!-- 기준 기간 행 -->
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #4DABF5; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="detail-period-preset" data-tab="device-platform" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" id="detailDevicePlatformStartDate" class="detail-start-date" data-tab="device-platform" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" id="detailDevicePlatformEndDate" class="detail-end-date" data-tab="device-platform" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
+                                    <!-- 비교 기간 행 -->
+                                    <div class="detail-compare-row" data-tab="device-platform" style="display: none; align-items: center; gap: 12px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #dee2e6; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="detail-period-preset-comp" data-tab="device-platform" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" id="detailDevicePlatformStartDateComp" class="detail-start-date-comp" data-tab="device-platform" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" id="detailDevicePlatformEndDateComp" class="detail-end-date-comp" data-tab="device-platform" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
                                 </div>
                             </div>
                             <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
@@ -3819,12 +3971,43 @@
                                     <p style="color: var(--grey-600); font-size: 13px; margin: 0;">각 기기의 성과를 비교합니다.</p>
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 20px;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
-                                    <input type="date" id="detailDeviceTypeStartDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
-                                    <span style="color: var(--grey-600); font-weight: 500;">~</span>
-                                    <input type="date" id="detailDeviceTypeEndDate" style="padding: 8px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                            <!-- 기간 선택 -->
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                                <div style="display: flex; flex-direction: column; align-items: center; padding: 10px 16px;">
+                                    <!-- 타이틀 + 비교 버튼 -->
+                                    <div style="display: flex; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 12px;">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="font-size: 13px;">📅</span>
+                                            <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
+                                        </div>
+                                        <button type="button" class="detail-compare-btn" data-tab="device-type" style="position: absolute; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                    </div>
+                                    <!-- 기준 기간 행 -->
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #4DABF5; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="detail-period-preset" data-tab="device-type" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" id="detailDeviceTypeStartDate" class="detail-start-date" data-tab="device-type" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" id="detailDeviceTypeEndDate" class="detail-end-date" data-tab="device-type" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
+                                    <!-- 비교 기간 행 -->
+                                    <div class="detail-compare-row" data-tab="device-type" style="display: none; align-items: center; gap: 12px;">
+                                        <span style="width: 12px; height: 12px; border: 2px solid #dee2e6; border-radius: 50%; background: white; flex-shrink: 0;"></span>
+                                        <select class="detail-period-preset-comp" data-tab="device-type" style="width: 120px; padding: 8px 32px 8px 12px; border: 1px solid #dee2e6; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: white; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23666%27 stroke-width=%271.5%27 fill=%27none%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 10px center;">
+                                            <option value="" selected>항목 선택</option>
+                                            <option value="7">최근 7일</option>
+                                            <option value="14">최근 14일</option>
+                                            <option value="30">최근 30일</option>
+                                        </select>
+                                        <input type="date" id="detailDeviceTypeStartDateComp" class="detail-start-date-comp" data-tab="device-type" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                        <span style="width: 20px; text-align: center; color: #999; font-size: 13px;">~</span>
+                                        <input type="date" id="detailDeviceTypeEndDateComp" class="detail-end-date-comp" data-tab="device-type" style="width: 130px; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 13px; color: #666; background: white;">
+                                    </div>
                                 </div>
                             </div>
                             <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
@@ -4631,6 +4814,9 @@
         let detailAdsetMetric = 'roas';
         let detailAdsetStartDate = '';
         let detailAdsetEndDate = '';
+        let detailAdsetCompareActive = false;
+        let detailAdsetStartDateComp = '';
+        let detailAdsetEndDateComp = '';
         let detailAdsetBarChart = null;
 
         // 성별 상세
@@ -4638,6 +4824,9 @@
         let detailGenderMetric = 'roas';
         let detailGenderStartDate = '';
         let detailGenderEndDate = '';
+        let detailGenderCompareActive = false;
+        let detailGenderStartDateComp = '';
+        let detailGenderEndDateComp = '';
         let detailGenderBarChart = null;
 
         // 연령 상세
@@ -4645,6 +4834,9 @@
         let detailAgeMetric = 'roas';
         let detailAgeStartDate = '';
         let detailAgeEndDate = '';
+        let detailAgeCompareActive = false;
+        let detailAgeStartDateComp = '';
+        let detailAgeEndDateComp = '';
         let detailAgeBarChart = null;
 
         // 플랫폼 상세
@@ -4652,6 +4844,9 @@
         let detailPlatformMetric = 'roas';
         let detailPlatformStartDate = '';
         let detailPlatformEndDate = '';
+        let detailPlatformCompareActive = false;
+        let detailPlatformStartDateComp = '';
+        let detailPlatformEndDateComp = '';
         let detailPlatformBarChart = null;
 
         // 기기플랫폼 상세
@@ -4659,6 +4854,9 @@
         let detailDevicePlatformMetric = 'roas';
         let detailDevicePlatformStartDate = '';
         let detailDevicePlatformEndDate = '';
+        let detailDevicePlatformCompareActive = false;
+        let detailDevicePlatformStartDateComp = '';
+        let detailDevicePlatformEndDateComp = '';
         let detailDevicePlatformBarChart = null;
 
         // 기기 상세
@@ -4666,6 +4864,9 @@
         let detailDeviceTypeMetric = 'roas';
         let detailDeviceTypeStartDate = '';
         let detailDeviceTypeEndDate = '';
+        let detailDeviceTypeCompareActive = false;
+        let detailDeviceTypeStartDateComp = '';
+        let detailDeviceTypeEndDateComp = '';
         let detailDeviceTypeBarChart = null;
 
         // 데이터 로딩
@@ -14845,6 +15046,86 @@
             }
         }
 
+        // 비교 Bar 차트 렌더링 함수 (두 기간 비교)
+        function renderDetailCompareBarChart(canvasId, chartVar, labels, values, valuesComp, metric, periodLabel, periodLabelComp) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return null;
+
+            if (chartVar) {
+                chartVar.destroy();
+            }
+
+            const metricLabels = {
+                'roas': 'ROAS (%)',
+                'cost': '비용 (원)',
+                'revenue': '전환값 (원)',
+                'conversions': '전환수',
+                'impressions': '노출수',
+                'clicks': '클릭수',
+                'cpm': 'CPM (원)',
+                'cpc': 'CPC (원)',
+                'cpa': 'CPA (원)',
+                'ctr': 'CTR (%)',
+                'cvr': '전환율 (%)'
+            };
+
+            const ctx = canvas.getContext('2d');
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: periodLabel || '기준 기간',
+                            data: values,
+                            backgroundColor: 'rgba(33, 150, 243, 0.8)',
+                            borderColor: 'rgba(33, 150, 243, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: periodLabelComp || '비교 기간',
+                            data: valuesComp,
+                            backgroundColor: 'rgba(158, 158, 158, 0.6)',
+                            borderColor: 'rgba(158, 158, 158, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatMetricValue(context.raw, metric);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: metricLabels[metric] || metric
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                font: { size: 11 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         // 공통 Bar 차트 렌더링 함수 (수평 막대) - 단순 버전
         function renderDetailBarChart(canvasId, chartVar, labels, values, metric, chartTitle) {
             const canvas = document.getElementById(canvasId);
@@ -15145,6 +15426,62 @@
             const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' };
             const hasActiveFilters = Object.values(detailAdsetFilters).some(arr => arr.length > 0);
 
+            // 비교 모드 처리
+            if (detailAdsetCompareActive && detailAdsetStartDateComp && detailAdsetEndDateComp) {
+                // 데이터 집계 함수
+                const aggregateData = (startDate, endDate) => {
+                    const dataMap = {};
+                    adsetDimensionData.forEach(row => {
+                        const adset = row['광고세트'];
+                        if (!adset || adset === '' || adset === '-') return;
+
+                        // 필터 매칭 확인
+                        let matches = true;
+                        Object.keys(filterMap).forEach(filterKey => {
+                            const column = filterMap[filterKey];
+                            const selectedValues = detailAdsetFilters[filterKey];
+                            if (selectedValues && selectedValues.length > 0) {
+                                if (!selectedValues.includes(row[column])) matches = false;
+                            }
+                        });
+                        if (!matches && hasActiveFilters) return;
+
+                        const date = row['일'];
+                        if (startDate || endDate) {
+                            const rowDate = new Date(date);
+                            if (isNaN(rowDate)) return;
+                            if (startDate && rowDate < new Date(startDate)) return;
+                            if (endDate && rowDate > new Date(endDate)) return;
+                        }
+
+                        if (!dataMap[adset]) {
+                            dataMap[adset] = { cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 };
+                        }
+                        dataMap[adset].cost += parseFloat(row['비용']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[adset].revenue += parseFloat(row['전환값']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[adset].conversions += parseFloat(row['전환수']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[adset].impressions += parseFloat(row['노출']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[adset].clicks += parseFloat(row['클릭']?.toString().replace(/,/g, '') || 0) || 0;
+                    });
+                    return dataMap;
+                };
+
+                const mainData = aggregateData(detailAdsetStartDate, detailAdsetEndDate);
+                const compData = aggregateData(detailAdsetStartDateComp, detailAdsetEndDateComp);
+
+                // 정렬 (기준 기간 기준)
+                const sortedAdsets = Object.keys(mainData)
+                    .sort((a, b) => calculateMetricValue(mainData[b], detailAdsetMetric) - calculateMetricValue(mainData[a], detailAdsetMetric))
+                    .slice(0, 15);
+
+                const labels = sortedAdsets;
+                const values = sortedAdsets.map(adset => calculateMetricValue(mainData[adset] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailAdsetMetric));
+                const valuesComp = sortedAdsets.map(adset => calculateMetricValue(compData[adset] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailAdsetMetric));
+
+                detailAdsetBarChart = renderDetailCompareBarChart('detailAdsetBarChart', detailAdsetBarChart, labels, values, valuesComp, detailAdsetMetric, '기준 기간', '비교 기간');
+                return;
+            }
+
             // 활성화된 필터 찾기
             let activeFilterKey = null;
             let activeFilterValues = [];
@@ -15305,6 +15642,59 @@
 
             const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션', 'adset': '광고세트' };
             const hasActiveFilters = Object.values(detailGenderFilters).some(arr => arr.length > 0);
+            const genderColumn = '성별_통합';
+
+            // 비교 모드 처리
+            if (detailGenderCompareActive && detailGenderStartDateComp && detailGenderEndDateComp) {
+                const aggregateData = (startDate, endDate) => {
+                    const dataMap = {};
+                    genderDimensionData.forEach(row => {
+                        const rawGender = row[genderColumn] || row['성별'];
+                        if (!rawGender || rawGender === '' || rawGender === '-' || rawGender === 'unknown') return;
+
+                        let matches = true;
+                        Object.keys(filterMap).forEach(filterKey => {
+                            const column = filterMap[filterKey];
+                            const selectedValues = detailGenderFilters[filterKey];
+                            if (selectedValues && selectedValues.length > 0) {
+                                if (!selectedValues.includes(row[column])) matches = false;
+                            }
+                        });
+                        if (!matches && hasActiveFilters) return;
+
+                        const date = row['일'];
+                        if (startDate || endDate) {
+                            const rowDate = new Date(date);
+                            if (isNaN(rowDate)) return;
+                            if (startDate && rowDate < new Date(startDate)) return;
+                            if (endDate && rowDate > new Date(endDate)) return;
+                        }
+
+                        if (!dataMap[rawGender]) {
+                            dataMap[rawGender] = { cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 };
+                        }
+                        dataMap[rawGender].cost += parseFloat(row['비용']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawGender].revenue += parseFloat(row['전환값']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawGender].conversions += parseFloat(row['전환수']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawGender].impressions += parseFloat(row['노출']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawGender].clicks += parseFloat(row['클릭']?.toString().replace(/,/g, '') || 0) || 0;
+                    });
+                    return dataMap;
+                };
+
+                const mainData = aggregateData(detailGenderStartDate, detailGenderEndDate);
+                const compData = aggregateData(detailGenderStartDateComp, detailGenderEndDateComp);
+
+                const sortedGenders = Object.keys(mainData)
+                    .sort((a, b) => calculateMetricValue(mainData[b], detailGenderMetric) - calculateMetricValue(mainData[a], detailGenderMetric));
+
+                const labels = sortedGenders;
+                const values = sortedGenders.map(g => calculateMetricValue(mainData[g] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailGenderMetric));
+                const valuesComp = sortedGenders.map(g => calculateMetricValue(compData[g] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailGenderMetric));
+
+                detailGenderBarChart = renderDetailCompareBarChart('detailGenderBarChart', detailGenderBarChart, labels, values, valuesComp, detailGenderMetric, '기준 기간', '비교 기간');
+                return;
+            }
 
             // 어떤 필터가 활성화되어 있는지 확인
             let activeFilterKey = null;
@@ -15315,9 +15705,6 @@
                     activeFilterColumn = filterMap[filterKey];
                 }
             });
-
-            // 성별_통합 컬럼 사용
-            const genderColumn = '성별_통합';
 
             if (hasActiveFilters && activeFilterKey) {
                 // 누적 바 차트: 성별별로 분류기준별 데이터 집계
@@ -15441,6 +15828,58 @@
 
             const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션', 'adset': '광고세트' };
             const hasActiveFilters = Object.values(detailAgeFilters).some(arr => arr.length > 0);
+            const ageColumn = '연령_통합';
+
+            // 비교 모드 처리
+            if (detailAgeCompareActive && detailAgeStartDateComp && detailAgeEndDateComp) {
+                const aggregateData = (startDate, endDate) => {
+                    const dataMap = {};
+                    ageDimensionData.forEach(row => {
+                        const rawAge = row[ageColumn] || row['연령'];
+                        if (!rawAge || rawAge === '' || rawAge === '-' || rawAge === 'unknown') return;
+
+                        let matches = true;
+                        Object.keys(filterMap).forEach(filterKey => {
+                            const column = filterMap[filterKey];
+                            const selectedValues = detailAgeFilters[filterKey];
+                            if (selectedValues && selectedValues.length > 0) {
+                                if (!selectedValues.includes(row[column])) matches = false;
+                            }
+                        });
+                        if (!matches && hasActiveFilters) return;
+
+                        const date = row['일'];
+                        if (startDate || endDate) {
+                            const rowDate = new Date(date);
+                            if (isNaN(rowDate)) return;
+                            if (startDate && rowDate < new Date(startDate)) return;
+                            if (endDate && rowDate > new Date(endDate)) return;
+                        }
+
+                        if (!dataMap[rawAge]) {
+                            dataMap[rawAge] = { cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 };
+                        }
+                        dataMap[rawAge].cost += parseFloat(row['비용']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawAge].revenue += parseFloat(row['전환값']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawAge].conversions += parseFloat(row['전환수']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawAge].impressions += parseFloat(row['노출']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawAge].clicks += parseFloat(row['클릭']?.toString().replace(/,/g, '') || 0) || 0;
+                    });
+                    return dataMap;
+                };
+
+                const mainData = aggregateData(detailAgeStartDate, detailAgeEndDate);
+                const compData = aggregateData(detailAgeStartDateComp, detailAgeEndDateComp);
+
+                const sortedAges = Object.keys(mainData).sort();
+
+                const labels = sortedAges;
+                const values = sortedAges.map(a => calculateMetricValue(mainData[a] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailAgeMetric));
+                const valuesComp = sortedAges.map(a => calculateMetricValue(compData[a] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailAgeMetric));
+
+                detailAgeBarChart = renderDetailCompareBarChart('detailAgeBarChart', detailAgeBarChart, labels, values, valuesComp, detailAgeMetric, '기준 기간', '비교 기간');
+                return;
+            }
 
             // 어떤 필터가 활성화되어 있는지 확인
             let activeFilterKey = null;
@@ -15451,9 +15890,6 @@
                     activeFilterColumn = filterMap[filterKey];
                 }
             });
-
-            // 연령_통합 컬럼 사용
-            const ageColumn = '연령_통합';
 
             if (hasActiveFilters && activeFilterKey) {
                 // 누적 바 차트: 연령별로 분류기준별 데이터 집계
@@ -15577,6 +16013,58 @@
 
             const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션', 'adset': '광고세트' };
             const hasActiveFilters = Object.values(detailPlatformFilters).some(arr => arr.length > 0);
+            const platformColumn = '플랫폼_통합';
+
+            // 비교 모드 처리
+            if (detailPlatformCompareActive && detailPlatformStartDateComp && detailPlatformEndDateComp) {
+                const aggregateData = (startDate, endDate) => {
+                    const dataMap = {};
+                    platformDimensionData.forEach(row => {
+                        const rawPlatform = row[platformColumn] || row['플랫폼'];
+                        if (!rawPlatform || rawPlatform === '' || rawPlatform === '-' || rawPlatform === 'unknown') return;
+
+                        let matches = true;
+                        Object.keys(filterMap).forEach(filterKey => {
+                            const column = filterMap[filterKey];
+                            const selectedValues = detailPlatformFilters[filterKey];
+                            if (selectedValues && selectedValues.length > 0) {
+                                if (!selectedValues.includes(row[column])) matches = false;
+                            }
+                        });
+                        if (!matches && hasActiveFilters) return;
+
+                        const date = row['일'];
+                        if (startDate || endDate) {
+                            const rowDate = new Date(date);
+                            if (isNaN(rowDate)) return;
+                            if (startDate && rowDate < new Date(startDate)) return;
+                            if (endDate && rowDate > new Date(endDate)) return;
+                        }
+
+                        if (!dataMap[rawPlatform]) {
+                            dataMap[rawPlatform] = { cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 };
+                        }
+                        dataMap[rawPlatform].cost += parseFloat(row['비용']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawPlatform].revenue += parseFloat(row['전환값']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawPlatform].conversions += parseFloat(row['전환수']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawPlatform].impressions += parseFloat(row['노출']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawPlatform].clicks += parseFloat(row['클릭']?.toString().replace(/,/g, '') || 0) || 0;
+                    });
+                    return dataMap;
+                };
+
+                const mainData = aggregateData(detailPlatformStartDate, detailPlatformEndDate);
+                const compData = aggregateData(detailPlatformStartDateComp, detailPlatformEndDateComp);
+
+                const sortedPlatforms = Object.keys(mainData).sort();
+
+                const labels = sortedPlatforms;
+                const values = sortedPlatforms.map(p => calculateMetricValue(mainData[p] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailPlatformMetric));
+                const valuesComp = sortedPlatforms.map(p => calculateMetricValue(compData[p] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailPlatformMetric));
+
+                detailPlatformBarChart = renderDetailCompareBarChart('detailPlatformBarChart', detailPlatformBarChart, labels, values, valuesComp, detailPlatformMetric, '기준 기간', '비교 기간');
+                return;
+            }
 
             // 어떤 필터가 활성화되어 있는지 확인
             let activeFilterKey = null;
@@ -15587,9 +16075,6 @@
                     activeFilterColumn = filterMap[filterKey];
                 }
             });
-
-            // 플랫폼_통합 컬럼 사용
-            const platformColumn = '플랫폼_통합';
 
             if (hasActiveFilters && activeFilterKey) {
                 // 누적 바 차트
@@ -15711,6 +16196,72 @@
 
             const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션', 'adset': '광고세트' };
             const hasActiveFilters = Object.values(detailDevicePlatformFilters).some(arr => arr.length > 0);
+            const devicePlatformColumn = '기기플랫폼_통합';
+
+            // 비교 모드 처리
+            console.log('Device-Platform Compare Mode:', detailDevicePlatformCompareActive, 'Comp dates:', detailDevicePlatformStartDateComp, '~', detailDevicePlatformEndDateComp);
+            console.log('Main period dates:', detailDevicePlatformStartDate, '~', detailDevicePlatformEndDate);
+            console.log('devicePlatformDimensionData count:', devicePlatformDimensionData ? devicePlatformDimensionData.length : 0);
+            if (detailDevicePlatformCompareActive && detailDevicePlatformStartDateComp && detailDevicePlatformEndDateComp) {
+                console.log('Entering compare mode rendering');
+                const aggregateData = (startDate, endDate) => {
+                    console.log('Aggregating data for period:', startDate, '~', endDate);
+                    const dataMap = {};
+                    let rowCount = 0;
+                    devicePlatformDimensionData.forEach(row => {
+                        const rawDP = row[devicePlatformColumn] || row['기기플랫폼'];
+                        if (!rawDP || rawDP === '' || rawDP === '-') return;
+
+                        let matches = true;
+                        Object.keys(filterMap).forEach(filterKey => {
+                            const column = filterMap[filterKey];
+                            const selectedValues = detailDevicePlatformFilters[filterKey];
+                            if (selectedValues && selectedValues.length > 0) {
+                                if (!selectedValues.includes(row[column])) matches = false;
+                            }
+                        });
+                        if (!matches && hasActiveFilters) return;
+
+                        const date = row['일'];
+                        if (startDate || endDate) {
+                            const rowDate = new Date(date);
+                            if (isNaN(rowDate)) return;
+                            if (startDate && rowDate < new Date(startDate)) return;
+                            if (endDate && rowDate > new Date(endDate)) return;
+                        }
+
+                        if (!dataMap[rawDP]) {
+                            dataMap[rawDP] = { cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 };
+                        }
+                        dataMap[rawDP].cost += parseFloat(row['비용']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawDP].revenue += parseFloat(row['전환값']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawDP].conversions += parseFloat(row['전환수']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawDP].impressions += parseFloat(row['노출']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawDP].clicks += parseFloat(row['클릭']?.toString().replace(/,/g, '') || 0) || 0;
+                        rowCount++;
+                    });
+                    console.log('Total rows aggregated:', rowCount);
+                    return dataMap;
+                };
+
+                const mainData = aggregateData(detailDevicePlatformStartDate, detailDevicePlatformEndDate);
+                const compData = aggregateData(detailDevicePlatformStartDateComp, detailDevicePlatformEndDateComp);
+                console.log('Main data keys:', Object.keys(mainData), 'Comp data keys:', Object.keys(compData));
+                console.log('Main data:', JSON.stringify(mainData));
+                console.log('Comp data:', JSON.stringify(compData));
+
+                const sortedDPs = Object.keys(mainData).sort();
+
+                const labels = sortedDPs;
+                const values = sortedDPs.map(dp => calculateMetricValue(mainData[dp] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailDevicePlatformMetric));
+                const valuesComp = sortedDPs.map(dp => calculateMetricValue(compData[dp] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailDevicePlatformMetric));
+                console.log('Labels:', labels);
+                console.log('Values (main):', values);
+                console.log('Values (comp):', valuesComp);
+
+                detailDevicePlatformBarChart = renderDetailCompareBarChart('detailDevicePlatformBarChart', detailDevicePlatformBarChart, labels, values, valuesComp, detailDevicePlatformMetric, '기준 기간', '비교 기간');
+                return;
+            }
 
             // 활성화된 필터 찾기
             let activeFilterKey = null;
@@ -15722,9 +16273,6 @@
                     break;
                 }
             }
-
-            // 기기플랫폼_통합 컬럼 사용
-            const devicePlatformColumn = '기기플랫폼_통합';
 
             if (hasActiveFilters && activeFilterKey) {
                 // 스택 바 차트: 필터 분류 기준별로 그룹화
@@ -15875,6 +16423,58 @@
 
             const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션', 'adset': '광고세트' };
             const hasActiveFilters = Object.values(detailDeviceTypeFilters).some(arr => arr.length > 0);
+            const deviceTypeColumn = '기기유형_통합';
+
+            // 비교 모드 처리
+            if (detailDeviceTypeCompareActive && detailDeviceTypeStartDateComp && detailDeviceTypeEndDateComp) {
+                const aggregateData = (startDate, endDate) => {
+                    const dataMap = {};
+                    deviceTypeDimensionData.forEach(row => {
+                        const rawDT = row[deviceTypeColumn] || row['기기유형'];
+                        if (!rawDT || rawDT === '' || rawDT === '-') return;
+
+                        let matches = true;
+                        Object.keys(filterMap).forEach(filterKey => {
+                            const column = filterMap[filterKey];
+                            const selectedValues = detailDeviceTypeFilters[filterKey];
+                            if (selectedValues && selectedValues.length > 0) {
+                                if (!selectedValues.includes(row[column])) matches = false;
+                            }
+                        });
+                        if (!matches && hasActiveFilters) return;
+
+                        const date = row['일'];
+                        if (startDate || endDate) {
+                            const rowDate = new Date(date);
+                            if (isNaN(rowDate)) return;
+                            if (startDate && rowDate < new Date(startDate)) return;
+                            if (endDate && rowDate > new Date(endDate)) return;
+                        }
+
+                        if (!dataMap[rawDT]) {
+                            dataMap[rawDT] = { cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 };
+                        }
+                        dataMap[rawDT].cost += parseFloat(row['비용']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawDT].revenue += parseFloat(row['전환값']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawDT].conversions += parseFloat(row['전환수']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawDT].impressions += parseFloat(row['노출']?.toString().replace(/,/g, '') || 0) || 0;
+                        dataMap[rawDT].clicks += parseFloat(row['클릭']?.toString().replace(/,/g, '') || 0) || 0;
+                    });
+                    return dataMap;
+                };
+
+                const mainData = aggregateData(detailDeviceTypeStartDate, detailDeviceTypeEndDate);
+                const compData = aggregateData(detailDeviceTypeStartDateComp, detailDeviceTypeEndDateComp);
+
+                const sortedDTs = Object.keys(mainData).sort();
+
+                const labels = sortedDTs;
+                const values = sortedDTs.map(dt => calculateMetricValue(mainData[dt] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailDeviceTypeMetric));
+                const valuesComp = sortedDTs.map(dt => calculateMetricValue(compData[dt] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailDeviceTypeMetric));
+
+                detailDeviceTypeBarChart = renderDetailCompareBarChart('detailDeviceTypeBarChart', detailDeviceTypeBarChart, labels, values, valuesComp, detailDeviceTypeMetric, '기준 기간', '비교 기간');
+                return;
+            }
 
             // 활성화된 필터 찾기
             let activeFilterKey = null;
@@ -15886,9 +16486,6 @@
                     break;
                 }
             }
-
-            // 기기유형_통합 컬럼 사용
-            const deviceTypeColumn = '기기유형_통합';
 
             if (hasActiveFilters && activeFilterKey) {
                 // 스택 바 차트: 필터 분류 기준별로 그룹화
@@ -16060,6 +16657,220 @@
                         renderFn();
                     });
                 }
+            });
+
+            // 성과 상세 분석 - 기간 선택 프리셋 이벤트
+            document.querySelectorAll('.detail-period-preset').forEach(preset => {
+                preset.addEventListener('change', function() {
+                    const tab = this.getAttribute('data-tab');
+                    const days = parseInt(this.value);
+                    if (!days) return;
+
+                    const endDate = new Date();
+                    const startDate = new Date();
+                    startDate.setDate(endDate.getDate() - days + 1);
+
+                    const formatDate = (d) => {
+                        const year = d.getFullYear();
+                        const month = String(d.getMonth() + 1).padStart(2, '0');
+                        const day = String(d.getDate()).padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                    };
+
+                    const startStr = formatDate(startDate);
+                    const endStr = formatDate(endDate);
+
+                    const startInput = document.querySelector(`.detail-start-date[data-tab="${tab}"]`);
+                    const endInput = document.querySelector(`.detail-end-date[data-tab="${tab}"]`);
+
+                    if (startInput) startInput.value = startStr;
+                    if (endInput) endInput.value = endStr;
+
+                    // 변수 업데이트 및 차트 렌더링
+                    if (tab === 'adset') { detailAdsetStartDate = startStr; detailAdsetEndDate = endStr; renderDetailAdsetBarChart(); }
+                    else if (tab === 'gender') { detailGenderStartDate = startStr; detailGenderEndDate = endStr; renderDetailGenderBarChart(); }
+                    else if (tab === 'age') { detailAgeStartDate = startStr; detailAgeEndDate = endStr; renderDetailAgeBarChart(); }
+                    else if (tab === 'platform') { detailPlatformStartDate = startStr; detailPlatformEndDate = endStr; renderDetailPlatformBarChart(); }
+                    else if (tab === 'device-platform') { detailDevicePlatformStartDate = startStr; detailDevicePlatformEndDate = endStr; renderDetailDevicePlatformBarChart(); }
+                    else if (tab === 'device-type') { detailDeviceTypeStartDate = startStr; detailDeviceTypeEndDate = endStr; renderDetailDeviceTypeBarChart(); }
+                });
+            });
+
+            // 성과 상세 분석 - 비교 기간 프리셋 이벤트
+            document.querySelectorAll('.detail-period-preset-comp').forEach(preset => {
+                preset.addEventListener('change', function() {
+                    const tab = this.getAttribute('data-tab');
+                    const days = parseInt(this.value);
+                    if (!days) return;
+
+                    const endDate = new Date();
+                    const startDate = new Date();
+                    startDate.setDate(endDate.getDate() - days + 1);
+
+                    const formatDate = (d) => {
+                        const year = d.getFullYear();
+                        const month = String(d.getMonth() + 1).padStart(2, '0');
+                        const day = String(d.getDate()).padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                    };
+
+                    const startStr = formatDate(startDate);
+                    const endStr = formatDate(endDate);
+
+                    const startInput = document.querySelector(`.detail-start-date-comp[data-tab="${tab}"]`);
+                    const endInput = document.querySelector(`.detail-end-date-comp[data-tab="${tab}"]`);
+
+                    if (startInput) startInput.value = startStr;
+                    if (endInput) endInput.value = endStr;
+
+                    // 상태 변수 업데이트
+                    if (tab === 'adset') { detailAdsetStartDateComp = startStr; detailAdsetEndDateComp = endStr; }
+                    else if (tab === 'gender') { detailGenderStartDateComp = startStr; detailGenderEndDateComp = endStr; }
+                    else if (tab === 'age') { detailAgeStartDateComp = startStr; detailAgeEndDateComp = endStr; }
+                    else if (tab === 'platform') { detailPlatformStartDateComp = startStr; detailPlatformEndDateComp = endStr; }
+                    else if (tab === 'device-platform') { detailDevicePlatformStartDateComp = startStr; detailDevicePlatformEndDateComp = endStr; }
+                    else if (tab === 'device-type') { detailDeviceTypeStartDateComp = startStr; detailDeviceTypeEndDateComp = endStr; }
+
+                    // 차트 다시 렌더링
+                    if (tab === 'adset') renderDetailAdsetBarChart();
+                    else if (tab === 'gender') renderDetailGenderBarChart();
+                    else if (tab === 'age') renderDetailAgeBarChart();
+                    else if (tab === 'platform') renderDetailPlatformBarChart();
+                    else if (tab === 'device-platform') renderDetailDevicePlatformBarChart();
+                    else if (tab === 'device-type') renderDetailDeviceTypeBarChart();
+                });
+            });
+
+            // 성과 상세 분석 - 날짜 수동 입력 시 프리셋 초기화
+            document.querySelectorAll('.detail-start-date, .detail-end-date').forEach(input => {
+                input.addEventListener('change', function() {
+                    const tab = this.getAttribute('data-tab');
+                    const preset = document.querySelector(`.detail-period-preset[data-tab="${tab}"]`);
+                    if (preset) preset.value = '';
+                });
+            });
+
+            document.querySelectorAll('.detail-start-date-comp, .detail-end-date-comp').forEach(input => {
+                input.addEventListener('change', function() {
+                    const tab = this.getAttribute('data-tab');
+                    const preset = document.querySelector(`.detail-period-preset-comp[data-tab="${tab}"]`);
+                    if (preset) preset.value = '';
+
+                    // 상태 변수 업데이트
+                    const isStartDate = this.classList.contains('detail-start-date-comp');
+                    if (isStartDate) {
+                        if (tab === 'adset') detailAdsetStartDateComp = this.value;
+                        else if (tab === 'gender') detailGenderStartDateComp = this.value;
+                        else if (tab === 'age') detailAgeStartDateComp = this.value;
+                        else if (tab === 'platform') detailPlatformStartDateComp = this.value;
+                        else if (tab === 'device-platform') detailDevicePlatformStartDateComp = this.value;
+                        else if (tab === 'device-type') detailDeviceTypeStartDateComp = this.value;
+                    } else {
+                        if (tab === 'adset') detailAdsetEndDateComp = this.value;
+                        else if (tab === 'gender') detailGenderEndDateComp = this.value;
+                        else if (tab === 'age') detailAgeEndDateComp = this.value;
+                        else if (tab === 'platform') detailPlatformEndDateComp = this.value;
+                        else if (tab === 'device-platform') detailDevicePlatformEndDateComp = this.value;
+                        else if (tab === 'device-type') detailDeviceTypeEndDateComp = this.value;
+                    }
+
+                    // 차트 다시 렌더링
+                    if (tab === 'adset') renderDetailAdsetBarChart();
+                    else if (tab === 'gender') renderDetailGenderBarChart();
+                    else if (tab === 'age') renderDetailAgeBarChart();
+                    else if (tab === 'platform') renderDetailPlatformBarChart();
+                    else if (tab === 'device-platform') renderDetailDevicePlatformBarChart();
+                    else if (tab === 'device-type') renderDetailDeviceTypeBarChart();
+                });
+            });
+
+            // 성과 상세 분석 - 비교 버튼 이벤트
+            document.querySelectorAll('.detail-compare-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tab = this.getAttribute('data-tab');
+                    const compareRow = document.querySelector(`.detail-compare-row[data-tab="${tab}"]`);
+
+                    // 상태 토글
+                    let isActivating = false;
+                    if (tab === 'adset') { detailAdsetCompareActive = !detailAdsetCompareActive; isActivating = detailAdsetCompareActive; }
+                    else if (tab === 'gender') { detailGenderCompareActive = !detailGenderCompareActive; isActivating = detailGenderCompareActive; }
+                    else if (tab === 'age') { detailAgeCompareActive = !detailAgeCompareActive; isActivating = detailAgeCompareActive; }
+                    else if (tab === 'platform') { detailPlatformCompareActive = !detailPlatformCompareActive; isActivating = detailPlatformCompareActive; }
+                    else if (tab === 'device-platform') { detailDevicePlatformCompareActive = !detailDevicePlatformCompareActive; isActivating = detailDevicePlatformCompareActive; }
+                    else if (tab === 'device-type') { detailDeviceTypeCompareActive = !detailDeviceTypeCompareActive; isActivating = detailDeviceTypeCompareActive; }
+
+                    if (compareRow) {
+                        compareRow.style.display = isActivating ? 'flex' : 'none';
+
+                        // 버튼 스타일 토글
+                        if (isActivating) {
+                            this.textContent = '취소';
+                            this.style.background = '#d32f2f';
+                            this.style.color = 'white';
+                            this.style.borderColor = '#d32f2f';
+
+                            // 비교 기간 자동 설정 (기준 기간의 이전 기간)
+                            const startInput = document.querySelector(`.detail-start-date[data-tab="${tab}"]`);
+                            const endInput = document.querySelector(`.detail-end-date[data-tab="${tab}"]`);
+
+                            if (startInput && endInput && startInput.value && endInput.value) {
+                                const startDate = new Date(startInput.value);
+                                const endDate = new Date(endInput.value);
+                                const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+
+                                const compEndDate = new Date(startDate);
+                                compEndDate.setDate(compEndDate.getDate() - 1);
+                                const compStartDate = new Date(compEndDate);
+                                compStartDate.setDate(compStartDate.getDate() - duration + 1);
+
+                                const formatDate = (d) => {
+                                    const year = d.getFullYear();
+                                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                                    const day = String(d.getDate()).padStart(2, '0');
+                                    return `${year}-${month}-${day}`;
+                                };
+
+                                const compStartStr = formatDate(compStartDate);
+                                const compEndStr = formatDate(compEndDate);
+
+                                const compStartInput = document.querySelector(`.detail-start-date-comp[data-tab="${tab}"]`);
+                                const compEndInput = document.querySelector(`.detail-end-date-comp[data-tab="${tab}"]`);
+
+                                if (compStartInput) compStartInput.value = compStartStr;
+                                if (compEndInput) compEndInput.value = compEndStr;
+
+                                // 상태 변수 업데이트
+                                if (tab === 'adset') { detailAdsetStartDateComp = compStartStr; detailAdsetEndDateComp = compEndStr; }
+                                else if (tab === 'gender') { detailGenderStartDateComp = compStartStr; detailGenderEndDateComp = compEndStr; }
+                                else if (tab === 'age') { detailAgeStartDateComp = compStartStr; detailAgeEndDateComp = compEndStr; }
+                                else if (tab === 'platform') { detailPlatformStartDateComp = compStartStr; detailPlatformEndDateComp = compEndStr; }
+                                else if (tab === 'device-platform') { detailDevicePlatformStartDateComp = compStartStr; detailDevicePlatformEndDateComp = compEndStr; }
+                                else if (tab === 'device-type') { detailDeviceTypeStartDateComp = compStartStr; detailDeviceTypeEndDateComp = compEndStr; }
+                            }
+                        } else {
+                            this.textContent = '비교';
+                            this.style.background = 'white';
+                            this.style.color = '#1a73e8';
+                            this.style.borderColor = '#1a73e8';
+
+                            // 비교 기간 초기화
+                            if (tab === 'adset') { detailAdsetStartDateComp = ''; detailAdsetEndDateComp = ''; }
+                            else if (tab === 'gender') { detailGenderStartDateComp = ''; detailGenderEndDateComp = ''; }
+                            else if (tab === 'age') { detailAgeStartDateComp = ''; detailAgeEndDateComp = ''; }
+                            else if (tab === 'platform') { detailPlatformStartDateComp = ''; detailPlatformEndDateComp = ''; }
+                            else if (tab === 'device-platform') { detailDevicePlatformStartDateComp = ''; detailDevicePlatformEndDateComp = ''; }
+                            else if (tab === 'device-type') { detailDeviceTypeStartDateComp = ''; detailDeviceTypeEndDateComp = ''; }
+                        }
+                    }
+
+                    // 차트 다시 렌더링
+                    if (tab === 'adset') renderDetailAdsetBarChart();
+                    else if (tab === 'gender') renderDetailGenderBarChart();
+                    else if (tab === 'age') renderDetailAgeBarChart();
+                    else if (tab === 'platform') renderDetailPlatformBarChart();
+                    else if (tab === 'device-platform') renderDetailDevicePlatformBarChart();
+                    else if (tab === 'device-type') renderDetailDeviceTypeBarChart();
+                });
             });
         }
 
