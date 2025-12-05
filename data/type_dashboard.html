@@ -1589,88 +1589,88 @@
                                     <div style="display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap;">
                                         <!-- 채널별 드롭다운 -->
                                         <div style="position: relative; min-width: 180px; flex: 1;">
-                                            <button type="button" class="filter-dropdown-btn" data-filter="channel" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
+                                            <button type="button" class="timeseries-filter-dropdown-btn" data-filter="channel" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
                                                 <span style="font-weight: 500;">채널_전체</span>
                                                 <span style="display: flex; align-items: center; gap: 6px;">
-                                                    <span class="selected-count" style="font-size: 11px; color: var(--grey-500);"></span>
+                                                    <span class="timeseries-selected-count" style="font-size: 11px; color: var(--grey-500);"></span>
                                                     <span style="font-size: 10px;">▼</span>
                                                 </span>
                                             </button>
-                                            <div class="filter-dropdown-list" data-filter="channel" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div class="timeseries-filter-dropdown-list" data-filter="channel" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
                                                 <div style="padding: 8px;">
                                                     <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px; z-index: 1;">
                                                         <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px; border-radius: 4px; transition: background 0.2s;">
-                                                            <input type="checkbox" class="filter-select-all" data-filter="channel" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                            <input type="checkbox" class="timeseries-filter-select-all" data-filter="channel" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
                                                             전체 선택
                                                         </label>
                                                     </div>
-                                                    <div id="filterChannelList" class="filter-checkbox-list"></div>
+                                                    <div id="timeseriesFilterChannelList" class="timeseries-filter-checkbox-list"></div>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <!-- 제품별 드롭다운 -->
                                         <div style="position: relative; min-width: 180px; flex: 1;">
-                                            <button type="button" class="filter-dropdown-btn" data-filter="product" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
+                                            <button type="button" class="timeseries-filter-dropdown-btn" data-filter="product" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
                                                 <span style="font-weight: 500;">제품_전체</span>
                                                 <span style="display: flex; align-items: center; gap: 6px;">
-                                                    <span class="selected-count" style="font-size: 11px; color: var(--grey-500);"></span>
+                                                    <span class="timeseries-selected-count" style="font-size: 11px; color: var(--grey-500);"></span>
                                                     <span style="font-size: 10px;">▼</span>
                                                 </span>
                                             </button>
-                                            <div class="filter-dropdown-list" data-filter="product" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div class="timeseries-filter-dropdown-list" data-filter="product" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
                                                 <div style="padding: 8px;">
                                                     <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px; z-index: 1;">
                                                         <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px; border-radius: 4px; transition: background 0.2s;">
-                                                            <input type="checkbox" class="filter-select-all" data-filter="product" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                            <input type="checkbox" class="timeseries-filter-select-all" data-filter="product" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
                                                             전체 선택
                                                         </label>
                                                     </div>
-                                                    <div id="filterProductList" class="filter-checkbox-list"></div>
+                                                    <div id="timeseriesFilterProductList" class="timeseries-filter-checkbox-list"></div>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <!-- 브랜드별 드롭다운 -->
                                         <div style="position: relative; min-width: 180px; flex: 1;">
-                                            <button type="button" class="filter-dropdown-btn" data-filter="brand" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
+                                            <button type="button" class="timeseries-filter-dropdown-btn" data-filter="brand" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
                                                 <span style="font-weight: 500;">브랜드_전체</span>
                                                 <span style="display: flex; align-items: center; gap: 6px;">
-                                                    <span class="selected-count" style="font-size: 11px; color: var(--grey-500);"></span>
+                                                    <span class="timeseries-selected-count" style="font-size: 11px; color: var(--grey-500);"></span>
                                                     <span style="font-size: 10px;">▼</span>
                                                 </span>
                                             </button>
-                                            <div class="filter-dropdown-list" data-filter="brand" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div class="timeseries-filter-dropdown-list" data-filter="brand" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
                                                 <div style="padding: 8px;">
                                                     <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px; z-index: 1;">
                                                         <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px; border-radius: 4px; transition: background 0.2s;">
-                                                            <input type="checkbox" class="filter-select-all" data-filter="brand" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                            <input type="checkbox" class="timeseries-filter-select-all" data-filter="brand" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
                                                             전체 선택
                                                         </label>
                                                     </div>
-                                                    <div id="filterBrandList" class="filter-checkbox-list"></div>
+                                                    <div id="timeseriesFilterBrandList" class="timeseries-filter-checkbox-list"></div>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <!-- 프로모션별 드롭다운 -->
                                         <div style="position: relative; min-width: 180px; flex: 1;">
-                                            <button type="button" class="filter-dropdown-btn" data-filter="promotion" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
+                                            <button type="button" class="timeseries-filter-dropdown-btn" data-filter="promotion" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
                                                 <span style="font-weight: 500;">프로모션_전체</span>
                                                 <span style="display: flex; align-items: center; gap: 6px;">
-                                                    <span class="selected-count" style="font-size: 11px; color: var(--grey-500);"></span>
+                                                    <span class="timeseries-selected-count" style="font-size: 11px; color: var(--grey-500);"></span>
                                                     <span style="font-size: 10px;">▼</span>
                                                 </span>
                                             </button>
-                                            <div class="filter-dropdown-list" data-filter="promotion" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                            <div class="timeseries-filter-dropdown-list" data-filter="promotion" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
                                                 <div style="padding: 8px;">
                                                     <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px; z-index: 1;">
                                                         <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px; border-radius: 4px; transition: background 0.2s;">
-                                                            <input type="checkbox" class="filter-select-all" data-filter="promotion" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                            <input type="checkbox" class="timeseries-filter-select-all" data-filter="promotion" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
                                                             전체 선택
                                                         </label>
                                                     </div>
-                                                    <div id="filterPromotionList" class="filter-checkbox-list"></div>
+                                                    <div id="timeseriesFilterPromotionList" class="timeseries-filter-checkbox-list"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -2415,9 +2415,9 @@
                                     </div>
                                     <!-- 집계 단위 선택 버튼 -->
                                     <div class="view-type-section" style="margin-bottom: 0;">
-                                        <button class="view-btn device-platform-period-btn active" data-period="daily">일별</button>
-                                        <button class="view-btn device-platform-period-btn" data-period="weekly">주별</button>
-                                        <button class="view-btn device-platform-period-btn" data-period="monthly">월별</button>
+                                        <button class="view-btn deviceplatform-period-btn active" data-period="daily">일별</button>
+                                        <button class="view-btn deviceplatform-period-btn" data-period="weekly">주별</button>
+                                        <button class="view-btn deviceplatform-period-btn" data-period="monthly">월별</button>
                                     </div>
                                 </div>
 
@@ -2638,9 +2638,9 @@
                                     </div>
                                     <!-- 집계 단위 선택 버튼 -->
                                     <div class="view-type-section" style="margin-bottom: 0;">
-                                        <button class="view-btn device-type-period-btn active" data-period="daily">일별</button>
-                                        <button class="view-btn device-type-period-btn" data-period="weekly">주별</button>
-                                        <button class="view-btn device-type-period-btn" data-period="monthly">월별</button>
+                                        <button class="view-btn device-period-btn active" data-period="daily">일별</button>
+                                        <button class="view-btn device-period-btn" data-period="weekly">주별</button>
+                                        <button class="view-btn device-period-btn" data-period="monthly">월별</button>
                                     </div>
                                 </div>
 
@@ -4192,14 +4192,14 @@
                                     </div>
                                 </div>
                                 <!-- 우측: 기간 선택 -->
-                                <div style="display: flex; flex-direction: column; align-items: center; padding: 10px 16px;">
+                                <div style="display: flex; flex-direction: column; align-items: flex-end; padding: 10px 16px;">
                                     <!-- 타이틀 + 비교 버튼 -->
-                                    <div style="display: flex; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 12px;">
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                                         <div style="display: flex; align-items: center; gap: 6px;">
                                             <span style="font-size: 13px;">📅</span>
                                             <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
                                         </div>
-                                        <button class="perf-compare-btn" data-category="brand" style="position: absolute; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                        <button class="perf-compare-btn" data-category="brand" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
                                     </div>
                                     <!-- 기준 기간 행 -->
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
@@ -4261,14 +4261,14 @@
                                     </div>
                                 </div>
                                 <!-- 우측: 기간 선택 -->
-                                <div style="display: flex; flex-direction: column; align-items: center; padding: 10px 16px;">
+                                <div style="display: flex; flex-direction: column; align-items: flex-end; padding: 10px 16px;">
                                     <!-- 타이틀 + 비교 버튼 -->
-                                    <div style="display: flex; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 12px;">
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                                         <div style="display: flex; align-items: center; gap: 6px;">
                                             <span style="font-size: 13px;">📅</span>
                                             <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
                                         </div>
-                                        <button class="perf-compare-btn" data-category="product" style="position: absolute; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                        <button class="perf-compare-btn" data-category="product" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
                                     </div>
                                     <!-- 기준 기간 행 -->
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
@@ -4330,14 +4330,14 @@
                                     </div>
                                 </div>
                                 <!-- 우측: 기간 선택 -->
-                                <div style="display: flex; flex-direction: column; align-items: center; padding: 10px 16px;">
+                                <div style="display: flex; flex-direction: column; align-items: flex-end; padding: 10px 16px;">
                                     <!-- 타이틀 + 비교 버튼 -->
-                                    <div style="display: flex; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 12px;">
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                                         <div style="display: flex; align-items: center; gap: 6px;">
                                             <span style="font-size: 13px;">📅</span>
                                             <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
                                         </div>
-                                        <button class="perf-compare-btn" data-category="promotion" style="position: absolute; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                        <button class="perf-compare-btn" data-category="promotion" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
                                     </div>
                                     <!-- 기준 기간 행 -->
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
@@ -4399,14 +4399,14 @@
                                     </div>
                                 </div>
                                 <!-- 우측: 기간 선택 -->
-                                <div style="display: flex; flex-direction: column; align-items: center; padding: 10px 16px;">
+                                <div style="display: flex; flex-direction: column; align-items: flex-end; padding: 10px 16px;">
                                     <!-- 타이틀 + 비교 버튼 -->
-                                    <div style="display: flex; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 12px;">
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                                         <div style="display: flex; align-items: center; gap: 6px;">
                                             <span style="font-size: 13px;">📅</span>
                                             <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
                                         </div>
-                                        <button class="perf-compare-btn" data-category="targeting" style="position: absolute; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                        <button class="perf-compare-btn" data-category="targeting" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
                                     </div>
                                     <!-- 기준 기간 행 -->
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
@@ -4680,7 +4680,6 @@
     <script>
         // 전역 변수
         let insightsData = null;
-        let dailyData = null;
         let dimensionData = null;
         let currentPeriod = 'full';  // 기간 필터: 'full', '180d', '90d'
 
@@ -8272,12 +8271,6 @@
             renderTargetingPerformanceChart();
         }
 
-        // 자연어 인사이트 생성 (UI 삭제로 빈 함수 유지)
-        function generateBrandInsight() { }
-        function generateProductInsight() { }
-        function generatePromotionInsight() { }
-        function generateTargetingInsight() { }
-
         // 브랜드 성과 차트 - adsetDimensionData(dimension_type1_campaign_adset.csv) 사용
         function renderBrandPerformanceChart() {
             const state = perfChartState.brand;
@@ -8437,8 +8430,6 @@
                     }
                 }
             });
-
-            generateBrandInsight();
         }
 
         // 상품 성과 차트 - adsetDimensionData(dimension_type1_campaign_adset.csv) 사용
@@ -8588,8 +8579,6 @@
                     }
                 }
             });
-
-            generateProductInsight();
         }
 
         // 프로모션 성과 차트 - adsetDimensionData(dimension_type1_campaign_adset.csv) 사용
@@ -8739,8 +8728,6 @@
                     }
                 }
             });
-
-            generatePromotionInsight();
         }
 
         // 타겟팅 성과 차트 - adsetDimensionData(dimension_type1_campaign_adset.csv)의 '타겟팅' 컬럼 사용
@@ -8887,8 +8874,6 @@
                     }
                 }
             });
-
-            generateTargetingInsight();
         }
 
         // 성과분석 KPI/정렬 드롭다운 이벤트
@@ -8928,13 +8913,6 @@
             renderAllPerformanceCharts();
             setupPerformanceControls();
         }
-
-        // 기존 테이블 함수들 (호환성 유지)
-        function renderBrandDetailTable() {}
-        function renderProductDetailTable() {}
-        function renderPromotionDetailTable() {}
-        function renderTopAdsetsTable() {}
-        function renderAgeGenderTable() {}
 
         // ========== 리타겟팅 및 계절성 분석 ==========
 
@@ -10411,9 +10389,9 @@
             });
 
             // 기기플랫폼 기간 버튼 이벤트
-            document.querySelectorAll('.device-platform-period-btn').forEach(btn => {
+            document.querySelectorAll('.deviceplatform-period-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    document.querySelectorAll('.device-platform-period-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.deviceplatform-period-btn').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     currentDevicePlatformPeriod = this.dataset.period;
                     renderDevicePlatformTrendChart();
@@ -10459,9 +10437,9 @@
             });
 
             // 기기유형 기간 버튼 이벤트
-            document.querySelectorAll('.device-type-period-btn').forEach(btn => {
+            document.querySelectorAll('.device-period-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    document.querySelectorAll('.device-type-period-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.device-period-btn').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     currentDeviceTypePeriod = this.dataset.period;
                     renderDeviceTypeTrendChart();
@@ -10524,10 +10502,10 @@
             if (!adsetDimensionData) return;
 
             const filterMap = {
-                'channel': { column: '유형구분', listId: 'filterChannelList', label: '채널' },
-                'product': { column: '상품명', listId: 'filterProductList', label: '제품' },
-                'brand': { column: '브랜드명', listId: 'filterBrandList', label: '브랜드' },
-                'promotion': { column: '프로모션', listId: 'filterPromotionList', label: '프로모션' }
+                'channel': { column: '유형구분', listId: 'timeseriesFilterChannelList', label: '채널' },
+                'product': { column: '상품명', listId: 'timeseriesFilterProductList', label: '제품' },
+                'brand': { column: '브랜드명', listId: 'timeseriesFilterBrandList', label: '브랜드' },
+                'promotion': { column: '프로모션', listId: 'timeseriesFilterPromotionList', label: '프로모션' }
             };
 
             // 각 필터에 대한 체크박스 리스트 생성
@@ -10556,14 +10534,14 @@
             });
 
             // 드롭다운 버튼 클릭 이벤트
-            document.querySelectorAll('.filter-dropdown-btn').forEach(btn => {
+            document.querySelectorAll('.timeseries-filter-dropdown-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     const filterType = this.dataset.filter;
-                    const dropdown = document.querySelector(`.filter-dropdown-list[data-filter="${filterType}"]`);
+                    const dropdown = document.querySelector(`.timeseries-filter-dropdown-list[data-filter="${filterType}"]`);
 
                     // 다른 드롭다운 닫기
-                    document.querySelectorAll('.filter-dropdown-list').forEach(dd => {
+                    document.querySelectorAll('.timeseries-filter-dropdown-list').forEach(dd => {
                         if (dd !== dropdown) dd.style.display = 'none';
                     });
 
@@ -10575,10 +10553,10 @@
             });
 
             // 전체 선택 체크박스 이벤트
-            document.querySelectorAll('.filter-select-all').forEach(checkbox => {
+            document.querySelectorAll('.timeseries-filter-select-all').forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
                     const filterType = this.dataset.filter;
-                    const list = document.getElementById(`filter${filterType.charAt(0).toUpperCase() + filterType.slice(1)}List`);
+                    const list = document.getElementById(`timeseriesFilter${filterType.charAt(0).toUpperCase() + filterType.slice(1)}List`);
                     if (!list) return;
 
                     const itemCheckboxes = list.querySelectorAll('.filter-item-checkbox');
@@ -10593,8 +10571,8 @@
 
             // 외부 클릭 시 드롭다운 닫기
             document.addEventListener('click', function(e) {
-                if (!e.target.closest('.filter-dropdown-btn') && !e.target.closest('.filter-dropdown-list')) {
-                    document.querySelectorAll('.filter-dropdown-list').forEach(dd => {
+                if (!e.target.closest('.timeseries-filter-dropdown-btn') && !e.target.closest('.timeseries-filter-dropdown-list')) {
+                    document.querySelectorAll('.timeseries-filter-dropdown-list').forEach(dd => {
                         dd.style.display = 'none';
                     });
                 }
@@ -10641,15 +10619,15 @@
                 'promotion': '프로모션'
             };
 
-            const btn = document.querySelector(`.filter-dropdown-btn[data-filter="${filterKey}"]`);
-            const list = document.getElementById(`filter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}List`);
+            const btn = document.querySelector(`.timeseries-filter-dropdown-btn[data-filter="${filterKey}"]`);
+            const list = document.getElementById(`timeseriesFilter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}List`);
 
             if (!btn || !list) return;
 
             const checkedBoxes = list.querySelectorAll('.filter-item-checkbox:checked');
             const totalBoxes = list.querySelectorAll('.filter-item-checkbox');
             const btnText = btn.querySelector('span:first-child');
-            const countText = btn.querySelector('.selected-count');
+            const countText = btn.querySelector('.timeseries-selected-count');
 
             if (checkedBoxes.length === 0) {
                 btnText.textContent = `${filterMap[filterKey]}_전체`;
@@ -10670,10 +10648,10 @@
             if (!adsetDimensionData) return;
 
             const filterMap = {
-                'channel': { column: '유형구분', listId: 'filterChannelList' },
-                'product': { column: '상품명', listId: 'filterProductList' },
-                'brand': { column: '브랜드명', listId: 'filterBrandList' },
-                'promotion': { column: '프로모션', listId: 'filterPromotionList' }
+                'channel': { column: '유형구분', listId: 'timeseriesFilterChannelList' },
+                'product': { column: '상품명', listId: 'timeseriesFilterProductList' },
+                'brand': { column: '브랜드명', listId: 'timeseriesFilterBrandList' },
+                'promotion': { column: '프로모션', listId: 'timeseriesFilterPromotionList' }
             };
 
             // 선택된 필터 값 수집

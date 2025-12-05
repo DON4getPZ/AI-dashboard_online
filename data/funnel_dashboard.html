@@ -3973,10 +3973,31 @@
                         </div>
                     `;
                 } else {
-                    abStatsContainer.innerHTML = '';
+                    abStatsContainer.innerHTML = `
+                        <div style="padding: 16px; background: linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%); border-radius: 8px; border-left: 4px solid var(--grey-400);">
+                            <div style="font-size: 14px; font-weight: 600; color: var(--grey-600); margin-bottom: 8px;">
+                                📊 통계적으로 유의미한 채널 비교
+                            </div>
+                            <div style="font-size: 13px; color: var(--grey-500);">
+                                선택한 기간 내에서는 통계적으로 유의미한 전환율 차이(p-value < 0.05)를 보이는 채널 조합이 없습니다.
+                            </div>
+                            <div style="margin-top: 12px; padding: 10px; background: white; border-radius: 6px; font-size: 12px; color: var(--grey-600);">
+                                💡 <strong>참고:</strong> 분석 기간을 '전체 기간'으로 변경하면 더 많은 데이터를 기반으로 유의미한 결과를 확인할 수 있습니다.
+                            </div>
+                        </div>
+                    `;
                 }
             } else {
-                abStatsContainer.innerHTML = '';
+                abStatsContainer.innerHTML = `
+                    <div style="padding: 16px; background: linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%); border-radius: 8px; border-left: 4px solid var(--grey-400);">
+                        <div style="font-size: 14px; font-weight: 600; color: var(--grey-600); margin-bottom: 8px;">
+                            📊 통계적으로 유의미한 채널 비교
+                        </div>
+                        <div style="font-size: 13px; color: var(--grey-500);">
+                            채널 비교 분석 데이터가 없습니다.
+                        </div>
+                    </div>
+                `;
             }
 
             // 3. 이탈 위험 경고 (기본 7일)
