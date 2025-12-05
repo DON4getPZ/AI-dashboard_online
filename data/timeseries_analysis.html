@@ -1382,9 +1382,9 @@
                         <div id="forecastTab" class="analysis-tab-content active">
                             <!-- 뷰 타입 선택 -->
                             <div class="view-type-section">
-                                <button class="view-btn active" data-view="daily">일별</button>
-                                <button class="view-btn" data-view="weekly">주별</button>
-                                <button class="view-btn" data-view="monthly">월별</button>
+                                <button class="view-btn forecast-view-btn active" data-view="daily">일별</button>
+                                <button class="view-btn forecast-view-btn" data-view="weekly">주별</button>
+                                <button class="view-btn forecast-view-btn" data-view="monthly">월별</button>
                             </div>
 
                             <!-- 예측 차트 -->
@@ -1760,245 +1760,7 @@
                     </div>
                     <div class="collapsible-content">
                         <!-- 시각화 타입 탭 -->
-                        <div class="view-type-section" style="margin-bottom: 24px;">
-                            <button class="view-btn viz-tab-btn active" data-viz-tab="statistics">통계 분석</button>
-                        </div>
-
-                        <!-- 탭 1: 비즈니스 인사이트 시각화 (이동됨: 성과 분석 대시보드에 통합) -->
-                        <div id="businessVizTab" class="viz-tab-content" style="display: none;">
-                            <!-- 섹션 설명 -->
-                            <div style="font-size: 13px; color: var(--grey-700); padding: 16px; background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%); line-height: 1.7; border-radius: 8px; margin-bottom: 24px;">
-                                <strong style="color: var(--primary-main);">📖 비즈니스 인사이트란?</strong><br>
-                                실제 마케팅 데이터를 바탕으로 <strong>즉시 실행 가능한 의사결정</strong>을 도와드립니다.<br>
-                                <span style="color: var(--grey-600);">각 채널의 수익성, 제품별 매출 기여도, 예산 집행 현황을 한눈에 파악하세요.</span><br><br>
-                                <strong style="color: var(--primary-main);">💡 어떻게 활용하나요?</strong><br>
-                                • <strong>채널 ROAS</strong>: 100% 이상인 채널에 투자 확대, 이하인 채널은 개선 또는 축소<br>
-                                • <strong>제품 매출</strong>: 주력 제품 집중 마케팅, 저성과 제품 전략 재검토<br>
-                                • <strong>예산 소진율</strong>: 100% 초과 시 긴급 예산 조정 필요, 미달 시 집행 가속화 검토
-                            </div>
-
-                            <!-- 비즈니스 인사이트 서브 탭 -->
-                            <div class="view-type-section" style="margin-bottom: 24px;">
-                                <button class="view-btn business-subtab-btn active" data-business-tab="channel-roas">📊 채널별 ROAS</button>
-                                <button class="view-btn business-subtab-btn" data-business-tab="product-budget">🎯 제품 매출 & 예산</button>
-                            </div>
-
-                            <!-- 서브 탭 1: 채널별 ROAS 비교 -->
-                            <div id="channelRoasTab" class="business-subtab-content" style="display: block;">
-                                <div class="card" style="padding: 24px; margin-bottom: 24px;">
-                                    <div class="visualization-title" style="margin-bottom: 16px;">📊 채널별 ROAS 비교</div>
-                                    <div class="img-tooltip-wrapper" data-tooltip="각 마케팅 채널의 ROAS(광고 수익률)를 비교합니다. 100% 이상이면 수익, 이하면 손실을 의미합니다." style="margin-bottom: 20px;">
-                                        <img src="visualizations/channel_roas_comparison.png" alt="채널 ROAS" class="visualization-img">
-                                    </div>
-
-                                    <!-- ROAS 인사이트 카드 -->
-                                    <div class="insight-header" style="font-size: 14px; margin-bottom: 12px;">💡 핵심 인사이트</div>
-                                    <div class="insight-content" style="grid-template-columns: repeat(3, 1fr); gap: 12px;">
-                                        <div class="insight-card positive">
-                                            <div class="insight-title" style="font-size: 13px;">✅ 고성과 채널</div>
-                                            <div class="insight-text" style="font-size: 12px;">
-                                                ROAS 150% 이상인 채널에 <strong>예산 추가 배정</strong>을 권장합니다.
-                                                투자 대비 높은 수익을 창출하고 있습니다.
-                                            </div>
-                                        </div>
-                                        <div class="insight-card neutral">
-                                            <div class="insight-title" style="font-size: 13px;">⚠️ 개선 필요 채널</div>
-                                            <div class="insight-text" style="font-size: 12px;">
-                                                ROAS 100% 미만인 채널은 <strong>타겟팅 및 소재 최적화</strong>가 필요합니다.
-                                                손실이 발생하고 있는 상태입니다.
-                                            </div>
-                                        </div>
-                                        <div class="insight-card positive" style="border-left-color: var(--secondary-main);">
-                                            <div class="insight-title" style="font-size: 13px;">📈 액션 아이템</div>
-                                            <div class="insight-text" style="font-size: 12px;">
-                                                고성과 채널의 <strong>성공 요인을 분석</strong>하여
-                                                저성과 채널에 적용해보세요.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 서브 탭 2: 제품 매출 & 예산 -->
-                            <div id="productBudgetTab" class="business-subtab-content" style="display: none;">
-                                <div class="card" style="padding: 24px; margin-bottom: 24px;">
-                                    <!-- 이미지 좌우 배치 -->
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; align-items: start;">
-                                        <!-- 왼쪽: 제품별 매출 기여도 -->
-                                        <div style="text-align: center;">
-                                            <div class="visualization-title" style="margin-bottom: 16px;">🎯 제품별 매출 기여도</div>
-                                            <div class="img-tooltip-wrapper" data-tooltip="각 제품이 전체 매출에서 차지하는 비중을 표시합니다. 주력 제품과 개선 필요 제품을 파악할 수 있습니다;">
-                                                <img src="visualizations/product_revenue_pie.png" alt="제품 매출" class="visualization-img" style="max-width: 90%; margin: 0 auto;">
-                                            </div>
-                                        </div>
-
-                                        <!-- 오른쪽: 월 예산 소진율 -->
-                                        <div style="text-align: center;">
-                                            <div class="visualization-title" style="margin-bottom: 16px;">💰 월 예산 소진율</div>
-                                            <div class="img-tooltip-wrapper" data-tooltip="현재 월 예산 대비 실제 소진율을 게이지로 표시합니다. 100% 초과 시 예산을 다시 살펴보시는 것을 추천드려요;">
-                                                <img src="visualizations/budget_gauge.png" alt="예산 게이지" class="visualization-img" style="max-width: 80%; margin: 0 auto;">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- 제품별 상세 분석 테이블 -->
-                                    <div class="insight-header" style="font-size: 14px; margin-bottom: 12px;">📋 제품별 상세 현황</div>
-                                    <div style="overflow-x: auto; margin-bottom: 16px;">
-                                        <table style="width: 100%; font-size: 13px;">
-                                            <thead>
-                                                <tr>
-                                                    <th style="text-align: left; padding: 10px;">제품명</th>
-                                                    <th style="text-align: right; padding: 10px;">매출 기여도</th>
-                                                    <th style="text-align: right; padding: 10px;">등급</th>
-                                                    <th style="text-align: left; padding: 10px;">전략 권장사항</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr style="background: var(--success-light);">
-                                                    <td style="padding: 10px;"><strong>파우치</strong></td>
-                                                    <td style="text-align: right; padding: 10px;"><strong>30.5%</strong></td>
-                                                    <td style="text-align: right; padding: 10px;"><span style="background: var(--success-main); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">A+</span></td>
-                                                    <td style="padding: 10px;">주력 제품 - 마케팅 예산 최우선 배정</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 10px;">기타</td>
-                                                    <td style="text-align: right; padding: 10px;">18.2%</td>
-                                                    <td style="text-align: right; padding: 10px;"><span style="background: var(--success-main); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">A</span></td>
-                                                    <td style="padding: 10px;">안정적 매출원 - 현 수준 유지</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 10px;">발매트</td>
-                                                    <td style="text-align: right; padding: 10px;">15.5%</td>
-                                                    <td style="text-align: right; padding: 10px;"><span style="background: var(--secondary-main); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">B+</span></td>
-                                                    <td style="padding: 10px;">성장 잠재력 제품 - 추가 프로모션 검토</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 10px;">롤슈즈</td>
-                                                    <td style="text-align: right; padding: 10px;">11.5%</td>
-                                                    <td style="text-align: right; padding: 10px;"><span style="background: var(--secondary-main); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">B</span></td>
-                                                    <td style="padding: 10px;">중위 제품 - 계절성 활용 전략 고려</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 10px;">블랭킷</td>
-                                                    <td style="text-align: right; padding: 10px;">9.8%</td>
-                                                    <td style="text-align: right; padding: 10px;"><span style="background: var(--warning-main); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">C+</span></td>
-                                                    <td style="padding: 10px;">개선 필요 - 타겟 고객 재정의 필요</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 10px;">파자마</td>
-                                                    <td style="text-align: right; padding: 10px;">7.7%</td>
-                                                    <td style="text-align: right; padding: 10px;"><span style="background: var(--warning-main); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">C</span></td>
-                                                    <td style="padding: 10px;">저성과 - 가격 및 포지셔닝 재검토</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 10px;">앞치마</td>
-                                                    <td style="text-align: right; padding: 10px;">5.9%</td>
-                                                    <td style="text-align: right; padding: 10px;"><span style="background: var(--warning-main); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">C</span></td>
-                                                    <td style="padding: 10px;">저성과 - 틈새 시장 공략 전략 필요</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 10px;">기타 제품</td>
-                                                    <td style="text-align: right; padding: 10px;">0.9%</td>
-                                                    <td style="text-align: right; padding: 10px;"><span style="background: var(--grey-500); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">D</span></td>
-                                                    <td style="padding: 10px;">신제품 또는 단종 검토 대상</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    <!-- 제품 포트폴리오 인사이트 -->
-                                    <div class="insight-content" style="grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px;">
-                                        <div class="insight-card positive">
-                                            <div class="insight-title" style="font-size: 13px;">🎯 포트폴리오 분석</div>
-                                            <div class="insight-text" style="font-size: 12px;">
-                                                상위 3개 제품(파우치, 기타, 발매트)이 <strong>전체 매출의 64.2%</strong>를 차지합니다.
-                                                집중 마케팅으로 효율성을 극대화하세요.
-                                            </div>
-                                        </div>
-                                        <div class="insight-card neutral">
-                                            <div class="insight-title" style="font-size: 13px;">💡 개선 기회</div>
-                                            <div class="insight-text" style="font-size: 12px;">
-                                                하위 제품군(블랭킷~앞치마)은 전체 23.4%로,
-                                                <strong>번들 판매</strong>나 <strong>크로스셀링</strong> 전략을 통해 매출 증대 기회가 있습니다.
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- 예산 초과 경고 -->
-                                    <div style="background: linear-gradient(135deg, #fff4f0 0%, #ffebe8 100%); padding: 16px; border-radius: 8px; border-left: 4px solid var(--error-main); margin-bottom: 16px;">
-                                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                                            <span style="font-size: 20px;">🚨</span>
-                                            <strong style="color: var(--error-main); font-size: 15px;">예산 초과 경고 (109.0%)</strong>
-                                        </div>
-                                        <p style="font-size: 13px; color: var(--grey-700); margin-bottom: 12px; line-height: 1.6;">
-                                            현재 월 예산을 <strong style="color: var(--error-main);">9% 초과</strong> 집행 중입니다.
-                                            즉시 예산 조정이 필요하며, 아래 액션 플랜을 참고하세요.
-                                        </p>
-
-                                        <!-- 긴급 액션 플랜 -->
-                                        <div style="background: white; padding: 12px; border-radius: 6px;">
-                                            <div style="font-weight: 600; font-size: 13px; margin-bottom: 8px; color: var(--grey-900);">🎯 즉시 실행 가능한 액션 플랜</div>
-                                            <div style="display: grid; gap: 8px;">
-                                                <div style="display: flex; gap: 8px; align-items: start;">
-                                                    <span style="color: var(--error-main); font-weight: 600; font-size: 12px;">1.</span>
-                                                    <span style="font-size: 12px; line-height: 1.5;">
-                                                        <strong>저성과 채널 일시 중단</strong>: ROAS 100% 미만 채널의 캠페인을 즉시 중단하거나 예산 50% 삭감
-                                                    </span>
-                                                </div>
-                                                <div style="display: flex; gap: 8px; align-items: start;">
-                                                    <span style="color: var(--error-main); font-weight: 600; font-size: 12px;">2.</span>
-                                                    <span style="font-size: 12px; line-height: 1.5;">
-                                                        <strong>일일 예산 한도 설정</strong>: 남은 기간 동안 일평균 예산을 재계산하여 상한선 설정
-                                                    </span>
-                                                </div>
-                                                <div style="display: flex; gap: 8px; align-items: start;">
-                                                    <span style="color: var(--warning-main); font-weight: 600; font-size: 12px;">3.</span>
-                                                    <span style="font-size: 12px; line-height: 1.5;">
-                                                        <strong>고성과 채널 유지</strong>: ROAS 150% 이상인 채널은 현 수준을 유지하되, 불필요한 키워드 제거
-                                                    </span>
-                                                </div>
-                                                <div style="display: flex; gap: 8px; align-items: start;">
-                                                    <span style="color: var(--secondary-main); font-weight: 600; font-size: 12px;">4.</span>
-                                                    <span style="font-size: 12px; line-height: 1.5;">
-                                                        <strong>추가 예산 승인 요청</strong>: 고성과 채널의 ROI를 근거로 예산 추가 승인 건의
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- 예산 관리 인사이트 -->
-                                    <div class="insight-content" style="grid-template-columns: repeat(3, 1fr); gap: 12px;">
-                                        <div class="insight-card negative">
-                                            <div class="insight-title" style="font-size: 13px;">⚠️ 현재 상태</div>
-                                            <div class="insight-text" style="font-size: 12px;">
-                                                예산 소진율 <strong>109%</strong><br>
-                                                초과 집행 <strong>9%</strong><br>
-                                                즉시 조치 필요
-                                            </div>
-                                        </div>
-                                        <div class="insight-card neutral">
-                                            <div class="insight-title" style="font-size: 13px;">📊 예상 영향</div>
-                                            <div class="insight-text" style="font-size: 12px;">
-                                                현 추세 유지 시<br>
-                                                월말까지 <strong>15% 추가 초과</strong> 예상<br>
-                                                예산 통제 시급
-                                            </div>
-                                        </div>
-                                        <div class="insight-card positive" style="border-left-color: var(--secondary-main);">
-                                            <div class="insight-title" style="font-size: 13px;">✅ 목표 수준</div>
-                                            <div class="insight-text" style="font-size: 12px;">
-                                                권장 소진율 <strong>95-100%</strong><br>
-                                                현재 대비 <strong>-9%p 조정</strong> 필요<br>
-                                                최적 집행률 달성
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 탭 2: 통계 분석 시각화 -->
+                        <!-- 통계 분석 시각화 -->
                         <div id="statisticsVizTab" class="viz-tab-content" style="display: block;">
                             <!-- 섹션 설명 -->
                             <div style="font-size: 13px; color: var(--grey-700); padding: 16px; background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%); line-height: 1.7; border-radius: 8px; margin-bottom: 24px;">
@@ -2244,7 +2006,6 @@
         let currentView = 'daily';
         let forecastChart = null;
         let insightsData = null;
-        let segmentStatsData = null;
         let currentPeriod = 'full';  // 분석 기간 (full, 180d, 90d)
         let aiSummaryPeriod = 'full';  // AI 요약 분석 기간 (독립)
         let alertsExpanded = false;  // 경고 펼침 상태
@@ -2393,7 +2154,6 @@
             // updateAiSummary는 독립적인 기간 설정을 사용하므로 여기서 호출하지 않음
             updateOpportunities();
             updateInsightsBadges();
-            updateOverallInsights();
             updateInsightsFromData();  // 경고 알림 업데이트
             updateRecommendations();
             updatePerformanceTrends();
@@ -2501,7 +2261,7 @@
             }
         }
 
-        // 인사이트 및 세그먼트 데이터 로드
+        // 인사이트 데이터 로드
         async function loadInsightsAndSegments() {
             try {
                 // insights.json 로드
@@ -2511,23 +2271,14 @@
                 }
                 insightsData = await insightsResponse.json();
 
-                // segment_stats.json 로드
-                const segmentResponse = await fetch('forecast/segment_stats.json');
-                if (!segmentResponse.ok) {
-                    throw new Error(`segment_stats.json 로드 실패: ${segmentResponse.status}`);
-                }
-                segmentStatsData = await segmentResponse.json();
-
                 // 인사이트 업데이트
                 updateSummaryCard();
                 updateAiSummary();
-                updateOverallInsights();
                 updateInsightsFromData();
                 updateRecommendations();
                 updateOpportunities();
                 updateInsightsBadges();
                 updatePerformanceTrends();
-                updateSegmentAnalysis();
                 updatePeriodIndicator();
             } catch (error) {
                 console.error('인사이트 데이터 로드 실패:', error);
@@ -3116,9 +2867,7 @@
         // 대시보드 업데이트
         function updateDashboard() {
             updateKPISummary();
-            updateInsights();
             updateChart();
-            updateTable();
         }
 
         // KPI 요약 업데이트
@@ -3499,114 +3248,6 @@
             }
         }
 
-        // Overall 인사이트 업데이트
-        function updateOverallInsights() {
-            const overallContainer = document.getElementById('overallContent');
-            if (!overallContainer) {
-                console.log('overallContent element not found - skipping updateOverallInsights');
-                return;
-            }
-
-            const periodData = getPeriodData();
-            if (!periodData || !periodData.overall) {
-                overallContainer.innerHTML = `
-                    <div class="insight-card neutral">
-                        <div class="insight-text">전체 성과 데이터를 불러올 수 없습니다.</div>
-                    </div>
-                `;
-                return;
-            }
-
-            const overall = periodData.overall;
-            const cards = [];
-
-            // Current Period 카드
-            if (overall.current_period) {
-                const current = overall.current_period;
-                cards.push(`
-                    <div class="insight-card positive">
-                        <div class="insight-title">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
-                            실제 성과 (${current.start_date} ~ ${current.end_date})
-                        </div>
-                        <div class="insight-text" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px;">
-                            <div><strong>총 비용:</strong> ${formatNumber(current.total_cost)}원</div>
-                            <div><strong>총 전환수:</strong> ${formatNumber(current.total_conversions)}건</div>
-                            <div><strong>총 매출:</strong> ${formatNumber(current.total_revenue)}원</div>
-                            <div><strong>ROAS:</strong> <span style="color: ${current.roas >= 100 ? '#00c853' : '#ff1744'}; font-weight: 600;">${formatDecimal(current.roas)}%</span></div>
-                            <div><strong>평균 CPA:</strong> ${formatNumber(current.avg_cpa)}원</div>
-                            <div><strong>CVR:</strong> ${formatDecimal(current.cvr)}%</div>
-                        </div>
-                    </div>
-                `);
-            }
-
-            // Forecast Period 카드
-            if (overall.forecast_period) {
-                const forecast = overall.forecast_period;
-                cards.push(`
-                    <div class="insight-card neutral">
-                        <div class="insight-title">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z"/></svg>
-                            예측 성과 (${forecast.start_date} ~ ${forecast.end_date})
-                        </div>
-                        <div class="insight-text" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px;">
-                            <div><strong>예상 비용:</strong> ${formatNumber(forecast.total_cost)}원</div>
-                            <div><strong>예상 전환수:</strong> ${formatNumber(forecast.total_conversions)}건</div>
-                            <div><strong>예상 매출:</strong> ${formatNumber(forecast.total_revenue)}원</div>
-                            <div><strong>예상 ROAS:</strong> <span style="color: ${forecast.roas >= 100 ? '#00c853' : '#ff1744'}; font-weight: 600;">${formatDecimal(forecast.roas)}%</span></div>
-                            <div><strong>예상 CPA:</strong> ${formatNumber(forecast.avg_cpa)}원</div>
-                            <div><strong>예상 CVR:</strong> ${formatDecimal(forecast.cvr)}%</div>
-                        </div>
-                    </div>
-                `);
-            }
-
-            // Trend 카드
-            if (overall.trend) {
-                const trend = overall.trend;
-                const trendClass = trend.direction === 'improving' ? 'positive' : trend.direction === 'declining' ? 'negative' : 'neutral';
-                const trendIcon = trend.direction === 'improving'
-                    ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>'
-                    : trend.direction === 'declining'
-                    ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"/></svg>'
-                    : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>';
-
-                const trendText = trend.direction === 'improving' ? '개선 예상' : trend.direction === 'declining' ? '하락 예상' : '안정 유지';
-
-                cards.push(`
-                    <div class="insight-card ${trendClass}">
-                        <div class="insight-title">
-                            ${trendIcon}
-                            트렌드 분석: ${trendText}
-                        </div>
-                        <div class="insight-text">
-                            ROAS ${trend.roas_change >= 0 ? '+' : ''}${formatDecimal(trend.roas_change)}%p,
-                            전환수 ${trend.conversion_change >= 0 ? '+' : ''}${formatDecimal(trend.conversion_change)}% 변화 예상
-                        </div>
-                    </div>
-                `);
-            }
-
-            // Overall Alerts
-            if (overall.alerts && overall.alerts.length > 0) {
-                overall.alerts.forEach(alert => {
-                    const severityClass = alert.severity === 'high' ? 'negative' : alert.severity === 'medium' ? 'neutral' : 'positive';
-                    cards.push(`
-                        <div class="insight-card ${severityClass}">
-                            <div class="insight-title">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-                                ${alert.type === 'budget_alert' ? '예산 경고' : '알림'}
-                            </div>
-                            <div class="insight-text">${alert.message}</div>
-                        </div>
-                    `);
-                });
-            }
-
-            overallContainer.innerHTML = cards.join('');
-        }
-
         // insights.json 데이터로 인사이트 업데이트
         function updateInsightsFromData() {
             const insightContainer = document.getElementById('insightContent');
@@ -3617,7 +3258,11 @@
 
             const periodData = getPeriodData();
             if (!periodData) {
-                updateInsights(); // 폴백: 기존 로직 사용
+                insightContainer.innerHTML = `
+                    <div class="insight-card neutral">
+                        <div class="insight-text">데이터를 불러올 수 없습니다.</div>
+                    </div>
+                `;
                 return;
             }
 
@@ -4068,217 +3713,6 @@
             `;
         }
 
-        // 세그먼트 분석 업데이트
-        function updateSegmentAnalysis() {
-            const container = document.getElementById('segmentAnalysisContent');
-            if (!container) {
-                console.log('segmentAnalysisContent element not found - skipping updateSegmentAnalysis');
-                return;
-            }
-
-            if (!segmentStatsData) {
-                return;
-            }
-
-            // 탭 생성
-            container.innerHTML = `
-                <div class="segment-tabs">
-                    <button class="segment-tab active" data-segment="brand">브랜드별</button>
-                    <button class="segment-tab" data-segment="channel">유형구분별</button>
-                    <button class="segment-tab" data-segment="product">제품별</button>
-                    <button class="segment-tab" data-segment="promotion">프로모션별</button>
-                </div>
-                <div class="segment-grid" id="segmentGrid">
-                    <!-- 세그먼트 카드 동적 생성 -->
-                </div>
-            `;
-
-            // 탭 클릭 이벤트
-            document.querySelectorAll('.segment-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    document.querySelectorAll('.segment-tab').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    renderSegmentCards(this.dataset.segment);
-                });
-            });
-
-            // 초기 렌더링 (브랜드별)
-            renderSegmentCards('brand');
-        }
-
-        // 세그먼트 카드 렌더링
-        function renderSegmentCards(segmentType) {
-            const grid = document.getElementById('segmentGrid');
-            const data = segmentStatsData[segmentType];
-
-            if (!data) {
-                grid.innerHTML = '<p style="padding: 24px;">데이터를 불러올 수 없습니다.</p>';
-                return;
-            }
-
-            // ROAS 기준 내림차순 정렬
-            const sortedData = Object.entries(data).sort((a, b) => b[1].roas - a[1].roas);
-
-            grid.innerHTML = sortedData.map(([name, stats]) => {
-                const roasClass = stats.roas >= 150 ? 'positive' : stats.roas < 100 ? 'negative' : '';
-                const cvrClass = stats.cvr >= 3 ? 'positive' : stats.cvr < 1 ? 'negative' : '';
-
-                return `
-                    <div class="segment-card">
-                        <div class="segment-card-title">${name}</div>
-                        <div class="segment-metrics">
-                            <div class="segment-metric-row">
-                                <span class="segment-metric-label">총 비용</span>
-                                <span class="segment-metric-value">${formatNumber(stats.total_cost)}원</span>
-                            </div>
-                            <div class="segment-metric-row">
-                                <span class="segment-metric-label">총 매출</span>
-                                <span class="segment-metric-value">${formatNumber(stats.total_revenue)}원</span>
-                            </div>
-                            <div class="segment-metric-row">
-                                <span class="segment-metric-label">전환수</span>
-                                <span class="segment-metric-value">${formatNumber(stats.total_conversions)}건</span>
-                            </div>
-                            <div class="segment-metric-row">
-                                <span class="segment-metric-label">ROAS</span>
-                                <span class="segment-metric-value ${roasClass}">${formatDecimal(stats.roas)}%</span>
-                            </div>
-                            <div class="segment-metric-row">
-                                <span class="segment-metric-label">CVR</span>
-                                <span class="segment-metric-value ${cvrClass}">${formatDecimal(stats.cvr)}%</span>
-                            </div>
-                            <div class="segment-metric-row">
-                                <span class="segment-metric-label">CPA</span>
-                                <span class="segment-metric-value">${formatNumber(stats.cpa)}원</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // 기존 인사이트 업데이트 (폴백용)
-        function updateInsights() {
-            const insightContainer = document.getElementById('insightContent');
-            if (!insightContainer) {
-                console.log('insightContent element not found - skipping updateInsights');
-                return;
-            }
-
-            const actualData = forecastData.filter(d => d.type === 'actual');
-            const forecastDataOnly = forecastData.filter(d => d.type === 'forecast');
-
-            // 실제 vs 예측 분석
-            const actualCost = actualData.reduce((sum, d) => sum + (parseFloat(d['비용_예측']) || 0), 0);
-            const forecastCost = forecastDataOnly.reduce((sum, d) => sum + (parseFloat(d['비용_예측']) || 0), 0);
-            const actualConv = actualData.reduce((sum, d) => sum + (parseFloat(d['전환수_예측']) || 0), 0);
-            const forecastConv = forecastDataOnly.reduce((sum, d) => sum + (parseFloat(d['전환수_예측']) || 0), 0);
-            const actualValue = actualData.reduce((sum, d) => sum + (parseFloat(d['전환값_예측']) || 0), 0);
-            const forecastValue = forecastDataOnly.reduce((sum, d) => sum + (parseFloat(d['전환값_예측']) || 0), 0);
-
-            // ROAS 계산
-            const actualROAS = actualCost > 0 ? (actualValue / actualCost * 100) : 0;
-            const forecastROAS = forecastCost > 0 ? (forecastValue / forecastCost * 100) : 0;
-
-            // CPA 계산
-            const actualCPA = actualConv > 0 ? (actualCost / actualConv) : 0;
-            const forecastCPA = forecastConv > 0 ? (forecastCost / forecastConv) : 0;
-
-            const insights = [];
-
-            // 비용 인사이트
-            const costChange = actualCost > 0 ? ((forecastCost - actualCost) / actualCost * 100) : 0;
-            if (costChange > 10) {
-                insights.push({
-                    type: 'negative',
-                    title: '비용 증가 예상',
-                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
-                    text: `향후 예측 기간 동안 광고 비용이 약 ${Math.abs(costChange).toFixed(1)}% 증가할 것으로 예상됩니다. 예산 재조정이 필요할 수 있습니다.`
-                });
-            } else if (costChange < -10) {
-                insights.push({
-                    type: 'positive',
-                    title: '비용 감소 예상',
-                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
-                    text: `향후 예측 기간 동안 광고 비용이 약 ${Math.abs(costChange).toFixed(1)}% 감소할 것으로 예상됩니다. 효율적인 운영이 이루어지고 있습니다.`
-                });
-            }
-
-            // 전환 인사이트
-            const convChange = actualConv > 0 ? ((forecastConv - actualConv) / actualConv * 100) : 0;
-            if (convChange > 15) {
-                insights.push({
-                    type: 'positive',
-                    title: '전환수 증가 예상',
-                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>',
-                    text: `전환수가 약 ${Math.abs(convChange).toFixed(1)}% 증가할 것으로 예측됩니다. 현재 캠페인 전략이 효과적으로 작동하고 있습니다.`
-                });
-            } else if (convChange < -15) {
-                insights.push({
-                    type: 'negative',
-                    title: '전환수 감소 예상',
-                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"/></svg>',
-                    text: `전환수가 약 ${Math.abs(convChange).toFixed(1)}% 감소할 것으로 예측됩니다. 성과가 낮은 광고 소재나 타겟 세그먼트를 조정해보시는 것을 추천드려요.`
-                });
-            }
-
-            // ROAS 인사이트
-            const roasChange = actualROAS > 0 ? ((forecastROAS - actualROAS) / actualROAS * 100) : 0;
-            if (roasChange > 10) {
-                insights.push({
-                    type: 'positive',
-                    title: 'ROAS 개선 예상',
-                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>',
-                    text: `ROAS가 ${actualROAS.toFixed(0)}%에서 ${forecastROAS.toFixed(0)}%로 개선될 것으로 예상됩니다. 투자 대비 수익률이 향상되고 있습니다.`
-                });
-            } else if (roasChange < -10) {
-                insights.push({
-                    type: 'neutral',
-                    title: 'ROAS 하락 예상',
-                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>',
-                    text: `ROAS가 ${actualROAS.toFixed(0)}%에서 ${forecastROAS.toFixed(0)}%로 하락할 것으로 예상됩니다. 타겟팅이나 크리에이티브를 개선해보시는 것을 추천드려요.`
-                });
-            }
-
-            // CPA 인사이트
-            const cpaChange = actualCPA > 0 ? ((forecastCPA - actualCPA) / actualCPA * 100) : 0;
-            if (cpaChange < -15) {
-                insights.push({
-                    type: 'positive',
-                    title: 'CPA 효율화',
-                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
-                    text: `전환당 비용(CPA)이 ${formatNumber(actualCPA)}원에서 ${formatNumber(forecastCPA)}원으로 약 ${Math.abs(cpaChange).toFixed(1)}% 감소할 것으로 예상됩니다.`
-                });
-            } else if (cpaChange > 20) {
-                insights.push({
-                    type: 'negative',
-                    title: 'CPA 상승 경고',
-                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>',
-                    text: `전환당 비용(CPA)이 ${formatNumber(actualCPA)}원에서 ${formatNumber(forecastCPA)}원으로 약 ${cpaChange.toFixed(1)}% 상승할 것으로 예상됩니다. 입찰 전략을 조정하거나 예산 배분을 재검토해보시면 좋을 것 같아요.`
-                });
-            }
-
-            // 기본 인사이트 추가
-            if (insights.length === 0) {
-                insights.push({
-                    type: 'neutral',
-                    title: '안정적인 성과 예측',
-                    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
-                    text: `현재 광고 성과가 안정적으로 유지되고 있으며, 예측 기간 동안 큰 변동 없이 비슷한 수준을 유지할 것으로 예상됩니다.`
-                });
-            }
-
-            insightContainer.innerHTML = insights.map(insight => `
-                <div class="insight-card ${insight.type}">
-                    <div class="insight-title">
-                        ${insight.icon}
-                        ${insight.title}
-                    </div>
-                    <div class="insight-text">${insight.text}</div>
-                </div>
-            `).join('');
-        }
-
         // 차트 업데이트
         function updateChart() {
             const ctx = document.getElementById('forecastChart').getContext('2d');
@@ -4508,33 +3942,6 @@
             });
         }
 
-        // 테이블 업데이트
-        function updateTable() {
-            const tbody = document.getElementById('tableBody');
-
-            // tableBody 요소가 없으면 종료
-            if (!tbody) return;
-
-            // 유형 레이블 결정
-            function getTypeLabel(type) {
-                if (type === 'forecast') return '예측';
-                if (type === 'mixed') return '혼합';
-                return '실측';
-            }
-
-            tbody.innerHTML = forecastData.map(row => `
-                <tr class="${row.type === 'forecast' ? 'forecast-row' : row.type === 'mixed' ? 'mixed-row' : ''}">
-                    <td>${row['일 구분']}</td>
-                    <td>${formatNumber(parseFloat(row['비용_예측']) || 0)}</td>
-                    <td>${formatNumber(parseFloat(row['노출_예측']) || 0)}</td>
-                    <td>${formatNumber(parseFloat(row['클릭_예측']) || 0)}</td>
-                    <td>${formatNumber(parseFloat(row['전환수_예측']) || 0)}</td>
-                    <td>${formatNumber(parseFloat(row['전환값_예측']) || 0)}</td>
-                    <td>${getTypeLabel(row.type)}</td>
-                </tr>
-            `).join('');
-        }
-
         // 초기화
         document.addEventListener('DOMContentLoaded', function() {
             loadData();
@@ -4641,27 +4048,6 @@
                 });
             });
 
-            // 시각화 탭 전환 이벤트 (데이터 시각화 대시보드)
-            document.querySelectorAll('.viz-tab-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // 버튼 활성화 상태 전환
-                    document.querySelectorAll('.viz-tab-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-
-                    // 탭 컨텐츠 표시/숨김
-                    const targetTab = this.dataset.vizTab;
-                    document.querySelectorAll('.viz-tab-content').forEach(content => {
-                        content.style.display = 'none';
-                    });
-
-                    // 선택된 탭 표시
-                    if (targetTab === 'business') {
-                        document.getElementById('businessVizTab').style.display = 'block';
-                    } else if (targetTab === 'statistics') {
-                        document.getElementById('statisticsVizTab').style.display = 'block';
-                    }
-                });
-            });
 
             // 비즈니스 인사이트 서브 탭 전환 이벤트
             document.querySelectorAll('.business-subtab-btn').forEach(btn => {

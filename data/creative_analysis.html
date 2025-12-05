@@ -312,6 +312,39 @@
             box-shadow: 0 0 0 3px var(--primary-light);
         }
 
+        /* 날짜 범위 선택 */
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .date-range input[type="date"] {
+            padding: 10px 14px;
+            border: 1px solid var(--grey-300);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--paper);
+            color: var(--grey-900);
+            transition: all 0.2s ease;
+        }
+
+        .date-range input[type="date"]:hover {
+            border-color: var(--primary-main);
+        }
+
+        .date-range input[type="date"]:focus {
+            outline: none;
+            border-color: var(--primary-main);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .date-range span {
+            color: var(--grey-500);
+            font-weight: 500;
+        }
+
         /* 소재 그리드 */
         .creative-grid {
             display: grid;
@@ -739,6 +772,7 @@
         }
 
         .modal-chart-checkbox.cost { border-left: 3px solid #673ab7; }
+        .modal-chart-checkbox.cpm { border-left: 3px solid #9c27b0; }
         .modal-chart-checkbox.cpc { border-left: 3px solid #2196f3; }
         .modal-chart-checkbox.cpa { border-left: 3px solid #ff9800; }
         .modal-chart-checkbox.roas { border-left: 3px solid #00c853; }
@@ -899,12 +933,12 @@
         }
 
         /* 보조 필터 행 */
-        .sub-filter-row {
+        .secondary-filter-row {
             padding-top: 12px;
             border-top: 1px dashed var(--grey-300);
         }
 
-        .sub-filter-row::before {
+        .secondary-filter-row::before {
             content: '조건 2';
             display: block;
             font-size: 12px;
@@ -1115,7 +1149,7 @@
                         </div>
                         <div class="filter-group">
                             <label>프로모션</label>
-                            <select id="filterExtra">
+                            <select id="filterPromotion">
                                 <option value="">전체</option>
                             </select>
                         </div>
@@ -1198,10 +1232,10 @@
                         </div>
                     </div>
                     <!-- 보조 필터 그룹 (OR/AND 선택시 표시) -->
-                    <div class="filter-row sub-filter-row" id="subFilterRow" style="align-items: flex-end; margin-top: 12px; display: none;">
+                    <div class="filter-row secondary-filter-row" id="secondaryFilterRow" style="align-items: flex-end; margin-top: 12px; display: none;">
                         <div class="filter-group" style="flex: 0 0 120px;">
                             <label>KPI 기준</label>
-                            <select id="kpiFilterMetricSub">
+                            <select id="kpiFilterMetricSecondary">
                                 <option value="비용">비용</option>
                                 <option value="노출">노출</option>
                                 <option value="클릭">클릭</option>
@@ -1214,7 +1248,7 @@
                         </div>
                         <div class="filter-group" style="flex: 0 0 100px;">
                             <label>조건</label>
-                            <select id="kpiFilterOperatorSub">
+                            <select id="kpiFilterOperatorSecondary">
                                 <option value=">">> (보다 큼)</option>
                                 <option value="<">< (보다 작음)</option>
                                 <option value=">=">>= (크거나 같음)</option>
@@ -1224,21 +1258,21 @@
                         </div>
                         <div class="filter-group" style="flex: 0 0 120px;">
                             <label>기준값</label>
-                            <input type="text" id="kpiFilterValueSub" placeholder="수치 입력" class="formatted-number">
+                            <input type="text" id="kpiFilterValueSecondary" placeholder="수치 입력" class="formatted-number">
                         </div>
                         <div class="filter-group" style="flex: 0 0 120px;">
                             <label>조합 조건</label>
                             <div class="compound-radio-group">
                                 <label class="radio-label">
-                                    <input type="radio" name="compoundLogicSub" value="none" checked>
+                                    <input type="radio" name="compoundLogicSecondary" value="none" checked>
                                     <span>없음</span>
                                 </label>
                                 <label class="radio-label">
-                                    <input type="radio" name="compoundLogicSub" value="or">
+                                    <input type="radio" name="compoundLogicSecondary" value="or">
                                     <span>또는</span>
                                 </label>
                                 <label class="radio-label">
-                                    <input type="radio" name="compoundLogicSub" value="and">
+                                    <input type="radio" name="compoundLogicSecondary" value="and">
                                     <span>그리고</span>
                                 </label>
                             </div>
@@ -1352,6 +1386,10 @@
                             <input type="checkbox" id="modalChartCost" checked onchange="updateModalChart()">
                             <span>비용</span>
                         </label>
+                        <label class="modal-chart-checkbox cpm">
+                            <input type="checkbox" id="modalChartCPM" onchange="updateModalChart()">
+                            <span>CPM</span>
+                        </label>
                         <label class="modal-chart-checkbox cpc">
                             <input type="checkbox" id="modalChartCPC" onchange="updateModalChart()">
                             <span>CPC</span>
@@ -1380,10 +1418,12 @@
                                     <th>기간</th>
                                     <th>비용</th>
                                     <th>노출</th>
+                                    <th>CPM</th>
                                     <th>클릭</th>
                                     <th>CPC</th>
                                     <th>전환수</th>
                                     <th>CPA</th>
+                                    <th>전환값</th>
                                     <th>ROAS</th>
                                 </tr>
                             </thead>
@@ -1416,7 +1456,7 @@
             type: '',
             brand: '',
             product: '',
-            extra: '',
+            promotion: '',
             campaign: '',
             adSet: '',
             startDate: '',
@@ -1431,10 +1471,10 @@
             value: '',
             enabled: false,
             compoundLogic: 'none',
-            subMetric: '비용',
-            subOperator: '>',
-            subValue: '',
-            subCompoundLogic: 'none',
+            secondaryMetric: '비용',
+            secondaryOperator: '>',
+            secondaryValue: '',
+            secondaryCompoundLogic: 'none',
             tertiaryMetric: '비용',
             tertiaryOperator: '>',
             tertiaryValue: ''
@@ -1679,40 +1719,40 @@
                 filters.product = '';
                 productSelect.value = '';
             }
-            updateExtraFilter();
+            updatePromotionFilter();
         }
 
-        // 추가구분 필터 (상품명의 하위)
-        function updateExtraFilter() {
+        // 프로모션 필터 (상품명의 하위)
+        function updatePromotionFilter() {
             const filteredData = allData.filter(row => {
                 if (filters.type && row['유형구분'] !== filters.type) return false;
                 if (filters.brand && row['브랜드명'] !== filters.brand) return false;
                 if (filters.product && row['상품명'] !== filters.product) return false;
                 return true;
             });
-            const extras = [...new Set(filteredData.map(d => d['프로모션']))].filter(Boolean).sort();
-            const extraSelect = document.getElementById('filterExtra');
-            extraSelect.innerHTML = '<option value="">전체</option>';
-            extras.forEach(opt => {
+            const promotions = [...new Set(filteredData.map(d => d['프로모션']))].filter(Boolean).sort();
+            const promotionSelect = document.getElementById('filterPromotion');
+            promotionSelect.innerHTML = '<option value="">전체</option>';
+            promotions.forEach(opt => {
                 const option = document.createElement('option');
                 option.value = opt;
                 option.textContent = opt;
-                extraSelect.appendChild(option);
+                promotionSelect.appendChild(option);
             });
-            if (!extras.includes(filters.extra)) {
-                filters.extra = '';
-                extraSelect.value = '';
+            if (!promotions.includes(filters.promotion)) {
+                filters.promotion = '';
+                promotionSelect.value = '';
             }
             updateCampaignFilter();
         }
 
-        // 캠페인 필터 (추가구분의 하위)
+        // 캠페인 필터 (프로모션의 하위)
         function updateCampaignFilter() {
             const filteredData = allData.filter(row => {
                 if (filters.type && row['유형구분'] !== filters.type) return false;
                 if (filters.brand && row['브랜드명'] !== filters.brand) return false;
                 if (filters.product && row['상품명'] !== filters.product) return false;
-                if (filters.extra && row['프로모션'] !== filters.extra) return false;
+                if (filters.promotion && row['프로모션'] !== filters.promotion) return false;
                 return true;
             });
             const campaigns = [...new Set(filteredData.map(d => d['캠페인']))].filter(Boolean).sort();
@@ -1737,7 +1777,7 @@
                 if (filters.type && row['유형구분'] !== filters.type) return false;
                 if (filters.brand && row['브랜드명'] !== filters.brand) return false;
                 if (filters.product && row['상품명'] !== filters.product) return false;
-                if (filters.extra && row['프로모션'] !== filters.extra) return false;
+                if (filters.promotion && row['프로모션'] !== filters.promotion) return false;
                 if (filters.campaign && row['캠페인'] !== filters.campaign) return false;
                 return true;
             });
@@ -1796,7 +1836,7 @@
                 if (filters.type && row['유형구분'] !== filters.type) return false;
                 if (filters.brand && row['브랜드명'] !== filters.brand) return false;
                 if (filters.product && row['상품명'] !== filters.product) return false;
-                if (filters.extra && row['프로모션'] !== filters.extra) return false;
+                if (filters.promotion && row['프로모션'] !== filters.promotion) return false;
                 if (filters.campaign && row['캠페인'] !== filters.campaign) return false;
                 if (filters.adSet && row['광고세트'] !== filters.adSet) return false;
 
@@ -1905,17 +1945,17 @@
                         }
 
                         // 보조 조건 평가
-                        const subTargetValue = parseFloat(kpiFilter.subValue);
+                        const secondaryTargetValue = parseFloat(kpiFilter.secondaryValue);
                         let secondaryResult = true;
-                        if (!isNaN(subTargetValue) && kpiFilter.subValue !== '') {
-                            const subMetricValue = getMetricValue(creative, kpiFilter.subMetric);
-                            secondaryResult = compareValues(subMetricValue, kpiFilter.subOperator, subTargetValue);
+                        if (!isNaN(secondaryTargetValue) && kpiFilter.secondaryValue !== '') {
+                            const secondaryMetricValue = getMetricValue(creative, kpiFilter.secondaryMetric);
+                            secondaryResult = compareValues(secondaryMetricValue, kpiFilter.secondaryOperator, secondaryTargetValue);
                         }
 
-                        // 3차 조건 평가 (subCompoundLogic이 설정된 경우에만)
+                        // 3차 조건 평가 (secondaryCompoundLogic이 설정된 경우에만)
                         let tertiaryResult = true;
                         let hasTertiaryCondition = false;
-                        if (kpiFilter.subCompoundLogic !== 'none') {
+                        if (kpiFilter.secondaryCompoundLogic !== 'none') {
                             const tertiaryTargetValue = parseFloat(kpiFilter.tertiaryValue);
                             if (!isNaN(tertiaryTargetValue) && kpiFilter.tertiaryValue !== '') {
                                 hasTertiaryCondition = true;
@@ -1927,18 +1967,18 @@
                         // OR 또는 AND 연산 (1차-2차 조건)
                         let result12;
                         if (kpiFilter.compoundLogic === 'or') {
-                            result12 = primaryResult || (kpiFilter.subValue !== '' ? secondaryResult : false);
+                            result12 = primaryResult || (kpiFilter.secondaryValue !== '' ? secondaryResult : false);
                         } else if (kpiFilter.compoundLogic === 'and') {
-                            result12 = primaryResult && (kpiFilter.subValue !== '' ? secondaryResult : true);
+                            result12 = primaryResult && (kpiFilter.secondaryValue !== '' ? secondaryResult : true);
                         } else {
                             return primaryResult;
                         }
 
-                        // 3차 조건 적용 (subCompoundLogic 기반)
+                        // 3차 조건 적용 (secondaryCompoundLogic 기반)
                         if (hasTertiaryCondition) {
-                            if (kpiFilter.subCompoundLogic === 'or') {
+                            if (kpiFilter.secondaryCompoundLogic === 'or') {
                                 return result12 || tertiaryResult;
-                            } else if (kpiFilter.subCompoundLogic === 'and') {
+                            } else if (kpiFilter.secondaryCompoundLogic === 'and') {
                                 return result12 && tertiaryResult;
                             }
                         }
@@ -2081,11 +2121,9 @@
         let currentModalData = [];
         let currentModalViewType = 'daily';
         let isModalTableExpanded = false;
-        let currentCreativeName = '';
 
         // 소재 세부 성과 모달 표시
         function showCreativeDetail(creativeName) {
-            currentCreativeName = creativeName;
             // 해당 소재의 데이터 필터링
             const creativeData = filterData().filter(row => row['소재이름'] === creativeName);
 
@@ -2239,6 +2277,7 @@
                 .map(([period, values]) => ({
                     period,
                     ...values,
+                    CPM: values.노출 > 0 ? (values.비용 / values.노출 * 1000) : 0,
                     CPC: values.클릭 > 0 ? (values.비용 / values.클릭) : 0,
                     CPA: values.전환수 > 0 ? (values.비용 / values.전환수) : 0,
                     ROAS: values.비용 > 0 ? (values.전환값 / values.비용 * 100) : 0
@@ -2261,10 +2300,12 @@
                         <td>${formatPeriodLabel(row.period, currentModalViewType)}</td>
                         <td>${formatNumber(row.비용)}</td>
                         <td>${formatNumber(row.노출)}</td>
+                        <td>${formatNumber(row.CPM)}</td>
                         <td>${formatNumber(row.클릭)}</td>
                         <td>${formatNumber(row.CPC)}</td>
                         <td>${formatNumber(row.전환수)}</td>
                         <td>${formatNumber(row.CPA)}</td>
+                        <td>${formatNumber(row.전환값)}</td>
                         <td>${formatROAS(row.ROAS)}</td>
                     </tr>
                 `;
@@ -2327,19 +2368,21 @@
 
             // 체크박스 상태 확인
             const showCost = document.getElementById('modalChartCost').checked;
+            const showCPM = document.getElementById('modalChartCPM').checked;
             const showCPC = document.getElementById('modalChartCPC').checked;
             const showCPA = document.getElementById('modalChartCPA').checked;
             const showROAS = document.getElementById('modalChartROAS').checked;
 
             // Y축 결정 로직 (모든 조합 고려)
-            // 우선순위: 비용 > CPC > CPA > ROAS
+            // 우선순위: 비용 > CPM > CPC > CPA > ROAS
             // 첫 번째 지표는 왼쪽, 나머지는 오른쪽
             const hasCostMetric = showCost;
+            const hasCpmMetric = showCPM;
             const hasCpcMetric = showCPC;
             const hasCpaMetric = showCPA;
 
             // 오른쪽 축 사용 여부 결정 (2개 이상 지표 선택 시)
-            const selectedCount = (showCost ? 1 : 0) + (showCPC ? 1 : 0) + (showCPA ? 1 : 0) + (showROAS ? 1 : 0);
+            const selectedCount = (showCost ? 1 : 0) + (showCPM ? 1 : 0) + (showCPC ? 1 : 0) + (showCPA ? 1 : 0) + (showROAS ? 1 : 0);
             const useRightAxis = selectedCount >= 2;
 
             // 데이터셋 생성
@@ -2357,40 +2400,53 @@
                 });
             }
 
-            if (showCPC) {
-                // CPC: 비용이 있으면 오른쪽, 없으면 왼쪽
+            if (showCPM) {
+                // CPM: 비용이 있으면 오른쪽, 없으면 왼쪽
                 datasets.push({
-                    label: 'CPC',
-                    data: sortedData.map(d => d.CPC),
-                    borderColor: '#2196f3',
-                    backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                    label: 'CPM',
+                    data: sortedData.map(d => d.CPM),
+                    borderColor: '#9c27b0',
+                    backgroundColor: 'rgba(156, 39, 176, 0.1)',
                     yAxisID: hasCostMetric ? 'y1' : 'y',
                     tension: 0.3,
                     fill: false
                 });
             }
 
+            if (showCPC) {
+                // CPC: 비용 또는 CPM이 있으면 오른쪽, 없으면 왼쪽
+                datasets.push({
+                    label: 'CPC',
+                    data: sortedData.map(d => d.CPC),
+                    borderColor: '#2196f3',
+                    backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                    yAxisID: (hasCostMetric || hasCpmMetric) ? 'y1' : 'y',
+                    tension: 0.3,
+                    fill: false
+                });
+            }
+
             if (showCPA) {
-                // CPA: 비용 또는 CPC가 있으면 오른쪽, 없으면 왼쪽
+                // CPA: 비용/CPM/CPC 중 하나라도 있으면 오른쪽, 없으면 왼쪽
                 datasets.push({
                     label: 'CPA',
                     data: sortedData.map(d => d.CPA),
                     borderColor: '#ff9800',
                     backgroundColor: 'rgba(255, 152, 0, 0.1)',
-                    yAxisID: (hasCostMetric || hasCpcMetric) ? 'y1' : 'y',
+                    yAxisID: (hasCostMetric || hasCpmMetric || hasCpcMetric) ? 'y1' : 'y',
                     tension: 0.3,
                     fill: false
                 });
             }
 
             if (showROAS) {
-                // ROAS: 비용/CPC/CPA 중 하나라도 있으면 오른쪽, ROAS만 있으면 왼쪽
+                // ROAS: 비용/CPM/CPC/CPA 중 하나라도 있으면 오른쪽, ROAS만 있으면 왼쪽
                 datasets.push({
                     label: 'ROAS',
                     data: sortedData.map(d => d.ROAS),
                     borderColor: '#00c853',
                     backgroundColor: 'rgba(0, 200, 83, 0.1)',
-                    yAxisID: (hasCostMetric || hasCpcMetric || hasCpaMetric) ? 'y1' : 'y',
+                    yAxisID: (hasCostMetric || hasCpmMetric || hasCpcMetric || hasCpaMetric) ? 'y1' : 'y',
                     tension: 0.3,
                     fill: false
                 });
@@ -2451,6 +2507,7 @@
                                 display: true,
                                 text: (function() {
                                     if (showCost) return '비용 (원)';
+                                    if (showCPM) return 'CPM (원)';
                                     if (showCPC) return 'CPC (원)';
                                     if (showCPA) return 'CPA (원)';
                                     if (showROAS) return 'ROAS (%)';
@@ -2459,7 +2516,7 @@
                             },
                             ticks: {
                                 callback: function(value) {
-                                    if (!showCost && !showCPC && !showCPA && showROAS) {
+                                    if (!showCost && !showCPM && !showCPC && !showCPA && showROAS) {
                                         return value + '%';
                                     }
                                     return formatNumber(value);
@@ -2475,9 +2532,10 @@
                                 text: (function() {
                                     // 오른쪽 축에 있는 지표들 확인
                                     const rightMetrics = [];
-                                    if (hasCostMetric && showCPC) rightMetrics.push('CPC');
-                                    if ((hasCostMetric || hasCpcMetric) && showCPA) rightMetrics.push('CPA');
-                                    if ((hasCostMetric || hasCpcMetric || hasCpaMetric) && showROAS) rightMetrics.push('ROAS');
+                                    if (hasCostMetric && showCPM) rightMetrics.push('CPM');
+                                    if ((hasCostMetric || hasCpmMetric) && showCPC) rightMetrics.push('CPC');
+                                    if ((hasCostMetric || hasCpmMetric || hasCpcMetric) && showCPA) rightMetrics.push('CPA');
+                                    if ((hasCostMetric || hasCpmMetric || hasCpcMetric || hasCpaMetric) && showROAS) rightMetrics.push('ROAS');
 
                                     if (rightMetrics.length === 0) return '';
                                     if (rightMetrics.includes('ROAS') && rightMetrics.length === 1) return 'ROAS (%)';
@@ -2491,11 +2549,12 @@
                             ticks: {
                                 callback: function(value) {
                                     // 오른쪽 축에 ROAS만 있을 때는 % 표시
-                                    const hasRightCPC = hasCostMetric && showCPC;
-                                    const hasRightCPA = (hasCostMetric || hasCpcMetric) && showCPA;
-                                    const hasRightROAS = (hasCostMetric || hasCpcMetric || hasCpaMetric) && showROAS;
+                                    const hasRightCPM = hasCostMetric && showCPM;
+                                    const hasRightCPC = (hasCostMetric || hasCpmMetric) && showCPC;
+                                    const hasRightCPA = (hasCostMetric || hasCpmMetric || hasCpcMetric) && showCPA;
+                                    const hasRightROAS = (hasCostMetric || hasCpmMetric || hasCpcMetric || hasCpaMetric) && showROAS;
 
-                                    if (hasRightROAS && !hasRightCPC && !hasRightCPA) {
+                                    if (hasRightROAS && !hasRightCPM && !hasRightCPC && !hasRightCPA) {
                                         return value + '%';
                                     }
                                     return formatNumber(value);
@@ -2532,12 +2591,12 @@
 
             document.getElementById('filterProduct').addEventListener('change', e => {
                 filters.product = e.target.value;
-                updateExtraFilter();
+                updatePromotionFilter();
                 updateDashboard();
             });
 
-            document.getElementById('filterExtra').addEventListener('change', e => {
-                filters.extra = e.target.value;
+            document.getElementById('filterPromotion').addEventListener('change', e => {
+                filters.promotion = e.target.value;
                 updateCampaignFilter();
                 updateDashboard();
             });
@@ -2612,18 +2671,18 @@
             document.querySelectorAll('input[name="compoundLogic"]').forEach(radio => {
                 radio.addEventListener('change', e => {
                     kpiFilter.compoundLogic = e.target.value;
-                    const subFilterRow = document.getElementById('subFilterRow');
+                    const secondaryFilterRow = document.getElementById('secondaryFilterRow');
                     const tertiaryFilterRow = document.getElementById('tertiaryFilterRow');
 
                     if (e.target.value === 'none') {
-                        subFilterRow.style.display = 'none';
+                        secondaryFilterRow.style.display = 'none';
                         tertiaryFilterRow.style.display = 'none';
                         // 조건2의 조합조건도 초기화
-                        kpiFilter.subCompoundLogic = 'none';
-                        document.querySelector('input[name="compoundLogicSub"][value="none"]').checked = true;
+                        kpiFilter.secondaryCompoundLogic = 'none';
+                        document.querySelector('input[name="compoundLogicSecondary"][value="none"]').checked = true;
                     } else {
-                        subFilterRow.style.display = 'flex';
-                        // tertiaryFilterRow는 subCompoundLogic에 의해 제어됨
+                        secondaryFilterRow.style.display = 'flex';
+                        // tertiaryFilterRow는 secondaryCompoundLogic에 의해 제어됨
                     }
 
                     if (kpiFilter.enabled) {
@@ -2633,9 +2692,9 @@
             });
 
             // 조합 조건 라디오 버튼 이벤트 (조건2 -> 조건3)
-            document.querySelectorAll('input[name="compoundLogicSub"]').forEach(radio => {
+            document.querySelectorAll('input[name="compoundLogicSecondary"]').forEach(radio => {
                 radio.addEventListener('change', e => {
-                    kpiFilter.subCompoundLogic = e.target.value;
+                    kpiFilter.secondaryCompoundLogic = e.target.value;
                     const tertiaryFilterRow = document.getElementById('tertiaryFilterRow');
 
                     if (e.target.value === 'none') {
@@ -2651,24 +2710,24 @@
             });
 
             // 보조 필터 이벤트
-            document.getElementById('kpiFilterMetricSub').addEventListener('change', e => {
-                kpiFilter.subMetric = e.target.value;
+            document.getElementById('kpiFilterMetricSecondary').addEventListener('change', e => {
+                kpiFilter.secondaryMetric = e.target.value;
                 if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
                     updateDashboard();
                 }
             });
 
-            document.getElementById('kpiFilterOperatorSub').addEventListener('change', e => {
-                kpiFilter.subOperator = e.target.value;
+            document.getElementById('kpiFilterOperatorSecondary').addEventListener('change', e => {
+                kpiFilter.secondaryOperator = e.target.value;
                 if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
                     updateDashboard();
                 }
             });
 
-            document.getElementById('kpiFilterValueSub').addEventListener('input', e => {
+            document.getElementById('kpiFilterValueSecondary').addEventListener('input', e => {
                 const formatted = formatNumberInput(e.target.value);
                 e.target.value = formatted;
-                kpiFilter.subValue = parseFormattedNumber(formatted);
+                kpiFilter.secondaryValue = parseFormattedNumber(formatted);
                 if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
                     updateDashboard();
                 }
@@ -2693,7 +2752,7 @@
                 const formatted = formatNumberInput(e.target.value);
                 e.target.value = formatted;
                 kpiFilter.tertiaryValue = parseFormattedNumber(formatted);
-                if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none' && kpiFilter.subCompoundLogic !== 'none') {
+                if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none' && kpiFilter.secondaryCompoundLogic !== 'none') {
                     updateDashboard();
                 }
             });

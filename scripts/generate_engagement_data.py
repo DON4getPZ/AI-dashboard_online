@@ -40,15 +40,29 @@ def generate_channel_engagement_data():
     channel_stats = ga4_df.groupby('channel').agg({
         'Sessions': 'sum',
         'Engaged sessions': 'sum',
-        'Average session duration': 'mean',
-        'Bounce rate': 'mean',
         'Total users': 'sum',
         'New users': 'sum'
     }).reset_index()
 
+    # Average session duration 세션 가중 평균 계산
+    # = sum(duration × sessions) / sum(sessions)
+    weighted_duration = ga4_df.groupby('channel').apply(
+        lambda x: (x['Average session duration'] * x['Sessions']).sum() / x['Sessions'].sum()
+        if x['Sessions'].sum() > 0 else 0,
+        include_groups=False
+    ).reset_index(name='Average session duration')
+    channel_stats = channel_stats.merge(weighted_duration, on='channel', how='left')
+
     # 참여율 계산 (Engaged sessions / Total sessions * 100)
     channel_stats['Engagement rate'] = (
         channel_stats['Engaged sessions'] / channel_stats['Sessions'] * 100
+    ).round(2)
+
+    # Bounce rate 직접 계산 (세션 기반)
+    # Bounce rate = (Sessions - Engaged sessions) / Sessions × 100
+    channel_stats['Bounce rate'] = (
+        (channel_stats['Sessions'] - channel_stats['Engaged sessions'])
+        / channel_stats['Sessions'] * 100
     ).round(2)
 
     # 재방문율 계산 (100 - New user %)
@@ -59,9 +73,6 @@ def generate_channel_engagement_data():
 
     # 세션 시간을 초 단위로 반올림
     channel_stats['Average session duration'] = channel_stats['Average session duration'].round(1)
-
-    # Bounce rate를 퍼센트로 변환 (이미 0-1 사이 값이므로 100을 곱함)
-    channel_stats['Bounce rate'] = (channel_stats['Bounce rate'] * 100).round(2)
 
     # 필요한 컬럼만 선택
     result = channel_stats[[
