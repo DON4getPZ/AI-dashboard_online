@@ -422,6 +422,161 @@
             color: var(--error-main);
         }
 
+        /* KPI 토글 스타일 */
+        .kpi-section {
+            margin-bottom: 24px;
+        }
+
+        .kpi-view-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .kpi-view-btn {
+            padding: 10px 24px;
+            border: none;
+            background: var(--paper);
+            color: var(--grey-700);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .kpi-view-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .kpi-view-btn.active {
+            background: var(--primary-main);
+            color: white;
+            box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+        }
+
+        .kpi-grid-primary {
+            margin-bottom: 0;
+        }
+
+        .kpi-grid.kpi-grid-secondary {
+            display: none;
+            margin-top: 16px;
+        }
+
+        .kpi-section.show-all .kpi-grid.kpi-grid-secondary {
+            display: grid;
+        }
+
+        .kpi-summary-card.secondary {
+            background: var(--grey-50);
+        }
+
+        /* KPI 그리드 - 업그레이드 디자인 */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: var(--paper);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+
+        .kpi-card.highlight {
+            border-left: 4px solid var(--primary-main);
+        }
+
+        .kpi-card.secondary {
+            background: var(--grey-50);
+        }
+
+        .kpi-card.secondary .kpi-icon {
+            background: var(--grey-200);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .kpi-title {
+            font-size: 13px;
+            color: var(--grey-600);
+            font-weight: 600;
+        }
+
+        .kpi-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--grey-100);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-main);
+            font-size: 16px;
+        }
+
+        .kpi-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin-bottom: 8px;
+        }
+
+        .kpi-value.highlight-value {
+            color: var(--primary-main);
+        }
+
+        .kpi-trend {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .kpi-trend.up { color: var(--success-main); }
+        .kpi-trend.down { color: var(--error-main); }
+        .kpi-trend.neutral { color: var(--grey-500); }
+
+        .kpi-card .trend-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        .kpi-card .trend-badge.up {
+            background: var(--success-light);
+            color: var(--success-main);
+        }
+
+        .kpi-card .trend-badge.down {
+            background: var(--error-light);
+            color: var(--error-main);
+        }
+
         /* 차트 섹션 */
         .chart-section {
             margin-bottom: 24px;
@@ -1190,8 +1345,15 @@
                 </div>
 
                 <!-- 1. 핵심 KPI 요약 (제일 위, 펼쳐진 상태) -->
-                <div class="kpi-summary-grid" id="kpiSummaryGrid">
-                    <!-- JS로 동적 생성 -->
+                <!-- 주요/세부 성과 토글 -->
+                <div class="kpi-view-toggle">
+                    <button class="kpi-view-btn active" data-kpi-view="primary">주요 성과</button>
+                    <button class="kpi-view-btn" data-kpi-view="all">세부 성과</button>
+                </div>
+                <div class="kpi-section" id="kpiSectionContainer">
+                    <div id="kpiSummaryGrid">
+                        <!-- JS로 동적 생성 -->
+                    </div>
                 </div>
 
                 <!-- 2. 통합 인사이트 대시보드 (접기/펼치기) -->
@@ -2913,49 +3075,65 @@
                 return ((forecast - actual) / actual * 100).toFixed(1);
             };
 
-            // 상위 행: 비용 및 효율 지표 (5개)
+            // 상위 행: 주요 성과 (5개) - 비용 및 효율 지표
             const topKpis = [
-                { label: '예측 비용', value: formatNumber(forecastTotals.비용), unit: '원', change: calcChange(forecastTotals.비용, actualTotals.비용) },
-                { label: '예측 CPM', value: formatDecimal(forecastCPM), unit: '원', change: calcChange(forecastCPM, actualCPM) },
-                { label: '예측 CPC', value: formatDecimal(forecastCPC), unit: '원', change: calcChange(forecastCPC, actualCPC) },
-                { label: '예측 CPA', value: formatNumber(forecastCPA), unit: '원', change: calcChange(forecastCPA, actualCPA) },
-                { label: '예측 ROAS', value: formatPercent(forecastROAS), unit: '%', change: calcChange(forecastROAS, actualROAS) }
+                { label: '예측 비용', value: formatNumber(forecastTotals.비용), unit: '원', change: calcChange(forecastTotals.비용, actualTotals.비용), icon: '💰', highlight: false },
+                { label: '예측 ROAS', value: formatPercent(forecastROAS), unit: '%', change: calcChange(forecastROAS, actualROAS), icon: '📈', highlight: true },
+                { label: '예측 CPA', value: formatNumber(forecastCPA), unit: '원', change: calcChange(forecastCPA, actualCPA), icon: '🎯', highlight: false },
+                { label: '예측 CPC', value: formatDecimal(forecastCPC), unit: '원', change: calcChange(forecastCPC, actualCPC), icon: '🖱️', highlight: false },
+                { label: '예측 CPM', value: formatDecimal(forecastCPM), unit: '원', change: calcChange(forecastCPM, actualCPM), icon: '👁️', highlight: false }
             ];
 
-            // 하위 행: 기본 성과 지표 (4개)
+            // 하위 행: 세부 성과 (4개) - 기본 성과 지표
             const bottomKpis = [
-                { label: '예측 노출', value: formatNumber(forecastTotals.노출), unit: '회', change: calcChange(forecastTotals.노출, actualTotals.노출) },
-                { label: '예측 클릭', value: formatNumber(forecastTotals.클릭), unit: '회', change: calcChange(forecastTotals.클릭, actualTotals.클릭) },
-                { label: '예측 전환수', value: formatNumber(forecastTotals.전환수), unit: '건', change: calcChange(forecastTotals.전환수, actualTotals.전환수) },
-                { label: '예측 전환값', value: formatNumber(forecastTotals.전환값), unit: '원', change: calcChange(forecastTotals.전환값, actualTotals.전환값) }
+                { label: '예측 노출', value: formatNumber(forecastTotals.노출), unit: '회', change: calcChange(forecastTotals.노출, actualTotals.노출), icon: '👀' },
+                { label: '예측 클릭', value: formatNumber(forecastTotals.클릭), unit: '회', change: calcChange(forecastTotals.클릭, actualTotals.클릭), icon: '👆' },
+                { label: '예측 전환수', value: formatNumber(forecastTotals.전환수), unit: '건', change: calcChange(forecastTotals.전환수, actualTotals.전환수), icon: '✅' },
+                { label: '예측 전환값', value: formatNumber(forecastTotals.전환값), unit: '원', change: calcChange(forecastTotals.전환값, actualTotals.전환값), icon: '💵' }
             ];
 
-            // KPI 카드 HTML 생성 함수
+            // KPI 카드 HTML 생성 함수 (primary) - marketing_dashboard_v3.html 스타일
             const createKpiCard = (kpi) => `
-                <div class="kpi-summary-card card">
-                    <div class="kpi-summary-label">${kpi.label}</div>
-                    <div class="kpi-summary-value">${kpi.value}</div>
-                    <div class="kpi-summary-unit">${kpi.unit}</div>
-                    <div class="kpi-forecast-badge ${parseFloat(kpi.change) >= 0 ? 'up' : 'down'}">
-                        ${parseFloat(kpi.change) >= 0 ? '▲' : '▼'} ${Math.abs(kpi.change)}%
+                <div class="kpi-card${kpi.highlight ? ' highlight' : ''}">
+                    <div class="kpi-header">
+                        <span class="kpi-title">${kpi.label}</span>
+                        <div class="kpi-icon">${kpi.icon}</div>
+                    </div>
+                    <div class="kpi-value${kpi.highlight ? ' highlight-value' : ''}">${kpi.value}</div>
+                    <div class="kpi-trend ${parseFloat(kpi.change) >= 0 ? 'up' : 'down'}">
+                        <span class="trend-badge ${parseFloat(kpi.change) >= 0 ? 'up' : 'down'}">
+                            ${parseFloat(kpi.change) >= 0 ? '▲' : '▼'} ${Math.abs(kpi.change)}%
+                        </span>
+                        <span style="color: var(--grey-500); font-size: 12px;">vs 실제</span>
                     </div>
                 </div>
             `;
 
-            // 2행 레이아웃 HTML 생성
+            // KPI 카드 HTML 생성 함수 (secondary) - marketing_dashboard_v3.html 스타일
+            const createSecondaryKpiCard = (kpi) => `
+                <div class="kpi-card secondary">
+                    <div class="kpi-header">
+                        <span class="kpi-title">${kpi.label}</span>
+                        <div class="kpi-icon">${kpi.icon}</div>
+                    </div>
+                    <div class="kpi-value">${kpi.value}</div>
+                    <div class="kpi-trend ${parseFloat(kpi.change) >= 0 ? 'up' : 'down'}">
+                        <span class="trend-badge ${parseFloat(kpi.change) >= 0 ? 'up' : 'down'}">
+                            ${parseFloat(kpi.change) >= 0 ? '▲' : '▼'} ${Math.abs(kpi.change)}%
+                        </span>
+                        <span style="color: var(--grey-500); font-size: 12px;">vs 실제</span>
+                    </div>
+                </div>
+            `;
+
+            // 주요 성과 / 세부 성과 토글 레이아웃 HTML 생성
             document.getElementById('kpiSummaryGrid').innerHTML = `
-                <div class="kpi-row-container">
-                    <div class="kpi-row-label">효율 지표</div>
-                    <div class="kpi-summary-grid" style="margin-bottom: 0;">
-                        ${topKpis.map(createKpiCard).join('')}
-                    </div>
-                </div>
-                <div class="kpi-row-container">
-                    <div class="kpi-row-label">기본 성과</div>
-                    <div class="kpi-summary-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 0;">
-                        ${bottomKpis.map(createKpiCard).join('')}
-                    </div>
-                </div>
+                <section class="kpi-grid kpi-grid-primary" style="margin-bottom: 0;">
+                    ${topKpis.map(createKpiCard).join('')}
+                </section>
+                <section class="kpi-grid kpi-grid-secondary" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 0;">
+                    ${bottomKpis.map(createSecondaryKpiCard).join('')}
+                </section>
             `;
         }
 
@@ -3959,6 +4137,25 @@
                     if (this.dataset.view) {
                         currentView = this.dataset.view;
                         loadData();
+                    }
+                });
+            });
+
+            // KPI 주요/세부 성과 토글 버튼
+            document.querySelectorAll('.kpi-view-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // 버튼 활성화 토글
+                    document.querySelectorAll('.kpi-view-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // kpi-section에 show-all 토글
+                    const kpiSection = document.getElementById('kpiSectionContainer');
+                    if (kpiSection) {
+                        if (btn.dataset.kpiView === 'all') {
+                            kpiSection.classList.add('show-all');
+                        } else {
+                            kpiSection.classList.remove('show-all');
+                        }
                     }
                 });
             });

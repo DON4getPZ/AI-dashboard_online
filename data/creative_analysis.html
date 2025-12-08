@@ -989,6 +989,242 @@
         .sort-radio-group .radio-label span {
             white-space: nowrap;
         }
+
+        /* KPI 필터 + 정렬 통합 레이아웃 */
+        .unified-filter-container {
+            display: flex;
+            gap: 0;
+        }
+
+        .unified-filter-left {
+            flex: 1;
+            padding-right: 24px;
+        }
+
+        .unified-filter-right {
+            flex: 0 0 auto;
+            padding-left: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .unified-filter-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .unified-filter-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: var(--primary-main);
+            border-radius: 2px;
+        }
+
+        .unified-filter-content {
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 1200px) {
+            .unified-filter-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .unified-filter-left {
+                padding-right: 0;
+                border-right: none;
+                border-bottom: 1px solid var(--grey-200);
+                padding-bottom: 20px;
+            }
+
+            .unified-filter-right {
+                padding-left: 0;
+            }
+        }
+
+        /* 접기/펼치기 섹션 */
+        .collapsible-section {
+            margin-bottom: 24px;
+        }
+
+        .collapsible-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 16px 20px;
+            background: var(--paper);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .collapsible-header:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .collapsible-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+        }
+
+        .collapsible-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--primary-main);
+            border-radius: 2px;
+        }
+
+        .collapsible-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--primary-light);
+            color: var(--primary-main);
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .collapsible-toggle:hover {
+            background: var(--primary-main);
+            color: white;
+        }
+
+        .collapsible-toggle-icon {
+            transition: transform 0.2s ease;
+            transform: rotate(180deg);
+        }
+
+        .collapsible-toggle-icon.collapsed {
+            transform: rotate(0deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
+        }
+
+        .collapsible-content.expanded {
+            max-height: 2000px;
+            opacity: 1;
+            padding-top: 16px;
+        }
+
+        /* 통합 필터 컨테이너 */
+        .filter-inline-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 48px;
+            flex-wrap: wrap;
+        }
+
+        /* 기간 선택 영역 */
+        .filter-date-section {
+            display: flex;
+            flex-direction: column;
+            gap: 37px;
+        }
+
+        .filter-date-section .filter-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-900);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .filter-date-section .filter-label::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: var(--primary-main);
+            border-radius: 2px;
+        }
+
+        /* 필터 설정 영역 */
+        .filter-setting-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .filter-setting-section .filter-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-900);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .filter-setting-section .filter-label::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: var(--primary-main);
+            border-radius: 2px;
+        }
+
+        .filter-setting-section .filter-items {
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .filter-setting-section .filter-group {
+            flex: 1;
+            min-width: 0;
+        }
+
+        @media (max-width: 768px) {
+            .filter-inline-container {
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .filter-date-section {
+                width: 100%;
+            }
+
+            .filter-setting-section {
+                width: 100%;
+            }
+
+            .filter-setting-section .filter-items {
+                flex-direction: column;
+            }
+
+            .filter-setting-section .filter-group {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1080,15 +1316,82 @@
                     </div>
                 </div>
 
-                <!-- 기간 선택 (최상단) -->
-                <div class="filter-section card" style="margin-bottom: 16px;">
-                    <div class="filter-header">기간 선택</div>
-                    <div class="filter-row" style="margin-bottom: 0;">
-                        <div class="filter-group">
-                            <div class="date-range">
-                                <input type="date" id="startDate">
-                                <span>~</span>
-                                <input type="date" id="endDate">
+                <!-- 필터 설정 (접기/펼치기) -->
+                <div class="collapsible-section">
+                    <div class="collapsible-header" id="filterCollapsibleHeader">
+                        <div class="collapsible-title">필터 설정</div>
+                        <button class="collapsible-toggle">
+                            <span>펼치기</span>
+                            <span class="collapsible-toggle-icon collapsed">▼</span>
+                        </button>
+                    </div>
+                    <div class="collapsible-content" id="filterCollapsibleContent">
+                        <!-- 기간 선택 + 기본 필터 -->
+                        <div class="filter-section card" style="margin-bottom: 16px;">
+                            <div class="filter-inline-container">
+                                <!-- 기간 선택 -->
+                                <div class="filter-date-section">
+                                    <div class="filter-label">기간 선택</div>
+                                    <div class="date-range">
+                                        <input type="date" id="startDate">
+                                        <span>~</span>
+                                        <input type="date" id="endDate">
+                                    </div>
+                                </div>
+                                <!-- 기본 필터 -->
+                                <div class="filter-setting-section">
+                                    <div class="filter-label">기본 필터</div>
+                                    <div class="filter-items">
+                                        <div class="filter-group">
+                                            <label>유형구분</label>
+                                            <select id="filterType">
+                                                <option value="">전체</option>
+                                            </select>
+                                        </div>
+                                        <div class="filter-group">
+                                            <label>브랜드명</label>
+                                            <select id="filterBrand">
+                                                <option value="">전체</option>
+                                            </select>
+                                        </div>
+                                        <div class="filter-group">
+                                            <label>상품명</label>
+                                            <select id="filterProduct">
+                                                <option value="">전체</option>
+                                            </select>
+                                        </div>
+                                        <div class="filter-group">
+                                            <label>프로모션</label>
+                                            <select id="filterPromotion">
+                                                <option value="">전체</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 세부 필터 -->
+                        <div class="filter-section card">
+                            <div class="filter-header">세부 필터</div>
+                            <div class="filter-row">
+                                <div class="filter-group">
+                                    <label>캠페인</label>
+                                    <select id="filterCampaign">
+                                        <option value="">전체</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label>광고세트</label>
+                                    <select id="filterAdSet">
+                                        <option value="">전체</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="filter-row">
+                                <div class="filter-group">
+                                    <label>소재 검색</label>
+                                    <input type="text" id="searchText" placeholder="소재이름 검색..." style="flex: 1;">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1125,219 +1428,173 @@
                     </div>
                 </div>
 
-                <!-- 필터 섹션 -->
+                <!-- KPI 기준 필터 + 정렬 설정 통합 -->
                 <div class="filter-section card">
-                    <div class="filter-header">필터 설정</div>
-                    <div class="filter-row">
-                        <div class="filter-group">
-                            <label>유형구분</label>
-                            <select id="filterType">
-                                <option value="">전체</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>브랜드명</label>
-                            <select id="filterBrand">
-                                <option value="">전체</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>상품명</label>
-                            <select id="filterProduct">
-                                <option value="">전체</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>프로모션</label>
-                            <select id="filterPromotion">
-                                <option value="">전체</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="filter-row">
-                        <div class="filter-group">
-                            <label>캠페인</label>
-                            <select id="filterCampaign">
-                                <option value="">전체</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>광고세트</label>
-                            <select id="filterAdSet">
-                                <option value="">전체</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="filter-row">
-                        <div class="filter-group">
-                            <label>소재 검색</label>
-                            <input type="text" id="searchText" placeholder="소재이름 검색..." style="flex: 1;">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- KPI 기준 필터 (독립 박스) -->
-                <div class="filter-section card">
-                    <div class="filter-header">KPI 기준 필터</div>
-                    <div class="filter-row" style="align-items: flex-end; margin-bottom: 0;">
-                        <div class="filter-group" style="flex: 0 0 120px;">
-                            <label>KPI 기준</label>
-                            <select id="kpiFilterMetric">
-                                <option value="비용">비용</option>
-                                <option value="노출">노출</option>
-                                <option value="클릭">클릭</option>
-                                <option value="전환수">전환수</option>
-                                <option value="전환값">전환값</option>
-                                <option value="CPC">CPC</option>
-                                <option value="CPA">CPA</option>
-                                <option value="ROAS">ROAS</option>
-                            </select>
-                        </div>
-                        <div class="filter-group" style="flex: 0 0 100px;">
-                            <label>조건</label>
-                            <select id="kpiFilterOperator">
-                                <option value=">">> (보다 큼)</option>
-                                <option value="<">< (보다 작음)</option>
-                                <option value=">=">>= (크거나 같음)</option>
-                                <option value="<="><= (작거나 같음)</option>
-                                <option value="=">= (같음)</option>
-                            </select>
-                        </div>
-                        <div class="filter-group" style="flex: 0 0 120px;">
-                            <label>기준값</label>
-                            <input type="text" id="kpiFilterValue" placeholder="수치 입력" class="formatted-number">
-                        </div>
-                        <div class="filter-group" style="flex: 0 0 120px;">
-                            <label>조합 조건</label>
-                            <div class="compound-radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="compoundLogic" value="none" checked>
-                                    <span>없음</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="compoundLogic" value="or">
-                                    <span>또는</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="compoundLogic" value="and">
-                                    <span>그리고</span>
-                                </label>
+                    <div class="unified-filter-container">
+                        <!-- 왼쪽: KPI 기준 필터 -->
+                        <div class="unified-filter-left">
+                            <div class="unified-filter-title">KPI 기준 필터</div>
+                            <div class="unified-filter-content" style="margin-bottom: 0;">
+                                <div class="filter-group" style="flex: 0 0 100px;">
+                                    <label>KPI 기준</label>
+                                    <select id="kpiFilterMetric">
+                                        <option value="비용">비용</option>
+                                        <option value="노출">노출</option>
+                                        <option value="클릭">클릭</option>
+                                        <option value="전환수">전환수</option>
+                                        <option value="전환값">전환값</option>
+                                        <option value="CPC">CPC</option>
+                                        <option value="CPA">CPA</option>
+                                        <option value="ROAS">ROAS</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group" style="flex: 0 0 100px;">
+                                    <label>조건</label>
+                                    <select id="kpiFilterOperator">
+                                        <option value=">">> (보다 큼)</option>
+                                        <option value="<">< (보다 작음)</option>
+                                        <option value=">=">>= (크거나 같음)</option>
+                                        <option value="<="><= (작거나 같음)</option>
+                                        <option value="=">= (같음)</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group" style="flex: 0 0 100px;">
+                                    <label>기준값</label>
+                                    <input type="text" id="kpiFilterValue" placeholder="수치 입력" class="formatted-number">
+                                </div>
+                                <div class="filter-group" style="flex: 0 0 140px;">
+                                    <label>조합 조건</label>
+                                    <div class="compound-radio-group">
+                                        <label class="radio-label">
+                                            <input type="radio" name="compoundLogic" value="none" checked>
+                                            <span>없음</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="compoundLogic" value="or">
+                                            <span>또는</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="compoundLogic" value="and">
+                                            <span>그리고</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="filter-group" style="flex: 0 0 70px;">
+                                    <label>ON/OFF</label>
+                                    <button type="button" id="kpiFilterToggle" class="kpi-filter-toggle">
+                                        <span class="toggle-status">OFF</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- 보조 필터 그룹 (OR/AND 선택시 표시) -->
+                            <div class="filter-row secondary-filter-row" id="secondaryFilterRow" style="align-items: flex-end; margin-top: 12px; display: none;">
+                                <div class="filter-group" style="flex: 0 0 100px;">
+                                    <label>KPI 기준</label>
+                                    <select id="kpiFilterMetricSecondary">
+                                        <option value="비용">비용</option>
+                                        <option value="노출">노출</option>
+                                        <option value="클릭">클릭</option>
+                                        <option value="전환수">전환수</option>
+                                        <option value="전환값">전환값</option>
+                                        <option value="CPC">CPC</option>
+                                        <option value="CPA">CPA</option>
+                                        <option value="ROAS">ROAS</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group" style="flex: 0 0 100px;">
+                                    <label>조건</label>
+                                    <select id="kpiFilterOperatorSecondary">
+                                        <option value=">">> (보다 큼)</option>
+                                        <option value="<">< (보다 작음)</option>
+                                        <option value=">=">>= (크거나 같음)</option>
+                                        <option value="<="><= (작거나 같음)</option>
+                                        <option value="=">= (같음)</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group" style="flex: 0 0 100px;">
+                                    <label>기준값</label>
+                                    <input type="text" id="kpiFilterValueSecondary" placeholder="수치 입력" class="formatted-number">
+                                </div>
+                                <div class="filter-group" style="flex: 0 0 140px;">
+                                    <label>조합 조건</label>
+                                    <div class="compound-radio-group">
+                                        <label class="radio-label">
+                                            <input type="radio" name="compoundLogicSecondary" value="none" checked>
+                                            <span>없음</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="compoundLogicSecondary" value="or">
+                                            <span>또는</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="compoundLogicSecondary" value="and">
+                                            <span>그리고</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 3차 필터 그룹 (OR/AND 선택시 표시) -->
+                            <div class="filter-row tertiary-filter-row" id="tertiaryFilterRow" style="align-items: flex-end; margin-top: 12px; display: none;">
+                                <div class="filter-group" style="flex: 0 0 100px;">
+                                    <label>KPI 기준</label>
+                                    <select id="kpiFilterMetricTertiary">
+                                        <option value="비용">비용</option>
+                                        <option value="노출">노출</option>
+                                        <option value="클릭">클릭</option>
+                                        <option value="전환수">전환수</option>
+                                        <option value="전환값">전환값</option>
+                                        <option value="CPC">CPC</option>
+                                        <option value="CPA">CPA</option>
+                                        <option value="ROAS">ROAS</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group" style="flex: 0 0 100px;">
+                                    <label>조건</label>
+                                    <select id="kpiFilterOperatorTertiary">
+                                        <option value=">">> (보다 큼)</option>
+                                        <option value="<">< (보다 작음)</option>
+                                        <option value=">=">>= (크거나 같음)</option>
+                                        <option value="<="><= (작거나 같음)</option>
+                                        <option value="=">= (같음)</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group" style="flex: 0 0 100px;">
+                                    <label>기준값</label>
+                                    <input type="text" id="kpiFilterValueTertiary" placeholder="수치 입력" class="formatted-number">
+                                </div>
                             </div>
                         </div>
-                        <div class="filter-group" style="flex: 0 0 80px;">
-                            <label>ON/OFF</label>
-                            <button type="button" id="kpiFilterToggle" class="kpi-filter-toggle">
-                                <span class="toggle-status">OFF</span>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- 보조 필터 그룹 (OR/AND 선택시 표시) -->
-                    <div class="filter-row secondary-filter-row" id="secondaryFilterRow" style="align-items: flex-end; margin-top: 12px; display: none;">
-                        <div class="filter-group" style="flex: 0 0 120px;">
-                            <label>KPI 기준</label>
-                            <select id="kpiFilterMetricSecondary">
-                                <option value="비용">비용</option>
-                                <option value="노출">노출</option>
-                                <option value="클릭">클릭</option>
-                                <option value="전환수">전환수</option>
-                                <option value="전환값">전환값</option>
-                                <option value="CPC">CPC</option>
-                                <option value="CPA">CPA</option>
-                                <option value="ROAS">ROAS</option>
-                            </select>
-                        </div>
-                        <div class="filter-group" style="flex: 0 0 100px;">
-                            <label>조건</label>
-                            <select id="kpiFilterOperatorSecondary">
-                                <option value=">">> (보다 큼)</option>
-                                <option value="<">< (보다 작음)</option>
-                                <option value=">=">>= (크거나 같음)</option>
-                                <option value="<="><= (작거나 같음)</option>
-                                <option value="=">= (같음)</option>
-                            </select>
-                        </div>
-                        <div class="filter-group" style="flex: 0 0 120px;">
-                            <label>기준값</label>
-                            <input type="text" id="kpiFilterValueSecondary" placeholder="수치 입력" class="formatted-number">
-                        </div>
-                        <div class="filter-group" style="flex: 0 0 120px;">
-                            <label>조합 조건</label>
-                            <div class="compound-radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="compoundLogicSecondary" value="none" checked>
-                                    <span>없음</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="compoundLogicSecondary" value="or">
-                                    <span>또는</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="compoundLogicSecondary" value="and">
-                                    <span>그리고</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 3차 필터 그룹 (OR/AND 선택시 표시) -->
-                    <div class="filter-row tertiary-filter-row" id="tertiaryFilterRow" style="align-items: flex-end; margin-top: 12px; display: none;">
-                        <div class="filter-group" style="flex: 0 0 120px;">
-                            <label>KPI 기준</label>
-                            <select id="kpiFilterMetricTertiary">
-                                <option value="비용">비용</option>
-                                <option value="노출">노출</option>
-                                <option value="클릭">클릭</option>
-                                <option value="전환수">전환수</option>
-                                <option value="전환값">전환값</option>
-                                <option value="CPC">CPC</option>
-                                <option value="CPA">CPA</option>
-                                <option value="ROAS">ROAS</option>
-                            </select>
-                        </div>
-                        <div class="filter-group" style="flex: 0 0 100px;">
-                            <label>조건</label>
-                            <select id="kpiFilterOperatorTertiary">
-                                <option value=">">> (보다 큼)</option>
-                                <option value="<">< (보다 작음)</option>
-                                <option value=">=">>= (크거나 같음)</option>
-                                <option value="<="><= (작거나 같음)</option>
-                                <option value="=">= (같음)</option>
-                            </select>
-                        </div>
-                        <div class="filter-group" style="flex: 0 0 120px;">
-                            <label>기준값</label>
-                            <input type="text" id="kpiFilterValueTertiary" placeholder="수치 입력" class="formatted-number">
-                        </div>
-                    </div>
-                </div>
 
-                <!-- 정렬 설정 -->
-                <div class="filter-section card">
-                    <div class="filter-header">정렬 설정</div>
-                    <div class="filter-row" style="align-items: flex-end;">
-                        <div class="filter-group" style="flex: 0 0 150px;">
-                            <label>정렬 기준</label>
-                            <select id="sortMetric">
-                                <option value="비용">비용</option>
-                                <option value="노출">노출</option>
-                                <option value="클릭">클릭</option>
-                                <option value="전환수">전환수</option>
-                                <option value="전환값">전환값</option>
-                                <option value="CPC">CPC</option>
-                                <option value="CPA">CPA</option>
-                                <option value="ROAS">ROAS</option>
-                            </select>
-                        </div>
-                        <div class="filter-group" style="flex: 0 0 200px;">
-                            <label>정렬 순서</label>
-                            <div class="sort-radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="sortOrder" value="desc" checked>
-                                    <span>내림차순</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="sortOrder" value="asc">
-                                    <span>오름차순</span>
-                                </label>
+                        <!-- 오른쪽: 정렬 설정 -->
+                        <div class="unified-filter-right">
+                            <div class="unified-filter-title">정렬 설정</div>
+                            <div class="unified-filter-content">
+                                <div class="filter-group" style="flex: 0 0 100px;">
+                                    <label>정렬 기준</label>
+                                    <select id="sortMetric">
+                                        <option value="비용">비용</option>
+                                        <option value="노출">노출</option>
+                                        <option value="클릭">클릭</option>
+                                        <option value="전환수">전환수</option>
+                                        <option value="전환값">전환값</option>
+                                        <option value="CPC">CPC</option>
+                                        <option value="CPA">CPA</option>
+                                        <option value="ROAS">ROAS</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group" style="flex: 0 0 auto;">
+                                    <label>정렬 순서</label>
+                                    <div class="sort-radio-group">
+                                        <label class="radio-label">
+                                            <input type="radio" name="sortOrder" value="desc" checked>
+                                            <span>내림차순</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="sortOrder" value="asc">
+                                            <span>오름차순</span>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2575,6 +2832,26 @@
         // 이벤트 리스너
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
+
+            // 접기/펼치기 토글 기능
+            const filterCollapsibleHeader = document.getElementById('filterCollapsibleHeader');
+            const filterCollapsibleContent = document.getElementById('filterCollapsibleContent');
+
+            filterCollapsibleHeader.addEventListener('click', () => {
+                const toggle = filterCollapsibleHeader.querySelector('.collapsible-toggle');
+                const toggleText = toggle.querySelector('span:first-child');
+                const toggleIcon = toggle.querySelector('.collapsible-toggle-icon');
+
+                if (filterCollapsibleContent.classList.contains('expanded')) {
+                    filterCollapsibleContent.classList.remove('expanded');
+                    toggleText.textContent = '펼치기';
+                    toggleIcon.classList.add('collapsed');
+                } else {
+                    filterCollapsibleContent.classList.add('expanded');
+                    toggleText.textContent = '접기';
+                    toggleIcon.classList.remove('collapsed');
+                }
+            });
 
             // 필터 변경 이벤트 (계층 구조)
             document.getElementById('filterType').addEventListener('change', e => {

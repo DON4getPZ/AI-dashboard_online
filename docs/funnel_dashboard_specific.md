@@ -1,18 +1,123 @@
 # funnel_dashboard.html 기능 분석 문서
 
+---
+
+## 📋 목차
+
+### 기본 정보
+- [개요](#개요)
+- [HTML 문서 기본 구조](#html-문서-기본-구조)
+- [파일 정보](#파일-정보)
+
+### 기능 명세
+- [섹션별 기능 브리핑](#섹션별-기능-브리핑)
+  - [0. 성과 요약 배너](#0-성과-요약-배너)
+  - [1. 핵심 KPI 요약](#1-핵심-kpi-요약)
+  - [2. 고객 구매 여정 5단계](#2-고객-구매-여정-5단계-d3js-퍼널-차트)
+  - [3. 인사이트 & 채널 전략](#3-인사이트--채널-전략-통합-섹션)
+  - [4. 데이터 기반 의사결정 도구](#4-데이터-기반-의사결정-도구-collapsible-section-1)
+  - [5. 유입 채널별 상세 분석](#5-유입-채널별-상세-분석-collapsible-section-2)
+  - [6. 고객 재방문 및 이탈 분석](#6-고객-재방문-및-이탈-분석-collapsible-section-3)
+- [버튼 UI 컴포넌트](#버튼-ui-컴포넌트)
+
+### JavaScript
+- [전역 변수 및 상태 관리](#전역-변수-및-상태-관리)
+- [핵심 함수 목록](#핵심-함수-목록)
+- [JavaScript 핵심 함수 구현 코드](#javascript-핵심-함수-구현-코드)
+  - [1. CSV 파싱 함수](#1-csv-파싱-함수)
+  - [2. 데이터 로드 함수](#2-데이터-로드-함수)
+  - [3. 퍼널 차트 렌더링](#3-퍼널-차트-렌더링-d3js)
+  - [4. KPI 업데이트 함수](#4-kpi-업데이트-함수)
+  - [5. 인사이트 업데이트 함수](#5-인사이트-업데이트-함수)
+- [전역 변수 초기값](#전역-변수-초기값)
+
+### HTML 구조
+- [전체 HTML ID 매핑](#전체-html-id-매핑)
+- [사이드바 네비게이션 HTML 구조](#사이드바-네비게이션-html-구조)
+- [KPI 요약 카드 HTML 구조](#kpi-요약-카드-html-구조)
+
+### CSS 디자인
+- [HTML/CSS 디자인 구조](#htmlcss-디자인-구조)
+  - [0. 기본 CSS 리셋 및 Body 스타일](#0-기본-css-리셋-및-body-스타일)
+  - [1. CSS 변수 (Design Tokens)](#1-css-변수-design-tokens)
+  - [2. 레이아웃 구조](#2-레이아웃-구조)
+  - [3. KPI 요약 컴포넌트](#3-kpi-요약-컴포넌트)
+  - [4. 차트 컴포넌트](#4-차트-컴포넌트)
+  - [5. 인사이트 컴포넌트](#5-인사이트-컴포넌트)
+  - [6. 테이블 컴포넌트](#6-테이블-컴포넌트)
+  - [7. 버튼 컴포넌트](#7-버튼-컴포넌트)
+  - [8. 반응형 디자인](#8-반응형-디자인)
+
+### 데이터
+- [참조 데이터 파일 구조](#참조-데이터-파일-구조)
+- [데이터 흐름 (Data Flow)](#데이터-흐름-data-flow)
+
+### 기타
+- [차트 인스턴스](#차트-인스턴스)
+- [변경 이력](#변경-이력)
+
+---
+
 ## 개요
 `data/funnel_dashboard.html`은 **AARRR 퍼널 분석 대시보드**로, GA4 데이터를 기반으로 고객 구매 여정(유입→활동→관심→결제진행→구매완료)을 분석하는 대시보드입니다.
 
 ---
 
-## 파일 구조
+## HTML 문서 기본 구조
+
+### DOCTYPE 및 Head 섹션
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AARRR 퍼널 대시보드 - GA4 분석</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        /* CSS 내용 */
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- 사이드바 -->
+        <!-- 메인 컨텐츠 -->
+    </div>
+    <script>
+        /* JavaScript 내용 */
+    </script>
+</body>
+</html>
+```
+
+### 외부 라이브러리 CDN
+| 라이브러리 | CDN URL |
+|-----------|---------|
+| Google Fonts (Roboto, Inter) | `https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap` |
+| Chart.js | `https://cdn.jsdelivr.net/npm/chart.js` |
+| chartjs-plugin-datalabels | `https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2` |
+| D3.js (v7) | `https://d3js.org/d3.v7.min.js` |
+
+---
+
+## 파일 정보
+- **파일경로**: `data/funnel_dashboard.html`
+- **데이터 소스**: `funnel/daily_funnel.csv`, `funnel/weekly_funnel.csv`, `funnel/channel_funnel.csv`, `funnel/insights.json` 등
+- **차트 라이브러리**: Chart.js (CDN), D3.js (CDN)
 
 ### 외부 라이브러리
 | 라이브러리 | 용도 |
 |-----------|------|
-| Chart.js | 차트 시각화 |
+| Chart.js | 막대/라인 차트 시각화 |
 | chartjs-plugin-datalabels | 차트 데이터 라벨 플러그인 |
-| D3.js (v7) | 퍼널 차트 시각화 |
+| D3.js (v7) | 퍼널 차트 시각화 (SVG) |
 | Google Fonts (Roboto, Inter) | 폰트 |
 
 ---
@@ -481,6 +586,935 @@
 
 ---
 
+## 데이터 흐름 (Data Flow)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        loadData()                                │
+│  ┌──────────────┐  ┌──────────────┐  ┌────────────────────────┐ │
+│  │ CSV 파일 로드 │  │ JSON 파일 로드│  │ Promise.all로 병렬 처리│ │
+│  └──────────────┘  └──────────────┘  └────────────────────────┘ │
+└───────────────────────────┬─────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                    updateDashboard()                             │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
+│  │updateKPISummary│ │updateFunnelChart│ │updateInsights 등   │   │
+│  └──────────────┘  └──────────────┘  └──────────────────────┘   │
+└───────────────────────────┬─────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                     기간 전환 시                                 │
+│    switchPeriod() / switchInsightPeriod()                        │
+│         ↓                                                        │
+│    getPeriodData() / getInsightPeriodData()                      │
+│         ↓                                                        │
+│    각 컴포넌트 업데이트 함수 호출                                │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 데이터 파일 ↔ 함수 매핑
+
+| 데이터 파일 | 주요 함수 | 렌더링 컴포넌트 |
+|------------|----------|---------------|
+| `daily_funnel.csv` | `calculateFunnelData()` | 퍼널 차트, KPI 요약 |
+| `weekly_funnel.csv` | `calculateFunnelData()` | 퍼널 차트 |
+| `channel_funnel.csv` | `updateChannelTable()`, `updateKpiChart()` | 채널 테이블, 지표 차트 |
+| `insights.json` | `updateInsights()`, `updateBCGMatrix()` | 인사이트 카드, BCG 매트릭스 |
+| `new_vs_returning.csv` | `updateCustomerTrendChart()` | 신규/재방문 추세 차트 |
+| `channel_engagement.csv` | `updateChannelEngagementChart()` | 참여도 차트 |
+
+---
+
+## 전체 HTML ID 매핑
+
+### 헤더/배너 섹션 ID
+| ID | 용도 | 관련 함수 |
+|----|------|----------|
+| `analysisPeriod` | 분석 기간 표시 | `updateAnalysisPeriod()` |
+| `summaryCardBanner` | 성과 요약 배너 컨테이너 | `updateSummaryCardBanner()` |
+| `summaryCardTitle` | 배너 제목 | `updateSummaryCardBanner()` |
+| `summaryCardMessage` | 배너 메시지 | `updateSummaryCardBanner()` |
+| `summaryCardVisitors` | 방문자 수 | `updateSummaryCardBanner()` |
+| `summaryCardPurchasers` | 구매자 수 | `updateSummaryCardBanner()` |
+| `summaryCardCVR` | 전환율 | `updateSummaryCardBanner()` |
+
+### KPI 섹션 ID
+| ID | 용도 | 관련 함수 |
+|----|------|----------|
+| `kpiSummaryGrid` | KPI 카드 그리드 컨테이너 | `updateKPISummary()` |
+
+### 퍼널 차트 섹션 ID
+| ID | 용도 | 관련 함수 |
+|----|------|----------|
+| `funnelCompareBtn` | 비교 모드 버튼 | 이벤트 리스너 |
+| `singleFunnelView` | 단일 퍼널 뷰 컨테이너 | - |
+| `d3FunnelChart` | D3.js 메인 퍼널 차트 | `updateFunnelChart()` |
+| `compareFunnelView` | 비교 퍼널 뷰 컨테이너 | - |
+| `leftStartDate` / `leftEndDate` | 왼쪽 기간 선택 | `updateCompareFunnels()` |
+| `rightStartDate` / `rightEndDate` | 오른쪽 기간 선택 | `updateCompareFunnels()` |
+| `d3FunnelChartLeft` | 왼쪽 비교 퍼널 | `renderSmallFunnel()` |
+| `d3FunnelChartRight` | 오른쪽 비교 퍼널 | `renderSmallFunnel()` |
+| `comparisonInsights` | 비교 인사이트 컨테이너 | `updateComparisonInsights()` |
+| `comparisonContent` | 비교 인사이트 내용 | `updateComparisonInsights()` |
+
+### 인사이트 섹션 ID
+| ID | 용도 | 관련 함수 |
+|----|------|----------|
+| `insightPeriodDateRange` | 인사이트 기간 표시 | `updateInsightPeriodDateRange()` |
+| `urgentTotalCount` | 긴급 알림 총 개수 | `updateUrgentAlerts()` |
+| `summaryTabContent` | 핵심 요약 탭 | `setupInsightStrategyTabs()` |
+| `insightContent` | 인사이트 카드 컨테이너 | `updateInsights()` |
+| `urgentTabContent` | 긴급 개선 탭 | `setupInsightStrategyTabs()` |
+| `highAlertCount` / `mediumAlertCount` | 알림 개수 | `updateUrgentAlerts()` |
+| `highAlertsCards` / `mediumAlertsCards` | 알림 카드 컨테이너 | `renderUrgentAlertCards()` |
+| `bcgTabContent` | BCG 매트릭스 탭 | `setupInsightStrategyTabs()` |
+| `bcgMatrixContent` | BCG 매트릭스 컨테이너 | `updateBCGMatrix()` |
+
+### 의사결정 도구 섹션 ID
+| ID | 용도 | 관련 함수 |
+|----|------|----------|
+| `periodDateRange` | 기간 표시 | `updatePeriodDateRange()` |
+| `clusteringTab` | 채널 그룹 탭 | - |
+| `channelClusters` | 클러스터 컨테이너 | `updateAdvancedAnalysis()` |
+| `budgetTab` | 예산 가이드 탭 | - |
+| `abTestResults` | A/B 테스트 결과 | `updateAdvancedAnalysis()` |
+| `churnAlertTab` | 이탈 위험 탭 | - |
+| `churnPredictions` | 이탈 예측 컨테이너 | `updateChurnPredictions()` |
+| `improvementTab` | 성과 개선 탭 | - |
+| `improvementPredictions` | 개선 예측 컨테이너 | `updateImprovementPredictions()` |
+
+### 채널 분석 섹션 ID
+| ID | 용도 | 관련 함수 |
+|----|------|----------|
+| `tableTab` | 채널 테이블 탭 | - |
+| `channelTable` | 채널 테이블 | `updateChannelTable()` |
+| `channelTableBody` | 테이블 본문 | `updateChannelTable()` |
+| `channelTableInsightText` | 테이블 인사이트 | `analyzeChannelTableData()` |
+| `kpiTab` | KPI 차트 탭 | - |
+| `channelKpiChart` | KPI 막대 차트 | `updateKpiChart()` |
+| `kpiChartInsightText` | KPI 차트 인사이트 | `analyzeKpiChartData()` |
+| `balanceTab` | 효율성/규모 탭 | - |
+| `channelCompareChart` | 비교 차트 | `updateCompareChart()` |
+| `top10Tab` | TOP 10 탭 | - |
+| `campaignChart` | 전환율 TOP 10 차트 | `updateCampaignChart()` |
+
+### 고객 분석 섹션 ID
+| ID | 용도 | 관련 함수 |
+|----|------|----------|
+| `trendTab` | 추세 탭 | - |
+| `customerTrendChart` | 신규/재방문 추세 차트 | `updateCustomerTrendChart()` |
+| `conversionTab` | 전환율 비교 탭 | - |
+| `newVsReturningConversionChart` | 전환율 비교 차트 | `updateNewVsReturningConversionChart()` |
+| `churnTab` | 이탈률 탭 | - |
+| `channelChurnChart` | 이탈률 차트 | `updateChurnChart()` |
+| `matrixTab` | 채널 매트릭스 탭 | - |
+| `channelMatrixChart` | 채널 품질 매트릭스 | `updateChannelMatrixChart()` |
+| `engagementTab` | 참여도 탭 | - |
+| `channelEngagementChart` | 참여도 차트 | `updateChannelEngagementChart()` |
+
+### 툴팁 ID
+| ID | 용도 |
+|----|------|
+| `kpiChartTooltip` | KPI 차트 호버 툴팁 |
+| `compareChartTooltip` | 비교 차트 호버 툴팁 |
+| `customerTrendTooltip` | 추세 차트 호버 툴팁 |
+| `churnChartTooltip` | 이탈 차트 호버 툴팁 |
+
+---
+
+## HTML/CSS 디자인 구조
+
+### 0. 기본 CSS 리셋 및 Body 스타일
+
+```css
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--background);
+    color: var(--grey-900);
+    line-height: 1.5;
+}
+```
+
+### 1. CSS 변수 (Design Tokens)
+
+```css
+:root {
+    /* Berry Theme Colors */
+    --primary-main: #673ab7;      /* 메인 보라색 */
+    --primary-light: #ede7f6;
+    --primary-dark: #5e35b1;
+    --secondary-main: #2196f3;    /* 파란색 */
+    --secondary-light: #e3f2fd;
+    --success-main: #00c853;      /* 녹색 */
+    --success-light: #b9f6ca;
+    --warning-main: #ffab00;      /* 주황색 */
+    --warning-light: #fff8e1;
+    --error-main: #ff1744;        /* 빨간색 */
+    --error-light: #ffeaea;
+    --grey-50: #fafafa;
+    --grey-100: #f5f5f5;
+    --grey-200: #eeeeee;
+    --grey-300: #e0e0e0;
+    --grey-500: #9e9e9e;
+    --grey-600: #757575;
+    --grey-700: #616161;
+    --grey-900: #212121;
+    --paper: #ffffff;
+    --background: #f8fafc;
+    --sidebar-bg: #ffffff;
+    --sidebar-width: 260px;
+}
+```
+
+### 2. 레이아웃 구조
+
+```css
+/* 앱 래퍼 */
+.app-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* 사이드바 */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--grey-200);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+/* 메인 컨텐츠 */
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    padding: 24px;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+```
+
+### 3. KPI 요약 컴포넌트
+
+```css
+.kpi-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.kpi-summary-card {
+    padding: 20px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--paper) 0%, var(--grey-50) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+
+/* 각 카드별 왼쪽 보더 색상 */
+.kpi-summary-card:nth-child(1)::before { background: #673ab7; }
+.kpi-summary-card:nth-child(2)::before { background: #2196f3; }
+.kpi-summary-card:nth-child(3)::before { background: #ff9800; }
+.kpi-summary-card:nth-child(4)::before { background: #4caf50; }
+.kpi-summary-card:nth-child(5)::before { background: #00c853; }
+
+.kpi-summary-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--grey-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.kpi-summary-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--grey-900);
+}
+
+.kpi-summary-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    margin-top: 8px;
+}
+
+.kpi-summary-badge.positive {
+    background: var(--success-light);
+    color: var(--success-main);
+}
+
+.kpi-summary-badge.negative {
+    background: var(--error-light);
+    color: var(--error-main);
+}
+```
+
+### 4. 차트 컴포넌트
+
+```css
+.chart-section {
+    margin-bottom: 24px;
+    padding: 24px;
+    overflow: visible;
+}
+
+.chart-header {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--grey-900);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chart-header::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    background: var(--secondary-main);
+    border-radius: 2px;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    overflow: visible;
+}
+
+.chart-container-small {
+    position: relative;
+    height: 300px;
+    overflow: visible;
+}
+```
+
+### 5. 인사이트 컴포넌트
+
+```css
+.insight-section {
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.insight-header {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--grey-900);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.insight-header::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    background: var(--warning-main);
+    border-radius: 2px;
+}
+
+.insight-content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.insight-card {
+    padding: 20px;
+    background: linear-gradient(135deg, var(--grey-50) 0%, var(--paper) 100%);
+    border-radius: 12px;
+    border-left: 4px solid var(--primary-main);
+}
+
+.insight-card.positive { border-left-color: var(--success-main); }
+.insight-card.negative { border-left-color: var(--error-main); }
+.insight-card.neutral { border-left-color: var(--warning-main); }
+
+.insight-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--grey-900);
+    margin-bottom: 8px;
+}
+
+.insight-text {
+    font-size: 14px;
+    color: var(--grey-700);
+    line-height: 1.6;
+}
+```
+
+### 6. 테이블 컴포넌트
+
+```css
+.table-section {
+    overflow: visible;
+    position: relative;
+}
+
+.table-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--grey-200);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--grey-900);
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 14px 16px;
+    text-align: right;
+    font-size: 14px;
+}
+
+th {
+    background: var(--grey-50);
+    font-weight: 600;
+    color: var(--grey-700);
+    border-bottom: 2px solid var(--grey-200);
+    position: sticky;
+    top: 0;
+    cursor: pointer;
+}
+
+th:first-child, td:first-child {
+    text-align: left;
+    position: sticky;
+    left: 0;
+    background: var(--paper);
+}
+```
+
+### 7. 버튼 컴포넌트
+
+```css
+.view-btn {
+    padding: 10px 24px;
+    border: none;
+    background: var(--paper);
+    color: var(--grey-700);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.view-btn:hover {
+    background: var(--primary-light);
+    color: var(--primary-main);
+}
+
+.view-btn.active {
+    background: var(--primary-main);
+    color: white;
+    box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+}
+
+/* 기간 필터 버튼 */
+.period-filter-btn, .insight-period-btn {
+    padding: 6px 12px;
+    border: 1px solid var(--grey-300);
+    background: var(--paper);
+    color: var(--grey-700);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.period-filter-btn.active, .insight-period-btn.active {
+    background: var(--primary-main);
+    color: white;
+    border-color: var(--primary-main);
+}
+```
+
+### 8. 반응형 디자인
+
+```css
+@media (max-width: 1200px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .kpi-summary-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .insight-content {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 16px;
+    }
+
+    .kpi-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .insight-content {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-container {
+        height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .kpi-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kpi-summary-value {
+        font-size: 20px;
+    }
+}
+```
+
+---
+
+## JavaScript 핵심 함수 구현 코드
+
+### 1. CSV 파싱 함수
+
+```javascript
+function parseCSV(text, filename = 'unknown') {
+    const lines = text.trim().split('\n');
+
+    function parseLine(line) {
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            const nextChar = line[i + 1];
+
+            if (char === '"') {
+                if (inQuotes && nextChar === '"') {
+                    current += '"';
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (char === ',' && !inQuotes) {
+                result.push(current);
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        result.push(current);
+        return result;
+    }
+
+    const headers = parseLine(lines[0]).map(h => h.trim());
+
+    return lines.slice(1).map(line => {
+        const values = parseLine(line);
+        const obj = {};
+        headers.forEach((header, index) => {
+            obj[header] = values[index] ? values[index].trim() : '';
+        });
+        return obj;
+    }).filter(row => Object.values(row).some(v => v !== ''));
+}
+```
+
+### 2. 데이터 로드 함수
+
+```javascript
+async function loadData() {
+    try {
+        // JSON 데이터 로드
+        const insightsResponse = await fetch('funnel/insights.json');
+        insightsData = await insightsResponse.json();
+
+        // CSV 파일들 병렬 로드
+        const [dailyText, weeklyText, channelText, newVsReturningText,
+               channelEngagementText, newVsReturningConversionText] = await Promise.all([
+            fetch('funnel/daily_funnel.csv').then(r => r.text()),
+            fetch('funnel/weekly_funnel.csv').then(r => r.text()),
+            fetch('funnel/channel_funnel.csv').then(r => r.text()),
+            fetch('funnel/new_vs_returning.csv').then(r => r.text()),
+            fetch('funnel/channel_engagement.csv').then(r => r.text()),
+            fetch('funnel/new_vs_returning_conversion.csv').then(r => r.text())
+        ]);
+
+        // CSV 파싱
+        dailyData = parseCSV(dailyText, 'daily_funnel.csv');
+        weeklyData = parseCSV(weeklyText, 'weekly_funnel.csv');
+        channelData = parseCSV(channelText, 'channel_funnel.csv');
+        newVsReturningData = parseCSV(newVsReturningText, 'new_vs_returning.csv');
+        channelEngagementData = parseCSV(channelEngagementText, 'channel_engagement.csv');
+        newVsReturningConversionData = parseCSV(newVsReturningConversionText, 'new_vs_returning_conversion.csv');
+
+        // 대시보드 업데이트
+        updateDashboard();
+
+    } catch (error) {
+        console.error('데이터 로드 실패:', error);
+    }
+}
+```
+
+### 3. 퍼널 차트 렌더링 (D3.js)
+
+```javascript
+function updateFunnelChart() {
+    const container = document.getElementById('d3FunnelChart');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    const funnelData = calculateFunnelData(dailyData);
+    if (!funnelData || funnelData.length === 0) return;
+
+    const width = container.clientWidth || 800;
+    const height = 500;
+    const margin = { top: 40, right: 200, bottom: 40, left: 200 };
+
+    const svg = d3.select(container)
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height);
+
+    const stages = ['유입', '활동', '관심', '결제진행', '구매완료'];
+    const colors = ['#673ab7', '#2196f3', '#ff9800', '#4caf50', '#00c853'];
+
+    const maxValue = funnelData[0].value;
+    const stageHeight = (height - margin.top - margin.bottom) / stages.length;
+
+    // 각 단계별 트라페지오드(사다리꼴) 그리기
+    funnelData.forEach((stage, i) => {
+        const topWidth = (stage.value / maxValue) * (width - margin.left - margin.right);
+        const bottomWidth = funnelData[i + 1]
+            ? (funnelData[i + 1].value / maxValue) * (width - margin.left - margin.right)
+            : topWidth * 0.8;
+
+        const y = margin.top + i * stageHeight;
+        const centerX = width / 2;
+
+        // 사다리꼴 패스
+        const path = `
+            M ${centerX - topWidth/2} ${y}
+            L ${centerX + topWidth/2} ${y}
+            L ${centerX + bottomWidth/2} ${y + stageHeight}
+            L ${centerX - bottomWidth/2} ${y + stageHeight}
+            Z
+        `;
+
+        svg.append('path')
+            .attr('d', path)
+            .attr('fill', colors[i])
+            .attr('opacity', 0.85)
+            .on('mouseover', function() {
+                d3.select(this).attr('opacity', 1);
+            })
+            .on('mouseout', function() {
+                d3.select(this).attr('opacity', 0.85);
+            });
+
+        // 라벨
+        svg.append('text')
+            .attr('x', centerX)
+            .attr('y', y + stageHeight / 2)
+            .attr('text-anchor', 'middle')
+            .attr('fill', 'white')
+            .attr('font-weight', '600')
+            .text(`${stage.label}: ${stage.value.toLocaleString()}`);
+    });
+}
+```
+
+### 4. KPI 업데이트 함수
+
+```javascript
+function updateKPISummary() {
+    const container = document.getElementById('kpiSummaryGrid');
+    if (!container) return;
+
+    const funnelData = calculateFunnelData(dailyData);
+    if (!funnelData || funnelData.length === 0) return;
+
+    const stages = [
+        { key: '유입', label: '총 유입', color: '#673ab7' },
+        { key: '활동', label: '총 활성화', color: '#2196f3' },
+        { key: '관심', label: '관심', color: '#ff9800' },
+        { key: '결제진행', label: '결제 진행', color: '#4caf50' },
+        { key: '구매완료', label: '구매 완료', color: '#00c853' }
+    ];
+
+    container.innerHTML = stages.map((stage, i) => {
+        const data = funnelData.find(d => d.label === stage.key);
+        const value = data ? data.value : 0;
+        const prevValue = i > 0 ? funnelData[i - 1].value : value;
+        const rate = prevValue > 0 ? ((value / prevValue) * 100).toFixed(1) : 0;
+
+        return `
+            <div class="kpi-summary-card card">
+                <div class="kpi-summary-label">${stage.label}</div>
+                <div class="kpi-summary-value">${value.toLocaleString()}</div>
+                ${i > 0 ? `
+                    <div class="kpi-summary-badge ${parseFloat(rate) >= 50 ? 'positive' : 'negative'}">
+                        ${rate}% 전환
+                    </div>
+                ` : '<div class="kpi-summary-unit">명</div>'}
+            </div>
+        `;
+    }).join('');
+}
+```
+
+### 5. 인사이트 업데이트 함수
+
+```javascript
+function updateInsights() {
+    const container = document.getElementById('insightContent');
+    if (!container || !insightsData) return;
+
+    const periodData = getInsightPeriodData();
+    if (!periodData) return;
+
+    const summary = periodData.summary;
+    const topChannels = periodData.top_channels || [];
+    const alerts = periodData.alerts || [];
+
+    let html = '';
+
+    // 전체 전환율 카드
+    if (summary) {
+        html += `
+            <div class="insight-card positive">
+                <div class="insight-title">📊 전체 전환율</div>
+                <div class="insight-text">
+                    현재 전환율: <strong>${summary.overall_cvr || '-'}%</strong><br>
+                    ${summary.trend || ''}
+                </div>
+            </div>
+        `;
+    }
+
+    // 최고 성과 채널
+    if (topChannels.length > 0) {
+        html += `
+            <div class="insight-card neutral">
+                <div class="insight-title">🏆 최고 성과 채널</div>
+                <div class="insight-text">
+                    ${topChannels.slice(0, 3).map(ch =>
+                        `<strong>${ch.channel}</strong>: ${ch.cvr}%`
+                    ).join('<br>')}
+                </div>
+            </div>
+        `;
+    }
+
+    // 경고 알림
+    if (alerts.length > 0) {
+        html += `
+            <div class="insight-card negative">
+                <div class="insight-title">⚠️ 주의 필요</div>
+                <div class="insight-text">
+                    ${alerts.slice(0, 2).map(alert => alert.message).join('<br>')}
+                </div>
+            </div>
+        `;
+    }
+
+    container.innerHTML = html;
+}
+```
+
+---
+
+## 전역 변수 초기값
+
+```javascript
+// 데이터 변수
+let dailyData = [];
+let weeklyData = [];
+let channelData = [];
+let newVsReturningData = [];
+let channelEngagementData = [];
+let newVsReturningConversionData = [];
+let insightsData = null;
+
+// 기간 필터 상태
+let currentPeriod = 'full';
+let insightPeriod = 'full';
+let newVsReturningView = 'monthly';
+
+// 차트 선택 상태
+let currentKpiType = 'cvr';
+let currentChurnStage = 'avg';
+let currentChurnSort = 'desc';
+let currentChannelFunnel = 'purchase';
+
+// 차트 인스턴스
+let channelKpiChart = null;
+let channelChurnChart = null;
+let channelCompareChart = null;
+let campaignChart = null;
+let customerTrendChart = null;
+let newVsReturningConversionChart = null;
+let channelMatrixChart = null;
+let channelEngagementChart = null;
+```
+
+---
+
+## 사이드바 네비게이션 HTML 구조
+
+```html
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <a href="#" class="sidebar-logo">
+            <div class="sidebar-logo-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="sidebar-logo-text">Analytics</div>
+                <div class="sidebar-logo-subtitle">Dashboard</div>
+            </div>
+        </a>
+    </div>
+
+    <div class="simplebar-content-wrapper">
+        <div class="sidebar-content">
+            <div class="nav-group">
+                <div class="nav-group-title">대시보드</div>
+                <a href="marketing_dashboard_v3.html" class="nav-item">
+                    <div class="nav-item-icon">
+                        <svg viewBox="0 0 24 24"><!-- 아이콘 --></svg>
+                    </div>
+                    <span class="nav-item-text">광고 성과 대시보드</span>
+                </a>
+                <a href="#" class="nav-item active">
+                    <div class="nav-item-icon">
+                        <svg viewBox="0 0 24 24"><!-- 아이콘 --></svg>
+                    </div>
+                    <span class="nav-item-text">AARRR 퍼널 분석</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">분석</div>
+                <a href="creative_analysis.html" class="nav-item">
+                    <div class="nav-item-icon">
+                        <svg viewBox="0 0 24 24"><!-- 아이콘 --></svg>
+                    </div>
+                    <span class="nav-item-text">광고 소재별 분석</span>
+                </a>
+                <a href="timeseries_analysis.html" class="nav-item">
+                    <div class="nav-item-icon">
+                        <svg viewBox="0 0 24 24"><!-- 아이콘 --></svg>
+                    </div>
+                    <span class="nav-item-text">시계열 데이터 분석</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</aside>
+```
+
+---
+
+## KPI 요약 카드 HTML 구조
+
+```html
+<div class="kpi-summary-grid" id="kpiSummaryGrid">
+    <div class="kpi-summary-card card">
+        <div class="kpi-summary-label">총 유입</div>
+        <div class="kpi-summary-value">125,430</div>
+        <div class="kpi-summary-unit">명</div>
+    </div>
+    <div class="kpi-summary-card card">
+        <div class="kpi-summary-label">총 활성화</div>
+        <div class="kpi-summary-value">89,201</div>
+        <div class="kpi-summary-badge positive">71.1% 전환</div>
+    </div>
+    <div class="kpi-summary-card card">
+        <div class="kpi-summary-label">관심</div>
+        <div class="kpi-summary-value">45,678</div>
+        <div class="kpi-summary-badge positive">51.2% 전환</div>
+    </div>
+    <div class="kpi-summary-card card">
+        <div class="kpi-summary-label">결제 진행</div>
+        <div class="kpi-summary-value">12,345</div>
+        <div class="kpi-summary-badge negative">27.0% 전환</div>
+    </div>
+    <div class="kpi-summary-card card">
+        <div class="kpi-summary-label">구매 완료</div>
+        <div class="kpi-summary-value">8,901</div>
+        <div class="kpi-summary-badge positive">72.1% 전환</div>
+    </div>
+</div>
+```
+
+---
+
 ## 차트 인스턴스
 | 변수명 | 차트 종류 |
 |--------|----------|
@@ -501,4 +1535,13 @@
 |------|----------|
 | 2025-12-05 | 문서 최초 작성 - funnel_dashboard.html 섹션별 기능 분석 |
 | 2025-12-05 | Dead Code 제거: 미사용 전역 변수 3개 삭제 (currentView, selectedChannelKPI, currentChurnType), DEPRECATED 함수 2개 삭제 (updateNewVsReturningChart, updateReturnRateTrendChart), data-tab 속성 정규화 (churn-alert → churn_alert) |
+| 2025-12-08 | 목차 추가 (기본정보, 기능명세, JavaScript, HTML구조, CSS디자인, 데이터, 기타) |
+| 2025-12-08 | HTML 문서 기본 구조 섹션 추가 (DOCTYPE, head, CDN 링크) |
+| 2025-12-08 | 데이터 흐름 다이어그램 및 데이터 파일↔함수 매핑 추가 |
+| 2025-12-08 | 전체 HTML ID 매핑 추가 (헤더, KPI, 퍼널, 인사이트, 채널분석, 고객분석 섹션) |
+| 2025-12-08 | HTML/CSS 디자인 구조 추가 (CSS 변수, 레이아웃, KPI, 차트, 인사이트, 테이블, 버튼, 반응형) |
+| 2025-12-08 | JavaScript 핵심 함수 구현 코드 추가 (parseCSV, loadData, updateFunnelChart, updateKPISummary, updateInsights) |
+| 2025-12-08 | 전역 변수 초기값 추가 |
+| 2025-12-08 | 사이드바 네비게이션 HTML 구조 추가 |
+| 2025-12-08 | KPI 요약 카드 HTML 구조 추가 |
 

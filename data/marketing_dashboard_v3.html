@@ -512,38 +512,6 @@
             font-weight: 500;
         }
 
-        /* 뷰 타입 버튼 */
-        .view-type-section {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
-
-        .view-btn {
-            padding: 10px 24px;
-            border: none;
-            background: var(--paper);
-            color: var(--grey-700);
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 14px;
-            font-family: inherit;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-        }
-
-        .view-btn:hover {
-            background: var(--primary-light);
-            color: var(--primary-main);
-        }
-
-        .view-btn.active {
-            background: var(--primary-main);
-            color: white;
-            box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
-        }
-
         /* KPI 그리드 - 업그레이드 디자인 */
         .kpi-grid {
             display: grid;
@@ -586,15 +554,6 @@
 
         .kpi-section.show-all .kpi-grid-secondary {
             display: grid;
-        }
-
-        /* 기존 KPI 카드 토글 */
-        .kpi-legacy-section .kpi-row-secondary {
-            display: none;
-        }
-
-        .kpi-legacy-section.show-all .kpi-row-secondary {
-            display: flex;
         }
 
         .kpi-card.secondary {
@@ -769,89 +728,6 @@
             color: var(--grey-700);
         }
 
-        /* 기존 KPI 래퍼 (호환성) */
-        .kpi-wrapper {
-            margin-bottom: 12px;
-        }
-
-        .kpi-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-
-        .kpi-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .kpi-row-primary,
-        .kpi-row-secondary {
-            /* grid 제거, flexbox 사용 */
-        }
-
-        .kpi-wrapper .kpi-card {
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--grey-200);
-            flex: 1;
-            min-width: 140px;
-            box-shadow: none;
-        }
-
-        .kpi-wrapper .kpi-card:hover {
-            transform: none;
-            box-shadow: none;
-        }
-
-        .kpi-wrapper .kpi-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 3px;
-            height: 100%;
-            border-radius: 8px 0 0 8px;
-        }
-
-        /* Primary KPIs 색상 */
-        .kpi-row-primary .kpi-card:nth-child(1)::before { background: #673ab7; }
-        .kpi-row-primary .kpi-card:nth-child(2)::before { background: #ffab00; }
-        .kpi-row-primary .kpi-card:nth-child(3)::before { background: #2196f3; }
-        .kpi-row-primary .kpi-card:nth-child(4)::before { background: #ff9800; }
-        .kpi-row-primary .kpi-card:nth-child(5)::before { background: #00c853; }
-
-        /* Secondary KPIs 색상 */
-        .kpi-row-secondary .kpi-card:nth-child(1)::before { background: #00bcd4; }
-        .kpi-row-secondary .kpi-card:nth-child(2)::before { background: #e91e63; }
-        .kpi-row-secondary .kpi-card:nth-child(3)::before { background: #4caf50; }
-        .kpi-row-secondary .kpi-card:nth-child(4)::before { background: #9c27b0; }
-
-        .kpi-wrapper .kpi-card h3 {
-            font-size: 9px;
-            font-weight: 600;
-            color: var(--grey-500);
-            margin-bottom: 2px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .kpi-wrapper .kpi-card .value {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--grey-900);
-            line-height: 1;
-            display: inline;
-        }
-
-        .kpi-wrapper .kpi-card .unit {
-            font-size: 9px;
-            color: var(--grey-500);
-            font-weight: 500;
-            display: inline;
-            margin-left: 2px;
-        }
-
         .kpi-card .trend-wrapper {
             margin-top: 4px;
             display: flex;
@@ -931,33 +807,6 @@
             font-size: 8px;
             font-weight: 500;
             color: var(--grey-500);
-        }
-
-        /* 신규 KPI 박스 (총합계) - 인라인 컴팩트 */
-        .kpi-summary {
-            margin-bottom: 10px;
-        }
-
-        .kpi-summary .kpi-row {
-            gap: 6px;
-        }
-
-        .kpi-simple {
-            padding: 6px 10px;
-            min-width: 100px;
-        }
-
-        .kpi-simple h3 {
-            font-size: 8px;
-            margin-bottom: 1px;
-        }
-
-        .kpi-simple .value {
-            font-size: 15px;
-        }
-
-        .kpi-simple .unit {
-            font-size: 8px;
         }
 
         /* 차트 컨트롤 */
@@ -1210,10 +1059,6 @@
             .main-content {
                 margin-left: 0;
             }
-
-            .mobile-menu-btn {
-                display: flex;
-            }
         }
 
         @media (max-width: 768px) {
@@ -1238,19 +1083,6 @@
                 font-size: 16px;
             }
 
-            .kpi-simple {
-                min-width: 80px;
-                padding: 5px 8px;
-            }
-
-            .kpi-simple .value {
-                font-size: 14px;
-            }
-
-            .view-type-section {
-                flex-wrap: wrap;
-            }
-
             .chart-container {
                 height: 250px;
             }
@@ -1262,20 +1094,12 @@
         }
 
         @media (max-width: 480px) {
-            .kpi-row {
-                gap: 4px;
-            }
-
             .kpi-card {
                 min-width: 100px;
             }
 
             .kpi-card .value {
                 font-size: 15px;
-            }
-
-            .kpi-simple .value {
-                font-size: 13px;
             }
 
             .kpi-card .trend-detail {
@@ -1427,7 +1251,7 @@
                                         </div>
                                         <div class="filter-group">
                                             <label>프로모션</label>
-                                            <select id="filterExtra">
+                                            <select id="filterPromotion">
                                                 <option value="">전체</option>
                                             </select>
                                         </div>
@@ -1573,7 +1397,7 @@
 
                     <!-- 기간별 탭 콘텐츠 (일별/주별/월별 - 트렌드 포함) -->
                     <div class="kpi-tab-content" id="kpiTabPeriod">
-                        <div class="kpi-section kpi-period-section">
+                        <div class="kpi-section">
                             <section class="kpi-grid kpi-grid-primary">
                                 <div class="kpi-card">
                                     <div class="kpi-header">
@@ -1767,7 +1591,7 @@
             type: '',
             brand: '',
             product: '',
-            extra: '',
+            promotion: '',
             startDate: '',
             endDate: '',
             campaign: '',
@@ -1865,7 +1689,7 @@
             const types = [...new Set(allData.map(d => d['유형구분']))].filter(Boolean).sort();
             populateSelect('filterType', types);
 
-            // 브랜드명, 상품명, 추가구분은 계층 구조로 업데이트
+            // 브랜드명, 상품명, 프로모션은 계층 구조로 업데이트
             updateBrandFilter();
         }
 
@@ -1926,12 +1750,12 @@
                 productSelect.value = '';
             }
 
-            // 추가구분 업데이트 (상품명에 종속)
-            updateExtraFilter();
+            // 프로모션 업데이트 (상품명에 종속)
+            updatePromotionFilter();
         }
 
-        // 추가구분 필터 업데이트 (상품명의 하위 속성)
-        function updateExtraFilter() {
+        // 프로모션 필터 업데이트 (상품명의 하위 속성)
+        function updatePromotionFilter() {
             const filteredData = allData.filter(row => {
                 if (filters.type && row['유형구분'] !== filters.type) return false;
                 if (filters.brand && row['브랜드명'] !== filters.brand) return false;
@@ -1939,23 +1763,23 @@
                 return true;
             });
 
-            const extras = [...new Set(filteredData.map(d => d['프로모션']))].filter(Boolean).sort();
-            const currentExtra = filters.extra;
-            const extraSelect = document.getElementById('filterExtra');
+            const promotions = [...new Set(filteredData.map(d => d['프로모션']))].filter(Boolean).sort();
+            const currentPromotion = filters.promotion;
+            const promotionSelect = document.getElementById('filterPromotion');
 
-            extraSelect.innerHTML = '<option value="">전체</option>';
-            extras.forEach(opt => {
+            promotionSelect.innerHTML = '<option value="">전체</option>';
+            promotions.forEach(opt => {
                 const option = document.createElement('option');
                 option.value = opt;
                 option.textContent = opt;
-                extraSelect.appendChild(option);
+                promotionSelect.appendChild(option);
             });
 
-            if (extras.includes(currentExtra)) {
-                extraSelect.value = currentExtra;
+            if (promotions.includes(currentPromotion)) {
+                promotionSelect.value = currentPromotion;
             } else {
-                filters.extra = '';
-                extraSelect.value = '';
+                filters.promotion = '';
+                promotionSelect.value = '';
             }
         }
 
@@ -1985,7 +1809,7 @@
                 if (filters.type && row['유형구분'] !== filters.type) return false;
                 if (filters.brand && row['브랜드명'] !== filters.brand) return false;
                 if (filters.product && row['상품명'] !== filters.product) return false;
-                if (filters.extra && row['프로모션'] !== filters.extra) return false;
+                if (filters.promotion && row['프로모션'] !== filters.promotion) return false;
 
                 return true;
             });
@@ -2036,7 +1860,7 @@
                 if (filters.type && row['유형구분'] !== filters.type) return false;
                 if (filters.brand && row['브랜드명'] !== filters.brand) return false;
                 if (filters.product && row['상품명'] !== filters.product) return false;
-                if (filters.extra && row['프로모션'] !== filters.extra) return false;
+                if (filters.promotion && row['프로모션'] !== filters.promotion) return false;
 
                 // 캠페인 조건 (세트이름은 캠페인의 하위 속성)
                 if (filters.campaign && row['캠페인'] !== filters.campaign) return false;
@@ -2102,7 +1926,7 @@
                 if (filters.type && row['유형구분'] !== filters.type) return false;
                 if (filters.brand && row['브랜드명'] !== filters.brand) return false;
                 if (filters.product && row['상품명'] !== filters.product) return false;
-                if (filters.extra && row['프로모션'] !== filters.extra) return false;
+                if (filters.promotion && row['프로모션'] !== filters.promotion) return false;
 
                 // 날짜 범위 확인
                 if (filters.startDate || filters.endDate) {
@@ -2572,11 +2396,6 @@
                     return ((newVal - oldVal) / oldVal * 100);
                 };
 
-                // 퍼센트 포인트 계산 (ROAS용)
-                const calcPP = (newVal, oldVal) => {
-                    return newVal - oldVal;
-                };
-
                 // 증감율 업데이트 함수
                 const updateTrend = (id, change, oldValue, newValue, isGoodWhenUp = true, isPercentage = false) => {
                     const el = document.getElementById(id);
@@ -2821,7 +2640,7 @@
                 });
             });
 
-            // 기본 필터 변경 이벤트 (계층 구조: 유형구분 → 브랜드명 → 상품명 → 추가구분)
+            // 기본 필터 변경 이벤트 (계층 구조: 유형구분 → 브랜드명 → 상품명 → 프로모션)
             document.getElementById('filterType').addEventListener('change', e => {
                 filters.type = e.target.value;
                 // 유형구분 변경 시 하위 필터 모두 업데이트
@@ -2841,13 +2660,13 @@
             document.getElementById('filterProduct').addEventListener('change', e => {
                 filters.product = e.target.value;
                 // 상품명 변경 시 하위 필터 업데이트
-                updateExtraFilter();
+                updatePromotionFilter();
                 updateDetailFilters();
                 updateDashboard();
             });
 
-            document.getElementById('filterExtra').addEventListener('change', e => {
-                filters.extra = e.target.value;
+            document.getElementById('filterPromotion').addEventListener('change', e => {
+                filters.promotion = e.target.value;
                 updateDetailFilters();
                 updateDashboard();
             });
