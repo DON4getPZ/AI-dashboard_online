@@ -993,17 +993,16 @@
         /* KPI 필터 + 정렬 통합 레이아웃 */
         .unified-filter-container {
             display: flex;
-            gap: 0;
+            gap: 32px;
+            align-items: flex-start;
         }
 
         .unified-filter-left {
-            flex: 1;
-            padding-right: 24px;
+            flex: 0 1 auto;
         }
 
         .unified-filter-right {
             flex: 0 0 auto;
-            padding-left: 24px;
             display: flex;
             flex-direction: column;
         }
@@ -1041,9 +1040,6 @@
 
             .unified-filter-left {
                 padding-right: 0;
-                border-right: none;
-                border-bottom: 1px solid var(--grey-200);
-                padding-bottom: 20px;
             }
 
             .unified-filter-right {
@@ -1088,6 +1084,13 @@
             height: 20px;
             background: var(--primary-main);
             border-radius: 2px;
+        }
+
+        .collapsible-guide {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--grey-500);
+            margin-left: 8px;
         }
 
         .collapsible-toggle {
@@ -1319,7 +1322,7 @@
                 <!-- 필터 설정 (접기/펼치기) -->
                 <div class="collapsible-section">
                     <div class="collapsible-header" id="filterCollapsibleHeader">
-                        <div class="collapsible-title">필터 설정</div>
+                        <div class="collapsible-title">필터 설정 <span class="collapsible-guide">* 펼쳐서 세부 성과를 필터링할 수 있어요</span></div>
                         <button class="collapsible-toggle">
                             <span>펼치기</span>
                             <span class="collapsible-toggle-icon collapsed">▼</span>
