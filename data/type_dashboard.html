@@ -482,9 +482,9 @@
         }
 
         .decision-tool-tab-btn.period-filter-disabled.active {
-            background: #78909c;
+            background: #673ab7;
             color: white;
-            border-color: #78909c;
+            border-color: #673ab7;
             border-style: solid;
         }
 
@@ -551,88 +551,137 @@
             margin-top: 4px;
         }
 
-        /* KPI 카드 - 2행 레이아웃 */
+        /* KPI 그리드 - 업그레이드 디자인 */
         .kpi-wrapper {
-            margin-bottom: 24px;
-        }
-
-        .kpi-row {
-            display: grid;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        .kpi-row:last-child {
             margin-bottom: 0;
         }
 
-        .kpi-row-primary {
-            grid-template-columns: repeat(5, 1fr);
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
         }
 
-        .kpi-row-secondary {
-            grid-template-columns: repeat(4, 1fr);
+        .kpi-section {
+            margin-bottom: 24px;
+        }
+
+        .kpi-grid.kpi-grid-primary {
+            margin-bottom: 0;
+        }
+
+        .kpi-grid.kpi-grid-secondary {
+            display: none;
+            margin-top: 16px;
+        }
+
+        .kpi-section.show-all .kpi-grid.kpi-grid-secondary {
+            display: grid;
         }
 
         .kpi-card {
+            background: var(--paper);
             padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             position: relative;
             overflow: hidden;
-            border-radius: 16px;
-            background: linear-gradient(135deg, var(--paper) 0%, var(--grey-50) 100%);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            transition: box-shadow 0.2s ease, transform 0.2s ease;
-        }
-
-        .kpi-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            border-radius: 16px 0 0 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .kpi-card:hover {
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
         }
 
-        /* Primary KPIs 색상 */
-        .kpi-row-primary .kpi-card:nth-child(1)::before { background: linear-gradient(180deg, #673ab7 0%, #9c27b0 100%); }
-        .kpi-row-primary .kpi-card:nth-child(2)::before { background: linear-gradient(180deg, #ffab00 0%, #ff8f00 100%); }
-        .kpi-row-primary .kpi-card:nth-child(3)::before { background: linear-gradient(180deg, #2196f3 0%, #1976d2 100%); }
-        .kpi-row-primary .kpi-card:nth-child(4)::before { background: linear-gradient(180deg, #ff9800 0%, #f57c00 100%); }
-        .kpi-row-primary .kpi-card:nth-child(5)::before { background: linear-gradient(180deg, #00c853 0%, #00a152 100%); }
+        .kpi-card.highlight {
+            border-left: 4px solid var(--primary-main);
+        }
 
-        /* Secondary KPIs 색상 */
-        .kpi-row-secondary .kpi-card:nth-child(1)::before { background: linear-gradient(180deg, #00bcd4 0%, #0097a7 100%); }
-        .kpi-row-secondary .kpi-card:nth-child(2)::before { background: linear-gradient(180deg, #e91e63 0%, #c2185b 100%); }
-        .kpi-row-secondary .kpi-card:nth-child(3)::before { background: linear-gradient(180deg, #4caf50 0%, #388e3c 100%); }
-        .kpi-row-secondary .kpi-card:nth-child(4)::before { background: linear-gradient(180deg, #9c27b0 0%, #7b1fa2 100%); }
+        .kpi-card.secondary {
+            background: var(--grey-50);
+        }
 
-        .kpi-card h3 {
-            font-size: 11px;
+        .kpi-card.secondary .kpi-icon {
+            background: var(--grey-200);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .kpi-title {
+            font-size: 13px;
+            color: var(--grey-600);
             font-weight: 600;
-            color: var(--grey-500);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
-        .kpi-card .value {
-            font-size: 28px;
+        .kpi-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--grey-100);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-main);
+            font-size: 16px;
+        }
+
+        .kpi-value {
+            font-size: 26px;
             font-weight: 700;
             color: var(--grey-900);
-            line-height: 1.1;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
         }
 
-        .kpi-card .unit {
-            font-size: 11px;
+        .kpi-value.highlight-value {
+            color: var(--primary-main);
+        }
+
+        .kpi-trend {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .kpi-trend.neutral {
             color: var(--grey-500);
+        }
+
+        /* KPI 주요/세부 성과 토글 */
+        .kpi-view-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .kpi-view-btn {
+            padding: 10px 24px;
+            border: none;
+            background: var(--paper);
+            color: var(--grey-700);
+            border-radius: 8px;
+            cursor: pointer;
             font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .kpi-view-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .kpi-view-btn.active {
+            background: var(--primary-main);
+            color: white;
+            box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
         }
 
         /* 의사결정 도구 탭 */
@@ -928,11 +977,8 @@
         }
 
         @media (max-width: 1400px) {
-            .kpi-row-primary {
+            .kpi-grid {
                 grid-template-columns: repeat(3, 1fr);
-            }
-            .kpi-row-secondary {
-                grid-template-columns: repeat(2, 1fr);
             }
         }
 
@@ -941,12 +987,11 @@
                 padding: 16px;
             }
 
-            .kpi-row-primary,
-            .kpi-row-secondary {
+            .kpi-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .kpi-card .value {
+            .kpi-value {
                 font-size: 24px;
             }
 
@@ -956,8 +1001,7 @@
         }
 
         @media (max-width: 480px) {
-            .kpi-row-primary,
-            .kpi-row-secondary {
+            .kpi-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -1163,9 +1207,15 @@
             <!-- 전체 개요 섹션 (항상 표시) -->
             <div>
                 <!-- KPI 카드 -->
-                <div class="kpi-wrapper" id="kpi-wrapper">
-                    <div class="loading">
-                        <div class="loading-spinner"></div>
+                <div class="kpi-view-toggle">
+                    <button class="kpi-view-btn active" data-kpi-view="primary">주요 성과</button>
+                    <button class="kpi-view-btn" data-kpi-view="all">세부 성과</button>
+                </div>
+                <div class="kpi-section" id="kpi-section">
+                    <div class="kpi-wrapper" id="kpi-wrapper">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -1182,27 +1232,13 @@
                         </button>
                     </div>
                     <div class="collapsible-content">
-
-                        <!-- 스토리 기반 인트로 -->
-                        <div style="margin-bottom: 20px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; color: white;">
-                            <div style="display: flex; align-items: flex-start; gap: 16px;">
-                                <div style="font-size: 40px; line-height: 1;">📊</div>
-                                <div style="flex: 1;">
-                                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">오늘의 광고 성과, 한눈에 파악하세요</div>
-                                    <div style="font-size: 13px; opacity: 0.9; line-height: 1.6;">
-                                        복잡한 데이터를 쉽게 확인할 수 있도록 정리했어요. <strong>AI 예측</strong>은 분석한 데이터를 토대로 <strong>30일 이후</strong>의 데이터를 예측해요. 아래 탭에서 <strong>지금 해야 할 일</strong>을 확인하세요.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- 기간 필터 버튼 -->
                         <div style="margin-bottom: 12px; padding: 12px 16px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 10px; border: 1px solid #dee2e6;">
                             <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                                 <span style="font-size: 12px; font-weight: 600; color: #495057;">📅 분석 기간:</span>
                                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                                     <button class="period-filter-btn active" data-period="full" onclick="switchPeriod('full')"
-                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #1a73e8; color: white;">
+                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #673ab7; color: white;">
                                         전체 기간
                                     </button>
                                     <button class="period-filter-btn" data-period="180d" onclick="switchPeriod('180d')"
@@ -1232,17 +1268,18 @@
                             <button class="view-btn decision-tool-tab-btn period-filter-enabled" data-tab="targeting" style="padding: 8px 14px; font-size: 12px;" title="선택한 기간 필터가 적용됩니다">
                                 👥 타겟 분석
                             </button>
-                            <button class="view-btn decision-tool-tab-btn period-filter-enabled" data-tab="forecast" style="padding: 8px 14px; font-size: 12px;" title="선택한 기간 필터가 적용됩니다">
+                            <button class="view-btn decision-tool-tab-btn period-filter-enabled" data-tab="forecast" style="padding: 8px 14px; font-size: 12px; position: relative;" title="선택한 기간 필터가 적용됩니다">
                                 🔮 AI 예측
+                                <span style="position: absolute; top: -6px; right: -6px; background: #78909c; color: white; font-size: 8px; padding: 2px 4px; border-radius: 8px; font-weight: 600;">향후 30일</span>
                             </button>
                             <button class="view-btn decision-tool-tab-btn period-filter-disabled" data-tab="dayAnalysis" style="padding: 8px 14px; font-size: 12px; position: relative;" title="전체 기간 데이터만 사용됩니다 (기간 필터 미적용)">
                                 📊 계절성 분석
-                                <span style="position: absolute; top: -6px; right: -6px; background: #78909c; color: white; font-size: 8px; padding: 2px 4px; border-radius: 8px; font-weight: 600;">전체</span>
+                                <span style="position: absolute; top: -6px; right: -6px; background: #78909c; color: white; font-size: 8px; padding: 2px 4px; border-radius: 8px; font-weight: 600;">전체 기간</span>
                             </button>
                             <!-- 범례 -->
                             <div style="margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 10px; color: #6c757d;">
                                 <span style="display: flex; align-items: center; gap: 4px;">
-                                    <span style="width: 8px; height: 8px; background: #1a73e8; border-radius: 2px;"></span>
+                                    <span style="width: 8px; height: 8px; background: #673ab7; border-radius: 2px;"></span>
                                     기간 필터 적용
                                 </span>
                                 <span style="display: flex; align-items: center; gap: 4px;">
@@ -1292,7 +1329,7 @@
                             <!-- 서브탭 버튼 -->
                             <div style="display: flex; flex-wrap: wrap; gap: 8px; padding: 16px; background: #f8f9fa; border-bottom: 1px solid #e9ecef;">
                                 <button class="day-analysis-subtab active" data-day-tab="quarterlyTrend"
-                                        style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: none; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #78909c; color: white;">
+                                        style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: none; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #673ab7; color: white;">
                                     📈 분기별 추이
                                 </button>
                                 <button class="day-analysis-subtab" data-day-tab="dayConversion"
@@ -3088,7 +3125,7 @@
                                 <div style="display: flex; flex-direction: column; align-items: flex-end;">
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
                                         <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
-                                        <button type="button" class="detail-compare-btn" data-tab="adset" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                        <button type="button" class="detail-compare-btn" data-tab="adset" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 4px; cursor: pointer; background: white; color: #673ab7;">비교</button>
                                     </div>
                                     <!-- 기준 기간 행 -->
                                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
@@ -3260,7 +3297,7 @@
                                 <div style="display: flex; flex-direction: column; align-items: flex-end;">
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
                                         <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
-                                        <button type="button" class="detail-compare-btn" data-tab="gender" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                        <button type="button" class="detail-compare-btn" data-tab="gender" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 4px; cursor: pointer; background: white; color: #673ab7;">비교</button>
                                     </div>
                                     <!-- 기준 기간 행 -->
                                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
@@ -3442,7 +3479,7 @@
                                 <div style="display: flex; flex-direction: column; align-items: flex-end;">
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
                                         <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
-                                        <button type="button" class="detail-compare-btn" data-tab="age" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                        <button type="button" class="detail-compare-btn" data-tab="age" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 4px; cursor: pointer; background: white; color: #673ab7;">비교</button>
                                     </div>
                                     <!-- 기준 기간 행 -->
                                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
@@ -3624,7 +3661,7 @@
                                 <div style="display: flex; flex-direction: column; align-items: flex-end;">
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
                                         <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
-                                        <button type="button" class="detail-compare-btn" data-tab="platform" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                        <button type="button" class="detail-compare-btn" data-tab="platform" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 4px; cursor: pointer; background: white; color: #673ab7;">비교</button>
                                     </div>
                                     <!-- 기준 기간 행 -->
                                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
@@ -3806,7 +3843,7 @@
                                 <div style="display: flex; flex-direction: column; align-items: flex-end;">
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
                                         <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
-                                        <button type="button" class="detail-compare-btn" data-tab="device-platform" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                        <button type="button" class="detail-compare-btn" data-tab="device-platform" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 4px; cursor: pointer; background: white; color: #673ab7;">비교</button>
                                     </div>
                                     <!-- 기준 기간 행 -->
                                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
@@ -3988,7 +4025,7 @@
                                 <div style="display: flex; flex-direction: column; align-items: flex-end;">
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
                                         <span style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📅 기간 선택</span>
-                                        <button type="button" class="detail-compare-btn" data-tab="device-type" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                        <button type="button" class="detail-compare-btn" data-tab="device-type" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 4px; cursor: pointer; background: white; color: #673ab7;">비교</button>
                                     </div>
                                     <!-- 기준 기간 행 -->
                                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
@@ -4199,7 +4236,7 @@
                                             <span style="font-size: 13px;">📅</span>
                                             <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
                                         </div>
-                                        <button class="perf-compare-btn" data-category="brand" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                        <button class="perf-compare-btn" data-category="brand" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 4px; cursor: pointer; background: white; color: #673ab7;">비교</button>
                                     </div>
                                     <!-- 기준 기간 행 -->
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
@@ -4268,7 +4305,7 @@
                                             <span style="font-size: 13px;">📅</span>
                                             <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
                                         </div>
-                                        <button class="perf-compare-btn" data-category="product" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                        <button class="perf-compare-btn" data-category="product" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 4px; cursor: pointer; background: white; color: #673ab7;">비교</button>
                                     </div>
                                     <!-- 기준 기간 행 -->
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
@@ -4337,7 +4374,7 @@
                                             <span style="font-size: 13px;">📅</span>
                                             <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
                                         </div>
-                                        <button class="perf-compare-btn" data-category="promotion" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                        <button class="perf-compare-btn" data-category="promotion" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 4px; cursor: pointer; background: white; color: #673ab7;">비교</button>
                                     </div>
                                     <!-- 기준 기간 행 -->
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
@@ -4406,7 +4443,7 @@
                                             <span style="font-size: 13px;">📅</span>
                                             <span style="font-size: 13px; font-weight: 600; color: #333;">기간 선택</span>
                                         </div>
-                                        <button class="perf-compare-btn" data-category="targeting" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 4px; cursor: pointer; background: white; color: #1a73e8;">비교</button>
+                                        <button class="perf-compare-btn" data-category="targeting" style="padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 4px; cursor: pointer; background: white; color: #673ab7;">비교</button>
                                     </div>
                                     <!-- 기준 기간 행 -->
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
@@ -4463,7 +4500,7 @@
                     <!-- 서브탭 버튼 -->
                     <div style="display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 24px; background: #f8f9fa; border-bottom: 1px solid #e9ecef;">
                         <button class="retargeting-subtab active" data-retarget-tab="ageGender"
-                                style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: none; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #1a73e8; color: white;">
+                                style="padding: 8px 16px; font-size: 12px; font-weight: 600; border: none; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #673ab7; color: white;">
                             성별/연령
                         </button>
                         <button class="retargeting-subtab" data-retarget-tab="device"
@@ -5056,55 +5093,100 @@
             const roas = totalCost > 0 ? (totalRevenue / totalCost * 100) : 0;
 
             const html = `
-                <div class="kpi-row kpi-row-primary">
+                <section class="kpi-grid kpi-grid-primary">
                     <div class="kpi-card">
-                        <h3>총 비용</h3>
-                        <div class="value">${formatCurrency(totalCost)}</div>
-                        <div class="unit">원</div>
+                        <div class="kpi-header">
+                            <span class="kpi-title">총 비용</span>
+                            <div class="kpi-icon">💰</div>
+                        </div>
+                        <div class="kpi-value">${formatCurrency(totalCost)}</div>
+                        <div class="kpi-trend neutral">
+                            <span>전체 기간 합계</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card highlight">
+                        <div class="kpi-header">
+                            <span class="kpi-title">ROAS</span>
+                            <div class="kpi-icon">📈</div>
+                        </div>
+                        <div class="kpi-value highlight-value">${formatPercent(roas)}</div>
+                        <div class="kpi-trend neutral">
+                            <span>광고 수익률</span>
+                        </div>
                     </div>
                     <div class="kpi-card">
-                        <h3>CPM</h3>
-                        <div class="value">${formatCurrency(cpm)}</div>
-                        <div class="unit">원</div>
+                        <div class="kpi-header">
+                            <span class="kpi-title">CPA</span>
+                            <div class="kpi-icon">🎯</div>
+                        </div>
+                        <div class="kpi-value">${formatCurrency(cpa)}</div>
+                        <div class="kpi-trend neutral">
+                            <span>전환당 비용</span>
+                        </div>
                     </div>
                     <div class="kpi-card">
-                        <h3>CPC</h3>
-                        <div class="value">${formatCurrency(cpc)}</div>
-                        <div class="unit">원</div>
+                        <div class="kpi-header">
+                            <span class="kpi-title">CPC</span>
+                            <div class="kpi-icon">🖱️</div>
+                        </div>
+                        <div class="kpi-value">${formatCurrency(cpc)}</div>
+                        <div class="kpi-trend neutral">
+                            <span>클릭당 비용</span>
+                        </div>
                     </div>
                     <div class="kpi-card">
-                        <h3>CPA</h3>
-                        <div class="value">${formatCurrency(cpa)}</div>
-                        <div class="unit">원</div>
+                        <div class="kpi-header">
+                            <span class="kpi-title">CPM</span>
+                            <div class="kpi-icon">👁️</div>
+                        </div>
+                        <div class="kpi-value">${formatCurrency(cpm)}</div>
+                        <div class="kpi-trend neutral">
+                            <span>노출당 비용</span>
+                        </div>
                     </div>
-                    <div class="kpi-card">
-                        <h3>ROAS</h3>
-                        <div class="value">${formatPercent(roas)}</div>
-                        <div class="unit"></div>
+                </section>
+                <section class="kpi-grid kpi-grid-secondary">
+                    <div class="kpi-card secondary">
+                        <div class="kpi-header">
+                            <span class="kpi-title">총 노출</span>
+                            <div class="kpi-icon">👀</div>
+                        </div>
+                        <div class="kpi-value">${formatNumber(totalImpressions)}</div>
+                        <div class="kpi-trend neutral">
+                            <span>회</span>
+                        </div>
                     </div>
-                </div>
-                <div class="kpi-row kpi-row-secondary">
-                    <div class="kpi-card">
-                        <h3>총 노출</h3>
-                        <div class="value">${formatNumber(totalImpressions)}</div>
-                        <div class="unit">회</div>
+                    <div class="kpi-card secondary">
+                        <div class="kpi-header">
+                            <span class="kpi-title">총 클릭</span>
+                            <div class="kpi-icon">👆</div>
+                        </div>
+                        <div class="kpi-value">${formatNumber(totalClicks)}</div>
+                        <div class="kpi-trend neutral">
+                            <span>회</span>
+                        </div>
                     </div>
-                    <div class="kpi-card">
-                        <h3>총 클릭</h3>
-                        <div class="value">${formatNumber(totalClicks)}</div>
-                        <div class="unit">회</div>
+                    <div class="kpi-card secondary">
+                        <div class="kpi-header">
+                            <span class="kpi-title">총 전환수</span>
+                            <div class="kpi-icon">✅</div>
+                        </div>
+                        <div class="kpi-value">${formatNumber(totalConversions)}</div>
+                        <div class="kpi-trend neutral">
+                            <span>건</span>
+                        </div>
                     </div>
-                    <div class="kpi-card">
-                        <h3>총 전환수</h3>
-                        <div class="value">${formatNumber(totalConversions)}</div>
-                        <div class="unit">건</div>
+                    <div class="kpi-card secondary">
+                        <div class="kpi-header">
+                            <span class="kpi-title">총 전환값</span>
+                            <div class="kpi-icon">💵</div>
+                        </div>
+                        <div class="kpi-value">${formatCurrency(totalRevenue)}</div>
+                        <div class="kpi-trend neutral">
+                            <span>원</span>
+                        </div>
                     </div>
-                    <div class="kpi-card">
-                        <h3>총 전환값</h3>
-                        <div class="value">${formatCurrency(totalRevenue)}</div>
-                        <div class="unit">원</div>
-                    </div>
-                </div>
+                </section>
             `;
 
             document.getElementById('kpi-wrapper').innerHTML = html;
@@ -5153,9 +5235,9 @@
             // 버튼 스타일 업데이트
             document.querySelectorAll('.period-filter-btn').forEach(btn => {
                 if (btn.dataset.period === period) {
-                    btn.style.background = '#1a73e8';
+                    btn.style.background = '#673ab7';
                     btn.style.color = 'white';
-                    btn.style.borderColor = '#1a73e8';
+                    btn.style.borderColor = '#673ab7';
                     btn.classList.add('active');
                 } else {
                     btn.style.background = 'white';
@@ -7768,13 +7850,13 @@
         function initDayAnalysisSubtabs() {
             document.querySelectorAll('.day-analysis-subtab').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    // 버튼 스타일 변경 (회색 테마 - 전체 기간 고정 탭)
+                    // 버튼 스타일 변경
                     document.querySelectorAll('.day-analysis-subtab').forEach(b => {
                         b.style.background = 'white';
                         b.style.color = '#546e7a';
                         b.style.border = '1px solid #b0bec5';
                     });
-                    this.style.background = '#78909c';
+                    this.style.background = '#673ab7';
                     this.style.color = 'white';
                     this.style.border = 'none';
 
@@ -8251,8 +8333,8 @@
                         if (compareRow) compareRow.style.display = 'none';
                         this.textContent = '비교';
                         this.style.background = 'white';
-                        this.style.color = '#1a73e8';
-                        this.style.borderColor = '#1a73e8';
+                        this.style.color = '#673ab7';
+                        this.style.borderColor = '#673ab7';
 
                         perfChartState[category].startDateComp = '';
                         perfChartState[category].endDateComp = '';
@@ -9002,7 +9084,7 @@
                         b.style.color = '#495057';
                         b.style.border = '1px solid #dee2e6';
                     });
-                    this.style.background = '#1a73e8';
+                    this.style.background = '#673ab7';
                     this.style.color = 'white';
                     this.style.border = 'none';
 
@@ -10127,6 +10209,25 @@
                 content.classList.toggle('expanded', !isExpanded);
                 icon.classList.toggle('collapsed', isExpanded);
                 toggleText.textContent = isExpanded ? '펼치기' : '접기';
+            });
+        });
+
+        // KPI 주요/세부 성과 토글 버튼
+        document.querySelectorAll('.kpi-view-toggle .kpi-view-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 버튼 활성화 토글
+                document.querySelectorAll('.kpi-view-toggle .kpi-view-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // kpi-section에 show-all 토글
+                const kpiSection = document.getElementById('kpi-section');
+                if (kpiSection) {
+                    if (this.dataset.kpiView === 'all') {
+                        kpiSection.classList.add('show-all');
+                    } else {
+                        kpiSection.classList.remove('show-all');
+                    }
+                }
             });
         });
 
@@ -16793,8 +16894,8 @@
                         } else {
                             this.textContent = '비교';
                             this.style.background = 'white';
-                            this.style.color = '#1a73e8';
-                            this.style.borderColor = '#1a73e8';
+                            this.style.color = '#673ab7';
+                            this.style.borderColor = '#673ab7';
 
                             // 비교 기간 초기화
                             if (tab === 'adset') { detailAdsetStartDateComp = ''; detailAdsetEndDateComp = ''; }

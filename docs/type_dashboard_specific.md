@@ -78,7 +78,13 @@
 | **섹션 헤드** | 전체 개요 (상단 고정) |
 | **JS 함수** | `renderKPICards()` |
 | **참조 데이터** | `adsetDimensionData` (dimension_type1_campaign_adset.csv) |
-| **기능** | 주요 KPI 9개 표시: 총 비용, CPM, CPC, CPA, ROAS, 총 노출, 총 클릭, 총 전환수, 총 전환값 |
+| **기능** | 주요/세부 성과 토글 + KPI 9개 표시 |
+
+#### 1.1 주요/세부 성과 토글
+- **토글 버튼**: `kpi-view-toggle` > `kpi-view-btn`
+- **주요 성과** (기본): 총 비용, ROAS(강조), CPA, CPC, CPM (5개)
+- **세부 성과** (추가): 총 노출, 총 클릭, 총 전환수, 총 전환값 (4개)
+- **토글 동작**: `.kpi-section.show-all` 클래스로 세부 성과 표시/숨김
 
 ---
 
@@ -997,88 +1003,191 @@
 
 ### 3. KPI 카드 컴포넌트
 
-#### 3.1 KPI 래퍼 및 행 레이아웃
+#### 3.1 주요/세부 성과 토글
 ```css
-.kpi-wrapper {
-    margin-bottom: 24px;
-}
-.kpi-row {
-    display: grid;
-    gap: 16px;
+.kpi-view-toggle {
+    display: flex;
+    gap: 8px;
     margin-bottom: 16px;
 }
-.kpi-row:last-child {
+.kpi-view-btn {
+    padding: 10px 24px;
+    border: none;
+    background: var(--paper);
+    color: var(--grey-700);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.kpi-view-btn:hover {
+    background: var(--primary-light);
+    color: var(--primary-main);
+}
+.kpi-view-btn.active {
+    background: var(--primary-main);
+    color: white;
+    box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+}
+```
+
+#### 3.2 KPI 그리드 레이아웃
+```css
+.kpi-wrapper {
     margin-bottom: 0;
 }
-.kpi-row-primary {
-    grid-template-columns: repeat(5, 1fr);
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
 }
-.kpi-row-secondary {
-    grid-template-columns: repeat(4, 1fr);
+.kpi-section {
+    margin-bottom: 24px;
+}
+.kpi-grid.kpi-grid-primary {
+    margin-bottom: 0;
+}
+.kpi-grid.kpi-grid-secondary {
+    display: none;
+    margin-top: 16px;
+}
+.kpi-section.show-all .kpi-grid.kpi-grid-secondary {
+    display: grid;
 }
 ```
 
-#### 3.2 KPI 카드 스타일
+#### 3.3 KPI 카드 스타일
 ```css
 .kpi-card {
+    background: var(--paper);
     padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     position: relative;
     overflow: hidden;
-    border-radius: 16px;
-    background: linear-gradient(135deg, var(--paper) 0%, var(--grey-50) 100%);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-.kpi-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    border-radius: 16px 0 0 16px;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 .kpi-card:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
-.kpi-card h3 {
-    font-size: 11px;
+.kpi-card.highlight {
+    border-left: 4px solid var(--primary-main);
+}
+.kpi-card.secondary {
+    background: var(--grey-50);
+}
+.kpi-card.secondary .kpi-icon {
+    background: var(--grey-200);
+}
+```
+
+#### 3.4 KPI 카드 내부 요소
+```css
+.kpi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.kpi-title {
+    font-size: 13px;
+    color: var(--grey-600);
     font-weight: 600;
-    color: var(--grey-500);
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }
-.kpi-card .value {
-    font-size: 28px;
+.kpi-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--grey-100);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-main);
+    font-size: 16px;
+}
+.kpi-value {
+    font-size: 26px;
     font-weight: 700;
     color: var(--grey-900);
-    line-height: 1.1;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 }
-.kpi-card .unit {
-    font-size: 11px;
+.kpi-value.highlight-value {
+    color: var(--primary-main);
+}
+.kpi-trend {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.kpi-trend.neutral {
     color: var(--grey-500);
-    font-weight: 500;
 }
 ```
 
-#### 3.3 KPI 카드 색상 (좌측 바)
-```css
-/* Primary KPIs 색상 */
-.kpi-row-primary .kpi-card:nth-child(1)::before { background: linear-gradient(180deg, #673ab7 0%, #9c27b0 100%); } /* 총 비용 */
-.kpi-row-primary .kpi-card:nth-child(2)::before { background: linear-gradient(180deg, #ffab00 0%, #ff8f00 100%); } /* CPM */
-.kpi-row-primary .kpi-card:nth-child(3)::before { background: linear-gradient(180deg, #2196f3 0%, #1976d2 100%); } /* CPC */
-.kpi-row-primary .kpi-card:nth-child(4)::before { background: linear-gradient(180deg, #ff9800 0%, #f57c00 100%); } /* CPA */
-.kpi-row-primary .kpi-card:nth-child(5)::before { background: linear-gradient(180deg, #00c853 0%, #00a152 100%); } /* ROAS */
-
-/* Secondary KPIs 색상 */
-.kpi-row-secondary .kpi-card:nth-child(1)::before { background: linear-gradient(180deg, #00bcd4 0%, #0097a7 100%); } /* 총 노출 */
-.kpi-row-secondary .kpi-card:nth-child(2)::before { background: linear-gradient(180deg, #e91e63 0%, #c2185b 100%); } /* 총 클릭 */
-.kpi-row-secondary .kpi-card:nth-child(3)::before { background: linear-gradient(180deg, #4caf50 0%, #388e3c 100%); } /* 총 전환수 */
-.kpi-row-secondary .kpi-card:nth-child(4)::before { background: linear-gradient(180deg, #9c27b0 0%, #7b1fa2 100%); } /* 총 전환값 */
+#### 3.5 KPI 카드 HTML 구조
+```html
+<div class="kpi-view-toggle">
+    <button class="kpi-view-btn active" data-kpi-view="primary">주요 성과</button>
+    <button class="kpi-view-btn" data-kpi-view="all">세부 성과</button>
+</div>
+<div class="kpi-section" id="kpi-section">
+    <div class="kpi-wrapper" id="kpi-wrapper">
+        <section class="kpi-grid kpi-grid-primary">
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">총 비용</span>
+                    <div class="kpi-icon">💰</div>
+                </div>
+                <div class="kpi-value">₩22,896,831</div>
+                <div class="kpi-trend neutral">
+                    <span>전체 기간 합계</span>
+                </div>
+            </div>
+            <div class="kpi-card highlight">
+                <div class="kpi-header">
+                    <span class="kpi-title">ROAS</span>
+                    <div class="kpi-icon">📈</div>
+                </div>
+                <div class="kpi-value highlight-value">177.1%</div>
+                <div class="kpi-trend neutral">
+                    <span>광고 수익률</span>
+                </div>
+            </div>
+            <!-- CPA, CPC, CPM 카드 동일 구조 -->
+        </section>
+        <section class="kpi-grid kpi-grid-secondary">
+            <div class="kpi-card secondary">
+                <div class="kpi-header">
+                    <span class="kpi-title">총 노출</span>
+                    <div class="kpi-icon">👀</div>
+                </div>
+                <div class="kpi-value">1,234,567</div>
+                <div class="kpi-trend neutral">
+                    <span>회</span>
+                </div>
+            </div>
+            <!-- 총 클릭, 총 전환수, 총 전환값 카드 동일 구조 -->
+        </section>
+    </div>
+</div>
 ```
+
+#### 3.6 KPI 아이콘 매핑
+| KPI | 아이콘 | 클래스 |
+|-----|--------|--------|
+| 총 비용 | 💰 | - |
+| ROAS | 📈 | `highlight`, `highlight-value` |
+| CPA | 🎯 | - |
+| CPC | 🖱️ | - |
+| CPM | 👁️ | - |
+| 총 노출 | 👀 | `secondary` |
+| 총 클릭 | 👆 | `secondary` |
+| 총 전환수 | ✅ | `secondary` |
+| 총 전환값 | 💵 | `secondary` |
 
 ---
 
@@ -1964,3 +2073,7 @@ body {
 | 2025-12-08 | 동적 생성 HTML 구조 추가: AI 종합진단 카드, 핵심지표 카드, AI 추천 카드, 경고 알림 카드 (7.7~7.10) |
 | 2025-12-08 | 목차 추가: 기능 분석 (8개 섹션), HTML/CSS 디자인 구조 (14개 섹션), 부록 |
 | 2025-12-08 | 섹션 번호 중복 수정: "8. 로딩 상태 컴포넌트" → "9. 로딩 상태 컴포넌트", 이후 섹션 번호 재정렬 (9~13 → 10~14) |
+| 2025-12-09 | KPI 카드 영역에 '주요 성과/세부 성과' 토글 기능 추가 (marketing_dashboard_v3.html 참고) |
+| 2025-12-09 | KPI 카드 디자인 업그레이드: kpi-grid 레이아웃, kpi-header/title/icon/value/trend 구조, 아이콘 이모지 추가 |
+| 2025-12-09 | KPI 카드 CSS 전면 개편: kpi-row → kpi-grid, 좌측 바 색상 → highlight 클래스, secondary 카드 스타일 추가 |
+| 2025-12-09 | 문서 업데이트: KPI 카드 컴포넌트 섹션 전면 개편 (3.1~3.6), HTML 구조 및 아이콘 매핑 테이블 추가 |

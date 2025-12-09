@@ -551,7 +551,7 @@
         }
 
         .kpi-grid-primary {
-            margin-bottom: 0;
+            margin-bottom: 24px;
         }
 
         .kpi-grid-secondary {
@@ -576,10 +576,16 @@
             margin-bottom: 24px;
         }
 
+        .kpi-controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
         .kpi-tab-section {
             display: flex;
             gap: 8px;
-            margin-bottom: 12px;
         }
 
         .kpi-tab {
@@ -616,7 +622,6 @@
         .kpi-view-toggle {
             display: flex;
             gap: 8px;
-            margin-bottom: 16px;
         }
 
         .kpi-view-btn {
@@ -1289,17 +1294,20 @@
 
                 <!-- 통합 KPI 섹션 -->
                 <div class="kpi-unified-section">
-                    <!-- 기간 탭 -->
-                    <div class="kpi-tab-section">
-                        <button class="kpi-tab active" data-kpi-tab="total">전체</button>
-                        <button class="kpi-tab" data-kpi-tab="daily">일별</button>
-                        <button class="kpi-tab" data-kpi-tab="weekly">주별</button>
-                        <button class="kpi-tab" data-kpi-tab="monthly">월별</button>
-                    </div>
-                    <!-- 주요/세부 성과 토글 -->
-                    <div class="kpi-view-toggle">
-                        <button class="kpi-view-btn active" data-kpi-view="primary">주요 성과</button>
-                        <button class="kpi-view-btn" data-kpi-view="all">세부 성과</button>
+                    <!-- 기간 탭 + 주요/세부 성과 토글 (같은 행) -->
+                    <div class="kpi-controls-row">
+                        <!-- 기간 탭 -->
+                        <div class="kpi-tab-section">
+                            <button class="kpi-tab active" data-kpi-tab="total">전체</button>
+                            <button class="kpi-tab" data-kpi-tab="monthly">월별</button>
+                            <button class="kpi-tab" data-kpi-tab="weekly">주별</button>
+                            <button class="kpi-tab" data-kpi-tab="daily">일별</button>
+                        </div>
+                        <!-- 주요/세부 성과 토글 -->
+                        <div class="kpi-view-toggle">
+                            <button class="kpi-view-btn active" data-kpi-view="primary">주요 성과</button>
+                            <button class="kpi-view-btn" data-kpi-view="all">세부 성과</button>
+                        </div>
                     </div>
 
                     <!-- 전체 탭 콘텐츠 (요약 데이터) -->

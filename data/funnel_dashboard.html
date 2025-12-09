@@ -243,7 +243,7 @@
             box-shadow: 0 4px 20px 0 rgba(32, 40, 45, 0.12);
         }
 
-        /* KPI 요약 섹션 */
+        /* KPI 요약 섹션 - 업그레이드 디자인 */
         .kpi-summary-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -252,11 +252,18 @@
         }
 
         .kpi-summary-card {
+            background: var(--paper);
             padding: 20px;
             border-radius: 12px;
-            background: linear-gradient(135deg, var(--paper) 0%, var(--grey-50) 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             position: relative;
             overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .kpi-summary-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
         }
 
         .kpi-summary-card::before {
@@ -268,31 +275,29 @@
             height: 100%;
         }
 
-        .kpi-summary-card:nth-child(1)::before { background: #673ab7; }
-        .kpi-summary-card:nth-child(2)::before { background: #2196f3; }
-        .kpi-summary-card:nth-child(3)::before { background: #ff9800; }
-        .kpi-summary-card:nth-child(4)::before { background: #4caf50; }
-        .kpi-summary-card:nth-child(5)::before { background: #00c853; }
+        .kpi-summary-card:nth-child(1)::before { background: #d6beff; }
+        .kpi-summary-card:nth-child(2)::before { background: #be9ff2; }
+        .kpi-summary-card:nth-child(3)::before { background: #ab87ea; }
+        .kpi-summary-card:nth-child(4)::before { background: #8c63d3; }
+        .kpi-summary-card:nth-child(5)::before { background: #673ab7; }
 
         .kpi-summary-label {
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 600;
-            color: var(--grey-500);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            color: var(--grey-600);
+            margin-bottom: 12px;
         }
 
         .kpi-summary-value {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 700;
             color: var(--grey-900);
+            margin-bottom: 8px;
         }
 
         .kpi-summary-unit {
-            font-size: 11px;
+            font-size: 13px;
             color: var(--grey-500);
-            margin-top: 4px;
         }
 
         .kpi-summary-badge {
@@ -1388,87 +1393,96 @@
                     </div>
                 </div>
 
-                <!-- 3. 통합 인사이트 & 전략 섹션 -->
-                <div class="chart-section card" style="margin-bottom: 24px;">
-                    <div class="chart-header">
-                        💡 인사이트 & 채널 전략
-                    </div>
-                    <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px;">
-                        퍼널 분석 결과를 바탕으로 <strong>지금 바로 실행할 수 있는 개선 포인트</strong>와 <strong>채널별 투자 전략</strong>을 확인하세요.
-                    </div>
-
-                    <!-- 인사이트 섹션 전용 기간 필터 버튼 -->
-                    <div style="margin-bottom: 12px; padding: 10px 14px; background: linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%); border-radius: 8px; border: 1px solid #d1c4e9;">
-                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                            <span style="font-size: 11px; font-weight: 600; color: #5e35b1;">📅 분석 기간:</span>
-                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
-                                <button class="insight-period-btn active" data-period="full" onclick="switchInsightPeriod('full')"
-                                        style="padding: 4px 10px; font-size: 10px; font-weight: 600; border: 1px solid #673ab7; border-radius: 16px; cursor: pointer; transition: all 0.2s; background: #673ab7; color: white;">
-                                    전체
-                                </button>
-                                <button class="insight-period-btn" data-period="180d" onclick="switchInsightPeriod('180d')"
-                                        style="padding: 4px 10px; font-size: 10px; font-weight: 600; border: 1px solid #d1c4e9; border-radius: 16px; cursor: pointer; transition: all 0.2s; background: white; color: #5e35b1;">
-                                    180일
-                                </button>
-                                <button class="insight-period-btn" data-period="90d" onclick="switchInsightPeriod('90d')"
-                                        style="padding: 4px 10px; font-size: 10px; font-weight: 600; border: 1px solid #d1c4e9; border-radius: 16px; cursor: pointer; transition: all 0.2s; background: white; color: #5e35b1;">
-                                    90일
-                                </button>
-                                <button class="insight-period-btn" data-period="30d" onclick="switchInsightPeriod('30d')"
-                                        style="padding: 4px 10px; font-size: 10px; font-weight: 600; border: 1px solid #d1c4e9; border-radius: 16px; cursor: pointer; transition: all 0.2s; background: white; color: #5e35b1;">
-                                    30일
-                                </button>
-                            </div>
-                            <span id="insightPeriodDateRange" style="font-size: 10px; color: #7e57c2; margin-left: auto;"></span>
+                <!-- 3. 통합 인사이트 & 전략 섹션 (접기/펼치기) -->
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <div class="collapsible-title">
+                            <span class="collapsible-icon">💡</span>
+                            <span>인사이트 & 채널 전략 (긴급 개선 포인트, 채널 투자 전략)</span>
                         </div>
+                        <button class="collapsible-toggle">
+                            <span>펼치기</span>
+                            <span class="collapsible-toggle-icon collapsed">▼</span>
+                        </button>
                     </div>
-
-                    <!-- 통합 탭 버튼 -->
-                    <div class="view-type-section" style="margin-bottom: 20px;">
-                        <button class="view-btn insight-strategy-tab-btn active" data-tab="summary">📊 핵심 요약</button>
-                        <button class="view-btn insight-strategy-tab-btn" data-tab="urgent">🚨 긴급 개선 <span id="urgentTotalCount" style="font-size: 11px; opacity: 0.8;"></span></button>
-                        <button class="view-btn insight-strategy-tab-btn" data-tab="bcg">📈 채널 전략</button>
-                    </div>
-
-                    <!-- 탭 1: 핵심 요약 -->
-                    <div class="insight-strategy-tab-content active" id="summaryTabContent">
-                        <div class="insight-content" id="insightContent">
-                            <div class="insight-card neutral">
-                                <div class="insight-text">데이터를 불러오는 중...</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 탭 2: 긴급 개선 포인트 -->
-                    <div class="insight-strategy-tab-content" id="urgentTabContent" style="display: none;">
-                        <!-- 서브탭: 즉시 조치 / 개선 권장 -->
-                        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-                            <button class="view-btn urgent-alert-tab-btn active" data-tab="high" style="font-size: 13px;">⚠️ 즉시 조치 필요 <span id="highAlertCount" style="font-size: 11px; opacity: 0.8;"></span></button>
-                            <button class="view-btn urgent-alert-tab-btn" data-tab="medium" style="font-size: 13px;">📌 개선 권장 <span id="mediumAlertCount" style="font-size: 11px; opacity: 0.8;"></span></button>
-                        </div>
-                        <!-- 즉시 조치 필요 -->
-                        <div id="highAlertsTab" class="urgent-alert-tab-content active">
-                            <div id="highAlertsCards" style="display: grid; gap: 12px;"></div>
-                            <div id="highAlertsToggleContainer" style="text-align: center; margin-top: 12px; display: none;">
-                                <button id="highAlertsToggleBtn" class="view-btn" style="font-size: 13px; padding: 8px 20px;">더 보기</button>
-                            </div>
-                        </div>
-                        <!-- 개선 권장 -->
-                        <div id="mediumAlertsTab" class="urgent-alert-tab-content" style="display: none;">
-                            <div id="mediumAlertsCards" style="display: grid; gap: 12px;"></div>
-                            <div id="mediumAlertsToggleContainer" style="text-align: center; margin-top: 12px; display: none;">
-                                <button id="mediumAlertsToggleBtn" class="view-btn" style="font-size: 13px; padding: 8px 20px;">더 보기</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 탭 3: BCG Matrix 채널 전략 -->
-                    <div class="insight-strategy-tab-content" id="bcgTabContent" style="display: none;">
+                    <div class="collapsible-content">
                         <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px;">
-                            트래픽과 전환율을 기준으로 각 채널을 4가지 유형으로 분류했습니다.
+                            퍼널 분석 결과를 바탕으로 <strong>지금 바로 실행할 수 있는 개선 포인트</strong>와 <strong>채널별 투자 전략</strong>을 확인하세요.
                         </div>
-                        <div id="bcgMatrixContent" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
-                            <!-- JS로 동적 생성 -->
+
+                        <!-- 인사이트 섹션 전용 기간 필터 버튼 -->
+                        <div style="margin-bottom: 12px; padding: 12px 16px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 10px; border: 1px solid #dee2e6;">
+                            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                <span style="font-size: 12px; font-weight: 600; color: #495057;">📅 분석 기간:</span>
+                                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                    <button class="insight-period-btn active" data-period="full" onclick="switchInsightPeriod('full')"
+                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #673ab7; color: white;">
+                                        전체 기간
+                                    </button>
+                                    <button class="insight-period-btn" data-period="180d" onclick="switchInsightPeriod('180d')"
+                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                                        최근 180일
+                                    </button>
+                                    <button class="insight-period-btn" data-period="90d" onclick="switchInsightPeriod('90d')"
+                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                                        최근 90일
+                                    </button>
+                                    <button class="insight-period-btn" data-period="30d" onclick="switchInsightPeriod('30d')"
+                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                                        최근 30일
+                                    </button>
+                                </div>
+                                <span id="insightPeriodDateRange" style="font-size: 11px; color: #6c757d; margin-left: auto;"></span>
+                            </div>
+                        </div>
+
+                        <!-- 통합 탭 버튼 -->
+                        <div class="view-type-section" style="margin-bottom: 20px;">
+                            <button class="view-btn insight-strategy-tab-btn active" data-tab="summary">📊 핵심 요약</button>
+                            <button class="view-btn insight-strategy-tab-btn" data-tab="urgent">🚨 긴급 개선 <span id="urgentTotalCount" style="font-size: 11px; opacity: 0.8;"></span></button>
+                            <button class="view-btn insight-strategy-tab-btn" data-tab="bcg">📈 채널 전략</button>
+                        </div>
+
+                        <!-- 탭 1: 핵심 요약 -->
+                        <div class="insight-strategy-tab-content active" id="summaryTabContent">
+                            <div class="insight-content" id="insightContent">
+                                <div class="insight-card neutral">
+                                    <div class="insight-text">데이터를 불러오는 중...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 탭 2: 긴급 개선 포인트 -->
+                        <div class="insight-strategy-tab-content" id="urgentTabContent" style="display: none;">
+                            <!-- 서브탭: 즉시 조치 / 개선 권장 -->
+                            <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                                <button class="view-btn urgent-alert-tab-btn active" data-tab="high" style="font-size: 13px;">⚠️ 즉시 조치 필요 <span id="highAlertCount" style="font-size: 11px; opacity: 0.8;"></span></button>
+                                <button class="view-btn urgent-alert-tab-btn" data-tab="medium" style="font-size: 13px;">📌 개선 권장 <span id="mediumAlertCount" style="font-size: 11px; opacity: 0.8;"></span></button>
+                            </div>
+                            <!-- 즉시 조치 필요 -->
+                            <div id="highAlertsTab" class="urgent-alert-tab-content active">
+                                <div id="highAlertsCards" style="display: grid; gap: 12px;"></div>
+                                <div id="highAlertsToggleContainer" style="text-align: center; margin-top: 12px; display: none;">
+                                    <button id="highAlertsToggleBtn" class="view-btn" style="font-size: 13px; padding: 8px 20px;">더 보기</button>
+                                </div>
+                            </div>
+                            <!-- 개선 권장 -->
+                            <div id="mediumAlertsTab" class="urgent-alert-tab-content" style="display: none;">
+                                <div id="mediumAlertsCards" style="display: grid; gap: 12px;"></div>
+                                <div id="mediumAlertsToggleContainer" style="text-align: center; margin-top: 12px; display: none;">
+                                    <button id="mediumAlertsToggleBtn" class="view-btn" style="font-size: 13px; padding: 8px 20px;">더 보기</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 탭 3: BCG Matrix 채널 전략 -->
+                        <div class="insight-strategy-tab-content" id="bcgTabContent" style="display: none;">
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px;">
+                                트래픽과 전환율을 기준으로 각 채널을 4가지 유형으로 분류했습니다.
+                            </div>
+                            <div id="bcgMatrixContent" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                                <!-- JS로 동적 생성 -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1573,7 +1587,7 @@
                         <div class="decision-tool-tab-content" id="churnAlertTab" style="display: none;">
                         <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
                                     <span>⚠️ 주의 필요: 고객 이탈 증가 감지</span>
                                     <div style="display: flex; gap: 8px;">
                                         <button class="view-btn churn-period-btn active" data-period="7d">최근 7일</button>
@@ -1594,7 +1608,7 @@
                         <div class="decision-tool-tab-content" id="improvementTab" style="display: none;">
                         <div class="chart-section card">
                             <div class="chart-header">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; gap:  12px;">
                                     <span>✨ 좋은 소식: 어떤 부분이 좋아졌나요?</span>
                                     <div style="display: flex; gap: 8px;">
                                         <button class="view-btn improvement-period-btn active" data-period="7d">최근 7일</button>
@@ -2864,7 +2878,7 @@
         function switchInsightPeriod(period) {
             insightPeriod = period;
 
-            // 버튼 스타일 업데이트
+            // 버튼 스타일 업데이트 (기간 필터 버튼과 동일한 디자인)
             document.querySelectorAll('.insight-period-btn').forEach(btn => {
                 if (btn.dataset.period === period) {
                     btn.style.background = '#673ab7';
@@ -2873,8 +2887,8 @@
                     btn.classList.add('active');
                 } else {
                     btn.style.background = 'white';
-                    btn.style.color = '#5e35b1';
-                    btn.style.borderColor = '#d1c4e9';
+                    btn.style.color = '#495057';
+                    btn.style.borderColor = '#dee2e6';
                     btn.classList.remove('active');
                 }
             });
@@ -3160,8 +3174,8 @@
             const totalPurchase = data.reduce((sum, row) => sum + (parseFloat(row['구매완료']) || 0), 0);
 
             const kpis = [
-                { label: '총 유입', value: formatNumber(Math.round(totalAcquisition)), unit: '명', color: '#673ab7' },
-                { label: '총 활성화', value: formatNumber(Math.round(totalActivation)), unit: '명', color: '#2196f3' },
+                { label: '유입', value: formatNumber(Math.round(totalAcquisition)), unit: '명', color: '#673ab7' },
+                { label: '활동', value: formatNumber(Math.round(totalActivation)), unit: '명', color: '#2196f3' },
                 { label: '관심', value: formatNumber(Math.round(totalConsideration)), unit: '명', color: '#ff9800' },
                 { label: '결제 진행', value: formatNumber(Math.round(totalConversion)), unit: '명', color: '#4caf50' },
                 { label: '구매 완료', value: formatNumber(Math.round(totalPurchase)), unit: '명', color: '#00c853' }
@@ -3169,7 +3183,7 @@
 
             document.getElementById('kpiSummaryGrid').innerHTML = kpis.map(kpi => `
                 <div class="kpi-summary-card card">
-                    <div class="kpi-summary-label">${kpi.label} (일별 합계)</div>
+                    <div class="kpi-summary-label">${kpi.label} (총 합계)</div>
                     <div class="kpi-summary-value">${kpi.value}</div>
                     <div class="kpi-summary-unit">${kpi.unit}</div>
                 </div>

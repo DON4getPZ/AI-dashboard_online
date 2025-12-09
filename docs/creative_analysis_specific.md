@@ -60,9 +60,8 @@
 │   │       └── <div class="container">
 │   │           ├── .header (페이지 헤더)
 │   │           ├── .collapsible-section (필터 설정)
+│   │           ├── .filter-section.card (KPI 기준 필터 + 정렬 설정 통합)
 │   │           ├── .summary-section (요약 KPI)
-│   │           ├── .filter-section.card (KPI 기준 필터)
-│   │           ├── .filter-section.card (정렬 설정)
 │   │           └── .creative-grid (소재 그리드)
 │   │
 │   ├── <div class="modal-overlay"> (세부 성과 모달)
@@ -150,10 +149,10 @@
 | 항목 | 내용 |
 |------|------|
 | **섹션 헤드** | 필터 설정 |
-| **위치** | Line 1258-1337 |
+| **위치** | Line 1322-1400 |
 | **JS 함수** | `setDateRange()`, `populateFilters()`, `updateBrandFilter()`, `updateProductFilter()`, `updatePromotionFilter()`, `updateCampaignFilter()`, `updateAdSetFilter()` |
 | **참조 데이터** | `allData` (Creative_data.csv) |
-| **기능** | - 접기/펼치기 토글 기능<br>- 기간 선택 + 기본 필터 통합 레이아웃<br>- 세부 필터 (캠페인, 광고세트, 소재 검색) |
+| **기능** | - 접기/펼치기 토글 기능<br>- 기간 선택 + 기본 필터 통합 레이아웃<br>- 세부 필터 (캠페인, 광고세트, 소재 검색)<br>- 가이드 텍스트 표시 (`* 펼쳐서 세부 성과를 필터링할 수 있어요`) |
 
 #### 1.1 기간 선택 + 기본 필터 영역
 | 항목 | 내용 |
@@ -176,78 +175,82 @@
 
 ---
 
-### 2. 요약 섹션 (KPI 카드)
+### 2. KPI 기준 필터 + 정렬 설정 통합
 | 항목 | 내용 |
 |------|------|
-| **섹션 헤드** | (상단 요약 카드) |
-| **위치** | Line 1339-1368 |
-| **JS 함수** | `updateSummary()` |
-| **참조 데이터** | `aggregateByCreative()` 결과 데이터 |
-| **기능** | 주요 KPI 5개 표시: 총 비용, 평균 CPM, 평균 CPC, 평균 CPA, 평균 ROAS |
+| **섹션 헤드** | KPI 기준 필터 / 정렬 설정 |
+| **위치** | Line 1403-1573 |
+| **JS 함수** | `updateDashboard()` 내 KPI 필터 로직, `aggregateByCreative()` 내 정렬 로직 |
+| **참조 데이터** | `kpiFilter` 상태 객체, `sortConfig` 상태 객체 |
+| **레이아웃** | `unified-filter-container` (좌우 분할 레이아웃) |
+| **기능** | 아래 세부 항목 참조 |
 
----
-
-### 3. KPI 기준 필터
+#### 2.1 KPI 기준 필터 (좌측)
 | 항목 | 내용 |
 |------|------|
-| **섹션 헤드** | KPI 기준 필터 |
-| **위치** | Line 1370-1502 |
-| **JS 함수** | `updateDashboard()` 내 KPI 필터 로직 |
-| **참조 데이터** | `kpiFilter` 상태 객체 |
+| **레이아웃** | `unified-filter-left` |
 | **기능** | - 조건 1: KPI 기준, 조건, 기준값, 조합 조건 (없음/또는/그리고)<br>- 조건 2: 보조 KPI 필터<br>- 조건 3: 3차 KPI 필터<br>- ON/OFF 토글 |
 
-#### 지원 KPI 지표
+##### 지원 KPI 지표
 - 비용, 노출, 클릭, 전환수, 전환값, CPC, CPA, ROAS
 
-#### 조건 연산자
+##### 조건 연산자
 - `>` (보다 큼), `<` (보다 작음), `>=` (크거나 같음), `<=` (작거나 같음), `=` (같음)
 
----
-
-### 4. 정렬 설정
+#### 2.2 정렬 설정 (우측)
 | 항목 | 내용 |
 |------|------|
-| **섹션 헤드** | 정렬 설정 |
-| **위치** | Line 1504-1535 |
-| **JS 함수** | `aggregateByCreative()` 내 정렬 로직 |
-| **참조 데이터** | `sortConfig` 상태 객체 |
+| **레이아웃** | `unified-filter-right` |
 | **기능** | - 정렬 기준 (비용, 노출, 클릭, 전환수, 전환값, CPC, CPA, ROAS)<br>- 정렬 순서 (내림차순/오름차순) |
 
 ---
 
-### 5. 소재 그리드
+### 3. 요약 섹션 (KPI 카드)
+| 항목 | 내용 |
+|------|------|
+| **섹션 헤드** | (상단 요약 카드) |
+| **위치** | Line 1575-1610 |
+| **JS 함수** | `updateSummary()` |
+| **참조 데이터** | `aggregateByCreative()` 결과 데이터 |
+| **기능** | 주요 KPI 5개 표시: 총 비용, 평균 CPM, 평균 CPC, 평균 CPA, 평균 ROAS |
+
+> **참고**: 요약 섹션은 KPI 기준 필터 + 정렬 설정 하단에 위치 (2025-12-09 변경)
+
+---
+
+### 4. 소재 그리드
 | 항목 | 내용 |
 |------|------|
 | **섹션 헤드** | (소재 카드 그리드) |
-| **위치** | Line 1537-1541 |
+| **위치** | Line 1612-1616 |
 | **JS 함수** | `updateCreativeGrid()` |
 | **참조 데이터** | `aggregateByCreative()` 결과, `imageUrlMap`, `fallbackUrlMap`, `originalUrlMap` |
 | **기능** | - 소재 이미지 썸네일 표시<br>- 소재별 KPI 표시 (비용, CPC, CPA, ROAS)<br>- 이미지 URL 매핑 (facebook.com/ads/image, img.youtube.com 우선)<br>- 이미지 fallback 처리<br>- 원본 URL 링크 연결<br>- 소재 클릭 시 세부 성과 모달 표시 |
 
 ---
 
-### 6. 세부 성과 모달
+### 5. 세부 성과 모달
 | 항목 | 내용 |
 |------|------|
 | **섹션 헤드** | 소재 세부 성과 |
-| **위치** | Line 1545-1629 |
+| **위치** | Line 1620-1704 |
 | **JS 함수** | `showCreativeDetail()`, `changeModalViewType()`, `updateModalContent()`, `aggregateModalData()`, `updateModalTable()`, `updateModalChart()`, `expandModalTable()`, `collapseModalTable()`, `closeModal()` |
 | **참조 데이터** | `currentModalData` (필터링된 소재 데이터) |
 | **기능** | 아래 세부 항목 참조 |
 
-#### 6.1 뷰 타입 선택
+#### 5.1 뷰 타입 선택
 | 항목 | 내용 |
 |------|------|
 | **JS 함수** | `changeModalViewType()` |
 | **기능** | - 일별/주별/월별 집계 단위 전환 |
 
-#### 6.2 KPI 카드 (2행)
+#### 5.2 KPI 카드 (2행)
 | 항목 | 내용 |
 |------|------|
 | **JS 함수** | `updateModalContent()` |
 | **기능** | - 상단 행: 비용, CPC, CPA, ROAS<br>- 하단 행: 노출, 클릭, 전환수, 전환값 |
 
-#### 6.3 성과 추이 차트
+#### 5.3 성과 추이 차트
 | 항목 | 내용 |
 |------|------|
 | **JS 함수** | `updateModalChart()` |
@@ -262,7 +265,7 @@
 | `modalChartCPA` | CPA | unchecked |
 | `modalChartROAS` | ROAS | unchecked |
 
-#### 6.4 상세 데이터 테이블
+#### 5.4 상세 데이터 테이블
 | 항목 | 내용 |
 |------|------|
 | **JS 함수** | `updateModalTable()`, `expandModalTable()`, `collapseModalTable()` |
@@ -885,12 +888,13 @@ function updateDashboard() {
 | `.collapsible-toggle-icon.collapsed` | `transform: rotate(0deg);` | 아이콘 (접힘) |
 | `.collapsible-content` | `max-height: 0; overflow: hidden; opacity: 0; transition: all 0.3s ease;` | 콘텐츠 (접힘) |
 | `.collapsible-content.expanded` | `max-height: 2000px; opacity: 1; padding-top: 16px;` | 콘텐츠 (펼침) |
+| `.collapsible-guide` | `font-size: 12px; font-weight: 400; color: var(--grey-500); margin-left: 8px;` | 가이드 텍스트 |
 
 **HTML 구조**:
 ```html
 <div class="collapsible-section">
     <div class="collapsible-header" id="filterCollapsibleHeader">
-        <div class="collapsible-title">필터 설정</div>
+        <div class="collapsible-title">필터 설정 <span class="collapsible-guide">* 펼쳐서 세부 성과를 필터링할 수 있어요</span></div>
         <button class="collapsible-toggle">
             <span>펼치기</span>
             <span class="collapsible-toggle-icon collapsed">▼</span>
@@ -954,6 +958,65 @@ filterCollapsibleHeader.addEventListener('click', () => {
     flex-direction: column;
     gap: 12px;
     flex: 1;
+}
+```
+
+**KPI 필터 + 정렬 통합 레이아웃** (`unified-filter-*`):
+```css
+.unified-filter-container {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+}
+
+.unified-filter-left {
+    flex: 0 1 auto;
+}
+
+.unified-filter-right {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.unified-filter-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--grey-900);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.unified-filter-title::before {
+    content: '';
+    width: 4px;
+    height: 18px;
+    background: var(--primary-main);
+    border-radius: 2px;
+}
+
+.unified-filter-content {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 1200px) {
+    .unified-filter-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .unified-filter-left {
+        padding-right: 0;
+    }
+
+    .unified-filter-right {
+        padding-left: 0;
+    }
 }
 ```
 
@@ -1616,3 +1679,7 @@ body {
 | 2025-12-08 | 모달 테이블 컬럼 구조 추가: 10개 컬럼 순서 및 정렬 방향 명시 |
 | 2025-12-08 | 차트 체크박스 기본 상태 추가: 5개 지표별 기본 체크 상태 명시 |
 | 2025-12-08 | Dead Code 점검 결과 섹션 추가: 제거 이력, 현재 상태, 네이밍 정규화 결과 |
+| 2025-12-09 | 필터 설정 가이드 텍스트 추가: `.collapsible-guide` CSS 및 HTML (`* 펼쳐서 세부 성과를 필터링할 수 있어요`) |
+| 2025-12-09 | 섹션 순서 변경: 요약 섹션을 KPI 기준 필터 + 정렬 설정 통합 하단으로 이동 |
+| 2025-12-09 | KPI 필터 + 정렬 설정 통합: `unified-filter-*` CSS 클래스 추가 및 문서화 |
+| 2025-12-09 | 섹션 번호 재정렬: 2. KPI 기준 필터 + 정렬 설정 통합 → 3. 요약 섹션 → 4. 소재 그리드 → 5. 세부 성과 모달 |

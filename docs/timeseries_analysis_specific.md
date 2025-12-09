@@ -32,10 +32,20 @@
 | 항목 | 내용 |
 |------|------|
 | **섹션 헤드** | (KPI 카드 그리드) |
-| **HTML ID** | `kpiSummaryGrid` |
+| **HTML ID** | `kpiSummaryGrid`, `kpiSectionContainer` |
 | **JS 함수** | `updateKPISummary()` |
 | **참조 데이터** | `forecast/predictions_daily.csv` |
-| **기능** | - 효율 지표 5개: 예측 비용, CPM, CPC, CPA, ROAS<br>- 기본 성과 4개: 예측 노출, 클릭, 전환수, 전환값<br>- 실제 대비 변화율 표시 (▲/▼) |
+| **기능** | - 주요/세부 성과 토글 (kpi-view-toggle)<br>- 효율 지표 5개: 예측 비용, CPM, CPC, CPA, ROAS<br>- 기본 성과 4개: 예측 노출, 클릭, 전환수, 전환값<br>- 실제 대비 변화율 표시 (▲/▼) |
+
+#### 2.1 주요/세부 성과 토글
+| 항목 | 내용 |
+|------|------|
+| **레이아웃** | `kpi-view-toggle` (토글 버튼 컨테이너) |
+| **버튼 클래스** | `kpi-view-btn` |
+| **data 속성** | `data-kpi-view="primary\|all"` |
+| **컨테이너** | `kpi-section` (show-all 클래스 토글) |
+| **주요 성과** | `kpi-grid-primary` - 효율 지표 5개 표시 |
+| **세부 성과** | `kpi-grid-secondary` - 기본 성과 4개 추가 표시 |
 
 ---
 
@@ -175,6 +185,12 @@
 | 클래스 | 기능 |
 |--------|------|
 | `collapsible-toggle` | 섹션 접기/펼치기 |
+
+### 1.1 KPI 토글 버튼
+| 클래스 | data 속성 | 기능 |
+|--------|----------|------|
+| `kpi-view-btn` | `data-kpi-view="primary"` | 주요 성과만 표시 |
+| `kpi-view-btn` | `data-kpi-view="all"` | 주요 + 세부 성과 표시 |
 
 ### 2. 기간 필터 버튼 (분석 기간)
 | 클래스 | data 속성 | 호출 함수 | 기능 |
@@ -426,3 +442,6 @@
 | 2025-12-05 | 중복 HTML 블록 삭제: `businessVizTab` (약 230라인), 관련 이벤트 핸들러 제거 |
 | 2025-12-05 | 버튼 클래스 정규화: 전체 성과 예측 뷰 버튼에 `forecast-view-btn` 클래스 추가 |
 | 2025-12-05 | 미사용 변수 삭제: `segmentStatsData` |
+| 2025-12-09 | KPI 토글 기능 문서화: `kpi-view-toggle`, `kpi-view-btn`, `kpi-grid-primary`, `kpi-grid-secondary`, `kpi-section.show-all` |
+| 2025-12-09 | 섹션 2 업데이트: 핵심 KPI 요약에 주요/세부 성과 토글 기능 추가 |
+| 2025-12-09 | 버튼 UI 컴포넌트 추가: 1.1 KPI 토글 버튼 섹션 |

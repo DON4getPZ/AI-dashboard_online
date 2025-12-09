@@ -1324,7 +1324,7 @@
                 <div class="header">
                     <div>
                         <h1>시계열 데이터 분석</h1>
-                        <div class="header-subtitle">AI 기반 예측 모델을 통한 광고 성과 예측 및 인사이트</div>
+                        <div class="header-subtitle">AI 기반 예측 모델을 통한 광고 성과 예측 및 인사이트 <strong>(향후 30일 예측)</strong></div>
                     </div>
                 </div>
 
@@ -2334,6 +2334,7 @@
         let segmentTrendChart = null;
         let currentTrendSegmentType = 'channel';
         let segmentTrendViewType = 'daily';  // 세그먼트 트렌드 뷰 타입 (daily, weekly, monthly)
+        let dailyDataForKPI = [];  // KPI 요약용 일별 원본 데이터 (뷰 타입과 독립)
 
         // 숫자 포맷
         function formatNumber(num) {
@@ -2410,7 +2411,12 @@
                 const text = await response.text();
                 const dailyData = parseCSV(text);
 
-                // 뷰 타입에 따라 데이터 집계
+                // KPI 요약용 일별 원본 데이터 저장 (최초 로드 시에만)
+                if (dailyDataForKPI.length === 0) {
+                    dailyDataForKPI = dailyData;
+                }
+
+                // 뷰 타입에 따라 데이터 집계 (차트용)
                 if (currentView === 'daily') {
                     forecastData = dailyData;
                 } else {
@@ -3032,10 +3038,12 @@
             updateChart();
         }
 
-        // KPI 요약 업데이트
+        // KPI 요약 업데이트 (일별 원본 데이터 사용 - 뷰 타입과 독립)
         function updateKPISummary() {
-            const actualData = forecastData.filter(d => d.type === 'actual');
-            const forecastDataOnly = forecastData.filter(d => d.type === 'forecast');
+            // 일별 원본 데이터 사용 (뷰 타입 변경에 영향받지 않음)
+            const dataSource = dailyDataForKPI.length > 0 ? dailyDataForKPI : forecastData;
+            const actualData = dataSource.filter(d => d.type === 'actual');
+            const forecastDataOnly = dataSource.filter(d => d.type === 'forecast');
 
             // 실제 데이터 합계
             const actualTotals = actualData.reduce((acc, row) => {

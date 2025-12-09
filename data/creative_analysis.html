@@ -1400,43 +1400,17 @@
                     </div>
                 </div>
 
-                <!-- 요약 섹션 -->
-                <div class="summary-section">
-                    <div class="summary-grid">
-                        <div class="summary-card card">
-                            <h3>총 비용</h3>
-                            <div class="value" id="totalCost">-</div>
-                            <div class="unit">원</div>
-                        </div>
-                        <div class="summary-card card">
-                            <h3>평균 CPM</h3>
-                            <div class="value" id="avgCPM">-</div>
-                            <div class="unit">원</div>
-                        </div>
-                        <div class="summary-card card">
-                            <h3>평균 CPC</h3>
-                            <div class="value" id="avgCPC">-</div>
-                            <div class="unit">원</div>
-                        </div>
-                        <div class="summary-card card">
-                            <h3>평균 CPA</h3>
-                            <div class="value" id="avgCPA">-</div>
-                            <div class="unit">원</div>
-                        </div>
-                        <div class="summary-card card">
-                            <h3>평균 ROAS</h3>
-                            <div class="value" id="avgROAS">-</div>
-                            <div class="unit"></div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- KPI 기준 필터 + 정렬 설정 통합 -->
                 <div class="filter-section card">
                     <div class="unified-filter-container">
                         <!-- 왼쪽: KPI 기준 필터 -->
                         <div class="unified-filter-left">
-                            <div class="unified-filter-title">KPI 기준 필터</div>
+                            <div class="unified-filter-title">
+                                KPI 기준 필터
+                                <button type="button" id="kpiFilterToggle" class="kpi-filter-toggle" style="margin-left: 12px; width: auto; padding: 4px 10px; font-size: 11px;">
+                                    <span class="toggle-status">OFF</span>
+                                </button>
+                            </div>
                             <div class="unified-filter-content" style="margin-bottom: 0;">
                                 <div class="filter-group" style="flex: 0 0 100px;">
                                     <label>KPI 기준</label>
@@ -1481,12 +1455,6 @@
                                             <span>그리고</span>
                                         </label>
                                     </div>
-                                </div>
-                                <div class="filter-group" style="flex: 0 0 70px;">
-                                    <label>ON/OFF</label>
-                                    <button type="button" id="kpiFilterToggle" class="kpi-filter-toggle">
-                                        <span class="toggle-status">OFF</span>
-                                    </button>
                                 </div>
                             </div>
                             <!-- 보조 필터 그룹 (OR/AND 선택시 표시) -->
@@ -1599,6 +1567,37 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 요약 섹션 -->
+                <div class="summary-section">
+                    <div class="summary-grid">
+                        <div class="summary-card card">
+                            <h3>총 비용</h3>
+                            <div class="value" id="totalCost">-</div>
+                            <div class="unit">원</div>
+                        </div>
+                        <div class="summary-card card">
+                            <h3>평균 CPM</h3>
+                            <div class="value" id="avgCPM">-</div>
+                            <div class="unit">원</div>
+                        </div>
+                        <div class="summary-card card">
+                            <h3>평균 CPC</h3>
+                            <div class="value" id="avgCPC">-</div>
+                            <div class="unit">원</div>
+                        </div>
+                        <div class="summary-card card">
+                            <h3>평균 CPA</h3>
+                            <div class="value" id="avgCPA">-</div>
+                            <div class="unit">원</div>
+                        </div>
+                        <div class="summary-card card">
+                            <h3>평균 ROAS</h3>
+                            <div class="value" id="avgROAS">-</div>
+                            <div class="unit"></div>
                         </div>
                     </div>
                 </div>
