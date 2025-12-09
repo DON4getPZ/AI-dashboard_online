@@ -66,6 +66,8 @@ def main(category='default'):
     # 각 기간별 인사이트 생성
     period_insights = {}
     churn_data = None
+    crm_actions_by_period = {}  # 기간별 CRM 액션 (추이 분석 기반)
+    crm_actions_by_trend = None  # 전체 기간에서 추출한 추이 분석 결과
 
     for period in PERIODS:
         print(f"\n\n{'#'*100}")
@@ -75,21 +77,22 @@ def main(category='default'):
         insights = run_insights_generation(period['days'], category)
 
         if insights:
-            # 전체 기간에서 churn 데이터 저장 (이탈 예측용)
+            # 전체 기간에서 churn 데이터 및 추이 분석 결과 저장
             if period['key'] == 'full':
                 churn_data = {
                     'churn_predictions_7d': insights.get('churn_predictions_7d', []),
                     'churn_predictions_30d': insights.get('churn_predictions_30d', []),
                     'improvement_predictions_7d': insights.get('improvement_predictions_7d', []),
-                    'improvement_predictions_30d': insights.get('improvement_predictions_30d', []),
-                    'crm_actions': insights.get('crm_actions', [])
+                    'improvement_predictions_30d': insights.get('improvement_predictions_30d', [])
                 }
+                # 추이 분석 결과 저장 (전체 기간에서만 생성됨)
+                crm_actions_by_trend = insights.get('crm_actions_by_trend', {})
 
-            # 기간별 데이터 저장 (churn 관련 데이터 제외)
+            # 기간별 데이터 저장 (churn 관련 데이터 제외, crm_actions는 별도 관리)
             period_data = {k: v for k, v in insights.items()
                           if k not in ['churn_predictions_7d', 'churn_predictions_30d',
                                        'improvement_predictions_7d', 'improvement_predictions_30d',
-                                       'crm_actions', 'churn_predictions']}
+                                       'crm_actions', 'crm_actions_by_trend', 'churn_predictions']}
             period_data['period_info'] = {
                 'key': period['key'],
                 'days': period['days'],
@@ -101,10 +104,30 @@ def main(category='default'):
         else:
             print(f"✗ {period['label']} 실패")
 
+    # CRM 액션을 추이 분석 기반으로 구성 (시점 간 비교)
+    # 전체 데이터에서 d_day vs d_day-N 방식으로 분석된 결과 사용
+    if crm_actions_by_trend:
+        for period in PERIODS:
+            period_key = period['key']
+            crm_actions_by_period[period_key] = {
+                'period_label': period['label'],
+                'analysis_method': f"d_day vs d_day-{period['days']}d (주간 평균)" if period['days'] > 0 else "30일 전 대비 추이",
+                'crm_actions': crm_actions_by_trend.get(period_key, [])
+            }
+        print(f"\n✓ CRM 추이 분석 완료 (시점 간 비교 방식)")
+    else:
+        # fallback: 추이 분석 결과가 없는 경우
+        for period in PERIODS:
+            crm_actions_by_period[period['key']] = {
+                'period_label': period['label'],
+                'crm_actions': []
+            }
+
     # 중첩 구조로 결합
     combined_insights = {
         'by_period': period_insights,
         'churn_analysis': churn_data,  # 이탈 분석은 전체 기간 데이터만 사용
+        'crm_actions_by_period': crm_actions_by_period,  # 기간별 CRM 액션
         'generated_at': datetime.now().isoformat(),
         'available_periods': [{'key': p['key'], 'label': p['label']} for p in PERIODS]
     }
@@ -129,7 +152,14 @@ def main(category='default'):
     if churn_data:
         print(f"  - 7일 이탈 위험: {len(churn_data.get('churn_predictions_7d', []))}건")
         print(f"  - 30일 이탈 위험: {len(churn_data.get('churn_predictions_30d', []))}건")
-        print(f"  - CRM 액션: {len(churn_data.get('crm_actions', []))}건")
+
+    print(f"\n✓ CRM 액션 (시점 간 추이 분석):")
+    print(f"  분석 방식: d_day (최근 7일 평균) vs d_day-N (N일 전 7일 평균)")
+    for period_key, crm_data in crm_actions_by_period.items():
+        crm_count = len(crm_data.get('crm_actions', []))
+        period_label = crm_data.get('period_label', period_key)
+        method = crm_data.get('analysis_method', '')
+        print(f"  - {period_label}: {crm_count}건 ({method})")
 
     return combined_insights
 

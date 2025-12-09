@@ -966,7 +966,12 @@
         }
 
         .collapsible-toggle:hover {
-            background: var(--primary-main);
+            background: #673ab7;
+            color: white;
+        }
+
+        .collapsible-toggle.active {
+            background: #673ab7;
             color: white;
         }
 
@@ -1388,7 +1393,7 @@
                                 <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                                     <span style="font-size: 12px; font-weight: 600; color: #495057;">📅 AI 요약 기간:</span>
                                     <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                                        <button class="ai-period-btn active" data-ai-period="full" onclick="switchAiSummaryPeriod('full')" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #667eea; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #667eea; color: white;">전체</button>
+                                        <button class="ai-period-btn active" data-ai-period="full" onclick="switchAiSummaryPeriod('full')" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #673ab7; color: white;">전체</button>
                                         <button class="ai-period-btn" data-ai-period="180d" onclick="switchAiSummaryPeriod('180d')" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">180일</button>
                                         <button class="ai-period-btn" data-ai-period="90d" onclick="switchAiSummaryPeriod('90d')" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">90일</button>
                                     </div>
@@ -1405,7 +1410,7 @@
                             <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                                 <span style="font-size: 12px; font-weight: 600; color: #495057;">📅 분석 기간:</span>
                                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                                    <button class="view-btn period-btn active" data-period="full" onclick="switchPeriod('full')" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #1a73e8; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #1a73e8; color: white;">전체</button>
+                                    <button class="view-btn period-btn active" data-period="full" onclick="switchPeriod('full')" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #673ab7; color: white;">전체</button>
                                     <button class="view-btn period-btn" data-period="180d" onclick="switchPeriod('180d')" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">180일</button>
                                     <button class="view-btn period-btn" data-period="90d" onclick="switchPeriod('90d')" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">90일</button>
                                 </div>
@@ -1484,7 +1489,7 @@
                                 <span style="font-size: 16px;">📊</span>
                                 <span style="font-size: 13px; font-weight: 600; color: #1565c0;">비교 기간:</span>
                                 <div style="display: flex; gap: 6px;">
-                                    <button class="trend-period-btn active" data-trend-period="7d" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #1565c0; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #1565c0; color: white;">7일</button>
+                                    <button class="trend-period-btn active" data-trend-period="7d" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #673ab7; color: white;">7일</button>
                                     <button class="trend-period-btn" data-trend-period="14d" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">14일</button>
                                     <button class="trend-period-btn" data-trend-period="30d" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">30일</button>
                                 </div>
@@ -2208,9 +2213,9 @@
             document.querySelectorAll('.period-btn').forEach(btn => {
                 if (btn.dataset.period === period) {
                     btn.classList.add('active');
-                    btn.style.background = '#1a73e8';
+                    btn.style.background = '#673ab7';
                     btn.style.color = 'white';
-                    btn.style.borderColor = '#1a73e8';
+                    btn.style.borderColor = '#673ab7';
                 } else {
                     btn.classList.remove('active');
                     btn.style.background = 'white';
@@ -2253,9 +2258,9 @@
             document.querySelectorAll('.ai-period-btn').forEach(btn => {
                 if (btn.dataset.aiPeriod === period) {
                     btn.classList.add('active');
-                    btn.style.background = '#667eea';
+                    btn.style.background = '#673ab7';
                     btn.style.color = 'white';
-                    btn.style.borderColor = '#667eea';
+                    btn.style.borderColor = '#673ab7';
                 } else {
                     btn.classList.remove('active');
                     btn.style.background = 'white';
@@ -4182,9 +4187,9 @@
                     document.querySelectorAll('.trend-period-btn').forEach(b => {
                         if (b.dataset.trendPeriod === period) {
                             b.classList.add('active');
-                            b.style.background = '#1565c0';
+                            b.style.background = '#673ab7';
                             b.style.color = 'white';
-                            b.style.borderColor = '#1565c0';
+                            b.style.borderColor = '#673ab7';
                         } else {
                             b.classList.remove('active');
                             b.style.background = 'white';

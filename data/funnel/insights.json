@@ -1,7 +1,7 @@
 {
   "by_period": {
     "full": {
-      "generated_at": "2025-12-03T15:03:13.376634",
+      "generated_at": "2025-12-09T17:16:06.570474",
       "category": "--days",
       "thresholds_used": {
         "activation_rate_warning": 50.0,
@@ -22,7 +22,7 @@
         "is_filtered": false
       },
       "meta": {
-        "generated_at": "2025-12-03 15:03",
+        "generated_at": "2025-12-09 17:16",
         "analysis_period": "2025-02-12 ~ 2025-12-01",
         "category": "--days"
       },
@@ -881,7 +881,7 @@
       }
     },
     "180d": {
-      "generated_at": "2025-12-03T15:03:16.743477",
+      "generated_at": "2025-12-09T17:16:09.701225",
       "category": "--days",
       "thresholds_used": {
         "activation_rate_warning": 50.0,
@@ -902,7 +902,7 @@
         "is_filtered": true
       },
       "meta": {
-        "generated_at": "2025-12-03 15:03",
+        "generated_at": "2025-12-09 17:16",
         "analysis_period": "2025-06-04 ~ 2025-12-01",
         "category": "--days"
       },
@@ -938,7 +938,7 @@
           "overall_cvr": 0.72
         },
         "trend": {
-          "direction": "declining"
+          "direction": "stable"
         }
       },
       "top_channels": [
@@ -1627,8 +1627,8 @@
         "analysis_period_days": 181,
         "ab_tests_conducted": 15,
         "significant_ab_tests": 3,
-        "churn_risk_stages_7d": 3,
-        "churn_risk_stages_30d": 2,
+        "churn_risk_stages_7d": 0,
+        "churn_risk_stages_30d": 0,
         "improvement_stages_7d": 0,
         "improvement_stages_30d": 0
       },
@@ -1639,7 +1639,7 @@
       }
     },
     "90d": {
-      "generated_at": "2025-12-03T15:03:19.693916",
+      "generated_at": "2025-12-09T17:16:12.703434",
       "category": "--days",
       "thresholds_used": {
         "activation_rate_warning": 50.0,
@@ -1660,7 +1660,7 @@
         "is_filtered": true
       },
       "meta": {
-        "generated_at": "2025-12-03 15:03",
+        "generated_at": "2025-12-09 17:16",
         "analysis_period": "2025-09-02 ~ 2025-12-01",
         "category": "--days"
       },
@@ -1696,7 +1696,7 @@
           "overall_cvr": 0.68
         },
         "trend": {
-          "direction": "declining"
+          "direction": "stable"
         }
       },
       "top_channels": [
@@ -2219,8 +2219,8 @@
         "analysis_period_days": 91,
         "ab_tests_conducted": 6,
         "significant_ab_tests": 0,
-        "churn_risk_stages_7d": 3,
-        "churn_risk_stages_30d": 2,
+        "churn_risk_stages_7d": 0,
+        "churn_risk_stages_30d": 0,
         "improvement_stages_7d": 0,
         "improvement_stages_30d": 0
       },
@@ -2231,7 +2231,7 @@
       }
     },
     "30d": {
-      "generated_at": "2025-12-03T15:03:22.944937",
+      "generated_at": "2025-12-09T17:16:15.682651",
       "category": "--days",
       "thresholds_used": {
         "activation_rate_warning": 50.0,
@@ -2252,7 +2252,7 @@
         "is_filtered": true
       },
       "meta": {
-        "generated_at": "2025-12-03 15:03",
+        "generated_at": "2025-12-09 17:16",
         "analysis_period": "2025-11-01 ~ 2025-12-01",
         "category": "--days"
       },
@@ -2288,7 +2288,7 @@
           "overall_cvr": 0.94
         },
         "trend": {
-          "direction": "declining"
+          "direction": "stable"
         }
       },
       "top_channels": [
@@ -2754,7 +2754,7 @@
         "analysis_period_days": 31,
         "ab_tests_conducted": 3,
         "significant_ab_tests": 0,
-        "churn_risk_stages_7d": 3,
+        "churn_risk_stages_7d": 0,
         "churn_risk_stages_30d": 0,
         "improvement_stages_7d": 0,
         "improvement_stages_30d": 0
@@ -2837,29 +2837,111 @@
       }
     ],
     "improvement_predictions_7d": [],
-    "improvement_predictions_30d": [],
-    "crm_actions": [
-      {
-        "stage": "상품 구경 (활동)",
-        "trend": "📉 지난주보다 24.1% 줄었어요.",
-        "diagnosis": "고객들이 상품을 잘 안 눌러봅니다.",
-        "prescription": "👀 '요즘 이게 제일 잘 나가요🔥' 베스트 상품 큐레이션 배너를 메인에 띄워보세요."
-      },
-      {
-        "stage": "장바구니 (관심)",
-        "trend": "📉 지난주보다 27.5% 줄었어요.",
-        "diagnosis": "장바구니에 담고 잊어버린 분들이 많아요.",
-        "prescription": "🛒 이탈 1시간 후 '고객님, 담아두신 상품이 곧 품절돼요' 알림톡을 발송하세요."
-      },
-      {
-        "stage": "결제창 진입",
-        "trend": "📉 지난주보다 44.7% 줄었어요.",
-        "diagnosis": "다 사려다가 결제 직전에 나갔어요.",
-        "prescription": "💳 결제 오류가 없는지 확인하고, '지금 결제하면 내일 도착 🚚' 문구로 안심시켜주세요."
-      }
-    ]
+    "improvement_predictions_30d": []
   },
-  "generated_at": "2025-12-03T15:03:23.262376",
+  "crm_actions_by_period": {
+    "full": {
+      "period_label": "전체 기간",
+      "analysis_method": "30일 전 대비 추이",
+      "crm_actions": [
+        {
+          "stage": "상품 구경 (활동)",
+          "trend": "📉 30일 전 대비 25.1% 감소",
+          "diagnosis": "고객들이 상품을 잘 안 눌러봅니다.",
+          "prescription": "👀 '요즘 이게 제일 잘 나가요🔥' 베스트 상품 큐레이션 배너를 메인에 띄워보세요.",
+          "priority": "medium",
+          "change_pct": -25.1,
+          "d_day_value": 38.7,
+          "d_day_n_value": 48.4,
+          "period_days": 30
+        },
+        {
+          "stage": "장바구니 (관심)",
+          "trend": "📉 30일 전 대비 32.6% 감소",
+          "diagnosis": "장바구니에 담고 잊어버린 분들이 많아요.",
+          "prescription": "🛒 이탈 1시간 후 '고객님, 담아두신 상품이 곧 품절돼요' 알림톡을 발송하세요.",
+          "priority": "high",
+          "change_pct": -32.6,
+          "d_day_value": 18.9,
+          "d_day_n_value": 25.0,
+          "period_days": 30
+        },
+        {
+          "stage": "결제창 진입",
+          "trend": "📉 30일 전 대비 95.2% 감소",
+          "diagnosis": "다 사려다가 결제 직전에 나갔어요.",
+          "prescription": "💳 결제 오류가 없는지 확인하고, '지금 결제하면 내일 도착 🚚' 문구로 안심시켜주세요.",
+          "priority": "high",
+          "change_pct": -95.2,
+          "d_day_value": 3.0,
+          "d_day_n_value": 5.9,
+          "period_days": 30
+        }
+      ]
+    },
+    "180d": {
+      "period_label": "최근 180일",
+      "analysis_method": "d_day vs d_day-180d (주간 평균)",
+      "crm_actions": []
+    },
+    "90d": {
+      "period_label": "최근 90일",
+      "analysis_method": "d_day vs d_day-90d (주간 평균)",
+      "crm_actions": [
+        {
+          "stage": "매장 방문 (유입)",
+          "trend": "📉 90일 전 대비 31.6% 감소",
+          "diagnosis": "방문자 자체가 줄고 있어요.",
+          "prescription": "📢 광고 노출이 줄었거나, 시즌 이슈일 수 있어요. 캠페인 예산과 키워드를 점검하세요.",
+          "priority": "high",
+          "change_pct": -31.6,
+          "d_day_value": 137.6,
+          "d_day_n_value": 181.0,
+          "period_days": 90
+        }
+      ]
+    },
+    "30d": {
+      "period_label": "최근 30일",
+      "analysis_method": "d_day vs d_day-30d (주간 평균)",
+      "crm_actions": [
+        {
+          "stage": "상품 구경 (활동)",
+          "trend": "📉 30일 전 대비 25.1% 감소",
+          "diagnosis": "고객들이 상품을 잘 안 눌러봅니다.",
+          "prescription": "👀 '요즘 이게 제일 잘 나가요🔥' 베스트 상품 큐레이션 배너를 메인에 띄워보세요.",
+          "priority": "medium",
+          "change_pct": -25.1,
+          "d_day_value": 38.7,
+          "d_day_n_value": 48.4,
+          "period_days": 30
+        },
+        {
+          "stage": "장바구니 (관심)",
+          "trend": "📉 30일 전 대비 32.6% 감소",
+          "diagnosis": "장바구니에 담고 잊어버린 분들이 많아요.",
+          "prescription": "🛒 이탈 1시간 후 '고객님, 담아두신 상품이 곧 품절돼요' 알림톡을 발송하세요.",
+          "priority": "high",
+          "change_pct": -32.6,
+          "d_day_value": 18.9,
+          "d_day_n_value": 25.0,
+          "period_days": 30
+        },
+        {
+          "stage": "결제창 진입",
+          "trend": "📉 30일 전 대비 95.2% 감소",
+          "diagnosis": "다 사려다가 결제 직전에 나갔어요.",
+          "prescription": "💳 결제 오류가 없는지 확인하고, '지금 결제하면 내일 도착 🚚' 문구로 안심시켜주세요.",
+          "priority": "high",
+          "change_pct": -95.2,
+          "d_day_value": 3.0,
+          "d_day_n_value": 5.9,
+          "period_days": 30
+        }
+      ]
+    }
+  },
+  "generated_at": "2025-12-09T17:16:16.073883",
   "available_periods": [
     {
       "key": "full",

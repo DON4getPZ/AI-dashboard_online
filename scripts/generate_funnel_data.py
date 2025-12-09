@@ -692,28 +692,95 @@ def analyze_kmeans_clustering(channel_funnel_pivot, thresholds):
         }
 
 
-def analyze_churn_and_improvement(daily_funnel_pivot, thresholds):
-    """이탈 예측 및 성과 개선 분석 (7일 & 30일)"""
+def analyze_churn_and_improvement(daily_funnel_pivot, thresholds, filter_days=0):
+    """
+    이탈 예측 및 성과 개선 분석
+
+    시점 간 추이 분석 방식:
+    - d_day (마지막 7일 평균) vs d_day-N (N일 전 7일 평균)
+    - 변화율 = (d_day_value - d_day-N_value) / d_day_value × 100
+    - 180d, 90d, 30d 각각의 추이를 분석
+    """
 
     results = {
         'churn_7d': [],
         'churn_30d': [],
         'improvement_7d': [],
         'improvement_30d': [],
-        'crm_actions': []
+        'crm_actions': [],
+        'crm_actions_by_trend': {
+            'full': [],
+            '180d': [],
+            '90d': [],
+            '30d': []
+        }
     }
 
-    if len(daily_funnel_pivot) < 14:
+    data_len = len(daily_funnel_pivot)
+
+    if data_len < 14:
         results['status'] = 'insufficient_data'
         results['message'] = INSUFFICIENT_DATA_MESSAGES['few_days']
         return results
+
+    # 시점 간 추이 분석 (주간 평균 사용)
+    # d_day: 마지막 7일 평균
+    # d_day-N: N일 전 시점의 7일 평균
+    trend_periods = [
+        {'key': '180d', 'days': 180, 'label': '180일 전 대비', 'min_data': 187},
+        {'key': '90d', 'days': 90, 'label': '90일 전 대비', 'min_data': 97},
+        {'key': '30d', 'days': 30, 'label': '30일 전 대비', 'min_data': 37}
+    ]
 
     for stage in ['유입', '활동', '관심', '결제진행']:
         if stage not in daily_funnel_pivot.columns:
             continue
 
-        # 7일 비교
-        if len(daily_funnel_pivot) >= 14:
+        # d_day: 마지막 7일 평균
+        d_day_value = daily_funnel_pivot[stage].tail(7).mean()
+
+        if d_day_value <= 0:
+            continue
+
+        # 각 기간별 추이 분석
+        for period in trend_periods:
+            if data_len >= period['min_data']:
+                # d_day-N: N일 전 시점의 7일 평균 (예: -37:-30 = 30일 전 기준 7일)
+                start_idx = -(period['days'] + 7)
+                end_idx = -period['days']
+                d_day_n_value = daily_funnel_pivot[stage].iloc[start_idx:end_idx].mean()
+
+                if d_day_n_value > 0:
+                    # 변화율 = (현재 - 과거) / 현재 × 100
+                    change_pct = ((d_day_value - d_day_n_value) / d_day_value) * 100
+
+                    # 이탈 위험 판단 (값이 감소한 경우, 즉 change_pct가 음수)
+                    if change_pct < thresholds['churn_alert_threshold']:
+                        priority = 'high' if change_pct < thresholds['high_risk_threshold'] else 'medium'
+                        results['crm_actions_by_trend'][period['key']].append({
+                            'stage': FRIENDLY_NAMES.get(stage, stage),
+                            'trend': f"📉 {period['label']} {abs(change_pct):.1f}% 감소",
+                            'diagnosis': CRM_RECIPES.get(stage, CRM_RECIPES['유입'])['diagnosis'],
+                            'prescription': CRM_RECIPES.get(stage, CRM_RECIPES['유입'])['action'],
+                            'priority': priority,
+                            'change_pct': round(change_pct, 1),
+                            'd_day_value': round(d_day_value, 1),
+                            'd_day_n_value': round(d_day_n_value, 1),
+                            'period_days': period['days']
+                        })
+
+    # 전체 기간용 crm_actions (기존 7일 비교 방식 유지)
+    results['crm_actions_by_trend']['full'] = results['crm_actions_by_trend']['30d'].copy() if results['crm_actions_by_trend']['30d'] else []
+
+    # 하위 호환성을 위한 crm_actions (전체 기간 = 30d 추이 사용)
+    results['crm_actions'] = results['crm_actions_by_trend']['30d'].copy()
+
+    # 기존 7일 비교 (churn_7d, improvement_7d용 - 전체 기간용)
+    for stage in ['유입', '활동', '관심', '결제진행']:
+        if stage not in daily_funnel_pivot.columns:
+            continue
+
+        if filter_days == 0 and data_len >= 14:
             recent_7d = daily_funnel_pivot[stage].tail(7).mean()
             previous_7d = daily_funnel_pivot[stage].iloc[-14:-7].mean()
 
@@ -727,14 +794,6 @@ def analyze_churn_and_improvement(daily_funnel_pivot, thresholds):
                     churn_msg['previous_avg'] = round(previous_7d, 2)
                     results['churn_7d'].append(churn_msg)
 
-                    # CRM 액션 추가
-                    results['crm_actions'].append({
-                        'stage': FRIENDLY_NAMES.get(stage, stage),
-                        'trend': f"📉 지난주보다 {abs(change_pct):.1f}% 줄었어요.",
-                        'diagnosis': CRM_RECIPES.get(stage, CRM_RECIPES['유입'])['diagnosis'],
-                        'prescription': CRM_RECIPES.get(stage, CRM_RECIPES['유입'])['action']
-                    })
-
                 elif change_pct > thresholds['improvement_threshold']:
                     improvement_msg = generate_improvement_message(stage, change_pct, thresholds)
                     improvement_msg['period'] = '7d'
@@ -742,8 +801,8 @@ def analyze_churn_and_improvement(daily_funnel_pivot, thresholds):
                     improvement_msg['previous_avg'] = round(previous_7d, 2)
                     results['improvement_7d'].append(improvement_msg)
 
-        # 30일 비교
-        if len(daily_funnel_pivot) >= 60:
+        # 기존 30일 비교 (churn_30d, improvement_30d용 - 전체 기간용)
+        if filter_days == 0 and data_len >= 60:
             recent_30d = daily_funnel_pivot[stage].tail(30).mean()
             previous_30d = daily_funnel_pivot[stage].iloc[-60:-30].mean()
 
@@ -1005,7 +1064,7 @@ def generate_funnel_insights(category='default', ga4_file=None):
     kmeans_result = analyze_kmeans_clustering(channel_funnel_pivot, thresholds)
 
     print("   - 이탈/개선 예측...")
-    churn_analysis = analyze_churn_and_improvement(daily_funnel_pivot, thresholds)
+    churn_analysis = analyze_churn_and_improvement(daily_funnel_pivot, thresholds, filter_days)
 
     # 기본 퍼널 경고 (원본 유지)
     basic_alerts = []
@@ -1122,6 +1181,9 @@ def generate_funnel_insights(category='default', ga4_file=None):
 
         # CRM 액션 (새로운 기능)
         'crm_actions': churn_analysis.get('crm_actions', []),
+
+        # CRM 액션 추이 분석 (시점 간 비교: d_day vs d_day-N)
+        'crm_actions_by_trend': churn_analysis.get('crm_actions_by_trend', {}),
 
         # 데이터 이슈
         'data_issues': data_issues,

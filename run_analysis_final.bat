@@ -77,9 +77,7 @@ if errorlevel 1 (
 
 echo.
 echo [5/10] Generating multi-period AARRR funnel analysis...
-cd scripts
-python generate_funnel_data_multiperiod.py
-cd ..
+python scripts\generate_funnel_data_multiperiod.py
 
 if errorlevel 1 (
     echo [WARNING] Multi-period funnel analysis generation failed

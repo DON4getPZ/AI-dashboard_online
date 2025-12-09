@@ -1530,6 +1530,7 @@
                         <div class="view-type-section" style="margin-bottom: 24px; flex-wrap: wrap; gap: 6px; align-items: center;">
                             <button class="view-btn decision-tool-tab-btn period-filter-enabled active" data-tab="clustering" title="선택한 기간 필터가 적용됩니다">채널 그룹별 특성</button>
                             <button class="view-btn decision-tool-tab-btn period-filter-enabled" data-tab="budget" title="선택한 기간 필터가 적용됩니다">예산 투자 가이드</button>
+                            <button class="view-btn decision-tool-tab-btn period-filter-enabled" data-tab="crm_guide" title="선택한 기간 필터가 적용됩니다">CRM 가이드</button>
                             <button class="view-btn decision-tool-tab-btn period-filter-disabled" data-tab="churn_alert" style="position: relative;" title="전체 기간 데이터만 사용됩니다 (기간 필터 미적용)">
                                 이탈 위험 경고
                                 <span style="position: absolute; top: -6px; right: -6px; background: #78909c; color: white; font-size: 8px; padding: 2px 4px; border-radius: 8px; font-weight: 600;">전체</span>
@@ -1583,7 +1584,21 @@
                         </div>
                         </div>
 
-                        <!-- 탭 3: 이탈 위험 경고 -->
+                        <!-- 탭 3: CRM 가이드 (기간 필터 적용) -->
+                        <div class="decision-tool-tab-content" id="crmGuideTab" style="display: none;">
+                        <div class="chart-section card" style="margin-bottom: 16px;">
+                            <div class="chart-header">📋 CRM 액션 가이드</div>
+                            <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
+                                선택한 기간의 데이터를 분석하여 이탈 위험을 방지하기 위한 <strong>구체적인 CRM 액션</strong>을 제안합니다.
+                                각 단계별로 즉시 실행 가능한 처방을 확인하세요.
+                            </div>
+                            <div id="crmActionsContainer" style="padding: 20px;">
+                                <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
+                            </div>
+                        </div>
+                        </div>
+
+                        <!-- 탭 4: 이탈 위험 경고 -->
                         <div class="decision-tool-tab-content" id="churnAlertTab" style="display: none;">
                         <div class="chart-section card" style="margin-bottom: 16px;">
                             <div class="chart-header">
@@ -1604,7 +1619,7 @@
                         </div>
                         </div>
 
-                        <!-- 탭 4: 성과 개선 분석 -->
+                        <!-- 탭 5: 성과 개선 분석 -->
                         <div class="decision-tool-tab-content" id="improvementTab" style="display: none;">
                         <div class="chart-section card">
                             <div class="chart-header">
@@ -4006,6 +4021,85 @@
 
             // 4. 성과 개선 분석 (기본 7일)
             updateImprovementPredictions('7d');
+
+            // 5. CRM 액션 가이드 (기간 필터 적용)
+            renderCrmActions();
+        }
+
+        // CRM 액션 가이드 렌더링 함수 (기간 필터 연동)
+        function renderCrmActions() {
+            const crmContainer = document.getElementById('crmActionsContainer');
+            if (!crmContainer) return;
+
+            // crm_actions_by_period 데이터에서 현재 기간의 CRM 액션 가져오기
+            const crmActionsByPeriod = insightsData.crm_actions_by_period;
+            if (!crmActionsByPeriod || !crmActionsByPeriod[currentPeriod]) {
+                crmContainer.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: var(--grey-500);">
+                        <p>선택한 기간의 CRM 액션 데이터가 없습니다.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const periodCrmData = crmActionsByPeriod[currentPeriod];
+            const crmActions = periodCrmData.crm_actions || [];
+            const periodLabel = periodCrmData.period_label || currentPeriod;
+
+            if (crmActions.length === 0) {
+                crmContainer.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: var(--success-main);">
+                        <svg viewBox="0 0 24 24" fill="currentColor" style="width: 48px; height: 48px; margin-bottom: 12px;">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">이탈 위험 없음</p>
+                        <p style="font-size: 14px; color: var(--grey-600);">${periodLabel} 동안 특별한 CRM 액션이 필요하지 않습니다.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // CRM 액션 우선순위 색상
+            const priorityColors = {
+                'high': { border: '#ef5350', bg: '#ffebee', badge: '#c62828', label: '긴급' },
+                'medium': { border: '#ffa726', bg: '#fff3e0', badge: '#ef6c00', label: '주의' },
+                'low': { border: '#66bb6a', bg: '#e8f5e9', badge: '#2e7d32', label: '모니터링' }
+            };
+
+            crmContainer.innerHTML = `
+                <div style="margin-bottom: 16px; padding: 12px; background: #f5f5f5; border-radius: 8px;">
+                    <div style="font-size: 13px; color: var(--grey-700);">
+                        <strong>${periodLabel}</strong> 기간 분석 결과, <strong style="color: var(--primary-main);">${crmActions.length}건</strong>의 CRM 액션이 필요합니다.
+                    </div>
+                </div>
+                <div style="display: grid; gap: 12px;">
+                    ${crmActions.map((action, index) => {
+                        const priority = action.priority || 'medium';
+                        const colors = priorityColors[priority] || priorityColors['medium'];
+                        return `
+                            <div style="padding: 16px; background: ${colors.bg}; border-radius: 8px; border-left: 4px solid ${colors.border};">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                                    <div style="font-size: 14px; font-weight: 600; color: var(--grey-900);">
+                                        📍 ${action.stage || '알 수 없는 단계'}
+                                    </div>
+                                    <span style="font-size: 11px; padding: 3px 8px; background: ${colors.badge}; color: white; border-radius: 10px;">
+                                        ${colors.label}
+                                    </span>
+                                </div>
+                                <div style="font-size: 13px; color: var(--grey-700); margin-bottom: 6px;">
+                                    <strong>현황:</strong> ${action.trend || '데이터 없음'}
+                                </div>
+                                <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 10px; font-style: italic;">
+                                    <strong>진단:</strong> ${action.diagnosis || '진단 정보 없음'}
+                                </div>
+                                <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: white; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                    💊 <strong>처방:</strong> ${action.prescription || '처방 정보 없음'}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
         }
 
         // 단계별 맞춤 이탈 대응 추천 생성
@@ -4114,38 +4208,6 @@
                 `;
             }
 
-            // CRM 액션 가이드 표시 (전체 기간 데이터 사용)
-            if (churnData.crm_actions && churnData.crm_actions.length > 0) {
-                const crmHTML = `
-                    <div style="margin-top: 24px; padding: 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 8px; border-left: 4px solid var(--secondary-main);">
-                        <div style="font-size: 14px; font-weight: 600; color: var(--secondary-main); margin-bottom: 12px;">
-                            📋 CRM 액션 가이드
-                        </div>
-                        <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 12px;">
-                            이탈 위험을 방지하기 위한 구체적인 CRM 액션입니다.
-                        </div>
-                        <div style="display: grid; gap: 10px;">
-                            ${churnData.crm_actions.map(action => `
-                                <div style="padding: 12px; background: white; border-radius: 6px;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-900); margin-bottom: 6px;">
-                                        📍 ${action.stage}
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--grey-700); margin-bottom: 4px;">
-                                        ${action.trend}
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 8px;">
-                                        <em>${action.diagnosis}</em>
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--grey-900); padding: 8px; background: #f5f5f5; border-radius: 4px;">
-                                        💊 <strong>처방:</strong> ${action.prescription}
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-                churnContainer.insertAdjacentHTML('beforeend', crmHTML);
-            }
         }
 
         // 단계별 맞춤 개선 유지 추천 생성
@@ -7275,6 +7337,7 @@
                     let selectedTab = null;
                     if (targetTab === 'clustering') selectedTab = document.getElementById('clusteringTab');
                     else if (targetTab === 'budget') selectedTab = document.getElementById('budgetTab');
+                    else if (targetTab === 'crm_guide') selectedTab = document.getElementById('crmGuideTab');
                     else if (targetTab === 'churn_alert') selectedTab = document.getElementById('churnAlertTab');
                     else if (targetTab === 'improvement') selectedTab = document.getElementById('improvementTab');
 
