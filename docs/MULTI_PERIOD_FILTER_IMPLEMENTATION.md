@@ -1,5 +1,38 @@
 # 다중 기간 필터링 기능 구현 가이드
 
+## 목차
+
+1. [개요](#개요)
+2. [데이터 파이프라인](#1-데이터-파이프라인)
+   - [전체 아키텍처](#11-전체-아키텍처)
+   - [실행 명령어](#12-실행-명령어)
+   - [스크립트 의존성](#13-스크립트-의존성)
+3. [Multiperiod 구현 방식 비교](#2-multiperiod-구현-방식-비교)
+   - [두 가지 호출 방식](#21-두-가지-호출-방식)
+   - [Subprocess 방식](#22-subprocess-방식-type-funnel)
+   - [Import 방식](#23-import-방식-timeseries)
+   - [방식별 비교](#24-방식별-비교)
+   - [현재 구현 상태 및 이유](#25-현재-구현-상태-및-이유)
+4. [구현 배경](#3-구현-배경)
+5. [기간별 상세 분석 결과](#4-기간별-상세-분석-결과)
+   - [TYPE INSIGHTS](#41-type-insights-type_dashboardhtml)
+   - [FUNNEL INSIGHTS](#42-funnel-insights-funnel_dashboardhtml)
+   - [CRM 추이 분석](#43-crm-추이-분석-d_day-vs-d_day-n)
+   - [TIMESERIES INSIGHTS](#44-timeseries-insights-timeseries_analysishtml)
+   - [분석 알고리즘 요약](#45-분석-알고리즘-요약)
+   - [JSON 파일 구조 예시](#46-json-파일-구조-예시)
+6. [공통 구현 패턴](#5-공통-구현-패턴)
+   - [Python 스크립트 패턴](#51-python-스크립트-패턴)
+   - [JavaScript 패턴](#52-javascript-패턴)
+7. [type_dashboard.html 구현](#6-type_dashboardhtml-구현)
+8. [funnel_dashboard.html 구현](#7-funnel_dashboardhtml-구현)
+9. [timeseries_analysis.html 구현](#8-timeseries_analysishtml-구현)
+10. [주의사항](#9-주의사항)
+11. [관련 파일](#10-관련-파일)
+12. [변경 이력](#11-변경-이력)
+
+---
+
 ## 개요
 
 마케팅 대시보드에 기간별 필터링 기능을 구현한 내용을 정리합니다.
@@ -231,360 +264,11 @@ multiperiod.py
 
 ---
 
-## 4. 공통 구현 패턴
-
-### 4.1 Python 스크립트 패턴
-
-#### `--days` 파라미터 추가
-```python
-import argparse
-from datetime import timedelta
-
-parser = argparse.ArgumentParser(description='인사이트 생성')
-parser.add_argument('--days', type=int, default=0,
-                    help='최근 N일 데이터만 사용 (0=전체기간)')
-args = parser.parse_args()
-```
-
-#### `filter_by_days` 함수
-```python
-def filter_by_days(df, days, date_column='일'):
-    """최근 N일 데이터만 필터링"""
-    if days <= 0:
-        return df
-    if date_column not in df.columns:
-        return df
-    df_copy = df.copy()
-    df_copy[date_column] = pd.to_datetime(df_copy[date_column])
-    max_date = df_copy[date_column].max()
-    cutoff_date = max_date - timedelta(days=days)
-    return df_copy[df_copy[date_column] >= cutoff_date].copy()
-```
-
-### 4.2 JavaScript 패턴
-
-#### 전역 변수 및 헬퍼 함수
-```javascript
-let currentPeriod = 'full';
-
-// 현재 선택된 기간의 데이터 반환
-function getPeriodData() {
-    if (!insightsData || !insightsData.by_period) {
-        return insightsData;  // 이전 구조 호환
-    }
-    return insightsData.by_period[currentPeriod] || insightsData.by_period['full'];
-}
-```
-
-#### 기간 전환 함수
-```javascript
-function switchPeriod(period) {
-    currentPeriod = period;
-
-    // 버튼 스타일 업데이트
-    document.querySelectorAll('.period-filter-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.period === period);
-    });
-
-    // 모든 섹션 다시 렌더링
-    updateAllSections();
-}
-```
-
-#### 기간 필터 버튼 UI
-```html
-<div class="period-filter-container">
-    <span>기간:</span>
-    <button class="period-filter-btn active" data-period="full" onclick="switchPeriod('full')">전체기간</button>
-    <button class="period-filter-btn" data-period="180d" onclick="switchPeriod('180d')">180일</button>
-    <button class="period-filter-btn" data-period="90d" onclick="switchPeriod('90d')">90일</button>
-    <button class="period-filter-btn" data-period="30d" onclick="switchPeriod('30d')">30일</button>
-</div>
-```
-
----
-
-## 5. type_dashboard.html 구현
-
-### 5.1 특이사항
-- 계절성 분석(`seasonality`)은 전체 기간 데이터만 사용
-
-### 5.2 JSON 구조
-```json
-{
-  "by_period": {
-    "full": { ... },
-    "180d": { ... },
-    "90d": { ... },
-    "30d": { ... }
-  },
-  "seasonality": {
-    "seasonality_analysis": {...},
-    "seasonality_insights": [...]
-  },
-  "generated_at": "...",
-  "available_periods": [...]
-}
-```
-
-### 5.3 헬퍼 함수
-```javascript
-// 기간별 데이터
-function getPeriodData() {
-    return insightsData.by_period[currentPeriod];
-}
-
-// 계절성 데이터 (항상 전체 기간)
-function getSeasonalityData() {
-    return insightsData.seasonality;
-}
-```
-
-### 5.4 수정된 함수 목록
-- `updatePeriodInfo()`, `renderKPICards()`, `renderSummaryTab()`
-- `renderOpportunityTab()`, `renderWarningTab()`, `renderTargetingTab()`
-- `renderForecastTab()`, `renderBudgetGuideTab()`
-- `generateAIOpportunities()`, `generateAIActions()`
-- 등 총 20+ 함수
-
----
-
-## 6. funnel_dashboard.html 구현
-
-### 6.1 특이사항: 독립적인 기간 필터 2개
-
-| 섹션 | 변수 | 헬퍼 함수 | 적용 탭 |
-|------|------|-----------|---------|
-| 인사이트 & 채널 전략 | `insightPeriod` | `getInsightPeriodData()` | 핵심 요약, 긴급 개선, 채널 전략(BCG) |
-| 데이터 기반 의사결정 도구 | `currentPeriod` | `getPeriodData()` | 채널 그룹별 특성, 예산 투자 가이드 |
-
-**전체 기간 고정 항목**:
-- 이탈 위험 경고, 성과 개선 분석, CRM 액션 가이드
-
-### 6.2 JSON 구조
-```json
-{
-  "by_period": {
-    "full": { "overall": {...}, "channel_strategy": {...}, ... },
-    "180d": { ... },
-    "90d": { ... },
-    "30d": { ... }
-  },
-  "churn_analysis": {
-    "churn_predictions_7d": [...],
-    "churn_predictions_30d": [...],
-    "improvement_predictions_7d": [...],
-    "improvement_predictions_30d": [...],
-    "crm_actions": [...]
-  },
-  "generated_at": "...",
-  "available_periods": [...]
-}
-```
-
-### 6.3 헬퍼 함수 (3개)
-```javascript
-let currentPeriod = 'full';   // 데이터 기반 의사결정 도구용
-let insightPeriod = 'full';   // 인사이트 & 채널 전략용
-
-function getPeriodData() {
-    return insightsData.by_period[currentPeriod];
-}
-
-function getInsightPeriodData() {
-    return insightsData.by_period[insightPeriod];
-}
-
-function getChurnData() {
-    return insightsData.churn_analysis;  // 항상 전체 기간
-}
-```
-
-### 6.4 기간 전환 함수 (2개)
-```javascript
-function switchPeriod(period) {
-    currentPeriod = period;
-    updateAdvancedAnalysis();
-}
-
-function switchInsightPeriod(period) {
-    insightPeriod = period;
-    updateInsights();
-    updateUrgentAlerts();
-    updateBCGMatrix();
-}
-```
-
----
-
-## 7. timeseries_analysis.html 구현
-
-### 7.1 특이사항
-- `insight_generator.py`가 클래스 구조이므로 **Import 방식** 사용
-- `generate(save=False)` 파라미터로 개별 저장 방지
-
-### 7.2 Python 구현 (Import 방식)
-
-#### `insight_generator.py` (v2.1)
-```python
-class InsightGenerator:
-    def __init__(self, days: Optional[int] = None):
-        self.days = days
-        self.period_label = 'full' if days is None else f'{days}d'
-
-    def filter_by_days(self, df, date_column='일 구분'):
-        if self.days is None or df.empty:
-            return df
-        # ... 필터링 로직
-
-    def generate(self, save: bool = True):
-        """save=False면 저장 안 함 (래퍼 스크립트용)"""
-        # ... 인사이트 생성 로직
-        if save:
-            self.save_insights()
-        return self.insights
-```
-
-#### `generate_insights_multiperiod.py`
-```python
-from insight_generator import InsightGenerator, NpEncoder
-
-PERIODS = [None, 180, 90, 30]
-PERIOD_LABELS = {None: 'full', 180: '180d', 90: '90d', 30: '30d'}
-
-def generate_all_periods():
-    all_insights = {'generated_at': datetime.now().isoformat(), 'by_period': {}}
-
-    for period in PERIODS:
-        generator = InsightGenerator(days=period)
-        insights = generator.generate(save=False)  # 개별 저장 안 함
-        all_insights['by_period'][PERIOD_LABELS[period]] = insights
-
-    # 최종 1회만 저장
-    with open(output_file, 'w', encoding='utf-8') as f:
-        json.dump(all_insights, f, cls=NpEncoder, ensure_ascii=False, indent=2)
-```
-
-### 7.3 JSON 구조
-```json
-{
-  "generated_at": "2025-12-02T...",
-  "by_period": {
-    "full": {
-      "summary_card": {...},
-      "overall": {...},
-      "segments": { "alerts": [...], "recommendations": [...] },
-      "opportunities": [...],
-      "performance_trends": {...}
-    },
-    "180d": { ... },
-    "90d": { ... },
-    "30d": { ... }
-  }
-}
-```
-
-### 7.4 수정된 함수 목록
-- `updateSummaryCard()` - AI 상태 요약 카드
-- `updateAiSummary()` - AI 분석 요약 메시지
-- `updateDailyComparison()` - 오늘 실적 vs 예측 비교
-- `updateOpportunities()` - 기회 요소
-- `updateInsightsBadges()` - 탭 배지
-- `updateOverallInsights()` - 전체 성과 분석
-- `updateInsightsFromData()` - 세그먼트 경고 알림
-- `updateRecommendations()` - 투자 추천
-- `updatePerformanceTrends()` - 성과 트렌드 분석
-
----
-
-## 8. 주의사항
-
-### ROAS 계산 규칙 준수
-
-비율 지표는 반드시 **총합 기준**으로 계산 (참조: `RATIO_METRIC_CALCULATION_FIX.md`):
-
-```python
-# 올바른 방식
-total_revenue = df['전환값'].sum()
-total_cost = df['비용'].sum()
-roas = (total_revenue / total_cost * 100) if total_cost > 0 else 0
-
-# 잘못된 방식 (사용 금지)
-roas = df['ROAS'].mean()
-```
-
-### 전체 기간 고정 항목
-
-일부 데이터는 기간 필터 미적용:
-- **type**: 계절성 분석 (`seasonality`)
-- **funnel**: 이탈 분석 (`churn_analysis`)
-- **timeseries**: 없음 (모든 항목 필터 적용)
-
----
-
-## 9. 관련 파일
-
-### type_dashboard 관련
-
-| 파일 | 호출 방식 | 설명 |
-|------|----------|------|
-| `scripts/generate_type_insights.py` | - | 원본 스크립트 (--days 파라미터) |
-| `scripts/generate_type_insights_multiperiod.py` | **Subprocess** | 래퍼 스크립트 |
-| `data/type/insights.json` | - | 출력 파일 |
-| `data/type_dashboard.html` | - | 대시보드 HTML |
-
-### funnel_dashboard 관련
-
-| 파일 | 호출 방식 | 설명 |
-|------|----------|------|
-| `scripts/generate_funnel_data.py` | - | 원본 스크립트 (--days 파라미터) |
-| `scripts/generate_funnel_data_multiperiod.py` | **Subprocess** | 래퍼 스크립트 |
-| `data/funnel/insights.json` | - | 출력 파일 |
-| `data/funnel_dashboard.html` | - | 대시보드 HTML (독립 필터 2개) |
-
-### timeseries_analysis 관련
-
-| 파일 | 호출 방식 | 설명 |
-|------|----------|------|
-| `scripts/insight_generator.py` | - | 원본 클래스 (v2.1, --days 파라미터) |
-| `scripts/generate_insights_multiperiod.py` | **Import** | 래퍼 스크립트 |
-| `data/forecast/insights.json` | - | 출력 파일 |
-| `data/timeseries_analysis.html` | - | 대시보드 HTML |
-
-### 공통
-
-| 파일 | 설명 |
-|------|------|
-| `docs/RATIO_METRIC_CALCULATION_FIX.md` | 비율 지표 계산 규칙 |
-
----
-
-## 10. 변경 이력
-
-| 일자 | 대시보드 | 내용 |
-|------|----------|------|
-| 2025-12-01 | type | 초기 구현 완료 |
-| 2025-12-01 | type | summary 계산 버그 수정 (category_summary → daily_summary) |
-| 2025-12-01 | type | top_categories 계산 버그 수정 |
-| 2025-12-02 | funnel | 초기 구현 완료 |
-| 2025-12-02 | funnel | 독립적인 기간 필터 2개 구현 (인사이트/의사결정도구) |
-| 2025-12-02 | funnel | 이탈 분석은 전체 기간 데이터만 사용하도록 분리 |
-| 2025-12-02 | funnel | A/B 테스트 통계 반복 노출 버그 수정 |
-| 2025-12-02 | funnel | 예산 투자 가이드 기간 필터링 구현 |
-| 2025-12-02 | timeseries | `insight_generator.py` v2.1 업데이트 (--days 파라미터) |
-| 2025-12-02 | timeseries | `generate_insights_multiperiod.py` 래퍼 스크립트 생성 (Import 방식) |
-| 2025-12-02 | timeseries | `timeseries_analysis.html` 기간 필터 UI 추가 |
-| 2025-12-02 | 공통 | 데이터 파이프라인 및 Subprocess/Import 방식 문서화 |
-| 2025-12-09 | funnel | CRM 추이 분석 알고리즘 변경 (d_day vs d_day-N 방식) |
-| 2025-12-09 | 공통 | 기간별 상세 분석 결과 문서화 |
-
----
-
-## 11. 기간별 상세 분석 결과
+## 4. 기간별 상세 분석 결과
 
 > 데이터 기준일: 2024-12-01 (원본 데이터 마지막 날짜)
 
-### 11.1 TYPE INSIGHTS (type_dashboard.html)
+### 4.1 TYPE INSIGHTS (type_dashboard.html)
 
 #### 분석 방식
 - **기간 필터링**: 마지막 날짜(2024-12-01)로부터 N일 이전까지의 데이터 사용
@@ -609,7 +293,7 @@ roas = df['ROAS'].mean()
 
 ---
 
-### 11.2 FUNNEL INSIGHTS (funnel_dashboard.html)
+### 4.2 FUNNEL INSIGHTS (funnel_dashboard.html)
 
 #### 분석 방식 (일반)
 - **기간 필터링**: 마지막 날짜로부터 N일 이전까지의 퍼널 데이터 사용
@@ -626,7 +310,7 @@ roas = df['ROAS'].mean()
 
 ---
 
-### 11.3 CRM 추이 분석 (d_day vs d_day-N)
+### 4.3 CRM 추이 분석 (d_day vs d_day-N)
 
 #### 분석 방식
 - **d_day**: 마지막 7일 평균값 (2024-11-25 ~ 2024-12-01)
@@ -661,7 +345,7 @@ roas = df['ROAS'].mean()
 
 ---
 
-### 11.4 TIMESERIES INSIGHTS (timeseries_analysis.html)
+### 4.4 TIMESERIES INSIGHTS (timeseries_analysis.html)
 
 #### 분석 방식
 - **Prophet 예측**: 각 기간 데이터를 기반으로 향후 30일 예측
@@ -689,7 +373,7 @@ roas = df['ROAS'].mean()
 
 ---
 
-### 11.5 분석 알고리즘 요약
+### 4.5 분석 알고리즘 요약
 
 | 대시보드 | 분석 항목 | 알고리즘 | 비고 |
 |----------|-----------|----------|------|
@@ -702,7 +386,7 @@ roas = df['ROAS'].mean()
 
 ---
 
-### 11.6 JSON 파일 구조 예시
+### 4.6 JSON 파일 구조 예시
 
 #### data/funnel/insights.json (CRM 추이 분석 포함)
 
@@ -760,3 +444,353 @@ roas = df['ROAS'].mean()
     {"key": "30d", "label": "최근 30일"}
   ]
 }
+```
+
+---
+
+## 5. 공통 구현 패턴
+
+### 5.1 Python 스크립트 패턴
+
+#### `--days` 파라미터 추가
+```python
+import argparse
+from datetime import timedelta
+
+parser = argparse.ArgumentParser(description='인사이트 생성')
+parser.add_argument('--days', type=int, default=0,
+                    help='최근 N일 데이터만 사용 (0=전체기간)')
+args = parser.parse_args()
+```
+
+#### `filter_by_days` 함수
+```python
+def filter_by_days(df, days, date_column='일'):
+    """최근 N일 데이터만 필터링"""
+    if days <= 0:
+        return df
+    if date_column not in df.columns:
+        return df
+    df_copy = df.copy()
+    df_copy[date_column] = pd.to_datetime(df_copy[date_column])
+    max_date = df_copy[date_column].max()
+    cutoff_date = max_date - timedelta(days=days)
+    return df_copy[df_copy[date_column] >= cutoff_date].copy()
+```
+
+### 5.2 JavaScript 패턴
+
+#### 전역 변수 및 헬퍼 함수
+```javascript
+let currentPeriod = 'full';
+
+// 현재 선택된 기간의 데이터 반환
+function getPeriodData() {
+    if (!insightsData || !insightsData.by_period) {
+        return insightsData;  // 이전 구조 호환
+    }
+    return insightsData.by_period[currentPeriod] || insightsData.by_period['full'];
+}
+```
+
+#### 기간 전환 함수
+```javascript
+function switchPeriod(period) {
+    currentPeriod = period;
+
+    // 버튼 스타일 업데이트
+    document.querySelectorAll('.period-filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.period === period);
+    });
+
+    // 모든 섹션 다시 렌더링
+    updateAllSections();
+}
+```
+
+#### 기간 필터 버튼 UI
+```html
+<div class="period-filter-container">
+    <span>기간:</span>
+    <button class="period-filter-btn active" data-period="full" onclick="switchPeriod('full')">전체기간</button>
+    <button class="period-filter-btn" data-period="180d" onclick="switchPeriod('180d')">180일</button>
+    <button class="period-filter-btn" data-period="90d" onclick="switchPeriod('90d')">90일</button>
+    <button class="period-filter-btn" data-period="30d" onclick="switchPeriod('30d')">30일</button>
+</div>
+```
+
+---
+
+## 6. type_dashboard.html 구현
+
+### 6.1 특이사항
+- 계절성 분석(`seasonality`)은 전체 기간 데이터만 사용
+
+### 6.2 JSON 구조
+```json
+{
+  "by_period": {
+    "full": { ... },
+    "180d": { ... },
+    "90d": { ... },
+    "30d": { ... }
+  },
+  "seasonality": {
+    "seasonality_analysis": {...},
+    "seasonality_insights": [...]
+  },
+  "generated_at": "...",
+  "available_periods": [...]
+}
+```
+
+### 6.3 헬퍼 함수
+```javascript
+// 기간별 데이터
+function getPeriodData() {
+    return insightsData.by_period[currentPeriod];
+}
+
+// 계절성 데이터 (항상 전체 기간)
+function getSeasonalityData() {
+    return insightsData.seasonality;
+}
+```
+
+### 6.4 수정된 함수 목록
+- `updatePeriodInfo()`, `renderKPICards()`, `renderSummaryTab()`
+- `renderOpportunityTab()`, `renderWarningTab()`, `renderTargetingTab()`
+- `renderForecastTab()`, `renderBudgetGuideTab()`
+- `generateAIOpportunities()`, `generateAIActions()`
+- 등 총 20+ 함수
+
+---
+
+## 7. funnel_dashboard.html 구현
+
+### 7.1 특이사항: 독립적인 기간 필터 2개
+
+| 섹션 | 변수 | 헬퍼 함수 | 적용 탭 |
+|------|------|-----------|---------|
+| 인사이트 & 채널 전략 | `insightPeriod` | `getInsightPeriodData()` | 핵심 요약, 긴급 개선, 채널 전략(BCG) |
+| 데이터 기반 의사결정 도구 | `currentPeriod` | `getPeriodData()` | 채널 그룹별 특성, 예산 투자 가이드 |
+
+**전체 기간 고정 항목**:
+- 이탈 위험 경고, 성과 개선 분석, CRM 액션 가이드
+
+### 7.2 JSON 구조
+```json
+{
+  "by_period": {
+    "full": { "overall": {...}, "channel_strategy": {...}, ... },
+    "180d": { ... },
+    "90d": { ... },
+    "30d": { ... }
+  },
+  "churn_analysis": {
+    "churn_predictions_7d": [...],
+    "churn_predictions_30d": [...],
+    "improvement_predictions_7d": [...],
+    "improvement_predictions_30d": [...],
+    "crm_actions": [...]
+  },
+  "generated_at": "...",
+  "available_periods": [...]
+}
+```
+
+### 7.3 헬퍼 함수 (3개)
+```javascript
+let currentPeriod = 'full';   // 데이터 기반 의사결정 도구용
+let insightPeriod = 'full';   // 인사이트 & 채널 전략용
+
+function getPeriodData() {
+    return insightsData.by_period[currentPeriod];
+}
+
+function getInsightPeriodData() {
+    return insightsData.by_period[insightPeriod];
+}
+
+function getChurnData() {
+    return insightsData.churn_analysis;  // 항상 전체 기간
+}
+```
+
+### 7.4 기간 전환 함수 (2개)
+```javascript
+function switchPeriod(period) {
+    currentPeriod = period;
+    updateAdvancedAnalysis();
+}
+
+function switchInsightPeriod(period) {
+    insightPeriod = period;
+    updateInsights();
+    updateUrgentAlerts();
+    updateBCGMatrix();
+}
+```
+
+---
+
+## 8. timeseries_analysis.html 구현
+
+### 8.1 특이사항
+- `insight_generator.py`가 클래스 구조이므로 **Import 방식** 사용
+- `generate(save=False)` 파라미터로 개별 저장 방지
+
+### 8.2 Python 구현 (Import 방식)
+
+#### `insight_generator.py` (v2.1)
+```python
+class InsightGenerator:
+    def __init__(self, days: Optional[int] = None):
+        self.days = days
+        self.period_label = 'full' if days is None else f'{days}d'
+
+    def filter_by_days(self, df, date_column='일 구분'):
+        if self.days is None or df.empty:
+            return df
+        # ... 필터링 로직
+
+    def generate(self, save: bool = True):
+        """save=False면 저장 안 함 (래퍼 스크립트용)"""
+        # ... 인사이트 생성 로직
+        if save:
+            self.save_insights()
+        return self.insights
+```
+
+#### `generate_insights_multiperiod.py`
+```python
+from insight_generator import InsightGenerator, NpEncoder
+
+PERIODS = [None, 180, 90, 30]
+PERIOD_LABELS = {None: 'full', 180: '180d', 90: '90d', 30: '30d'}
+
+def generate_all_periods():
+    all_insights = {'generated_at': datetime.now().isoformat(), 'by_period': {}}
+
+    for period in PERIODS:
+        generator = InsightGenerator(days=period)
+        insights = generator.generate(save=False)  # 개별 저장 안 함
+        all_insights['by_period'][PERIOD_LABELS[period]] = insights
+
+    # 최종 1회만 저장
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(all_insights, f, cls=NpEncoder, ensure_ascii=False, indent=2)
+```
+
+### 8.3 JSON 구조
+```json
+{
+  "generated_at": "2025-12-02T...",
+  "by_period": {
+    "full": {
+      "summary_card": {...},
+      "overall": {...},
+      "segments": { "alerts": [...], "recommendations": [...] },
+      "opportunities": [...],
+      "performance_trends": {...}
+    },
+    "180d": { ... },
+    "90d": { ... },
+    "30d": { ... }
+  }
+}
+```
+
+### 8.4 수정된 함수 목록
+- `updateSummaryCard()` - AI 상태 요약 카드
+- `updateAiSummary()` - AI 분석 요약 메시지
+- `updateDailyComparison()` - 오늘 실적 vs 예측 비교
+- `updateOpportunities()` - 기회 요소
+- `updateInsightsBadges()` - 탭 배지
+- `updateOverallInsights()` - 전체 성과 분석
+- `updateInsightsFromData()` - 세그먼트 경고 알림
+- `updateRecommendations()` - 투자 추천
+- `updatePerformanceTrends()` - 성과 트렌드 분석
+
+---
+
+## 9. 주의사항
+
+### ROAS 계산 규칙 준수
+
+비율 지표는 반드시 **총합 기준**으로 계산 (참조: `RATIO_METRIC_CALCULATION_FIX.md`):
+
+```python
+# 올바른 방식
+total_revenue = df['전환값'].sum()
+total_cost = df['비용'].sum()
+roas = (total_revenue / total_cost * 100) if total_cost > 0 else 0
+
+# 잘못된 방식 (사용 금지)
+roas = df['ROAS'].mean()
+```
+
+### 전체 기간 고정 항목
+
+일부 데이터는 기간 필터 미적용:
+- **type**: 계절성 분석 (`seasonality`)
+- **funnel**: 이탈 분석 (`churn_analysis`)
+- **timeseries**: 없음 (모든 항목 필터 적용)
+
+---
+
+## 10. 관련 파일
+
+### type_dashboard 관련
+
+| 파일 | 호출 방식 | 설명 |
+|------|----------|------|
+| `scripts/generate_type_insights.py` | - | 원본 스크립트 (--days 파라미터) |
+| `scripts/generate_type_insights_multiperiod.py` | **Subprocess** | 래퍼 스크립트 |
+| `data/type/insights.json` | - | 출력 파일 |
+| `data/type_dashboard.html` | - | 대시보드 HTML |
+
+### funnel_dashboard 관련
+
+| 파일 | 호출 방식 | 설명 |
+|------|----------|------|
+| `scripts/generate_funnel_data.py` | - | 원본 스크립트 (--days 파라미터) |
+| `scripts/generate_funnel_data_multiperiod.py` | **Subprocess** | 래퍼 스크립트 |
+| `data/funnel/insights.json` | - | 출력 파일 |
+| `data/funnel_dashboard.html` | - | 대시보드 HTML (독립 필터 2개) |
+
+### timeseries_analysis 관련
+
+| 파일 | 호출 방식 | 설명 |
+|------|----------|------|
+| `scripts/insight_generator.py` | - | 원본 클래스 (v2.1, --days 파라미터) |
+| `scripts/generate_insights_multiperiod.py` | **Import** | 래퍼 스크립트 |
+| `data/forecast/insights.json` | - | 출력 파일 |
+| `data/timeseries_analysis.html` | - | 대시보드 HTML |
+
+### 공통
+
+| 파일 | 설명 |
+|------|------|
+| `docs/RATIO_METRIC_CALCULATION_FIX.md` | 비율 지표 계산 규칙 |
+
+---
+
+## 11. 변경 이력
+
+| 일자 | 대시보드 | 내용 |
+|------|----------|------|
+| 2025-12-01 | type | 초기 구현 완료 |
+| 2025-12-01 | type | summary 계산 버그 수정 (category_summary → daily_summary) |
+| 2025-12-01 | type | top_categories 계산 버그 수정 |
+| 2025-12-02 | funnel | 초기 구현 완료 |
+| 2025-12-02 | funnel | 독립적인 기간 필터 2개 구현 (인사이트/의사결정도구) |
+| 2025-12-02 | funnel | 이탈 분석은 전체 기간 데이터만 사용하도록 분리 |
+| 2025-12-02 | funnel | A/B 테스트 통계 반복 노출 버그 수정 |
+| 2025-12-02 | funnel | 예산 투자 가이드 기간 필터링 구현 |
+| 2025-12-02 | timeseries | `insight_generator.py` v2.1 업데이트 (--days 파라미터) |
+| 2025-12-02 | timeseries | `generate_insights_multiperiod.py` 래퍼 스크립트 생성 (Import 방식) |
+| 2025-12-02 | timeseries | `timeseries_analysis.html` 기간 필터 UI 추가 |
+| 2025-12-02 | 공통 | 데이터 파이프라인 및 Subprocess/Import 방식 문서화 |
+| 2025-12-09 | funnel | CRM 추이 분석 알고리즘 변경 (d_day vs d_day-N 방식) |
+| 2025-12-09 | 공통 | 기간별 상세 분석 결과 문서화 |
