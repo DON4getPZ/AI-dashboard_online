@@ -6,11 +6,12 @@ echo ==========================================
 echo  독립 실행형 HTML 대시보드 생성 도구
 echo ==========================================
 echo.
-echo 이 스크립트는 4개의 독립 실행형 HTML 파일을 생성합니다:
+echo 이 스크립트는 5개의 독립 실행형 HTML 파일을 생성합니다:
 echo   - marketing_dashboard_v3_standalone.html
 echo   - creative_analysis_standalone.html
 echo   - timeseries_analysis_standalone.html
 echo   - funnel_dashboard_standalone.html
+echo   - type_dashboard_standalone.html
 echo.
 echo ==========================================
 echo.

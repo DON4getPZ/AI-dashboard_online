@@ -52,6 +52,7 @@ csv_paths = [
     'funnel/daily_funnel.csv',
     'funnel/weekly_funnel.csv',
     'funnel/channel_funnel.csv',
+    'funnel/channel_daily_funnel.csv',
     'funnel/campaign_funnel.csv',
     'funnel/new_vs_returning.csv',
     'funnel/channel_engagement.csv',
