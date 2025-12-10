@@ -405,11 +405,13 @@
 | `channel-churn-sort-btn` | `data-sort="desc"` | 높은순 정렬 |
 | `channel-churn-sort-btn` | `data-sort="asc"` | 낮은순 정렬 |
 
-### 7. 퍼널 비교 버튼
+### 7. 퍼널 비교 및 필터 버튼
 | ID | 기능 |
 |----|------|
 | `funnelCompareBtn` | 비교 모드 진입 |
 | `closeFunnelCompare` | 단일 뷰로 돌아가기 |
+| `funnelFilterBtn` | 채널 필터 토글 (클릭 시 '필터' ↔ '해제' 전환) |
+| `funnelChannelFilter` | 채널 선택 드롭다운 (필터 활성화 시 표시) |
 
 ---
 
@@ -418,9 +420,9 @@
 ### 데이터 변수
 | 변수명 | 설명 | 로드 소스 |
 |--------|------|----------|
-| `dailyData` | 일별 퍼널 데이터 | funnel/daily_funnel.csv |
+| `dailyData` | 채널별 일별 퍼널 데이터 | funnel/channel_daily_funnel.csv |
 | `weeklyData` | 주별 퍼널 데이터 | funnel/weekly_funnel.csv |
-| `channelData` | 채널별 퍼널 데이터 | funnel/channel_funnel.csv |
+| `channelData` | 채널별 퍼널 데이터 (합산) | funnel/channel_funnel.csv |
 | `newVsReturningData` | 신규/재방문 데이터 | funnel/new_vs_returning.csv |
 | `channelEngagementData` | 채널 참여도 데이터 | funnel/channel_engagement.csv |
 | `newVsReturningConversionData` | 신규/재방문 전환율 데이터 | funnel/new_vs_returning_conversion.csv |
@@ -440,6 +442,12 @@
 | `currentChurnStage` | 선택된 이탈 단계 | 'avg' |
 | `currentChurnSort` | 이탈 정렬 방식 | 'desc' |
 | `currentChannelFunnel` | 선택된 퍼널 단계 | 'purchase' |
+
+### 퍼널 채널 필터 상태
+| 변수명 | 설명 | 기본값 |
+|--------|------|--------|
+| `funnelFilterActive` | 퍼널 채널 필터 활성화 여부 | false |
+| `selectedFunnelChannel` | 선택된 퍼널 필터 채널명 | '' (빈 문자열) |
 
 ---
 
@@ -534,6 +542,12 @@
 | `calculateChurnRates()` | 이탈률 계산 |
 | `updateSortIcons()` | 정렬 아이콘 업데이트 |
 
+### 퍼널 채널 필터 함수
+| 함수명 | 기능 |
+|--------|------|
+| `populateFunnelChannelFilter()` | 채널 드롭다운 목록 동적 생성 (dailyData에서 추출) |
+| `getFilteredDailyData(channel)` | 선택된 채널의 일별 데이터만 필터링하여 반환 |
+
 ---
 
 ## 참조 데이터 파일 구조
@@ -570,8 +584,26 @@
 
 ### CSV 파일 공통 컬럼
 
-#### daily_funnel.csv / weekly_funnel.csv
-- `Day` / `week`: 날짜 기준
+#### channel_daily_funnel.csv (HTML 퍼널 차트용)
+- `channel`: 채널명
+- `Day`: 날짜 기준
+- `유입`: 유입 수
+- `활동`: 활성화 수
+- `관심`: 관심 표시 수
+- `결제진행`: 결제 진행 수
+- `구매완료`: 구매 완료 수
+- `CVR`: 전환율
+
+#### daily_funnel.csv (Python 시계열 분석용)
+- `Day`: 날짜 기준
+- `유입`: 유입 수
+- `활동`: 활성화 수
+- `관심`: 관심 표시 수
+- `결제진행`: 결제 진행 수
+- `구매완료`: 구매 완료 수
+
+#### weekly_funnel.csv
+- `week`: 주 기준
 - `유입`: 유입 수
 - `활동`: 활성화 수
 - `관심`: 관심 표시 수
@@ -617,7 +649,7 @@
 
 | 데이터 파일 | 주요 함수 | 렌더링 컴포넌트 |
 |------------|----------|---------------|
-| `daily_funnel.csv` | `calculateFunnelData()` | 퍼널 차트, KPI 요약 |
+| `channel_daily_funnel.csv` | `calculateFunnelData()`, `getFilteredDailyData()` | 퍼널 차트, KPI 요약, 채널 필터 |
 | `weekly_funnel.csv` | `calculateFunnelData()` | 퍼널 차트 |
 | `channel_funnel.csv` | `updateChannelTable()`, `updateKpiChart()` | 채널 테이블, 지표 차트 |
 | `insights.json` | `updateInsights()`, `updateBCGMatrix()` | 인사이트 카드, BCG 매트릭스 |
@@ -648,6 +680,8 @@
 | ID | 용도 | 관련 함수 |
 |----|------|----------|
 | `funnelCompareBtn` | 비교 모드 버튼 | 이벤트 리스너 |
+| `funnelFilterBtn` | 채널 필터 토글 버튼 | 이벤트 리스너 |
+| `funnelChannelFilter` | 채널 선택 드롭다운 | `populateFunnelChannelFilter()` |
 | `singleFunnelView` | 단일 퍼널 뷰 컨테이너 | - |
 | `d3FunnelChart` | D3.js 메인 퍼널 차트 | `updateFunnelChart()` |
 | `compareFunnelView` | 비교 퍼널 뷰 컨테이너 | - |
@@ -1544,4 +1578,10 @@ let channelEngagementChart = null;
 | 2025-12-08 | 전역 변수 초기값 추가 |
 | 2025-12-08 | 사이드바 네비게이션 HTML 구조 추가 |
 | 2025-12-08 | KPI 요약 카드 HTML 구조 추가 |
+| 2025-12-10 | 채널 필터 기능 추가: `funnelFilterBtn`, `funnelChannelFilter` 버튼/드롭다운 추가 |
+| 2025-12-10 | 새 CSV 파일 `channel_daily_funnel.csv` 추가 (채널별 일별 퍼널 데이터) |
+| 2025-12-10 | `dailyData` 로드 경로 변경: `daily_funnel.csv` → `channel_daily_funnel.csv` |
+| 2025-12-10 | 퍼널 채널 필터 함수 추가: `populateFunnelChannelFilter()`, `getFilteredDailyData()` |
+| 2025-12-10 | 퍼널 채널 필터 상태 변수 추가: `funnelFilterActive`, `selectedFunnelChannel` |
+| 2025-12-10 | `updateFunnelChart()`, `updateCompareFunnels()` 채널 필터 연동 |
 
