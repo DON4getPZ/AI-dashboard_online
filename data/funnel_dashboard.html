@@ -1321,9 +1321,17 @@
                 <div class="chart-section card">
                     <div class="chart-header">
                         📊 고객 구매 여정 5단계
-                        <button id="funnelCompareBtn" class="view-btn" style="font-size: 14px; padding: 8px 20px; float: right;">
-                            비교
-                        </button>
+                        <div style="float: right; display: flex; align-items: center; gap: 8px;">
+                            <button id="funnelCompareBtn" class="view-btn" style="font-size: 14px; padding: 8px 20px;">
+                                비교
+                            </button>
+                            <button id="funnelFilterBtn" class="view-btn" style="font-size: 14px; padding: 8px 20px;">
+                                필터
+                            </button>
+                            <select id="funnelChannelFilter" style="display: none; padding: 8px 12px; font-size: 13px; border: 1px solid #dee2e6; border-radius: 6px; background: white; cursor: pointer; min-width: 150px;">
+                                <option value="">채널 선택...</option>
+                            </select>
+                        </div>
                     </div>
 
                     <!-- 설명 -->
@@ -1398,7 +1406,7 @@
                     <div class="collapsible-header">
                         <div class="collapsible-title">
                             <span class="collapsible-icon">💡</span>
-                            <span>인사이트 & 채널 전략 (긴급 개선 포인트, 채널 투자 전략)</span>
+                            <span>인사이트 & 채널 전략 (이탈 위험, 성과 개선)</span>
                         </div>
                         <button class="collapsible-toggle">
                             <span>펼치기</span>
@@ -1407,83 +1415,66 @@
                     </div>
                     <div class="collapsible-content">
                         <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px;">
-                            퍼널 분석 결과를 바탕으로 <strong>지금 바로 실행할 수 있는 개선 포인트</strong>와 <strong>채널별 투자 전략</strong>을 확인하세요.
-                        </div>
-
-                        <!-- 인사이트 섹션 전용 기간 필터 버튼 -->
-                        <div style="margin-bottom: 12px; padding: 12px 16px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 10px; border: 1px solid #dee2e6;">
-                            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                                <span style="font-size: 12px; font-weight: 600; color: #495057;">📅 분석 기간:</span>
-                                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                                    <button class="insight-period-btn active" data-period="full" onclick="switchInsightPeriod('full')"
-                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #673ab7; color: white;">
-                                        전체 기간
-                                    </button>
-                                    <button class="insight-period-btn" data-period="180d" onclick="switchInsightPeriod('180d')"
-                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
-                                        최근 180일
-                                    </button>
-                                    <button class="insight-period-btn" data-period="90d" onclick="switchInsightPeriod('90d')"
-                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
-                                        최근 90일
-                                    </button>
-                                    <button class="insight-period-btn" data-period="30d" onclick="switchInsightPeriod('30d')"
-                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
-                                        최근 30일
-                                    </button>
-                                </div>
-                                <span id="insightPeriodDateRange" style="font-size: 11px; color: #6c757d; margin-left: auto;"></span>
-                            </div>
+                            퍼널 분석 결과를 바탕으로 <strong>고객 이탈 위험</strong>과 <strong>성과 개선 현황</strong>을 확인하세요. 전체 기간 데이터를 기준으로 분석합니다.
                         </div>
 
                         <!-- 통합 탭 버튼 -->
                         <div class="view-type-section" style="margin-bottom: 20px;">
-                            <button class="view-btn insight-strategy-tab-btn active" data-tab="summary">📊 핵심 요약</button>
-                            <button class="view-btn insight-strategy-tab-btn" data-tab="urgent">🚨 긴급 개선 <span id="urgentTotalCount" style="font-size: 11px; opacity: 0.8;"></span></button>
-                            <button class="view-btn insight-strategy-tab-btn" data-tab="bcg">📈 채널 전략</button>
+                            <button class="view-btn insight-strategy-tab-btn active" data-tab="churn_alert">⚠️ 이탈 위험 경고</button>
+                            <button class="view-btn insight-strategy-tab-btn" data-tab="improvement">✨ 성과 개선 분석</button>
                         </div>
 
-                        <!-- 탭 1: 핵심 요약 -->
-                        <div class="insight-strategy-tab-content active" id="summaryTabContent">
-                            <div class="insight-content" id="insightContent">
-                                <div class="insight-card neutral">
-                                    <div class="insight-text">데이터를 불러오는 중...</div>
+                        <!-- 탭 1: 이탈 위험 경고 -->
+                        <div class="insight-strategy-tab-content active" id="insightChurnAlertTab">
+                        <div class="chart-section card" style="margin-bottom: 16px;">
+                            <div class="chart-header">
+                                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                                    <span>⚠️ 주의 필요: 고객 이탈 증가 감지</span>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="view-btn insight-churn-period-btn active" data-period="7d">최근 7일</button>
+                                        <button class="view-btn insight-churn-period-btn" data-period="30d">최근 30일</button>
+                                    </div>
                                 </div>
                             </div>
+                            <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
+                                이전 기간 대비 고객 이탈이 늘어난 단계를 알려드립니다. 빠르게 대응하면 매출 손실을 막을 수 있습니다.
+                            </div>
+                            <div id="insightChurnPredictions" style="padding: 20px;">
+                                <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
+                            </div>
+                        </div>
                         </div>
 
-                        <!-- 탭 2: 긴급 개선 포인트 -->
-                        <div class="insight-strategy-tab-content" id="urgentTabContent" style="display: none;">
-                            <!-- 서브탭: 즉시 조치 / 개선 권장 -->
-                            <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-                                <button class="view-btn urgent-alert-tab-btn active" data-tab="high" style="font-size: 13px;">⚠️ 즉시 조치 필요 <span id="highAlertCount" style="font-size: 11px; opacity: 0.8;"></span></button>
-                                <button class="view-btn urgent-alert-tab-btn" data-tab="medium" style="font-size: 13px;">📌 개선 권장 <span id="mediumAlertCount" style="font-size: 11px; opacity: 0.8;"></span></button>
-                            </div>
-                            <!-- 즉시 조치 필요 -->
-                            <div id="highAlertsTab" class="urgent-alert-tab-content active">
-                                <div id="highAlertsCards" style="display: grid; gap: 12px;"></div>
-                                <div id="highAlertsToggleContainer" style="text-align: center; margin-top: 12px; display: none;">
-                                    <button id="highAlertsToggleBtn" class="view-btn" style="font-size: 13px; padding: 8px 20px;">더 보기</button>
+                        <!-- 탭 2: 성과 개선 분석 -->
+                        <div class="insight-strategy-tab-content" id="insightImprovementTab" style="display: none;">
+                        <div class="chart-section card">
+                            <div class="chart-header">
+                                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                                    <span>✨ 좋은 소식: 어떤 부분이 좋아졌나요?</span>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="view-btn insight-improvement-period-btn active" data-period="7d">최근 7일</button>
+                                        <button class="view-btn insight-improvement-period-btn" data-period="30d">최근 30일</button>
+                                    </div>
                                 </div>
                             </div>
-                            <!-- 개선 권장 -->
-                            <div id="mediumAlertsTab" class="urgent-alert-tab-content" style="display: none;">
-                                <div id="mediumAlertsCards" style="display: grid; gap: 12px;"></div>
-                                <div id="mediumAlertsToggleContainer" style="text-align: center; margin-top: 12px; display: none;">
-                                    <button id="mediumAlertsToggleBtn" class="view-btn" style="font-size: 13px; padding: 8px 20px;">더 보기</button>
-                                </div>
+
+                            <!-- 설명 섹션 -->
+                            <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%); line-height: 1.7; border-radius: 8px; margin: 16px 20px 12px 20px;">
+                                <strong style="color: var(--primary-main);">📖 이 섹션은 무엇을 보여주나요?</strong><br>
+                                이전 기간과 비교하여 성과가 <strong>좋아진 단계</strong>를 자동으로 찾아드립니다.<br>
+                                <span style="color: var(--grey-600);">예시: 최근 7일간 "구매완료"가 이전 7일보다 15% 증가했다면 여기에 표시됩니다.</span><br><br>
+                                <strong style="color: var(--primary-main);">💡 왜 중요한가요?</strong><br>
+                                • 좋아진 이유를 알아야 <strong>그 성과를 계속 유지</strong>할 수 있습니다<br>
+                                • 성공 요인을 찾아 <strong>다른 채널이나 상품에도 적용</strong>할 수 있습니다<br>
+                                • 각 개선 사항마다 <strong>바로 실행할 수 있는 구체적인 액션</strong>을 제공합니다
                             </div>
+
+                            <div id="insightImprovementPredictions" style="padding: 20px;">
+                                <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
+                            </div>
+                        </div>
                         </div>
 
-                        <!-- 탭 3: BCG Matrix 채널 전략 -->
-                        <div class="insight-strategy-tab-content" id="bcgTabContent" style="display: none;">
-                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px;">
-                                트래픽과 전환율을 기준으로 각 채널을 4가지 유형으로 분류했습니다.
-                            </div>
-                            <div id="bcgMatrixContent" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
-                                <!-- JS로 동적 생성 -->
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -1492,7 +1483,7 @@
                     <div class="collapsible-header">
                         <div class="collapsible-title">
                             <span class="collapsible-icon">🔬</span>
-                            <span>데이터 기반 의사결정 도구 (예산 투자, 성과 비교, 위험 감지)</span>
+                            <span>데이터 기반 의사결정 도구 (핵심 요약, 긴급 개선, 채널 분석, 예산, CRM 가이드)</span>
                         </div>
                         <button class="collapsible-toggle">
                             <span>펼치기</span>
@@ -1528,36 +1519,62 @@
 
                         <!-- 탭 버튼 -->
                         <div class="view-type-section" style="margin-bottom: 24px; flex-wrap: wrap; gap: 6px; align-items: center;">
-                            <button class="view-btn decision-tool-tab-btn period-filter-enabled active" data-tab="clustering" title="선택한 기간 필터가 적용됩니다">채널 그룹별 특성</button>
+                            <button class="view-btn decision-tool-tab-btn period-filter-enabled active" data-tab="summary" title="선택한 기간 필터가 적용됩니다">📊 핵심 요약</button>
+                            <button class="view-btn decision-tool-tab-btn period-filter-enabled" data-tab="urgent" title="선택한 기간 필터가 적용됩니다">🚨 긴급 개선 <span id="urgentTotalCount" style="font-size: 11px; opacity: 0.8;"></span></button>
+                            <button class="view-btn decision-tool-tab-btn period-filter-enabled" data-tab="clustering" title="선택한 기간 필터가 적용됩니다">채널 그룹별 분석</button>
                             <button class="view-btn decision-tool-tab-btn period-filter-enabled" data-tab="budget" title="선택한 기간 필터가 적용됩니다">예산 투자 가이드</button>
                             <button class="view-btn decision-tool-tab-btn period-filter-enabled" data-tab="crm_guide" title="선택한 기간 필터가 적용됩니다">CRM 가이드</button>
-                            <button class="view-btn decision-tool-tab-btn period-filter-disabled" data-tab="churn_alert" style="position: relative;" title="전체 기간 데이터만 사용됩니다 (기간 필터 미적용)">
-                                이탈 위험 경고
-                                <span style="position: absolute; top: -6px; right: -6px; background: #78909c; color: white; font-size: 8px; padding: 2px 4px; border-radius: 8px; font-weight: 600;">전체</span>
-                            </button>
-                            <button class="view-btn decision-tool-tab-btn period-filter-disabled" data-tab="improvement" style="position: relative;" title="전체 기간 데이터만 사용됩니다 (기간 필터 미적용)">
-                                성과 개선 분석
-                                <span style="position: absolute; top: -6px; right: -6px; background: #78909c; color: white; font-size: 8px; padding: 2px 4px; border-radius: 8px; font-weight: 600;">전체</span>
-                            </button>
-                            <!-- 범례 -->
-                            <div style="margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 10px; color: #6c757d;">
-                                <span style="display: flex; align-items: center; gap: 4px;">
-                                    <span style="width: 8px; height: 8px; background: #673ab7; border-radius: 2px;"></span>
-                                    기간 필터 적용
-                                </span>
-                                <span style="display: flex; align-items: center; gap: 4px;">
-                                    <span style="width: 8px; height: 8px; background: #78909c; border-radius: 2px;"></span>
-                                    전체 기간 고정
-                                </span>
+                        </div>
+
+                        <!-- 탭 1: 핵심 요약 -->
+                        <div class="decision-tool-tab-content active" id="summaryTab">
+                            <div class="insight-content" id="insightContent">
+                                <div class="insight-card neutral">
+                                    <div class="insight-text">데이터를 불러오는 중...</div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- 탭 1: 채널 클러스터링 -->
-                        <div class="decision-tool-tab-content active" id="clusteringTab">
+                        <!-- 탭 2: 긴급 개선 포인트 -->
+                        <div class="decision-tool-tab-content" id="urgentTab" style="display: none;">
+                            <!-- 서브탭: 즉시 조치 / 개선 권장 -->
+                            <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                                <button class="view-btn urgent-alert-tab-btn active" data-tab="high" style="font-size: 13px;">⚠️ 즉시 조치 필요 <span id="highAlertCount" style="font-size: 11px; opacity: 0.8;"></span></button>
+                                <button class="view-btn urgent-alert-tab-btn" data-tab="medium" style="font-size: 13px;">📌 개선 권장 <span id="mediumAlertCount" style="font-size: 11px; opacity: 0.8;"></span></button>
+                            </div>
+                            <!-- 즉시 조치 필요 -->
+                            <div id="highAlertsTab" class="urgent-alert-tab-content active">
+                                <div id="highAlertsCards" style="display: grid; gap: 12px;"></div>
+                                <div id="highAlertsToggleContainer" style="text-align: center; margin-top: 12px; display: none;">
+                                    <button id="highAlertsToggleBtn" class="view-btn" style="font-size: 13px; padding: 8px 20px;">더 보기</button>
+                                </div>
+                            </div>
+                            <!-- 개선 권장 -->
+                            <div id="mediumAlertsTab" class="urgent-alert-tab-content" style="display: none;">
+                                <div id="mediumAlertsCards" style="display: grid; gap: 12px;"></div>
+                                <div id="mediumAlertsToggleContainer" style="text-align: center; margin-top: 12px; display: none;">
+                                    <button id="mediumAlertsToggleBtn" class="view-btn" style="font-size: 13px; padding: 8px 20px;">더 보기</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 탭 3: 채널 클러스터링 + BCG Matrix 통합 -->
+                        <div class="decision-tool-tab-content" id="clusteringTab" style="display: none;">
+                        <!-- BCG Matrix 채널 전략 -->
                         <div class="chart-section card" style="margin-bottom: 16px;">
-                            <div class="chart-header">🎯 채널 그룹별 특성 분석</div>
+                            <div class="chart-header">📈 BCG Matrix 채널 전략</div>
                             <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
-                                비슷한 성과를 보이는 채널들을 그룹으로 묶어 보여드립니다. 같은 그룹 내 채널들은 비슷한 전략으로 관리하면 효율적입니다.
+                                <strong>'지금 어떤 채널에 돈을 써야하나?'</strong> 투자 의사결정을 돕기위해 트래픽과 전환율을 기준으로 각 채널을 4가지 유형으로 분류했습니다.
+                            </div>
+                            <div id="bcgMatrixContent" style="padding: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                                <!-- JS로 동적 생성 -->
+                            </div>
+                        </div>
+                        <!-- 채널 퍼널 건강도 분석 -->
+                        <div class="chart-section card" style="margin-bottom: 16px;">
+                            <div class="chart-header">🩺 채널 퍼널 건강도 분석</div>
+                            <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
+                                <strong>'지금 어떤 채널의 퍼널 흐름이 건강해?'</strong> 각 채널의 유입→활동→관심→결제 단계별 전환 효율을 K-mean 툴로 종합 분석했습니다. 퍼널 건강 그룹은 모든 단계가 원활하고, 점검 필요 그룹은 중간 이탈이 심합니다.
                             </div>
                             <div id="channelClusters" style="padding: 20px;">
                                 <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
@@ -1598,56 +1615,6 @@
                         </div>
                         </div>
 
-                        <!-- 탭 4: 이탈 위험 경고 -->
-                        <div class="decision-tool-tab-content" id="churnAlertTab" style="display: none;">
-                        <div class="chart-section card" style="margin-bottom: 16px;">
-                            <div class="chart-header">
-                                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
-                                    <span>⚠️ 주의 필요: 고객 이탈 증가 감지</span>
-                                    <div style="display: flex; gap: 8px;">
-                                        <button class="view-btn churn-period-btn active" data-period="7d">최근 7일</button>
-                                        <button class="view-btn churn-period-btn" data-period="30d">최근 30일</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
-                                이전 기간 대비 고객 이탈이 늘어난 단계를 알려드립니다. 빠르게 대응하면 매출 손실을 막을 수 있습니다.
-                            </div>
-                            <div id="churnPredictions" style="padding: 20px;">
-                                <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
-                            </div>
-                        </div>
-                        </div>
-
-                        <!-- 탭 5: 성과 개선 분석 -->
-                        <div class="decision-tool-tab-content" id="improvementTab" style="display: none;">
-                        <div class="chart-section card">
-                            <div class="chart-header">
-                                <div style="display: flex; justify-content: space-between; align-items: center; gap:  12px;">
-                                    <span>✨ 좋은 소식: 어떤 부분이 좋아졌나요?</span>
-                                    <div style="display: flex; gap: 8px;">
-                                        <button class="view-btn improvement-period-btn active" data-period="7d">최근 7일</button>
-                                        <button class="view-btn improvement-period-btn" data-period="30d">최근 30일</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 설명 섹션 -->
-                            <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%); line-height: 1.7; border-radius: 8px; margin: 16px 20px 12px 20px;">
-                                <strong style="color: var(--primary-main);">📖 이 섹션은 무엇을 보여주나요?</strong><br>
-                                이전 기간과 비교하여 성과가 <strong>좋아진 단계</strong>를 자동으로 찾아드립니다.<br>
-                                <span style="color: var(--grey-600);">예시: 최근 7일간 "구매완료"가 이전 7일보다 15% 증가했다면 여기에 표시됩니다.</span><br><br>
-                                <strong style="color: var(--primary-main);">💡 왜 중요한가요?</strong><br>
-                                • 좋아진 이유를 알아야 <strong>그 성과를 계속 유지</strong>할 수 있습니다<br>
-                                • 성공 요인을 찾아 <strong>다른 채널이나 상품에도 적용</strong>할 수 있습니다<br>
-                                • 각 개선 사항마다 <strong>바로 실행할 수 있는 구체적인 액션</strong>을 제공합니다
-                            </div>
-
-                            <div id="improvementPredictions" style="padding: 20px;">
-                                <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
-                            </div>
-                        </div>
-                        </div>
                     </div>
                 </div>
 
@@ -2780,12 +2747,12 @@
             console.log('========================================\n');
 
             try {
-                // 일별 데이터
-                console.log('일별 데이터 로딩 중...');
-                const dailyResponse = await fetch('funnel/daily_funnel.csv');
+                // 채널별 일별 데이터 (singleFunnelView, compareFunnelView용)
+                console.log('채널별 일별 데이터 로딩 중...');
+                const dailyResponse = await fetch('funnel/channel_daily_funnel.csv');
                 const dailyText = await dailyResponse.text();
-                dailyData = parseCSV(dailyText, 'daily_funnel.csv');
-                console.log(`✓ 일별 데이터 로드 완료: ${dailyData.length}개 행\n`);
+                dailyData = parseCSV(dailyText, 'channel_daily_funnel.csv');
+                console.log(`✓ 채널별 일별 데이터 로드 완료: ${dailyData.length}개 행\n`);
 
                 // 주별 데이터
                 console.log('주별 데이터 로딩 중...');
@@ -2845,8 +2812,9 @@
             updateFunnelChart();
             updateInsights();
             updateUrgentAlerts();
-            updateBCGMatrix();
             setupInsightStrategyTabs();
+            updateInsightChurnPredictions('7d');
+            updateInsightImprovementPredictions('7d');
             updateAdvancedAnalysis();
             updateKpiChart('cvr');
             updateChurnChart();
@@ -2883,9 +2851,9 @@
             // 날짜 범위 표시 업데이트
             updatePeriodDateRange();
 
-            // 기간 필터가 적용되는 탭만 다시 렌더링
-            // (인사이트 & 채널 전략은 독립적인 기간 필터 사용)
-            // (이탈 위험/성과 개선은 전체 기간 데이터만 사용하므로 제외)
+            // 기간 필터가 적용되는 모든 탭 다시 렌더링
+            updateInsights();
+            updateUrgentAlerts();
             updateAdvancedAnalysis();
         }
 
@@ -2914,7 +2882,6 @@
             // 인사이트 & 채널 전략 섹션만 다시 렌더링
             updateInsights();
             updateUrgentAlerts();
-            updateBCGMatrix();
         }
 
         // 인사이트 섹션 날짜 범위 표시
@@ -2981,7 +2948,7 @@
         let urgentAlertsExpanded = { high: false, medium: false };
 
         function updateUrgentAlerts() {
-            const periodData = getInsightPeriodData();
+            const periodData = getPeriodData();
             const alerts = periodData?.urgent_alerts || [];
 
             // 심각도별로 그룹화
@@ -3080,12 +3047,12 @@
             }
         }
 
-        // BCG Matrix 채널 전략 업데이트 (인사이트 섹션 전용 기간 필터 사용)
+        // BCG Matrix 채널 전략 업데이트 (데이터 기반 의사결정 도구 기간 필터 사용)
         function updateBCGMatrix() {
             const content = document.getElementById('bcgMatrixContent');
             if (!content) return;
 
-            const periodData = getInsightPeriodData();
+            const periodData = getPeriodData();
             if (!periodData || !periodData.channel_strategy || periodData.channel_strategy.status !== 'success') {
                 content.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--grey-500);">채널 전략 데이터가 없습니다.</div>';
                 return;
@@ -3145,7 +3112,7 @@
             content.innerHTML = html || '<div style="padding: 20px; text-align: center; color: var(--grey-500);">분류된 채널이 없습니다.</div>';
         }
 
-        // 통합 인사이트 & 전략 탭 설정
+        // 인사이트 & 채널 전략 탭 설정 (이탈 위험/성과 개선)
         function setupInsightStrategyTabs() {
             const tabBtns = document.querySelectorAll('.insight-strategy-tab-btn');
             const tabContents = document.querySelectorAll('.insight-strategy-tab-content');
@@ -3164,13 +3131,29 @@
                     });
 
                     // 해당 탭 표시
-                    if (targetTab === 'summary') {
-                        document.getElementById('summaryTabContent').style.display = 'block';
-                    } else if (targetTab === 'urgent') {
-                        document.getElementById('urgentTabContent').style.display = 'block';
-                    } else if (targetTab === 'bcg') {
-                        document.getElementById('bcgTabContent').style.display = 'block';
+                    if (targetTab === 'churn_alert') {
+                        document.getElementById('insightChurnAlertTab').style.display = 'block';
+                    } else if (targetTab === 'improvement') {
+                        document.getElementById('insightImprovementTab').style.display = 'block';
                     }
+                });
+            });
+
+            // 인사이트 섹션 이탈 위험 7일/30일 토글
+            document.querySelectorAll('.insight-churn-period-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.insight-churn-period-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    updateInsightChurnPredictions(this.dataset.period);
+                });
+            });
+
+            // 인사이트 섹션 성과 개선 7일/30일 토글
+            document.querySelectorAll('.insight-improvement-period-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.insight-improvement-period-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    updateInsightImprovementPredictions(this.dataset.period);
                 });
             });
         }
@@ -3205,9 +3188,9 @@
             `).join('');
         }
 
-        // 인사이트 업데이트 (인사이트 섹션 전용 기간 필터 사용)
+        // 인사이트 업데이트 (데이터 기반 의사결정 도구 기간 필터 사용)
         function updateInsights() {
-            const periodData = getInsightPeriodData();
+            const periodData = getPeriodData();
             if (!periodData) return;
 
             const insights = [];
@@ -3267,9 +3250,9 @@
         function updateFunnelChart() {
             console.log('=== updateFunnelChart 시작 ===');
 
-            // 항상 daily 데이터 사용
-            const data = dailyData;
-            console.log(`일별 데이터: ${data.length}개 행`);
+            // 채널 필터 적용된 데이터 사용
+            const data = selectedFunnelChannel ? getFilteredDailyData(selectedFunnelChannel) : dailyData;
+            console.log(`일별 데이터: ${data.length}개 행${selectedFunnelChannel ? ` (${selectedFunnelChannel} 필터)` : ''}`);
 
             if (data.length === 0) {
                 console.warn('데이터가 없습니다.');
@@ -3921,7 +3904,10 @@
                 abTestContainer.innerHTML = '<p style="color: var(--grey-500);">채널 전략 데이터가 없습니다.</p>';
             }
 
-            // 2. 채널 클러스터링 (기간 필터 적용)
+            // 2. BCG Matrix 채널 전략 업데이트 (기간 필터 적용)
+            updateBCGMatrix();
+
+            // 3. 채널 클러스터링 (기간 필터 적용)
             const clusterContainer = document.getElementById('channelClusters');
             if (periodData.channel_clusters && periodData.channel_clusters.clusters) {
                 const clusters = periodData.channel_clusters.clusters;
@@ -3930,7 +3916,8 @@
                 clusterContainer.innerHTML = `
                     <div style="margin-bottom: 16px;">
                         <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 12px;">
-                            K-Means 클러스터링으로 <strong>${periodData.channel_clusters.n_clusters}개</strong> 그룹으로 분류
+                            퍼널 건강도 기준 <strong>${periodData.channel_clusters.n_clusters}개</strong> 그룹으로 분류
+                            <span style="font-size: 12px; color: var(--grey-500); margin-left: 8px;">(유입→활동→관심→결제 단계별 전환율 평균)</span>
                         </p>
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
@@ -4016,13 +4003,7 @@
                 `;
             }
 
-            // 3. 이탈 위험 경고 (기본 7일)
-            updateChurnPredictions('7d');
-
-            // 4. 성과 개선 분석 (기본 7일)
-            updateImprovementPredictions('7d');
-
-            // 5. CRM 액션 가이드 (기간 필터 적용)
+            // 4. CRM 액션 가이드 (기간 필터 적용)
             renderCrmActions();
         }
 
@@ -4148,7 +4129,143 @@
             return recommendations[index];
         }
 
-        // 이탈 위험 경고 업데이트 (period: '7d' or '30d')
+        // ========================================
+        // 인사이트 섹션용 이탈/성과 업데이트 함수
+        // ========================================
+
+        // 인사이트 섹션 - 이탈 위험 경고 업데이트
+        function updateInsightChurnPredictions(period) {
+            const churnData = getChurnData();
+            if (!churnData) return;
+
+            const dataKey = period === '7d' ? 'churn_predictions_7d' : 'churn_predictions_30d';
+            const predictions = churnData[dataKey] || [];
+            const periodText = period === '7d' ? '최근 7일 vs 이전 7일' : '최근 30일 vs 이전 30일';
+
+            const churnContainer = document.getElementById('insightChurnPredictions');
+            if (!churnContainer) return;
+
+            if (predictions.length > 0) {
+                churnContainer.innerHTML = `
+                    <div style="margin-bottom: 16px;">
+                        <p style="font-size: 14px; color: var(--error-main); font-weight: 600; margin-bottom: 12px;">
+                            ⚠️ ${predictions.length}개 퍼널 단계에서 이탈 위험 감지
+                        </p>
+                    </div>
+                    <div style="display: grid; gap: 12px;">
+                        ${predictions.map(pred => {
+                            const customRecommendation = getChurnRecommendation(pred.stage, pred.change_pct, pred.risk_level);
+                            return `
+                            <div style="padding: 16px; background: ${pred.risk_level === 'high' ? 'var(--error-light)' : 'var(--warning-light)'}; border-radius: 8px; border-left: 4px solid ${pred.risk_level === 'high' ? 'var(--error-main)' : 'var(--warning-main)'};">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                    <div>
+                                        <div style="font-size: 16px; font-weight: 600; color: var(--grey-900); margin-bottom: 4px;">
+                                            ${pred.stage} 단계
+                                        </div>
+                                        <div style="font-size: 13px; color: var(--grey-700);">
+                                            ${periodText}: <strong style="color: var(--error-main);">${pred.change_pct}%</strong> 감소
+                                        </div>
+                                    </div>
+                                    <span style="font-size: 12px; padding: 4px 12px; background: ${pred.risk_level === 'high' ? 'var(--error-main)' : 'var(--warning-main)'}; color: white; border-radius: 12px; font-weight: 600;">
+                                        ${pred.risk_level === 'high' ? '높음' : '중간'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; gap: 16px; font-size: 13px; color: var(--grey-700); margin-bottom: 12px;">
+                                    <span>최근 평균: <strong>${formatNumber(pred.recent_avg)}</strong>명</span>
+                                    <span>이전 평균: <strong>${formatNumber(pred.previous_avg)}</strong>명</span>
+                                </div>
+                                <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: white; border-radius: 6px; line-height: 1.6;">
+                                    💡 <strong>우선 조치:</strong> ${customRecommendation}
+                                </div>
+                            </div>
+                        `;
+                        }).join('')}
+                    </div>
+                `;
+            } else {
+                churnContainer.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: var(--success-main);">
+                        <svg viewBox="0 0 24 24" fill="currentColor" style="width: 48px; height: 48px; margin-bottom: 12px;">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">이탈 위험 없음</p>
+                        <p style="font-size: 14px; color: var(--grey-600);">모든 퍼널 단계가 안정적입니다.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 인사이트 섹션 - 성과 개선 분석 업데이트
+        function updateInsightImprovementPredictions(period) {
+            const churnData = getChurnData();
+            if (!churnData) return;
+
+            const dataKey = period === '7d' ? 'improvement_predictions_7d' : 'improvement_predictions_30d';
+            const predictions = churnData[dataKey] || [];
+            const periodText = period === '7d' ? '최근 7일 vs 이전 7일' : '최근 30일 vs 이전 30일';
+
+            const improvementContainer = document.getElementById('insightImprovementPredictions');
+            if (!improvementContainer) return;
+
+            if (predictions.length > 0) {
+                improvementContainer.innerHTML = `
+                    <div style="margin-bottom: 16px; padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid var(--success-main);">
+                        <p style="font-size: 15px; color: var(--success-main); font-weight: 600; margin-bottom: 6px;">
+                            🎉 축하합니다! ${predictions.length}개 단계에서 성과가 좋아졌습니다
+                        </p>
+                        <p style="font-size: 13px; color: var(--grey-700);">
+                            각 개선 사항마다 구체적인 실행 방법을 확인하여 이 성과를 계속 유지하세요.
+                        </p>
+                    </div>
+                    <div style="display: grid; gap: 12px;">
+                        ${predictions.map(pred => {
+                            const customRecommendation = getImprovementRecommendation(pred.stage, pred.change_pct, pred.improvement_level);
+                            const improvementPercent = Math.abs(parseFloat(pred.change_pct));
+                            const improvementLabel = improvementPercent > 15 ? '탁월한 개선!' : improvementPercent > 10 ? '좋은 개선!' : '긍정적 변화';
+
+                            return `
+                            <div style="padding: 16px; background: var(--success-light); border-radius: 8px; border-left: 4px solid var(--success-main);">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                    <div>
+                                        <div style="font-size: 16px; font-weight: 600; color: var(--grey-900); margin-bottom: 4px;">
+                                            ${pred.stage} 단계
+                                        </div>
+                                        <div style="font-size: 13px; color: var(--grey-700);">
+                                            ${periodText}: <strong style="color: var(--success-main);">+${pred.change_pct}%</strong> 증가
+                                        </div>
+                                    </div>
+                                    <span style="font-size: 12px; padding: 4px 12px; background: var(--success-main); color: white; border-radius: 12px; font-weight: 600;">
+                                        ${improvementLabel}
+                                    </span>
+                                </div>
+                                <div style="display: flex; gap: 16px; font-size: 13px; color: var(--grey-700); margin-bottom: 12px;">
+                                    <span>최근 평균: <strong>${formatNumber(pred.recent_avg)}</strong>명</span>
+                                    <span>이전 평균: <strong>${formatNumber(pred.previous_avg)}</strong>명</span>
+                                </div>
+                                <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: white; border-radius: 6px; line-height: 1.6;">
+                                    🎯 <strong>성과 유지 방법:</strong> ${customRecommendation}
+                                </div>
+                            </div>
+                        `;
+                        }).join('')}
+                    </div>
+                `;
+            } else {
+                improvementContainer.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: var(--grey-500);">
+                        <svg viewBox="0 0 24 24" fill="currentColor" style="width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.5;">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">성과 개선 데이터 없음</p>
+                        <p style="font-size: 14px; color: var(--grey-600);">선택한 기간에 눈에 띄는 성과 개선이 감지되지 않았습니다.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ========================================
+
+        // 이탈 위험 경고 업데이트 (period: '7d' or '30d') - 기존 (데이터 기반 섹션용 - 사용 안함)
         // 이탈 분석은 항상 전체 기간 데이터만 사용
         function updateChurnPredictions(period) {
             const churnData = getChurnData();
@@ -6212,6 +6329,94 @@
             console.log('=== updateComparisonInsights 완료 ===\n');
         }
 
+        // ========================================
+        // 퍼널 채널 필터 기능 (channel_daily_funnel.csv 기반)
+        // ========================================
+        let funnelFilterActive = false;
+        let selectedFunnelChannel = '';
+
+        // 채널 목록 동적 생성 (dailyData = channel_daily_funnel.csv)
+        function populateFunnelChannelFilter() {
+            const select = document.getElementById('funnelChannelFilter');
+            if (!select) return;
+
+            // channel_daily_funnel.csv (dailyData)에서 채널 목록 추출
+            const channels = new Set();
+            if (dailyData && dailyData.length > 0) {
+                dailyData.forEach(row => {
+                    const channel = row['channel'] || row['Channel'];
+                    if (channel) channels.add(channel);
+                });
+            }
+
+            // 드롭다운 옵션 생성
+            select.innerHTML = '<option value="">전체 채널</option>';
+            Array.from(channels).sort().forEach(channel => {
+                const option = document.createElement('option');
+                option.value = channel;
+                option.textContent = channel;
+                select.appendChild(option);
+            });
+        }
+
+        // 필터링된 일별 데이터 반환 (channel_daily_funnel.csv 기반)
+        function getFilteredDailyData(channel) {
+            if (!channel || !dailyData || dailyData.length === 0) {
+                return dailyData; // 전체 데이터 반환
+            }
+
+            // 해당 채널의 일별 데이터만 필터링
+            return dailyData.filter(row =>
+                (row['channel'] || row['Channel']) === channel
+            );
+        }
+
+        // 필터 버튼 클릭 이벤트
+        document.getElementById('funnelFilterBtn').addEventListener('click', function() {
+            const btn = this;
+            const select = document.getElementById('funnelChannelFilter');
+
+            if (funnelFilterActive) {
+                // 필터 해제
+                funnelFilterActive = false;
+                selectedFunnelChannel = '';
+                btn.textContent = '필터';
+                btn.style.background = '';
+                btn.style.color = '';
+                select.style.display = 'none';
+                select.value = '';
+
+                // 현재 모드에 따라 차트 업데이트
+                if (isCompareMode) {
+                    updateCompareFunnels();
+                } else {
+                    updateFunnelChart();
+                }
+            } else {
+                // 필터 활성화
+                funnelFilterActive = true;
+                btn.textContent = '해제';
+                btn.style.background = '#673ab7';
+                btn.style.color = 'white';
+                populateFunnelChannelFilter();
+                select.style.display = 'block';
+            }
+        });
+
+        // 드롭다운 변경 이벤트
+        document.getElementById('funnelChannelFilter').addEventListener('change', function() {
+            selectedFunnelChannel = this.value;
+
+            // 현재 모드에 따라 차트 업데이트
+            if (isCompareMode) {
+                updateCompareFunnels();
+            } else {
+                updateFunnelChart();
+            }
+        });
+
+        // ========================================
+
         // 비교 모드 전환 (토글 방식)
         document.getElementById('funnelCompareBtn').addEventListener('click', function() {
             const btn = this;
@@ -6320,9 +6525,9 @@
         function updateCompareFunnels() {
             console.log('=== updateCompareFunnels 시작 ===');
 
-            // 항상 daily 데이터 사용
-            const data = dailyData;
-            console.log(`일별 데이터: ${data.length}개`);
+            // 채널 필터 적용된 데이터 사용
+            const data = selectedFunnelChannel ? getFilteredDailyData(selectedFunnelChannel) : dailyData;
+            console.log(`일별 데이터: ${data.length}개${selectedFunnelChannel ? ` (${selectedFunnelChannel} 필터 적용)` : ''}`);
 
             // 데이터가 없으면 화면 초기화
             if (data.length === 0) {
@@ -7335,11 +7540,11 @@
                     });
 
                     let selectedTab = null;
-                    if (targetTab === 'clustering') selectedTab = document.getElementById('clusteringTab');
+                    if (targetTab === 'summary') selectedTab = document.getElementById('summaryTab');
+                    else if (targetTab === 'urgent') selectedTab = document.getElementById('urgentTab');
+                    else if (targetTab === 'clustering') selectedTab = document.getElementById('clusteringTab');
                     else if (targetTab === 'budget') selectedTab = document.getElementById('budgetTab');
                     else if (targetTab === 'crm_guide') selectedTab = document.getElementById('crmGuideTab');
-                    else if (targetTab === 'churn_alert') selectedTab = document.getElementById('churnAlertTab');
-                    else if (targetTab === 'improvement') selectedTab = document.getElementById('improvementTab');
 
                     if (selectedTab) {
                         selectedTab.style.display = 'block';

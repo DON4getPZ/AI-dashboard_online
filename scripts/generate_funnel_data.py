@@ -609,7 +609,13 @@ def analyze_ab_with_revenue_impact(channel_funnel_pivot, thresholds):
 
 
 def analyze_kmeans_clustering(channel_funnel_pivot, thresholds):
-    """K-Means 클러스터링으로 채널 그룹화"""
+    """
+    K-Means 클러스터링으로 채널 퍼널 건강도 분석
+
+    BCG Matrix와의 차별점:
+    - BCG: 트래픽 + CVR (결과 기반, "어디에 투자?")
+    - K-Means: 퍼널 전 단계 효율 (과정 기반, "어디를 고쳐?")
+    """
 
     if len(channel_funnel_pivot) < 3:
         return {
@@ -620,20 +626,35 @@ def analyze_kmeans_clustering(channel_funnel_pivot, thresholds):
     try:
         clustering_features = []
         channel_names = []
+        channel_stage_rates = []  # 각 채널의 단계별 전환율 저장
 
         for _, row in channel_funnel_pivot.iterrows():
             total_acquisition = row.get('유입', 0)
             if total_acquisition > 0:
+                # 각 단계별 전환율 계산
+                activation_rate = row.get('활동', 0) / total_acquisition
+                consideration_rate = row.get('관심', 0) / total_acquisition
+                conversion_rate = row.get('결제진행', 0) / total_acquisition
+                purchase_rate = row.get('구매완료', 0) / total_acquisition
+
                 features = [
-                    row.get('활동', 0) / total_acquisition,
-                    row.get('관심', 0) / total_acquisition,
-                    row.get('결제진행', 0) / total_acquisition,
-                    row.get('구매완료', 0) / total_acquisition,
+                    activation_rate,
+                    consideration_rate,
+                    conversion_rate,
+                    purchase_rate,
                     row.get('CVR', 0) / 100,
                     row.get('Revenue', 0) / total_acquisition
                 ]
                 clustering_features.append(features)
                 channel_names.append(row['channel'])
+
+                # 단계별 전환율 저장 (퍼널 건강도 계산용)
+                channel_stage_rates.append({
+                    'activation': activation_rate,
+                    'consideration': consideration_rate,
+                    'conversion': conversion_rate,
+                    'purchase': purchase_rate
+                })
 
         if len(clustering_features) < 3:
             return {
@@ -649,24 +670,35 @@ def analyze_kmeans_clustering(channel_funnel_pivot, thresholds):
         kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
         cluster_labels = kmeans.fit_predict(X_scaled)
 
-        # 클러스터별 평균 성과로 순위 결정
+        # 클러스터별 퍼널 건강도로 순위 결정 (CVR만이 아닌 전 단계 평균)
         cluster_performance = {}
         for i in range(n_clusters):
             cluster_indices = [j for j, label in enumerate(cluster_labels) if label == i]
-            avg_performance = np.mean([clustering_features[j][4] for j in cluster_indices])  # CVR 기준
-            cluster_performance[i] = avg_performance
+            # 퍼널 건강도 = 각 단계별 전환율의 평균 (유입→활동, 활동→관심, 관심→결제, 결제→구매)
+            funnel_health_scores = []
+            for j in cluster_indices:
+                rates = channel_stage_rates[j]
+                # 4개 단계 전환율의 평균
+                health_score = np.mean([
+                    rates['activation'],
+                    rates['consideration'],
+                    rates['conversion'],
+                    rates['purchase']
+                ])
+                funnel_health_scores.append(health_score)
+            cluster_performance[i] = np.mean(funnel_health_scores)
 
-        # 성과 순으로 정렬
+        # 퍼널 건강도 순으로 정렬
         sorted_clusters = sorted(cluster_performance.items(), key=lambda x: x[1], reverse=True)
         cluster_rank = {old: new for new, (old, _) in enumerate(sorted_clusters)}
 
         # 클러스터별 채널 그룹화
-        clusters = {'high': [], 'mid': [], 'low': []}
-        cluster_labels_map = {0: 'high', 1: 'mid', 2: 'low'}
+        clusters = {'healthy': [], 'partial': [], 'needs_attention': []}
+        cluster_labels_map = {0: 'healthy', 1: 'partial', 2: 'needs_attention'}
 
         for channel, label in zip(channel_names, cluster_labels):
             new_label = cluster_rank[label]
-            group = cluster_labels_map.get(new_label, 'mid')
+            group = cluster_labels_map.get(new_label, 'partial')
             clusters[group].append(channel)
 
         return {
@@ -674,15 +706,16 @@ def analyze_kmeans_clustering(channel_funnel_pivot, thresholds):
             'n_clusters': n_clusters,
             'clusters': clusters,
             'description': {
-                'high': '🏆 고성과 그룹 - 이 채널들이 매출의 핵심이에요!',
-                'mid': '📊 성장 가능 그룹 - 잠재력이 있어요. 투자를 고려해보세요.',
-                'low': '⚠️ 개선 필요 그룹 - 효율이 낮아요. 전략 재검토가 필요합니다.'
+                'healthy': '🩺 퍼널 건강 - 모든 단계가 원활해요! 현재 전략을 유지하세요.',
+                'partial': '🔧 부분 최적화 필요 - 일부 단계에서 이탈이 발생해요. 병목 구간을 점검하세요.',
+                'needs_attention': '🚨 퍼널 점검 필요 - 여러 단계에서 이탈이 심해요. 전면 재검토가 필요합니다.'
             },
             'recommendations': {
-                'high': '현재 투자 수준 유지 및 모니터링',
-                'mid': '성과 개선 가능성 테스트 - 예산 10% 증액',
-                'low': '효율 분석 후 예산 재배분 검토'
-            }
+                'healthy': '벤치마킹 대상 - 이 채널의 랜딩페이지/UX를 다른 채널에 적용해보세요.',
+                'partial': '단계별 분석 필요 - 어느 단계에서 이탈이 큰지 확인하고 해당 구간을 개선하세요.',
+                'needs_attention': '근본 원인 파악 - 타겟 고객이 맞는지, 광고 메시지가 적절한지 점검하세요.'
+            },
+            'analysis_method': '퍼널 건강도 (유입→활동→관심→결제 각 단계 전환율 평균)'
         }
 
     except Exception as e:
@@ -918,6 +951,26 @@ def generate_funnel_insights(category='default', ga4_file=None):
 
     daily_funnel_pivot.to_csv(FUNNEL_DIR / 'daily_funnel.csv', index=False, encoding='utf-8-sig')
     print(f"   ✓ 일별 퍼널: {len(daily_funnel_pivot)} rows")
+
+    # 1-2. 채널별 일별 퍼널 (channel_daily_funnel.csv)
+    channel_daily_funnel = df.groupby(['channel', 'Day', 'funnel']).agg({
+        'Total users': 'sum',
+        'Event value': 'sum'
+    }).reset_index()
+
+    channel_daily_pivot = channel_daily_funnel.pivot_table(
+        index=['channel', 'Day'], columns='funnel', values='Total users',
+        aggfunc='sum', fill_value=0
+    ).reset_index()
+
+    existing_cols_cd = [col for col in FUNNEL_ORDER if col in channel_daily_pivot.columns]
+    channel_daily_pivot = channel_daily_pivot[['channel', 'Day'] + existing_cols_cd]
+
+    if '유입' in channel_daily_pivot.columns and '구매완료' in channel_daily_pivot.columns:
+        channel_daily_pivot['CVR'] = (channel_daily_pivot['구매완료'] / channel_daily_pivot['유입'] * 100).fillna(0)
+
+    channel_daily_pivot.to_csv(FUNNEL_DIR / 'channel_daily_funnel.csv', index=False, encoding='utf-8-sig')
+    print(f"   ✓ 채널별 일별 퍼널: {len(channel_daily_pivot)} rows")
 
     # 2. 주별 퍼널
     if 'week' in df.columns:
