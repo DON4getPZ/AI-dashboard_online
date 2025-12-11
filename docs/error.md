@@ -1,45 +1,12 @@
-Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
-    at updateChurnPredictions (funnel_dashboard.html:4278:42)
-    at updateAdvancedAnalysis (funnel_dashboard.html:3999:13)
-    at switchPeriod (funnel_dashboard.html:2849:13)
-    at HTMLButtonElement.onclick (funnel_dashboard.html:1496:229)Understand this error
-funnel_dashboard.html:4278 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
-    at updateChurnPredictions (funnel_dashboard.html:4278:42)
-    at updateAdvancedAnalysis (funnel_dashboard.html:3999:13)
-    at switchPeriod (funnel_dashboard.html:2849:13)
-    at HTMLButtonElement.onclick (funnel_dashboard.html:1500:229)Understand this error
-funnel_dashboard.html:4278 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
-    at updateChurnPredictions (funnel_dashboard.html:4278:42)
-    at updateAdvancedAnalysis (funnel_dashboard.html:3999:13)
-    at switchPeriod (funnel_dashboard.html:2849:13)
-    at HTMLButtonElement.onclick (funnel_dashboard.html:1504:229)Understand this error
-funnel_dashboard.html:4278 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
-    at updateChurnPredictions (funnel_dashboard.html:4278:42)
-    at updateAdvancedAnalysis (funnel_dashboard.html:3999:13)
-    at switchPeriod (funnel_dashboard.html:2849:13)
-    at HTMLButtonElement.onclick (funnel_dashboard.html:1500:229)Understand this error
-funnel_dashboard.html:4278 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
-    at updateChurnPredictions (funnel_dashboard.html:4278:42)
-    at updateAdvancedAnalysis (funnel_dashboard.html:3999:13)
-    at switchPeriod (funnel_dashboard.html:2849:13)
-    at HTMLButtonElement.onclick (funnel_dashboard.html:1496:229)Understand this error
-funnel_dashboard.html:4278 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
-    at updateChurnPredictions (funnel_dashboard.html:4278:42)
-    at updateAdvancedAnalysis (funnel_dashboard.html:3999:13)
-    at switchPeriod (funnel_dashboard.html:2849:13)
-    at HTMLButtonElement.onclick (funnel_dashboard.html:1492:229)Understand this error
-funnel_dashboard.html:4278 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
-    at updateChurnPredictions (funnel_dashboard.html:4278:42)
-    at updateAdvancedAnalysis (funnel_dashboard.html:3999:13)
-    at switchPeriod (funnel_dashboard.html:2849:13)
-    at HTMLButtonElement.onclick (funnel_dashboard.html:1496:229)Understand this error
-funnel_dashboard.html:4278 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
-    at updateChurnPredictions (funnel_dashboard.html:4278:42)
-    at updateAdvancedAnalysis (funnel_dashboard.html:3999:13)
-    at switchPeriod (funnel_dashboard.html:2849:13)
-    at HTMLButtonElement.onclick (funnel_dashboard.html:1500:229)Understand this error
-funnel_dashboard.html:4278 Uncaught TypeError: Cannot set properties of null (setting 'innerHTML')
-    at updateChurnPredictions (funnel_dashboard.html:4278:42)
-    at updateAdvancedAnalysis (funnel_dashboard.html:3999:13)
-    at switchPeriod (funnel_dashboard.html:2849:13)
-    at HTMLButtonElement.onclick (funnel_dashboard.html:1504:229)
+[7/11] Installing Node.js packages...
+
+The system cannot find the path specified.
+npm error code ENOENT
+npm error syscall open
+npm error path C:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\package.json
+npm error errno -4058
+npm error enoent Could not read package.json: Error: ENOENT: no such file or directory, open 'C:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\package.json'
+npm error enoent This is related to npm not being able to find a file.
+npm error enoent
+npm error A complete log of this run can be found in: C:\Users\growthmaker\AppData\Local\npm-cache\_logs\2025-12-11T02_04_48_221Z-debug-0.log
+[OK] Node.js packages installed

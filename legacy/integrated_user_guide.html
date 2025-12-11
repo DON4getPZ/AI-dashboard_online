@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대시보드 통합 사용자 가이드 | Growthmaker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gm-primary: #667eea;
+            --gm-primary-dark: #5a67d8;
+            --gm-secondary: #764ba2;
+            --gm-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gm-gradient-soft: linear-gradient(135deg, #f0f4ff 0%, #faf5ff 100%);
+            --gm-success: #00c853;
+            --gm-warning: #f57c00;
+            --gm-error: #ef5350;
+            --gm-info: #1a73e8;
+            --grey-50: #fafafa;
+            --grey-100: #f5f5f5;
+            --grey-200: #eeeeee;
+            --grey-300: #e0e0e0;
+            --grey-500: #9e9e9e;
+            --grey-600: #757575;
+            --grey-700: #616161;
+            --grey-800: #424242;
+            --grey-900: #212121;
+            --paper: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --sidebar-width: 280px;
+
+            /* Dashboard Theme Colors */
+            --theme-marketing: #2196f3;
+            --theme-creative: #673ab7;
+            --theme-type: #667eea;
+            --theme-funnel: #ff6b6b;
+            --theme-timeseries: #11998e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--grey-50);
+            color: var(--grey-800);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* ========== Sidebar ========== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--grey-900);
+            color: white;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            background: var(--gm-gradient);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .sidebar-nav {
+            padding: 16px 0;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-section-title {
+            padding: 12px 20px 8px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--grey-500);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: var(--grey-300);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.05);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: var(--gm-primary);
+        }
+
+        .nav-link-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-link-badge {
+            margin-left: auto;
+            padding: 2px 8px;
+            background: var(--gm-primary);
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* Dashboard color badges */
+        .nav-link[data-dashboard="marketing"] .nav-link-badge { background: var(--theme-marketing); }
+        .nav-link[data-dashboard="creative"] .nav-link-badge { background: var(--theme-creative); }
+        .nav-link[data-dashboard="type"] .nav-link-badge { background: var(--theme-type); }
+        .nav-link[data-dashboard="funnel"] .nav-link-badge { background: var(--theme-funnel); }
+        .nav-link[data-dashboard="timeseries"] .nav-link-badge { background: var(--theme-timeseries); }
+
+        /* Sub navigation */
+        .nav-sub {
+            display: none;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .nav-sub.open {
+            display: block;
+        }
+
+        .nav-sub-link {
+            display: block;
+            padding: 10px 20px 10px 56px;
+            color: var(--grey-400);
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-sub-link:hover {
+            color: white;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .nav-sub-link.active {
+            color: white;
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* ========== Main Content ========== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        /* Dashboard Section */
+        .dashboard-section {
+            display: none;
+        }
+
+        .dashboard-section.active {
+            display: block;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            color: white;
+            padding: 48px 40px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .dashboard-header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 350px;
+            height: 350px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+
+        /* Theme-specific headers */
+        .dashboard-header.marketing { background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%); }
+        .dashboard-header.creative { background: linear-gradient(135deg, #673ab7 0%, #9c27b0 100%); }
+        .dashboard-header.type { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .dashboard-header.funnel { background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%); }
+        .dashboard-header.timeseries { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+
+        .dashboard-header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .dashboard-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .dashboard-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .dashboard-desc {
+            font-size: 16px;
+            opacity: 0.9;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        .dashboard-version {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 5px 12px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* Section Navigation (within dashboard) */
+        .section-nav {
+            background: var(--paper);
+            border-bottom: 1px solid var(--grey-200);
+            padding: 0 40px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-nav-container {
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .section-nav-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .section-nav-item {
+            padding: 14px 18px;
+            color: var(--grey-600);
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .section-nav-item:hover {
+            color: var(--gm-primary);
+        }
+
+        .section-nav-item.active {
+            color: var(--gm-primary);
+            border-bottom-color: var(--gm-primary);
+        }
+
+        /* Content Area */
+        .dashboard-content {
+            padding: 40px;
+            max-width: 1000px;
+        }
+
+        /* Section */
+        .content-section {
+            display: none;
+            margin-bottom: 40px;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-header {
+            margin-bottom: 28px;
+        }
+
+        .section-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--gm-gradient);
+            color: white;
+            border-radius: 50%;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin-bottom: 6px;
+        }
+
+        .section-desc {
+            font-size: 14px;
+            color: var(--grey-600);
+        }
+
+        /* Card */
+        .card {
+            background: var(--paper);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--grey-200);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--gm-gradient-soft);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .card-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin-bottom: 3px;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: var(--grey-600);
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            background: var(--grey-50);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            border: 1px solid var(--grey-200);
+        }
+
+        .feature-icon {
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .feature-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 5px;
+        }
+
+        .feature-desc {
+            font-size: 12px;
+            color: var(--grey-600);
+            line-height: 1.5;
+        }
+
+        /* Toggle Demo */
+        .toggle-demo {
+            background: var(--grey-50);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            margin: 14px 0;
+        }
+
+        .toggle-demo-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .toggle-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .demo-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--grey-300);
+            background: white;
+            color: var(--grey-700);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .demo-btn:hover {
+            border-color: var(--gm-primary);
+            color: var(--gm-primary);
+        }
+
+        .demo-btn.active {
+            background: var(--gm-primary);
+            color: white;
+            border-color: var(--gm-primary);
+        }
+
+        /* KPI Demo Grid */
+        .kpi-demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .kpi-demo-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 14px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--grey-200);
+            text-align: center;
+        }
+
+        .kpi-demo-card.highlight {
+            border-left: 4px solid var(--gm-primary);
+        }
+
+        .kpi-label {
+            font-size: 11px;
+            color: var(--grey-600);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .kpi-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .kpi-demo-card.highlight .kpi-value {
+            color: var(--gm-primary);
+        }
+
+        /* Filter Hierarchy */
+        .filter-hierarchy {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 14px;
+            background: var(--grey-50);
+            border-radius: var(--radius-md);
+            margin: 14px 0;
+        }
+
+        .filter-level {
+            padding: 6px 14px;
+            background: white;
+            border-radius: 18px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--grey-700);
+            border: 1px solid var(--grey-300);
+        }
+
+        .filter-arrow {
+            color: var(--grey-400);
+            font-size: 16px;
+        }
+
+        /* Callout Box */
+        .callout {
+            padding: 18px 20px;
+            border-radius: var(--radius-md);
+            margin: 18px 0;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .callout.tip {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border: 1px solid #c8e6c9;
+        }
+
+        .callout.warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #fff8e1 100%);
+            border: 1px solid #ffe0b2;
+        }
+
+        .callout.info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #e8f4fd 100%);
+            border: 1px solid #bbdefb;
+        }
+
+        .callout-icon {
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .callout-content {
+            flex: 1;
+        }
+
+        .callout-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .callout.tip .callout-title { color: #2e7d32; }
+        .callout.warning .callout-title { color: #e65100; }
+        .callout.info .callout-title { color: #1565c0; }
+
+        .callout-text {
+            font-size: 13px;
+            color: var(--grey-700);
+            line-height: 1.6;
+        }
+
+        /* Formula Box */
+        .formula-box {
+            background: var(--grey-900);
+            color: white;
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin: 14px 0;
+            overflow-x: auto;
+        }
+
+        .formula-item {
+            margin-bottom: 6px;
+        }
+
+        .formula-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .formula-name {
+            color: #64b5f6;
+        }
+
+        .formula-operator {
+            color: #ffab00;
+        }
+
+        .formula-comment {
+            color: #81c784;
+            margin-left: 10px;
+        }
+
+        /* Table Demo */
+        .table-demo {
+            width: 100%;
+            overflow-x: auto;
+            margin: 14px 0;
+        }
+
+        .table-demo table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .table-demo th {
+            background: var(--grey-100);
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--grey-700);
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .table-demo td {
+            padding: 10px;
+            border-bottom: 1px solid var(--grey-100);
+            color: var(--grey-800);
+        }
+
+        .table-demo tr:hover {
+            background: var(--grey-50);
+        }
+
+        .table-demo .positive {
+            color: var(--gm-success);
+            font-weight: 600;
+        }
+
+        .table-demo .negative {
+            color: var(--gm-error);
+            font-weight: 600;
+        }
+
+        /* Screenshot Placeholder */
+        .screenshot-placeholder {
+            background: linear-gradient(135deg, #f8f9fc 0%, #eef1f7 100%);
+            border: 2px dashed var(--grey-300);
+            border-radius: var(--radius-md);
+            padding: 40px 20px;
+            text-align: center;
+            margin: 18px 0;
+        }
+
+        .screenshot-icon {
+            font-size: 42px;
+            margin-bottom: 10px;
+            opacity: 0.6;
+        }
+
+        .screenshot-label {
+            font-size: 13px;
+            color: var(--grey-500);
+            font-weight: 500;
+        }
+
+        .screenshot-hint {
+            font-size: 11px;
+            color: var(--grey-500);
+            margin-top: 4px;
+        }
+
+        /* Tab Overview */
+        .tab-overview {
+            margin: 20px 0;
+        }
+
+        .tab-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: var(--grey-50);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+
+        .tab-icon {
+            width: 36px;
+            height: 36px;
+            background: white;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-info {
+            flex: 1;
+        }
+
+        .tab-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--grey-900);
+        }
+
+        .tab-desc {
+            font-size: 12px;
+            color: var(--grey-600);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .badge.core {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1565c0;
+        }
+
+        .badge.ai {
+            background: var(--gm-gradient-soft);
+            color: var(--gm-primary);
+        }
+
+        .badge.chart {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            color: #e65100;
+        }
+
+        /* FAQ */
+        .faq-list {
+            margin-top: 20px;
+        }
+
+        .faq-item {
+            border: 1px solid var(--grey-200);
+            border-radius: var(--radius-md);
+            margin-bottom: 10px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 16px 20px;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-900);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .faq-question:hover {
+            background: var(--grey-50);
+        }
+
+        .faq-icon {
+            font-size: 18px;
+            color: var(--grey-500);
+            transition: transform 0.3s;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer-content {
+            padding: 0 20px 16px;
+            font-size: 13px;
+            color: var(--grey-700);
+            line-height: 1.7;
+        }
+
+        /* Insight Demo */
+        .insight-demo {
+            display: grid;
+            gap: 10px;
+            margin: 14px 0;
+        }
+
+        .insight-item {
+            padding: 14px;
+            border-radius: var(--radius-sm);
+            border-left: 4px solid;
+        }
+
+        .insight-item.success {
+            background: #e8f5e9;
+            border-color: var(--gm-success);
+        }
+
+        .insight-item.warning {
+            background: #fff3e0;
+            border-color: var(--gm-warning);
+        }
+
+        .insight-item.error {
+            background: #ffebee;
+            border-color: var(--gm-error);
+        }
+
+        .insight-type {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            opacity: 0.8;
+        }
+
+        .insight-message {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--grey-800);
+        }
+
+        /* Funnel Demo */
+        .funnel-demo {
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #fff5f5 0%, #fffbeb 100%);
+            border-radius: var(--radius-lg);
+        }
+
+        .funnel-stage {
+            margin-bottom: 10px;
+        }
+
+        .funnel-bar {
+            height: 36px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 14px;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .funnel-stage:nth-child(1) .funnel-bar { width: 100%; }
+        .funnel-stage:nth-child(2) .funnel-bar { width: 75%; opacity: 0.9; }
+        .funnel-stage:nth-child(3) .funnel-bar { width: 50%; opacity: 0.8; }
+        .funnel-stage:nth-child(4) .funnel-bar { width: 30%; opacity: 0.7; }
+        .funnel-stage:nth-child(5) .funnel-bar { width: 20%; opacity: 0.6; }
+
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1001;
+            width: 44px;
+            height: 44px;
+            background: var(--gm-gradient);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Footer */
+        .guide-footer {
+            background: var(--grey-900);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .footer-desc {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: white;
+            opacity: 0.7;
+            text-decoration: none;
+            font-size: 13px;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .dashboard-header {
+                padding: 80px 24px 48px;
+            }
+
+            .dashboard-content {
+                padding: 24px;
+            }
+
+            .section-nav {
+                padding: 0 24px;
+            }
+
+            .dashboard-title {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kpi-demo-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filter-hierarchy {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filter-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* Print */
+        @media print {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-toggle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Toggle -->
+    <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">Growthmaker</div>
+            <div class="sidebar-subtitle">Dashboard User Guide</div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">대시보드 가이드</div>
+
+                <!-- 마케팅 성과 대시보드 -->
+                <div class="nav-link" data-dashboard="marketing" onclick="toggleSubNav(this)">
+                    <span class="nav-link-icon">📊</span>
+                    <span>마케팅 성과</span>
+                    <span class="nav-link-badge">Core</span>
+                </div>
+                <div class="nav-sub" id="sub-marketing">
+                    <a class="nav-sub-link" onclick="navigateTo('marketing', 'intro')">시작하기</a>
+                    <a class="nav-sub-link" onclick="navigateTo('marketing', 'filter')">필터 설정</a>
+                    <a class="nav-sub-link" onclick="navigateTo('marketing', 'kpi')">KPI 섹션</a>
+                    <a class="nav-sub-link" onclick="navigateTo('marketing', 'chart')">차트</a>
+                    <a class="nav-sub-link" onclick="navigateTo('marketing', 'table')">데이터 테이블</a>
+                    <a class="nav-sub-link" onclick="navigateTo('marketing', 'faq')">FAQ</a>
+                </div>
+
+                <!-- 광고 소재별 분석 -->
+                <div class="nav-link" data-dashboard="creative" onclick="toggleSubNav(this)">
+                    <span class="nav-link-icon">🎨</span>
+                    <span>광고 소재별 분석</span>
+                </div>
+                <div class="nav-sub" id="sub-creative">
+                    <a class="nav-sub-link" onclick="navigateTo('creative', 'intro')">시작하기</a>
+                    <a class="nav-sub-link" onclick="navigateTo('creative', 'filter')">필터 설정</a>
+                    <a class="nav-sub-link" onclick="navigateTo('creative', 'kpi-filter')">KPI 필터</a>
+                    <a class="nav-sub-link" onclick="navigateTo('creative', 'grid')">소재 그리드</a>
+                    <a class="nav-sub-link" onclick="navigateTo('creative', 'modal')">세부 성과</a>
+                    <a class="nav-sub-link" onclick="navigateTo('creative', 'faq')">FAQ</a>
+                </div>
+
+                <!-- 채널별 분석 -->
+                <div class="nav-link" data-dashboard="type" onclick="toggleSubNav(this)">
+                    <span class="nav-link-icon">📈</span>
+                    <span>채널별 분석</span>
+                    <span class="nav-link-badge">AI</span>
+                </div>
+                <div class="nav-sub" id="sub-type">
+                    <a class="nav-sub-link" onclick="navigateTo('type', 'intro')">시작하기</a>
+                    <a class="nav-sub-link" onclick="navigateTo('type', 'kpi')">KPI 카드</a>
+                    <a class="nav-sub-link" onclick="navigateTo('type', 'toggle')">토글 & 필터</a>
+                    <a class="nav-sub-link" onclick="navigateTo('type', 'insights')">AI 인사이트</a>
+                    <a class="nav-sub-link" onclick="navigateTo('type', 'analysis')">분석 기능</a>
+                    <a class="nav-sub-link" onclick="navigateTo('type', 'faq')">FAQ</a>
+                </div>
+
+                <!-- AARRR 퍼널 분석 -->
+                <div class="nav-link" data-dashboard="funnel" onclick="toggleSubNav(this)">
+                    <span class="nav-link-icon">🔻</span>
+                    <span>AARRR 퍼널</span>
+                </div>
+                <div class="nav-sub" id="sub-funnel">
+                    <a class="nav-sub-link" onclick="navigateTo('funnel', 'intro')">시작하기</a>
+                    <a class="nav-sub-link" onclick="navigateTo('funnel', 'funnel')">퍼널 차트</a>
+                    <a class="nav-sub-link" onclick="navigateTo('funnel', 'metrics')">단계별 지표</a>
+                    <a class="nav-sub-link" onclick="navigateTo('funnel', 'analysis')">분석 활용</a>
+                    <a class="nav-sub-link" onclick="navigateTo('funnel', 'faq')">FAQ</a>
+                </div>
+
+                <!-- 시계열 데이터 분석 -->
+                <div class="nav-link" data-dashboard="timeseries" onclick="toggleSubNav(this)">
+                    <span class="nav-link-icon">📉</span>
+                    <span>시계열 분석</span>
+                </div>
+                <div class="nav-sub" id="sub-timeseries">
+                    <a class="nav-sub-link" onclick="navigateTo('timeseries', 'intro')">시작하기</a>
+                    <a class="nav-sub-link" onclick="navigateTo('timeseries', 'chart')">차트 분석</a>
+                    <a class="nav-sub-link" onclick="navigateTo('timeseries', 'trend')">추세 분석</a>
+                    <a class="nav-sub-link" onclick="navigateTo('timeseries', 'forecast')">예측</a>
+                    <a class="nav-sub-link" onclick="navigateTo('timeseries', 'faq')">FAQ</a>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- ==================== 마케팅 성과 대시보드 ==================== -->
+        <div class="dashboard-section active" id="dashboard-marketing">
+            <header class="dashboard-header marketing">
+                <div class="dashboard-header-content">
+                    <div class="dashboard-badge">
+                        <span>📊</span>
+                        <span>Growthmaker Marketing Analytics</span>
+                    </div>
+                    <h1 class="dashboard-title">마케팅 성과 대시보드<br>사용자 가이드</h1>
+                    <p class="dashboard-desc">
+                        광고 캠페인의 전반적인 성과를 분석하고 모니터링하세요.
+                        일별/주별/월별 추이와 핵심 KPI를 한눈에 파악할 수 있습니다.
+                    </p>
+                    <span class="dashboard-version">📘 Guide v3.0 · Last Updated: 2025.12</span>
+                </div>
+            </header>
+
+            <nav class="section-nav">
+                <div class="section-nav-container">
+                    <div class="section-nav-item active" onclick="showSection('marketing', 'intro')">시작하기</div>
+                    <div class="section-nav-item" onclick="showSection('marketing', 'filter')">필터 설정</div>
+                    <div class="section-nav-item" onclick="showSection('marketing', 'kpi')">KPI 섹션</div>
+                    <div class="section-nav-item" onclick="showSection('marketing', 'chart')">차트</div>
+                    <div class="section-nav-item" onclick="showSection('marketing', 'table')">데이터 테이블</div>
+                    <div class="section-nav-item" onclick="showSection('marketing', 'faq')">FAQ</div>
+                </div>
+            </nav>
+
+            <div class="dashboard-content">
+                <!-- 시작하기 -->
+                <div class="content-section active" id="marketing-intro">
+                    <div class="section-header">
+                        <div class="section-number">1</div>
+                        <h2 class="section-title">대시보드 시작하기</h2>
+                        <p class="section-desc">마케팅 성과 대시보드의 핵심 기능과 구조를 알아봅니다.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📊</div>
+                            <div>
+                                <h3 class="card-title">이 대시보드는 무엇을 위한 건가요?</h3>
+                                <p class="card-subtitle">광고 성과 모니터링의 컨트롤 타워</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 14px; color: var(--grey-700); line-height: 1.8; margin-bottom: 20px;">
+                            마케팅 성과 대시보드는 <strong>광고 캠페인의 전반적인 성과</strong>를
+                            분석하고 모니터링하는 대시보드입니다. 비용, 노출, 클릭, 전환까지
+                            <strong>전체 퍼널을 한눈에</strong> 파악하고, 기간별 추이를 통해
+                            성과 변화를 추적할 수 있습니다.
+                        </p>
+
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <div class="feature-icon">📅</div>
+                                <div class="feature-name">기간별 집계</div>
+                                <div class="feature-desc">일별/주별/월별로 데이터를 집계하여 다양한 관점에서 분석</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">📈</div>
+                                <div class="feature-name">증감율 분석</div>
+                                <div class="feature-desc">직전 기간 대비 성과 변화를 자동 계산하여 표시</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">📊</div>
+                                <div class="feature-name">트렌드 차트</div>
+                                <div class="feature-desc">Bar + Line 콤보 차트로 비용과 효율 지표를 함께 시각화</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">🔍</div>
+                                <div class="feature-name">다단계 필터</div>
+                                <div class="feature-desc">유형→브랜드→상품→프로모션→캠페인→세트 계층 필터링</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">🧮</div>
+                            <div>
+                                <h3 class="card-title">핵심 KPI 계산 공식</h3>
+                                <p class="card-subtitle">대시보드에서 사용하는 지표의 계산 방식입니다</p>
+                            </div>
+                        </div>
+
+                        <div class="formula-box">
+                            <div class="formula-item">
+                                <span class="formula-name">CPM</span> <span class="formula-operator">=</span> (비용 / 노출) × 1000 <span class="formula-comment">// 1,000회 노출당 비용</span>
+                            </div>
+                            <div class="formula-item">
+                                <span class="formula-name">CPC</span> <span class="formula-operator">=</span> 비용 / 클릭 <span class="formula-comment">// 클릭당 비용</span>
+                            </div>
+                            <div class="formula-item">
+                                <span class="formula-name">CPA</span> <span class="formula-operator">=</span> 비용 / 전환수 <span class="formula-comment">// 전환당 비용</span>
+                            </div>
+                            <div class="formula-item">
+                                <span class="formula-name">ROAS</span> <span class="formula-operator">=</span> (전환값 / 비용) × 100 <span class="formula-comment">// 광고 수익률 (%)</span>
+                            </div>
+                        </div>
+
+                        <div class="callout tip">
+                            <div class="callout-icon">💡</div>
+                            <div class="callout-content">
+                                <div class="callout-title">주니어 마케터를 위한 Tip</div>
+                                <div class="callout-text">
+                                    <strong>CPM, CPC, CPA</strong>는 낮을수록 효율적입니다. 반면 <strong>ROAS</strong>는 높을수록 좋습니다.
+                                    ROAS 100%는 손익분기점으로, 1원 투자 시 1원의 수익이 발생한 것입니다.
+                                    일반적으로 <strong>ROAS 200% 이상</strong>을 효율적인 광고로 판단합니다.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 필터 설정 -->
+                <div class="content-section" id="marketing-filter">
+                    <div class="section-header">
+                        <div class="section-number">2</div>
+                        <h2 class="section-title">필터 설정</h2>
+                        <p class="section-desc">다단계 필터로 원하는 데이터만 정확하게 조회하세요.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">🔧</div>
+                            <div>
+                                <h3 class="card-title">필터 설정 영역</h3>
+                                <p class="card-subtitle">접기/펼치기 가능한 필터 영역입니다</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 18px;">
+                            필터 설정 섹션은 <strong>접기/펼치기</strong>가 가능합니다.
+                            기본 필터와 세부 필터를 조합하여 원하는 데이터만 조회할 수 있습니다.
+                        </p>
+
+                        <h4 style="font-size: 14px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
+                            🔗 필터 계층 구조
+                        </h4>
+
+                        <div class="filter-hierarchy">
+                            <div class="filter-level">유형구분</div>
+                            <span class="filter-arrow">→</span>
+                            <div class="filter-level">브랜드명</div>
+                            <span class="filter-arrow">→</span>
+                            <div class="filter-level">상품명</div>
+                            <span class="filter-arrow">→</span>
+                            <div class="filter-level">프로모션</div>
+                        </div>
+
+                        <div class="callout tip">
+                            <div class="callout-icon">💡</div>
+                            <div class="callout-content">
+                                <div class="callout-title">필터 활용 Tip</div>
+                                <div class="callout-text">
+                                    특정 캠페인의 성과만 분석하고 싶다면, 먼저 <strong>기본 필터</strong>로
+                                    유형/브랜드/상품/프로모션을 좁힌 후, <strong>캠페인 필터</strong>에서
+                                    원하는 캠페인을 선택하세요.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 섹션 -->
+                <div class="content-section" id="marketing-kpi">
+                    <div class="section-header">
+                        <div class="section-number">3</div>
+                        <h2 class="section-title">통합 KPI 섹션</h2>
+                        <p class="section-desc">핵심 성과 지표를 다양한 관점에서 확인하세요.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📊</div>
+                            <div>
+                                <h3 class="card-title">기간별 탭 전환</h3>
+                                <p class="card-subtitle">전체/일별/주별/월별 집계를 탭으로 전환합니다</p>
+                            </div>
+                            <span class="badge core">핵심 기능</span>
+                        </div>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">집계 단위 선택</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">전체</button>
+                                <button class="demo-btn">일별</button>
+                                <button class="demo-btn">주별</button>
+                                <button class="demo-btn">월별</button>
+                            </div>
+                        </div>
+
+                        <h4 style="font-size: 14px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
+                            📌 주요 성과 KPI (5개)
+                        </h4>
+
+                        <div class="kpi-demo-grid">
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">💰 총 비용</div>
+                                <div class="kpi-value">₩45.2M</div>
+                            </div>
+                            <div class="kpi-demo-card highlight">
+                                <div class="kpi-label">📈 ROAS</div>
+                                <div class="kpi-value">245%</div>
+                            </div>
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">🎯 CPA</div>
+                                <div class="kpi-value">₩12,500</div>
+                            </div>
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">🖱️ CPC</div>
+                                <div class="kpi-value">₩850</div>
+                            </div>
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">👁️ CPM</div>
+                                <div class="kpi-value">₩4,200</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 차트 -->
+                <div class="content-section" id="marketing-chart">
+                    <div class="section-header">
+                        <div class="section-number">4</div>
+                        <h2 class="section-title">성과 추이 차트</h2>
+                        <p class="section-desc">기간별 성과 변화를 시각적으로 확인하세요.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📈</div>
+                            <div>
+                                <h3 class="card-title">Bar + Line 콤보 차트</h3>
+                                <p class="card-subtitle">비용(Bar)과 효율 지표(Line)를 함께 시각화합니다</p>
+                            </div>
+                            <span class="badge chart">Chart.js</span>
+                        </div>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">차트 지표 선택</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">☑️ 비용</button>
+                                <button class="demo-btn">☐ CPM</button>
+                                <button class="demo-btn active">☑️ CPC</button>
+                                <button class="demo-btn">☐ CPA</button>
+                                <button class="demo-btn">☐ ROAS</button>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">📊</div>
+                            <div class="screenshot-label">성과 추이 차트 영역</div>
+                            <div class="screenshot-hint">비용 Bar + 효율 지표 Line 듀얼 Y축 차트</div>
+                        </div>
+
+                        <div class="callout tip">
+                            <div class="callout-icon">💡</div>
+                            <div class="callout-content">
+                                <div class="callout-title">차트 활용 Tip</div>
+                                <div class="callout-text">
+                                    <strong>비용 + ROAS</strong>를 함께 보면, 투자 대비 수익률의 변화를 한눈에 파악할 수 있습니다.
+                                    비용이 증가했는데 ROAS도 함께 상승했다면, 스케일업이 잘 되고 있는 신호입니다.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 데이터 테이블 -->
+                <div class="content-section" id="marketing-table">
+                    <div class="section-header">
+                        <div class="section-number">5</div>
+                        <h2 class="section-title">상세 데이터 테이블</h2>
+                        <p class="section-desc">기간별 상세 데이터를 테이블로 확인하세요.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📋</div>
+                            <div>
+                                <h3 class="card-title">테이블 구조</h3>
+                                <p class="card-subtitle">10개 컬럼으로 구성된 상세 데이터 테이블</p>
+                            </div>
+                        </div>
+
+                        <div class="table-demo">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>기간</th>
+                                        <th>비용</th>
+                                        <th>노출</th>
+                                        <th>클릭</th>
+                                        <th>CPC</th>
+                                        <th>전환수</th>
+                                        <th>CPA</th>
+                                        <th>ROAS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>2025-12-01</td>
+                                        <td>₩1,250,000</td>
+                                        <td>285,000</td>
+                                        <td>1,560</td>
+                                        <td>₩801</td>
+                                        <td>120</td>
+                                        <td>₩10,417</td>
+                                        <td class="positive">256%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2025-12-02</td>
+                                        <td>₩1,420,000</td>
+                                        <td>312,000</td>
+                                        <td>1,780</td>
+                                        <td>₩798</td>
+                                        <td>150</td>
+                                        <td>₩9,467</td>
+                                        <td class="positive">271%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2025-12-03</td>
+                                        <td>₩980,000</td>
+                                        <td>221,000</td>
+                                        <td>1,120</td>
+                                        <td>₩875</td>
+                                        <td>80</td>
+                                        <td>₩12,250</td>
+                                        <td class="positive">199%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ -->
+                <div class="content-section" id="marketing-faq">
+                    <div class="section-header">
+                        <div class="section-number">6</div>
+                        <h2 class="section-title">자주 묻는 질문</h2>
+                        <p class="section-desc">마케팅 성과 대시보드 사용 중 궁금한 점을 해결하세요.</p>
+                    </div>
+
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>탭을 전환하면 차트와 테이블도 바뀌나요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    네, 맞습니다. <strong>전체/일별/주별/월별</strong> 탭을 전환하면
+                                    KPI 카드, 차트, 테이블이 모두 해당 집계 단위로 변경됩니다.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>증감율이 "-"로 표시되는 이유는 무엇인가요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    직전 기간 데이터가 없거나, 직전 기간 값이 0인 경우,
+                                    또는 데이터가 1개 기간만 있는 경우에 "-"로 표시됩니다.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>CPA/CPC 증가가 왜 빨간색인가요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    <strong>CPA(전환당 비용)</strong>와 <strong>CPC(클릭당 비용)</strong>는
+                                    <strong>낮을수록 효율적</strong>인 지표입니다. 따라서 증가 시 빨간색으로 표시됩니다.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 광고 소재별 분석 대시보드 ==================== -->
+        <div class="dashboard-section" id="dashboard-creative">
+            <header class="dashboard-header creative">
+                <div class="dashboard-header-content">
+                    <div class="dashboard-badge">
+                        <span>🎨</span>
+                        <span>Growthmaker Creative Analytics</span>
+                    </div>
+                    <h1 class="dashboard-title">광고 소재별 분석<br>사용자 가이드</h1>
+                    <p class="dashboard-desc">
+                        광고 소재(이미지/영상)별 성과를 분석하고,
+                        최적의 크리에이티브를 발굴하여 광고 효율을 극대화하세요.
+                    </p>
+                    <span class="dashboard-version">📘 Guide v1.0 · Last Updated: 2025.12</span>
+                </div>
+            </header>
+
+            <nav class="section-nav">
+                <div class="section-nav-container">
+                    <div class="section-nav-item active" onclick="showSection('creative', 'intro')">시작하기</div>
+                    <div class="section-nav-item" onclick="showSection('creative', 'filter')">필터 설정</div>
+                    <div class="section-nav-item" onclick="showSection('creative', 'kpi-filter')">KPI 필터</div>
+                    <div class="section-nav-item" onclick="showSection('creative', 'grid')">소재 그리드</div>
+                    <div class="section-nav-item" onclick="showSection('creative', 'modal')">세부 성과</div>
+                    <div class="section-nav-item" onclick="showSection('creative', 'faq')">FAQ</div>
+                </div>
+            </nav>
+
+            <div class="dashboard-content">
+                <!-- 시작하기 -->
+                <div class="content-section active" id="creative-intro">
+                    <div class="section-header">
+                        <div class="section-number">1</div>
+                        <h2 class="section-title">대시보드 시작하기</h2>
+                        <p class="section-desc">광고 소재별 분석 대시보드의 핵심 기능과 구조를 알아봅니다.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);">🎨</div>
+                            <div>
+                                <h3 class="card-title">이 대시보드는 무엇을 위한 건가요?</h3>
+                                <p class="card-subtitle">광고 크리에이티브 성과 분석의 핵심 허브</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 14px; color: var(--grey-700); line-height: 1.8; margin-bottom: 20px;">
+                            광고 소재별 분석 대시보드는 <strong>이미지, 영상 등 광고 크리에이티브</strong>별로
+                            성과를 분석하는 대시보드입니다. 어떤 소재가 가장 효율적인지,
+                            어떤 소재에 예산을 집중해야 하는지 <strong>데이터 기반으로 의사결정</strong>할 수 있습니다.
+                        </p>
+
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <div class="feature-icon">🖼️</div>
+                                <div class="feature-name">소재 썸네일 그리드</div>
+                                <div class="feature-desc">소재 이미지와 핵심 KPI를 카드 형태로 한눈에 확인</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">🔍</div>
+                                <div class="feature-name">다단계 필터링</div>
+                                <div class="feature-desc">유형→브랜드→상품→프로모션→캠페인→광고세트 계층 필터</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">📊</div>
+                                <div class="feature-name">KPI 조건 필터</div>
+                                <div class="feature-desc">ROAS > 200%, CPA < 10,000원 등 조건부 필터링</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">📈</div>
+                                <div class="feature-name">성과 추이 차트</div>
+                                <div class="feature-desc">소재별 일별/주별/월별 성과 추이 시각화</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 필터 설정 -->
+                <div class="content-section" id="creative-filter">
+                    <div class="section-header">
+                        <div class="section-number">2</div>
+                        <h2 class="section-title">필터 설정</h2>
+                        <p class="section-desc">다단계 필터로 원하는 소재만 정확하게 찾아보세요.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);">🔧</div>
+                            <div>
+                                <h3 class="card-title">필터 설정 영역 (접기/펼치기)</h3>
+                                <p class="card-subtitle">기간 선택 + 기본 필터 + 세부 필터</p>
+                            </div>
+                        </div>
+
+                        <div class="filter-hierarchy">
+                            <div class="filter-level">유형구분</div>
+                            <span class="filter-arrow">→</span>
+                            <div class="filter-level">브랜드명</div>
+                            <span class="filter-arrow">→</span>
+                            <div class="filter-level">상품명</div>
+                            <span class="filter-arrow">→</span>
+                            <div class="filter-level">프로모션</div>
+                            <span class="filter-arrow">→</span>
+                            <div class="filter-level">캠페인</div>
+                            <span class="filter-arrow">→</span>
+                            <div class="filter-level">광고세트</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 필터 -->
+                <div class="content-section" id="creative-kpi-filter">
+                    <div class="section-header">
+                        <div class="section-number">3</div>
+                        <h2 class="section-title">KPI 기준 필터 + 정렬</h2>
+                        <p class="section-desc">성과 조건으로 우수 소재를 빠르게 찾아보세요.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);">🎯</div>
+                            <div>
+                                <h3 class="card-title">KPI 조건 필터링</h3>
+                                <p class="card-subtitle">최대 3개 조건을 조합하여 필터링할 수 있습니다</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 18px;">
+                            <strong>"ROAS가 200% 이상이면서 CPA가 15,000원 이하인 소재"</strong>처럼
+                            복합 조건으로 우수 소재만 필터링할 수 있습니다.
+                        </p>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">지원 KPI 지표</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn">비용</button>
+                                <button class="demo-btn">노출</button>
+                                <button class="demo-btn">클릭</button>
+                                <button class="demo-btn">전환수</button>
+                                <button class="demo-btn">CPC</button>
+                                <button class="demo-btn">CPA</button>
+                                <button class="demo-btn active">ROAS</button>
+                            </div>
+                        </div>
+
+                        <div class="callout info">
+                            <div class="callout-icon">ℹ️</div>
+                            <div class="callout-content">
+                                <div class="callout-title">조건 연산자 설명</div>
+                                <div class="callout-text">
+                                    • <strong>&gt; (보다 큼)</strong>: 기준값 초과<br>
+                                    • <strong>&lt; (보다 작음)</strong>: 기준값 미만<br>
+                                    • <strong>≥ (크거나 같음)</strong>: 기준값 이상<br>
+                                    • <strong>≤ (작거나 같음)</strong>: 기준값 이하
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 소재 그리드 -->
+                <div class="content-section" id="creative-grid">
+                    <div class="section-header">
+                        <div class="section-number">4</div>
+                        <h2 class="section-title">소재 그리드</h2>
+                        <p class="section-desc">소재 이미지와 핵심 KPI를 카드 형태로 확인하세요.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);">🖼️</div>
+                            <div>
+                                <h3 class="card-title">소재 카드 구조</h3>
+                                <p class="card-subtitle">썸네일 + 소재명 + 핵심 KPI 4가지</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 18px;">
+                            각 소재 카드는 <strong>이미지 썸네일</strong>, <strong>소재 이름</strong>,
+                            <strong>비용/CPC/CPA/ROAS</strong> 4가지 핵심 KPI로 구성됩니다.
+                        </p>
+
+                        <div class="kpi-demo-grid">
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">💰 비용</div>
+                                <div class="kpi-value">₩2.5M</div>
+                            </div>
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">🖱️ CPC</div>
+                                <div class="kpi-value">₩850</div>
+                            </div>
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">🎯 CPA</div>
+                                <div class="kpi-value">₩12,500</div>
+                            </div>
+                            <div class="kpi-demo-card highlight">
+                                <div class="kpi-label">📈 ROAS</div>
+                                <div class="kpi-value">245%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 세부 성과 -->
+                <div class="content-section" id="creative-modal">
+                    <div class="section-header">
+                        <div class="section-number">5</div>
+                        <h2 class="section-title">세부 성과 모달</h2>
+                        <p class="section-desc">소재별 상세 성과와 추이를 분석하세요.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);">📊</div>
+                            <div>
+                                <h3 class="card-title">모달 구성</h3>
+                                <p class="card-subtitle">KPI 카드 + 성과 추이 차트 + 상세 데이터 테이블</p>
+                            </div>
+                            <span class="badge chart">Chart.js</span>
+                        </div>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">집계 단위</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">일별</button>
+                                <button class="demo-btn">주별</button>
+                                <button class="demo-btn">월별</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ -->
+                <div class="content-section" id="creative-faq">
+                    <div class="section-header">
+                        <div class="section-number">6</div>
+                        <h2 class="section-title">자주 묻는 질문</h2>
+                        <p class="section-desc">광고 소재별 분석 대시보드 사용 중 궁금한 점을 해결하세요.</p>
+                    </div>
+
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>소재 이미지가 표시되지 않아요</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    광고가 삭제/비활성화된 경우, 이미지 URL이 만료된 경우,
+                                    또는 네트워크 문제로 로드 실패한 경우 이미지가 표시되지 않을 수 있습니다.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>KPI 필터를 여러 개 설정하면 어떻게 적용되나요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    KPI 필터는 최대 3개 조건을 설정할 수 있으며,
+                                    "또는 (OR)"과 "그리고 (AND)" 연산자로 조합됩니다.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 채널별 분석 대시보드 ==================== -->
+        <div class="dashboard-section" id="dashboard-type">
+            <header class="dashboard-header type">
+                <div class="dashboard-header-content">
+                    <div class="dashboard-badge">
+                        <span>📊</span>
+                        <span>Growthmaker Dashboard</span>
+                    </div>
+                    <h1 class="dashboard-title">채널별 분석 대시보드<br>사용자 가이드</h1>
+                    <p class="dashboard-desc">
+                        브랜드/상품/프로모션별 광고 성과를 한눈에 분석하세요.
+                        AI 기반 인사이트로 데이터 드리븐 의사결정을 시작합니다.
+                    </p>
+                    <span class="dashboard-version">📘 Guide v1.0 · Last Updated: 2025.12</span>
+                </div>
+            </header>
+
+            <nav class="section-nav">
+                <div class="section-nav-container">
+                    <div class="section-nav-item active" onclick="showSection('type', 'intro')">시작하기</div>
+                    <div class="section-nav-item" onclick="showSection('type', 'kpi')">KPI 카드</div>
+                    <div class="section-nav-item" onclick="showSection('type', 'toggle')">토글 & 필터</div>
+                    <div class="section-nav-item" onclick="showSection('type', 'insights')">AI 인사이트</div>
+                    <div class="section-nav-item" onclick="showSection('type', 'analysis')">분석 기능</div>
+                    <div class="section-nav-item" onclick="showSection('type', 'faq')">FAQ</div>
+                </div>
+            </nav>
+
+            <div class="dashboard-content">
+                <!-- 시작하기 -->
+                <div class="content-section active" id="type-intro">
+                    <div class="section-header">
+                        <div class="section-number">1</div>
+                        <h2 class="section-title">대시보드 시작하기</h2>
+                        <p class="section-desc">채널별 분석 대시보드의 기본 구조와 주요 기능을 알아봅니다.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">🎯</div>
+                            <div>
+                                <h3 class="card-title">이 대시보드는 무엇을 위한 건가요?</h3>
+                                <p class="card-subtitle">광고 성과 분석의 핵심 허브</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 14px; color: var(--grey-700); line-height: 1.8; margin-bottom: 20px;">
+                            채널별 분석 대시보드는 <strong>Meta, Google, Naver, Kakao</strong> 등 다양한 광고 채널의 성과를
+                            브랜드, 상품, 프로모션 단위로 분석할 수 있는 통합 대시보드입니다.
+                        </p>
+
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <div class="feature-icon">📈</div>
+                                <div class="feature-name">실시간 KPI 모니터링</div>
+                                <div class="feature-desc">ROAS, CPA, CPC 등 핵심 지표를 한눈에 확인</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">🤖</div>
+                                <div class="feature-name">AI 인사이트</div>
+                                <div class="feature-desc">자동화된 분석으로 액션 포인트 도출</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">🔮</div>
+                                <div class="feature-name">Prophet 예측</div>
+                                <div class="feature-desc">30일 후 성과를 예측하여 선제적 대응</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">🎯</div>
+                                <div class="feature-name">리타겟팅 분석</div>
+                                <div class="feature-desc">성별/연령/기기별 타겟 성과 비교</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 카드 -->
+                <div class="content-section" id="type-kpi">
+                    <div class="section-header">
+                        <div class="section-number">2</div>
+                        <h2 class="section-title">KPI 카드 이해하기</h2>
+                        <p class="section-desc">핵심 성과 지표를 빠르게 파악하는 방법을 알아봅니다.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📊</div>
+                            <div>
+                                <h3 class="card-title">주요 성과 vs 세부 성과</h3>
+                                <p class="card-subtitle">토글 버튼으로 원하는 수준의 정보를 확인하세요</p>
+                            </div>
+                        </div>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">토글 버튼</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">주요 성과</button>
+                                <button class="demo-btn">세부 성과</button>
+                            </div>
+                        </div>
+
+                        <div class="kpi-demo-grid">
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">💰 총 비용</div>
+                                <div class="kpi-value">₩22.9M</div>
+                            </div>
+                            <div class="kpi-demo-card highlight">
+                                <div class="kpi-label">📈 ROAS</div>
+                                <div class="kpi-value">177.1%</div>
+                            </div>
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">🎯 CPA</div>
+                                <div class="kpi-value">₩15,234</div>
+                            </div>
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">🖱️ CPC</div>
+                                <div class="kpi-value">₩892</div>
+                            </div>
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">👁️ CPM</div>
+                                <div class="kpi-value">₩4,521</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 토글 & 필터 -->
+                <div class="content-section" id="type-toggle">
+                    <div class="section-header">
+                        <div class="section-number">3</div>
+                        <h2 class="section-title">토글 & 필터 활용하기</h2>
+                        <p class="section-desc">다양한 토글과 필터 기능으로 원하는 데이터를 조회하세요.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📅</div>
+                            <div>
+                                <h3 class="card-title">기간 필터</h3>
+                                <p class="card-subtitle">분석 기간을 전체/180일/90일 중 선택하세요</p>
+                            </div>
+                        </div>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">기간 필터</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">전체 기간</button>
+                                <button class="demo-btn">최근 180일</button>
+                                <button class="demo-btn">최근 90일</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI 인사이트 -->
+                <div class="content-section" id="type-insights">
+                    <div class="section-header">
+                        <div class="section-number">4</div>
+                        <h2 class="section-title">AI 인사이트 활용하기</h2>
+                        <p class="section-desc">AI가 분석한 핵심 인사이트와 추천 사항을 확인하세요.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">🤖</div>
+                            <div>
+                                <h3 class="card-title">AI 컨설턴트 종합 진단</h3>
+                                <p class="card-subtitle">오늘의 광고 성과를 한 문장으로 요약합니다</p>
+                            </div>
+                            <span class="badge ai">AI 기반</span>
+                        </div>
+
+                        <div class="insight-demo">
+                            <div class="insight-item success">
+                                <div class="insight-type">성과 우수</div>
+                                <div class="insight-message">A 브랜드의 ROAS가 245%로 평균 대비 38% 높습니다</div>
+                            </div>
+                            <div class="insight-item warning">
+                                <div class="insight-type">주의 필요</div>
+                                <div class="insight-message">B 상품의 CPA가 지난 7일간 42% 상승했습니다</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 분석 기능 -->
+                <div class="content-section" id="type-analysis">
+                    <div class="section-header">
+                        <div class="section-number">5</div>
+                        <h2 class="section-title">분석 기능 상세</h2>
+                        <p class="section-desc">다양한 분석 기능을 활용하여 심층적인 인사이트를 얻으세요.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📈</div>
+                            <div>
+                                <h3 class="card-title">성과 추이 분석</h3>
+                                <p class="card-subtitle">시간에 따른 성과 변화를 시각화합니다</p>
+                            </div>
+                        </div>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">분석 탭</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">광고세트 추이</button>
+                                <button class="demo-btn">성별 추이</button>
+                                <button class="demo-btn">연령 추이</button>
+                                <button class="demo-btn">플랫폼 추이</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ -->
+                <div class="content-section" id="type-faq">
+                    <div class="section-header">
+                        <div class="section-number">6</div>
+                        <h2 class="section-title">자주 묻는 질문</h2>
+                        <p class="section-desc">대시보드 사용 중 궁금한 점을 해결하세요.</p>
+                    </div>
+
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>AI 예측은 얼마나 정확한가요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    AI 예측은 과거 데이터 패턴을 학습하여 미래를 예측합니다.
+                                    데이터가 많을수록, 패턴이 일정할수록 정확도가 높습니다.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>ROAS가 100% 미만이면 문제가 있는 건가요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    ROAS 100% 미만은 광고비보다 매출이 적다는 의미입니다.
+                                    단, 브랜드 인지도 캠페인이나 신규 고객 확보 목적의 광고는
+                                    단기 ROAS보다 LTV를 고려해야 합니다.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== AARRR 퍼널 분석 대시보드 ==================== -->
+        <div class="dashboard-section" id="dashboard-funnel">
+            <header class="dashboard-header funnel">
+                <div class="dashboard-header-content">
+                    <div class="dashboard-badge">
+                        <span>🔻</span>
+                        <span>Growthmaker Funnel Analytics</span>
+                    </div>
+                    <h1 class="dashboard-title">AARRR 퍼널 분석<br>사용자 가이드</h1>
+                    <p class="dashboard-desc">
+                        고객 여정의 각 단계별 전환율을 분석하고,
+                        이탈 구간을 파악하여 성장 기회를 발굴하세요.
+                    </p>
+                    <span class="dashboard-version">📘 Guide v1.0 · Last Updated: 2025.12</span>
+                </div>
+            </header>
+
+            <nav class="section-nav">
+                <div class="section-nav-container">
+                    <div class="section-nav-item active" onclick="showSection('funnel', 'intro')">시작하기</div>
+                    <div class="section-nav-item" onclick="showSection('funnel', 'funnel')">퍼널 차트</div>
+                    <div class="section-nav-item" onclick="showSection('funnel', 'metrics')">단계별 지표</div>
+                    <div class="section-nav-item" onclick="showSection('funnel', 'analysis')">분석 활용</div>
+                    <div class="section-nav-item" onclick="showSection('funnel', 'faq')">FAQ</div>
+                </div>
+            </nav>
+
+            <div class="dashboard-content">
+                <!-- 시작하기 -->
+                <div class="content-section active" id="funnel-intro">
+                    <div class="section-header">
+                        <div class="section-number">1</div>
+                        <h2 class="section-title">대시보드 시작하기</h2>
+                        <p class="section-desc">AARRR 퍼널 분석 대시보드의 핵심 기능을 알아봅니다.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">🔻</div>
+                            <div>
+                                <h3 class="card-title">AARRR 퍼널이란?</h3>
+                                <p class="card-subtitle">성장 분석을 위한 핵심 프레임워크</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 14px; color: var(--grey-700); line-height: 1.8; margin-bottom: 20px;">
+                            AARRR은 <strong>Acquisition(획득) → Activation(활성화) → Retention(유지) →
+                            Revenue(수익) → Referral(추천)</strong>의 5단계로 구성된 성장 분석 프레임워크입니다.
+                        </p>
+
+                        <div class="funnel-demo">
+                            <div class="funnel-stage">
+                                <div class="funnel-bar">
+                                    <span class="funnel-label">Acquisition</span>
+                                    <span class="funnel-value">100%</span>
+                                </div>
+                            </div>
+                            <div class="funnel-stage">
+                                <div class="funnel-bar">
+                                    <span class="funnel-label">Activation</span>
+                                    <span class="funnel-value">75%</span>
+                                </div>
+                            </div>
+                            <div class="funnel-stage">
+                                <div class="funnel-bar">
+                                    <span class="funnel-label">Retention</span>
+                                    <span class="funnel-value">50%</span>
+                                </div>
+                            </div>
+                            <div class="funnel-stage">
+                                <div class="funnel-bar">
+                                    <span class="funnel-label">Revenue</span>
+                                    <span class="funnel-value">30%</span>
+                                </div>
+                            </div>
+                            <div class="funnel-stage">
+                                <div class="funnel-bar">
+                                    <span class="funnel-label">Referral</span>
+                                    <span class="funnel-value">20%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 퍼널 차트 -->
+                <div class="content-section" id="funnel-funnel">
+                    <div class="section-header">
+                        <div class="section-number">2</div>
+                        <h2 class="section-title">퍼널 차트</h2>
+                        <p class="section-desc">각 단계별 전환율을 시각화하여 확인합니다.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">📊</div>
+                            <div>
+                                <h3 class="card-title">퍼널 시각화</h3>
+                                <p class="card-subtitle">단계별 이탈률과 전환율을 한눈에 확인</p>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">📊</div>
+                            <div class="screenshot-label">퍼널 차트 영역</div>
+                            <div class="screenshot-hint">각 단계별 전환율과 이탈률 시각화</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 단계별 지표 -->
+                <div class="content-section" id="funnel-metrics">
+                    <div class="section-header">
+                        <div class="section-number">3</div>
+                        <h2 class="section-title">단계별 지표</h2>
+                        <p class="section-desc">각 퍼널 단계의 상세 지표를 확인합니다.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">📈</div>
+                            <div>
+                                <h3 class="card-title">핵심 지표</h3>
+                                <p class="card-subtitle">전환율, 이탈률, 평균 체류 시간 등</p>
+                            </div>
+                        </div>
+
+                        <div class="kpi-demo-grid">
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">Acquisition</div>
+                                <div class="kpi-value">10,000</div>
+                            </div>
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">Activation</div>
+                                <div class="kpi-value">7,500</div>
+                            </div>
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">Retention</div>
+                                <div class="kpi-value">5,000</div>
+                            </div>
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">Revenue</div>
+                                <div class="kpi-value">3,000</div>
+                            </div>
+                            <div class="kpi-demo-card highlight">
+                                <div class="kpi-label">Referral</div>
+                                <div class="kpi-value">2,000</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 분석 활용 -->
+                <div class="content-section" id="funnel-analysis">
+                    <div class="section-header">
+                        <div class="section-number">4</div>
+                        <h2 class="section-title">분석 활용</h2>
+                        <p class="section-desc">퍼널 데이터를 활용한 개선 전략을 수립하세요.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">💡</div>
+                            <div>
+                                <h3 class="card-title">이탈 구간 분석</h3>
+                                <p class="card-subtitle">가장 많은 이탈이 발생하는 구간을 파악하세요</p>
+                            </div>
+                        </div>
+
+                        <div class="callout tip">
+                            <div class="callout-icon">💡</div>
+                            <div class="callout-content">
+                                <div class="callout-title">퍼널 최적화 Tip</div>
+                                <div class="callout-text">
+                                    이탈률이 가장 높은 단계에 집중하여 UX 개선, 콘텐츠 최적화,
+                                    리타겟팅 캠페인 등을 진행하면 효과적으로 전환율을 높일 수 있습니다.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ -->
+                <div class="content-section" id="funnel-faq">
+                    <div class="section-header">
+                        <div class="section-number">5</div>
+                        <h2 class="section-title">자주 묻는 질문</h2>
+                        <p class="section-desc">퍼널 분석 대시보드 사용 중 궁금한 점을 해결하세요.</p>
+                    </div>
+
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>퍼널 데이터는 어디서 가져오나요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    GA4, 광고 플랫폼, 자체 CRM 데이터 등 다양한 소스에서
+                                    수집된 데이터를 통합하여 퍼널 분석에 활용합니다.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 시계열 분석 대시보드 ==================== -->
+        <div class="dashboard-section" id="dashboard-timeseries">
+            <header class="dashboard-header timeseries">
+                <div class="dashboard-header-content">
+                    <div class="dashboard-badge">
+                        <span>📉</span>
+                        <span>Growthmaker Time Series Analytics</span>
+                    </div>
+                    <h1 class="dashboard-title">시계열 데이터 분석<br>사용자 가이드</h1>
+                    <p class="dashboard-desc">
+                        시간에 따른 성과 변화를 분석하고 추세를 파악하세요.
+                        예측 모델을 통해 미래 성과를 예측할 수 있습니다.
+                    </p>
+                    <span class="dashboard-version">📘 Guide v1.0 · Last Updated: 2025.12</span>
+                </div>
+            </header>
+
+            <nav class="section-nav">
+                <div class="section-nav-container">
+                    <div class="section-nav-item active" onclick="showSection('timeseries', 'intro')">시작하기</div>
+                    <div class="section-nav-item" onclick="showSection('timeseries', 'chart')">차트 분석</div>
+                    <div class="section-nav-item" onclick="showSection('timeseries', 'trend')">추세 분석</div>
+                    <div class="section-nav-item" onclick="showSection('timeseries', 'forecast')">예측</div>
+                    <div class="section-nav-item" onclick="showSection('timeseries', 'faq')">FAQ</div>
+                </div>
+            </nav>
+
+            <div class="dashboard-content">
+                <!-- 시작하기 -->
+                <div class="content-section active" id="timeseries-intro">
+                    <div class="section-header">
+                        <div class="section-number">1</div>
+                        <h2 class="section-title">대시보드 시작하기</h2>
+                        <p class="section-desc">시계열 데이터 분석 대시보드의 핵심 기능을 알아봅니다.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">📉</div>
+                            <div>
+                                <h3 class="card-title">시계열 분석이란?</h3>
+                                <p class="card-subtitle">시간 순서에 따른 데이터 패턴 분석</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 14px; color: var(--grey-700); line-height: 1.8; margin-bottom: 20px;">
+                            시계열 분석은 <strong>시간에 따른 데이터의 변화 패턴</strong>을 분석하는 방법입니다.
+                            트렌드, 계절성, 주기성 등을 파악하여 미래 성과를 예측할 수 있습니다.
+                        </p>
+
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <div class="feature-icon">📈</div>
+                                <div class="feature-name">트렌드 분석</div>
+                                <div class="feature-desc">장기적인 성과 변화 추세 파악</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">🔄</div>
+                                <div class="feature-name">계절성 분석</div>
+                                <div class="feature-desc">주기적으로 반복되는 패턴 식별</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">🔮</div>
+                                <div class="feature-name">예측 모델</div>
+                                <div class="feature-desc">미래 성과 예측 및 시나리오 분석</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">⚠️</div>
+                                <div class="feature-name">이상치 감지</div>
+                                <div class="feature-desc">비정상적인 데이터 포인트 탐지</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 차트 분석 -->
+                <div class="content-section" id="timeseries-chart">
+                    <div class="section-header">
+                        <div class="section-number">2</div>
+                        <h2 class="section-title">차트 분석</h2>
+                        <p class="section-desc">시계열 데이터를 다양한 차트로 시각화합니다.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">📊</div>
+                            <div>
+                                <h3 class="card-title">시계열 차트</h3>
+                                <p class="card-subtitle">일별/주별/월별 성과 추이 시각화</p>
+                            </div>
+                        </div>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">집계 단위</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">일별</button>
+                                <button class="demo-btn">주별</button>
+                                <button class="demo-btn">월별</button>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">📈</div>
+                            <div class="screenshot-label">시계열 차트 영역</div>
+                            <div class="screenshot-hint">라인 차트로 시간에 따른 변화 시각화</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 추세 분석 -->
+                <div class="content-section" id="timeseries-trend">
+                    <div class="section-header">
+                        <div class="section-number">3</div>
+                        <h2 class="section-title">추세 분석</h2>
+                        <p class="section-desc">장기적인 성과 변화 추세를 파악합니다.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">📈</div>
+                            <div>
+                                <h3 class="card-title">추세선 분석</h3>
+                                <p class="card-subtitle">이동 평균 및 추세선으로 방향성 파악</p>
+                            </div>
+                        </div>
+
+                        <div class="insight-demo">
+                            <div class="insight-item success">
+                                <div class="insight-type">상승 추세</div>
+                                <div class="insight-message">ROAS가 최근 30일간 15% 상승 추세입니다</div>
+                            </div>
+                            <div class="insight-item warning">
+                                <div class="insight-type">하락 추세</div>
+                                <div class="insight-message">전환율이 최근 7일간 5% 하락했습니다</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 예측 -->
+                <div class="content-section" id="timeseries-forecast">
+                    <div class="section-header">
+                        <div class="section-number">4</div>
+                        <h2 class="section-title">예측</h2>
+                        <p class="section-desc">미래 성과를 예측하고 시나리오를 분석합니다.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">🔮</div>
+                            <div>
+                                <h3 class="card-title">Prophet 예측</h3>
+                                <p class="card-subtitle">30일 후 성과 예측</p>
+                            </div>
+                            <span class="badge ai">AI 기반</span>
+                        </div>
+
+                        <div class="callout info">
+                            <div class="callout-icon">ℹ️</div>
+                            <div class="callout-content">
+                                <div class="callout-title">예측 모델 설명</div>
+                                <div class="callout-text">
+                                    Facebook의 Prophet 알고리즘을 사용하여 시계열 데이터의 트렌드,
+                                    계절성, 휴일 효과 등을 학습하고 미래 값을 예측합니다.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ -->
+                <div class="content-section" id="timeseries-faq">
+                    <div class="section-header">
+                        <div class="section-number">5</div>
+                        <h2 class="section-title">자주 묻는 질문</h2>
+                        <p class="section-desc">시계열 분석 대시보드 사용 중 궁금한 점을 해결하세요.</p>
+                    </div>
+
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>예측 정확도는 어떻게 되나요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    예측 정확도는 데이터의 양과 패턴의 일관성에 따라 달라집니다.
+                                    일반적으로 MAPE(평균 절대 퍼센트 오차) 기준으로 평가하며,
+                                    10% 이내면 우수한 예측으로 판단합니다.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="guide-footer">
+            <div class="footer-logo">Growthmaker</div>
+            <p class="footer-desc">데이터를 통해 진단하고, 기술로 실행하며, 전략으로 성장시키는 Growth Partner</p>
+            <div class="footer-links">
+                <a href="https://blog.growthmaker.kr" class="footer-link" target="_blank">Blog</a>
+                <a href="mailto:support@growthmaker.kr" class="footer-link">Contact</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // Current state
+        let currentDashboard = 'marketing';
+        let currentSection = 'intro';
+
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Toggle sub navigation
+        function toggleSubNav(element) {
+            const dashboard = element.getAttribute('data-dashboard');
+            const subNav = document.getElementById('sub-' + dashboard);
+
+            // Close all other sub navs
+            document.querySelectorAll('.nav-sub').forEach(nav => {
+                if (nav.id !== 'sub-' + dashboard) {
+                    nav.classList.remove('open');
+                }
+            });
+
+            // Toggle current sub nav
+            subNav.classList.toggle('open');
+
+            // Navigate to dashboard intro
+            navigateTo(dashboard, 'intro');
+        }
+
+        // Navigate to specific dashboard and section
+        function navigateTo(dashboard, section) {
+            currentDashboard = dashboard;
+            currentSection = section;
+
+            // Update dashboard visibility
+            document.querySelectorAll('.dashboard-section').forEach(d => {
+                d.classList.remove('active');
+            });
+            document.getElementById('dashboard-' + dashboard).classList.add('active');
+
+            // Update section visibility
+            showSection(dashboard, section);
+
+            // Update sidebar active states
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector('.nav-link[data-dashboard="' + dashboard + '"]').classList.add('active');
+
+            document.querySelectorAll('.nav-sub-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Close sidebar on mobile
+            if (window.innerWidth <= 1024) {
+                document.getElementById('sidebar').classList.remove('open');
+            }
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Show specific section within dashboard
+        function showSection(dashboard, section) {
+            currentSection = section;
+
+            // Update section visibility
+            const dashboardEl = document.getElementById('dashboard-' + dashboard);
+            dashboardEl.querySelectorAll('.content-section').forEach(s => {
+                s.classList.remove('active');
+            });
+            document.getElementById(dashboard + '-' + section).classList.add('active');
+
+            // Update section nav
+            dashboardEl.querySelectorAll('.section-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            dashboardEl.querySelectorAll('.section-nav-item').forEach(item => {
+                if (item.textContent.toLowerCase().includes(getSectionName(section).toLowerCase()) ||
+                    item.onclick.toString().includes(section)) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // Get section display name
+        function getSectionName(section) {
+            const names = {
+                'intro': '시작하기',
+                'filter': '필터',
+                'kpi': 'KPI',
+                'chart': '차트',
+                'table': '테이블',
+                'faq': 'FAQ',
+                'kpi-filter': 'KPI 필터',
+                'grid': '그리드',
+                'modal': '세부 성과',
+                'toggle': '토글',
+                'insights': '인사이트',
+                'analysis': '분석',
+                'funnel': '퍼널',
+                'metrics': '지표',
+                'trend': '추세',
+                'forecast': '예측'
+            };
+            return names[section] || section;
+        }
+
+        // Toggle FAQ
+        function toggleFaq(btn) {
+            const item = btn.parentElement;
+            item.classList.toggle('open');
+        }
+
+        // Initialize - open first sub nav
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('sub-marketing').classList.add('open');
+        });
+    </script>
+</body>
+</html>

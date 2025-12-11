@@ -1,0 +1,2001 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>광고 소재별 분석 대시보드 사용자 가이드 | Growthmaker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gm-primary: #673ab7;
+            --gm-primary-dark: #5e35b1;
+            --gm-secondary: #2196f3;
+            --gm-gradient: linear-gradient(135deg, #673ab7 0%, #9c27b0 100%);
+            --gm-gradient-soft: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);
+            --gm-success: #00c853;
+            --gm-warning: #ff9800;
+            --gm-error: #ef5350;
+            --gm-info: #2196f3;
+            --grey-50: #fafafa;
+            --grey-100: #f5f5f5;
+            --grey-200: #eeeeee;
+            --grey-300: #e0e0e0;
+            --grey-500: #9e9e9e;
+            --grey-600: #757575;
+            --grey-700: #616161;
+            --grey-800: #424242;
+            --grey-900: #212121;
+            --paper: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--grey-50);
+            color: var(--grey-800);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* Header */
+        .guide-header {
+            background: linear-gradient(135deg, #673ab7 0%, #9c27b0 100%);
+            color: white;
+            padding: 60px 24px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .guide-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .guide-header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 24px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .guide-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .guide-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .version-tag {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Navigation */
+        .guide-nav {
+            background: var(--paper);
+            border-bottom: 1px solid var(--grey-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .nav-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-item {
+            padding: 16px 20px;
+            color: var(--grey-600);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            color: var(--gm-primary);
+        }
+
+        .nav-item.active {
+            color: var(--gm-primary);
+            border-bottom-color: var(--gm-primary);
+        }
+
+        /* Main Content */
+        .guide-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 60px;
+            scroll-margin-top: 80px;
+        }
+
+        .section-header {
+            margin-bottom: 32px;
+        }
+
+        .section-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--gm-gradient);
+            color: white;
+            border-radius: 50%;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin-bottom: 8px;
+        }
+
+        .section-desc {
+            font-size: 15px;
+            color: var(--grey-600);
+        }
+
+        /* Card */
+        .card {
+            background: var(--paper);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--grey-200);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--grey-600);
+        }
+
+        /* Screenshot Placeholder */
+        .screenshot-placeholder {
+            background: linear-gradient(135deg, #f8f9fc 0%, #eef1f7 100%);
+            border: 2px dashed var(--grey-300);
+            border-radius: var(--radius-md);
+            padding: 48px 24px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .screenshot-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.6;
+        }
+
+        .screenshot-label {
+            font-size: 14px;
+            color: var(--grey-500);
+            font-weight: 500;
+        }
+
+        .screenshot-hint {
+            font-size: 12px;
+            color: var(--grey-500);
+            margin-top: 4px;
+        }
+
+        /* Step Guide */
+        .step-guide {
+            counter-reset: step;
+        }
+
+        .step {
+            display: flex;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--grey-100);
+        }
+
+        .step:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            counter-increment: step;
+            width: 32px;
+            height: 32px;
+            background: var(--gm-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-number::before {
+            content: counter(step);
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 6px;
+        }
+
+        .step-desc {
+            font-size: 14px;
+            color: var(--grey-600);
+            line-height: 1.6;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .feature-item {
+            background: var(--grey-50);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid var(--grey-200);
+        }
+
+        .feature-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .feature-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 6px;
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: var(--grey-600);
+            line-height: 1.5;
+        }
+
+        /* Toggle Demo */
+        .toggle-demo {
+            background: var(--grey-50);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin: 16px 0;
+        }
+
+        .toggle-demo-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .toggle-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .demo-btn {
+            padding: 10px 20px;
+            border: 1px solid var(--grey-300);
+            background: white;
+            color: var(--grey-700);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .demo-btn:hover {
+            border-color: var(--gm-primary);
+            color: var(--gm-primary);
+        }
+
+        .demo-btn.active {
+            background: var(--gm-primary);
+            color: white;
+            border-color: var(--gm-primary);
+        }
+
+        .demo-btn.period {
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        /* Creative Card Demo */
+        .creative-demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .creative-demo-card {
+            background: white;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--grey-200);
+            transition: all 0.2s;
+        }
+
+        .creative-demo-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .creative-demo-image {
+            width: 100%;
+            height: 140px;
+            background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            opacity: 0.6;
+        }
+
+        .creative-demo-info {
+            padding: 16px;
+        }
+
+        .creative-demo-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .creative-demo-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .creative-metric {
+            font-size: 12px;
+        }
+
+        .creative-metric-label {
+            color: var(--grey-500);
+        }
+
+        .creative-metric-value {
+            font-weight: 600;
+            color: var(--grey-800);
+        }
+
+        /* KPI Summary Demo */
+        .kpi-summary-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .kpi-summary-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--grey-200);
+        }
+
+        .kpi-summary-card.highlight {
+            border-left: 4px solid var(--gm-primary);
+        }
+
+        .kpi-summary-label {
+            font-size: 12px;
+            color: var(--grey-600);
+            margin-bottom: 8px;
+        }
+
+        .kpi-summary-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .kpi-summary-card.highlight .kpi-summary-value {
+            color: var(--gm-primary);
+        }
+
+        /* Filter Hierarchy */
+        .filter-hierarchy {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 16px;
+            background: var(--grey-50);
+            border-radius: var(--radius-md);
+            margin: 16px 0;
+        }
+
+        .filter-level {
+            padding: 8px 16px;
+            background: white;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--grey-700);
+            border: 1px solid var(--grey-300);
+        }
+
+        .filter-arrow {
+            color: var(--grey-400);
+            font-size: 18px;
+        }
+
+        /* KPI Filter Demo */
+        .kpi-filter-demo {
+            background: white;
+            border: 1px solid var(--grey-200);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin: 16px 0;
+        }
+
+        .kpi-filter-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .kpi-filter-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .kpi-filter-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--grey-700);
+            min-width: 60px;
+        }
+
+        .kpi-filter-select {
+            padding: 8px 12px;
+            border: 1px solid var(--grey-300);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--grey-700);
+            background: white;
+        }
+
+        .kpi-filter-input {
+            padding: 8px 12px;
+            border: 1px solid var(--grey-300);
+            border-radius: 6px;
+            font-size: 13px;
+            width: 100px;
+        }
+
+        .kpi-filter-toggle {
+            padding: 6px 14px;
+            background: var(--gm-success);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Modal Demo */
+        .modal-demo {
+            background: var(--grey-100);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .modal-demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-demo-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .modal-demo-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--grey-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--grey-600);
+        }
+
+        .modal-kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .modal-kpi-card {
+            background: white;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+        }
+
+        .modal-kpi-label {
+            font-size: 11px;
+            color: var(--grey-500);
+            margin-bottom: 4px;
+        }
+
+        .modal-kpi-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        /* Chart Color Legend */
+        .chart-color-legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 16px;
+            background: var(--grey-50);
+            border-radius: var(--radius-md);
+            margin: 16px 0;
+        }
+
+        .color-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--grey-700);
+        }
+
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .color-dot.cost { background: #673ab7; }
+        .color-dot.cpm { background: #9c27b0; }
+        .color-dot.cpc { background: #2196f3; }
+        .color-dot.cpa { background: #ff9800; }
+        .color-dot.roas { background: #00c853; }
+
+        /* Callout Box */
+        .callout {
+            padding: 20px 24px;
+            border-radius: var(--radius-md);
+            margin: 20px 0;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .callout.tip {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border: 1px solid #c8e6c9;
+        }
+
+        .callout.warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #fff8e1 100%);
+            border: 1px solid #ffe0b2;
+        }
+
+        .callout.info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #e8f4fd 100%);
+            border: 1px solid #bbdefb;
+        }
+
+        .callout.creative {
+            background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);
+            border: 1px solid #e1bee7;
+        }
+
+        .callout-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .callout-content {
+            flex: 1;
+        }
+
+        .callout-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .callout.tip .callout-title { color: #2e7d32; }
+        .callout.warning .callout-title { color: #e65100; }
+        .callout.info .callout-title { color: #1565c0; }
+        .callout.creative .callout-title { color: #7b1fa2; }
+
+        .callout-text {
+            font-size: 14px;
+            color: var(--grey-700);
+            line-height: 1.6;
+        }
+
+        /* Tab Overview */
+        .tab-overview {
+            margin: 24px 0;
+        }
+
+        .tab-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--grey-50);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+
+        .tab-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-info {
+            flex: 1;
+        }
+
+        .tab-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-900);
+        }
+
+        .tab-desc {
+            font-size: 13px;
+            color: var(--grey-600);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge.new {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge.creative {
+            background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);
+            color: #7b1fa2;
+        }
+
+        .badge.chart {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1565c0;
+        }
+
+        /* FAQ */
+        .faq-list {
+            margin-top: 24px;
+        }
+
+        .faq-item {
+            border: 1px solid var(--grey-200);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 20px 24px;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--grey-900);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .faq-question:hover {
+            background: var(--grey-50);
+        }
+
+        .faq-icon {
+            font-size: 20px;
+            color: var(--grey-500);
+            transition: transform 0.3s;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer-content {
+            padding: 0 24px 20px;
+            font-size: 14px;
+            color: var(--grey-700);
+            line-height: 1.7;
+        }
+
+        /* Table Demo */
+        .table-demo {
+            width: 100%;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        .table-demo table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .table-demo th {
+            background: var(--grey-100);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--grey-700);
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .table-demo td {
+            padding: 12px;
+            border-bottom: 1px solid var(--grey-100);
+            color: var(--grey-800);
+        }
+
+        .table-demo tr:hover {
+            background: var(--grey-50);
+        }
+
+        /* Footer */
+        .guide-footer {
+            background: var(--grey-900);
+            color: white;
+            padding: 48px 24px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .footer-desc {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 24px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: white;
+            opacity: 0.7;
+            text-decoration: none;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .guide-title {
+                font-size: 28px;
+            }
+
+            .guide-subtitle {
+                font-size: 15px;
+            }
+
+            .section-title {
+                font-size: 22px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kpi-summary-demo {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modal-kpi-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .creative-demo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-hierarchy {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filter-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* Print */
+        @media print {
+            .guide-nav {
+                display: none;
+            }
+
+            .section {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="guide-header">
+        <div class="header-content">
+            <div class="brand-badge">
+                <span>🎨</span>
+                <span>Growthmaker Creative Analytics</span>
+            </div>
+            <h1 class="guide-title">광고 소재별 분석<br>대시보드 사용자 가이드</h1>
+            <p class="guide-subtitle">
+                광고 소재(이미지/영상)별 성과를 분석하고,
+                최적의 크리에이티브를 발굴하여 광고 효율을 극대화하세요.
+            </p>
+            <span class="version-tag">📘 Guide v1.0 · Last Updated: 2025.12</span>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="guide-nav">
+        <div class="nav-container">
+            <a href="#intro" class="nav-item active">시작하기</a>
+            <a href="#filter" class="nav-item">필터 설정</a>
+            <a href="#kpi-filter" class="nav-item">KPI 필터</a>
+            <a href="#grid" class="nav-item">소재 그리드</a>
+            <a href="#modal" class="nav-item">세부 성과</a>
+            <a href="#faq" class="nav-item">FAQ</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="guide-content">
+        <!-- Section 1: 시작하기 -->
+        <section id="intro" class="section">
+            <div class="section-header">
+                <div class="section-number">1</div>
+                <h2 class="section-title">대시보드 시작하기</h2>
+                <p class="section-desc">광고 소재별 분석 대시보드의 핵심 기능과 구조를 알아봅니다.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎨</div>
+                    <div>
+                        <h3 class="card-title">이 대시보드는 무엇을 위한 건가요?</h3>
+                        <p class="card-subtitle">광고 크리에이티브 성과 분석의 핵심 허브</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); line-height: 1.8; margin-bottom: 24px;">
+                    광고 소재별 분석 대시보드는 <strong>이미지, 영상 등 광고 크리에이티브</strong>별로 
+                    성과를 분석하는 대시보드입니다. 어떤 소재가 가장 효율적인지, 
+                    어떤 소재에 예산을 집중해야 하는지 <strong>데이터 기반으로 의사결정</strong>할 수 있습니다.
+                </p>
+
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">🖼️</div>
+                        <div class="feature-name">소재 썸네일 그리드</div>
+                        <div class="feature-desc">소재 이미지와 핵심 KPI를 카드 형태로 한눈에 확인</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🔍</div>
+                        <div class="feature-name">다단계 필터링</div>
+                        <div class="feature-desc">유형→브랜드→상품→프로모션→캠페인→광고세트 계층 필터</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-name">KPI 조건 필터</div>
+                        <div class="feature-desc">ROAS > 200%, CPA < 10,000원 등 조건부 필터링</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📈</div>
+                        <div class="feature-name">성과 추이 차트</div>
+                        <div class="feature-desc">소재별 일별/주별/월별 성과 추이 시각화</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🗂️</div>
+                    <div>
+                        <h3 class="card-title">대시보드 구성</h3>
+                        <p class="card-subtitle">5개의 핵심 영역으로 구성되어 있습니다</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">대시보드 전체 레이아웃 스크린샷</div>
+                    <div class="screenshot-hint">필터 + KPI 요약 + 소재 그리드가 보이는 화면</div>
+                </div>
+
+                <div class="tab-overview">
+                    <div class="tab-row">
+                        <div class="tab-icon">🔧</div>
+                        <div class="tab-info">
+                            <div class="tab-name">필터 설정 (접기/펼치기)</div>
+                            <div class="tab-desc">기간, 유형구분, 브랜드, 상품, 프로모션, 캠페인, 광고세트, 소재 검색</div>
+                        </div>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">🎯</div>
+                        <div class="tab-info">
+                            <div class="tab-name">KPI 기준 필터 + 정렬 설정</div>
+                            <div class="tab-desc">KPI 조건 필터링 (최대 3개 조건), 정렬 기준/순서 설정</div>
+                        </div>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">📊</div>
+                        <div class="tab-info">
+                            <div class="tab-name">요약 KPI 카드</div>
+                            <div class="tab-desc">총 비용, 평균 CPM, CPC, CPA, ROAS</div>
+                        </div>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">🖼️</div>
+                        <div class="tab-info">
+                            <div class="tab-name">소재 그리드</div>
+                            <div class="tab-desc">소재 이미지 썸네일과 KPI 카드 형태로 표시</div>
+                        </div>
+                        <span class="badge creative">핵심</span>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">📈</div>
+                        <div class="tab-info">
+                            <div class="tab-name">세부 성과 모달</div>
+                            <div class="tab-desc">소재 클릭 시 일별/주별/월별 상세 분석 모달</div>
+                        </div>
+                        <span class="badge chart">Chart.js</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 요약 KPI 카드 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div>
+                        <h3 class="card-title">요약 KPI 카드</h3>
+                        <p class="card-subtitle">필터링된 소재들의 집계 성과를 한눈에 확인하세요</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    현재 필터 조건에 맞는 소재들의 <strong>총 비용, 평균 CPM, CPC, CPA, ROAS</strong>를 
+                    요약 카드로 보여줍니다. 필터를 변경하면 실시간으로 업데이트됩니다.
+                </p>
+
+                <div class="kpi-summary-demo">
+                    <div class="kpi-summary-card">
+                        <div class="kpi-summary-label">💰 총 비용</div>
+                        <div class="kpi-summary-value">₩45.2M</div>
+                    </div>
+                    <div class="kpi-summary-card">
+                        <div class="kpi-summary-label">👁️ 평균 CPM</div>
+                        <div class="kpi-summary-value">₩4,850</div>
+                    </div>
+                    <div class="kpi-summary-card">
+                        <div class="kpi-summary-label">🖱️ 평균 CPC</div>
+                        <div class="kpi-summary-value">₩920</div>
+                    </div>
+                    <div class="kpi-summary-card">
+                        <div class="kpi-summary-label">🎯 평균 CPA</div>
+                        <div class="kpi-summary-value">₩14,200</div>
+                    </div>
+                    <div class="kpi-summary-card highlight">
+                        <div class="kpi-summary-label">📈 평균 ROAS</div>
+                        <div class="kpi-summary-value">185%</div>
+                    </div>
+                </div>
+
+                <div class="callout tip">
+                    <div class="callout-icon">💡</div>
+                    <div class="callout-content">
+                        <div class="callout-title">주니어 마케터를 위한 Tip</div>
+                        <div class="callout-text">
+                            <strong>ROAS(광고 수익률)</strong>가 100% 이상이면 광고비 대비 수익이 발생한 것입니다.
+                            예를 들어, ROAS 185%는 1원 투자 시 1.85원의 수익이 발생했다는 의미입니다.
+                            일반적으로 <strong>200% 이상</strong>을 효율적인 소재로 판단합니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: 필터 설정 -->
+        <section id="filter" class="section">
+            <div class="section-header">
+                <div class="section-number">2</div>
+                <h2 class="section-title">필터 설정</h2>
+                <p class="section-desc">다단계 필터로 원하는 소재만 정확하게 찾아보세요.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🔧</div>
+                    <div>
+                        <h3 class="card-title">필터 설정 영역 (접기/펼치기)</h3>
+                        <p class="card-subtitle">기간 선택 + 기본 필터 + 세부 필터</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    필터 설정 섹션은 <strong>접기/펼치기</strong>가 가능합니다. 
+                    세부 필터링이 필요할 때만 펼쳐서 사용하세요.
+                </p>
+
+                <div class="callout creative">
+                    <div class="callout-icon">💜</div>
+                    <div class="callout-content">
+                        <div class="callout-title">가이드 텍스트</div>
+                        <div class="callout-text">
+                            접혀있을 때 <strong>"* 펼쳐서 세부 성과를 필터링할 수 있어요"</strong> 안내 문구가 표시됩니다.
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                    📅 기간 선택
+                </h4>
+                <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                    시작일과 종료일을 선택하면 해당 기간의 데이터만 표시됩니다.
+                    데이터 로드 시 자동으로 전체 기간이 설정됩니다.
+                </p>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">기간 선택 + 기본 필터 스크린샷</div>
+                    <div class="screenshot-hint">날짜 선택과 유형/브랜드/상품/프로모션 필터</div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                    🔗 필터 계층 구조
+                </h4>
+                <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                    필터는 계층 구조로 작동합니다. 상위 필터를 선택하면 하위 필터 옵션이 자동으로 갱신됩니다.
+                </p>
+
+                <div class="filter-hierarchy">
+                    <div class="filter-level">유형구분</div>
+                    <span class="filter-arrow">→</span>
+                    <div class="filter-level">브랜드명</div>
+                    <span class="filter-arrow">→</span>
+                    <div class="filter-level">상품명</div>
+                    <span class="filter-arrow">→</span>
+                    <div class="filter-level">프로모션</div>
+                    <span class="filter-arrow">→</span>
+                    <div class="filter-level">캠페인</div>
+                    <span class="filter-arrow">→</span>
+                    <div class="filter-level">광고세트</div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                    🔍 세부 필터
+                </h4>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">세부 필터 항목</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn">캠페인</button>
+                        <button class="demo-btn">광고세트</button>
+                        <button class="demo-btn active">소재 검색</button>
+                    </div>
+                </div>
+
+                <p style="font-size: 14px; color: var(--grey-600); margin-top: 16px;">
+                    <strong>소재 검색</strong>은 소재 이름에 특정 키워드가 포함된 소재만 필터링합니다.
+                    예: "여름" 검색 시 "여름_프로모션_배너_01", "2024여름시즌" 등이 표시됩니다.
+                </p>
+
+                <div class="callout tip">
+                    <div class="callout-icon">💡</div>
+                    <div class="callout-content">
+                        <div class="callout-title">필터 활용 Tip</div>
+                        <div class="callout-text">
+                            특정 프로모션의 소재 성과만 비교하고 싶다면, 
+                            <strong>프로모션 필터</strong>를 먼저 선택하세요.
+                            해당 프로모션에 사용된 모든 소재가 표시되어 A/B 테스트 결과를 쉽게 비교할 수 있습니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: KPI 기준 필터 -->
+        <section id="kpi-filter" class="section">
+            <div class="section-header">
+                <div class="section-number">3</div>
+                <h2 class="section-title">KPI 기준 필터 + 정렬</h2>
+                <p class="section-desc">성과 조건으로 우수 소재를 빠르게 찾아보세요.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <div>
+                        <h3 class="card-title">KPI 조건 필터링</h3>
+                        <p class="card-subtitle">최대 3개 조건을 조합하여 필터링할 수 있습니다</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    <strong>"ROAS가 200% 이상이면서 CPA가 15,000원 이하인 소재"</strong>처럼 
+                    복합 조건으로 우수 소재만 필터링할 수 있습니다.
+                </p>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
+                    📌 지원 KPI 지표
+                </h4>
+                <div class="toggle-demo">
+                    <div class="toggle-buttons">
+                        <button class="demo-btn">비용</button>
+                        <button class="demo-btn">노출</button>
+                        <button class="demo-btn">클릭</button>
+                        <button class="demo-btn">전환수</button>
+                        <button class="demo-btn">전환값</button>
+                        <button class="demo-btn">CPC</button>
+                        <button class="demo-btn">CPA</button>
+                        <button class="demo-btn active">ROAS</button>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                    🔧 조건 필터 예시
+                </h4>
+
+                <div class="kpi-filter-demo">
+                    <div class="kpi-filter-row">
+                        <span class="kpi-filter-label">조건 1</span>
+                        <select class="kpi-filter-select">
+                            <option>ROAS</option>
+                        </select>
+                        <select class="kpi-filter-select">
+                            <option>≥ (크거나 같음)</option>
+                        </select>
+                        <input type="text" class="kpi-filter-input" value="200" />
+                        <select class="kpi-filter-select">
+                            <option>그리고 (AND)</option>
+                        </select>
+                    </div>
+                    <div class="kpi-filter-row">
+                        <span class="kpi-filter-label">조건 2</span>
+                        <select class="kpi-filter-select">
+                            <option>CPA</option>
+                        </select>
+                        <select class="kpi-filter-select">
+                            <option>≤ (작거나 같음)</option>
+                        </select>
+                        <input type="text" class="kpi-filter-input" value="15000" />
+                        <select class="kpi-filter-select">
+                            <option>없음</option>
+                        </select>
+                    </div>
+                    <div class="kpi-filter-row">
+                        <span class="kpi-filter-label">상태</span>
+                        <button class="kpi-filter-toggle">ON</button>
+                    </div>
+                </div>
+
+                <div class="callout info">
+                    <div class="callout-icon">ℹ️</div>
+                    <div class="callout-content">
+                        <div class="callout-title">조건 연산자 설명</div>
+                        <div class="callout-text">
+                            • <strong>&gt; (보다 큼)</strong>: 기준값 초과<br>
+                            • <strong>&lt; (보다 작음)</strong>: 기준값 미만<br>
+                            • <strong>≥ (크거나 같음)</strong>: 기준값 이상<br>
+                            • <strong>≤ (작거나 같음)</strong>: 기준값 이하<br>
+                            • <strong>= (같음)</strong>: 기준값과 정확히 일치
+                        </div>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">KPI 필터 + 정렬 설정 스크린샷</div>
+                    <div class="screenshot-hint">좌측 KPI 필터, 우측 정렬 설정이 보이는 화면</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📋</div>
+                    <div>
+                        <h3 class="card-title">정렬 설정</h3>
+                        <p class="card-subtitle">원하는 기준으로 소재 순서를 정렬하세요</p>
+                    </div>
+                </div>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">정렬 기준</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn">비용</button>
+                        <button class="demo-btn">노출</button>
+                        <button class="demo-btn">클릭</button>
+                        <button class="demo-btn">전환수</button>
+                        <button class="demo-btn">전환값</button>
+                        <button class="demo-btn">CPC</button>
+                        <button class="demo-btn">CPA</button>
+                        <button class="demo-btn active">ROAS</button>
+                    </div>
+                </div>
+
+                <div class="toggle-demo" style="margin-top: 12px;">
+                    <div class="toggle-demo-label">정렬 순서</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">내림차순 (높은 순)</button>
+                        <button class="demo-btn">오름차순 (낮은 순)</button>
+                    </div>
+                </div>
+
+                <div class="callout tip">
+                    <div class="callout-icon">💡</div>
+                    <div class="callout-content">
+                        <div class="callout-title">정렬 활용 Tip</div>
+                        <div class="callout-text">
+                            <strong>ROAS 내림차순</strong>: 가장 효율적인 소재를 상단에 배치<br>
+                            <strong>비용 내림차순</strong>: 예산이 많이 투입된 소재를 상단에 배치<br>
+                            <strong>CPA 오름차순</strong>: 전환 비용이 낮은 소재를 상단에 배치
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: 소재 그리드 -->
+        <section id="grid" class="section">
+            <div class="section-header">
+                <div class="section-number">4</div>
+                <h2 class="section-title">소재 그리드</h2>
+                <p class="section-desc">소재 이미지와 핵심 KPI를 카드 형태로 확인하세요.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🖼️</div>
+                    <div>
+                        <h3 class="card-title">소재 카드 구조</h3>
+                        <p class="card-subtitle">썸네일 + 소재명 + 핵심 KPI 4가지</p>
+                    </div>
+                    <span class="badge creative">핵심 기능</span>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    각 소재 카드는 <strong>이미지 썸네일</strong>, <strong>소재 이름</strong>, 
+                    <strong>비용/CPC/CPA/ROAS</strong> 4가지 핵심 KPI로 구성됩니다.
+                    카드를 클릭하면 세부 성과 모달이 열립니다.
+                </p>
+
+                <div class="creative-demo-grid">
+                    <div class="creative-demo-card">
+                        <div class="creative-demo-image">🖼️</div>
+                        <div class="creative-demo-info">
+                            <div class="creative-demo-name">여름_프로모션_배너_01</div>
+                            <div class="creative-demo-metrics">
+                                <div class="creative-metric">
+                                    <div class="creative-metric-label">비용</div>
+                                    <div class="creative-metric-value">₩2.5M</div>
+                                </div>
+                                <div class="creative-metric">
+                                    <div class="creative-metric-label">CPC</div>
+                                    <div class="creative-metric-value">₩850</div>
+                                </div>
+                                <div class="creative-metric">
+                                    <div class="creative-metric-label">CPA</div>
+                                    <div class="creative-metric-value">₩12,500</div>
+                                </div>
+                                <div class="creative-metric">
+                                    <div class="creative-metric-label">ROAS</div>
+                                    <div class="creative-metric-value" style="color: #00c853;">245%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="creative-demo-card">
+                        <div class="creative-demo-image">🎬</div>
+                        <div class="creative-demo-info">
+                            <div class="creative-demo-name">신제품_런칭_영상_15s</div>
+                            <div class="creative-demo-metrics">
+                                <div class="creative-metric">
+                                    <div class="creative-metric-label">비용</div>
+                                    <div class="creative-metric-value">₩4.8M</div>
+                                </div>
+                                <div class="creative-metric">
+                                    <div class="creative-metric-label">CPC</div>
+                                    <div class="creative-metric-value">₩720</div>
+                                </div>
+                                <div class="creative-metric">
+                                    <div class="creative-metric-label">CPA</div>
+                                    <div class="creative-metric-value">₩9,800</div>
+                                </div>
+                                <div class="creative-metric">
+                                    <div class="creative-metric-label">ROAS</div>
+                                    <div class="creative-metric-value" style="color: #00c853;">312%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="creative-demo-card">
+                        <div class="creative-demo-image">🖼️</div>
+                        <div class="creative-demo-info">
+                            <div class="creative-demo-name">가을_컬렉션_카드뉴스</div>
+                            <div class="creative-demo-metrics">
+                                <div class="creative-metric">
+                                    <div class="creative-metric-label">비용</div>
+                                    <div class="creative-metric-value">₩1.2M</div>
+                                </div>
+                                <div class="creative-metric">
+                                    <div class="creative-metric-label">CPC</div>
+                                    <div class="creative-metric-value">₩1,100</div>
+                                </div>
+                                <div class="creative-metric">
+                                    <div class="creative-metric-label">CPA</div>
+                                    <div class="creative-metric-value">₩18,500</div>
+                                </div>
+                                <div class="creative-metric">
+                                    <div class="creative-metric-label">ROAS</div>
+                                    <div class="creative-metric-value" style="color: #ff9800;">142%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">소재 그리드 실제 스크린샷</div>
+                    <div class="screenshot-hint">여러 소재 카드가 그리드로 배치된 화면</div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                    🔗 이미지 URL 처리
+                </h4>
+                <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                    소재 이미지는 다음 우선순위로 로드됩니다.
+                    이미지 로드 실패 시 자동으로 대체 이미지가 표시됩니다.
+                </p>
+
+                <div style="padding: 16px; background: var(--grey-50); border-radius: var(--radius-md); margin: 16px 0;">
+                    <div style="font-size: 14px; color: var(--grey-700);">
+                        <strong>1순위:</strong> Facebook Ads / YouTube 썸네일<br>
+                        <strong>2순위:</strong> Scontent / Google 광고 이미지<br>
+                        <strong>3순위:</strong> 기타 URL<br>
+                        <strong>실패 시:</strong> "이미지 로드 실패" 플레이스홀더 표시
+                    </div>
+                </div>
+
+                <div class="callout tip">
+                    <div class="callout-icon">💡</div>
+                    <div class="callout-content">
+                        <div class="callout-title">소재 카드 활용 Tip</div>
+                        <div class="callout-text">
+                            이미지를 클릭하면 <strong>원본 URL이 새 탭에서 열립니다</strong>.
+                            광고 플랫폼에서 실제 소재를 확인하고 싶을 때 활용하세요.
+                            카드 전체를 클릭하면 세부 성과 모달이 열립니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: 세부 성과 모달 -->
+        <section id="modal" class="section">
+            <div class="section-header">
+                <div class="section-number">5</div>
+                <h2 class="section-title">세부 성과 모달</h2>
+                <p class="section-desc">소재별 상세 성과와 추이를 분석하세요.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div>
+                        <h3 class="card-title">모달 구성</h3>
+                        <p class="card-subtitle">KPI 카드 + 성과 추이 차트 + 상세 데이터 테이블</p>
+                    </div>
+                    <span class="badge chart">Chart.js</span>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    소재 카드를 클릭하면 해당 소재의 <strong>세부 성과 모달</strong>이 열립니다.
+                    일별/주별/월별 집계 단위를 선택하여 다양한 관점에서 분석할 수 있습니다.
+                </p>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">집계 단위</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">일별</button>
+                        <button class="demo-btn">주별</button>
+                        <button class="demo-btn">월별</button>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                    📊 KPI 카드 (2행)
+                </h4>
+
+                <div class="modal-demo">
+                    <div class="modal-demo-header">
+                        <div class="modal-demo-title">여름_프로모션_배너_01</div>
+                        <div class="modal-demo-close">✕</div>
+                    </div>
+                    <div class="modal-kpi-row">
+                        <div class="modal-kpi-card">
+                            <div class="modal-kpi-label">💰 비용</div>
+                            <div class="modal-kpi-value">₩2,450,000</div>
+                        </div>
+                        <div class="modal-kpi-card">
+                            <div class="modal-kpi-label">🖱️ CPC</div>
+                            <div class="modal-kpi-value">₩850</div>
+                        </div>
+                        <div class="modal-kpi-card">
+                            <div class="modal-kpi-label">🎯 CPA</div>
+                            <div class="modal-kpi-value">₩12,500</div>
+                        </div>
+                        <div class="modal-kpi-card" style="background: #f3e5f5;">
+                            <div class="modal-kpi-label">📈 ROAS</div>
+                            <div class="modal-kpi-value" style="color: #673ab7;">245%</div>
+                        </div>
+                    </div>
+                    <div class="modal-kpi-row">
+                        <div class="modal-kpi-card">
+                            <div class="modal-kpi-label">👁️ 노출</div>
+                            <div class="modal-kpi-value">520,000</div>
+                        </div>
+                        <div class="modal-kpi-card">
+                            <div class="modal-kpi-label">👆 클릭</div>
+                            <div class="modal-kpi-value">2,882</div>
+                        </div>
+                        <div class="modal-kpi-card">
+                            <div class="modal-kpi-label">✅ 전환수</div>
+                            <div class="modal-kpi-value">196</div>
+                        </div>
+                        <div class="modal-kpi-card">
+                            <div class="modal-kpi-label">💵 전환값</div>
+                            <div class="modal-kpi-value">₩6,002,500</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📈</div>
+                    <div>
+                        <h3 class="card-title">성과 추이 차트</h3>
+                        <p class="card-subtitle">시간에 따른 KPI 변화를 시각화합니다</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    체크박스로 표시할 지표를 선택하세요. 
+                    <strong>듀얼 Y축</strong>을 지원하여 단위가 다른 지표도 함께 비교할 수 있습니다.
+                </p>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">차트 지표 선택</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">☑️ 비용</button>
+                        <button class="demo-btn">☐ CPM</button>
+                        <button class="demo-btn active">☑️ CPC</button>
+                        <button class="demo-btn">☐ CPA</button>
+                        <button class="demo-btn">☐ ROAS</button>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                    🎨 지표별 색상
+                </h4>
+
+                <div class="chart-color-legend">
+                    <div class="color-item">
+                        <div class="color-dot cost"></div>
+                        <span>비용 (보라색)</span>
+                    </div>
+                    <div class="color-item">
+                        <div class="color-dot cpm"></div>
+                        <span>CPM (자주색)</span>
+                    </div>
+                    <div class="color-item">
+                        <div class="color-dot cpc"></div>
+                        <span>CPC (파란색)</span>
+                    </div>
+                    <div class="color-item">
+                        <div class="color-dot cpa"></div>
+                        <span>CPA (주황색)</span>
+                    </div>
+                    <div class="color-item">
+                        <div class="color-dot roas"></div>
+                        <span>ROAS (녹색)</span>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">성과 추이 차트 스크린샷</div>
+                    <div class="screenshot-hint">듀얼 Y축 라인 차트</div>
+                </div>
+
+                <div class="callout info">
+                    <div class="callout-icon">ℹ️</div>
+                    <div class="callout-content">
+                        <div class="callout-title">듀얼 Y축 작동 방식</div>
+                        <div class="callout-text">
+                            첫 번째 지표는 <strong>왼쪽 Y축</strong>, 두 번째 이상 지표는 <strong>오른쪽 Y축</strong>에 표시됩니다.
+                            비용과 ROAS처럼 단위가 다른 지표를 함께 볼 때 유용합니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📋</div>
+                    <div>
+                        <h3 class="card-title">상세 데이터 테이블</h3>
+                        <p class="card-subtitle">일별/주별/월별 상세 데이터를 테이블로 확인합니다</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    10개 컬럼으로 구성된 상세 테이블입니다. 
+                    "더보기" 버튼으로 전체 데이터를 펼쳐볼 수 있습니다.
+                </p>
+
+                <div class="table-demo">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>날짜</th>
+                                <th>비용</th>
+                                <th>노출</th>
+                                <th>CPM</th>
+                                <th>클릭</th>
+                                <th>CPC</th>
+                                <th>전환수</th>
+                                <th>CPA</th>
+                                <th>전환값</th>
+                                <th>ROAS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2025-12-01</td>
+                                <td>₩125,000</td>
+                                <td>28,500</td>
+                                <td>₩4,386</td>
+                                <td>156</td>
+                                <td>₩801</td>
+                                <td>12</td>
+                                <td>₩10,417</td>
+                                <td>₩320,000</td>
+                                <td style="color: #00c853; font-weight: 600;">256%</td>
+                            </tr>
+                            <tr>
+                                <td>2025-12-02</td>
+                                <td>₩142,000</td>
+                                <td>31,200</td>
+                                <td>₩4,551</td>
+                                <td>178</td>
+                                <td>₩798</td>
+                                <td>15</td>
+                                <td>₩9,467</td>
+                                <td>₩385,000</td>
+                                <td style="color: #00c853; font-weight: 600;">271%</td>
+                            </tr>
+                            <tr>
+                                <td>2025-12-03</td>
+                                <td>₩98,000</td>
+                                <td>22,100</td>
+                                <td>₩4,434</td>
+                                <td>112</td>
+                                <td>₩875</td>
+                                <td>8</td>
+                                <td>₩12,250</td>
+                                <td>₩195,000</td>
+                                <td style="color: #ff9800; font-weight: 600;">199%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="callout tip">
+                    <div class="callout-icon">💡</div>
+                    <div class="callout-content">
+                        <div class="callout-title">테이블 활용 Tip</div>
+                        <div class="callout-text">
+                            특정 날짜에 성과가 급변했다면, 해당 날짜에 <strong>크리에이티브 변경</strong>, 
+                            <strong>타겟팅 조정</strong>, <strong>시즌 이벤트</strong> 등의 외부 요인이 있었는지 확인하세요.
+                            패턴을 파악하면 향후 최적화에 활용할 수 있습니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: FAQ -->
+        <section id="faq" class="section">
+            <div class="section-header">
+                <div class="section-number">6</div>
+                <h2 class="section-title">자주 묻는 질문</h2>
+                <p class="section-desc">광고 소재별 분석 대시보드 사용 중 궁금한 점을 해결하세요.</p>
+            </div>
+
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>소재 이미지가 표시되지 않아요</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            소재 이미지는 광고 플랫폼(Facebook, Google 등)의 CDN에서 가져옵니다.
+                            다음 경우에 이미지가 표시되지 않을 수 있습니다:<br><br>
+                            • <strong>광고가 삭제/비활성화</strong>된 경우<br>
+                            • <strong>이미지 URL이 만료</strong>된 경우<br>
+                            • <strong>네트워크 문제</strong>로 로드 실패<br><br>
+                            이 경우 "이미지 로드 실패" 플레이스홀더가 표시됩니다.
+                            원본 URL이 있다면 클릭하여 직접 확인해 보세요.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>KPI 필터를 여러 개 설정하면 어떻게 적용되나요?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            KPI 필터는 최대 3개 조건을 설정할 수 있으며, 
+                            <strong>"또는 (OR)"</strong>과 <strong>"그리고 (AND)"</strong> 연산자로 조합됩니다.<br><br>
+                            예시: ROAS ≥ 200% <strong>그리고</strong> CPA ≤ 15,000<br>
+                            → 두 조건을 <strong>모두 만족</strong>하는 소재만 표시<br><br>
+                            예시: ROAS ≥ 300% <strong>또는</strong> 전환수 ≥ 50<br>
+                            → 두 조건 중 <strong>하나라도 만족</strong>하는 소재 표시
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>ROAS가 0%로 표시되는 소재는 무엇인가요?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            ROAS가 0%인 소재는 <strong>전환값(매출)이 0원</strong>인 경우입니다.<br><br>
+                            가능한 원인:<br>
+                            • 전환 추적이 제대로 설정되지 않음<br>
+                            • 아직 전환이 발생하지 않음 (러닝 초기)<br>
+                            • 전환값이 GA4/광고 플랫폼에 기록되지 않음<br><br>
+                            전환 추적 설정을 점검하거나, 충분한 러닝 기간이 지난 후 다시 확인하세요.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>소재 검색은 어떤 기준으로 검색되나요?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            소재 검색은 <strong>소재 이름에 검색어가 포함</strong>된 모든 소재를 찾습니다.
+                            (SQL의 LIKE '%검색어%' 방식)<br><br>
+                            예시: "여름" 검색 시<br>
+                            • 여름_프로모션_배너_01 ✓<br>
+                            • 2024여름시즌_영상 ✓<br>
+                            • summer_banner ✗ (한글 "여름" 미포함)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>차트에서 두 가지 지표를 동시에 보고 싶어요</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            세부 성과 모달의 차트에서 <strong>여러 체크박스를 동시에 선택</strong>하면 됩니다.<br><br>
+                            듀얼 Y축이 자동으로 활성화되어 단위가 다른 지표도 함께 표시됩니다:<br>
+                            • <strong>왼쪽 Y축</strong>: 첫 번째 선택한 지표<br>
+                            • <strong>오른쪽 Y축</strong>: 두 번째 이상 선택한 지표<br><br>
+                            예: 비용(왼쪽)과 ROAS(오른쪽)를 함께 보면 
+                            투자와 수익률의 관계를 한눈에 파악할 수 있습니다.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>소재 A/B 테스트 결과를 비교하고 싶어요</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            A/B 테스트 비교를 위한 추천 워크플로우:<br><br>
+                            1. <strong>캠페인 또는 광고세트 필터</strong>로 테스트 그룹 선택<br>
+                            2. <strong>ROAS 내림차순</strong>으로 정렬<br>
+                            3. 상위 소재들의 KPI 비교<br>
+                            4. 각 소재 클릭하여 <strong>일별 추이</strong> 확인<br><br>
+                            특정 기간의 테스트라면 <strong>날짜 필터</strong>를 함께 설정하세요.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>모달의 테이블 데이터를 내보낼 수 있나요?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            현재 버전에서는 테이블 데이터 내보내기 기능이 제공되지 않습니다.<br><br>
+                            임시 방법:<br>
+                            • 테이블을 <strong>마우스로 드래그</strong>하여 선택 후 복사 (Ctrl+C)<br>
+                            • Excel이나 Google Sheets에 붙여넣기<br><br>
+                            추후 업데이트에서 CSV 내보내기 기능이 추가될 예정입니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="callout info" style="margin-top: 32px;">
+                <div class="callout-icon">📞</div>
+                <div class="callout-content">
+                    <div class="callout-title">추가 문의</div>
+                    <div class="callout-text">
+                        이 가이드에서 해결되지 않은 궁금증이 있으시면 
+                        담당 Growth Manager에게 문의하시거나,
+                        <strong>support@growthmaker.kr</strong>로 이메일을 보내주세요.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="guide-footer">
+        <div class="footer-logo">Growthmaker</div>
+        <p class="footer-desc">데이터를 통해 진단하고, 기술로 실행하며, 전략으로 성장시키는 Growth Partner</p>
+        <div class="footer-links">
+            <a href="https://blog.growthmaker.kr" class="footer-link" target="_blank">Blog</a>
+            <a href="mailto:support@growthmaker.kr" class="footer-link">Contact</a>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ Toggle
+        function toggleFaq(btn) {
+            const item = btn.parentElement;
+            item.classList.toggle('open');
+        }
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('.nav-item').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Update active nav
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Update active nav on scroll
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.section');
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (pageYOffset >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            document.querySelectorAll('.nav-item').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

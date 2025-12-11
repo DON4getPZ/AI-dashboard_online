@@ -6,7 +6,7 @@ echo ===========================================================================
 echo Marketing Dashboard v3.0 - Auto Setup (Python 3.13 Compatible)
 echo ================================================================================
 echo.
-echo [1/11] Checking environment...
+echo [1/6] Checking environment...
 echo.
 
 REM Python check
@@ -34,28 +34,8 @@ if %MAJOR% LSS 3 (
     echo [WARNING] Python 3.13+ is recommended for best compatibility
 )
 
-REM Node.js check
-node --version >nul 2>&1
-if errorlevel 1 (
-    echo [ERROR] Node.js not installed
-    echo Please install Node.js 18+ from https://nodejs.org/
-    pause
-    exit /b 1
-)
-echo [OK] Node.js installed
-
-REM Git check
-git --version >nul 2>&1
-if errorlevel 1 (
-    echo [ERROR] Git not installed
-    echo Please install Git from https://git-scm.com/downloads
-    pause
-    exit /b 1
-)
-echo [OK] Git installed
-
 echo.
-echo [2/11] Enter configuration details
+echo [2/6] Enter configuration details
 echo.
 
 REM 기존 config.json이 있는지 확인
@@ -76,7 +56,8 @@ if exist config.json (
         echo    Worksheet: !WORKSHEET_NAME!
         echo.
 
-        goto CONFIG_DONE
+        REM 기존 config 사용 시 파일 재저장 건너뛰기
+        goto SKIP_CONFIG_SAVE
     )
 )
 
@@ -146,21 +127,14 @@ set /p WORKSHEET_NAME="Worksheet name (default: data_integration): "
 if "%WORKSHEET_NAME%"=="" set WORKSHEET_NAME=data_integration
 echo [OK] Worksheet: %WORKSHEET_NAME%
 
-set /p GITHUB_USERNAME="GitHub Username: "
-echo [OK] GitHub: %GITHUB_USERNAME%
-
-set /p REPO_NAME="Repository name (default: marketing-dashboard): "
-if "%REPO_NAME%"=="" set REPO_NAME=marketing-dashboard
-echo [OK] Repository: %REPO_NAME%
-
 :CONFIG_DONE
 
 echo.
-echo [3/11] Creating config file...
+echo [3/6] Creating config file...
 echo.
 
 REM Use PowerShell to create JSON properly
-powershell -Command "$config = @{google=@{credentials_path='%GOOGLE_JSON:\\=\\\\%';sheet_id='%SHEET_ID%';worksheet_name='%WORKSHEET_NAME%'};github=@{username='%GITHUB_USERNAME%';repository='%REPO_NAME%'};schedule=@{cron='30 1 * * *';description='Daily at 10:30 KST'}}; $config | ConvertTo-Json -Depth 10 | Out-File -Encoding UTF8 config.json"
+powershell -Command "$config = @{google=@{credentials_path='%GOOGLE_JSON:\=\\%';sheet_id='%SHEET_ID%';worksheet_name='%WORKSHEET_NAME%'}}; $config | ConvertTo-Json -Depth 10 | Out-File -Encoding UTF8 config.json"
 
 if exist config.json (
     echo [OK] config.json created
@@ -170,8 +144,10 @@ if exist config.json (
     exit /b 1
 )
 
+:SKIP_CONFIG_SAVE
+
 echo.
-echo [4/11] Upgrading pip to latest version...
+echo [4/6] Upgrading pip to latest version...
 echo.
 
 python -m pip install --upgrade pip
@@ -182,7 +158,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [5/11] Installing Python packages (Python 3.13 compatible)...
+echo [5/6] Installing Python packages (Python 3.13 compatible)...
 echo.
 echo This version uses Prophet with cmdstanpy backend for time series forecasting!
 echo.
@@ -205,7 +181,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [6/11] Verifying installed packages...
+echo Verifying installed packages...
 echo.
 
 python -c "import pandas; print('  - pandas:', pandas.__version__)"
@@ -251,44 +227,14 @@ if errorlevel 1 (
 )
 
 echo.
-echo [7/11] Installing Node.js packages...
+echo [6/6] Download data (optional)
 echo.
 
-cd react-app
-call npm install
-if errorlevel 1 (
-    echo [ERROR] npm install failed
-    cd ..
-    pause
-    exit /b 1
-)
-echo [OK] Node.js packages installed
-cd ..
-
-echo.
-echo [8/11] Creating environment variables...
-echo.
-
-REM Create .env.local
-(
-echo NEXT_PUBLIC_DATA_URL=https://raw.githubusercontent.com/%GITHUB_USERNAME%/%REPO_NAME%/main/data
-) > react-app\.env.local
-
-if exist react-app\.env.local (
-    echo [OK] .env.local created
-) else (
-    echo [ERROR] Failed to create .env.local
-)
-
-echo.
-echo [9/11] Local test (optional)
-echo.
-
-set /p RUN_TEST="Run data fetch test? (Y/N): "
+set /p RUN_TEST="Download data now? (Y/N): "
 if /i "%RUN_TEST%"=="Y" (
     echo.
     echo ========================================================================
-    echo Data Fetch Test
+    echo Downloading Data from Google Sheets
     echo ========================================================================
 
     REM Step 1: JSON 파일 유효성 검증
@@ -299,7 +245,7 @@ if /i "%RUN_TEST%"=="Y" (
     if not exist "%GOOGLE_JSON%" (
         echo [ERROR] JSON file not found: %GOOGLE_JSON%
         echo Please check the file path.
-        goto TEST_FAILED
+        goto DOWNLOAD_FAILED
     )
     echo [OK] JSON file exists
 
@@ -308,7 +254,7 @@ if /i "%RUN_TEST%"=="Y" (
     if errorlevel 1 (
         echo [ERROR] Invalid JSON format
         echo Please check your Service Account JSON file.
-        goto TEST_FAILED
+        goto DOWNLOAD_FAILED
     )
     echo [OK] JSON format valid
 
@@ -326,7 +272,7 @@ if /i "%RUN_TEST%"=="Y" (
         echo 1. Check file path has no special characters
         echo 2. Ensure file is readable
         echo 3. Try using a path without spaces
-        goto TEST_FAILED
+        goto DOWNLOAD_FAILED
     )
 
     set SHEET_ID=%SHEET_ID%
@@ -335,7 +281,6 @@ if /i "%RUN_TEST%"=="Y" (
     echo [OK] Environment variables set
     echo    - SHEET_ID: %SHEET_ID%
     echo    - WORKSHEET_NAME: %WORKSHEET_NAME%
-    echo    - GOOGLE_CREDENTIALS: [%GOOGLE_CREDENTIALS:~0,50%...]
 
     REM Step 3: Google Sheets 데이터 가져오기
     echo.
@@ -355,21 +300,21 @@ if /i "%RUN_TEST%"=="Y" (
         echo 4. Google Sheets API not enabled
         echo.
         echo Please check the error messages above.
-        goto TEST_FAILED
+        goto DOWNLOAD_FAILED
     )
 
     REM Step 4: 데이터 처리
-    if exist raw_data.csv (
+    if exist data\raw\raw_data.csv (
         echo.
         echo [OK] Data fetch successful!
 
         REM 파일 크기 확인
-        for %%F in (raw_data.csv) do set FILE_SIZE=%%~zF
+        for %%F in (data\raw\raw_data.csv) do set FILE_SIZE=%%~zF
         if !FILE_SIZE! LSS 100 (
             echo [WARNING] File size is very small: !FILE_SIZE! bytes
             echo The file might be empty or incomplete.
         ) else (
-            echo    - File: raw_data.csv
+            echo    - File: data\raw\raw_data.csv
             echo    - Size: !FILE_SIZE! bytes
         )
 
@@ -377,7 +322,7 @@ if /i "%RUN_TEST%"=="Y" (
         echo [Step 4] Processing marketing data...
         echo.
 
-        set INPUT_CSV_PATH=raw_data.csv
+        set INPUT_CSV_PATH=data\raw\raw_data.csv
         python scripts\process_marketing_data.py
 
         if errorlevel 1 (
@@ -389,11 +334,11 @@ if /i "%RUN_TEST%"=="Y" (
             echo 1. CSV format doesn't match expected structure
             echo 2. Required columns are missing
             echo 3. Data type conversion errors
-            goto TEST_FAILED
+            goto DOWNLOAD_FAILED
         ) else (
             echo.
             echo ====================================================================
-            echo [SUCCESS] Test completed successfully!
+            echo [SUCCESS] Download and processing completed successfully!
             echo ====================================================================
             echo.
             echo Generated files:
@@ -410,41 +355,46 @@ if /i "%RUN_TEST%"=="Y" (
                 echo    - data\forecast\predictions.csv (forecasts)
             )
             echo.
-            goto TEST_SUCCESS
+            goto DOWNLOAD_SUCCESS
         )
     ) else (
         echo.
-        echo [ERROR] raw_data.csv not created
+        echo [ERROR] data\raw\raw_data.csv not created
         echo Data fetch failed or returned no data.
-        goto TEST_FAILED
+        goto DOWNLOAD_FAILED
     )
 )
 
-goto TEST_END
+goto SETUP_COMPLETE
 
-:TEST_FAILED
+:DOWNLOAD_FAILED
 echo.
 echo ========================================================================
-echo [FAILED] Test did not complete successfully
+echo [FAILED] Download did not complete successfully
 echo ========================================================================
 echo.
-echo You can:
-echo 1. Check the error messages above
-echo 2. Verify your Google Service Account setup
-echo 3. Continue with GitHub setup anyway
+echo Please check:
+echo 1. Service Account has access to the sheet
+echo 2. Sheet ID is correct
+echo 3. Worksheet name exists
+echo 4. Google Sheets API is enabled
 echo.
-set /p CONTINUE_SETUP="Continue with GitHub setup? (Y/N): "
-if /i "%CONTINUE_SETUP%" NEQ "Y" (
-    echo.
-    echo Setup paused. Fix the issues and run setup_fixed.bat again.
-    pause
-    exit /b 1
-)
-goto TEST_END
+goto SETUP_COMPLETE
 
-:TEST_SUCCESS
-echo Setup will continue with GitHub repository creation...
+:DOWNLOAD_SUCCESS
+echo Download completed successfully!
+echo.
+
+:SETUP_COMPLETE
+echo.
+echo ================================================================================
+echo Setup Complete!
+echo ================================================================================
+echo.
+echo To download data manually, run:
+echo    python scripts\fetch_google_sheets.py
+echo.
+echo To process data, run:
+echo    python scripts\process_marketing_data.py
 echo.
 pause
-
-:TEST_END

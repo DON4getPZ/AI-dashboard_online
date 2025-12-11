@@ -1,0 +1,2083 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시계열 데이터 분석 대시보드 사용자 가이드 | Growthmaker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gm-primary: #667eea;
+            --gm-primary-dark: #5a67d8;
+            --gm-secondary: #764ba2;
+            --gm-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gm-gradient-soft: linear-gradient(135deg, #f0f4ff 0%, #faf5ff 100%);
+            --gm-success: #00c853;
+            --gm-warning: #f57c00;
+            --gm-error: #ef5350;
+            --gm-info: #1a73e8;
+            --grey-50: #fafafa;
+            --grey-100: #f5f5f5;
+            --grey-200: #eeeeee;
+            --grey-300: #e0e0e0;
+            --grey-500: #9e9e9e;
+            --grey-600: #757575;
+            --grey-700: #616161;
+            --grey-800: #424242;
+            --grey-900: #212121;
+            --paper: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--grey-50);
+            color: var(--grey-800);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* Header */
+        .guide-header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 60px 24px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .guide-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .guide-header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 24px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .guide-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .guide-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .version-tag {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Navigation */
+        .guide-nav {
+            background: var(--paper);
+            border-bottom: 1px solid var(--grey-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .nav-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-item {
+            padding: 16px 20px;
+            color: var(--grey-600);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            color: #11998e;
+        }
+
+        .nav-item.active {
+            color: #11998e;
+            border-bottom-color: #11998e;
+        }
+
+        /* Main Content */
+        .guide-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 60px;
+            scroll-margin-top: 80px;
+        }
+
+        .section-header {
+            margin-bottom: 32px;
+        }
+
+        .section-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border-radius: 50%;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin-bottom: 8px;
+        }
+
+        .section-desc {
+            font-size: 15px;
+            color: var(--grey-600);
+        }
+
+        /* Card */
+        .card {
+            background: var(--paper);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--grey-200);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--grey-600);
+        }
+
+        /* Screenshot Placeholder */
+        .screenshot-placeholder {
+            background: linear-gradient(135deg, #f8f9fc 0%, #eef1f7 100%);
+            border: 2px dashed var(--grey-300);
+            border-radius: var(--radius-md);
+            padding: 48px 24px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .screenshot-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.6;
+        }
+
+        .screenshot-label {
+            font-size: 14px;
+            color: var(--grey-500);
+            font-weight: 500;
+        }
+
+        .screenshot-hint {
+            font-size: 12px;
+            color: var(--grey-500);
+            margin-top: 4px;
+        }
+
+        /* Step Guide */
+        .step-guide {
+            counter-reset: step;
+        }
+
+        .step {
+            display: flex;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--grey-100);
+        }
+
+        .step:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            counter-increment: step;
+            width: 32px;
+            height: 32px;
+            background: #11998e;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-number::before {
+            content: counter(step);
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 6px;
+        }
+
+        .step-desc {
+            font-size: 14px;
+            color: var(--grey-600);
+            line-height: 1.6;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .feature-item {
+            background: var(--grey-50);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid var(--grey-200);
+        }
+
+        .feature-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .feature-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 6px;
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: var(--grey-600);
+            line-height: 1.5;
+        }
+
+        /* Toggle Demo */
+        .toggle-demo {
+            background: var(--grey-50);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin: 16px 0;
+        }
+
+        .toggle-demo-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .toggle-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .demo-btn {
+            padding: 10px 20px;
+            border: 1px solid var(--grey-300);
+            background: white;
+            color: var(--grey-700);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .demo-btn:hover {
+            border-color: #11998e;
+            color: #11998e;
+        }
+
+        .demo-btn.active {
+            background: #11998e;
+            color: white;
+            border-color: #11998e;
+        }
+
+        .demo-btn.period {
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .demo-btn.period.active {
+            background: var(--gm-info);
+            border-color: var(--gm-info);
+        }
+
+        .demo-btn.trend {
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .demo-btn.trend.active {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        /* Status Card Demo */
+        .status-card-demo {
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin: 20px 0;
+            color: white;
+        }
+
+        .status-card-demo.blue {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .status-card-demo.green {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .status-card-demo.yellow {
+            background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+        }
+
+        .status-card-demo.red {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        }
+
+        /* Insight Demo */
+        .insight-demo {
+            display: grid;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .insight-item {
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            border-left: 4px solid;
+        }
+
+        .insight-item.success {
+            background: #e8f5e9;
+            border-color: var(--gm-success);
+        }
+
+        .insight-item.warning {
+            background: #fff3e0;
+            border-color: var(--gm-warning);
+        }
+
+        .insight-item.error {
+            background: #ffebee;
+            border-color: var(--gm-error);
+        }
+
+        .insight-item.info {
+            background: #e3f2fd;
+            border-color: var(--gm-info);
+        }
+
+        .insight-type {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            opacity: 0.8;
+        }
+
+        .insight-message {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--grey-800);
+        }
+
+        /* KPI Demo */
+        .kpi-demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .kpi-demo-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--grey-200);
+        }
+
+        .kpi-demo-card.highlight {
+            border-left: 4px solid #11998e;
+        }
+
+        .kpi-demo-card.secondary {
+            background: var(--grey-50);
+        }
+
+        .kpi-label {
+            font-size: 11px;
+            color: var(--grey-600);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .kpi-demo-card.highlight .kpi-value {
+            color: #11998e;
+        }
+
+        .kpi-change {
+            font-size: 12px;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        .kpi-change.up {
+            color: var(--gm-success);
+        }
+
+        .kpi-change.down {
+            color: var(--gm-error);
+        }
+
+        /* Callout Box */
+        .callout {
+            padding: 20px 24px;
+            border-radius: var(--radius-md);
+            margin: 20px 0;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .callout.tip {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border: 1px solid #c8e6c9;
+        }
+
+        .callout.warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #fff8e1 100%);
+            border: 1px solid #ffe0b2;
+        }
+
+        .callout.info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #e8f4fd 100%);
+            border: 1px solid #bbdefb;
+        }
+
+        .callout-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .callout-content {
+            flex: 1;
+        }
+
+        .callout-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .callout.tip .callout-title { color: #2e7d32; }
+        .callout.warning .callout-title { color: #e65100; }
+        .callout.info .callout-title { color: #1565c0; }
+
+        .callout-text {
+            font-size: 14px;
+            color: var(--grey-700);
+            line-height: 1.6;
+        }
+
+        /* FAQ */
+        .faq-list {
+            margin-top: 24px;
+        }
+
+        .faq-item {
+            border: 1px solid var(--grey-200);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 20px 24px;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--grey-900);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .faq-question:hover {
+            background: var(--grey-50);
+        }
+
+        .faq-icon {
+            font-size: 20px;
+            color: var(--grey-500);
+            transition: transform 0.3s;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer-content {
+            padding: 0 24px 20px;
+            font-size: 14px;
+            color: var(--grey-700);
+            line-height: 1.7;
+        }
+
+        /* Tab Section */
+        .tab-overview {
+            margin: 24px 0;
+        }
+
+        .tab-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--grey-50);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+
+        .tab-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-info {
+            flex: 1;
+        }
+
+        .tab-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-900);
+        }
+
+        .tab-desc {
+            font-size: 13px;
+            color: var(--grey-600);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge.new {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge.ai {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #11998e;
+        }
+
+        .badge.prophet {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            color: #e65100;
+        }
+
+        /* Segment Demo */
+        .segment-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .segment-card {
+            background: white;
+            border: 1px solid var(--grey-200);
+            border-radius: var(--radius-md);
+            padding: 16px;
+        }
+
+        .segment-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .segment-metrics {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .segment-metric {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .segment-metric-label {
+            color: var(--grey-600);
+        }
+
+        .segment-metric-value {
+            font-weight: 600;
+            color: var(--grey-900);
+        }
+
+        /* Chart Legend Demo */
+        .chart-legend {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin: 16px 0;
+            padding: 16px;
+            background: var(--grey-50);
+            border-radius: var(--radius-md);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--grey-700);
+        }
+
+        .legend-line {
+            width: 24px;
+            height: 3px;
+            border-radius: 2px;
+        }
+
+        .legend-line.actual {
+            background: #11998e;
+        }
+
+        .legend-line.forecast {
+            background: #11998e;
+            background: repeating-linear-gradient(
+                90deg,
+                #11998e 0px,
+                #11998e 4px,
+                transparent 4px,
+                transparent 8px
+            );
+        }
+
+        /* Footer */
+        .guide-footer {
+            background: var(--grey-900);
+            color: white;
+            padding: 48px 24px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .footer-desc {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 24px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: white;
+            opacity: 0.7;
+            text-decoration: none;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .guide-title {
+                font-size: 28px;
+            }
+
+            .guide-subtitle {
+                font-size: 15px;
+            }
+
+            .section-title {
+                font-size: 22px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kpi-demo-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .guide-nav {
+                display: none;
+            }
+
+            .section {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="guide-header">
+        <div class="header-content">
+            <div class="brand-badge">
+                <span>📈</span>
+                <span>Growthmaker AI Forecast</span>
+            </div>
+            <h1 class="guide-title">시계열 데이터 분석<br>대시보드 사용자 가이드</h1>
+            <p class="guide-subtitle">
+                Prophet 기반 AI 예측 모델로 광고 성과를 예측하고,
+                데이터 기반의 선제적 의사결정을 시작하세요.
+            </p>
+            <span class="version-tag">📘 Guide v1.0 · Last Updated: 2025.12</span>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="guide-nav">
+        <div class="nav-container">
+            <a href="#intro" class="nav-item active">시작하기</a>
+            <a href="#status" class="nav-item">AI 상태 요약</a>
+            <a href="#kpi" class="nav-item">KPI 카드</a>
+            <a href="#insights" class="nav-item">AI 인사이트</a>
+            <a href="#analysis" class="nav-item">성과 분석</a>
+            <a href="#algorithm" class="nav-item">분석 알고리즘</a>
+            <a href="#faq" class="nav-item">FAQ</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="guide-content">
+        <!-- Section 1: 시작하기 -->
+        <section id="intro" class="section">
+            <div class="section-header">
+                <div class="section-number">1</div>
+                <h2 class="section-title">대시보드 시작하기</h2>
+                <p class="section-desc">시계열 데이터 분석 대시보드의 핵심 기능과 구조를 알아봅니다.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🔮</div>
+                    <div>
+                        <h3 class="card-title">이 대시보드는 무엇을 위한 건가요?</h3>
+                        <p class="card-subtitle">AI 기반 광고 성과 예측의 핵심 허브</p>
+                    </div>
+                </div>
+                <p style="font-size: 15px; color: var(--grey-700); line-height: 1.8; margin-bottom: 24px;">
+                    시계열 데이터 분석 대시보드는 <strong>Facebook의 Prophet 알고리즘</strong>을 활용하여 
+                    광고 성과를 예측하고, 미래 트렌드를 분석하는 AI 기반 대시보드입니다.
+                    <strong>실제 데이터와 예측 데이터를 비교</strong>하여 광고 전략 수립에 활용하고,
+                    선제적인 의사결정을 지원합니다.
+                </p>
+
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">🤖</div>
+                        <div class="feature-name">AI 성과 예측</div>
+                        <div class="feature-desc">Prophet 모델로 비용, 전환, 매출 등 핵심 지표 예측</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-name">세그먼트 비교</div>
+                        <div class="feature-desc">채널/제품/브랜드/프로모션별 실제 vs 예측 비교</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">⚠️</div>
+                        <div class="feature-name">경고 & 추천</div>
+                        <div class="feature-desc">AI가 감지한 이슈와 투자 추천 사항 제공</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📈</div>
+                        <div class="feature-name">트렌드 분석</div>
+                        <div class="feature-desc">성과 개선/하락 트렌드 자동 감지</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🗂️</div>
+                    <div>
+                        <h3 class="card-title">대시보드 구성</h3>
+                        <p class="card-subtitle">4개의 핵심 섹션으로 구성되어 있습니다</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">대시보드 전체 레이아웃 스크린샷</div>
+                    <div class="screenshot-hint">각 섹션이 표시된 전체 화면 캡처</div>
+                </div>
+
+                <div class="tab-overview">
+                    <div class="tab-row">
+                        <div class="tab-icon">🤖</div>
+                        <div class="tab-info">
+                            <div class="tab-name">AI 상태 요약 & KPI</div>
+                            <div class="tab-desc">현재 상태 진단 및 핵심 KPI 예측값 표시 (상단 고정)</div>
+                        </div>
+                        <span class="badge ai">AI 기반</span>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">🔬</div>
+                        <div class="tab-info">
+                            <div class="tab-name">통합 인사이트 대시보드</div>
+                            <div class="tab-desc">AI 인사이트 요약, 경고 알림, 기회 요소, 투자 추천</div>
+                        </div>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">📈</div>
+                        <div class="tab-info">
+                            <div class="tab-name">최근 변화 인사이트</div>
+                            <div class="tab-desc">7일/14일/30일 기준 성과 개선 및 하락 트렌드</div>
+                        </div>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">📊</div>
+                        <div class="tab-info">
+                            <div class="tab-name">성과 분석 대시보드</div>
+                            <div class="tab-desc">전체 성과 예측, 세그먼트 비교/트렌드, 비즈니스 인사이트</div>
+                        </div>
+                        <span class="badge prophet">Prophet</span>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">🧮</div>
+                        <div class="tab-info">
+                            <div class="tab-name">데이터 분석 알고리즘</div>
+                            <div class="tab-desc">예측 모델 상세, 계절성 분해, 상관관계, 데이터 품질</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: AI 상태 요약 -->
+        <section id="status" class="section">
+            <div class="section-header">
+                <div class="section-number">2</div>
+                <h2 class="section-title">AI 상태 요약 카드</h2>
+                <p class="section-desc">AI가 진단한 현재 광고 성과 상태를 한눈에 확인하세요.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🤖</div>
+                    <div>
+                        <h3 class="card-title">상태 요약 카드 이해하기</h3>
+                        <p class="card-subtitle">색상별 상태와 핵심 지표를 빠르게 파악하세요</p>
+                    </div>
+                    <span class="badge ai">AI 기반</span>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    대시보드 최상단에 표시되는 <strong>AI 상태 요약 카드</strong>는 
+                    현재 광고 성과 상태를 색상과 함께 직관적으로 보여줍니다.
+                    현재 매출/ROAS와 예측 매출/ROAS를 비교하여 성과 추이를 파악할 수 있습니다.
+                </p>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                    🎨 상태별 색상 의미
+                </h4>
+
+                <div class="status-card-demo green" style="margin-bottom: 12px;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <span style="font-size: 32px;">✅</span>
+                        <div>
+                            <div style="font-size: 18px; font-weight: 700;">성과가 안정적입니다</div>
+                            <div style="font-size: 14px; opacity: 0.9;">ROAS가 목표치를 달성하고 있으며, 예측 추이도 긍정적입니다.</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                        <div style="padding: 10px 16px; background: rgba(255,255,255,0.2); border-radius: 10px;">
+                            <div style="font-size: 11px; opacity: 0.8;">현재 매출</div>
+                            <div style="font-size: 18px; font-weight: 700;">₩45.2M</div>
+                        </div>
+                        <div style="padding: 10px 16px; background: rgba(255,255,255,0.2); border-radius: 10px;">
+                            <div style="font-size: 11px; opacity: 0.8;">예측 매출</div>
+                            <div style="font-size: 18px; font-weight: 700;">₩48.7M</div>
+                        </div>
+                        <div style="padding: 10px 16px; background: rgba(255,255,255,0.2); border-radius: 10px;">
+                            <div style="font-size: 11px; opacity: 0.8;">현재 ROAS</div>
+                            <div style="font-size: 18px; font-weight: 700;">185%</div>
+                        </div>
+                        <div style="padding: 10px 16px; background: rgba(255,255,255,0.2); border-radius: 10px;">
+                            <div style="font-size: 11px; opacity: 0.8;">예측 ROAS</div>
+                            <div style="font-size: 18px; font-weight: 700;">192%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 20px 0;">
+                    <div style="padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; color: white;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">💙</div>
+                        <div style="font-size: 14px; font-weight: 600;">Blue - 분석 중</div>
+                        <div style="font-size: 12px; opacity: 0.9;">데이터 수집 및 분석 진행 중</div>
+                    </div>
+                    <div style="padding: 16px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 12px; color: white;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">💚</div>
+                        <div style="font-size: 14px; font-weight: 600;">Green - 양호</div>
+                        <div style="font-size: 12px; opacity: 0.9;">성과가 안정적이고 긍정적</div>
+                    </div>
+                    <div style="padding: 16px; background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); border-radius: 12px; color: white;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">💛</div>
+                        <div style="font-size: 14px; font-weight: 600;">Yellow - 주의</div>
+                        <div style="font-size: 12px; opacity: 0.9;">일부 지표 모니터링 필요</div>
+                    </div>
+                    <div style="padding: 16px; background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); border-radius: 12px; color: white;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">❤️</div>
+                        <div style="font-size: 14px; font-weight: 600;">Red - 경고</div>
+                        <div style="font-size: 12px; opacity: 0.9;">즉각적인 조치 권장</div>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">AI 상태 요약 카드 실제 스크린샷</div>
+                    <div class="screenshot-hint">대시보드 상단 상태 카드 화면</div>
+                </div>
+
+                <div class="callout tip">
+                    <div class="callout-icon">💡</div>
+                    <div class="callout-content">
+                        <div class="callout-title">주니어 마케터를 위한 Tip</div>
+                        <div class="callout-text">
+                            상태 카드 색상이 <strong>Green</strong>이면 현재 전략을 유지하면서 
+                            세부 최적화에 집중하세요. <strong>Yellow나 Red</strong>인 경우 
+                            아래 인사이트 섹션에서 구체적인 원인과 해결 방안을 확인하세요.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: KPI 카드 -->
+        <section id="kpi" class="section">
+            <div class="section-header">
+                <div class="section-number">3</div>
+                <h2 class="section-title">핵심 KPI 요약</h2>
+                <p class="section-desc">예측 기반 핵심 성과 지표를 확인하세요.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div>
+                        <h3 class="card-title">주요 성과 vs 세부 성과</h3>
+                        <p class="card-subtitle">토글 버튼으로 원하는 수준의 정보를 확인하세요</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    KPI 카드는 <strong>예측 값</strong>과 함께 <strong>실제 대비 변화율</strong>을 표시합니다.
+                    주요 성과(효율 지표 5개)와 세부 성과(기본 성과 4개)로 구분되어 있습니다.
+                </p>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">토글 버튼 미리보기</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active" onclick="toggleKpiView(this, 'primary')">주요 성과</button>
+                        <button class="demo-btn" onclick="toggleKpiView(this, 'all')">세부 성과</button>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 16px; font-weight: 600; margin: 28px 0 16px; color: var(--grey-900);">
+                    📌 주요 성과 (효율 지표 5개)
+                </h4>
+                <div class="kpi-demo-grid" id="kpiPrimary">
+                    <div class="kpi-demo-card">
+                        <div class="kpi-label">💰 예측 비용</div>
+                        <div class="kpi-value">₩28.5M</div>
+                        <div class="kpi-change up">▲ 5.2% vs 실제</div>
+                    </div>
+                    <div class="kpi-demo-card">
+                        <div class="kpi-label">👁️ CPM</div>
+                        <div class="kpi-value">₩4,850</div>
+                        <div class="kpi-change down">▼ 2.1% vs 실제</div>
+                    </div>
+                    <div class="kpi-demo-card">
+                        <div class="kpi-label">🖱️ CPC</div>
+                        <div class="kpi-value">₩920</div>
+                        <div class="kpi-change down">▼ 3.5% vs 실제</div>
+                    </div>
+                    <div class="kpi-demo-card">
+                        <div class="kpi-label">🎯 CPA</div>
+                        <div class="kpi-value">₩14,200</div>
+                        <div class="kpi-change down">▼ 8.3% vs 실제</div>
+                    </div>
+                    <div class="kpi-demo-card highlight">
+                        <div class="kpi-label">📈 ROAS</div>
+                        <div class="kpi-value">192%</div>
+                        <div class="kpi-change up">▲ 12.4% vs 실제</div>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 16px; font-weight: 600; margin: 28px 0 16px; color: var(--grey-900);">
+                    📌 세부 성과 (기본 성과 4개)
+                </h4>
+                <div class="kpi-demo-grid" id="kpiSecondary">
+                    <div class="kpi-demo-card secondary">
+                        <div class="kpi-label">👀 예측 노출</div>
+                        <div class="kpi-value">5.87M</div>
+                        <div class="kpi-change up">▲ 7.8%</div>
+                    </div>
+                    <div class="kpi-demo-card secondary">
+                        <div class="kpi-label">👆 예측 클릭</div>
+                        <div class="kpi-value">31,024</div>
+                        <div class="kpi-change up">▲ 9.2%</div>
+                    </div>
+                    <div class="kpi-demo-card secondary">
+                        <div class="kpi-label">✅ 예측 전환수</div>
+                        <div class="kpi-value">2,008</div>
+                        <div class="kpi-change up">▲ 15.3%</div>
+                    </div>
+                    <div class="kpi-demo-card secondary">
+                        <div class="kpi-label">💵 예측 전환값</div>
+                        <div class="kpi-value">₩54.7M</div>
+                        <div class="kpi-change up">▲ 18.1%</div>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">KPI 카드 토글 전환 스크린샷</div>
+                    <div class="screenshot-hint">주요 성과 ↔ 세부 성과 전환 화면</div>
+                </div>
+
+                <div class="callout info">
+                    <div class="callout-icon">ℹ️</div>
+                    <div class="callout-content">
+                        <div class="callout-title">예측값 해석 방법</div>
+                        <div class="callout-text">
+                            <strong>▲ (상승)</strong>: 예측 값이 실제보다 높음 → 성과 개선 예상<br>
+                            <strong>▼ (하락)</strong>: 예측 값이 실제보다 낮음 → 효율 개선 또는 볼륨 감소 예상<br>
+                            CPA, CPC, CPM은 낮을수록 좋으므로 ▼가 긍정적입니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: AI 인사이트 -->
+        <section id="insights" class="section">
+            <div class="section-header">
+                <div class="section-number">4</div>
+                <h2 class="section-title">AI 인사이트 활용하기</h2>
+                <p class="section-desc">AI가 분석한 경고, 추천, 기회 요소를 확인하세요.</p>
+            </div>
+
+            <!-- 통합 인사이트 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🔬</div>
+                    <div>
+                        <h3 class="card-title">통합 인사이트 대시보드</h3>
+                        <p class="card-subtitle">AI가 분석한 핵심 인사이트를 한곳에서 확인하세요</p>
+                    </div>
+                    <span class="badge ai">AI 기반</span>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    통합 인사이트 섹션에서는 <strong>독립적인 기간 필터</strong>를 통해 
+                    전체/180일/90일 기준의 AI 분석 결과를 확인할 수 있습니다.
+                </p>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">AI 요약 기간 필터 (독립 작동)</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn period active">전체 기간</button>
+                        <button class="demo-btn period">최근 180일</button>
+                        <button class="demo-btn period">최근 90일</button>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                    📊 카테고리별 인사이트 카드
+                </h4>
+
+                <div class="insight-demo" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+                    <div class="insight-item success">
+                        <div class="insight-type">🚀 성과 현황</div>
+                        <div class="insight-message">ROAS가 전월 대비 <span style="color: var(--gm-success); font-weight: 700;">+15.3%</span> 상승</div>
+                    </div>
+                    <div class="insight-item success">
+                        <div class="insight-type">📈 상승 트렌드</div>
+                        <div class="insight-message">전환율이 지속적으로 개선 중</div>
+                    </div>
+                    <div class="insight-item warning">
+                        <div class="insight-type">📉 하락 트렌드</div>
+                        <div class="insight-message">B 채널 CTR <span style="color: var(--gm-warning); font-weight: 700;">-8.2%</span> 하락</div>
+                    </div>
+                    <div class="insight-item error">
+                        <div class="insight-type">⚠️ 경고</div>
+                        <div class="insight-message">C 상품 CPA 급등 감지</div>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">AI 인사이트 요약 스크린샷</div>
+                    <div class="screenshot-hint">스토리 배너와 인사이트 카드 그리드</div>
+                </div>
+            </div>
+
+            <!-- 경고 및 추천 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">⚠️</div>
+                    <div>
+                        <h3 class="card-title">경고 및 추천</h3>
+                        <p class="card-subtitle">주요 경고 알림과 투자 추천을 확인하세요</p>
+                    </div>
+                </div>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">인사이트 탭</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">경고 및 추천</button>
+                        <button class="demo-btn">기회 요소</button>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                    🚨 세그먼트별 경고 알림
+                </h4>
+
+                <div style="background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-left: 4px solid var(--gm-error); border-radius: var(--radius-md); padding: 20px; margin-bottom: 16px;">
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <div style="font-size: 24px;">⚠️</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 15px; font-weight: 600; color: #c62828; margin-bottom: 6px;">
+                                [Meta] 25-34 여성 타겟 CPA 급등
+                            </div>
+                            <div style="font-size: 14px; color: var(--grey-600); line-height: 1.6;">
+                                해당 세그먼트의 CPA가 지난 7일간 35% 상승했습니다. 크리에이티브 피로도 또는 경쟁 심화가 원인으로 추정됩니다.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                    💡 투자 추천
+                </h4>
+
+                <div style="background: white; border: 1px solid var(--grey-200); border-radius: var(--radius-md); padding: 20px; margin-bottom: 12px;">
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">1</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 15px; font-weight: 600; color: var(--grey-900); margin-bottom: 8px;">
+                                Google 검색광고 예산 20% 확대 추천
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 12px;">
+                                <div style="padding: 10px; background: var(--grey-50); border-radius: 8px;">
+                                    <div style="font-size: 11px; color: var(--grey-500); margin-bottom: 2px;">우선순위</div>
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--gm-success);">🔥 높음</div>
+                                </div>
+                                <div style="padding: 10px; background: var(--grey-50); border-radius: 8px;">
+                                    <div style="font-size: 11px; color: var(--grey-500); margin-bottom: 2px;">타겟</div>
+                                    <div style="font-size: 13px; font-weight: 600;">브랜드 키워드</div>
+                                </div>
+                                <div style="padding: 10px; background: var(--grey-50); border-radius: 8px;">
+                                    <div style="font-size: 11px; color: var(--grey-500); margin-bottom: 2px;">기대 효과</div>
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--gm-success);">ROAS +25%</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 13px; color: var(--grey-600); line-height: 1.6;">
+                                <strong>이유:</strong> 현재 ROAS 285%로 전체 채널 중 최고 효율. 예산 확대 시 추가 전환 확보 가능성 높음.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="callout tip">
+                    <div class="callout-icon">💡</div>
+                    <div class="callout-content">
+                        <div class="callout-title">카드 확장 기능</div>
+                        <div class="callout-text">
+                            추천 카드를 클릭하면 상세 정보가 펼쳐집니다. 
+                            "더보기" 버튼으로 추가 경고/추천 사항을 확인할 수 있습니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 최근 변화 인사이트 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📈</div>
+                    <div>
+                        <h3 class="card-title">최근 변화 인사이트</h3>
+                        <p class="card-subtitle">성과 개선 및 하락 트렌드를 기간별로 분석합니다</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    7일/14일/30일 비교 기간을 선택하여 최근 성과 변화 추이를 확인하세요.
+                    <strong>개선된 지표</strong>와 <strong>하락한 지표</strong>를 채널별로 구분하여 보여줍니다.
+                </p>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">비교 기간 선택</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn trend active">7일</button>
+                        <button class="demo-btn trend">14일</button>
+                        <button class="demo-btn trend">30일</button>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px;">
+                    <div style="padding: 20px; background: #e8f5e9; border-radius: var(--radius-md);">
+                        <div style="font-size: 14px; font-weight: 600; color: #2e7d32; margin-bottom: 12px;">📈 성과 개선</div>
+                        <div style="font-size: 14px; color: var(--grey-700);">
+                            • Meta ROAS <strong style="color: #2e7d32;">+18.5%</strong><br>
+                            • Google 전환수 <strong style="color: #2e7d32;">+12.3%</strong><br>
+                            • Naver CTR <strong style="color: #2e7d32;">+8.7%</strong>
+                        </div>
+                    </div>
+                    <div style="padding: 20px; background: #ffebee; border-radius: var(--radius-md);">
+                        <div style="font-size: 14px; font-weight: 600; color: #c62828; margin-bottom: 12px;">📉 성과 하락</div>
+                        <div style="font-size: 14px; color: var(--grey-700);">
+                            • Kakao CPA <strong style="color: #c62828;">+22.1%</strong><br>
+                            • Meta CPM <strong style="color: #c62828;">+15.8%</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">최근 변화 인사이트 스크린샷</div>
+                    <div class="screenshot-hint">개선/하락 트렌드 카드 화면</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: 성과 분석 -->
+        <section id="analysis" class="section">
+            <div class="section-header">
+                <div class="section-number">5</div>
+                <h2 class="section-title">성과 분석 대시보드</h2>
+                <p class="section-desc">Prophet 예측 모델 기반의 상세 성과 분석 기능을 활용하세요.</p>
+            </div>
+
+            <!-- 전체 성과 예측 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div>
+                        <h3 class="card-title">전체 성과 예측</h3>
+                        <p class="card-subtitle">실제 데이터와 예측 데이터를 시계열 차트로 비교합니다</p>
+                    </div>
+                    <span class="badge prophet">Prophet</span>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    일별/주별/월별 집계 단위로 비용, 노출, 클릭, 전환수, 전환값의 
+                    <strong>실제 데이터(실선)</strong>와 <strong>예측 데이터(점선)</strong>를 비교할 수 있습니다.
+                </p>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">성과 분석 탭</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">전체 성과 예측</button>
+                        <button class="demo-btn">세그먼트 비교</button>
+                        <button class="demo-btn">세그먼트 트렌드</button>
+                        <button class="demo-btn">비즈니스 인사이트</button>
+                    </div>
+                </div>
+
+                <div class="toggle-demo" style="margin-top: 12px;">
+                    <div class="toggle-demo-label">집계 단위</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">일별</button>
+                        <button class="demo-btn">주별</button>
+                        <button class="demo-btn">월별</button>
+                    </div>
+                </div>
+
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-line actual"></div>
+                        <span>실제 데이터</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line forecast"></div>
+                        <span>예측 데이터</span>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">전체 성과 예측 차트 스크린샷</div>
+                    <div class="screenshot-hint">실제 vs 예측 시계열 라인 차트</div>
+                </div>
+
+                <div class="step-guide">
+                    <div class="step">
+                        <div class="step-number"></div>
+                        <div class="step-content">
+                            <div class="step-title">집계 단위 선택</div>
+                            <div class="step-desc">일별, 주별, 월별 중 분석 목적에 맞는 단위 선택</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number"></div>
+                        <div class="step-content">
+                            <div class="step-title">지표 체크박스 선택</div>
+                            <div class="step-desc">비용, 노출, 클릭, 전환수, 전환값 중 확인할 지표 선택</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number"></div>
+                        <div class="step-content">
+                            <div class="step-title">실제 vs 예측 비교</div>
+                            <div class="step-desc">실선(실제)과 점선(예측)의 gap을 확인하여 예측 정확도 파악</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 세그먼트 비교 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📈</div>
+                    <div>
+                        <h3 class="card-title">세그먼트 비교</h3>
+                        <p class="card-subtitle">채널/제품/브랜드/프로모션별 실제 vs 예측 성과 비교</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    세그먼트 타입과 비교 지표를 선택하여 각 세그먼트별 실제 성과와 예측 성과를 
+                    막대 차트로 비교합니다.
+                </p>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">세그먼트 타입</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">채널</button>
+                        <button class="demo-btn">제품</button>
+                        <button class="demo-btn">브랜드</button>
+                        <button class="demo-btn">프로모션</button>
+                    </div>
+                </div>
+
+                <div class="toggle-demo" style="margin-top: 12px;">
+                    <div class="toggle-demo-label">비교 지표</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">ROAS</button>
+                        <button class="demo-btn">전환수</button>
+                        <button class="demo-btn">매출</button>
+                        <button class="demo-btn">비용</button>
+                        <button class="demo-btn">CVR</button>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                    📋 세그먼트별 상세 카드
+                </h4>
+
+                <div class="segment-demo">
+                    <div class="segment-card">
+                        <div class="segment-name">
+                            <span style="font-size: 18px;">📘</span> Meta
+                        </div>
+                        <div class="segment-metrics">
+                            <div class="segment-metric">
+                                <span class="segment-metric-label">실제 ROAS</span>
+                                <span class="segment-metric-value">185%</span>
+                            </div>
+                            <div class="segment-metric">
+                                <span class="segment-metric-label">예측 ROAS</span>
+                                <span class="segment-metric-value" style="color: var(--gm-success);">198%</span>
+                            </div>
+                            <div class="segment-metric">
+                                <span class="segment-metric-label">CVR</span>
+                                <span class="segment-metric-value">3.2%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="segment-card">
+                        <div class="segment-name">
+                            <span style="font-size: 18px;">🔴</span> Google
+                        </div>
+                        <div class="segment-metrics">
+                            <div class="segment-metric">
+                                <span class="segment-metric-label">실제 ROAS</span>
+                                <span class="segment-metric-value">285%</span>
+                            </div>
+                            <div class="segment-metric">
+                                <span class="segment-metric-label">예측 ROAS</span>
+                                <span class="segment-metric-value" style="color: var(--gm-success);">312%</span>
+                            </div>
+                            <div class="segment-metric">
+                                <span class="segment-metric-label">CVR</span>
+                                <span class="segment-metric-value">4.8%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="segment-card">
+                        <div class="segment-name">
+                            <span style="font-size: 18px;">🟢</span> Naver
+                        </div>
+                        <div class="segment-metrics">
+                            <div class="segment-metric">
+                                <span class="segment-metric-label">실제 ROAS</span>
+                                <span class="segment-metric-value">156%</span>
+                            </div>
+                            <div class="segment-metric">
+                                <span class="segment-metric-label">예측 ROAS</span>
+                                <span class="segment-metric-value" style="color: var(--gm-warning);">148%</span>
+                            </div>
+                            <div class="segment-metric">
+                                <span class="segment-metric-label">CVR</span>
+                                <span class="segment-metric-value">2.1%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">세그먼트 비교 막대 차트 스크린샷</div>
+                    <div class="screenshot-hint">실제 vs 예측 비교 막대 차트</div>
+                </div>
+            </div>
+
+            <!-- 세그먼트 트렌드 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📉</div>
+                    <div>
+                        <h3 class="card-title">세그먼트 트렌드</h3>
+                        <p class="card-subtitle">시간에 따른 세그먼트별 ROAS 추이를 분석합니다</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    최대 5개 세그먼트를 선택하여 시간에 따른 ROAS 추이를 비교할 수 있습니다.
+                    실제 데이터와 예측 데이터가 분리되어 표시됩니다.
+                </p>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">세그먼트 선택 (최대 5개)</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active" style="font-size: 12px;">☑️ Meta</button>
+                        <button class="demo-btn active" style="font-size: 12px;">☑️ Google</button>
+                        <button class="demo-btn active" style="font-size: 12px;">☑️ Naver</button>
+                        <button class="demo-btn" style="font-size: 12px;">☐ Kakao</button>
+                        <button class="demo-btn" style="font-size: 12px;">☐ Apple</button>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">세그먼트 트렌드 차트 스크린샷</div>
+                    <div class="screenshot-hint">다중 세그먼트 ROAS 추이 라인 차트</div>
+                </div>
+
+                <div class="callout warning">
+                    <div class="callout-icon">⚠️</div>
+                    <div class="callout-content">
+                        <div class="callout-title">참고사항</div>
+                        <div class="callout-text">
+                            세그먼트를 5개 초과 선택하면 차트 가독성이 떨어집니다.
+                            비교하고 싶은 핵심 세그먼트만 선택하여 분석하세요.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 비즈니스 인사이트 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">💼</div>
+                    <div>
+                        <h3 class="card-title">비즈니스 인사이트</h3>
+                        <p class="card-subtitle">채널 ROAS, 제품 매출, 예산 소진율을 확인합니다</p>
+                    </div>
+                </div>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">비즈니스 인사이트 서브탭</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">채널별 ROAS</button>
+                        <button class="demo-btn">제품 매출 & 예산</button>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                    📊 채널별 ROAS
+                </h4>
+                <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                    고성과 채널과 개선 필요 채널을 시각적으로 비교합니다.
+                </p>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">채널 ROAS 비교 차트 스크린샷</div>
+                    <div class="screenshot-hint">channel_roas_comparison.png</div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                    💰 제품 매출 & 예산
+                </h4>
+                <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                    제품별 매출 기여도와 월 예산 소진율을 확인합니다. 
+                    제품별 등급(A+~D)과 예산 초과 경고를 제공합니다.
+                </p>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">제품 매출 파이차트 & 예산 게이지 스크린샷</div>
+                    <div class="screenshot-hint">product_revenue_pie.png, budget_gauge.png</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: 분석 알고리즘 -->
+        <section id="algorithm" class="section">
+            <div class="section-header">
+                <div class="section-number">6</div>
+                <h2 class="section-title">데이터 분석 알고리즘</h2>
+                <p class="section-desc">예측 모델과 데이터 품질 분석 방법을 이해하세요.</p>
+            </div>
+
+            <!-- 예측 & 트렌드 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🔮</div>
+                    <div>
+                        <h3 class="card-title">예측 & 트렌드</h3>
+                        <p class="card-subtitle">Prophet 시계열 예측과 계절성 분해를 이해합니다</p>
+                    </div>
+                    <span class="badge prophet">Prophet</span>
+                </div>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">분석 알고리즘 서브탭</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">예측 & 트렌드</button>
+                        <button class="demo-btn">관계 & 품질</button>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                    📈 Prophet 시계열 예측
+                </h4>
+                <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                    Facebook에서 개발한 Prophet 알고리즘은 트렌드, 계절성, 휴일 효과를 자동으로 감지하여 
+                    시계열 데이터를 예측합니다.
+                </p>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">Prophet 예측 차트 스크린샷</div>
+                    <div class="screenshot-hint">timeseries_forecast.png</div>
+                </div>
+
+                <div class="callout info">
+                    <div class="callout-icon">ℹ️</div>
+                    <div class="callout-content">
+                        <div class="callout-title">차트 읽는 법</div>
+                        <div class="callout-text">
+                            <strong>검은 점</strong>: 실제 데이터<br>
+                            <strong>파란 선</strong>: 예측 값 (중앙값)<br>
+                            <strong>파란 영역</strong>: 신뢰 구간 (예측 범위)<br>
+                            신뢰 구간이 좁을수록 예측 정확도가 높습니다.
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                    🔄 계절성 분해 분석
+                </h4>
+                <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                    시계열 데이터를 Trend(추세), Seasonal(계절성), Residual(잔차)로 분해하여 
+                    각 요소의 영향을 파악합니다.
+                </p>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">계절성 분해 차트 스크린샷</div>
+                    <div class="screenshot-hint">seasonal_decomposition.png</div>
+                </div>
+
+                <div class="callout tip">
+                    <div class="callout-icon">💡</div>
+                    <div class="callout-content">
+                        <div class="callout-title">실무 활용 Tip</div>
+                        <div class="callout-text">
+                            <strong>Trend</strong>가 상승 추세면 장기적으로 성과가 개선되고 있는 것입니다.
+                            <strong>Seasonal</strong> 패턴을 파악하면 특정 요일/시즌에 예산을 집중할 수 있습니다.
+                            <strong>Residual</strong>이 크면 예측 모델이 설명하지 못하는 변동이 있다는 의미입니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 관계 & 품질 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🧮</div>
+                    <div>
+                        <h3 class="card-title">관계 & 품질</h3>
+                        <p class="card-subtitle">상관관계, 이상치, 데이터 분포를 분석합니다</p>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                    🔥 상관관계 히트맵
+                </h4>
+                <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                    지표 간 상관관계를 히트맵으로 시각화합니다. 
+                    색상이 진할수록 상관관계가 강합니다.
+                </p>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">상관관계 히트맵 스크린샷</div>
+                    <div class="screenshot-hint">correlation_heatmap.png</div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                    📦 이상치 분석 (박스플롯)
+                </h4>
+                <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                    데이터 분포에서 벗어난 이상치를 감지합니다. 
+                    이상치는 데이터 오류이거나 특별한 이벤트일 수 있습니다.
+                </p>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">이상치 박스플롯 스크린샷</div>
+                    <div class="screenshot-hint">boxplot_outliers.png</div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                    📊 데이터 분포 분석
+                </h4>
+                <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                    각 지표의 분포 형태를 히스토그램으로 확인합니다.
+                </p>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">데이터 분포 히스토그램 스크린샷</div>
+                    <div class="screenshot-hint">distribution_analysis.png</div>
+                </div>
+
+                <div class="callout tip">
+                    <div class="callout-icon">💡</div>
+                    <div class="callout-content">
+                        <div class="callout-title">데이터 품질 체크리스트</div>
+                        <div class="callout-text">
+                            ✅ 결측치가 없는지 확인<br>
+                            ✅ 이상치가 합리적인지 검토<br>
+                            ✅ 데이터 분포가 예상과 일치하는지 확인<br>
+                            ✅ 상관관계가 비즈니스 로직과 맞는지 검증
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: FAQ -->
+        <section id="faq" class="section">
+            <div class="section-header">
+                <div class="section-number">7</div>
+                <h2 class="section-title">자주 묻는 질문</h2>
+                <p class="section-desc">시계열 분석 대시보드 사용 중 궁금한 점을 해결하세요.</p>
+            </div>
+
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>Prophet 예측은 얼마나 정확한가요?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Prophet 예측의 정확도는 <strong>데이터의 양과 패턴의 일관성</strong>에 따라 달라집니다.
+                            일반적으로 데이터가 많고, 계절성이 뚜렷하며, 외부 요인 변동이 적을수록 정확도가 높습니다.
+                            광고 데이터의 경우 평균 <strong>MAPE(평균 절대 백분율 오차) 10~20%</strong> 수준을 기대할 수 있습니다.
+                            예측은 참고용으로 활용하시고, 실제 데이터와 정기적으로 비교하여 검증하세요.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>실제 데이터와 예측 데이터가 크게 다른 이유는?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            예측과 실제가 크게 다른 경우 다음 요인을 점검해 보세요:<br><br>
+                            • <strong>외부 요인</strong>: 시즌, 프로모션, 경쟁사 활동 등 모델이 학습하지 못한 변수<br>
+                            • <strong>광고 설정 변경</strong>: 예산, 타겟팅, 입찰 전략 변경<br>
+                            • <strong>플랫폼 알고리즘 변화</strong>: Meta, Google 등의 알고리즘 업데이트<br>
+                            • <strong>데이터 품질 이슈</strong>: 트래킹 오류, 전환 지연 등<br><br>
+                            Gap이 지속적으로 크다면 담당 Growth Manager에게 모델 재학습을 요청하세요.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>AI 요약 기간 필터와 분석 기간 필터의 차이는?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <strong>분석 기간 필터</strong>는 대시보드 전체에 영향을 미치며, 
+                            차트와 KPI 데이터의 기준 기간을 변경합니다.<br><br>
+                            <strong>AI 요약 기간 필터</strong>는 통합 인사이트 섹션에만 적용되며, 
+                            AI 인사이트 분석의 기준 기간을 독립적으로 설정할 수 있습니다.<br><br>
+                            예를 들어, 전체 차트는 "전체 기간"으로 보면서 AI 인사이트는 "최근 90일" 기준으로 
+                            확인하는 것이 가능합니다.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>세그먼트 비교에서 어떤 지표를 봐야 하나요?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            목표에 따라 다른 지표를 확인하세요:<br><br>
+                            • <strong>ROAS</strong>: 광고 효율성 비교 (수익성 중심)<br>
+                            • <strong>전환수</strong>: 볼륨 비교 (성장성 중심)<br>
+                            • <strong>매출</strong>: 절대적 기여도 비교<br>
+                            • <strong>비용</strong>: 투자 규모 비교<br>
+                            • <strong>CVR</strong>: 전환 효율 비교<br><br>
+                            일반적으로 <strong>ROAS</strong>로 효율을 먼저 확인하고, 
+                            <strong>전환수</strong>로 볼륨을 함께 고려하는 것을 권장합니다.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>경고 알림이 떴는데 어떻게 대응해야 하나요?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            경고 알림은 다음 순서로 대응하세요:<br><br>
+                            1. <strong>원인 파악</strong>: 경고 메시지와 세그먼트 정보 확인<br>
+                            2. <strong>데이터 검증</strong>: 해당 세그먼트의 상세 추이 차트 확인<br>
+                            3. <strong>조치 실행</strong>: 크리에이티브 교체, 타겟 세분화, 예산 재배분 등<br>
+                            4. <strong>모니터링</strong>: 조치 후 7일간 성과 변화 추적<br><br>
+                            긴급한 경고(Red 상태)는 담당 Growth Manager와 즉시 상의하세요.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>계절성 분해에서 Residual이 크면 어떻게 해야 하나요?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Residual(잔차)은 Trend와 Seasonal로 설명되지 않는 변동입니다.
+                            Residual이 크다면:<br><br>
+                            • <strong>외부 이벤트 확인</strong>: 해당 시점에 특별한 프로모션, 이슈가 있었는지 점검<br>
+                            • <strong>데이터 품질 점검</strong>: 트래킹 오류, 데이터 누락 확인<br>
+                            • <strong>모델 개선 검토</strong>: 추가 변수(휴일, 프로모션 등)를 모델에 반영 요청<br><br>
+                            일정 수준의 Residual은 정상적이며, 평균 대비 ±2 표준편차 이내면 허용 범위입니다.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>예측 데이터를 활용한 예산 계획은 어떻게 세우나요?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            예측 데이터 기반 예산 계획 수립 가이드:<br><br>
+                            1. <strong>목표 설정</strong>: 목표 ROAS, 전환수, 매출 설정<br>
+                            2. <strong>예측 확인</strong>: 세그먼트별 예측 ROAS와 예측 전환수 확인<br>
+                            3. <strong>우선순위 결정</strong>: 예측 ROAS가 높은 세그먼트에 예산 집중<br>
+                            4. <strong>시나리오 분석</strong>: 예산 10%, 20% 증가 시 예상 결과 시뮬레이션<br>
+                            5. <strong>리스크 관리</strong>: 신뢰 구간 하한선 기준으로 보수적 계획 수립<br><br>
+                            상세한 예산 계획은 담당 Growth Manager와 함께 수립하세요.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="callout info" style="margin-top: 32px;">
+                <div class="callout-icon">📞</div>
+                <div class="callout-content">
+                    <div class="callout-title">추가 문의</div>
+                    <div class="callout-text">
+                        이 가이드에서 해결되지 않은 궁금증이 있으시면 
+                        담당 Growth Manager에게 문의하시거나,
+                        <strong>support@growthmaker.kr</strong>로 이메일을 보내주세요.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="guide-footer">
+        <div class="footer-logo">Growthmaker</div>
+        <p class="footer-desc">데이터를 통해 진단하고, 기술로 실행하며, 전략으로 성장시키는 Growth Partner</p>
+        <div class="footer-links">
+            <a href="https://blog.growthmaker.kr" class="footer-link" target="_blank">Blog</a>
+            <a href="mailto:support@growthmaker.kr" class="footer-link">Contact</a>
+        </div>
+    </footer>
+
+    <script>
+        // KPI View Toggle Demo
+        function toggleKpiView(btn, view) {
+            const container = btn.parentElement;
+            container.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const secondary = document.getElementById('kpiSecondary');
+            if (view === 'all') {
+                secondary.style.display = 'grid';
+            } else {
+                secondary.style.display = 'none';
+            }
+        }
+
+        // FAQ Toggle
+        function toggleFaq(btn) {
+            const item = btn.parentElement;
+            item.classList.toggle('open');
+        }
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('.nav-item').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Update active nav
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Update active nav on scroll
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.section');
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (pageYOffset >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            document.querySelectorAll('.nav-item').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

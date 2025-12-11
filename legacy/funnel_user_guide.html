@@ -1,0 +1,2036 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AARRR 퍼널 분석 대시보드 사용자 가이드 | Growthmaker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gm-primary: #ff6b6b;
+            --gm-primary-dark: #ee5a5a;
+            --gm-secondary: #feca57;
+            --gm-gradient: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            --gm-gradient-soft: linear-gradient(135deg, #fff5f5 0%, #fffbeb 100%);
+            --gm-purple: #667eea;
+            --gm-success: #00c853;
+            --gm-warning: #f57c00;
+            --gm-error: #ef5350;
+            --gm-info: #1a73e8;
+            --grey-50: #fafafa;
+            --grey-100: #f5f5f5;
+            --grey-200: #eeeeee;
+            --grey-300: #e0e0e0;
+            --grey-500: #9e9e9e;
+            --grey-600: #757575;
+            --grey-700: #616161;
+            --grey-800: #424242;
+            --grey-900: #212121;
+            --paper: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--grey-50);
+            color: var(--grey-800);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* Header */
+        .guide-header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            color: white;
+            padding: 60px 24px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .guide-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .guide-header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 24px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .guide-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .guide-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .version-tag {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Navigation */
+        .guide-nav {
+            background: var(--paper);
+            border-bottom: 1px solid var(--grey-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .nav-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-item {
+            padding: 16px 20px;
+            color: var(--grey-600);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            color: var(--gm-primary);
+        }
+
+        .nav-item.active {
+            color: var(--gm-primary);
+            border-bottom-color: var(--gm-primary);
+        }
+
+        /* Main Content */
+        .guide-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 60px;
+            scroll-margin-top: 80px;
+        }
+
+        .section-header {
+            margin-bottom: 32px;
+        }
+
+        .section-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--gm-gradient);
+            color: white;
+            border-radius: 50%;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin-bottom: 8px;
+        }
+
+        .section-desc {
+            font-size: 15px;
+            color: var(--grey-600);
+        }
+
+        /* Card */
+        .card {
+            background: var(--paper);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--grey-200);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--grey-600);
+        }
+
+        /* Screenshot Placeholder */
+        .screenshot-placeholder {
+            background: linear-gradient(135deg, #f8f9fc 0%, #eef1f7 100%);
+            border: 2px dashed var(--grey-300);
+            border-radius: var(--radius-md);
+            padding: 48px 24px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .screenshot-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.6;
+        }
+
+        .screenshot-label {
+            font-size: 14px;
+            color: var(--grey-500);
+            font-weight: 500;
+        }
+
+        .screenshot-hint {
+            font-size: 12px;
+            color: var(--grey-500);
+            margin-top: 4px;
+        }
+
+        /* Step Guide */
+        .step-guide {
+            counter-reset: step;
+        }
+
+        .step {
+            display: flex;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--grey-100);
+        }
+
+        .step:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            counter-increment: step;
+            width: 32px;
+            height: 32px;
+            background: var(--gm-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-number::before {
+            content: counter(step);
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 6px;
+        }
+
+        .step-desc {
+            font-size: 14px;
+            color: var(--grey-600);
+            line-height: 1.6;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .feature-item {
+            background: var(--grey-50);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid var(--grey-200);
+        }
+
+        .feature-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .feature-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 6px;
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: var(--grey-600);
+            line-height: 1.5;
+        }
+
+        /* Toggle Demo */
+        .toggle-demo {
+            background: var(--grey-50);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin: 16px 0;
+        }
+
+        .toggle-demo-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .toggle-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .demo-btn {
+            padding: 10px 20px;
+            border: 1px solid var(--grey-300);
+            background: white;
+            color: var(--grey-700);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .demo-btn:hover {
+            border-color: var(--gm-primary);
+            color: var(--gm-primary);
+        }
+
+        .demo-btn.active {
+            background: var(--gm-primary);
+            color: white;
+            border-color: var(--gm-primary);
+        }
+
+        .demo-btn.period {
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .demo-btn.period.active {
+            background: var(--gm-info);
+            border-color: var(--gm-info);
+        }
+
+        /* Funnel Demo */
+        .funnel-demo {
+            margin: 24px 0;
+            padding: 24px;
+            background: linear-gradient(135deg, #fff5f5 0%, #fffbeb 100%);
+            border-radius: var(--radius-lg);
+        }
+
+        .funnel-stage {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .funnel-bar {
+            height: 40px;
+            background: var(--gm-gradient);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .funnel-stage:nth-child(1) .funnel-bar { width: 100%; }
+        .funnel-stage:nth-child(2) .funnel-bar { width: 75%; background: linear-gradient(135deg, #ff7b7b 0%, #ffd666 100%); }
+        .funnel-stage:nth-child(3) .funnel-bar { width: 50%; background: linear-gradient(135deg, #ff8b8b 0%, #ffe066 100%); }
+        .funnel-stage:nth-child(4) .funnel-bar { width: 30%; background: linear-gradient(135deg, #ffa5a5 0%, #ffeb99 100%); }
+        .funnel-stage:nth-child(5) .funnel-bar { width: 20%; background: linear-gradient(135deg, #ffb5b5 0%, #fff0b3 100%); }
+
+        .funnel-label {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .funnel-value {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .funnel-arrow {
+            text-align: center;
+            padding: 4px 0;
+            color: var(--grey-500);
+            font-size: 12px;
+        }
+
+        /* KPI Demo Grid */
+        .kpi-demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .kpi-demo-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--grey-200);
+            text-align: center;
+        }
+
+        .kpi-demo-card.highlight {
+            border-left: 4px solid var(--gm-primary);
+        }
+
+        .kpi-label {
+            font-size: 11px;
+            color: var(--grey-600);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .kpi-badge {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .kpi-badge.positive {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .kpi-badge.negative {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* BCG Matrix Demo */
+        .bcg-demo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .bcg-card {
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid;
+        }
+
+        .bcg-card.cashcow {
+            background: #e8f5e9;
+            border-color: #c8e6c9;
+        }
+
+        .bcg-card.gem {
+            background: #e3f2fd;
+            border-color: #bbdefb;
+        }
+
+        .bcg-card.pit {
+            background: #fff3e0;
+            border-color: #ffe0b2;
+        }
+
+        .bcg-card.dog {
+            background: #fce4ec;
+            border-color: #f8bbd0;
+        }
+
+        .bcg-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .bcg-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .bcg-card.cashcow .bcg-title { color: #2e7d32; }
+        .bcg-card.gem .bcg-title { color: #1565c0; }
+        .bcg-card.pit .bcg-title { color: #e65100; }
+        .bcg-card.dog .bcg-title { color: #c2185b; }
+
+        .bcg-desc {
+            font-size: 12px;
+            color: var(--grey-600);
+        }
+
+        /* Callout Box */
+        .callout {
+            padding: 20px 24px;
+            border-radius: var(--radius-md);
+            margin: 20px 0;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .callout.tip {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border: 1px solid #c8e6c9;
+        }
+
+        .callout.warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #fff8e1 100%);
+            border: 1px solid #ffe0b2;
+        }
+
+        .callout.info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #e8f4fd 100%);
+            border: 1px solid #bbdefb;
+        }
+
+        .callout.aarrr {
+            background: linear-gradient(135deg, #fff5f5 0%, #fffbeb 100%);
+            border: 1px solid #ffcdd2;
+        }
+
+        .callout-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .callout-content {
+            flex: 1;
+        }
+
+        .callout-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .callout.tip .callout-title { color: #2e7d32; }
+        .callout.warning .callout-title { color: #e65100; }
+        .callout.info .callout-title { color: #1565c0; }
+        .callout.aarrr .callout-title { color: #c62828; }
+
+        .callout-text {
+            font-size: 14px;
+            color: var(--grey-700);
+            line-height: 1.6;
+        }
+
+        /* Tab Overview */
+        .tab-overview {
+            margin: 24px 0;
+        }
+
+        .tab-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--grey-50);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+
+        .tab-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-info {
+            flex: 1;
+        }
+
+        .tab-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-900);
+        }
+
+        .tab-desc {
+            font-size: 13px;
+            color: var(--grey-600);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge.new {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge.ai {
+            background: linear-gradient(135deg, #ede7f6 0%, #e8eaf6 100%);
+            color: #5e35b1;
+        }
+
+        .badge.ga4 {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            color: #e65100;
+        }
+
+        .badge.d3 {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+            color: #c62828;
+        }
+
+        /* Alert Demo */
+        .alert-demo {
+            margin: 16px 0;
+        }
+
+        .alert-card {
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .alert-card.high {
+            background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%);
+            border-left: 4px solid #ef5350;
+        }
+
+        .alert-card.medium {
+            background: linear-gradient(135deg, #fff3e0 0%, #fffbeb 100%);
+            border-left: 4px solid #ffa726;
+        }
+
+        .alert-icon {
+            font-size: 20px;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-severity {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .alert-card.high .alert-severity { color: #c62828; }
+        .alert-card.medium .alert-severity { color: #e65100; }
+
+        .alert-message {
+            font-size: 14px;
+            color: var(--grey-800);
+            font-weight: 500;
+        }
+
+        .alert-action {
+            font-size: 13px;
+            color: var(--grey-600);
+            margin-top: 6px;
+        }
+
+        /* FAQ */
+        .faq-list {
+            margin-top: 24px;
+        }
+
+        .faq-item {
+            border: 1px solid var(--grey-200);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 20px 24px;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--grey-900);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .faq-question:hover {
+            background: var(--grey-50);
+        }
+
+        .faq-icon {
+            font-size: 20px;
+            color: var(--grey-500);
+            transition: transform 0.3s;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer-content {
+            padding: 0 24px 20px;
+            font-size: 14px;
+            color: var(--grey-700);
+            line-height: 1.7;
+        }
+
+        /* Matrix Demo */
+        .matrix-demo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0;
+            padding: 20px;
+            background: var(--grey-50);
+            border-radius: var(--radius-md);
+        }
+
+        .matrix-quadrant {
+            padding: 16px;
+            background: white;
+            border-radius: var(--radius-sm);
+            text-align: center;
+        }
+
+        .matrix-quadrant.star { border-top: 3px solid #4caf50; }
+        .matrix-quadrant.growth { border-top: 3px solid #2196f3; }
+        .matrix-quadrant.stable { border-top: 3px solid #ff9800; }
+        .matrix-quadrant.problem { border-top: 3px solid #f44336; }
+
+        .matrix-label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .matrix-quadrant.star .matrix-label { color: #2e7d32; }
+        .matrix-quadrant.growth .matrix-label { color: #1565c0; }
+        .matrix-quadrant.stable .matrix-label { color: #e65100; }
+        .matrix-quadrant.problem .matrix-label { color: #c62828; }
+
+        .matrix-desc {
+            font-size: 11px;
+            color: var(--grey-600);
+        }
+
+        /* Footer */
+        .guide-footer {
+            background: var(--grey-900);
+            color: white;
+            padding: 48px 24px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .footer-desc {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 24px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: white;
+            opacity: 0.7;
+            text-decoration: none;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .guide-title {
+                font-size: 28px;
+            }
+
+            .guide-subtitle {
+                font-size: 15px;
+            }
+
+            .section-title {
+                font-size: 22px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kpi-demo-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .bcg-demo {
+                grid-template-columns: 1fr;
+            }
+
+            .matrix-demo {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Print */
+        @media print {
+            .guide-nav {
+                display: none;
+            }
+
+            .section {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="guide-header">
+        <div class="header-content">
+            <div class="brand-badge">
+                <span>🎯</span>
+                <span>Growthmaker AARRR Analytics</span>
+            </div>
+            <h1 class="guide-title">AARRR 퍼널 분석<br>대시보드 사용자 가이드</h1>
+            <p class="guide-subtitle">
+                GA4 데이터 기반의 고객 구매 여정을 분석하고,
+                전환율 최적화를 위한 데이터 기반 의사결정을 시작하세요.
+            </p>
+            <span class="version-tag">📘 Guide v1.0 · Last Updated: 2025.12</span>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="guide-nav">
+        <div class="nav-container">
+            <a href="#intro" class="nav-item active">시작하기</a>
+            <a href="#funnel" class="nav-item">퍼널 차트</a>
+            <a href="#insights" class="nav-item">인사이트</a>
+            <a href="#decision" class="nav-item">의사결정 도구</a>
+            <a href="#channel" class="nav-item">채널 분석</a>
+            <a href="#customer" class="nav-item">고객 분석</a>
+            <a href="#faq" class="nav-item">FAQ</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="guide-content">
+        <!-- Section 1: 시작하기 -->
+        <section id="intro" class="section">
+            <div class="section-header">
+                <div class="section-number">1</div>
+                <h2 class="section-title">대시보드 시작하기</h2>
+                <p class="section-desc">AARRR 퍼널 분석 대시보드의 핵심 기능과 구조를 알아봅니다.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <div>
+                        <h3 class="card-title">AARRR 퍼널이란?</h3>
+                        <p class="card-subtitle">고객 구매 여정을 5단계로 분석하는 그로스 해킹 프레임워크</p>
+                    </div>
+                </div>
+
+                <div class="callout aarrr">
+                    <div class="callout-icon">📚</div>
+                    <div class="callout-content">
+                        <div class="callout-title">AARRR 프레임워크 이해하기</div>
+                        <div class="callout-text">
+                            <strong>A</strong>cquisition (유입) → <strong>A</strong>ctivation (활성화) → 
+                            <strong>R</strong>etention (관심/재방문) → <strong>R</strong>evenue (결제) → 
+                            <strong>R</strong>eferral (추천/구매완료)<br><br>
+                            이 대시보드에서는 <strong>유입 → 활동 → 관심 → 결제진행 → 구매완료</strong>의 
+                            5단계 퍼널로 고객 여정을 분석합니다.
+                        </div>
+                    </div>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); line-height: 1.8; margin-bottom: 24px;">
+                    AARRR 퍼널 분석 대시보드는 <strong>GA4 데이터</strong>를 기반으로 
+                    고객이 웹사이트에 방문하여 최종 구매에 이르기까지의 여정을 분석합니다.
+                    각 단계별 <strong>전환율과 이탈률</strong>을 파악하여 
+                    병목 구간을 발견하고 개선 전략을 수립할 수 있습니다.
+                </p>
+
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-name">D3.js 퍼널 차트</div>
+                        <div class="feature-desc">인터랙티브한 5단계 퍼널 시각화 및 기간별 비교</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">💡</div>
+                        <div class="feature-name">AI 인사이트</div>
+                        <div class="feature-desc">자동 분석된 경고, 기회 요소, 채널 전략 제공</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🔬</div>
+                        <div class="feature-name">의사결정 도구</div>
+                        <div class="feature-desc">예산 가이드, 이탈 경고, 성과 개선 분석</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">👥</div>
+                        <div class="feature-name">고객 분석</div>
+                        <div class="feature-desc">신규/재방문 비교, 채널 품질 매트릭스</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🗂️</div>
+                    <div>
+                        <h3 class="card-title">대시보드 구성</h3>
+                        <p class="card-subtitle">6개의 핵심 영역으로 구성되어 있습니다</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">대시보드 전체 레이아웃 스크린샷</div>
+                    <div class="screenshot-hint">성과 배너 + 퍼널 + 인사이트 섹션이 보이는 화면</div>
+                </div>
+
+                <div class="tab-overview">
+                    <div class="tab-row">
+                        <div class="tab-icon">📈</div>
+                        <div class="tab-info">
+                            <div class="tab-name">성과 요약 배너 & KPI 카드</div>
+                            <div class="tab-desc">이번 달 방문자, 구매자, 전환율 요약 (상단 고정)</div>
+                        </div>
+                        <span class="badge ga4">GA4</span>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">🎯</div>
+                        <div class="tab-info">
+                            <div class="tab-name">고객 구매 여정 5단계</div>
+                            <div class="tab-desc">D3.js 인터랙티브 퍼널 차트, 기간별 비교 모드</div>
+                        </div>
+                        <span class="badge d3">D3.js</span>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">💡</div>
+                        <div class="tab-info">
+                            <div class="tab-name">인사이트 & 채널 전략</div>
+                            <div class="tab-desc">핵심 요약, 긴급 개선, BCG 매트릭스</div>
+                        </div>
+                        <span class="badge ai">AI 분석</span>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">🔬</div>
+                        <div class="tab-info">
+                            <div class="tab-name">데이터 기반 의사결정 도구</div>
+                            <div class="tab-desc">채널 클러스터링, 예산 가이드, 이탈 경고, 성과 개선</div>
+                        </div>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">📊</div>
+                        <div class="tab-info">
+                            <div class="tab-name">유입 채널별 상세 분석</div>
+                            <div class="tab-desc">채널별 퍼널 테이블, 지표 비교, 전환율 TOP 10</div>
+                        </div>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">👥</div>
+                        <div class="tab-info">
+                            <div class="tab-name">고객 재방문 및 이탈 분석</div>
+                            <div class="tab-desc">신규 vs 재방문, 이탈률, 채널 품질 매트릭스</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 핵심 KPI 카드 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div>
+                        <h3 class="card-title">핵심 KPI 요약 카드</h3>
+                        <p class="card-subtitle">5단계 퍼널의 핵심 지표를 한눈에 확인하세요</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    대시보드 상단에 표시되는 KPI 카드는 각 퍼널 단계의 
+                    <strong>인원 수</strong>와 <strong>전환율</strong>을 보여줍니다.
+                    전환율이 50% 이상이면 녹색, 미만이면 빨간색 배지로 표시됩니다.
+                </p>
+
+                <div class="kpi-demo-grid">
+                    <div class="kpi-demo-card">
+                        <div class="kpi-label">총 유입</div>
+                        <div class="kpi-value">125,430</div>
+                        <div style="font-size: 12px; color: var(--grey-500); margin-top: 4px;">명</div>
+                    </div>
+                    <div class="kpi-demo-card">
+                        <div class="kpi-label">총 활성화</div>
+                        <div class="kpi-value">89,201</div>
+                        <div class="kpi-badge positive">71.1% 전환</div>
+                    </div>
+                    <div class="kpi-demo-card">
+                        <div class="kpi-label">관심</div>
+                        <div class="kpi-value">45,678</div>
+                        <div class="kpi-badge positive">51.2% 전환</div>
+                    </div>
+                    <div class="kpi-demo-card">
+                        <div class="kpi-label">결제 진행</div>
+                        <div class="kpi-value">12,345</div>
+                        <div class="kpi-badge negative">27.0% 전환</div>
+                    </div>
+                    <div class="kpi-demo-card highlight">
+                        <div class="kpi-label">구매 완료</div>
+                        <div class="kpi-value">8,901</div>
+                        <div class="kpi-badge positive">72.1% 전환</div>
+                    </div>
+                </div>
+
+                <div class="callout tip">
+                    <div class="callout-icon">💡</div>
+                    <div class="callout-content">
+                        <div class="callout-title">주니어 마케터를 위한 Tip</div>
+                        <div class="callout-text">
+                            <strong>빨간색 배지</strong>가 표시된 단계는 병목 구간입니다. 
+                            위 예시에서는 "관심 → 결제 진행" 단계가 27%로 가장 낮으므로,
+                            장바구니 이탈 방지 전략이 필요합니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: 퍼널 차트 -->
+        <section id="funnel" class="section">
+            <div class="section-header">
+                <div class="section-number">2</div>
+                <h2 class="section-title">고객 구매 여정 5단계</h2>
+                <p class="section-desc">D3.js 기반 인터랙티브 퍼널 차트를 활용하세요.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <div>
+                        <h3 class="card-title">퍼널 차트 이해하기</h3>
+                        <p class="card-subtitle">각 단계별 전환율과 이탈률을 시각적으로 확인합니다</p>
+                    </div>
+                    <span class="badge d3">D3.js</span>
+                </div>
+
+                <div class="funnel-demo">
+                    <div class="funnel-stage">
+                        <div class="funnel-bar">
+                            <span class="funnel-label">유입 (Acquisition)</span>
+                            <span class="funnel-value">125,430명</span>
+                        </div>
+                    </div>
+                    <div class="funnel-arrow">↓ 71.1% 전환 / 28.9% 이탈</div>
+                    <div class="funnel-stage">
+                        <div class="funnel-bar">
+                            <span class="funnel-label">활동 (Activation)</span>
+                            <span class="funnel-value">89,201명</span>
+                        </div>
+                    </div>
+                    <div class="funnel-arrow">↓ 51.2% 전환 / 48.8% 이탈</div>
+                    <div class="funnel-stage">
+                        <div class="funnel-bar">
+                            <span class="funnel-label">관심 (Retention)</span>
+                            <span class="funnel-value">45,678명</span>
+                        </div>
+                    </div>
+                    <div class="funnel-arrow">↓ 27.0% 전환 / 73.0% 이탈 ⚠️</div>
+                    <div class="funnel-stage">
+                        <div class="funnel-bar">
+                            <span class="funnel-label">결제 진행 (Revenue)</span>
+                            <span class="funnel-value">12,345명</span>
+                        </div>
+                    </div>
+                    <div class="funnel-arrow">↓ 72.1% 전환</div>
+                    <div class="funnel-stage">
+                        <div class="funnel-bar">
+                            <span class="funnel-label">구매 완료 (Referral)</span>
+                            <span class="funnel-value">8,901명</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">D3.js 퍼널 차트 스크린샷</div>
+                    <div class="screenshot-hint">마우스 호버 시 인사이트 툴팁이 표시되는 화면</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🔄</div>
+                    <div>
+                        <h3 class="card-title">비교 모드 & 채널 필터</h3>
+                        <p class="card-subtitle">기간별 비교와 채널별 필터링으로 심층 분석하세요</p>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
+                    📊 비교 모드
+                </h4>
+                <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                    "비교" 버튼을 클릭하면 두 기간의 퍼널을 나란히 비교할 수 있습니다.
+                    성과가 개선된 단계와 악화된 단계를 한눈에 파악하세요.
+                </p>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">퍼널 컨트롤</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">단일 뷰</button>
+                        <button class="demo-btn">비교</button>
+                        <button class="demo-btn">필터</button>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                    🔍 채널 필터
+                </h4>
+                <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                    "필터" 버튼을 클릭하면 특정 채널의 퍼널만 볼 수 있습니다.
+                    Meta, Google, Naver 등 채널별 고객 여정을 개별적으로 분석하세요.
+                </p>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">채널 선택</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">전체</button>
+                        <button class="demo-btn">Meta</button>
+                        <button class="demo-btn">Google</button>
+                        <button class="demo-btn">Naver</button>
+                        <button class="demo-btn">Kakao</button>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">퍼널 비교 모드 스크린샷</div>
+                    <div class="screenshot-hint">두 기간 퍼널이 나란히 표시된 화면</div>
+                </div>
+
+                <div class="callout info">
+                    <div class="callout-icon">ℹ️</div>
+                    <div class="callout-content">
+                        <div class="callout-title">채널별 필터 활용 방법</div>
+                        <div class="callout-text">
+                            채널 필터를 활용하면 <strong>채널별 병목 구간</strong>을 파악할 수 있습니다.
+                            예를 들어, Meta는 유입→활동 이탈이 높고, Google은 관심→결제 이탈이 높다면,
+                            각 채널에 맞는 차별화된 전략을 수립할 수 있습니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: 인사이트 & 채널 전략 -->
+        <section id="insights" class="section">
+            <div class="section-header">
+                <div class="section-number">3</div>
+                <h2 class="section-title">인사이트 & 채널 전략</h2>
+                <p class="section-desc">AI가 분석한 핵심 인사이트와 채널별 전략을 확인하세요.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">💡</div>
+                    <div>
+                        <h3 class="card-title">인사이트 탭 구성</h3>
+                        <p class="card-subtitle">3개의 탭에서 다양한 인사이트를 제공합니다</p>
+                    </div>
+                    <span class="badge ai">AI 분석</span>
+                </div>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">인사이트 탭</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">핵심 요약</button>
+                        <button class="demo-btn">긴급 개선</button>
+                        <button class="demo-btn">채널 전략</button>
+                    </div>
+                </div>
+
+                <div class="toggle-demo" style="margin-top: 12px;">
+                    <div class="toggle-demo-label">분석 기간</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn period active">전체</button>
+                        <button class="demo-btn period">180일</button>
+                        <button class="demo-btn period">90일</button>
+                        <button class="demo-btn period">30일</button>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                    📊 핵심 요약 탭
+                </h4>
+
+                <div style="display: grid; gap: 12px; margin-bottom: 20px;">
+                    <div style="padding: 16px; background: #e8f5e9; border-radius: 12px; border-left: 4px solid #4caf50;">
+                        <div style="font-size: 14px; font-weight: 600; color: #2e7d32; margin-bottom: 6px;">📊 전체 전환율</div>
+                        <div style="font-size: 14px; color: var(--grey-700);">현재 전환율: <strong>7.1%</strong> (전월 대비 +1.2%p)</div>
+                    </div>
+                    <div style="padding: 16px; background: #e3f2fd; border-radius: 12px; border-left: 4px solid #2196f3;">
+                        <div style="font-size: 14px; font-weight: 600; color: #1565c0; margin-bottom: 6px;">🏆 최고 성과 채널</div>
+                        <div style="font-size: 14px; color: var(--grey-700);"><strong>Google</strong>: 12.3% / <strong>Naver</strong>: 9.8% / <strong>Meta</strong>: 6.5%</div>
+                    </div>
+                    <div style="padding: 16px; background: #ffebee; border-radius: 12px; border-left: 4px solid #ef5350;">
+                        <div style="font-size: 14px; font-weight: 600; color: #c62828; margin-bottom: 6px;">⚠️ 주의 필요</div>
+                        <div style="font-size: 14px; color: var(--grey-700);">Kakao 채널 전환율 2.1%로 평균 대비 -67% 하락</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🚨</div>
+                    <div>
+                        <h3 class="card-title">긴급 개선 탭</h3>
+                        <p class="card-subtitle">즉시 조치가 필요한 이슈와 개선 권장 사항</p>
+                    </div>
+                </div>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">심각도 필터</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active" style="background: #ef5350; color: white; border-color: #ef5350;">즉시 조치 필요</button>
+                        <button class="demo-btn" style="border-color: #ffa726; color: #e65100;">개선 권장</button>
+                    </div>
+                </div>
+
+                <div class="alert-demo">
+                    <div class="alert-card high">
+                        <div class="alert-icon">🔥</div>
+                        <div class="alert-content">
+                            <div class="alert-severity">즉시 조치 필요 (HIGH)</div>
+                            <div class="alert-message">결제 진행 → 구매 완료 단계 이탈률 급증 (+15%)</div>
+                            <div class="alert-action">💡 추천 액션: 결제 페이지 오류 점검 및 결제 수단 다양화</div>
+                        </div>
+                    </div>
+                    <div class="alert-card medium">
+                        <div class="alert-icon">⚠️</div>
+                        <div class="alert-content">
+                            <div class="alert-severity">개선 권장 (MEDIUM)</div>
+                            <div class="alert-message">Instagram 채널 유입 후 활동 전환율 35% 하락</div>
+                            <div class="alert-action">💡 추천 액션: 랜딩 페이지 콘텐츠 일관성 점검</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">긴급 개선 탭 스크린샷</div>
+                    <div class="screenshot-hint">심각도별 경고 카드가 표시된 화면</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <div>
+                        <h3 class="card-title">채널 전략 (BCG Matrix)</h3>
+                        <p class="card-subtitle">채널을 4가지 유형으로 분류하여 전략을 제시합니다</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    BCG 매트릭스는 <strong>트래픽(규모)</strong>과 <strong>전환율(효율)</strong>을 기준으로 
+                    채널을 분류합니다. 각 유형에 맞는 차별화된 투자 전략을 수립하세요.
+                </p>
+
+                <div class="bcg-demo">
+                    <div class="bcg-card cashcow">
+                        <div class="bcg-icon">🐄</div>
+                        <div class="bcg-title">Cash Cow (효자 채널)</div>
+                        <div class="bcg-desc">높은 트래픽 + 높은 전환율<br>현 수준 유지하며 수익 극대화</div>
+                    </div>
+                    <div class="bcg-card gem">
+                        <div class="bcg-icon">💎</div>
+                        <div class="bcg-title">Hidden Gem (숨은 보석)</div>
+                        <div class="bcg-desc">낮은 트래픽 + 높은 전환율<br>예산 확대로 성장 가속화</div>
+                    </div>
+                    <div class="bcg-card pit">
+                        <div class="bcg-icon">🕳️</div>
+                        <div class="bcg-title">Money Pit (밑 빠진 독)</div>
+                        <div class="bcg-desc">높은 트래픽 + 낮은 전환율<br>랜딩/타겟팅 개선 필요</div>
+                    </div>
+                    <div class="bcg-card dog">
+                        <div class="bcg-icon">🐕</div>
+                        <div class="bcg-title">Dog (재검토 필요)</div>
+                        <div class="bcg-desc">낮은 트래픽 + 낮은 전환율<br>철수 또는 전면 개편 검토</div>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">BCG 매트릭스 스크린샷</div>
+                    <div class="screenshot-hint">채널별 4분면 분류 화면</div>
+                </div>
+
+                <div class="callout tip">
+                    <div class="callout-icon">💡</div>
+                    <div class="callout-content">
+                        <div class="callout-title">BCG 매트릭스 활용 전략</div>
+                        <div class="callout-text">
+                            <strong>Hidden Gem</strong> 채널에 예산을 우선 투자하세요. 
+                            전환율이 이미 검증되었으므로 트래픽만 늘리면 성과가 비례하여 증가합니다.
+                            <strong>Money Pit</strong> 채널은 즉시 개선하지 않으면 예산 낭비가 지속됩니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: 데이터 기반 의사결정 도구 -->
+        <section id="decision" class="section">
+            <div class="section-header">
+                <div class="section-number">4</div>
+                <h2 class="section-title">데이터 기반 의사결정 도구</h2>
+                <p class="section-desc">예산 투자, 이탈 위험, 성과 개선을 위한 분석 도구입니다.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🔬</div>
+                    <div>
+                        <h3 class="card-title">의사결정 도구 탭 구성</h3>
+                        <p class="card-subtitle">4개의 분석 도구로 전략적 의사결정을 지원합니다</p>
+                    </div>
+                </div>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">의사결정 도구 탭</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">채널 그룹별 특성</button>
+                        <button class="demo-btn">예산 투자 가이드</button>
+                        <button class="demo-btn">이탈 위험 경고</button>
+                        <button class="demo-btn">성과 개선 분석</button>
+                    </div>
+                </div>
+
+                <div class="tab-overview" style="margin-top: 20px;">
+                    <div class="tab-row">
+                        <div class="tab-icon">🔮</div>
+                        <div class="tab-info">
+                            <div class="tab-name">채널 그룹별 특성</div>
+                            <div class="tab-desc">채널 클러스터링 분석, 유사 성과 채널 그룹화</div>
+                        </div>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">💰</div>
+                        <div class="tab-info">
+                            <div class="tab-name">예산 투자 가이드</div>
+                            <div class="tab-desc">100만원 투자 시 예상 성과 시뮬레이션</div>
+                        </div>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">⚠️</div>
+                        <div class="tab-info">
+                            <div class="tab-name">이탈 위험 경고</div>
+                            <div class="tab-desc">7일/30일 기준 이탈 증가 감지 및 대응 가이드</div>
+                        </div>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">📈</div>
+                        <div class="tab-info">
+                            <div class="tab-name">성과 개선 분석</div>
+                            <div class="tab-desc">성과가 좋아진 단계 자동 탐지 및 액션 제시</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">💰</div>
+                    <div>
+                        <h3 class="card-title">예산 투자 가이드</h3>
+                        <p class="card-subtitle">채널별 100만원 투자 시 예상 성과를 시뮬레이션합니다</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    각 채널에 <strong>100만원을 투자했을 때</strong> 예상되는 
+                    방문자, 전환수, 매출을 시뮬레이션합니다. 
+                    <strong>신뢰도</strong>가 함께 표시되어 예측의 정확도를 파악할 수 있습니다.
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 20px 0;">
+                    <div style="padding: 16px; background: #e8f5e9; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 4px;">Google</div>
+                        <div style="font-size: 20px; font-weight: 700; color: #2e7d32;">₩3.2M 예상 매출</div>
+                        <div style="font-size: 12px; color: #4caf50;">ROAS 320% | 신뢰도 92%</div>
+                    </div>
+                    <div style="padding: 16px; background: #e3f2fd; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 4px;">Naver</div>
+                        <div style="font-size: 20px; font-weight: 700; color: #1565c0;">₩2.8M 예상 매출</div>
+                        <div style="font-size: 12px; color: #2196f3;">ROAS 280% | 신뢰도 88%</div>
+                    </div>
+                    <div style="padding: 16px; background: #fff3e0; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 4px;">Meta</div>
+                        <div style="font-size: 20px; font-weight: 700; color: #e65100;">₩1.5M 예상 매출</div>
+                        <div style="font-size: 12px; color: #ff9800;">ROAS 150% | 신뢰도 85%</div>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">예산 투자 가이드 스크린샷</div>
+                    <div class="screenshot-hint">채널별 투자 효율성 분석 화면</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">⚠️</div>
+                    <div>
+                        <h3 class="card-title">이탈 위험 경고</h3>
+                        <p class="card-subtitle">최근 이탈률 증가를 감지하고 대응 방안을 제시합니다</p>
+                    </div>
+                </div>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">분석 기간</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active" style="background: #ef5350; color: white; border-color: #ef5350;">최근 7일</button>
+                        <button class="demo-btn">최근 30일</button>
+                    </div>
+                </div>
+
+                <div class="alert-demo">
+                    <div class="alert-card high">
+                        <div class="alert-icon">📉</div>
+                        <div class="alert-content">
+                            <div class="alert-severity">관심 → 결제진행 이탈 급증</div>
+                            <div class="alert-message">7일간 이탈률 +18.5%p 증가 (45.2% → 63.7%)</div>
+                            <div class="alert-action">💡 대응: 장바구니 리마인더 발송, 할인 쿠폰 팝업 테스트</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="callout warning">
+                    <div class="callout-icon">⚠️</div>
+                    <div class="callout-content">
+                        <div class="callout-title">이탈 경고 대응 가이드</div>
+                        <div class="callout-text">
+                            이탈률이 <strong>주간 기준 10%p 이상</strong> 증가하면 즉각적인 조치가 필요합니다.
+                            먼저 기술적 이슈(페이지 오류, 결제 오류)를 점검하고,
+                            그 다음 UX/콘텐츠 개선을 검토하세요.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: 유입 채널별 상세 분석 -->
+        <section id="channel" class="section">
+            <div class="section-header">
+                <div class="section-number">5</div>
+                <h2 class="section-title">유입 채널별 상세 분석</h2>
+                <p class="section-desc">채널별 퍼널 데이터와 성과를 심층 분석합니다.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div>
+                        <h3 class="card-title">채널 분석 탭 구성</h3>
+                        <p class="card-subtitle">4개의 탭에서 채널별 성과를 다각도로 분석합니다</p>
+                    </div>
+                </div>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">채널 분석 탭</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">채널별 고객 흐름</button>
+                        <button class="demo-btn">지표별 비교</button>
+                        <button class="demo-btn">효율성과 규모</button>
+                        <button class="demo-btn">전환율 TOP 10</button>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                    📋 채널별 고객 흐름 테이블
+                </h4>
+                <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                    채널별로 5단계 퍼널 데이터를 테이블로 확인합니다. 
+                    컬럼 헤더를 클릭하면 정렬할 수 있습니다.
+                </p>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">채널별 퍼널 테이블 스크린샷</div>
+                    <div class="screenshot-hint">정렬 기능이 있는 데이터 테이블</div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                    📊 지표별 비교 차트
+                </h4>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">비교 지표 선택</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">전환율</button>
+                        <button class="demo-btn">방문자 수</button>
+                        <button class="demo-btn">활성 사용자</button>
+                        <button class="demo-btn">관심 고객</button>
+                        <button class="demo-btn">결제 시도</button>
+                        <button class="demo-btn">구매 건수</button>
+                        <button class="demo-btn">매출액</button>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">지표별 비교 막대 차트 스크린샷</div>
+                    <div class="screenshot-hint">채널별 선택 지표 비교 화면</div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                    📈 전환율 TOP 10
+                </h4>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">퍼널 단계 선택</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn">활동 전환율</button>
+                        <button class="demo-btn">관심 전환율</button>
+                        <button class="demo-btn">결제진행 전환율</button>
+                        <button class="demo-btn active">구매완료 전환율</button>
+                    </div>
+                </div>
+
+                <div class="callout tip">
+                    <div class="callout-icon">💡</div>
+                    <div class="callout-content">
+                        <div class="callout-title">채널 분석 활용 Tip</div>
+                        <div class="callout-text">
+                            <strong>효율성과 규모</strong> 탭에서는 전환율/방문자/구매/매출을 
+                            100점 만점으로 환산하여 채널 간 균형을 비교합니다.
+                            효율은 높지만 규모가 작은 채널은 예산 확대 기회입니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: 고객 재방문 및 이탈 분석 -->
+        <section id="customer" class="section">
+            <div class="section-header">
+                <div class="section-number">6</div>
+                <h2 class="section-title">고객 재방문 및 이탈 분석</h2>
+                <p class="section-desc">신규/재방문 고객 비교와 채널 품질을 분석합니다.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">👥</div>
+                    <div>
+                        <h3 class="card-title">고객 분석 탭 구성</h3>
+                        <p class="card-subtitle">5개의 탭에서 고객 행동을 심층 분석합니다</p>
+                    </div>
+                </div>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">고객 분석 탭</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">신규 vs 재방문 추세</button>
+                        <button class="demo-btn">전환율 비교</button>
+                        <button class="demo-btn">이탈률 분석</button>
+                        <button class="demo-btn">채널 품질 매트릭스</button>
+                        <button class="demo-btn">고객 참여도</button>
+                    </div>
+                </div>
+
+                <div class="tab-overview" style="margin-top: 20px;">
+                    <div class="tab-row">
+                        <div class="tab-icon">📈</div>
+                        <div class="tab-info">
+                            <div class="tab-name">신규 vs 재방문 추세</div>
+                            <div class="tab-desc">월별/주별/일별 신규 고객 비율과 재방문율 추이</div>
+                        </div>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">🔄</div>
+                        <div class="tab-info">
+                            <div class="tab-name">전환율 비교</div>
+                            <div class="tab-desc">신규 vs 재방문 고객의 퍼널 단계별 전환율 비교</div>
+                        </div>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">📉</div>
+                        <div class="tab-info">
+                            <div class="tab-name">이탈률 분석</div>
+                            <div class="tab-desc">채널별 퍼널 단계별 이탈률 및 정렬 기능</div>
+                        </div>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">🎯</div>
+                        <div class="tab-info">
+                            <div class="tab-name">채널 품질 매트릭스</div>
+                            <div class="tab-desc">재방문율 vs 이탈률 기준 4분면 분류</div>
+                        </div>
+                    </div>
+                    <div class="tab-row">
+                        <div class="tab-icon">💬</div>
+                        <div class="tab-info">
+                            <div class="tab-name">고객 참여도</div>
+                            <div class="tab-desc">채널별 Engagement Rate 분석</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <div>
+                        <h3 class="card-title">채널 품질 매트릭스</h3>
+                        <p class="card-subtitle">재방문율과 이탈률로 채널 품질을 4분면으로 분류합니다</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                    <strong>재방문율</strong>(높을수록 좋음)과 <strong>이탈률</strong>(낮을수록 좋음)을 
+                    기준으로 채널을 4가지 유형으로 분류합니다.
+                </p>
+
+                <div class="matrix-demo">
+                    <div class="matrix-quadrant star">
+                        <div class="matrix-label">⭐ 스타 채널</div>
+                        <div class="matrix-desc">높은 재방문율 + 낮은 이탈률<br>최우선 투자 채널</div>
+                    </div>
+                    <div class="matrix-quadrant growth">
+                        <div class="matrix-label">🚀 성장 채널</div>
+                        <div class="matrix-desc">높은 재방문율 + 높은 이탈률<br>이탈 원인 개선 필요</div>
+                    </div>
+                    <div class="matrix-quadrant stable">
+                        <div class="matrix-label">📊 안정 채널</div>
+                        <div class="matrix-desc">낮은 재방문율 + 낮은 이탈률<br>재방문 유도 전략 필요</div>
+                    </div>
+                    <div class="matrix-quadrant problem">
+                        <div class="matrix-label">🔴 문제 채널</div>
+                        <div class="matrix-desc">낮은 재방문율 + 높은 이탈률<br>전면 재검토 필요</div>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">채널 품질 매트릭스 산점도 스크린샷</div>
+                    <div class="screenshot-hint">4분면 분류 산점도 차트</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📉</div>
+                    <div>
+                        <h3 class="card-title">이탈률 분석</h3>
+                        <p class="card-subtitle">퍼널 단계별 이탈률을 채널 간 비교합니다</p>
+                    </div>
+                </div>
+
+                <div class="toggle-demo">
+                    <div class="toggle-demo-label">이탈 단계 선택</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn">유입→활동</button>
+                        <button class="demo-btn">활동→관심</button>
+                        <button class="demo-btn">관심→결제진행</button>
+                        <button class="demo-btn">결제진행→구매</button>
+                        <button class="demo-btn active">평균 이탈률</button>
+                    </div>
+                </div>
+
+                <div class="toggle-demo" style="margin-top: 12px;">
+                    <div class="toggle-demo-label">정렬 방식</div>
+                    <div class="toggle-buttons">
+                        <button class="demo-btn active">높은순</button>
+                        <button class="demo-btn">낮은순</button>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-icon">🖼️</div>
+                    <div class="screenshot-label">이탈률 분석 막대 차트 스크린샷</div>
+                    <div class="screenshot-hint">단계별 이탈률 비교 화면</div>
+                </div>
+
+                <div class="callout info">
+                    <div class="callout-icon">ℹ️</div>
+                    <div class="callout-content">
+                        <div class="callout-title">이탈률 해석 가이드</div>
+                        <div class="callout-text">
+                            <strong>유입→활동</strong> 이탈률이 높으면 → 랜딩 페이지 개선 필요<br>
+                            <strong>관심→결제진행</strong> 이탈률이 높으면 → 장바구니/가격 정책 검토<br>
+                            <strong>결제진행→구매</strong> 이탈률이 높으면 → 결제 UX/결제수단 점검
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: FAQ -->
+        <section id="faq" class="section">
+            <div class="section-header">
+                <div class="section-number">7</div>
+                <h2 class="section-title">자주 묻는 질문</h2>
+                <p class="section-desc">AARRR 퍼널 분석 대시보드 사용 중 궁금한 점을 해결하세요.</p>
+            </div>
+
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>GA4 데이터는 얼마나 자주 업데이트되나요?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            GA4 데이터는 일반적으로 <strong>24~48시간</strong> 지연되어 반영됩니다.
+                            실시간 데이터가 필요한 경우 GA4의 실시간 보고서를 함께 활용하세요.
+                            대시보드의 데이터는 매일 새벽에 자동으로 갱신됩니다.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>퍼널의 각 단계는 GA4의 어떤 이벤트를 기준으로 하나요?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            기본 매핑은 다음과 같습니다:<br><br>
+                            • <strong>유입 (Acquisition)</strong>: session_start 또는 first_visit<br>
+                            • <strong>활동 (Activation)</strong>: page_view 2회 이상 또는 scroll<br>
+                            • <strong>관심 (Retention)</strong>: add_to_cart 또는 view_item<br>
+                            • <strong>결제 진행 (Revenue)</strong>: begin_checkout<br>
+                            • <strong>구매 완료 (Referral)</strong>: purchase<br><br>
+                            클라이언트별로 커스텀 이벤트 매핑이 가능합니다.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>BCG 매트릭스의 분류 기준은 무엇인가요?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            BCG 매트릭스는 두 가지 축으로 분류합니다:<br><br>
+                            • <strong>X축 (트래픽)</strong>: 채널별 방문자 수 (전체 평균 대비)<br>
+                            • <strong>Y축 (전환율)</strong>: 채널별 구매 전환율 (전체 평균 대비)<br><br>
+                            평균 이상이면 "높음", 평균 미만이면 "낮음"으로 분류하여 4분면에 배치합니다.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>예산 투자 가이드의 신뢰도는 어떻게 계산되나요?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            신뢰도는 다음 요소를 종합하여 계산됩니다:<br><br>
+                            • <strong>데이터 양</strong>: 해당 채널의 과거 데이터 충분성<br>
+                            • <strong>일관성</strong>: 성과 지표의 변동폭<br>
+                            • <strong>최신성</strong>: 최근 데이터 반영 비중<br><br>
+                            신뢰도 80% 이상이면 예측이 비교적 정확하고, 
+                            60% 미만이면 참고용으로만 활용하세요.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>특정 채널만 필터링해서 볼 수 있나요?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            네, 가능합니다! 퍼널 차트 상단의 <strong>"필터"</strong> 버튼을 클릭하면
+                            채널 선택 드롭다운이 나타납니다. 원하는 채널을 선택하면 
+                            해당 채널의 퍼널 데이터만 표시됩니다.<br><br>
+                            필터를 해제하려면 다시 "필터" 버튼을 클릭하거나 "전체"를 선택하세요.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>신규 고객과 재방문 고객의 구분 기준은?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            GA4의 <strong>first_visit</strong> 이벤트를 기준으로 구분합니다.<br><br>
+                            • <strong>신규 고객</strong>: 해당 기간 내 first_visit 이벤트가 발생한 사용자<br>
+                            • <strong>재방문 고객</strong>: first_visit 없이 session_start만 발생한 사용자<br><br>
+                            쿠키 기반이므로 기기/브라우저가 달라지면 신규로 집계될 수 있습니다.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>이탈률이 높은 단계를 개선하려면 어떻게 해야 하나요?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            단계별 개선 전략을 참고하세요:<br><br>
+                            <strong>유입→활동 이탈</strong><br>
+                            • 랜딩 페이지 로딩 속도 개선<br>
+                            • 광고-랜딩 페이지 메시지 일관성 확보<br>
+                            • Above the fold 콘텐츠 최적화<br><br>
+                            <strong>관심→결제 이탈</strong><br>
+                            • 장바구니 리마인더 이메일/푸시 발송<br>
+                            • 할인 쿠폰 팝업 테스트<br>
+                            • 제품 상세 정보 보강<br><br>
+                            <strong>결제→구매 이탈</strong><br>
+                            • 결제 수단 다양화<br>
+                            • 결제 프로세스 단순화<br>
+                            • 결제 오류 모니터링
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="callout info" style="margin-top: 32px;">
+                <div class="callout-icon">📞</div>
+                <div class="callout-content">
+                    <div class="callout-title">추가 문의</div>
+                    <div class="callout-text">
+                        이 가이드에서 해결되지 않은 궁금증이 있으시면 
+                        담당 Growth Manager에게 문의하시거나,
+                        <strong>support@growthmaker.kr</strong>로 이메일을 보내주세요.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="guide-footer">
+        <div class="footer-logo">Growthmaker</div>
+        <p class="footer-desc">데이터를 통해 진단하고, 기술로 실행하며, 전략으로 성장시키는 Growth Partner</p>
+        <div class="footer-links">
+            <a href="https://blog.growthmaker.kr" class="footer-link" target="_blank">Blog</a>
+            <a href="mailto:support@growthmaker.kr" class="footer-link">Contact</a>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ Toggle
+        function toggleFaq(btn) {
+            const item = btn.parentElement;
+            item.classList.toggle('open');
+        }
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('.nav-item').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Update active nav
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Update active nav on scroll
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.section');
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (pageYOffset >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            document.querySelectorAll('.nav-item').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

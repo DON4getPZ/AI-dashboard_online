@@ -834,6 +834,29 @@
             background: rgba(103, 58, 183, 0.05);
         }
 
+        /* 정렬 가능한 헤더 */
+        .modal-table th.sortable {
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s ease;
+        }
+
+        .modal-table th.sortable:hover {
+            background: var(--grey-200);
+        }
+
+        .modal-table th.sortable .sort-icon {
+            display: inline-block;
+            margin-left: 4px;
+            font-size: 10px;
+            color: var(--grey-400);
+            transition: color 0.2s ease;
+        }
+
+        .modal-table th.sortable.active .sort-icon {
+            color: var(--primary-main);
+        }
+
         /* 모달 더보기/접기 버튼 */
         .modal-show-more-container {
             padding: 12px 16px;
@@ -1674,11 +1697,12 @@
                         <table class="modal-table">
                             <thead>
                                 <tr>
-                                    <th>기간</th>
+                                    <th class="sortable active" onclick="toggleModalTableSort()">기간 <span class="sort-icon" id="modalSortIcon">▼</span></th>
                                     <th>비용</th>
                                     <th>노출</th>
                                     <th>CPM</th>
                                     <th>클릭</th>
+                                    <th>CTR</th>
                                     <th>CPC</th>
                                     <th>전환수</th>
                                     <th>CPA</th>
@@ -2375,11 +2399,18 @@
             return Math.round(num) + '%';
         }
 
+        // CTR 포맷 (소수점 2자리)
+        function formatCTR(num) {
+            if (num === 0 || num === null || num === undefined) return '-';
+            return num.toFixed(2) + '%';
+        }
+
         // 모달 관련 전역 변수
         let modalChartInstance = null;
         let currentModalData = [];
         let currentModalViewType = 'daily';
         let isModalTableExpanded = false;
+        let modalTableSortOrder = 'desc'; // 'desc': 내림차순(최신순), 'asc': 오름차순(과거순)
 
         // 소재 세부 성과 모달 표시
         function showCreativeDetail(creativeName) {
@@ -2395,6 +2426,7 @@
             currentModalData = creativeData;
             currentModalViewType = 'daily';
             isModalTableExpanded = false;
+            modalTableSortOrder = 'desc'; // 정렬 순서 초기화 (내림차순)
 
             // 뷰 타입 버튼 초기화
             document.querySelectorAll('.modal-view-btn').forEach(btn => {
@@ -2416,6 +2448,7 @@
         function changeModalViewType(viewType) {
             currentModalViewType = viewType;
             isModalTableExpanded = false;
+            modalTableSortOrder = 'desc'; // 정렬 순서 초기화
 
             // 버튼 활성화 상태 변경
             document.querySelectorAll('.modal-view-btn').forEach(btn => {
@@ -2496,6 +2529,9 @@
             // 테이블 업데이트
             updateModalTable(aggregatedData);
 
+            // 정렬 아이콘 업데이트
+            updateModalSortIcon();
+
             // 차트 업데이트
             updateModalChart();
         }
@@ -2531,17 +2567,20 @@
                 groups[key].전환값 += parseFloat(row['전환값']) || 0;
             });
 
-            // 파생 지표 계산 및 정렬 (내림차순)
+            // 파생 지표 계산 및 정렬 (modalTableSortOrder에 따라)
             return Object.entries(groups)
                 .map(([period, values]) => ({
                     period,
                     ...values,
                     CPM: values.노출 > 0 ? (values.비용 / values.노출 * 1000) : 0,
+                    CTR: values.노출 > 0 ? (values.클릭 / values.노출 * 100) : 0,
                     CPC: values.클릭 > 0 ? (values.비용 / values.클릭) : 0,
                     CPA: values.전환수 > 0 ? (values.비용 / values.전환수) : 0,
                     ROAS: values.비용 > 0 ? (values.전환값 / values.비용 * 100) : 0
                 }))
-                .sort((a, b) => b.period.localeCompare(a.period));
+                .sort((a, b) => modalTableSortOrder === 'desc'
+                    ? b.period.localeCompare(a.period)
+                    : a.period.localeCompare(b.period));
         }
 
         // 모달 테이블 업데이트
@@ -2561,6 +2600,7 @@
                         <td>${formatNumber(row.노출)}</td>
                         <td>${formatNumber(row.CPM)}</td>
                         <td>${formatNumber(row.클릭)}</td>
+                        <td>${formatCTR(row.CTR)}</td>
                         <td>${formatNumber(row.CPC)}</td>
                         <td>${formatNumber(row.전환수)}</td>
                         <td>${formatNumber(row.CPA)}</td>
@@ -2614,6 +2654,27 @@
             isModalTableExpanded = false;
             const aggregatedData = aggregateModalData(currentModalData, currentModalViewType);
             updateModalTable(aggregatedData);
+        }
+
+        // 모달 테이블 정렬 토글
+        function toggleModalTableSort() {
+            // 정렬 순서 토글
+            modalTableSortOrder = modalTableSortOrder === 'desc' ? 'asc' : 'desc';
+
+            // 데이터 재집계 및 테이블 업데이트
+            const aggregatedData = aggregateModalData(currentModalData, currentModalViewType);
+            updateModalTable(aggregatedData);
+
+            // 정렬 아이콘 업데이트
+            updateModalSortIcon();
+        }
+
+        // 정렬 아이콘 업데이트
+        function updateModalSortIcon() {
+            const sortIcon = document.getElementById('modalSortIcon');
+            if (sortIcon) {
+                sortIcon.textContent = modalTableSortOrder === 'desc' ? '▼' : '▲';
+            }
         }
 
         // 모달 차트 업데이트

@@ -43,7 +43,8 @@ if exist config.json (
         echo    Worksheet: !WORKSHEET_NAME!
         echo.
 
-        goto CONFIG_DONE
+        REM 기존 config 사용 시 파일 재저장 건너뛰기
+        goto SKIP_CONFIG_SAVE
     )
 )
 
@@ -103,6 +104,8 @@ if exist config.json (
     pause
     exit /b 1
 )
+
+:SKIP_CONFIG_SAVE
 
 echo.
 echo [4/4] Download raw data
