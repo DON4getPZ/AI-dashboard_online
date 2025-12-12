@@ -409,6 +409,58 @@
             color: var(--grey-600);
         }
 
+        /* Step Guide */
+        .step-guide {
+            counter-reset: step;
+        }
+
+        .step {
+            display: flex;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--grey-100);
+        }
+
+        .step:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            counter-increment: step;
+            width: 32px;
+            height: 32px;
+            background: var(--gm-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-number::before {
+            content: counter(step);
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 6px;
+        }
+
+        .step-desc {
+            font-size: 14px;
+            color: var(--grey-600);
+            line-height: 1.6;
+        }
+
         /* Feature Grid */
         .feature-grid {
             display: grid;
@@ -657,6 +709,84 @@
             margin-left: 10px;
         }
 
+        /* Chart Demo */
+        .chart-demo {
+            background: white;
+            border: 1px solid var(--grey-200);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin: 16px 0;
+        }
+
+        .chart-demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .chart-demo-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-800);
+        }
+
+        .chart-demo-legend {
+            display: flex;
+            gap: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--grey-600);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-bar {
+            width: 16px;
+            height: 10px;
+            border-radius: 2px;
+        }
+
+        .chart-demo-area {
+            height: 200px;
+            background: linear-gradient(180deg, var(--grey-50) 0%, white 100%);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 20px;
+            gap: 8px;
+        }
+
+        .chart-bar {
+            width: 40px;
+            background: linear-gradient(180deg, #1e88e5 0%, #1565c0 100%);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+
+        .chart-bar::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background: var(--gm-success);
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
         /* Table Demo */
         .table-demo {
             width: 100%;
@@ -791,6 +921,11 @@
         .badge.chart {
             background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
             color: #e65100;
+        }
+
+        .badge.creative {
+            background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);
+            color: #7b1fa2;
         }
 
         /* FAQ */
@@ -2068,8 +2203,14 @@
                             <span class="badge chart">Chart.js</span>
                         </div>
 
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            체크박스로 표시할 지표를 선택하세요. <strong>비용</strong>은 Bar 차트로,
+                            <strong>CPM/CPC/CPA/ROAS</strong>는 Line 차트로 표시됩니다.
+                            듀얼 Y축을 사용하여 단위가 다른 지표를 함께 비교할 수 있습니다.
+                        </p>
+
                         <div class="toggle-demo">
-                            <div class="toggle-demo-label">차트 지표 선택</div>
+                            <div class="toggle-demo-label">차트 지표 선택 (체크박스)</div>
                             <div class="toggle-buttons">
                                 <button class="demo-btn active">☑️ 비용</button>
                                 <button class="demo-btn">☐ CPM</button>
@@ -2084,7 +2225,7 @@
                                 <div class="chart-demo-title">성과 추이</div>
                                 <div class="chart-demo-legend">
                                     <div class="legend-item">
-                                        <div class="legend-bar" style="background: linear-gradient(180deg, #673ab7 0%, #512da8 100%);"></div>
+                                        <div class="legend-bar" style="background: linear-gradient(180deg, #1e88e5 0%, #1565c0 100%);"></div>
                                         <span>비용 (Bar)</span>
                                     </div>
                                     <div class="legend-item">
@@ -2108,7 +2249,7 @@
                             </div>
                         </div>
 
-                        <h4 style="font-size: 14px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
                             🎨 지표별 차트 설정
                         </h4>
 
@@ -2126,35 +2267,41 @@
                                     <tr>
                                         <td><strong>비용</strong></td>
                                         <td>Bar</td>
-                                        <td>왼쪽</td>
-                                        <td><span style="color: #673ab7;">■</span> 보라색</td>
+                                        <td>왼쪽 (y)</td>
+                                        <td><span style="color: #673ab7;">■</span> 보라색 (#673ab7)</td>
                                     </tr>
                                     <tr>
                                         <td><strong>CPM</strong></td>
                                         <td>Line</td>
-                                        <td>오른쪽</td>
-                                        <td><span style="color: #ffab00;">●</span> 주황색</td>
+                                        <td>오른쪽 (y1)</td>
+                                        <td><span style="color: #ffab00;">●</span> 주황색 (#ffab00)</td>
                                     </tr>
                                     <tr>
                                         <td><strong>CPC</strong></td>
                                         <td>Line</td>
-                                        <td>오른쪽</td>
-                                        <td><span style="color: #2196f3;">●</span> 파란색</td>
+                                        <td>오른쪽 (y1)</td>
+                                        <td><span style="color: #2196f3;">●</span> 파란색 (#2196f3)</td>
                                     </tr>
                                     <tr>
                                         <td><strong>CPA</strong></td>
                                         <td>Line</td>
-                                        <td>오른쪽</td>
-                                        <td><span style="color: #ff9800;">●</span> 오렌지</td>
+                                        <td>오른쪽 (y1)</td>
+                                        <td><span style="color: #ff9800;">●</span> 오렌지 (#ff9800)</td>
                                     </tr>
                                     <tr>
                                         <td><strong>ROAS</strong></td>
                                         <td>Line (filled)</td>
-                                        <td>오른쪽</td>
-                                        <td><span style="color: #00c853;">●</span> 녹색</td>
+                                        <td>오른쪽 (y1)</td>
+                                        <td><span style="color: #00c853;">●</span> 녹색 (#00c853)</td>
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">성과 추이 차트 실제 스크린샷</div>
+                            <div class="screenshot-hint">체크박스 + 듀얼 Y축 콤보 차트</div>
                         </div>
 
                         <div class="callout tip">
@@ -2164,6 +2311,7 @@
                                 <div class="callout-text">
                                     <strong>비용 + ROAS</strong>를 함께 보면, 투자 대비 수익률의 변화를 한눈에 파악할 수 있습니다.
                                     비용이 증가했는데 ROAS도 함께 상승했다면, 스케일업이 잘 되고 있는 신호입니다.
+                                    반면, 비용은 증가했는데 ROAS가 하락했다면 효율 점검이 필요합니다.
                                 </div>
                             </div>
                         </div>
@@ -2302,7 +2450,11 @@
                             <div class="faq-answer">
                                 <div class="faq-answer-content">
                                     네, 맞습니다. <strong>전체/일별/주별/월별</strong> 탭을 전환하면
-                                    KPI 카드, 차트, 테이블이 모두 해당 집계 단위로 변경됩니다.
+                                    KPI 카드, 차트, 테이블이 모두 해당 집계 단위로 변경됩니다.<br><br>
+                                    예를 들어, "월별" 탭을 선택하면:<br>
+                                    • KPI 카드: 월별 집계 데이터의 마지막 월 vs 직전 월 비교<br>
+                                    • 차트: 월별 추이 그래프<br>
+                                    • 테이블: 월별 상세 데이터
                                 </div>
                             </div>
                         </div>
@@ -2314,8 +2466,29 @@
                             </button>
                             <div class="faq-answer">
                                 <div class="faq-answer-content">
-                                    직전 기간 데이터가 없거나, 직전 기간 값이 0인 경우,
-                                    또는 데이터가 1개 기간만 있는 경우에 "-"로 표시됩니다.
+                                    증감율이 "-"로 표시되는 경우는 다음과 같습니다:<br><br>
+                                    • <strong>직전 기간 데이터가 없는 경우</strong>: 비교할 기준이 없음<br>
+                                    • <strong>직전 기간 값이 0인 경우</strong>: 0으로 나눌 수 없음<br>
+                                    • <strong>데이터가 1개 기간만 있는 경우</strong>: 비교 대상 없음<br><br>
+                                    이 경우 필터 기간을 더 넓게 설정하면 해결될 수 있습니다.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>ROAS 퍼센트 포인트(%p)는 무엇인가요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    퍼센트 포인트(%p)는 <strong>비율의 절대적 차이</strong>를 나타냅니다.<br><br>
+                                    예시:<br>
+                                    • 지난달 ROAS: 200%<br>
+                                    • 이번달 ROAS: 215%<br>
+                                    • 변화: <strong>+15%p</strong> (215 - 200 = 15)<br><br>
+                                    일반 증감율(%)과 다르게, ROAS는 이미 비율(%)이므로
+                                    단순 뺄셈으로 변화량을 계산하여 %p로 표시합니다.
                                 </div>
                             </div>
                         </div>
@@ -2328,20 +2501,11 @@
                             <div class="faq-answer">
                                 <div class="faq-answer-content">
                                     <strong>CPA(전환당 비용)</strong>와 <strong>CPC(클릭당 비용)</strong>는
-                                    <strong>낮을수록 효율적</strong>인 지표입니다. 따라서 증가 시 빨간색으로 표시됩니다.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="faq-item">
-                            <button class="faq-question" onclick="toggleFaq(this)">
-                                <span>ROAS 퍼센트 포인트(%p)는 무엇인가요?</span>
-                                <span class="faq-icon">▼</span>
-                            </button>
-                            <div class="faq-answer">
-                                <div class="faq-answer-content">
-                                    퍼센트 포인트(%p)는 <strong>비율의 절대적 차이</strong>를 나타냅니다.
-                                    예: 지난달 ROAS 200% → 이번달 215% = <strong>+15%p</strong> (215-200)
+                                    <strong>낮을수록 효율적</strong>인 지표입니다.<br><br>
+                                    따라서:<br>
+                                    • CPA/CPC <strong>감소</strong> → 효율 개선 → <span style="color: #00c853; font-weight: 600;">녹색</span><br>
+                                    • CPA/CPC <strong>증가</strong> → 효율 악화 → <span style="color: #ff1744; font-weight: 600;">빨간색</span><br><br>
+                                    이는 ROAS(높을수록 좋음)와 반대되는 개념입니다.
                                 </div>
                             </div>
                         </div>
@@ -2353,8 +2517,11 @@
                             </button>
                             <div class="faq-answer">
                                 <div class="faq-answer-content">
-                                    네, <strong>체크박스를 여러 개 선택</strong>하면 됩니다.
-                                    비용(왼쪽 Y축, Bar)과 효율 지표(오른쪽 Y축, Line)를 함께 비교할 수 있습니다.
+                                    네, <strong>체크박스를 여러 개 선택</strong>하면 됩니다.<br><br>
+                                    • <strong>비용</strong>: 왼쪽 Y축 (Bar 차트)<br>
+                                    • <strong>CPM/CPC/CPA/ROAS</strong>: 오른쪽 Y축 (Line 차트)<br><br>
+                                    듀얼 Y축을 사용하므로 단위가 다른 지표도 함께 비교할 수 있습니다.
+                                    예: 비용(원) + ROAS(%)를 한 차트에서 확인 가능
                                 </div>
                             </div>
                         </div>
@@ -2366,8 +2533,11 @@
                             </button>
                             <div class="faq-answer">
                                 <div class="faq-answer-content">
-                                    각 필터 드롭다운에서 <strong>"전체"</strong> 옵션을 선택하거나,
-                                    <strong>페이지를 새로고침(F5)</strong>하면 모든 필터가 초기화됩니다.
+                                    현재 버전에서는 별도의 "초기화" 버튼이 없습니다.<br><br>
+                                    필터를 초기화하려면:<br>
+                                    1. 각 필터 드롭다운에서 <strong>"전체"</strong> 옵션을 선택<br>
+                                    2. 또는 <strong>페이지를 새로고침</strong> (F5)<br><br>
+                                    새로고침 시 데이터가 다시 로드되며 모든 필터가 초기 상태로 돌아갑니다.
                                 </div>
                             </div>
                         </div>
@@ -2379,14 +2549,18 @@
                             </button>
                             <div class="faq-answer">
                                 <div class="faq-answer-content">
-                                    테이블 영역을 <strong>마우스로 드래그</strong>하여 선택 후
-                                    <strong>Ctrl+C</strong>로 복사하여 Excel에 붙여넣기 할 수 있습니다.
+                                    현재 버전에서는 직접 내보내기 기능이 제공되지 않습니다.<br><br>
+                                    임시 방법:<br>
+                                    1. 테이블 영역을 <strong>마우스로 드래그</strong>하여 선택<br>
+                                    2. <strong>Ctrl+C</strong>로 복사<br>
+                                    3. Excel이나 Google Sheets에 <strong>Ctrl+V</strong>로 붙여넣기<br><br>
+                                    추후 업데이트에서 CSV/Excel 내보내기 기능이 추가될 예정입니다.
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="callout info" style="margin-top: 24px;">
+                    <div class="callout info" style="margin-top: 32px;">
                         <div class="callout-icon">📞</div>
                         <div class="callout-content">
                             <div class="callout-title">추가 문의</div>
@@ -2599,6 +2773,42 @@
                             </div>
                         </div>
 
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            필터 설정 섹션은 <strong>접기/펼치기</strong>가 가능합니다.
+                            세부 필터링이 필요할 때만 펼쳐서 사용하세요.
+                        </p>
+
+                        <div class="callout" style="background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%); border: 1px solid #e1bee7;">
+                            <div class="callout-icon">💜</div>
+                            <div class="callout-content">
+                                <div class="callout-title" style="color: #7b1fa2;">가이드 텍스트</div>
+                                <div class="callout-text">
+                                    접혀있을 때 <strong>"* 펼쳐서 세부 성과를 필터링할 수 있어요"</strong> 안내 문구가 표시됩니다.
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                            📅 기간 선택
+                        </h4>
+                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                            시작일과 종료일을 선택하면 해당 기간의 데이터만 표시됩니다.
+                            데이터 로드 시 자동으로 전체 기간이 설정됩니다.
+                        </p>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">기간 선택 + 기본 필터 스크린샷</div>
+                            <div class="screenshot-hint">날짜 선택과 유형/브랜드/상품/프로모션 필터</div>
+                        </div>
+
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                            🔗 필터 계층 구조
+                        </h4>
+                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                            필터는 계층 구조로 작동합니다. 상위 필터를 선택하면 하위 필터 옵션이 자동으로 갱신됩니다.
+                        </p>
+
                         <div class="filter-hierarchy">
                             <div class="filter-level">유형구분</div>
                             <span class="filter-arrow">→</span>
@@ -2611,6 +2821,36 @@
                             <div class="filter-level">캠페인</div>
                             <span class="filter-arrow">→</span>
                             <div class="filter-level">광고세트</div>
+                        </div>
+
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                            🔍 세부 필터
+                        </h4>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">세부 필터 항목</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn">캠페인</button>
+                                <button class="demo-btn">광고세트</button>
+                                <button class="demo-btn active">소재 검색</button>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 14px; color: var(--grey-600); margin-top: 16px;">
+                            <strong>소재 검색</strong>은 소재 이름에 특정 키워드가 포함된 소재만 필터링합니다.
+                            예: "여름" 검색 시 "여름_프로모션_배너_01", "2024여름시즌" 등이 표시됩니다.
+                        </p>
+
+                        <div class="callout tip">
+                            <div class="callout-icon">💡</div>
+                            <div class="callout-content">
+                                <div class="callout-title">필터 활용 Tip</div>
+                                <div class="callout-text">
+                                    특정 프로모션의 소재 성과만 비교하고 싶다면,
+                                    <strong>프로모션 필터</strong>를 먼저 선택하세요.
+                                    해당 프로모션에 사용된 모든 소재가 표시되어 A/B 테스트 결과를 쉽게 비교할 수 있습니다.
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2632,25 +2872,28 @@
                             </div>
                         </div>
 
-                        <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 18px;">
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
                             <strong>"ROAS가 200% 이상이면서 CPA가 15,000원 이하인 소재"</strong>처럼
                             복합 조건으로 우수 소재만 필터링할 수 있습니다.
                         </p>
 
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
+                            📌 지원 KPI 지표
+                        </h4>
                         <div class="toggle-demo">
-                            <div class="toggle-demo-label">지원 KPI 지표</div>
                             <div class="toggle-buttons">
                                 <button class="demo-btn">비용</button>
                                 <button class="demo-btn">노출</button>
                                 <button class="demo-btn">클릭</button>
                                 <button class="demo-btn">전환수</button>
+                                <button class="demo-btn">전환값</button>
                                 <button class="demo-btn">CPC</button>
                                 <button class="demo-btn">CPA</button>
                                 <button class="demo-btn active">ROAS</button>
                             </div>
                         </div>
 
-                        <h4 style="font-size: 14px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
                             🔧 조건 필터 예시
                         </h4>
 
@@ -2695,9 +2938,16 @@
                                     • <strong>&gt; (보다 큼)</strong>: 기준값 초과<br>
                                     • <strong>&lt; (보다 작음)</strong>: 기준값 미만<br>
                                     • <strong>≥ (크거나 같음)</strong>: 기준값 이상<br>
-                                    • <strong>≤ (작거나 같음)</strong>: 기준값 이하
+                                    • <strong>≤ (작거나 같음)</strong>: 기준값 이하<br>
+                                    • <strong>= (같음)</strong>: 기준값과 정확히 일치
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">KPI 필터 + 정렬 설정 스크린샷</div>
+                            <div class="screenshot-hint">좌측 KPI 필터, 우측 정렬 설정이 보이는 화면</div>
                         </div>
                     </div>
 
@@ -2714,7 +2964,10 @@
                             <div class="toggle-demo-label">정렬 기준</div>
                             <div class="toggle-buttons">
                                 <button class="demo-btn">비용</button>
+                                <button class="demo-btn">노출</button>
+                                <button class="demo-btn">클릭</button>
                                 <button class="demo-btn">전환수</button>
+                                <button class="demo-btn">전환값</button>
                                 <button class="demo-btn">CPC</button>
                                 <button class="demo-btn">CPA</button>
                                 <button class="demo-btn active">ROAS</button>
@@ -2758,70 +3011,121 @@
                                 <h3 class="card-title">소재 카드 구조</h3>
                                 <p class="card-subtitle">썸네일 + 소재명 + 핵심 KPI 4가지</p>
                             </div>
+                            <span class="badge creative">핵심 기능</span>
                         </div>
 
-                        <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 18px;">
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
                             각 소재 카드는 <strong>이미지 썸네일</strong>, <strong>소재 이름</strong>,
                             <strong>비용/CPC/CPA/ROAS</strong> 4가지 핵심 KPI로 구성됩니다.
+                            카드를 클릭하면 세부 성과 모달이 열립니다.
                         </p>
 
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 20px 0;">
-                            <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #e5e7eb;">
-                                <div style="width: 100%; height: 100px; background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%); display: flex; align-items: center; justify-content: center; font-size: 36px; opacity: 0.6;">🖼️</div>
-                                <div style="padding: 12px;">
-                                    <div style="font-size: 12px; font-weight: 600; color: #1f2937; margin-bottom: 8px;">여름_프로모션_배너_01</div>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px;">
-                                        <div><span style="color: #6b7280;">비용</span> <strong>₩2.5M</strong></div>
-                                        <div><span style="color: #6b7280;">CPC</span> <strong>₩850</strong></div>
-                                        <div><span style="color: #6b7280;">CPA</span> <strong>₩12.5K</strong></div>
-                                        <div><span style="color: #6b7280;">ROAS</span> <strong style="color: #00c853;">245%</strong></div>
+                        <div class="creative-demo-grid">
+                            <div class="creative-demo-card">
+                                <div class="creative-demo-image">🖼️</div>
+                                <div class="creative-demo-info">
+                                    <div class="creative-demo-name">여름_프로모션_배너_01</div>
+                                    <div class="creative-demo-metrics">
+                                        <div class="creative-metric">
+                                            <div class="creative-metric-label">비용</div>
+                                            <div class="creative-metric-value">₩2.5M</div>
+                                        </div>
+                                        <div class="creative-metric">
+                                            <div class="creative-metric-label">CPC</div>
+                                            <div class="creative-metric-value">₩850</div>
+                                        </div>
+                                        <div class="creative-metric">
+                                            <div class="creative-metric-label">CPA</div>
+                                            <div class="creative-metric-value">₩12,500</div>
+                                        </div>
+                                        <div class="creative-metric">
+                                            <div class="creative-metric-label">ROAS</div>
+                                            <div class="creative-metric-value" style="color: #00c853;">245%</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #e5e7eb;">
-                                <div style="width: 100%; height: 100px; background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%); display: flex; align-items: center; justify-content: center; font-size: 36px; opacity: 0.6;">🎬</div>
-                                <div style="padding: 12px;">
-                                    <div style="font-size: 12px; font-weight: 600; color: #1f2937; margin-bottom: 8px;">신제품_런칭_영상_15s</div>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px;">
-                                        <div><span style="color: #6b7280;">비용</span> <strong>₩4.8M</strong></div>
-                                        <div><span style="color: #6b7280;">CPC</span> <strong>₩720</strong></div>
-                                        <div><span style="color: #6b7280;">CPA</span> <strong>₩9.8K</strong></div>
-                                        <div><span style="color: #6b7280;">ROAS</span> <strong style="color: #00c853;">312%</strong></div>
+                            <div class="creative-demo-card">
+                                <div class="creative-demo-image">🎬</div>
+                                <div class="creative-demo-info">
+                                    <div class="creative-demo-name">신제품_런칭_영상_15s</div>
+                                    <div class="creative-demo-metrics">
+                                        <div class="creative-metric">
+                                            <div class="creative-metric-label">비용</div>
+                                            <div class="creative-metric-value">₩4.8M</div>
+                                        </div>
+                                        <div class="creative-metric">
+                                            <div class="creative-metric-label">CPC</div>
+                                            <div class="creative-metric-value">₩720</div>
+                                        </div>
+                                        <div class="creative-metric">
+                                            <div class="creative-metric-label">CPA</div>
+                                            <div class="creative-metric-value">₩9,800</div>
+                                        </div>
+                                        <div class="creative-metric">
+                                            <div class="creative-metric-label">ROAS</div>
+                                            <div class="creative-metric-value" style="color: #00c853;">312%</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #e5e7eb;">
-                                <div style="width: 100%; height: 100px; background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%); display: flex; align-items: center; justify-content: center; font-size: 36px; opacity: 0.6;">🖼️</div>
-                                <div style="padding: 12px;">
-                                    <div style="font-size: 12px; font-weight: 600; color: #1f2937; margin-bottom: 8px;">가을_컬렉션_카드뉴스</div>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px;">
-                                        <div><span style="color: #6b7280;">비용</span> <strong>₩1.2M</strong></div>
-                                        <div><span style="color: #6b7280;">CPC</span> <strong>₩1.1K</strong></div>
-                                        <div><span style="color: #6b7280;">CPA</span> <strong>₩18.5K</strong></div>
-                                        <div><span style="color: #6b7280;">ROAS</span> <strong style="color: #ff9800;">142%</strong></div>
+                            <div class="creative-demo-card">
+                                <div class="creative-demo-image">🖼️</div>
+                                <div class="creative-demo-info">
+                                    <div class="creative-demo-name">가을_컬렉션_카드뉴스</div>
+                                    <div class="creative-demo-metrics">
+                                        <div class="creative-metric">
+                                            <div class="creative-metric-label">비용</div>
+                                            <div class="creative-metric-value">₩1.2M</div>
+                                        </div>
+                                        <div class="creative-metric">
+                                            <div class="creative-metric-label">CPC</div>
+                                            <div class="creative-metric-value">₩1,100</div>
+                                        </div>
+                                        <div class="creative-metric">
+                                            <div class="creative-metric-label">CPA</div>
+                                            <div class="creative-metric-value">₩18,500</div>
+                                        </div>
+                                        <div class="creative-metric">
+                                            <div class="creative-metric-label">ROAS</div>
+                                            <div class="creative-metric-value" style="color: #ff9800;">142%</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">소재 그리드 실제 스크린샷</div>
+                            <div class="screenshot-hint">여러 소재 카드가 그리드로 배치된 화면</div>
                         </div>
 
                         <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
                             🔗 이미지 URL 처리
                         </h4>
+                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                            소재 이미지는 다음 우선순위로 로드됩니다.
+                            이미지 로드 실패 시 자동으로 대체 이미지가 표시됩니다.
+                        </p>
+
                         <div style="padding: 16px; background: var(--grey-50); border-radius: var(--radius-md); margin: 16px 0;">
                             <div style="font-size: 14px; color: var(--grey-700);">
                                 <strong>1순위:</strong> Facebook Ads / YouTube 썸네일<br>
                                 <strong>2순위:</strong> Scontent / Google 광고 이미지<br>
-                                <strong>3순위:</strong> 기본 플레이스홀더 이미지
+                                <strong>3순위:</strong> 기타 URL<br>
+                                <strong>실패 시:</strong> "이미지 로드 실패" 플레이스홀더 표시
                             </div>
                         </div>
 
                         <div class="callout tip">
                             <div class="callout-icon">💡</div>
                             <div class="callout-content">
-                                <div class="callout-title">소재 카드 클릭</div>
+                                <div class="callout-title">소재 카드 활용 Tip</div>
                                 <div class="callout-text">
-                                    카드를 클릭하면 <strong>세부 성과 모달</strong>이 열립니다.
-                                    일별 추이 차트와 상세 KPI를 확인할 수 있습니다.
+                                    이미지를 클릭하면 <strong>원본 URL이 새 탭에서 열립니다</strong>.
+                                    광고 플랫폼에서 실제 소재를 확인하고 싶을 때 활용하세요.
+                                    카드 전체를 클릭하면 세부 성과 모달이 열립니다.
                                 </div>
                             </div>
                         </div>
@@ -2846,6 +3150,11 @@
                             <span class="badge chart">Chart.js</span>
                         </div>
 
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            소재 카드를 클릭하면 해당 소재의 <strong>세부 성과 모달</strong>이 열립니다.
+                            일별/주별/월별 집계 단위를 선택하여 다양한 관점에서 분석할 수 있습니다.
+                        </p>
+
                         <div class="toggle-demo">
                             <div class="toggle-demo-label">집계 단위</div>
                             <div class="toggle-buttons">
@@ -2856,50 +3165,48 @@
                         </div>
 
                         <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
-                            📊 모달 KPI 카드 예시
+                            📊 KPI 카드 (2행)
                         </h4>
 
-                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; margin: 16px 0;">
-                            <div style="padding: 16px; background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%); display: flex; justify-content: space-between; align-items: center;">
-                                <div style="font-weight: 600; color: #1f2937;">여름_프로모션_배너_01</div>
-                                <div style="color: #6b7280; cursor: pointer;">✕</div>
+                        <div class="modal-demo">
+                            <div class="modal-demo-header">
+                                <div class="modal-demo-title">여름_프로모션_배너_01</div>
+                                <div class="modal-demo-close">✕</div>
                             </div>
-                            <div style="padding: 16px;">
-                                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px;">
-                                    <div style="padding: 12px; background: #f9fafb; border-radius: 8px; text-align: center;">
-                                        <div style="font-size: 11px; color: #6b7280;">💰 비용</div>
-                                        <div style="font-size: 14px; font-weight: 600;">₩2.45M</div>
-                                    </div>
-                                    <div style="padding: 12px; background: #f9fafb; border-radius: 8px; text-align: center;">
-                                        <div style="font-size: 11px; color: #6b7280;">🖱️ CPC</div>
-                                        <div style="font-size: 14px; font-weight: 600;">₩850</div>
-                                    </div>
-                                    <div style="padding: 12px; background: #f9fafb; border-radius: 8px; text-align: center;">
-                                        <div style="font-size: 11px; color: #6b7280;">🎯 CPA</div>
-                                        <div style="font-size: 14px; font-weight: 600;">₩12,500</div>
-                                    </div>
-                                    <div style="padding: 12px; background: #f3e5f5; border-radius: 8px; text-align: center;">
-                                        <div style="font-size: 11px; color: #6b7280;">📈 ROAS</div>
-                                        <div style="font-size: 14px; font-weight: 600; color: #673ab7;">245%</div>
-                                    </div>
+                            <div class="modal-kpi-row">
+                                <div class="modal-kpi-card">
+                                    <div class="modal-kpi-label">💰 비용</div>
+                                    <div class="modal-kpi-value">₩2,450,000</div>
                                 </div>
-                                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
-                                    <div style="padding: 12px; background: #f9fafb; border-radius: 8px; text-align: center;">
-                                        <div style="font-size: 11px; color: #6b7280;">👁️ 노출</div>
-                                        <div style="font-size: 14px; font-weight: 600;">520K</div>
-                                    </div>
-                                    <div style="padding: 12px; background: #f9fafb; border-radius: 8px; text-align: center;">
-                                        <div style="font-size: 11px; color: #6b7280;">👆 클릭</div>
-                                        <div style="font-size: 14px; font-weight: 600;">2,882</div>
-                                    </div>
-                                    <div style="padding: 12px; background: #f9fafb; border-radius: 8px; text-align: center;">
-                                        <div style="font-size: 11px; color: #6b7280;">✅ 전환수</div>
-                                        <div style="font-size: 14px; font-weight: 600;">196</div>
-                                    </div>
-                                    <div style="padding: 12px; background: #f9fafb; border-radius: 8px; text-align: center;">
-                                        <div style="font-size: 11px; color: #6b7280;">💵 전환값</div>
-                                        <div style="font-size: 14px; font-weight: 600;">₩6.0M</div>
-                                    </div>
+                                <div class="modal-kpi-card">
+                                    <div class="modal-kpi-label">🖱️ CPC</div>
+                                    <div class="modal-kpi-value">₩850</div>
+                                </div>
+                                <div class="modal-kpi-card">
+                                    <div class="modal-kpi-label">🎯 CPA</div>
+                                    <div class="modal-kpi-value">₩12,500</div>
+                                </div>
+                                <div class="modal-kpi-card" style="background: #f3e5f5;">
+                                    <div class="modal-kpi-label">📈 ROAS</div>
+                                    <div class="modal-kpi-value" style="color: #673ab7;">245%</div>
+                                </div>
+                            </div>
+                            <div class="modal-kpi-row">
+                                <div class="modal-kpi-card">
+                                    <div class="modal-kpi-label">👁️ 노출</div>
+                                    <div class="modal-kpi-value">520,000</div>
+                                </div>
+                                <div class="modal-kpi-card">
+                                    <div class="modal-kpi-label">👆 클릭</div>
+                                    <div class="modal-kpi-value">2,882</div>
+                                </div>
+                                <div class="modal-kpi-card">
+                                    <div class="modal-kpi-label">✅ 전환수</div>
+                                    <div class="modal-kpi-value">196</div>
+                                </div>
+                                <div class="modal-kpi-card">
+                                    <div class="modal-kpi-label">💵 전환값</div>
+                                    <div class="modal-kpi-value">₩6,002,500</div>
                                 </div>
                             </div>
                         </div>
@@ -2914,41 +3221,62 @@
                             </div>
                         </div>
 
-                        <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 16px;">
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
                             체크박스로 표시할 지표를 선택하세요.
                             <strong>듀얼 Y축</strong>을 지원하여 단위가 다른 지표도 함께 비교할 수 있습니다.
                         </p>
 
-                        <div style="display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0;">
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <div style="width: 12px; height: 12px; background: #673ab7; border-radius: 50%;"></div>
-                                <span style="font-size: 13px;">비용</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <div style="width: 12px; height: 12px; background: #9c27b0; border-radius: 50%;"></div>
-                                <span style="font-size: 13px;">CPM</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <div style="width: 12px; height: 12px; background: #2196f3; border-radius: 50%;"></div>
-                                <span style="font-size: 13px;">CPC</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <div style="width: 12px; height: 12px; background: #ff9800; border-radius: 50%;"></div>
-                                <span style="font-size: 13px;">CPA</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <div style="width: 12px; height: 12px; background: #00c853; border-radius: 50%;"></div>
-                                <span style="font-size: 13px;">ROAS</span>
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">차트 지표 선택</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">☑️ 비용</button>
+                                <button class="demo-btn">☐ CPM</button>
+                                <button class="demo-btn active">☑️ CPC</button>
+                                <button class="demo-btn">☐ CPA</button>
+                                <button class="demo-btn">☐ ROAS</button>
                             </div>
                         </div>
 
-                        <div class="callout tip">
-                            <div class="callout-icon">💡</div>
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                            🎨 지표별 색상
+                        </h4>
+
+                        <div class="chart-color-legend">
+                            <div class="color-item">
+                                <div class="color-dot cost"></div>
+                                <span>비용 (보라색)</span>
+                            </div>
+                            <div class="color-item">
+                                <div class="color-dot cpm"></div>
+                                <span>CPM (자주색)</span>
+                            </div>
+                            <div class="color-item">
+                                <div class="color-dot cpc"></div>
+                                <span>CPC (파란색)</span>
+                            </div>
+                            <div class="color-item">
+                                <div class="color-dot cpa"></div>
+                                <span>CPA (주황색)</span>
+                            </div>
+                            <div class="color-item">
+                                <div class="color-dot roas"></div>
+                                <span>ROAS (녹색)</span>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">성과 추이 차트 스크린샷</div>
+                            <div class="screenshot-hint">듀얼 Y축 라인 차트</div>
+                        </div>
+
+                        <div class="callout info">
+                            <div class="callout-icon">ℹ️</div>
                             <div class="callout-content">
-                                <div class="callout-title">듀얼 Y축 활용</div>
+                                <div class="callout-title">듀얼 Y축 작동 방식</div>
                                 <div class="callout-text">
-                                    비용(왼쪽 Y축)과 ROAS(오른쪽 Y축)를 함께 선택하면
-                                    투자 대비 수익률 관계를 한눈에 파악할 수 있습니다.
+                                    첫 번째 지표는 <strong>왼쪽 Y축</strong>, 두 번째 이상 지표는 <strong>오른쪽 Y축</strong>에 표시됩니다.
+                                    비용과 ROAS처럼 단위가 다른 지표를 함께 볼 때 유용합니다.
                                 </div>
                             </div>
                         </div>
@@ -2959,11 +3287,12 @@
                             <div class="card-icon" style="background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);">📋</div>
                             <div>
                                 <h3 class="card-title">상세 데이터 테이블</h3>
-                                <p class="card-subtitle">10개 컬럼으로 구성된 일별 상세 데이터</p>
+                                <p class="card-subtitle">일별/주별/월별 상세 데이터를 테이블로 확인합니다</p>
                             </div>
                         </div>
 
-                        <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 16px;">
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            10개 컬럼으로 구성된 상세 테이블입니다.
                             "더보기" 버튼으로 전체 데이터를 펼쳐볼 수 있습니다.
                         </p>
 
@@ -3029,6 +3358,18 @@
                                 더보기 ▼
                             </button>
                         </div>
+
+                        <div class="callout tip">
+                            <div class="callout-icon">💡</div>
+                            <div class="callout-content">
+                                <div class="callout-title">테이블 활용 Tip</div>
+                                <div class="callout-text">
+                                    특정 날짜에 성과가 급변했다면, 해당 날짜에 <strong>크리에이티브 변경</strong>,
+                                    <strong>타겟팅 조정</strong>, <strong>시즌 이벤트</strong> 등의 외부 요인이 있었는지 확인하세요.
+                                    패턴을 파악하면 향후 최적화에 활용할 수 있습니다.
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -3048,8 +3389,13 @@
                             </button>
                             <div class="faq-answer">
                                 <div class="faq-answer-content">
-                                    광고가 삭제/비활성화된 경우, 이미지 URL이 만료된 경우,
-                                    또는 네트워크 문제로 로드 실패한 경우 이미지가 표시되지 않을 수 있습니다.
+                                    소재 이미지는 광고 플랫폼(Facebook, Google 등)의 CDN에서 가져옵니다.
+                                    다음 경우에 이미지가 표시되지 않을 수 있습니다:<br><br>
+                                    • <strong>광고가 삭제/비활성화</strong>된 경우<br>
+                                    • <strong>이미지 URL이 만료</strong>된 경우<br>
+                                    • <strong>네트워크 문제</strong>로 로드 실패<br><br>
+                                    이 경우 "이미지 로드 실패" 플레이스홀더가 표시됩니다.
+                                    원본 URL이 있다면 클릭하여 직접 확인해 보세요.
                                 </div>
                             </div>
                         </div>
@@ -3271,7 +3617,7 @@
                                 <div class="tab-icon">🔬</div>
                                 <div class="tab-info">
                                     <div class="tab-name">데이터 기반 의사결정 도구</div>
-                                    <div class="tab-desc">AI 인사이트, 성과 기회, 주의 필요, 타겟 분석, AI 예측</div>
+                                    <div class="tab-desc">AI 인사이트, 성과 기회, 주의 필요, 타겟 분석, AI 예측, 계절성 분석</div>
                                 </div>
                                 <span class="badge ai">AI 기반</span>
                             </div>
@@ -3280,6 +3626,13 @@
                                 <div class="tab-info">
                                     <div class="tab-name">성과 추이 분석</div>
                                     <div class="tab-desc">광고세트/성별/연령/플랫폼/기기별 시계열 차트</div>
+                                </div>
+                            </div>
+                            <div class="tab-row">
+                                <div class="tab-icon">📋</div>
+                                <div class="tab-info">
+                                    <div class="tab-name">성과 상세 분석</div>
+                                    <div class="tab-desc">차원별 성과 비교 막대 차트</div>
                                 </div>
                             </div>
                             <div class="tab-row">
@@ -3317,18 +3670,32 @@
                             </div>
                         </div>
 
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            KPI 카드는 두 가지 뷰로 제공됩니다. <strong>주요 성과</strong>는 핵심 5개 지표만,
+                            <strong>세부 성과</strong>는 추가 4개 지표를 포함하여 총 9개 지표를 보여줍니다.
+                        </p>
+
                         <div class="toggle-demo">
-                            <div class="toggle-demo-label">토글 버튼</div>
+                            <div class="toggle-demo-label">토글 버튼 미리보기</div>
                             <div class="toggle-buttons">
                                 <button class="demo-btn active">주요 성과</button>
                                 <button class="demo-btn">세부 성과</button>
                             </div>
                         </div>
 
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">KPI 카드 토글 전환 스크린샷</div>
+                            <div class="screenshot-hint">주요 성과 ↔ 세부 성과 전환 화면</div>
+                        </div>
+
+                        <h4 style="font-size: 16px; font-weight: 600; margin: 28px 0 16px; color: var(--grey-900);">
+                            📌 주요 성과 지표 (기본 표시)
+                        </h4>
                         <div class="kpi-demo-grid">
                             <div class="kpi-demo-card">
                                 <div class="kpi-label">💰 총 비용</div>
-                                <div class="kpi-value">₩22.9M</div>
+                                <div class="kpi-value">₩22,896,831</div>
                             </div>
                             <div class="kpi-demo-card highlight">
                                 <div class="kpi-label">📈 ROAS</div>
@@ -3401,13 +3768,24 @@
                             </div>
                         </div>
 
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            대시보드 상단의 기간 필터를 통해 원하는 기간의 데이터만 조회할 수 있습니다.
+                            기간 선택 시 대부분의 탭이 해당 기간 기준으로 새로고침됩니다.
+                        </p>
+
                         <div class="toggle-demo">
-                            <div class="toggle-demo-label">기간 필터</div>
+                            <div class="toggle-demo-label">기간 필터 미리보기</div>
                             <div class="toggle-buttons">
-                                <button class="demo-btn active">전체 기간</button>
-                                <button class="demo-btn">최근 180일</button>
-                                <button class="demo-btn">최근 90일</button>
+                                <button class="demo-btn period active">전체 기간</button>
+                                <button class="demo-btn period">최근 180일</button>
+                                <button class="demo-btn period">최근 90일</button>
                             </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">기간 필터 UI 스크린샷</div>
+                            <div class="screenshot-hint">기간 필터 버튼 그룹 화면</div>
                         </div>
 
                         <div class="callout warning">
@@ -3418,6 +3796,121 @@
                                     <strong>계절성 분석</strong> 탭은 전체 기간 데이터만 사용합니다.
                                     해당 탭에는 "🔒 이 탭은 전체 기간 데이터를 사용합니다" 안내가 표시됩니다.
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📂</div>
+                            <div>
+                                <h3 class="card-title">섹션 접기/펼치기</h3>
+                                <p class="card-subtitle">필요한 섹션만 펼쳐서 집중하세요</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            각 분석 섹션 헤더를 클릭하면 해당 섹션을 접거나 펼칠 수 있습니다.
+                            현재 확인하고 싶은 섹션만 펼쳐두면 화면을 깔끔하게 유지할 수 있습니다.
+                        </p>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">섹션 접기/펼치기 스크린샷</div>
+                            <div class="screenshot-hint">접힌 상태와 펼친 상태 비교 화면</div>
+                        </div>
+
+                        <div class="step-guide">
+                            <div class="step">
+                                <div class="step-number"></div>
+                                <div class="step-content">
+                                    <div class="step-title">섹션 헤더 클릭</div>
+                                    <div class="step-desc">분석 섹션의 제목 영역을 클릭합니다. (예: "📈 성과 추이 분석")</div>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number"></div>
+                                <div class="step-content">
+                                    <div class="step-title">펼치기/접기 토글</div>
+                                    <div class="step-desc">클릭하면 섹션이 펼쳐지거나 접힙니다. 버튼 텍스트가 "펼치기" ↔ "접기"로 변경됩니다.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 탭 전환 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">🔀</div>
+                            <div>
+                                <h3 class="card-title">탭 전환</h3>
+                                <p class="card-subtitle">각 섹션 내 세부 분석 탭을 활용하세요</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            각 분석 섹션에는 여러 개의 탭이 있습니다. 탭을 클릭하여 원하는 분석 유형으로 전환하세요.
+                        </p>
+
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                            🔬 데이터 기반 의사결정 도구 탭
+                        </h4>
+                        <div class="toggle-demo">
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">오늘의 요약</button>
+                                <button class="demo-btn">성과 기회</button>
+                                <button class="demo-btn">주의 필요</button>
+                                <button class="demo-btn">타겟 분석</button>
+                                <button class="demo-btn">AI 예측 <span class="badge ai" style="margin-left: 4px;">AI</span></button>
+                                <button class="demo-btn">계절성 분석</button>
+                            </div>
+                        </div>
+
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                            📈 성과 추이 분석 탭
+                        </h4>
+                        <div class="toggle-demo">
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">광고세트 추이</button>
+                                <button class="demo-btn">성별 추이</button>
+                                <button class="demo-btn">연령 추이</button>
+                                <button class="demo-btn">플랫폼 추이</button>
+                                <button class="demo-btn">기기플랫폼 추이</button>
+                                <button class="demo-btn">기기 추이</button>
+                                <button class="demo-btn">성별 연령 PIVOT</button>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">탭 전환 UI 스크린샷</div>
+                            <div class="screenshot-hint">탭 버튼 그룹과 활성 탭 표시 화면</div>
+                        </div>
+                    </div>
+
+                    <!-- 집계 단위 & 필터 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">⚙️</div>
+                            <div>
+                                <h3 class="card-title">집계 단위 & 필터 드롭다운</h3>
+                                <p class="card-subtitle">차트 데이터를 원하는 방식으로 조회하세요</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            성과 추이 분석 차트에서는 <strong>집계 단위</strong>와 <strong>필터</strong>를 조합하여
+                            다양한 시각으로 데이터를 분석할 수 있습니다.
+                        </p>
+
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                            📊 집계 단위
+                        </h4>
+                        <div class="toggle-demo">
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">일별</button>
+                                <button class="demo-btn">주별</button>
+                                <button class="demo-btn">월별</button>
                             </div>
                         </div>
 
@@ -3453,38 +3946,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-icon">📂</div>
-                            <div>
-                                <h3 class="card-title">섹션 접기/펼치기</h3>
-                                <p class="card-subtitle">필요한 섹션만 펼쳐서 집중하세요</p>
-                            </div>
-                        </div>
-
-                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
-                            각 분석 섹션 헤더를 클릭하면 해당 섹션을 접거나 펼칠 수 있습니다.
-                            현재 확인하고 싶은 섹션만 펼쳐두면 화면을 깔끔하게 유지할 수 있습니다.
-                        </p>
-
-                        <div class="step-guide">
-                            <div class="step">
-                                <div class="step-number"></div>
-                                <div class="step-content">
-                                    <div class="step-title">섹션 헤더 클릭</div>
-                                    <div class="step-desc">분석 섹션의 제목 영역을 클릭합니다. (예: "📈 성과 추이 분석")</div>
-                                </div>
-                            </div>
-                            <div class="step">
-                                <div class="step-number"></div>
-                                <div class="step-content">
-                                    <div class="step-title">펼치기/접기 토글</div>
-                                    <div class="step-desc">클릭하면 섹션이 펼쳐지거나 접힙니다. 버튼 텍스트가 "펼치기" ↔ "접기"로 변경됩니다.</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- AI 인사이트 -->
@@ -3495,6 +3956,7 @@
                         <p class="section-desc">AI가 분석한 핵심 인사이트와 추천 사항을 확인하세요.</p>
                     </div>
 
+                    <!-- AI 종합 진단 -->
                     <div class="card">
                         <div class="card-header">
                             <div class="card-icon">🤖</div>
@@ -3505,14 +3967,255 @@
                             <span class="badge ai">AI 기반</span>
                         </div>
 
-                        <div class="insight-demo">
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            "오늘의 요약" 탭 최상단에 표시되는 <strong>AI 종합 진단 카드</strong>는
+                            현재 기간의 성과를 분석하여 핵심 메시지를 전달합니다.
+                        </p>
+
+                        <div style="background: var(--gm-gradient); border-radius: var(--radius-lg); padding: 24px; color: white; margin-bottom: 20px;">
+                            <div style="display: flex; gap: 16px; align-items: flex-start;">
+                                <div style="font-size: 40px;">🤖</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">
+                                        광고 성과가 전반적으로 양호합니다!
+                                    </div>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+                                        <span style="padding: 6px 14px; background: rgba(255,255,255,0.2); border-radius: 20px; font-size: 13px; font-weight: 600;">ROAS 177.1%</span>
+                                        <span style="padding: 6px 14px; background: rgba(255,255,255,0.2); border-radius: 20px; font-size: 13px; font-weight: 600;">매출 ₩40.5M</span>
+                                        <span style="padding: 6px 14px; background: rgba(255,255,255,0.2); border-radius: 20px; font-size: 13px; font-weight: 600;">비용 ₩22.9M</span>
+                                    </div>
+                                    <div style="font-size: 14px; opacity: 0.95; line-height: 1.7; padding: 12px; background: rgba(255,255,255,0.15); border-radius: 10px;">
+                                        ROAS가 100%를 상회하며 광고비 대비 수익이 발생하고 있습니다.
+                                        특히 A 브랜드의 성과가 우수하니 예산 확대를 검토해 보세요.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">AI 종합 진단 카드 실제 스크린샷</div>
+                            <div class="screenshot-hint">대시보드 내 실제 카드 화면</div>
+                        </div>
+                    </div>
+
+                    <!-- 핵심 지표 대시보드 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📈</div>
+                            <div>
+                                <h3 class="card-title">핵심 지표 대시보드</h3>
+                                <p class="card-subtitle">4개 핵심 지표의 상태를 시각적으로 확인합니다</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            ROAS, CPA, 전환수, 매출 4개 지표에 대해 <strong>상태 아이콘</strong>과 함께
+                            현재 성과가 좋은지, 개선이 필요한지 한눈에 파악할 수 있습니다.
+                        </p>
+
+                        <div class="insight-demo" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
                             <div class="insight-item success">
-                                <div class="insight-type">성과 우수</div>
-                                <div class="insight-message">A 브랜드의 ROAS가 245%로 평균 대비 38% 높습니다</div>
+                                <div class="insight-type">ROAS</div>
+                                <div style="font-size: 22px; font-weight: 700; color: var(--gm-success);">177.1%</div>
+                                <div style="margin-top: 8px; display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 18px;">🎉</span>
+                                    <span style="font-size: 12px; font-weight: 600; color: var(--gm-success);">매우 좋음</span>
+                                </div>
                             </div>
                             <div class="insight-item warning">
-                                <div class="insight-type">주의 필요</div>
-                                <div class="insight-message">B 상품의 CPA가 지난 7일간 42% 상승했습니다</div>
+                                <div class="insight-type">CPA</div>
+                                <div style="font-size: 22px; font-weight: 700; color: var(--gm-warning);">₩15,234</div>
+                                <div style="margin-top: 8px; display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 18px;">📊</span>
+                                    <span style="font-size: 12px; font-weight: 600; color: var(--gm-warning);">보통</span>
+                                </div>
+                            </div>
+                            <div class="insight-item success">
+                                <div class="insight-type">전환수</div>
+                                <div style="font-size: 22px; font-weight: 700; color: var(--gm-success);">1,503</div>
+                                <div style="margin-top: 8px; display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 18px;">👍</span>
+                                    <span style="font-size: 12px; font-weight: 600; color: var(--gm-success);">양호</span>
+                                </div>
+                            </div>
+                            <div class="insight-item success">
+                                <div class="insight-type">매출</div>
+                                <div style="font-size: 22px; font-weight: 700; color: var(--gm-success);">₩40.5M</div>
+                                <div style="margin-top: 8px; display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 18px;">🎉</span>
+                                    <span style="font-size: 12px; font-weight: 600; color: var(--gm-success);">매우 좋음</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="callout info">
+                            <div class="callout-icon">ℹ️</div>
+                            <div class="callout-content">
+                                <div class="callout-title">상태 기준</div>
+                                <div class="callout-text">
+                                    🎉 <strong>매우 좋음</strong> - 목표 대비 우수한 성과<br>
+                                    👍 <strong>양호</strong> - 목표 달성 중<br>
+                                    📊 <strong>보통</strong> - 개선 여지 있음<br>
+                                    ⚠️ <strong>개선 필요</strong> - 즉각적인 조치 권장
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI 추천 사항 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">💡</div>
+                            <div>
+                                <h3 class="card-title">AI 핵심 추천 사항</h3>
+                                <p class="card-subtitle">데이터 분석 기반의 액션 아이템을 제안합니다</p>
+                            </div>
+                            <span class="badge ai">AI 기반</span>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            AI가 분석한 데이터를 바탕으로 <strong>우선순위별 추천 사항</strong>을 제공합니다.
+                            각 추천에는 구체적인 행동 가이드가 포함되어 있습니다.
+                        </p>
+
+                        <div style="background: white; border: 1px solid var(--grey-200); border-radius: var(--radius-md); padding: 20px; margin-bottom: 16px;">
+                            <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                <div style="width: 32px; height: 32px; background: var(--gm-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">1</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 15px; font-weight: 600; color: var(--grey-900); margin-bottom: 6px;">
+                                        A 브랜드 광고 예산 15% 확대 권장
+                                    </div>
+                                    <div style="font-size: 14px; color: var(--grey-600); line-height: 1.6;">
+                                        A 브랜드의 ROAS가 245%로 평균 대비 38% 높습니다.
+                                        현재 예산 대비 전환 효율이 우수하므로 예산 확대 시 추가 수익 창출이 예상됩니다.
+                                    </div>
+                                    <div style="margin-top: 10px;">
+                                        <span style="padding: 4px 10px; background: #e8f5e9; color: #2e7d32; border-radius: 12px; font-size: 11px; font-weight: 600;">
+                                            🔥 높은 우선순위
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: white; border: 1px solid var(--grey-200); border-radius: var(--radius-md); padding: 20px;">
+                            <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                <div style="width: 32px; height: 32px; background: var(--gm-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">2</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 15px; font-weight: 600; color: var(--grey-900); margin-bottom: 6px;">
+                                        25-34 여성 타겟 크리에이티브 테스트
+                                    </div>
+                                    <div style="font-size: 14px; color: var(--grey-600); line-height: 1.6;">
+                                        해당 타겟의 CTR이 2.8%로 가장 높지만, 전환율은 평균 수준입니다.
+                                        전환 최적화 크리에이티브 A/B 테스트를 권장합니다.
+                                    </div>
+                                    <div style="margin-top: 10px;">
+                                        <span style="padding: 4px 10px; background: #fff3e0; color: #e65100; border-radius: 12px; font-size: 11px; font-weight: 600;">
+                                            📊 중간 우선순위
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">AI 추천 사항 전체 목록 스크린샷</div>
+                            <div class="screenshot-hint">"더보기" 클릭 시 추가 추천 사항 표시 화면</div>
+                        </div>
+                    </div>
+
+                    <!-- 경고 알림 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">⚠️</div>
+                            <div>
+                                <h3 class="card-title">주의 필요 알림</h3>
+                                <p class="card-subtitle">즉각적인 조치가 필요한 이슈를 알려드립니다</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            "주의 필요" 탭에서는 AI가 감지한 <strong>경고 알림</strong>을 확인할 수 있습니다.
+                            각 경고에는 예상되는 재무적 영향과 권장 조치 사항이 포함됩니다.
+                        </p>
+
+                        <div style="background: linear-gradient(135deg, #fff5f5 0%, #ffebee 100%); border-left: 4px solid var(--gm-error); border-radius: var(--radius-md); padding: 20px; margin-bottom: 16px;">
+                            <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                <div style="font-size: 24px;">⚠️</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 15px; font-weight: 600; color: #c62828; margin-bottom: 6px;">
+                                        B 상품 CPA 급등 경고
+                                    </div>
+                                    <div style="font-size: 14px; color: var(--grey-600); line-height: 1.6; margin-bottom: 12px;">
+                                        B 상품의 CPA가 지난 7일간 42% 상승했습니다. (₩18,500 → ₩26,270)
+                                        현재 추세가 지속될 경우 월간 예산 초과가 예상됩니다.
+                                    </div>
+                                    <div style="padding: 12px; background: rgba(239,83,80,0.1); border-radius: 8px; margin-bottom: 10px;">
+                                        <div style="font-size: 11px; color: #c62828; font-weight: 600; margin-bottom: 4px;">💰 Financial Impact</div>
+                                        <div style="font-size: 13px; color: var(--grey-800);">추가 비용 ₩2,340,000/월 예상</div>
+                                    </div>
+                                    <div style="padding: 12px; background: rgba(76,175,80,0.1); border-radius: 8px;">
+                                        <div style="font-size: 11px; color: #2e7d32; font-weight: 600; margin-bottom: 4px;">✅ Action</div>
+                                        <div style="font-size: 13px; color: var(--grey-800);">B 상품 광고세트 크리에이티브 점검 및 타겟 세분화 검토</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">주의 필요 서브탭</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active" style="background: #ffebee; color: #c62828; border-color: #ffcdd2;">AI 분석 경고</button>
+                                <button class="demo-btn" style="background: #fff3e0; color: #e65100; border-color: #ffe0b2;">CPA 높음</button>
+                                <button class="demo-btn" style="background: #fff8e1; color: #f57f17; border-color: #fff59d;">비효율 상품</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI 예측 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">🔮</div>
+                            <div>
+                                <h3 class="card-title">AI 예측 (Prophet)</h3>
+                                <p class="card-subtitle">30일 후 성과를 예측하여 선제적 대응을 지원합니다</p>
+                            </div>
+                            <span class="badge ai">AI 기반</span>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            Facebook의 <strong>Prophet</strong> 알고리즘을 활용하여 향후 30일간의
+                            ROAS, 전환수, 매출 등을 예측합니다. 예측 데이터를 바탕으로
+                            예산 조정, 캠페인 전략 수립 등에 활용하세요.
+                        </p>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">Prophet 예측 차트 스크린샷</div>
+                            <div class="screenshot-hint">실제 데이터 + 예측 데이터가 표시된 시계열 차트</div>
+                        </div>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">AI 예측 서브탭</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">상품별 분석</button>
+                                <button class="demo-btn">성별&연령 분석</button>
+                                <button class="demo-btn">기기플랫폼 분석</button>
+                                <button class="demo-btn">채널 분석</button>
+                            </div>
+                        </div>
+
+                        <div class="callout tip" style="margin-top: 20px;">
+                            <div class="callout-icon">💡</div>
+                            <div class="callout-content">
+                                <div class="callout-title">예측 활용 Tip</div>
+                                <div class="callout-text">
+                                    예측 ROAS가 하락 추세라면, 현재 잘 되고 있는 광고세트에 예산을 집중하거나
+                                    새로운 크리에이티브 테스트를 준비하세요. 예측은 참고용이며,
+                                    외부 요인(시즌, 경쟁사 등)에 따라 달라질 수 있습니다.
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3535,15 +4238,10 @@
                             </div>
                         </div>
 
-                        <div class="toggle-demo">
-                            <div class="toggle-demo-label">분석 탭</div>
-                            <div class="toggle-buttons">
-                                <button class="demo-btn active">광고세트 추이</button>
-                                <button class="demo-btn">성별 추이</button>
-                                <button class="demo-btn">연령 추이</button>
-                                <button class="demo-btn">플랫폼 추이</button>
-                            </div>
-                        </div>
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            광고세트, 성별, 연령, 플랫폼, 기기별로 성과 추이를 시계열 차트로 확인할 수 있습니다.
+                            일별/주별/월별 집계와 다양한 필터를 조합하여 분석하세요.
+                        </p>
 
                         <div class="step-guide">
                             <div class="step">
@@ -3576,7 +4274,24 @@
                             </div>
                         </div>
 
-                        <p style="font-size: 15px; color: var(--grey-700); margin: 20px 0;">
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">성과 추이 분석 차트 스크린샷</div>
+                            <div class="screenshot-hint">시계열 라인 차트 및 필터 UI</div>
+                        </div>
+                    </div>
+
+                    <!-- 성과 상세 분석 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📊</div>
+                            <div>
+                                <h3 class="card-title">성과 상세 분석</h3>
+                                <p class="card-subtitle">차원별 성과를 막대 차트로 비교합니다</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
                             각 차원(광고세트, 성별, 연령 등)별 성과를 막대 차트로 비교 분석합니다.
                             <strong>기간 비교</strong> 기능을 활성화하면 두 기간의 성과 변화를 한눈에 확인할 수 있습니다.
                         </p>
@@ -3611,6 +4326,7 @@
                         </div>
                     </div>
 
+                    <!-- 성과 분석 -->
                     <div class="card">
                         <div class="card-header">
                             <div class="card-icon">🏆</div>
@@ -3909,7 +4625,21 @@
                                 <div class="tab-icon">🔬</div>
                                 <div class="tab-info">
                                     <div class="tab-name">데이터 기반 의사결정 도구</div>
-                                    <div class="tab-desc">채널 클러스터링, 예산 가이드, 이탈 경고</div>
+                                    <div class="tab-desc">채널 클러스터링, 예산 가이드, 이탈 경고, 성과 개선</div>
+                                </div>
+                            </div>
+                            <div class="tab-row">
+                                <div class="tab-icon">📊</div>
+                                <div class="tab-info">
+                                    <div class="tab-name">유입 채널별 상세 분석</div>
+                                    <div class="tab-desc">채널별 퍼널 테이블, 지표 비교, 전환율 TOP 10</div>
+                                </div>
+                            </div>
+                            <div class="tab-row">
+                                <div class="tab-icon">👥</div>
+                                <div class="tab-info">
+                                    <div class="tab-name">고객 재방문 및 이탈 분석</div>
+                                    <div class="tab-desc">신규 vs 재방문, 이탈률, 채널 품질 매트릭스</div>
                                 </div>
                             </div>
                         </div>
@@ -5054,117 +5784,154 @@
                     </div>
                 </div>
 
-                <!-- 차트 분석 -->
-                <div class="content-section" id="timeseries-chart">
+                <!-- 핵심 KPI 요약 -->
+                <div class="content-section" id="timeseries-kpi">
                     <div class="section-header">
                         <div class="section-number">3</div>
-                        <h2 class="section-title">차트 분석</h2>
-                        <p class="section-desc">시계열 데이터를 다양한 차트로 시각화합니다.</p>
+                        <h2 class="section-title">핵심 KPI 요약</h2>
+                        <p class="section-desc">예측 기반 핵심 성과 지표를 확인하세요.</p>
                     </div>
 
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-icon" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">📊</div>
+                            <div class="card-icon">📊</div>
                             <div>
-                                <h3 class="card-title">시계열 차트</h3>
-                                <p class="card-subtitle">일별/주별/월별 성과 추이 시각화</p>
+                                <h3 class="card-title">주요 성과 vs 세부 성과</h3>
+                                <p class="card-subtitle">토글 버튼으로 원하는 수준의 정보를 확인하세요</p>
                             </div>
                         </div>
 
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            KPI 카드는 <strong>예측 값</strong>과 함께 <strong>실제 대비 변화율</strong>을 표시합니다.
+                            주요 성과(효율 지표 5개)와 세부 성과(기본 성과 4개)로 구분되어 있습니다.
+                        </p>
+
                         <div class="toggle-demo">
-                            <div class="toggle-demo-label">집계 단위</div>
+                            <div class="toggle-demo-label">토글 버튼 미리보기</div>
                             <div class="toggle-buttons">
-                                <button class="demo-btn active">일별</button>
-                                <button class="demo-btn">주별</button>
-                                <button class="demo-btn">월별</button>
+                                <button class="demo-btn active">주요 성과</button>
+                                <button class="demo-btn">세부 성과</button>
+                            </div>
+                        </div>
+
+                        <h4 style="font-size: 16px; font-weight: 600; margin: 28px 0 16px; color: var(--grey-900);">
+                            📌 주요 성과 (효율 지표 5개)
+                        </h4>
+                        <div class="kpi-demo-grid">
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">💰 예측 비용</div>
+                                <div class="kpi-value">₩28.5M</div>
+                                <div class="kpi-change up">▲ 5.2% vs 실제</div>
+                            </div>
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">👁️ CPM</div>
+                                <div class="kpi-value">₩4,850</div>
+                                <div class="kpi-change down">▼ 2.1% vs 실제</div>
+                            </div>
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">🖱️ CPC</div>
+                                <div class="kpi-value">₩920</div>
+                                <div class="kpi-change down">▼ 3.5% vs 실제</div>
+                            </div>
+                            <div class="kpi-demo-card">
+                                <div class="kpi-label">🎯 CPA</div>
+                                <div class="kpi-value">₩14,200</div>
+                                <div class="kpi-change down">▼ 8.3% vs 실제</div>
+                            </div>
+                            <div class="kpi-demo-card highlight">
+                                <div class="kpi-label">📈 ROAS</div>
+                                <div class="kpi-value">192%</div>
+                                <div class="kpi-change up">▲ 12.4% vs 실제</div>
+                            </div>
+                        </div>
+
+                        <h4 style="font-size: 16px; font-weight: 600; margin: 28px 0 16px; color: var(--grey-900);">
+                            📌 세부 성과 (기본 성과 4개)
+                        </h4>
+                        <div class="kpi-demo-grid">
+                            <div class="kpi-demo-card secondary">
+                                <div class="kpi-label">👀 예측 노출</div>
+                                <div class="kpi-value">5.87M</div>
+                                <div class="kpi-change up">▲ 7.8%</div>
+                            </div>
+                            <div class="kpi-demo-card secondary">
+                                <div class="kpi-label">👆 예측 클릭</div>
+                                <div class="kpi-value">31,024</div>
+                                <div class="kpi-change up">▲ 9.2%</div>
+                            </div>
+                            <div class="kpi-demo-card secondary">
+                                <div class="kpi-label">✅ 예측 전환수</div>
+                                <div class="kpi-value">2,008</div>
+                                <div class="kpi-change up">▲ 15.3%</div>
+                            </div>
+                            <div class="kpi-demo-card secondary">
+                                <div class="kpi-label">💵 예측 전환값</div>
+                                <div class="kpi-value">₩54.7M</div>
+                                <div class="kpi-change up">▲ 18.1%</div>
                             </div>
                         </div>
 
                         <div class="screenshot-placeholder">
-                            <div class="screenshot-icon">📈</div>
-                            <div class="screenshot-label">시계열 차트 영역</div>
-                            <div class="screenshot-hint">라인 차트로 시간에 따른 변화 시각화</div>
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">KPI 카드 토글 전환 스크린샷</div>
+                            <div class="screenshot-hint">주요 성과 ↔ 세부 성과 전환 화면</div>
                         </div>
 
-                        <div class="chart-legend">
-                            <div class="legend-item">
-                                <div class="legend-line actual"></div>
-                                <span>실제 데이터</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-line forecast"></div>
-                                <span>예측 데이터</span>
-                            </div>
-                        </div>
-
-                        <div class="step-guide">
-                            <div class="step">
-                                <div class="step-number"></div>
-                                <div class="step-content">
-                                    <div class="step-title">집계 단위 선택</div>
-                                    <div class="step-desc">일별, 주별, 월별 중 분석 목적에 맞는 단위 선택</div>
-                                </div>
-                            </div>
-                            <div class="step">
-                                <div class="step-number"></div>
-                                <div class="step-content">
-                                    <div class="step-title">지표 체크박스 선택</div>
-                                    <div class="step-desc">비용, 노출, 클릭, 전환수, 전환값 중 확인할 지표 선택</div>
-                                </div>
-                            </div>
-                            <div class="step">
-                                <div class="step-number"></div>
-                                <div class="step-content">
-                                    <div class="step-title">실제 vs 예측 비교</div>
-                                    <div class="step-desc">실선(실제)과 점선(예측)의 gap을 확인하여 예측 정확도 파악</div>
+                        <div class="callout info">
+                            <div class="callout-icon">ℹ️</div>
+                            <div class="callout-content">
+                                <div class="callout-title">예측값 해석 방법</div>
+                                <div class="callout-text">
+                                    <strong>▲ (상승)</strong>: 예측 값이 실제보다 높음 → 성과 개선 예상<br>
+                                    <strong>▼ (하락)</strong>: 예측 값이 실제보다 낮음 → 효율 개선 또는 볼륨 감소 예상<br>
+                                    CPA, CPC, CPM은 낮을수록 좋으므로 ▼가 긍정적입니다.
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 추세 분석 -->
-                <div class="content-section" id="timeseries-trend">
+                <!-- AI 인사이트 활용하기 -->
+                <div class="content-section" id="timeseries-insights">
                     <div class="section-header">
                         <div class="section-number">4</div>
-                        <h2 class="section-title">추세 분석</h2>
-                        <p class="section-desc">장기적인 성과 변화 추세를 파악합니다.</p>
+                        <h2 class="section-title">AI 인사이트 활용하기</h2>
+                        <p class="section-desc">AI가 분석한 경고, 추천, 기회 요소를 확인하세요.</p>
                     </div>
 
+                    <!-- 통합 인사이트 -->
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-icon" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">📈</div>
+                            <div class="card-icon">🔬</div>
                             <div>
-                                <h3 class="card-title">추세선 분석</h3>
-                                <p class="card-subtitle">이동 평균 및 추세선으로 방향성 파악</p>
+                                <h3 class="card-title">통합 인사이트 대시보드</h3>
+                                <p class="card-subtitle">AI가 분석한 핵심 인사이트를 한곳에서 확인하세요</p>
+                            </div>
+                            <span class="badge ai">AI 기반</span>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            통합 인사이트 섹션에서는 <strong>독립적인 기간 필터</strong>를 통해
+                            전체/180일/90일 기준의 AI 분석 결과를 확인할 수 있습니다.
+                        </p>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">AI 요약 기간 필터 (독립 작동)</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn period active">전체 기간</button>
+                                <button class="demo-btn period">최근 180일</button>
+                                <button class="demo-btn period">최근 90일</button>
                             </div>
                         </div>
 
-                        <div class="insight-demo">
-                            <div class="insight-item success">
-                                <div class="insight-type">상승 추세</div>
-                                <div class="insight-message">ROAS가 최근 30일간 15% 상승 추세입니다</div>
-                            </div>
-                            <div class="insight-item warning">
-                                <div class="insight-type">하락 추세</div>
-                                <div class="insight-message">전환율이 최근 7일간 5% 하락했습니다</div>
-                            </div>
-                        </div>
-                    </div>
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                            📊 카테고리별 인사이트 카드
+                        </h4>
 
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-icon" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">💡</div>
-                            <div>
-                                <h3 class="card-title">카테고리별 인사이트 카드</h3>
-                                <p class="card-subtitle">AI가 분석한 주요 인사이트를 카테고리별로 확인</p>
-                            </div>
-                        </div>
-
-                        <div class="insight-demo" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                        <div class="insight-demo" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
                             <div class="insight-item success">
                                 <div class="insight-type">🚀 성과 현황</div>
-                                <div class="insight-message">ROAS가 전월 대비 <strong style="color: #2e7d32;">+15.3%</strong> 상승</div>
+                                <div class="insight-message">ROAS가 전월 대비 <span style="color: var(--gm-success); font-weight: 700;">+15.3%</span> 상승</div>
                             </div>
                             <div class="insight-item success">
                                 <div class="insight-type">📈 상승 트렌드</div>
@@ -5172,18 +5939,25 @@
                             </div>
                             <div class="insight-item warning">
                                 <div class="insight-type">📉 하락 트렌드</div>
-                                <div class="insight-message">B 채널 CTR <strong style="color: #e65100;">-8.2%</strong> 하락</div>
+                                <div class="insight-message">B 채널 CTR <span style="color: var(--gm-warning); font-weight: 700;">-8.2%</span> 하락</div>
                             </div>
                             <div class="insight-item error">
                                 <div class="insight-type">⚠️ 경고</div>
                                 <div class="insight-message">C 상품 CPA 급등 감지</div>
                             </div>
                         </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">AI 인사이트 요약 스크린샷</div>
+                            <div class="screenshot-hint">스토리 배너와 인사이트 카드 그리드</div>
+                        </div>
                     </div>
 
+                    <!-- 경고 및 추천 -->
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-icon" style="background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);">⚠️</div>
+                            <div class="card-icon">⚠️</div>
                             <div>
                                 <h3 class="card-title">경고 및 추천</h3>
                                 <p class="card-subtitle">주요 경고 알림과 투자 추천을 확인하세요</p>
@@ -5198,53 +5972,141 @@
                             </div>
                         </div>
 
-                        <div style="background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-left: 4px solid #c62828; border-radius: 8px; padding: 16px; margin: 16px 0;">
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                            🚨 세그먼트별 경고 알림
+                        </h4>
+
+                        <div style="background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%); border-left: 4px solid var(--gm-error); border-radius: var(--radius-md); padding: 20px; margin-bottom: 16px;">
                             <div style="display: flex; gap: 12px; align-items: flex-start;">
-                                <div style="font-size: 20px;">⚠️</div>
+                                <div style="font-size: 24px;">⚠️</div>
                                 <div style="flex: 1;">
-                                    <div style="font-size: 14px; font-weight: 600; color: #c62828; margin-bottom: 4px;">
+                                    <div style="font-size: 15px; font-weight: 600; color: #c62828; margin-bottom: 6px;">
                                         [Meta] 25-34 여성 타겟 CPA 급등
                                     </div>
-                                    <div style="font-size: 13px; color: var(--grey-600); line-height: 1.5;">
-                                        해당 세그먼트의 CPA가 지난 7일간 35% 상승했습니다.
+                                    <div style="font-size: 14px; color: var(--grey-600); line-height: 1.6;">
+                                        해당 세그먼트의 CPA가 지난 7일간 35% 상승했습니다. 크리에이티브 피로도 또는 경쟁 심화가 원인으로 추정됩니다.
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div style="background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border-left: 4px solid #2e7d32; border-radius: 8px; padding: 16px;">
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                            💡 투자 추천
+                        </h4>
+
+                        <div style="background: white; border: 1px solid var(--grey-200); border-radius: var(--radius-md); padding: 20px; margin-bottom: 12px;">
                             <div style="display: flex; gap: 12px; align-items: flex-start;">
-                                <div style="font-size: 20px;">💰</div>
+                                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">1</div>
                                 <div style="flex: 1;">
-                                    <div style="font-size: 14px; font-weight: 600; color: #2e7d32; margin-bottom: 4px;">
-                                        [Google] 35-44 남성 타겟 투자 확대 추천
+                                    <div style="font-size: 15px; font-weight: 600; color: var(--grey-900); margin-bottom: 8px;">
+                                        Google 검색광고 예산 20% 확대 추천
                                     </div>
-                                    <div style="font-size: 13px; color: var(--grey-600); line-height: 1.5;">
-                                        ROAS 320%로 최고 효율 세그먼트입니다. 예산 20% 증액을 권장합니다.
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 12px;">
+                                        <div style="padding: 10px; background: var(--grey-50); border-radius: 8px;">
+                                            <div style="font-size: 11px; color: var(--grey-500); margin-bottom: 2px;">우선순위</div>
+                                            <div style="font-size: 13px; font-weight: 600; color: var(--gm-success);">🔥 높음</div>
+                                        </div>
+                                        <div style="padding: 10px; background: var(--grey-50); border-radius: 8px;">
+                                            <div style="font-size: 11px; color: var(--grey-500); margin-bottom: 2px;">타겟</div>
+                                            <div style="font-size: 13px; font-weight: 600;">브랜드 키워드</div>
+                                        </div>
+                                        <div style="padding: 10px; background: var(--grey-50); border-radius: 8px;">
+                                            <div style="font-size: 11px; color: var(--grey-500); margin-bottom: 2px;">기대 효과</div>
+                                            <div style="font-size: 13px; font-weight: 600; color: var(--gm-success);">ROAS +25%</div>
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 13px; color: var(--grey-600); line-height: 1.6;">
+                                        <strong>이유:</strong> 현재 ROAS 285%로 전체 채널 중 최고 효율. 예산 확대 시 추가 전환 확보 가능성 높음.
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="callout tip">
+                            <div class="callout-icon">💡</div>
+                            <div class="callout-content">
+                                <div class="callout-title">카드 확장 기능</div>
+                                <div class="callout-text">
+                                    추천 카드를 클릭하면 상세 정보가 펼쳐집니다.
+                                    "더보기" 버튼으로 추가 경고/추천 사항을 확인할 수 있습니다.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 최근 변화 인사이트 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📈</div>
+                            <div>
+                                <h3 class="card-title">최근 변화 인사이트</h3>
+                                <p class="card-subtitle">성과 개선 및 하락 트렌드를 기간별로 분석합니다</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            7일/14일/30일 비교 기간을 선택하여 최근 성과 변화 추이를 확인하세요.
+                            <strong>개선된 지표</strong>와 <strong>하락한 지표</strong>를 채널별로 구분하여 보여줍니다.
+                        </p>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">비교 기간 선택</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn trend active">7일</button>
+                                <button class="demo-btn trend">14일</button>
+                                <button class="demo-btn trend">30일</button>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px;">
+                            <div style="padding: 20px; background: #e8f5e9; border-radius: var(--radius-md);">
+                                <div style="font-size: 14px; font-weight: 600; color: #2e7d32; margin-bottom: 12px;">📈 성과 개선</div>
+                                <div style="font-size: 14px; color: var(--grey-700);">
+                                    • Meta ROAS <strong style="color: #2e7d32;">+18.5%</strong><br>
+                                    • Google 전환수 <strong style="color: #2e7d32;">+12.3%</strong><br>
+                                    • Naver CTR <strong style="color: #2e7d32;">+8.7%</strong>
+                                </div>
+                            </div>
+                            <div style="padding: 20px; background: #ffebee; border-radius: var(--radius-md);">
+                                <div style="font-size: 14px; font-weight: 600; color: #c62828; margin-bottom: 12px;">📉 성과 하락</div>
+                                <div style="font-size: 14px; color: var(--grey-700);">
+                                    • Kakao CPA <strong style="color: #c62828;">+22.1%</strong><br>
+                                    • Meta CPM <strong style="color: #c62828;">+15.8%</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">최근 변화 인사이트 스크린샷</div>
+                            <div class="screenshot-hint">개선/하락 트렌드 카드 화면</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 예측 -->
-                <div class="content-section" id="timeseries-forecast">
+                <!-- 성과 분석 대시보드 -->
+                <div class="content-section" id="timeseries-analysis">
                     <div class="section-header">
                         <div class="section-number">5</div>
-                        <h2 class="section-title">예측</h2>
-                        <p class="section-desc">미래 성과를 예측하고 시나리오를 분석합니다.</p>
+                        <h2 class="section-title">성과 분석 대시보드</h2>
+                        <p class="section-desc">Prophet 예측 모델 기반의 상세 성과 분석 기능을 활용하세요.</p>
                     </div>
 
+                    <!-- 전체 성과 예측 -->
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-icon" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">🔮</div>
+                            <div class="card-icon">📊</div>
                             <div>
-                                <h3 class="card-title">Prophet 예측</h3>
-                                <p class="card-subtitle">30일 후 성과 예측</p>
+                                <h3 class="card-title">전체 성과 예측</h3>
+                                <p class="card-subtitle">실제 데이터와 예측 데이터를 시계열 차트로 비교합니다</p>
                             </div>
-                            <span class="badge ai">AI 기반</span>
+                            <span class="badge prophet">Prophet</span>
                         </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            일별/주별/월별 집계 단위로 비용, 노출, 클릭, 전환수, 전환값의
+                            <strong>실제 데이터(실선)</strong>와 <strong>예측 데이터(점선)</strong>를 비교할 수 있습니다.
+                        </p>
 
                         <div class="toggle-demo">
                             <div class="toggle-demo-label">성과 분석 탭</div>
@@ -5265,42 +6127,21 @@
                             </div>
                         </div>
 
-                        <h4 style="font-size: 16px; font-weight: 600; margin: 20px 0 16px; color: var(--grey-900);">
-                            📌 예측 KPI 요약
-                        </h4>
-                        <div class="kpi-demo-grid">
-                            <div class="kpi-demo-card">
-                                <div class="kpi-label">💰 예측 비용</div>
-                                <div class="kpi-value">₩28.5M</div>
-                                <div class="kpi-change up">▲ 5.2% vs 실제</div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <div class="legend-line actual"></div>
+                                <span>실제 데이터</span>
                             </div>
-                            <div class="kpi-demo-card highlight">
-                                <div class="kpi-label">📈 예측 ROAS</div>
-                                <div class="kpi-value">192%</div>
-                                <div class="kpi-change up">▲ 12.4% vs 실제</div>
-                            </div>
-                            <div class="kpi-demo-card">
-                                <div class="kpi-label">✅ 예측 전환수</div>
-                                <div class="kpi-value">2,008</div>
-                                <div class="kpi-change up">▲ 15.3%</div>
-                            </div>
-                            <div class="kpi-demo-card">
-                                <div class="kpi-label">💵 예측 전환값</div>
-                                <div class="kpi-value">₩54.7M</div>
-                                <div class="kpi-change up">▲ 18.1%</div>
+                            <div class="legend-item">
+                                <div class="legend-line forecast"></div>
+                                <span>예측 데이터</span>
                             </div>
                         </div>
 
-                        <div class="callout info" style="margin-top: 24px;">
-                            <div class="callout-icon">ℹ️</div>
-                            <div class="callout-content">
-                                <div class="callout-title">예측값 해석 방법</div>
-                                <div class="callout-text">
-                                    <strong>▲ (상승)</strong>: 예측 값이 실제보다 높음 → 성과 개선 예상<br>
-                                    <strong>▼ (하락)</strong>: 예측 값이 실제보다 낮음 → 효율 개선 또는 볼륨 감소 예상<br>
-                                    Facebook의 Prophet 알고리즘을 사용하여 시계열 데이터의 트렌드, 계절성, 휴일 효과 등을 학습합니다.
-                                </div>
-                            </div>
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">전체 성과 예측 차트 스크린샷</div>
+                            <div class="screenshot-hint">실제 vs 예측 시계열 라인 차트</div>
                         </div>
 
                         <div class="step-guide">
@@ -5328,173 +6169,201 @@
                         </div>
                     </div>
 
+                    <!-- 세그먼트 비교 -->
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-icon" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">📊</div>
+                            <div class="card-icon">📈</div>
                             <div>
-                                <h3 class="card-title">세그먼트별 비교</h3>
-                                <p class="card-subtitle">채널/제품/브랜드별 실제 vs 예측 비교</p>
+                                <h3 class="card-title">세그먼트 비교</h3>
+                                <p class="card-subtitle">채널/제품/브랜드/프로모션별 실제 vs 예측 성과 비교</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            세그먼트 타입과 비교 지표를 선택하여 각 세그먼트별 실제 성과와 예측 성과를
+                            막대 차트로 비교합니다.
+                        </p>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">세그먼트 타입</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">채널</button>
+                                <button class="demo-btn">제품</button>
+                                <button class="demo-btn">브랜드</button>
+                                <button class="demo-btn">프로모션</button>
+                            </div>
+                        </div>
+
+                        <div class="toggle-demo" style="margin-top: 12px;">
+                            <div class="toggle-demo-label">비교 지표</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">ROAS</button>
+                                <button class="demo-btn">전환수</button>
+                                <button class="demo-btn">매출</button>
+                                <button class="demo-btn">비용</button>
+                                <button class="demo-btn">CVR</button>
+                            </div>
+                        </div>
+
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                            📋 세그먼트별 상세 카드
+                        </h4>
+
+                        <div class="segment-demo">
+                            <div class="segment-card">
+                                <div class="segment-name">
+                                    <span style="font-size: 18px;">📘</span> Meta
+                                </div>
+                                <div class="segment-metrics">
+                                    <div class="segment-metric">
+                                        <span class="segment-metric-label">실제 ROAS</span>
+                                        <span class="segment-metric-value">185%</span>
+                                    </div>
+                                    <div class="segment-metric">
+                                        <span class="segment-metric-label">예측 ROAS</span>
+                                        <span class="segment-metric-value" style="color: var(--gm-success);">198%</span>
+                                    </div>
+                                    <div class="segment-metric">
+                                        <span class="segment-metric-label">CVR</span>
+                                        <span class="segment-metric-value">3.2%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="segment-card">
+                                <div class="segment-name">
+                                    <span style="font-size: 18px;">🔴</span> Google
+                                </div>
+                                <div class="segment-metrics">
+                                    <div class="segment-metric">
+                                        <span class="segment-metric-label">실제 ROAS</span>
+                                        <span class="segment-metric-value">285%</span>
+                                    </div>
+                                    <div class="segment-metric">
+                                        <span class="segment-metric-label">예측 ROAS</span>
+                                        <span class="segment-metric-value" style="color: var(--gm-success);">312%</span>
+                                    </div>
+                                    <div class="segment-metric">
+                                        <span class="segment-metric-label">CVR</span>
+                                        <span class="segment-metric-value">4.8%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="segment-card">
+                                <div class="segment-name">
+                                    <span style="font-size: 18px;">🟢</span> Naver
+                                </div>
+                                <div class="segment-metrics">
+                                    <div class="segment-metric">
+                                        <span class="segment-metric-label">실제 ROAS</span>
+                                        <span class="segment-metric-value">156%</span>
+                                    </div>
+                                    <div class="segment-metric">
+                                        <span class="segment-metric-label">예측 ROAS</span>
+                                        <span class="segment-metric-value" style="color: var(--gm-warning);">148%</span>
+                                    </div>
+                                    <div class="segment-metric">
+                                        <span class="segment-metric-label">CVR</span>
+                                        <span class="segment-metric-value">2.1%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">세그먼트 비교 막대 차트 스크린샷</div>
+                            <div class="screenshot-hint">실제 vs 예측 비교 막대 차트</div>
+                        </div>
+                    </div>
+
+                    <!-- 세그먼트 트렌드 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📉</div>
+                            <div>
+                                <h3 class="card-title">세그먼트 트렌드</h3>
+                                <p class="card-subtitle">시간에 따른 세그먼트별 ROAS 추이를 분석합니다</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            최대 5개 세그먼트를 선택하여 시간에 따른 ROAS 추이를 비교할 수 있습니다.
+                            실제 데이터와 예측 데이터가 분리되어 표시됩니다.
+                        </p>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">세그먼트 선택 (최대 5개)</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active" style="font-size: 12px;">☑️ Meta</button>
+                                <button class="demo-btn active" style="font-size: 12px;">☑️ Google</button>
+                                <button class="demo-btn active" style="font-size: 12px;">☑️ Naver</button>
+                                <button class="demo-btn" style="font-size: 12px;">☐ Kakao</button>
+                                <button class="demo-btn" style="font-size: 12px;">☐ Apple</button>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">세그먼트 트렌드 차트 스크린샷</div>
+                            <div class="screenshot-hint">다중 세그먼트 ROAS 추이 라인 차트</div>
+                        </div>
+
+                        <div class="callout warning">
+                            <div class="callout-icon">⚠️</div>
+                            <div class="callout-content">
+                                <div class="callout-title">참고사항</div>
+                                <div class="callout-text">
+                                    세그먼트를 5개 초과 선택하면 차트 가독성이 떨어집니다.
+                                    비교하고 싶은 핵심 세그먼트만 선택하여 분석하세요.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 비즈니스 인사이트 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">💼</div>
+                            <div>
+                                <h3 class="card-title">비즈니스 인사이트</h3>
+                                <p class="card-subtitle">채널 ROAS, 제품 매출, 예산 소진율을 확인합니다</p>
                             </div>
                         </div>
 
                         <div class="toggle-demo">
-                            <div class="toggle-demo-label">세그먼트 기준</div>
+                            <div class="toggle-demo-label">비즈니스 인사이트 서브탭</div>
                             <div class="toggle-buttons">
-                                <button class="demo-btn active">채널별</button>
-                                <button class="demo-btn">제품별</button>
-                                <button class="demo-btn">브랜드별</button>
-                                <button class="demo-btn">프로모션별</button>
+                                <button class="demo-btn active">채널별 ROAS</button>
+                                <button class="demo-btn">제품 매출 & 예산</button>
                             </div>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 16px 0;">
-                            <div style="background: white; border: 1px solid var(--grey-200); border-radius: 12px; padding: 16px;">
-                                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                                    <span style="font-size: 16px;">📘</span> Meta
-                                </div>
-                                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="color: var(--grey-600);">실제 ROAS</span>
-                                        <span>185%</span>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="color: var(--grey-600);">예측 ROAS</span>
-                                        <span style="color: #2e7d32;">198%</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="background: white; border: 1px solid var(--grey-200); border-radius: 12px; padding: 16px;">
-                                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                                    <span style="font-size: 16px;">🔴</span> Google
-                                </div>
-                                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="color: var(--grey-600);">실제 ROAS</span>
-                                        <span>285%</span>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="color: var(--grey-600);">예측 ROAS</span>
-                                        <span style="color: #2e7d32;">312%</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="background: white; border: 1px solid var(--grey-200); border-radius: 12px; padding: 16px;">
-                                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                                    <span style="font-size: 16px;">🟢</span> Naver
-                                </div>
-                                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="color: var(--grey-600);">실제 ROAS</span>
-                                        <span>220%</span>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="color: var(--grey-600);">예측 ROAS</span>
-                                        <span style="color: #2e7d32;">245%</span>
-                                    </div>
-                                </div>
-                            </div>
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                            📊 채널별 ROAS
+                        </h4>
+                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                            고성과 채널과 개선 필요 채널을 시각적으로 비교합니다.
+                        </p>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">채널 ROAS 비교 차트 스크린샷</div>
+                            <div class="screenshot-hint">channel_roas_comparison.png</div>
                         </div>
 
-                        <div class="callout tip">
-                            <div class="callout-icon">💡</div>
-                            <div class="callout-content">
-                                <div class="callout-title">세그먼트 비교 활용 Tip</div>
-                                <div class="callout-text">
-                                    예측 ROAS가 실제보다 높은 세그먼트는 <strong>성장 가능성이 높습니다</strong>.
-                                    예산을 점진적으로 늘려가며 성과를 모니터링하세요.
-                                </div>
-                            </div>
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                            💰 제품 매출 & 예산
+                        </h4>
+                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                            제품별 매출 기여도와 월 예산 소진율을 확인합니다.
+                            제품별 등급(A+~D)과 예산 초과 경고를 제공합니다.
+                        </p>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">제품 매출 파이차트 & 예산 게이지 스크린샷</div>
+                            <div class="screenshot-hint">product_revenue_pie.png, budget_gauge.png</div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- 세그먼트 트렌드 -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">📉</div>
-                        <div>
-                            <h3 class="card-title">세그먼트 트렌드</h3>
-                            <p class="card-subtitle">시간에 따른 세그먼트별 ROAS 추이를 분석합니다</p>
-                        </div>
-                    </div>
-
-                    <p style="font-size: 13px; color: var(--grey-700); margin-bottom: 16px;">
-                        최대 5개 세그먼트를 선택하여 시간에 따른 ROAS 추이를 비교할 수 있습니다.
-                        실제 데이터와 예측 데이터가 분리되어 표시됩니다.
-                    </p>
-
-                    <div class="toggle-demo">
-                        <div class="toggle-demo-label">세그먼트 선택 (최대 5개)</div>
-                        <div class="toggle-buttons">
-                            <button class="demo-btn active" style="font-size: 12px;">☑️ Meta</button>
-                            <button class="demo-btn active" style="font-size: 12px;">☑️ Google</button>
-                            <button class="demo-btn active" style="font-size: 12px;">☑️ Naver</button>
-                            <button class="demo-btn" style="font-size: 12px;">☐ Kakao</button>
-                            <button class="demo-btn" style="font-size: 12px;">☐ Apple</button>
-                        </div>
-                    </div>
-
-                    <div class="screenshot-placeholder">
-                        <div class="screenshot-icon">🖼️</div>
-                        <div class="screenshot-label">세그먼트 트렌드 차트 스크린샷</div>
-                        <div class="screenshot-hint">다중 세그먼트 ROAS 추이 라인 차트</div>
-                    </div>
-
-                    <div class="callout warning">
-                        <div class="callout-icon">⚠️</div>
-                        <div class="callout-content">
-                            <div class="callout-title">참고사항</div>
-                            <div class="callout-text">
-                                세그먼트를 5개 초과 선택하면 차트 가독성이 떨어집니다.
-                                비교하고 싶은 핵심 세그먼트만 선택하여 분석하세요.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 비즈니스 인사이트 -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">💼</div>
-                        <div>
-                            <h3 class="card-title">비즈니스 인사이트</h3>
-                            <p class="card-subtitle">채널 ROAS, 제품 매출, 예산 소진율을 확인합니다</p>
-                        </div>
-                    </div>
-
-                    <div class="toggle-demo">
-                        <div class="toggle-demo-label">비즈니스 인사이트 서브탭</div>
-                        <div class="toggle-buttons">
-                            <button class="demo-btn active">채널별 ROAS</button>
-                            <button class="demo-btn">제품 매출 & 예산</button>
-                        </div>
-                    </div>
-
-                    <h4 style="font-size: 14px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
-                        📊 채널별 ROAS
-                    </h4>
-                    <p style="font-size: 13px; color: var(--grey-600); margin-bottom: 14px;">
-                        고성과 채널과 개선 필요 채널을 시각적으로 비교합니다.
-                    </p>
-
-                    <div class="screenshot-placeholder">
-                        <div class="screenshot-icon">🖼️</div>
-                        <div class="screenshot-label">채널 ROAS 비교 차트 스크린샷</div>
-                        <div class="screenshot-hint">channel_roas_comparison.png</div>
-                    </div>
-
-                    <h4 style="font-size: 14px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
-                        💰 제품 매출 & 예산
-                    </h4>
-                    <p style="font-size: 13px; color: var(--grey-600); margin-bottom: 14px;">
-                        제품별 매출 기여도와 월 예산 소진율을 확인합니다.
-                        제품별 등급(A+~D)과 예산 초과 경고를 제공합니다.
-                    </p>
-
-                    <div class="screenshot-placeholder">
-                        <div class="screenshot-icon">🖼️</div>
-                        <div class="screenshot-label">제품 매출 파이차트 & 예산 게이지 스크린샷</div>
-                        <div class="screenshot-hint">product_revenue_pie.png, budget_gauge.png</div>
                     </div>
                 </div>
 
@@ -5897,8 +6766,10 @@
                 item.classList.remove('active');
             });
             dashboardEl.querySelectorAll('.section-nav-item').forEach(item => {
-                if (item.textContent.toLowerCase().includes(getSectionName(section).toLowerCase()) ||
-                    item.onclick.toString().includes(section)) {
+                // Use onclick check with exact section match
+                const onclickStr = item.onclick ? item.onclick.toString() : '';
+                const sectionMatch = onclickStr.match(/showSection\s*\(\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]+)['"]\s*\)/);
+                if (sectionMatch && sectionMatch[2] === section) {
                     item.classList.add('active');
                 }
             });

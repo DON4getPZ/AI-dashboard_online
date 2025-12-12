@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python scripts/generate_engagement_data.py:*)"
+      "Bash(python scripts/generate_engagement_data.py:*)",
+      "Bash(python scripts/merge_slides.py:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
