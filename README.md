@@ -1,4 +1,4 @@
-# 마케팅 대시보드 v4.1 - Standalone HTML 기반
+# 마케팅 대시보드 v4.2 - Standalone HTML 기반
 
 **Growthmaker - 데이터 기반 그로스 마케팅 대시보드**
 
@@ -9,43 +9,69 @@
 - **Standalone HTML**: 서버 없이 브라우저에서 바로 실행
 - **Prophet 시계열 예측**: 계절성 패턴 분석 및 90일 예측
 - **다차원 분석**: 캠페인, 광고세트, 연령, 성별, 기기, 플랫폼별 분석
-- **퍼널 분석**: 채널별/캠페인별 전환 퍼널 시각화
-- **크리에이티브 분석**: 이미지별 성과 분석
+- **퍼널 분석**: AARRR 프레임워크 기반 D3.js 전환 퍼널 시각화
+- **크리에이티브 분석**: 이미지별 성과 분석 및 KPI 필터링
+- **다중 기간 필터**: 전체/180일/90일/30일 기간별 분석 지원
 
 ---
 
 ## 대시보드 구성
 
 ### 1. Type Dashboard (type_dashboard_standalone.html)
-**가장 포괄적인 분석 대시보드**
+**채널별 종합 분석 대시보드** - [상세 문서](docs/type_dashboard_specific.md)
 
 | 기능 | 설명 |
 |------|------|
-| 오늘의 요약 | 핵심 KPI 및 AI 추천 |
-| 성과 분석 | 캠페인/광고세트별 ROAS, CPA 분석 |
-| 타겟 분석 | 연령, 성별, 기기, 플랫폼별 성과 |
-| 계절성 분석 | 분기별 추이, 요일별 분석, 채널별 요일 |
-| AI 예측 | Prophet 기반 시계열 예측 |
-| 성과 추이 | 광고세트/성별/연령/플랫폼 추이 차트 |
+| 오늘의 요약 | 핵심 KPI 및 AI 컨설턴트 종합 진단 |
+| 데이터 기반 의사결정 도구 | 성과 기회, 주의 필요, 타겟 분석, AI 예측, 계절성 분석 |
+| 성과 추이 분석 | 광고세트/성별/연령/플랫폼/기기플랫폼/기기 추이 차트 |
+| 성과 상세 분석 | 차원별 성과 막대 차트 비교 |
+| 성과 분석 | 브랜드/상품/프로모션/타겟팅별 분석 |
+| 리타겟팅 분석 | 성별연령/기기/플랫폼/노출기기별 성과 테이블 |
 
 ### 2. Marketing Dashboard (marketing_dashboard_v3_standalone.html)
-- KPI 카드 (광고비, 클릭수, 전환수, ROAS)
-- 성과 트렌드 차트
-- PIVOT 테이블
+**마케팅 성과 대시보드** - [상세 문서](docs/marketing_dashboard_specific.md)
+
+| 기능 | 설명 |
+|------|------|
+| 필터 설정 | 기간/유형구분/브랜드명/상품명/프로모션/캠페인/세트이름 필터 |
+| 통합 KPI | 전체/일별/주별/월별 탭, 주요/세부 성과 토글 |
+| 성과 추이 차트 | 체크박스로 지표 선택, 듀얼 Y축 콤보 차트 |
+| 데이터 테이블 | 기간별 상세 데이터, 더보기/접기 기능 |
 
 ### 3. Funnel Dashboard (funnel_dashboard_standalone.html)
-- 채널별/캠페인별 전환 퍼널
-- 신규 vs 재방문 분석
-- 채널 참여도 분석
+**AARRR 퍼널 분석 대시보드** - [상세 문서](docs/funnel_dashboard_specific.md)
+
+| 기능 | 설명 |
+|------|------|
+| 핵심 KPI 요약 | 총 유입/활성화/관심/결제진행/구매완료 |
+| 고객 구매 여정 5단계 | D3.js 인터랙티브 퍼널 차트, 기간별 비교 |
+| 인사이트 & 채널 전략 | 핵심 요약, 긴급 개선, BCG Matrix 채널 전략 |
+| 데이터 기반 의사결정 도구 | 채널 그룹별 특성, A/B 테스트 통계, 예산 투자 가이드 |
+| 유입 채널별 상세 분석 | 채널별/세그먼트별 퍼널 성과 |
+| 고객 재방문 및 이탈 분석 | 이탈 위험 경고, CRM 액션 가이드 |
 
 ### 4. Timeseries Analysis (timeseries_analysis_standalone.html)
-- Prophet 예측 차트
-- 계절성 분해
-- 신뢰구간 표시
+**시계열 예측 분석 대시보드** - [상세 문서](docs/timeseries_analysis_specific.md)
+
+| 기능 | 설명 |
+|------|------|
+| AI 상태 요약 | 현재 상태, 현재/예측 매출 비교 |
+| 통합 인사이트 | AI 스토리 배너, 경고 알림, 투자 추천 |
+| 최근 변화 인사이트 | 성과 개선/하락 분석 (7일/14일/30일 비교) |
+| 성과 분석 대시보드 | 전체 성과 예측, 세그먼트 비교/트렌드, 비즈니스 인사이트 |
+| 데이터 분석 알고리즘 | Prophet 예측, 상관관계 히트맵, 이상치 분석 |
 
 ### 5. Creative Analysis (creative_analysis_standalone.html)
-- 이미지별 성과 분석
-- 크리에이티브 ROAS 비교
+**광고 소재별 분석 대시보드** - [상세 문서](docs/creative_analysis_specific.md)
+
+| 기능 | 설명 |
+|------|------|
+| 필터 설정 | 기간/유형구분/브랜드명/상품명/프로모션/캠페인/광고세트/소재 검색 |
+| KPI 기준 필터 | 다중 조건 필터 (비용, ROAS, CPA 등), ON/OFF 토글 |
+| 정렬 설정 | 1차/2차 정렬 기준, 오름차순/내림차순 |
+| 요약 KPI | 전체 비용, 평균 ROAS, 평균 CPA, 총 전환수, 총 전환값 |
+| 소재 그리드 | 이미지별 성과 카드, 세부 성과 모달 (CTR 포함) |
 
 ---
 
@@ -153,7 +179,13 @@ marketing-dashboard/
 ├── docs/
 │   ├── requirements.md             # 패키지 요구사항 가이드
 │   ├── integration.md              # 통합 아키텍처 문서
-│   └── CSV_PARSING_STANDARD.md     # CSV 파싱 표준 (RFC 4180)
+│   ├── CSV_PARSING_STANDARD.md     # CSV 파싱 표준 (RFC 4180)
+│   ├── MULTI_PERIOD_FILTER_IMPLEMENTATION.md  # 다중 기간 필터 구현 가이드
+│   ├── type_dashboard_specific.md  # Type 대시보드 기능 명세
+│   ├── marketing_dashboard_specific.md  # Marketing 대시보드 기능 명세
+│   ├── funnel_dashboard_specific.md    # Funnel 대시보드 기능 명세
+│   ├── timeseries_analysis_specific.md # Timeseries 분석 기능 명세
+│   └── creative_analysis_specific.md   # Creative 분석 기능 명세
 ├── requirements.txt                # 전체 패키지 (Prophet 포함)
 ├── requirements_multi.txt          # Multi-sheet 다운로드용
 ├── requirements_creative.txt       # Creative 다운로드용
@@ -234,6 +266,44 @@ marketing-dashboard/
 
 ---
 
+## 다중 기간 필터링 기능
+
+> 상세 구현 가이드: [docs/MULTI_PERIOD_FILTER_IMPLEMENTATION.md](docs/MULTI_PERIOD_FILTER_IMPLEMENTATION.md)
+
+### 적용 대시보드
+
+| 대시보드 | 필터 옵션 | 제외 항목 |
+|----------|-----------|-----------|
+| Type Dashboard | 전체/180일/90일/30일 | 계절성 분석 |
+| Funnel Dashboard | 전체/180일/90일/30일 | 이탈 위험/성과 개선 |
+| Timeseries Analysis | 전체/180일/90일/30일 | - |
+
+### 데이터 구조 (Nested Structure)
+
+```json
+{
+  "by_period": {
+    "full": { ... },
+    "180d": { ... },
+    "90d": { ... },
+    "30d": { ... }
+  },
+  "seasonality": { ... },
+  "generated_at": "...",
+  "available_periods": [...]
+}
+```
+
+### Multiperiod 스크립트
+
+| Multiperiod 스크립트 | 원본 스크립트 | 출력 파일 |
+|---------------------|--------------|----------|
+| `generate_type_insights_multiperiod.py` | `generate_type_insights.py` | `data/type/insights.json` |
+| `generate_funnel_data_multiperiod.py` | `generate_funnel_data.py` | `data/funnel/insights.json` |
+| `generate_insights_multiperiod.py` | `insight_generator.py` | `data/forecast/insights.json` |
+
+---
+
 ## Prophet 예측 알고리즘
 
 ### 하이브리드 접근법
@@ -253,6 +323,15 @@ marketing-dashboard/
 - **분기별 추이**: Q1~Q4 성과 비교
 - **요일별 분석**: 월~일 전환 패턴
 - **채널별 요일**: 채널별 최적 광고 요일 파악
+
+### KPI 계산 공식
+```javascript
+CPM  = (비용 / 노출) * 1000    // 1,000회 노출당 비용
+CPC  = 비용 / 클릭             // 클릭당 비용
+CPA  = 비용 / 전환수           // 전환당 비용
+CTR  = (클릭 / 노출) * 100     // 클릭률 (%)
+ROAS = (전환값 / 비용) * 100   // 광고 수익률 (%)
+```
 
 ---
 
@@ -370,6 +449,21 @@ install_packages.bat
 
 ---
 
-**버전**: 4.1.0
-**최종 업데이트**: 2025-11-27
+**버전**: 4.2.0
+**최종 업데이트**: 2025-12-11
 **라이선스**: MIT
+
+---
+
+## 상세 문서
+
+각 대시보드의 상세 기능 명세는 아래 문서를 참조하세요:
+
+| 대시보드 | 문서 |
+|----------|------|
+| Type Dashboard | [type_dashboard_specific.md](docs/type_dashboard_specific.md) |
+| Marketing Dashboard | [marketing_dashboard_specific.md](docs/marketing_dashboard_specific.md) |
+| Funnel Dashboard | [funnel_dashboard_specific.md](docs/funnel_dashboard_specific.md) |
+| Timeseries Analysis | [timeseries_analysis_specific.md](docs/timeseries_analysis_specific.md) |
+| Creative Analysis | [creative_analysis_specific.md](docs/creative_analysis_specific.md) |
+| 다중 기간 필터 구현 | [MULTI_PERIOD_FILTER_IMPLEMENTATION.md](docs/MULTI_PERIOD_FILTER_IMPLEMENTATION.md) |

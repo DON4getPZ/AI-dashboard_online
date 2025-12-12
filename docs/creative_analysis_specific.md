@@ -30,7 +30,7 @@
 | 항목 | 내용 |
 |------|------|
 | **파일 경로** | `data/creative_analysis.html` |
-| **총 라인 수** | 2987 라인 |
+| **총 라인 수** | 3143 라인 |
 | **문자 인코딩** | UTF-8 |
 | **HTML 언어** | ko (한국어) |
 | **페이지 타이틀** | 광고 소재별 분석 - 마케팅 대시보드 |
@@ -272,18 +272,26 @@
 | **기능** | - 기간별 상세 데이터 표시<br>- 기본 5행 표시, 더보기/접기 버튼 |
 
 ##### 모달 테이블 컬럼 구조
-| 순서 | 컬럼명 | 정렬 |
-|------|--------|------|
-| 1 | 기간 | left |
-| 2 | 비용 | right |
-| 3 | 노출 | right |
-| 4 | CPM | right |
-| 5 | 클릭 | right |
-| 6 | CPC | right |
-| 7 | 전환수 | right |
-| 8 | CPA | right |
-| 9 | 전환값 | right |
-| 10 | ROAS | right |
+| 순서 | 컬럼명 | 정렬 | 비고 |
+|------|--------|------|------|
+| 1 | 기간 | left | 정렬 가능 (클릭 시 내림차순/오름차순 토글) |
+| 2 | 비용 | right | |
+| 3 | 노출 | right | |
+| 4 | CPM | right | |
+| 5 | 클릭 | right | |
+| 6 | CTR | right | 클릭률 (클릭/노출*100, 소수점 2자리) |
+| 7 | CPC | right | |
+| 8 | 전환수 | right | |
+| 9 | CPA | right | |
+| 10 | 전환값 | right | |
+| 11 | ROAS | right | |
+
+##### 기간 컬럼 정렬 기능
+- **기본 정렬**: 내림차순 (최신순, desc)
+- **클릭 시 토글**: 내림차순 ↔ 오름차순
+- **정렬 아이콘**: `▼` (내림차순) / `▲` (오름차순)
+- **관련 함수**: `toggleModalTableSort()`, `updateModalSortIcon()`
+- **관련 변수**: `modalTableSortOrder`
 
 ---
 
@@ -384,6 +392,7 @@
 | `modalChartROAS` | 차트 ROAS 체크박스 |
 | `modalChart` | 차트 캔버스 |
 | `modalTableBody` | 테이블 tbody |
+| `modalSortIcon` | 테이블 기간 컬럼 정렬 아이콘 (▼/▲) |
 | `modalShowMoreContainer` | 더보기 버튼 컨테이너 |
 | `modalCollapseContainer` | 접기 버튼 컨테이너 |
 | `modalHiddenCount` | 숨겨진 행 개수 표시 |
@@ -447,6 +456,7 @@ let modalChartInstance = null;
 let currentModalData = [];
 let currentModalViewType = 'daily';
 let isModalTableExpanded = false;
+let modalTableSortOrder = 'desc'; // 'desc': 내림차순(최신순), 'asc': 오름차순(과거순)
 ```
 
 ### 데이터 변수
@@ -499,6 +509,7 @@ let isModalTableExpanded = false;
 | `currentModalData` | 현재 모달 데이터 | [] |
 | `currentModalViewType` | 현재 뷰 타입 | 'daily' |
 | `isModalTableExpanded` | 테이블 확장 상태 | false |
+| `modalTableSortOrder` | 테이블 기간 정렬 순서 | 'desc' (내림차순/최신순) |
 
 ---
 
@@ -676,17 +687,20 @@ function aggregateModalData(data, viewType) {
         groups[key].전환수 += parseFloat(row['전환수']) || 0;
         groups[key].전환값 += parseFloat(row['전환값']) || 0;
     });
-    // 파생 지표 계산 및 정렬 (내림차순)
+    // 파생 지표 계산 및 정렬 (modalTableSortOrder에 따라)
     return Object.entries(groups)
         .map(([period, values]) => ({
             period,
             ...values,
             CPM: values.노출 > 0 ? (values.비용 / values.노출 * 1000) : 0,
+            CTR: values.노출 > 0 ? (values.클릭 / values.노출 * 100) : 0,
             CPC: values.클릭 > 0 ? (values.비용 / values.클릭) : 0,
             CPA: values.전환수 > 0 ? (values.비용 / values.전환수) : 0,
             ROAS: values.비용 > 0 ? (values.전환값 / values.비용 * 100) : 0
         }))
-        .sort((a, b) => b.period.localeCompare(a.period));
+        .sort((a, b) => modalTableSortOrder === 'desc'
+            ? b.period.localeCompare(a.period)
+            : a.period.localeCompare(b.period));
 }
 ```
 
@@ -719,10 +733,46 @@ function updateDashboard() {
 |--------|------|
 | `formatNumber(num)` | 숫자 포맷 (#,###) |
 | `formatROAS(num)` | ROAS 포맷 (%) |
+| `formatCTR(num)` | CTR 포맷 (소수점 2자리 %) |
 | `formatDateForInput(date)` | 날짜 포맷 (YYYY-MM-DD) |
 | `formatNumberInput(value)` | 입력 숫자 포맷 (#,###) |
 | `parseFormattedNumber(value)` | 포맷된 숫자에서 실제 값 추출 |
 | `formatPeriodLabel(period, viewType)` | 기간 레이블 포맷 |
+
+#### formatCTR(num)
+```javascript
+function formatCTR(num) {
+    if (num === 0 || num === null || num === undefined) return '-';
+    return num.toFixed(2) + '%';
+}
+```
+
+### 모달 테이블 정렬 함수
+
+#### toggleModalTableSort()
+```javascript
+function toggleModalTableSort() {
+    // 정렬 순서 토글
+    modalTableSortOrder = modalTableSortOrder === 'desc' ? 'asc' : 'desc';
+
+    // 데이터 재집계 및 테이블 업데이트
+    const aggregatedData = aggregateModalData(currentModalData, currentModalViewType);
+    updateModalTable(aggregatedData);
+
+    // 정렬 아이콘 업데이트
+    updateModalSortIcon();
+}
+```
+
+#### updateModalSortIcon()
+```javascript
+function updateModalSortIcon() {
+    const sortIcon = document.getElementById('modalSortIcon');
+    if (sortIcon) {
+        sortIcon.textContent = modalTableSortOrder === 'desc' ? '▼' : '▲';
+    }
+}
+```
 
 ---
 
@@ -753,9 +803,12 @@ function updateDashboard() {
 | `원본 url / ID` 또는 `원본url/ID` | 원본 URL |
 
 #### URL 우선순위
-1. `facebook.com/ads/image`, `img.youtube.com/vi/` (최우선)
-2. `scontent`, `googlesyndication` (fallback)
-3. 기타 URL
+| 순위 | URL 패턴 | 처리 방식 |
+|------|----------|----------|
+| 1순위 | `drive.google.com` | `/thumbnail?id={ID}&sz=w1000`으로 변환 후 `imageUrlMap` 저장 |
+| 2순위 | `facebook.com/ads/image`, `img.youtube.com/vi/` | `imageUrlMap` 저장 (1순위 없을 때) |
+| 3순위 | `scontent`, `googlesyndication` | 1,2순위 있으면 `fallbackUrlMap`, 없으면 `imageUrlMap` |
+| 4순위 | 기타 URL | `imageUrlMap` 비어있을 때만 저장 |
 
 ---
 
@@ -1292,6 +1345,29 @@ filterCollapsibleHeader.addEventListener('click', () => {
 .modal-table tr:hover {
     background: rgba(103, 58, 183, 0.05);  /* primary-main 투명도 */
 }
+
+/* 정렬 가능한 헤더 */
+.modal-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s ease;
+}
+
+.modal-table th.sortable:hover {
+    background: var(--grey-200);
+}
+
+.modal-table th.sortable .sort-icon {
+    display: inline-block;
+    margin-left: 4px;
+    font-size: 10px;
+    color: var(--grey-400);
+    transition: color 0.2s ease;
+}
+
+.modal-table th.sortable.active .sort-icon {
+    color: var(--primary-main);
+}
 ```
 
 ---
@@ -1485,13 +1561,55 @@ if (showROAS) { yAxisID: (hasCostMetric || hasCpmMetric || hasCpcMetric || hasCp
 ### 6. 이미지 URL 처리 로직
 
 #### 6.1 URL 우선순위
-```
-1순위: facebook.com/ads/image, img.youtube.com/vi/  (imageUrlMap)
-2순위: scontent, googlesyndication                   (fallbackUrlMap)
-3순위: 기타 URL
+| 순위 | URL 패턴 | 처리 방식 |
+|------|----------|----------|
+| 1순위 | `drive.google.com` | `/thumbnail?id={ID}&sz=w1000`으로 변환 후 `imageUrlMap` 저장 |
+| 2순위 | `facebook.com/ads/image`, `img.youtube.com/vi/` | `imageUrlMap` 저장 (1순위 없을 때) |
+| 3순위 | `scontent`, `googlesyndication` | 1,2순위 있으면 `fallbackUrlMap`, 없으면 `imageUrlMap` |
+| 4순위 | 기타 URL | `imageUrlMap` 비어있을 때만 저장 |
+
+#### 6.2 Google Drive URL 변환
+```javascript
+function convertGoogleDriveUrl(url) {
+    const driveMatch = url.match(/drive\.google\.com\/file\/d\/([^\/]+)\/view/);
+    if (driveMatch) {
+        return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1000`;
+    }
+    return url;
+}
 ```
 
-#### 6.2 Fallback 처리 흐름
+**변환 예시**:
+```
+원본: https://drive.google.com/file/d/17n2apmiFJD1wqdXdAgoJMmV61IGGYZjM/view
+변환: https://drive.google.com/thumbnail?id=17n2apmiFJD1wqdXdAgoJMmV61IGGYZjM&sz=w1000
+```
+
+#### 6.3 originalUrlMap 독립 저장
+
+`originalUrlMap`은 `imageUrlMap` 우선순위와 **독립적으로** 저장됩니다.
+
+```javascript
+// originalUrlMap은 imageUrlMap 우선순위와 독립적으로 저장
+// 유효한 원본 URL이 있고, 기존에 저장된 값이 없으면 저장
+if (originalUrl && originalUrl !== '-' && !originalUrlMap[creativeName]) {
+    originalUrlMap[creativeName] = originalUrl;
+}
+```
+
+**처리 규칙**:
+- 유효한 `원본 url / ID` 값이 있으면 (`-` 제외) 저장
+- 먼저 발견된 유효한 값이 저장되고, 이후 값은 무시
+- `imageUrlMap` 우선순위 로직과 독립적으로 동작
+
+**예시**: 같은 소재이름으로 2개 행이 있을 때
+
+| 순서 | url | 원본 url / ID | imageUrlMap | originalUrlMap |
+|------|-----|---------------|-------------|----------------|
+| 1 (먼저) | `drive.google.com/...` | `-` | Google Drive 저장 | 저장 안 됨 |
+| 2 (나중) | `facebook.com/...` | `https://fb.com/123` | 유지 (1순위) | **저장 ✅** |
+
+#### 6.5 Fallback 처리 흐름
 ```
 1. imageUrlMap[소재이름]에서 이미지 URL 로드 시도
    ↓ 실패 시
@@ -1500,7 +1618,7 @@ if (showROAS) { yAxisID: (hasCostMetric || hasCpmMetric || hasCpcMetric || hasCp
 3. placeholder 표시 ("이미지 로드 실패")
 ```
 
-#### 6.3 onerror 핸들러 코드
+#### 6.6 onerror 핸들러 코드
 ```javascript
 // fallback URL이 있는 경우
 onerror="if(!this.dataset.tried){
@@ -1515,7 +1633,7 @@ onerror="if(!this.dataset.tried){
 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
 ```
 
-#### 6.4 원본 URL 링크
+#### 6.7 원본 URL 링크
 - `originalUrlMap[소재이름]`에 원본 URL 저장
 - 이미지 클릭 시 새 탭에서 원본 URL 열기
 - 원본 URL이 없으면 `imageUrl`을 링크로 사용
@@ -1683,3 +1801,12 @@ body {
 | 2025-12-09 | 섹션 순서 변경: 요약 섹션을 KPI 기준 필터 + 정렬 설정 통합 하단으로 이동 |
 | 2025-12-09 | KPI 필터 + 정렬 설정 통합: `unified-filter-*` CSS 클래스 추가 및 문서화 |
 | 2025-12-09 | 섹션 번호 재정렬: 2. KPI 기준 필터 + 정렬 설정 통합 → 3. 요약 섹션 → 4. 소재 그리드 → 5. 세부 성과 모달 |
+| 2025-12-11 | 모달 테이블 CTR 컬럼 추가: 클릭률 (클릭/노출*100, 소수점 2자리) - 테이블 11개 컬럼으로 확장 |
+| 2025-12-11 | 모달 테이블 기간 정렬 기능 추가: `toggleModalTableSort()`, `updateModalSortIcon()` 함수, `modalTableSortOrder` 전역 변수 |
+| 2025-12-11 | CSS 추가: `.modal-table th.sortable`, `.sort-icon` 정렬 가능한 헤더 스타일 |
+| 2025-12-11 | 유틸리티 함수 추가: `formatCTR(num)` - CTR 포맷 (소수점 2자리 %) |
+| 2025-12-11 | aggregateModalData 함수 업데이트: CTR 계산 추가, modalTableSortOrder에 따른 동적 정렬 |
+| 2025-12-12 | URL 우선순위 변경: Google Drive URL을 1순위로 승격 (기존: 4순위 기타) |
+| 2025-12-12 | `convertGoogleDriveUrl()` 함수 추가: `/file/d/{ID}/view` → `/thumbnail?id={ID}&sz=w1000` 변환 |
+| 2025-12-12 | 이미지 URL 처리 로직 섹션 재구성: 6.2 Google Drive URL 변환 추가, 섹션 번호 재정렬 |
+| 2025-12-12 | `originalUrlMap` 독립 저장 로직 추가: `imageUrlMap` 우선순위와 독립적으로 유효한 원본 URL 저장 (6.3 섹션) |

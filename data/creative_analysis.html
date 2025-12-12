@@ -1867,63 +1867,85 @@
                 if (urlResponse.ok) {
                     const urlText = await urlResponse.text();
                     const urlData = parseCSVWithQuotes(urlText);
-                    // 소재이름 -> URL 매핑 생성 (facebook.com/ads/image 최우선, scontent fallback)
+                    // Google Drive URL을 thumbnail 형식으로 변환
+                    function convertGoogleDriveUrl(url) {
+                        const driveMatch = url.match(/drive\.google\.com\/file\/d\/([^\/]+)\/view/);
+                        if (driveMatch) {
+                            return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1000`;
+                        }
+                        return url;
+                    }
+
+                    // 소재이름 -> URL 매핑 생성
+                    // 우선순위: 1.drive.google.com > 2.facebook.com/ads/image,youtube > 3.scontent > 4.기타
                     urlData.forEach(row => {
                         const creativeName = row['광고,에셋이름'] || row['광고'];
                         const url = row['url'];
                         const originalUrl = row['원본 url / ID'] || row['원본url/ID'] || '';
 
                         if (creativeName && url) {
-                            // URL 우선순위: facebook.com/ads/image, img.youtube.com > scontent > 기타
+                            // originalUrlMap은 imageUrlMap 우선순위와 독립적으로 저장
+                            // 유효한 원본 URL이 있고, 기존에 저장된 값이 없으면 저장
+                            if (originalUrl && originalUrl !== '-' && !originalUrlMap[creativeName]) {
+                                originalUrlMap[creativeName] = originalUrl;
+                            }
+
+                            // URL 유형 판별
+                            const isGoogleDrive = url.includes('drive.google.com');
                             const isFacebookAdsImage = url.includes('facebook.com/ads/image');
                             const isYoutubeThumbnail = url.includes('img.youtube.com/vi/');
                             const isScontent = url.includes('scontent') || url.includes('googlesyndication');
-                            const isPrimaryUrl = isFacebookAdsImage || isYoutubeThumbnail;
 
-                            // facebook.com/ads/image 또는 img.youtube.com URL은 최우선
-                            if (isPrimaryUrl) {
-                                // 기존에 primary URL이 없거나, scontent만 있으면 덮어쓰기
+                            // 1순위: Google Drive URL (최우선, thumbnail 형식으로 변환)
+                            if (isGoogleDrive) {
                                 const existingUrl = imageUrlMap[creativeName];
-                                const existingIsPrimary = existingUrl &&
-                                    (existingUrl.includes('facebook.com/ads/image') || existingUrl.includes('img.youtube.com/vi/'));
-
-                                if (!existingIsPrimary) {
-                                    // 기존 URL이 scontent면 fallback으로 이동
-                                    if (existingUrl && (existingUrl.includes('scontent') || existingUrl.includes('googlesyndication'))) {
+                                // 기존에 Google Drive URL이 아니면 덮어쓰기
+                                if (!existingUrl || !existingUrl.includes('drive.google.com/thumbnail')) {
+                                    // 기존 URL이 있으면 fallback으로 이동
+                                    if (existingUrl && !fallbackUrlMap[creativeName]) {
                                         fallbackUrlMap[creativeName] = existingUrl;
                                     }
-                                    imageUrlMap[creativeName] = url;
-                                    if (originalUrl && originalUrl !== '-') {
-                                        originalUrlMap[creativeName] = originalUrl;
+                                    imageUrlMap[creativeName] = convertGoogleDriveUrl(url);
+                                }
+                            }
+                            // 2순위: facebook.com/ads/image 또는 img.youtube.com
+                            else if (isFacebookAdsImage || isYoutubeThumbnail) {
+                                const existingUrl = imageUrlMap[creativeName];
+                                // Google Drive URL이 이미 있으면 건너뛰기
+                                const existingIsGoogleDrive = existingUrl && existingUrl.includes('drive.google.com/thumbnail');
+                                if (!existingIsGoogleDrive) {
+                                    const existingIsPrimary = existingUrl &&
+                                        (existingUrl.includes('facebook.com/ads/image') || existingUrl.includes('img.youtube.com/vi/'));
+                                    if (!existingIsPrimary) {
+                                        // 기존 URL이 scontent면 fallback으로 이동
+                                        if (existingUrl && (existingUrl.includes('scontent') || existingUrl.includes('googlesyndication'))) {
+                                            fallbackUrlMap[creativeName] = existingUrl;
+                                        }
+                                        imageUrlMap[creativeName] = url;
                                     }
                                 }
                             }
-                            // scontent 등 URL은 fallback으로 저장
+                            // 3순위: scontent 등 URL
                             else if (isScontent) {
-                                // 이미 primary URL이 있으면 fallback으로 저장
                                 const existingUrl = imageUrlMap[creativeName];
+                                const existingIsGoogleDrive = existingUrl && existingUrl.includes('drive.google.com/thumbnail');
                                 const existingIsPrimary = existingUrl &&
                                     (existingUrl.includes('facebook.com/ads/image') || existingUrl.includes('img.youtube.com/vi/'));
 
-                                if (existingIsPrimary) {
+                                // 1,2순위 URL이 있으면 fallback으로 저장
+                                if (existingIsGoogleDrive || existingIsPrimary) {
                                     if (!fallbackUrlMap[creativeName]) {
                                         fallbackUrlMap[creativeName] = url;
                                     }
                                 }
-                                // primary URL이 없으면 primary로 저장
-                                else if (!imageUrlMap[creativeName]) {
+                                // 1,2순위 URL이 없으면 primary로 저장
+                                else if (!existingUrl) {
                                     imageUrlMap[creativeName] = url;
-                                    if (originalUrl && originalUrl !== '-') {
-                                        originalUrlMap[creativeName] = originalUrl;
-                                    }
                                 }
                             }
-                            // 기타 URL은 아무것도 없을 때만
+                            // 4순위: 기타 URL은 아무것도 없을 때만
                             else if (!imageUrlMap[creativeName]) {
                                 imageUrlMap[creativeName] = url;
-                                if (originalUrl && originalUrl !== '-') {
-                                    originalUrlMap[creativeName] = originalUrl;
-                                }
                             }
                         }
                     });
