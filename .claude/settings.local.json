@@ -3,7 +3,10 @@
     "allow": [
       "Bash(python scripts/generate_engagement_data.py:*)",
       "Bash(python scripts/merge_slides.py:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(cat:*)",
+      "Bash(__NEW_LINE__ echo \"=== v6_2_ 접두사 클래스 목록 ===\")",
+      "Bash(__NEW_LINE__ echo \"\")"
     ],
     "deny": [],
     "ask": []

@@ -159,6 +159,14 @@
             margin-top: 0.25rem;
         }
 
+        .slide-1 .icon-highlight {
+            position: absolute;
+            top: 60px;
+            left: 60px;
+            font-size: 2.5rem;
+            opacity: 0.3;
+        }
+
         /* Slide 2 - Problem */
         .slide-2 {
             flex-direction: row !important;
@@ -207,6 +215,28 @@
             font-size: 1.4rem;
             width: 24px;
             text-align: center;
+        }
+
+        .icon-container {
+            font-size: 5rem;
+            color: #ef4444;
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .icon-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #374151;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .icon-subtitle {
+            font-size: 0.95rem;
+            color: #6b7280;
+            text-align: center;
+            line-height: 1.4;
         }
 
         .highlight-box {
@@ -471,12 +501,12 @@
             font-weight: 700;
         }
 
-        /* Slides 9-10 Common Styles (AI/Human sections) */
-        .slide-9, .slide-10 {
+        /* Slide 6 - AI Action Plan */
+        .slide-6 {
             flex-direction: row !important;
         }
 
-        .slide-9 .left-section {
+        .slide-6 .left-section {
             flex: 1;
             background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
             display: flex;
@@ -487,7 +517,7 @@
             position: relative;
         }
 
-        .slide-9 .right-section, .slide-10 .right-section {
+        .slide-6 .right-section {
             width: 450px;
             background: #f1f5f9;
             display: flex;
@@ -529,8 +559,17 @@
             gap: 0.5rem;
         }
 
-        /* Slide 10 - Human Touch */
-        .slide-10 .left-section {
+        .slide-6 .icon-container {
+            font-size: 4rem;
+            color: #1e40af;
+        }
+
+        /* Slide 7 - Human Touch */
+        .slide-7 {
+            flex-direction: row !important;
+        }
+
+        .slide-7 .left-section {
             flex: 1;
             background: linear-gradient(135deg, #059669 0%, #10b981 100%);
             display: flex;
@@ -541,11 +580,21 @@
             position: relative;
         }
 
-        .slide-10 .feature-item i {
+        .slide-7 .right-section {
+            width: 450px;
+            background: #f1f5f9;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .slide-7 .feature-item i {
             color: #6ee7b7;
         }
 
-        .slide-10 .highlight-box {
+        .slide-7 .highlight-box {
             border-left-color: #34d399;
         }
 
@@ -564,8 +613,13 @@
             gap: 0.5rem;
         }
 
-        /* Slide 11 - Value Summary */
-        .slide-11 .content-wrapper {
+        .slide-7 .icon-container {
+            font-size: 4rem;
+            color: #059669;
+        }
+
+        /* Slide 8 - Value Summary */
+        .slide-8 .content-wrapper {
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -573,7 +627,7 @@
             padding: 40px 80px;
         }
 
-        .slide-11 .main-title {
+        .slide-8 .main-title {
             font-size: 2.5rem;
             font-weight: 900;
             color: #1e40af;
@@ -657,12 +711,12 @@
             gap: 0.4rem;
         }
 
-        /* Slide 12 - CTA */
-        .slide-12 {
+        /* Slide 9 - CTA */
+        .slide-9 {
             background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
         }
 
-        .slide-12 .content-wrapper {
+        .slide-9 .content-wrapper {
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -672,7 +726,7 @@
             position: relative;
         }
 
-        .slide-12 .main-title {
+        .slide-9 .main-title {
             font-size: 3.5rem;
             font-weight: 900;
             text-align: center;
@@ -681,7 +735,7 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
-        .slide-12 .subtitle {
+        .slide-9 .subtitle {
             font-size: 1.4rem;
             font-weight: 300;
             text-align: center;
@@ -746,6 +800,19 @@
             line-height: 1.5;
         }
 
+        .badge-promise {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f59e0b;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
         .growth-icon {
             position: absolute;
             top: 2rem;
@@ -777,12 +844,12 @@
             .principles-container {
                 flex-wrap: wrap;
             }
-            .slide-2, .slide-3, .slide-9, .slide-10 {
+            .slide-2, .slide-3, .slide-6, .slide-7 {
                 flex-direction: column !important;
             }
             .slide-2 .right-section,
-            .slide-9 .right-section,
-            .slide-10 .right-section {
+            .slide-6 .right-section,
+            .slide-7 .right-section {
                 width: 100%;
             }
         }
@@ -976,9 +1043,9 @@
             </div>
         </div>
 
-        <!-- Slide 6: AI Dashboard Solution (v6_3) -->
+        <!-- Slide 5-1: AI Dashboard Solution (v6_3) -->
         <style>
-            .slide-6 .slide-container {
+            .v6_3_slide-container {
                 flex: 1;
                 display: flex;
                 flex-direction: column;
@@ -986,7 +1053,7 @@
                 padding: 40px 60px;
             }
 
-            .slide-6 .main-title {
+            .v6_3_main-title {
                 font-size: 2rem;
                 font-weight: 900;
                 color: #1e40af;
@@ -995,117 +1062,117 @@
                 line-height: 1.3;
                 letter-spacing: -0.02em;
                 opacity: 0;
-                animation: fadeInUp-slide6 0.6s ease-out forwards;
+                animation: v6_3_fadeInUp 0.6s ease-out forwards;
             }
 
-            .slide-6 .sub-title {
+            .v6_3_sub-title {
                 font-size: 1rem;
                 color: #64748b;
                 text-align: center;
                 margin-bottom: 24px;
                 opacity: 0;
-                animation: fadeInUp-slide6 0.6s ease-out 0.1s forwards;
+                animation: v6_3_fadeInUp 0.6s ease-out 0.1s forwards;
             }
 
-            .slide-6 .comparison-section {
+            .v6_3_comparison-section {
                 display: flex;
                 gap: 24px;
                 margin-bottom: 20px;
             }
 
-            .slide-6 .comparison-card {
+            .v6_3_comparison-card {
                 flex: 1;
                 border-radius: 12px;
                 overflow: hidden;
                 opacity: 0;
-                animation: fadeInUp-slide6 0.6s ease-out forwards;
+                animation: v6_3_fadeInUp 0.6s ease-out forwards;
             }
 
-            .slide-6 .legacy-card {
+            .v6_3_legacy-card {
                 background: #1e293b;
                 border: 1px solid #334155;
                 animation-delay: 0.2s;
             }
 
-            .slide-6 .card-header {
+            .v6_3_card-header {
                 padding: 12px 16px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
             }
 
-            .slide-6 .legacy-card .slide-6 .card-header {
+            .v6_3_legacy-card .v6_3_card-header {
                 background: rgba(0,0,0,0.3);
                 border-bottom: 1px solid #334155;
             }
 
-            .slide-6 .card-title {
+            .v6_3_card-title {
                 font-size: 14px;
                 font-weight: 700;
             }
 
-            .slide-6 .legacy-card .slide-6 .card-title {
+            .v6_3_legacy-card .v6_3_card-title {
                 color: #94a3b8;
             }
 
-            .slide-6 .card-subtitle {
+            .v6_3_card-subtitle {
                 font-size: 11px;
                 margin-top: 2px;
                 color: #64748b;
             }
 
-            .slide-6 .status-badge {
+            .v6_3_status-badge {
                 padding: 4px 12px;
                 border-radius: 16px;
                 font-size: 10px;
                 font-weight: 600;
             }
 
-            .slide-6 .status-badge.slide-6 .problem {
+            .v6_3_status-badge.v6_3_problem {
                 background: rgba(239, 68, 68, 0.2);
                 color: #fca5a5;
             }
 
-            .slide-6 .status-badge.slide-6 .solution {
+            .v6_3_status-badge.v6_3_solution {
                 background: rgba(16, 185, 129, 0.2);
                 color: #6ee7b7;
             }
 
-            .slide-6 .legacy-content {
+            .v6_3_legacy-content {
                 padding: 12px 16px 16px;
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 12px;
             }
 
-            .slide-6 .legacy-chart {
+            .v6_3_legacy-chart {
                 background: rgba(0,0,0,0.3);
                 border-radius: 8px;
                 padding: 10px;
                 height: 70px;
             }
 
-            .slide-6 .chart-bars {
+            .v6_3_chart-bars {
                 display: flex;
                 align-items: flex-end;
                 gap: 4px;
                 height: 50px;
             }
 
-            .slide-6 .bar {
+            .v6_3_bar {
                 flex: 1;
                 background: linear-gradient(180deg, #475569 0%, #334155 100%);
                 border-radius: 2px 2px 0 0;
             }
 
-            .slide-6 .legacy-table {
+            .v6_3_legacy-table {
                 background: rgba(0,0,0,0.3);
                 border-radius: 8px;
                 padding: 8px;
                 font-size: 8px;
             }
 
-            .slide-6 .table-row {
+            .v6_3_table-row {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
                 gap: 2px;
@@ -1113,37 +1180,37 @@
                 border-bottom: 1px solid rgba(100, 116, 139, 0.2);
             }
 
-            .slide-6 .table-row:last-child {
+            .v6_3_table-row:last-child {
                 border-bottom: none;
             }
 
-            .slide-6 .table-cell {
+            .v6_3_table-cell {
                 color: #64748b;
                 text-align: center;
                 padding: 2px;
             }
 
-            .slide-6 .table-cell.slide-6 .highlight-cell {
+            .v6_3_table-cell.v6_3_highlight-cell {
                 background: rgba(234, 179, 8, 0.2);
                 color: #fcd34d;
                 border-radius: 2px;
             }
 
-            .slide-6 .legacy-problems {
+            .v6_3_legacy-problems {
                 grid-column: 1 / -1;
                 display: flex;
                 gap: 12px;
                 margin-top: 4px;
             }
 
-            .slide-6 .problem-item {
+            .v6_3_problem-item {
                 flex: 1;
                 display: flex;
                 gap: 8px;
                 align-items: flex-start;
             }
 
-            .slide-6 .problem-icon {
+            .v6_3_problem-icon {
                 width: 24px;
                 height: 24px;
                 border-radius: 6px;
@@ -1156,50 +1223,50 @@
                 color: #f87171;
             }
 
-            .slide-6 .problem-text h4 {
+            .v6_3_problem-text h4 {
                 color: #e2e8f0;
                 font-size: 10px;
                 font-weight: 600;
                 margin-bottom: 2px;
             }
 
-            .slide-6 .problem-text p {
+            .v6_3_problem-text p {
                 color: #64748b;
                 font-size: 9px;
                 line-height: 1.3;
             }
 
-            .slide-6 .ai-card {
+            .v6_3_ai-card {
                 background: white;
                 border: 2px solid #3b82f6;
                 box-shadow: 0 8px 30px rgba(59, 130, 246, 0.15);
                 animation-delay: 0.3s;
             }
 
-            .slide-6 .ai-card .slide-6 .card-header {
+            .v6_3_ai-card .v6_3_card-header {
                 background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(6, 182, 212, 0.08));
                 border-bottom: 1px solid rgba(59, 130, 246, 0.15);
             }
 
-            .slide-6 .ai-card .slide-6 .card-title {
+            .v6_3_ai-card .v6_3_card-title {
                 color: #1e40af;
             }
 
-            .slide-6 .ai-card .slide-6 .card-subtitle {
+            .v6_3_ai-card .v6_3_card-subtitle {
                 color: #64748b;
             }
 
-            .slide-6 .ai-content {
+            .v6_3_ai-content {
                 padding: 12px 16px 16px;
             }
 
-            .slide-6 .alert-section {
+            .v6_3_alert-section {
                 display: flex;
                 gap: 10px;
                 margin-bottom: 12px;
             }
 
-            .slide-6 .alert-card {
+            .v6_3_alert-card {
                 flex: 1;
                 padding: 10px 12px;
                 border-radius: 10px;
@@ -1208,17 +1275,17 @@
                 gap: 10px;
             }
 
-            .slide-6 .alert-card.slide-6 .green {
+            .v6_3_alert-card.v6_3_green {
                 background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.06));
                 border: 1px solid rgba(16, 185, 129, 0.25);
             }
 
-            .slide-6 .alert-card.slide-6 .red {
+            .v6_3_alert-card.v6_3_red {
                 background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.06));
                 border: 1px solid rgba(239, 68, 68, 0.25);
             }
 
-            .slide-6 .traffic-light {
+            .v6_3_traffic-light {
                 display: flex;
                 flex-direction: column;
                 gap: 2px;
@@ -1227,31 +1294,31 @@
                 border-radius: 4px;
             }
 
-            .slide-6 .light {
+            .v6_3_light {
                 width: 8px;
                 height: 8px;
                 border-radius: 50%;
                 background: #374151;
             }
 
-            .slide-6 .green .light.active { background: #10b981; box-shadow: 0 0 6px #10b981; animation: lightPulse-slide6 2s ease-in-out infinite; }
-            .slide-6 .red .light.active { background: #ef4444; box-shadow: 0 0 6px #ef4444; animation: lightPulse-slide6 2s ease-in-out infinite; }
+            .v6_3_green .v6_3_light.v6_3_active { background: #10b981; box-shadow: 0 0 6px #10b981; animation: v6_3_lightPulse 2s ease-in-out infinite; }
+            .v6_3_red .v6_3_light.v6_3_active { background: #ef4444; box-shadow: 0 0 6px #ef4444; animation: v6_3_lightPulse 2s ease-in-out infinite; }
 
-            .slide-6 .alert-info h4 {
+            .v6_3_alert-info h4 {
                 font-size: 11px;
                 font-weight: 700;
                 margin-bottom: 1px;
             }
 
-            .slide-6 .green .slide-6 .alert-info h4 { color: #059669; }
-            .slide-6 .red .slide-6 .alert-info h4 { color: #dc2626; }
+            .v6_3_green .v6_3_alert-info h4 { color: #059669; }
+            .v6_3_red .v6_3_alert-info h4 { color: #dc2626; }
 
-            .slide-6 .alert-info p {
+            .v6_3_alert-info p {
                 font-size: 9px;
                 color: #64748b;
             }
 
-            .slide-6 .action-badge {
+            .v6_3_action-badge {
                 margin-left: auto;
                 padding: 4px 8px;
                 border-radius: 4px;
@@ -1260,24 +1327,24 @@
                 background: white;
             }
 
-            .slide-6 .green .slide-6 .action-badge { color: #059669; border: 1px solid rgba(16, 185, 129, 0.3); }
-            .slide-6 .red .slide-6 .action-badge { color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.3); }
+            .v6_3_green .v6_3_action-badge { color: #059669; border: 1px solid rgba(16, 185, 129, 0.3); }
+            .v6_3_red .v6_3_action-badge { color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.3); }
 
-            .slide-6 .matrix-funnel {
+            .v6_3_matrix-funnel {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 10px;
                 margin-bottom: 12px;
             }
 
-            .slide-6 .matrix-card, .slide-6 .funnel-card {
+            .v6_3_matrix-card, .v6_3_funnel-card {
                 background: #f8fafc;
                 border-radius: 10px;
                 padding: 12px;
                 border: 1px solid #e2e8f0;
             }
 
-            .slide-6 .section-title {
+            .v6_3_section-title {
                 font-size: 11px;
                 font-weight: 700;
                 color: #1e40af;
@@ -1287,11 +1354,11 @@
                 gap: 6px;
             }
 
-            .slide-6 .section-title i {
+            .v6_3_section-title i {
                 font-size: 12px;
             }
 
-            .slide-6 .bcg-grid {
+            .v6_3_bcg-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 grid-template-rows: 1fr 1fr;
@@ -1299,7 +1366,7 @@
                 height: 80px;
             }
 
-            .slide-6 .bcg-cell {
+            .v6_3_bcg-cell {
                 border-radius: 6px;
                 padding: 6px;
                 display: flex;
@@ -1311,45 +1378,45 @@
                 text-align: center;
             }
 
-            .slide-6 .bcg-cell.slide-6 .hidden-gem {
+            .v6_3_bcg-cell.v6_3_hidden-gem {
                 background: rgba(6, 182, 212, 0.2);
                 color: #0891b2;
             }
 
-            .slide-6 .bcg-cell.slide-6 .cash-cow {
+            .v6_3_bcg-cell.v6_3_cash-cow {
                 background: rgba(16, 185, 129, 0.2);
                 color: #059669;
             }
 
-            .slide-6 .bcg-cell.slide-6 .dog {
+            .v6_3_bcg-cell.v6_3_dog {
                 background: rgba(100, 116, 139, 0.15);
                 color: #64748b;
             }
 
-            .slide-6 .bcg-cell.slide-6 .money-pit {
+            .v6_3_bcg-cell.v6_3_money-pit {
                 background: rgba(245, 158, 11, 0.2);
                 color: #d97706;
             }
 
-            .slide-6 .bcg-cell span {
+            .v6_3_bcg-cell span {
                 font-size: 7px;
                 opacity: 0.7;
                 margin-top: 2px;
             }
 
-            .slide-6 .funnel-visual {
+            .v6_3_funnel-visual {
                 display: flex;
                 flex-direction: column;
                 gap: 2px;
             }
 
-            .slide-6 .funnel-stage {
+            .v6_3_funnel-stage {
                 display: flex;
                 align-items: center;
                 gap: 8px;
             }
 
-            .slide-6 .funnel-bar {
+            .v6_3_funnel-bar {
                 height: 14px;
                 border-radius: 3px;
                 display: flex;
@@ -1361,19 +1428,19 @@
                 color: white;
             }
 
-            .slide-6 .funnel-stage:nth-child(1) .slide-6 .funnel-bar { width: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa); }
-            .slide-6 .funnel-stage:nth-child(2) .slide-6 .funnel-bar { width: 80%; background: linear-gradient(90deg, #06b6d4, #22d3ee); }
-            .slide-6 .funnel-stage:nth-child(3) .slide-6 .funnel-bar { width: 60%; background: linear-gradient(90deg, #10b981, #34d399); }
-            .slide-6 .funnel-stage:nth-child(4) .slide-6 .funnel-bar { width: 40%; background: linear-gradient(90deg, #f59e0b, #fbbf24); }
-            .slide-6 .funnel-stage:nth-child(5) .slide-6 .funnel-bar { width: 25%; background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+            .v6_3_funnel-stage:nth-child(1) .v6_3_funnel-bar { width: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+            .v6_3_funnel-stage:nth-child(2) .v6_3_funnel-bar { width: 80%; background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+            .v6_3_funnel-stage:nth-child(3) .v6_3_funnel-bar { width: 60%; background: linear-gradient(90deg, #10b981, #34d399); }
+            .v6_3_funnel-stage:nth-child(4) .v6_3_funnel-bar { width: 40%; background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+            .v6_3_funnel-stage:nth-child(5) .v6_3_funnel-bar { width: 25%; background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
 
-            .slide-6 .funnel-label {
+            .v6_3_funnel-label {
                 font-size: 8px;
                 color: #64748b;
                 width: 60px;
             }
 
-            .slide-6 .funnel-value {
+            .v6_3_funnel-value {
                 font-size: 8px;
                 font-weight: 600;
                 color: #1e40af;
@@ -1381,19 +1448,19 @@
                 text-align: right;
             }
 
-            .slide-6 .ai-benefits {
+            .v6_3_ai-benefits {
                 display: flex;
                 gap: 10px;
             }
 
-            .slide-6 .benefit-item {
+            .v6_3_benefit-item {
                 flex: 1;
                 display: flex;
                 gap: 8px;
                 align-items: flex-start;
             }
 
-            .slide-6 .benefit-icon {
+            .v6_3_benefit-icon {
                 width: 20px;
                 height: 20px;
                 border-radius: 5px;
@@ -1406,26 +1473,26 @@
                 color: white;
             }
 
-            .slide-6 .benefit-text h4 {
+            .v6_3_benefit-text h4 {
                 color: #1e40af;
                 font-size: 10px;
                 font-weight: 700;
                 margin-bottom: 1px;
             }
 
-            .slide-6 .benefit-text p {
+            .v6_3_benefit-text p {
                 color: #64748b;
                 font-size: 8px;
                 line-height: 1.3;
             }
 
-            .slide-6 .vs-divider {
+            .v6_3_vs-divider {
                 display: flex;
                 align-items: center;
                 justify-content: center;
             }
 
-            .slide-6 .vs-circle {
+            .v6_3_vs-circle {
                 width: 36px;
                 height: 36px;
                 background: linear-gradient(135deg, #1e40af, #3b82f6);
@@ -1437,16 +1504,16 @@
                 font-size: 12px;
                 color: white;
                 box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-                animation: pulse-slide6 2s ease-in-out infinite;
+                animation: v6_3_pulse 2s ease-in-out infinite;
             }
 
-            .slide-6 .features-grid {
+            .v6_3_features-grid {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
                 gap: 16px;
             }
 
-            .slide-6 .feature-card {
+            .v6_3_feature-card {
                 background: #f8fafc;
                 border-radius: 10px;
                 padding: 16px;
@@ -1454,21 +1521,21 @@
                 border: 2px solid #e2e8f0;
                 transition: all 0.3s ease;
                 opacity: 0;
-                animation: fadeInUp-slide6 0.6s ease-out forwards;
+                animation: v6_3_fadeInUp 0.6s ease-out forwards;
             }
 
-            .slide-6 .feature-card:nth-child(1) { animation-delay: 0.4s; }
-            .slide-6 .feature-card:nth-child(2) { animation-delay: 0.5s; }
-            .slide-6 .feature-card:nth-child(3) { animation-delay: 0.6s; }
-            .slide-6 .feature-card:nth-child(4) { animation-delay: 0.7s; }
+            .v6_3_feature-card:nth-child(1) { animation-delay: 0.4s; }
+            .v6_3_feature-card:nth-child(2) { animation-delay: 0.5s; }
+            .v6_3_feature-card:nth-child(3) { animation-delay: 0.6s; }
+            .v6_3_feature-card:nth-child(4) { animation-delay: 0.7s; }
 
-            .slide-6 .feature-card:hover {
+            .v6_3_feature-card:hover {
                 border-color: #3b82f6;
                 transform: translateY(-2px);
                 box-shadow: 0 8px 20px rgba(59,130,246,0.12);
             }
 
-            .slide-6 .feature-icon-box {
+            .v6_3_feature-icon-box {
                 width: 36px;
                 height: 36px;
                 border-radius: 10px;
@@ -1480,33 +1547,33 @@
                 color: white;
             }
 
-            .slide-6 .feature-icon-box.slide-6 .blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
-            .slide-6 .feature-icon-box.slide-6 .cyan { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
-            .slide-6 .feature-icon-box.slide-6 .emerald { background: linear-gradient(135deg, #10b981, #34d399); }
-            .slide-6 .feature-icon-box.slide-6 .purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+            .v6_3_feature-icon-box.v6_3_blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+            .v6_3_feature-icon-box.v6_3_cyan { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
+            .v6_3_feature-icon-box.v6_3_emerald { background: linear-gradient(135deg, #10b981, #34d399); }
+            .v6_3_feature-icon-box.v6_3_purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
 
-            .slide-6 .feature-card h3 {
+            .v6_3_feature-card h3 {
                 font-size: 12px;
                 font-weight: 700;
                 color: #1e40af;
                 margin-bottom: 6px;
             }
 
-            .slide-6 .feature-card p {
+            .v6_3_feature-card p {
                 font-size: 10px;
                 color: #64748b;
                 line-height: 1.4;
                 margin-bottom: 8px;
             }
 
-            .slide-6 .feature-tags {
+            .v6_3_feature-tags {
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: center;
                 gap: 4px;
             }
 
-            .slide-6 .feature-tag {
+            .v6_3_feature-tag {
                 padding: 2px 6px;
                 border-radius: 4px;
                 font-size: 8px;
@@ -1515,7 +1582,7 @@
                 color: #3730a3;
             }
 
-            .slide-6 .key-message {
+            .v6_3_key-message {
                 background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
                 color: white;
                 padding: 16px 24px;
@@ -1523,22 +1590,22 @@
                 text-align: center;
                 margin-top: 16px;
                 opacity: 0;
-                animation: fadeInUp-slide6 0.6s ease-out 0.8s forwards;
+                animation: v6_3_fadeInUp 0.6s ease-out 0.8s forwards;
             }
 
-            .slide-6 .key-message-text {
+            .v6_3_key-message-text {
                 font-size: 1.1rem;
                 font-weight: 700;
                 line-height: 1.4;
             }
 
-            .slide-6 .highlight-text-white {
+            .v6_3_highlight-text-white {
                 background: rgba(255,255,255,0.2);
                 padding: 2px 8px;
                 border-radius: 4px;
             }
 
-            @keyframes fadeInUp-slide6 {
+            @keyframes v6_3_fadeInUp {
                 from {
                     opacity: 0;
                     transform: translateY(20px);
@@ -1549,88 +1616,88 @@
                 }
             }
 
-            @keyframes pulse-slide6 {
+            @keyframes v6_3_pulse {
                 0%, 100% { transform: scale(1); }
                 50% { transform: scale(1.05); }
             }
 
-            @keyframes lightPulse-slide6 {
+            @keyframes v6_3_lightPulse {
                 0%, 100% { opacity: 1; }
                 50% { opacity: 0.6; }
             }
         </style>
 
-        <div class="slide slide-6" data-slide="6">
-            <div class="slide-container">
+        <div class="slide slide-5-1" data-slide="5.1">
+            <div class="v6_3_slide-container">
                 <!-- Title -->
-                <h1 class="main-title">단순 데이터 나열을 넘어, '행동'과 '직관'을 설계하다</h1>
-                <p class="sub-title">데이터를 통해 진단하고, 기술로 실행하며, 전략으로 성장시키는 Growth Partner</p>
+                <h1 class="v6_3_main-title">단순 데이터 나열을 넘어, '행동'과 '직관'을 설계하다</h1>
+                <p class="v6_3_sub-title">데이터를 통해 진단하고, 기술로 실행하며, 전략으로 성장시키는 Growth Partner</p>
 
                 <!-- Comparison Section -->
-                <div class="comparison-section">
+                <div class="v6_3_comparison-section">
                     <!-- Legacy Dashboard -->
-                    <div class="comparison-card legacy-card">
-                        <div class="card-header">
+                    <div class="v6_3_comparison-card v6_3_legacy-card">
+                        <div class="v6_3_card-header">
                             <div>
-                                <h3 class="card-title">기존 대시보드의 한계</h3>
-                                <p class="card-subtitle">"해석이 필요한 데이터의 늪"</p>
+                                <h3 class="v6_3_card-title">기존 대시보드의 한계</h3>
+                                <p class="v6_3_card-subtitle">"해석이 필요한 데이터의 늪"</p>
                             </div>
-                            <span class="status-badge problem">Problem</span>
+                            <span class="v6_3_status-badge v6_3_problem">Problem</span>
                         </div>
-                        <div class="legacy-content">
-                            <div class="legacy-chart">
-                                <div class="chart-bars">
-                                    <div class="bar" style="height: 60%"></div>
-                                    <div class="bar" style="height: 80%"></div>
-                                    <div class="bar" style="height: 45%"></div>
-                                    <div class="bar" style="height: 90%"></div>
-                                    <div class="bar" style="height: 55%"></div>
-                                    <div class="bar" style="height: 70%"></div>
-                                    <div class="bar" style="height: 40%"></div>
-                                    <div class="bar" style="height: 85%"></div>
+                        <div class="v6_3_legacy-content">
+                            <div class="v6_3_legacy-chart">
+                                <div class="v6_3_chart-bars">
+                                    <div class="v6_3_bar" style="height: 60%"></div>
+                                    <div class="v6_3_bar" style="height: 80%"></div>
+                                    <div class="v6_3_bar" style="height: 45%"></div>
+                                    <div class="v6_3_bar" style="height: 90%"></div>
+                                    <div class="v6_3_bar" style="height: 55%"></div>
+                                    <div class="v6_3_bar" style="height: 70%"></div>
+                                    <div class="v6_3_bar" style="height: 40%"></div>
+                                    <div class="v6_3_bar" style="height: 85%"></div>
                                 </div>
                             </div>
-                            <div class="legacy-table">
-                                <div class="table-row">
-                                    <div class="table-cell">Channel</div>
-                                    <div class="table-cell">Users</div>
-                                    <div class="table-cell">Conv%</div>
-                                    <div class="table-cell">ROAS</div>
+                            <div class="v6_3_legacy-table">
+                                <div class="v6_3_table-row">
+                                    <div class="v6_3_table-cell">Channel</div>
+                                    <div class="v6_3_table-cell">Users</div>
+                                    <div class="v6_3_table-cell">Conv%</div>
+                                    <div class="v6_3_table-cell">ROAS</div>
                                 </div>
-                                <div class="table-row">
-                                    <div class="table-cell">Meta</div>
-                                    <div class="table-cell">12,450</div>
-                                    <div class="table-cell highlight-cell">2.3%</div>
-                                    <div class="table-cell">1.8</div>
+                                <div class="v6_3_table-row">
+                                    <div class="v6_3_table-cell">Meta</div>
+                                    <div class="v6_3_table-cell">12,450</div>
+                                    <div class="v6_3_table-cell v6_3_highlight-cell">2.3%</div>
+                                    <div class="v6_3_table-cell">1.8</div>
                                 </div>
-                                <div class="table-row">
-                                    <div class="table-cell">Google</div>
-                                    <div class="table-cell">8,320</div>
-                                    <div class="table-cell">3.1%</div>
-                                    <div class="table-cell">2.1</div>
+                                <div class="v6_3_table-row">
+                                    <div class="v6_3_table-cell">Google</div>
+                                    <div class="v6_3_table-cell">8,320</div>
+                                    <div class="v6_3_table-cell">3.1%</div>
+                                    <div class="v6_3_table-cell">2.1</div>
                                 </div>
-                                <div class="table-row">
-                                    <div class="table-cell">Naver</div>
-                                    <div class="table-cell">5,890</div>
-                                    <div class="table-cell">4.2%</div>
-                                    <div class="table-cell">2.4</div>
+                                <div class="v6_3_table-row">
+                                    <div class="v6_3_table-cell">Naver</div>
+                                    <div class="v6_3_table-cell">5,890</div>
+                                    <div class="v6_3_table-cell">4.2%</div>
+                                    <div class="v6_3_table-cell">2.4</div>
                                 </div>
                             </div>
-                            <div class="legacy-problems">
-                                <div class="problem-item">
-                                    <div class="problem-icon">
+                            <div class="v6_3_legacy-problems">
+                                <div class="v6_3_problem-item">
+                                    <div class="v6_3_problem-icon">
                                         <i class="fas fa-question-circle"></i>
                                     </div>
-                                    <div class="problem-text">
+                                    <div class="v6_3_problem-text">
                                         <h4>분석 없는 자동화</h4>
                                         <p>단순 숫자 나열, "왜?" "무엇을?" 부재</p>
                                     </div>
                                 </div>
-                                <div class="problem-item">
-                                    <div class="problem-icon">
+                                <div class="v6_3_problem-item">
+                                    <div class="v6_3_problem-icon">
                                         <i class="fas fa-graduation-cap"></i>
                                     </div>
-                                    <div class="problem-text">
+                                    <div class="v6_3_problem-text">
                                         <h4>학습 필요한 차트</h4>
                                         <p>화려하지만 난해, 즉각 이해 어려움</p>
                                     </div>
@@ -1640,125 +1707,125 @@
                     </div>
 
                     <!-- VS -->
-                    <div class="vs-divider">
-                        <div class="vs-circle">VS</div>
+                    <div class="v6_3_vs-divider">
+                        <div class="v6_3_vs-circle">VS</div>
                     </div>
 
                     <!-- AI Solution -->
-                    <div class="comparison-card ai-card">
-                        <div class="card-header">
+                    <div class="v6_3_comparison-card v6_3_ai-card">
+                        <div class="v6_3_card-header">
                             <div>
-                                <h3 class="card-title">AI 대시보드 솔루션</h3>
-                                <p class="card-subtitle">"즉시 실행 가능한 인사이트"</p>
+                                <h3 class="v6_3_card-title">AI 대시보드 솔루션</h3>
+                                <p class="v6_3_card-subtitle">"즉시 실행 가능한 인사이트"</p>
                             </div>
-                            <span class="status-badge solution">Solution</span>
+                            <span class="v6_3_status-badge v6_3_solution">Solution</span>
                         </div>
-                        <div class="ai-content">
+                        <div class="v6_3_ai-content">
                             <!-- Alerts -->
-                            <div class="alert-section">
-                                <div class="alert-card green">
-                                    <div class="traffic-light">
-                                        <div class="light active"></div>
-                                        <div class="light"></div>
-                                        <div class="light"></div>
+                            <div class="v6_3_alert-section">
+                                <div class="v6_3_alert-card v6_3_green">
+                                    <div class="v6_3_traffic-light">
+                                        <div class="v6_3_light v6_3_active"></div>
+                                        <div class="v6_3_light"></div>
+                                        <div class="v6_3_light"></div>
                                     </div>
-                                    <div class="alert-info">
+                                    <div class="v6_3_alert-info">
                                         <h4>전환율 (+5% Green)</h4>
                                         <p>전환율 개선 추세 유지</p>
                                     </div>
-                                    <div class="action-badge">성과 개선</div>
+                                    <div class="v6_3_action-badge">성과 개선</div>
                                 </div>
-                                <div class="alert-card red">
-                                    <div class="traffic-light">
-                                        <div class="light"></div>
-                                        <div class="light"></div>
-                                        <div class="light active"></div>
+                                <div class="v6_3_alert-card v6_3_red">
+                                    <div class="v6_3_traffic-light">
+                                        <div class="v6_3_light"></div>
+                                        <div class="v6_3_light"></div>
+                                        <div class="v6_3_light v6_3_active"></div>
                                     </div>
-                                    <div class="alert-info">
+                                    <div class="v6_3_alert-info">
                                         <h4>이탈률 (High Risk)</h4>
                                         <p>결제 오류 점검 필요</p>
                                     </div>
-                                    <div class="action-badge">긴급 개선</div>
+                                    <div class="v6_3_action-badge">긴급 개선</div>
                                 </div>
                             </div>
 
                             <!-- Matrix & Funnel -->
-                            <div class="matrix-funnel">
-                                <div class="matrix-card">
-                                    <div class="section-title">
+                            <div class="v6_3_matrix-funnel">
+                                <div class="v6_3_matrix-card">
+                                    <div class="v6_3_section-title">
                                         <i class="fas fa-th-large"></i>
                                         BCG Matrix (채널 전략)
                                     </div>
-                                    <div class="bcg-grid">
-                                        <div class="bcg-cell hidden-gem">
+                                    <div class="v6_3_bcg-grid">
+                                        <div class="v6_3_bcg-cell v6_3_hidden-gem">
                                             Hidden Gem
                                             <span>예산 확대</span>
                                         </div>
-                                        <div class="bcg-cell cash-cow">
+                                        <div class="v6_3_bcg-cell v6_3_cash-cow">
                                             Cash Cow
                                             <span>수익 극대화</span>
                                         </div>
-                                        <div class="bcg-cell dog">
+                                        <div class="v6_3_bcg-cell v6_3_dog">
                                             Dog
                                             <span>철수 검토</span>
                                         </div>
-                                        <div class="bcg-cell money-pit">
+                                        <div class="v6_3_bcg-cell v6_3_money-pit">
                                             Money Pit
                                             <span>개선 필요</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="funnel-card">
-                                    <div class="section-title">
+                                <div class="v6_3_funnel-card">
+                                    <div class="v6_3_section-title">
                                         <i class="fas fa-filter"></i>
                                         AARRR Funnel
                                     </div>
-                                    <div class="funnel-visual">
-                                        <div class="funnel-stage">
-                                            <span class="funnel-label">Acquisition</span>
-                                            <div class="funnel-bar">48,970</div>
-                                            <span class="funnel-value">100%</span>
+                                    <div class="v6_3_funnel-visual">
+                                        <div class="v6_3_funnel-stage">
+                                            <span class="v6_3_funnel-label">Acquisition</span>
+                                            <div class="v6_3_funnel-bar">48,970</div>
+                                            <span class="v6_3_funnel-value">100%</span>
                                         </div>
-                                        <div class="funnel-stage">
-                                            <span class="funnel-label">Activation</span>
-                                            <div class="funnel-bar">24,485</div>
-                                            <span class="funnel-value">50%</span>
+                                        <div class="v6_3_funnel-stage">
+                                            <span class="v6_3_funnel-label">Activation</span>
+                                            <div class="v6_3_funnel-bar">24,485</div>
+                                            <span class="v6_3_funnel-value">50%</span>
                                         </div>
-                                        <div class="funnel-stage">
-                                            <span class="funnel-label">Retention</span>
-                                            <div class="funnel-bar">12,242</div>
-                                            <span class="funnel-value">25%</span>
+                                        <div class="v6_3_funnel-stage">
+                                            <span class="v6_3_funnel-label">Retention</span>
+                                            <div class="v6_3_funnel-bar">12,242</div>
+                                            <span class="v6_3_funnel-value">25%</span>
                                         </div>
-                                        <div class="funnel-stage">
-                                            <span class="funnel-label">Revenue</span>
-                                            <div class="funnel-bar">4,897</div>
-                                            <span class="funnel-value">10%</span>
+                                        <div class="v6_3_funnel-stage">
+                                            <span class="v6_3_funnel-label">Revenue</span>
+                                            <div class="v6_3_funnel-bar">4,897</div>
+                                            <span class="v6_3_funnel-value">10%</span>
                                         </div>
-                                        <div class="funnel-stage">
-                                            <span class="funnel-label">Referral</span>
-                                            <div class="funnel-bar">1,469</div>
-                                            <span class="funnel-value">3%</span>
+                                        <div class="v6_3_funnel-stage">
+                                            <span class="v6_3_funnel-label">Referral</span>
+                                            <div class="v6_3_funnel-bar">1,469</div>
+                                            <span class="v6_3_funnel-value">3%</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Benefits -->
-                            <div class="ai-benefits">
-                                <div class="benefit-item">
-                                    <div class="benefit-icon">
+                            <div class="v6_3_ai-benefits">
+                                <div class="v6_3_benefit-item">
+                                    <div class="v6_3_benefit-icon">
                                         <i class="fas fa-robot"></i>
                                     </div>
-                                    <div class="benefit-text">
+                                    <div class="v6_3_benefit-text">
                                         <h4>AI 기반 액션 제안</h4>
                                         <p>긴급 개선, 성과 분석 자동화</p>
                                     </div>
                                 </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-icon">
+                                <div class="v6_3_benefit-item">
+                                    <div class="v6_3_benefit-icon">
                                         <i class="fas fa-check-circle"></i>
                                     </div>
-                                    <div class="benefit-text">
+                                    <div class="v6_3_benefit-text">
                                         <h4>Zero Learning Curve</h4>
                                         <p>신호등 시스템, 표준 모델 활용</p>
                                     </div>
@@ -1769,67 +1836,67 @@
                 </div>
 
                 <!-- Features Grid -->
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon-box blue">
+                <div class="v6_3_features-grid">
+                    <div class="v6_3_feature-card">
+                        <div class="v6_3_feature-icon-box v6_3_blue">
                             <i class="fas fa-filter"></i>
                         </div>
                         <h3>핵심 시각화 및 퍼널 분석</h3>
                         <p>D3.js 기반 인터랙티브 퍼널 차트로 고객 구매 여정 5단계 시각화</p>
-                        <div class="feature-tags">
-                            <span class="feature-tag">AARRR 퍼널</span>
-                            <span class="feature-tag">기간 비교</span>
+                        <div class="v6_3_feature-tags">
+                            <span class="v6_3_feature-tag">AARRR 퍼널</span>
+                            <span class="v6_3_feature-tag">기간 비교</span>
                         </div>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-icon-box cyan">
+                    <div class="v6_3_feature-card">
+                        <div class="v6_3_feature-icon-box v6_3_cyan">
                             <i class="fas fa-brain"></i>
                         </div>
                         <h3>AI 인사이트 및 전략 도구</h3>
                         <p>핵심 요약, 긴급 개선 사항 AI 자동 분석. BCG 매트릭스 전략</p>
-                        <div class="feature-tags">
-                            <span class="feature-tag">AI 자동 분석</span>
-                            <span class="feature-tag">BCG 매트릭스</span>
+                        <div class="v6_3_feature-tags">
+                            <span class="v6_3_feature-tag">AI 자동 분석</span>
+                            <span class="v6_3_feature-tag">BCG 매트릭스</span>
                         </div>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-icon-box emerald">
+                    <div class="v6_3_feature-card">
+                        <div class="v6_3_feature-icon-box v6_3_emerald">
                             <i class="fas fa-chart-line"></i>
                         </div>
                         <h3>데이터 기반 의사결정</h3>
                         <p>예산 투자 시뮬레이션, 이탈 위험 경고 시스템 실시간 대응</p>
-                        <div class="feature-tags">
-                            <span class="feature-tag">예산 시뮬레이션</span>
-                            <span class="feature-tag">이탈 경고</span>
+                        <div class="v6_3_feature-tags">
+                            <span class="v6_3_feature-tag">예산 시뮬레이션</span>
+                            <span class="v6_3_feature-tag">이탈 경고</span>
                         </div>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-icon-box purple">
+                    <div class="v6_3_feature-card">
+                        <div class="v6_3_feature-icon-box v6_3_purple">
                             <i class="fas fa-users"></i>
                         </div>
                         <h3>상세 분석 (채널/고객)</h3>
                         <p>채널별 퍼널 데이터, 신규 vs 재방문, 채널 품질 매트릭스</p>
-                        <div class="feature-tags">
-                            <span class="feature-tag">채널 분석</span>
-                            <span class="feature-tag">고객 세분화</span>
+                        <div class="v6_3_feature-tags">
+                            <span class="v6_3_feature-tag">채널 분석</span>
+                            <span class="v6_3_feature-tag">고객 세분화</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Key Message -->
-                <div class="key-message">
-                    <p class="key-message-text">
-                        <span class="highlight-text-white">AI가 분석</span>하고,
-                        <span class="highlight-text-white">신호등이 알리고</span>,
-                        <span class="highlight-text-white">BCG가 전략</span>을 제시합니다
+                <div class="v6_3_key-message">
+                    <p class="v6_3_key-message-text">
+                        <span class="v6_3_highlight-text-white">AI가 분석</span>하고,
+                        <span class="v6_3_highlight-text-white">신호등이 알리고</span>,
+                        <span class="v6_3_highlight-text-white">BCG가 전략</span>을 제시합니다
                     </p>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 7: AI Dashboard Solution (v6_2) -->
+        <!-- Slide 5-2: AI Dashboard Solution (v6_2) -->
         <style>
-            .slide-7 .slide-container {
+            .v6_2_slide-container {
                 width: 100%;
                 min-height: 720px;
                 background: white;
@@ -1839,7 +1906,7 @@
                 flex-direction: column;
             }
 
-            .slide-7 .bg-decoration {
+            .v6_2_bg-decoration {
                 position: absolute;
                 border-radius: 50%;
                 filter: blur(80px);
@@ -1847,7 +1914,7 @@
                 z-index: 0;
             }
 
-            .slide-7 .bg-decoration.slide-7 .blue {
+            .v6_2_bg-decoration.v6_2_blue {
                 width: 300px;
                 height: 300px;
                 background: #3b82f6;
@@ -1856,7 +1923,7 @@
                 opacity: 0.1;
             }
 
-            .slide-7 .bg-decoration.slide-7 .cyan {
+            .v6_2_bg-decoration.v6_2_cyan {
                 width: 200px;
                 height: 200px;
                 background: #06b6d4;
@@ -1865,7 +1932,7 @@
                 opacity: 0.08;
             }
 
-            .slide-7 .grid-pattern {
+            .v6_2_grid-pattern {
                 position: absolute;
                 inset: 0;
                 background-image:
@@ -1875,7 +1942,7 @@
                 z-index: 0;
             }
 
-            .slide-7 .content-wrapper {
+            .v6_2_content-wrapper {
                 position: relative;
                 z-index: 10;
                 flex: 1;
@@ -1884,19 +1951,19 @@
                 padding: 28px 50px;
             }
 
-            .slide-7 .header {
+            .v6_2_header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 16px;
             }
 
-            .slide-7 .title-section {
+            .v6_2_title-section {
                 text-align: center;
                 margin-bottom: 20px;
             }
 
-            .slide-7 .main-title {
+            .v6_2_main-title {
                 font-size: 1.75rem;
                 font-weight: 900;
                 color: #0f172a;
@@ -1905,25 +1972,25 @@
                 letter-spacing: -0.5px;
             }
 
-            .slide-7 .main-title .slide-7 .highlight {
+            .v6_2_main-title .v6_2_highlight {
                 background: linear-gradient(135deg, #3b82f6, #06b6d4);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
             }
 
-            .slide-7 .subtitle {
+            .v6_2_subtitle {
                 font-size: 13px;
                 color: #64748b;
                 font-weight: 400;
             }
 
-            .slide-7 .subtitle strong {
+            .v6_2_subtitle strong {
                 color: #3b82f6;
                 font-weight: 600;
             }
 
-            .slide-7 .main-content {
+            .v6_2_main-content {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
                 gap: 16px;
@@ -1931,7 +1998,7 @@
                 flex: 1;
             }
 
-            .slide-7 .ps-card {
+            .v6_2_ps-card {
                 background: white;
                 border-radius: 16px;
                 overflow: hidden;
@@ -1941,33 +2008,33 @@
                 flex-direction: column;
                 transition: all 0.3s ease;
                 opacity: 0;
-                animation: fadeInUp-slide7 0.6s ease-out forwards;
+                animation: v6_2_fadeInUp 0.6s ease-out forwards;
             }
 
-            .slide-7 .ps-card:hover {
+            .v6_2_ps-card:hover {
                 transform: translateY(-3px);
                 box-shadow: 0 8px 30px rgba(59, 130, 246, 0.1);
                 border-color: rgba(59, 130, 246, 0.2);
             }
 
-            .slide-7 .ps-card:nth-child(1) { animation-delay: 0.1s; }
-            .slide-7 .ps-card:nth-child(2) { animation-delay: 0.2s; }
-            .slide-7 .ps-card:nth-child(3) { animation-delay: 0.3s; }
+            .v6_2_ps-card:nth-child(1) { animation-delay: 0.1s; }
+            .v6_2_ps-card:nth-child(2) { animation-delay: 0.2s; }
+            .v6_2_ps-card:nth-child(3) { animation-delay: 0.3s; }
 
-            .slide-7 .problem-section {
+            .v6_2_problem-section {
                 background: #1e293b;
                 padding: 14px 16px;
                 position: relative;
             }
 
-            .slide-7 .problem-header {
+            .v6_2_problem-header {
                 display: flex;
                 align-items: center;
                 gap: 8px;
                 margin-bottom: 8px;
             }
 
-            .slide-7 .problem-badge {
+            .v6_2_problem-badge {
                 padding: 3px 10px;
                 background: rgba(239, 68, 68, 0.2);
                 color: #fca5a5;
@@ -1978,20 +2045,20 @@
                 letter-spacing: 0.3px;
             }
 
-            .slide-7 .problem-title {
+            .v6_2_problem-title {
                 color: #e2e8f0;
                 font-size: 12px;
                 font-weight: 700;
                 line-height: 1.4;
             }
 
-            .slide-7 .problem-desc {
+            .v6_2_problem-desc {
                 color: #94a3b8;
                 font-size: 10px;
                 line-height: 1.5;
             }
 
-            .slide-7 .problem-visual {
+            .v6_2_problem-visual {
                 margin-top: 10px;
                 background: rgba(0,0,0,0.3);
                 border-radius: 8px;
@@ -2001,7 +2068,7 @@
                 gap: 10px;
             }
 
-            .slide-7 .problem-icon-box {
+            .v6_2_problem-icon-box {
                 width: 32px;
                 height: 32px;
                 background: rgba(239, 68, 68, 0.15);
@@ -2012,22 +2079,22 @@
                 flex-shrink: 0;
             }
 
-            .slide-7 .problem-icon-box i {
+            .v6_2_problem-icon-box i {
                 font-size: 14px;
                 color: #f87171;
             }
 
-            .slide-7 .problem-visual-text {
+            .v6_2_problem-visual-text {
                 font-size: 9px;
                 color: #94a3b8;
                 line-height: 1.4;
             }
 
-            .slide-7 .problem-visual-text strong {
+            .v6_2_problem-visual-text strong {
                 color: #fca5a5;
             }
 
-            .slide-7 .arrow-divider {
+            .v6_2_arrow-divider {
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -2035,7 +2102,7 @@
                 background: linear-gradient(180deg, #1e293b 0%, white 100%);
             }
 
-            .slide-7 .arrow-circle {
+            .v6_2_arrow-circle {
                 width: 28px;
                 height: 28px;
                 background: linear-gradient(135deg, #3b82f6, #06b6d4);
@@ -2044,29 +2111,29 @@
                 align-items: center;
                 justify-content: center;
                 box-shadow: 0 3px 10px rgba(59, 130, 246, 0.4);
-                animation: pulse-slide7 2s ease-in-out infinite;
+                animation: v6_2_pulse 2s ease-in-out infinite;
             }
 
-            .slide-7 .arrow-circle i {
+            .v6_2_arrow-circle i {
                 font-size: 12px;
                 color: white;
             }
 
-            .slide-7 .solution-section {
+            .v6_2_solution-section {
                 padding: 12px 16px 16px;
                 flex: 1;
                 display: flex;
                 flex-direction: column;
             }
 
-            .slide-7 .solution-header {
+            .v6_2_solution-header {
                 display: flex;
                 align-items: center;
                 gap: 8px;
                 margin-bottom: 10px;
             }
 
-            .slide-7 .solution-badge {
+            .v6_2_solution-badge {
                 padding: 3px 10px;
                 background: rgba(16, 185, 129, 0.15);
                 color: #10b981;
@@ -2077,20 +2144,20 @@
                 letter-spacing: 0.3px;
             }
 
-            .slide-7 .solution-title {
+            .v6_2_solution-title {
                 color: #0f172a;
                 font-size: 12px;
                 font-weight: 700;
             }
 
-            .slide-7 .feature-list {
+            .v6_2_feature-list {
                 display: flex;
                 flex-direction: column;
                 gap: 8px;
                 flex: 1;
             }
 
-            .slide-7 .feature-item {
+            .v6_2_feature-item {
                 display: flex;
                 gap: 10px;
                 align-items: flex-start;
@@ -2101,12 +2168,12 @@
                 transition: all 0.2s ease;
             }
 
-            .slide-7 .feature-item:hover {
+            .v6_2_feature-item:hover {
                 background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(6, 182, 212, 0.05));
                 border-color: rgba(59, 130, 246, 0.1);
             }
 
-            .slide-7 .feature-icon {
+            .v6_2_feature-icon {
                 width: 28px;
                 height: 28px;
                 border-radius: 8px;
@@ -2116,32 +2183,32 @@
                 flex-shrink: 0;
             }
 
-            .slide-7 .feature-icon.slide-7 .blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
-            .slide-7 .feature-icon.slide-7 .cyan { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
-            .slide-7 .feature-icon.slide-7 .emerald { background: linear-gradient(135deg, #10b981, #34d399); }
-            .slide-7 .feature-icon.slide-7 .amber { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
-            .slide-7 .feature-icon.slide-7 .purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
-            .slide-7 .feature-icon.slide-7 .rose { background: linear-gradient(135deg, #f43f5e, #fb7185); }
+            .v6_2_feature-icon.v6_2_blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+            .v6_2_feature-icon.v6_2_cyan { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
+            .v6_2_feature-icon.v6_2_emerald { background: linear-gradient(135deg, #10b981, #34d399); }
+            .v6_2_feature-icon.v6_2_amber { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+            .v6_2_feature-icon.v6_2_purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+            .v6_2_feature-icon.v6_2_rose { background: linear-gradient(135deg, #f43f5e, #fb7185); }
 
-            .slide-7 .feature-icon i {
+            .v6_2_feature-icon i {
                 font-size: 12px;
                 color: white;
             }
 
-            .slide-7 .feature-content h4 {
+            .v6_2_feature-content h4 {
                 font-size: 11px;
                 font-weight: 700;
                 color: #0f172a;
                 margin-bottom: 2px;
             }
 
-            .slide-7 .feature-content p {
+            .v6_2_feature-content p {
                 font-size: 9px;
                 color: #64748b;
                 line-height: 1.4;
             }
 
-            .slide-7 .feature-tag {
+            .v6_2_feature-tag {
                 display: inline-block;
                 margin-top: 4px;
                 padding: 2px 6px;
@@ -2152,7 +2219,7 @@
                 border-radius: 4px;
             }
 
-            .slide-7 .summary-section {
+            .v6_2_summary-section {
                 background: linear-gradient(135deg, #0f172a, #1e3a5f);
                 border-radius: 14px;
                 padding: 16px 24px;
@@ -2161,10 +2228,10 @@
                 gap: 20px;
                 box-shadow: 0 8px 30px rgba(15, 23, 42, 0.2);
                 opacity: 0;
-                animation: fadeInUp-slide7 0.6s ease-out 0.4s forwards;
+                animation: v6_2_fadeInUp 0.6s ease-out 0.4s forwards;
             }
 
-            .slide-7 .summary-icon {
+            .v6_2_summary-icon {
                 width: 48px;
                 height: 48px;
                 background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
@@ -2176,15 +2243,15 @@
                 border: 1px solid rgba(255,255,255,0.1);
             }
 
-            .slide-7 .summary-icon span {
+            .v6_2_summary-icon span {
                 font-size: 22px;
             }
 
-            .slide-7 .summary-content {
+            .v6_2_summary-content {
                 flex: 1;
             }
 
-            .slide-7 .summary-label {
+            .v6_2_summary-label {
                 font-size: 9px;
                 color: #94a3b8;
                 font-weight: 500;
@@ -2194,37 +2261,37 @@
                 gap: 6px;
             }
 
-            .slide-7 .summary-label::before {
+            .v6_2_summary-label::before {
                 content: '';
                 width: 12px;
                 height: 2px;
                 background: #06b6d4;
             }
 
-            .slide-7 .summary-title {
+            .v6_2_summary-title {
                 font-size: 14px;
                 font-weight: 800;
                 color: white;
                 margin-bottom: 4px;
             }
 
-            .slide-7 .summary-title .slide-7 .accent {
+            .v6_2_summary-title .v6_2_accent {
                 color: #06b6d4;
             }
 
-            .slide-7 .summary-desc {
+            .v6_2_summary-desc {
                 font-size: 10px;
                 color: #cbd5e1;
                 line-height: 1.5;
             }
 
-            .slide-7 .summary-tags {
+            .v6_2_summary-tags {
                 display: flex;
                 gap: 10px;
                 flex-shrink: 0;
             }
 
-            .slide-7 .summary-tag {
+            .v6_2_summary-tag {
                 padding: 8px 12px;
                 background: rgba(255,255,255,0.1);
                 border: 1px solid rgba(255,255,255,0.15);
@@ -2232,24 +2299,24 @@
                 text-align: center;
             }
 
-            .slide-7 .summary-tag-icon {
+            .v6_2_summary-tag-icon {
                 font-size: 16px;
                 margin-bottom: 4px;
             }
 
-            .slide-7 .summary-tag-text {
+            .v6_2_summary-tag-text {
                 font-size: 9px;
                 color: white;
                 font-weight: 600;
             }
 
-            .slide-7 .summary-tag-sub {
+            .v6_2_summary-tag-sub {
                 font-size: 8px;
                 color: #94a3b8;
                 margin-top: 1px;
             }
 
-            @keyframes fadeInUp-slide7 {
+            @keyframes v6_2_fadeInUp {
                 from {
                     opacity: 0;
                     transform: translateY(20px);
@@ -2260,85 +2327,85 @@
                 }
             }
 
-            @keyframes pulse-slide7 {
+            @keyframes v6_2_pulse {
                 0%, 100% { transform: scale(1); }
                 50% { transform: scale(1.05); }
             }
         </style>
 
-        <div class="slide slide-7" data-slide="7">
-            <div class="slide-container">
+        <div class="slide slide-5-2" data-slide="5.2">
+            <div class="v6_2_slide-container">
                 <!-- Background Decorations -->
-                <div class="bg-decoration blue"></div>
-                <div class="bg-decoration cyan"></div>
-                <div class="grid-pattern"></div>
+                <div class="v6_2_bg-decoration v6_2_blue"></div>
+                <div class="v6_2_bg-decoration v6_2_cyan"></div>
+                <div class="v6_2_grid-pattern"></div>
 
-                <div class="content-wrapper">
+                <div class="v6_2_content-wrapper">
                     <!-- Header -->
-                    <header class="header">
+                    <header class="v6_2_header">
                     </header>
 
                     <!-- Title Section -->
-                    <section class="title-section">
-                        <h1 class="main-title">보는 데이터를 넘어, <span class="highlight">'행동하는 데이터'</span>로</h1>
-                        <p class="subtitle">AI가 <strong>진단(Diagnosis)</strong>하고, <strong>예측(Prophet)</strong>하며, 구체적인 <strong>할 일(Action Item)</strong>을 제시합니다</p>
+                    <section class="v6_2_title-section">
+                        <h1 class="v6_2_main-title">보는 데이터를 넘어, <span class="v6_2_highlight">'행동하는 데이터'</span>로</h1>
+                        <p class="v6_2_subtitle">AI가 <strong>진단(Diagnosis)</strong>하고, <strong>예측(Prophet)</strong>하며, 구체적인 <strong>할 일(Action Item)</strong>을 제시합니다</p>
                     </section>
 
                     <!-- Main Content -->
-                    <section class="main-content">
+                    <section class="v6_2_main-content">
                         <!-- Card 1: 자동화 vs AI 인사이트 -->
-                        <div class="ps-card">
-                            <div class="problem-section">
-                                <div class="problem-header">
-                                    <span class="problem-badge">Problem</span>
+                        <div class="v6_2_ps-card">
+                            <div class="v6_2_problem-section">
+                                <div class="v6_2_problem-header">
+                                    <span class="v6_2_problem-badge">Problem</span>
                                 </div>
-                                <h3 class="problem-title">"자동화는 되었지만, 분석은 없다"</h3>
-                                <p class="problem-desc">숫자 나열은 기계의 영역. '왜?' '무엇을?'에 대한 답이 없다.</p>
-                                <div class="problem-visual">
-                                    <div class="problem-icon-box">
+                                <h3 class="v6_2_problem-title">"자동화는 되었지만, 분석은 없다"</h3>
+                                <p class="v6_2_problem-desc">숫자 나열은 기계의 영역. '왜?' '무엇을?'에 대한 답이 없다.</p>
+                                <div class="v6_2_problem-visual">
+                                    <div class="v6_2_problem-icon-box">
                                         <i class="fas fa-question-circle"></i>
                                     </div>
-                                    <div class="problem-visual-text">
+                                    <div class="v6_2_problem-visual-text">
                                         ROAS 2.3 / CPA ₩12,500<br/>
                                         <strong>"그래서 뭘 해야 하지...?"</strong>
                                     </div>
                                 </div>
                             </div>
-                            <div class="arrow-divider">
-                                <div class="arrow-circle">
+                            <div class="v6_2_arrow-divider">
+                                <div class="v6_2_arrow-circle">
                                     <i class="fas fa-arrow-down"></i>
                                 </div>
                             </div>
-                            <div class="solution-section">
-                                <div class="solution-header">
-                                    <span class="solution-badge">Solution</span>
-                                    <h3 class="solution-title">AI 기반 인사이트 & 진단</h3>
+                            <div class="v6_2_solution-section">
+                                <div class="v6_2_solution-header">
+                                    <span class="v6_2_solution-badge">Solution</span>
+                                    <h3 class="v6_2_solution-title">AI 기반 인사이트 & 진단</h3>
                                 </div>
-                                <div class="feature-list">
-                                    <div class="feature-item">
-                                        <div class="feature-icon blue">
+                                <div class="v6_2_feature-list">
+                                    <div class="v6_2_feature-item">
+                                        <div class="v6_2_feature-icon v6_2_blue">
                                             <i class="fas fa-chart-pie"></i>
                                         </div>
-                                        <div class="feature-content">
+                                        <div class="v6_2_feature-content">
                                             <h4>AI 컨설턴트 종합 진단</h4>
                                             <p>현황을 명확한 언어로 요약</p>
                                         </div>
                                     </div>
-                                    <div class="feature-item">
-                                        <div class="feature-icon emerald">
+                                    <div class="v6_2_feature-item">
+                                        <div class="v6_2_feature-icon v6_2_emerald">
                                             <i class="fas fa-check-circle"></i>
                                         </div>
-                                        <div class="feature-content">
+                                        <div class="v6_2_feature-content">
                                             <h4>AI 핵심 추천 사항</h4>
                                             <p>우선순위별 구체적 행동 가이드</p>
-                                            <span class="feature-tag">예: A브랜드 예산 15% 확대</span>
+                                            <span class="v6_2_feature-tag">예: A브랜드 예산 15% 확대</span>
                                         </div>
                                     </div>
-                                    <div class="feature-item">
-                                        <div class="feature-icon amber">
+                                    <div class="v6_2_feature-item">
+                                        <div class="v6_2_feature-icon v6_2_amber">
                                             <i class="fas fa-exclamation-triangle"></i>
                                         </div>
-                                        <div class="feature-content">
+                                        <div class="v6_2_feature-content">
                                             <h4>주의 필요 알림</h4>
                                             <p>재무적 영향 계산 + 조치 안내</p>
                                         </div>
@@ -2348,59 +2415,59 @@
                         </div>
 
                         <!-- Card 2: 예쁜 차트 vs 직관적 UI -->
-                        <div class="ps-card">
-                            <div class="problem-section">
-                                <div class="problem-header">
-                                    <span class="problem-badge">Problem</span>
+                        <div class="v6_2_ps-card">
+                            <div class="v6_2_problem-section">
+                                <div class="v6_2_problem-header">
+                                    <span class="v6_2_problem-badge">Problem</span>
                                 </div>
-                                <h3 class="problem-title">"예쁜 차트, 해석하려면 공부가 필요"</h3>
-                                <p class="problem-desc">화려한 히트맵이 실무자 시간을 빼앗는다.</p>
-                                <div class="problem-visual">
-                                    <div class="problem-icon-box">
+                                <h3 class="v6_2_problem-title">"예쁜 차트, 해석하려면 공부가 필요"</h3>
+                                <p class="v6_2_problem-desc">화려한 히트맵이 실무자 시간을 빼앗는다.</p>
+                                <div class="v6_2_problem-visual">
+                                    <div class="v6_2_problem-icon-box">
                                         <i class="fas fa-th"></i>
                                     </div>
-                                    <div class="problem-visual-text">
+                                    <div class="v6_2_problem-visual-text">
                                         복잡한 히트맵, 다차원 그래프<br/>
                                         <strong>"이거 어떻게 해석해?"</strong>
                                     </div>
                                 </div>
                             </div>
-                            <div class="arrow-divider">
-                                <div class="arrow-circle">
+                            <div class="v6_2_arrow-divider">
+                                <div class="v6_2_arrow-circle">
                                     <i class="fas fa-arrow-down"></i>
                                 </div>
                             </div>
-                            <div class="solution-section">
-                                <div class="solution-header">
-                                    <span class="solution-badge">Solution</span>
-                                    <h3 class="solution-title">직관적 상태 표시 & 요약</h3>
+                            <div class="v6_2_solution-section">
+                                <div class="v6_2_solution-header">
+                                    <span class="v6_2_solution-badge">Solution</span>
+                                    <h3 class="v6_2_solution-title">직관적 상태 표시 & 요약</h3>
                                 </div>
-                                <div class="feature-list">
-                                    <div class="feature-item">
-                                        <div class="feature-icon cyan">
+                                <div class="v6_2_feature-list">
+                                    <div class="v6_2_feature-item">
+                                        <div class="v6_2_feature-icon v6_2_cyan">
                                             <i class="fas fa-smile"></i>
                                         </div>
-                                        <div class="feature-content">
+                                        <div class="v6_2_feature-content">
                                             <h4>상태 아이콘 시각화</h4>
                                             <p>이모지와 텍스트로 한눈에 판단</p>
-                                            <span class="feature-tag">ROAS 2.8 🎉 매우 좋음</span>
+                                            <span class="v6_2_feature-tag">ROAS 2.8 🎉 매우 좋음</span>
                                         </div>
                                     </div>
-                                    <div class="feature-item">
-                                        <div class="feature-icon purple">
+                                    <div class="v6_2_feature-item">
+                                        <div class="v6_2_feature-icon v6_2_purple">
                                             <i class="fas fa-th-large"></i>
                                         </div>
-                                        <div class="feature-content">
+                                        <div class="v6_2_feature-content">
                                             <h4>단순화된 KPI 카드</h4>
                                             <p>주요(5개) ↔ 세부(9개) 토글</p>
-                                            <span class="feature-tag">정보 과부하 방지</span>
+                                            <span class="v6_2_feature-tag">정보 과부하 방지</span>
                                         </div>
                                     </div>
-                                    <div class="feature-item">
-                                        <div class="feature-icon blue">
+                                    <div class="v6_2_feature-item">
+                                        <div class="v6_2_feature-icon v6_2_blue">
                                             <i class="fas fa-eye"></i>
                                         </div>
-                                        <div class="feature-content">
+                                        <div class="v6_2_feature-content">
                                             <h4>Zero Learning Curve</h4>
                                             <p>직관적으로 이해 가능한 UI</p>
                                         </div>
@@ -2410,59 +2477,59 @@
                         </div>
 
                         <!-- Card 3: 엑셀 현실 vs 심층 분석 -->
-                        <div class="ps-card">
-                            <div class="problem-section">
-                                <div class="problem-header">
-                                    <span class="problem-badge">Problem</span>
+                        <div class="v6_2_ps-card">
+                            <div class="v6_2_problem-section">
+                                <div class="v6_2_problem-header">
+                                    <span class="v6_2_problem-badge">Problem</span>
                                 </div>
-                                <h3 class="problem-title">"결국 엑셀을 켜는 현실"</h3>
-                                <p class="problem-desc">대시보드가 질문에 답 못해 엑셀로 회귀.</p>
-                                <div class="problem-visual">
-                                    <div class="problem-icon-box">
+                                <h3 class="v6_2_problem-title">"결국 엑셀을 켜는 현실"</h3>
+                                <p class="v6_2_problem-desc">대시보드가 질문에 답 못해 엑셀로 회귀.</p>
+                                <div class="v6_2_problem-visual">
+                                    <div class="v6_2_problem-icon-box">
                                         <i class="fas fa-file-excel"></i>
                                     </div>
-                                    <div class="problem-visual-text">
+                                    <div class="v6_2_problem-visual-text">
                                         =VLOOKUP... =SUMIFS...<br/>
                                         <strong>"다시 가공해야지..."</strong>
                                     </div>
                                 </div>
                             </div>
-                            <div class="arrow-divider">
-                                <div class="arrow-circle">
+                            <div class="v6_2_arrow-divider">
+                                <div class="v6_2_arrow-circle">
                                     <i class="fas fa-arrow-down"></i>
                                 </div>
                             </div>
-                            <div class="solution-section">
-                                <div class="solution-header">
-                                    <span class="solution-badge">Solution</span>
-                                    <h3 class="solution-title">자체 심층 분석 & 예측</h3>
+                            <div class="v6_2_solution-section">
+                                <div class="v6_2_solution-header">
+                                    <span class="v6_2_solution-badge">Solution</span>
+                                    <h3 class="v6_2_solution-title">자체 심층 분석 & 예측</h3>
                                 </div>
-                                <div class="feature-list">
-                                    <div class="feature-item">
-                                        <div class="feature-icon emerald">
+                                <div class="v6_2_feature-list">
+                                    <div class="v6_2_feature-item">
+                                        <div class="v6_2_feature-icon v6_2_emerald">
                                             <i class="fas fa-layer-group"></i>
                                         </div>
-                                        <div class="feature-content">
+                                        <div class="v6_2_feature-content">
                                             <h4>다차원 피벗 분석</h4>
                                             <p>광고세트, 성별, 연령 조합 분석</p>
-                                            <span class="feature-tag">엑셀 다운로드 불필요</span>
+                                            <span class="v6_2_feature-tag">엑셀 다운로드 불필요</span>
                                         </div>
                                     </div>
-                                    <div class="feature-item">
-                                        <div class="feature-icon rose">
+                                    <div class="v6_2_feature-item">
+                                        <div class="v6_2_feature-icon v6_2_rose">
                                             <i class="fas fa-chart-line"></i>
                                         </div>
-                                        <div class="feature-content">
+                                        <div class="v6_2_feature-content">
                                             <h4>Prophet 예측</h4>
                                             <p>향후 30일 성과 예측 제공</p>
-                                            <span class="feature-tag">Facebook Prophet 내장</span>
+                                            <span class="v6_2_feature-tag">Facebook Prophet 내장</span>
                                         </div>
                                     </div>
-                                    <div class="feature-item">
-                                        <div class="feature-icon amber">
+                                    <div class="v6_2_feature-item">
+                                        <div class="v6_2_feature-icon v6_2_amber">
                                             <i class="fas fa-users"></i>
                                         </div>
-                                        <div class="feature-content">
+                                        <div class="v6_2_feature-content">
                                             <h4>리타겟팅 효율 등급표</h4>
                                             <p>조합별 효율 테이블 즉시 제공</p>
                                         </div>
@@ -2473,30 +2540,30 @@
                     </section>
 
                     <!-- Summary Section -->
-                    <section class="summary-section">
-                        <div class="summary-icon">
+                    <section class="v6_2_summary-section">
+                        <div class="v6_2_summary-icon">
                             <span>💡</span>
                         </div>
-                        <div class="summary-content">
-                            <div class="summary-label">철학의 구현체</div>
-                            <h2 class="summary-title">'예쁜 쓰레기'가 아닌, <span class="accent">'액션'과 '해석'</span> 중심 설계</h2>
-                            <p class="summary-desc">AI 대시보드는 실무자가 즉시 행동할 수 있는 인사이트를 제공합니다. 데이터를 통해 진단하고, 기술로 실행하며, 전략으로 성장시키는 Growth Partner.</p>
+                        <div class="v6_2_summary-content">
+                            <div class="v6_2_summary-label">철학의 구현체</div>
+                            <h2 class="v6_2_summary-title">'예쁜 쓰레기'가 아닌, <span class="v6_2_accent">'액션'과 '해석'</span> 중심 설계</h2>
+                            <p class="v6_2_summary-desc">AI 대시보드는 실무자가 즉시 행동할 수 있는 인사이트를 제공합니다. 데이터를 통해 진단하고, 기술로 실행하며, 전략으로 성장시키는 Growth Partner.</p>
                         </div>
-                        <div class="summary-tags">
-                            <div class="summary-tag">
-                                <div class="summary-tag-icon">🔍</div>
-                                <div class="summary-tag-text">Diagnosis</div>
-                                <div class="summary-tag-sub">AI 진단</div>
+                        <div class="v6_2_summary-tags">
+                            <div class="v6_2_summary-tag">
+                                <div class="v6_2_summary-tag-icon">🔍</div>
+                                <div class="v6_2_summary-tag-text">Diagnosis</div>
+                                <div class="v6_2_summary-tag-sub">AI 진단</div>
                             </div>
-                            <div class="summary-tag">
-                                <div class="summary-tag-icon">📈</div>
-                                <div class="summary-tag-text">Prophet</div>
-                                <div class="summary-tag-sub">미래 예측</div>
+                            <div class="v6_2_summary-tag">
+                                <div class="v6_2_summary-tag-icon">📈</div>
+                                <div class="v6_2_summary-tag-text">Prophet</div>
+                                <div class="v6_2_summary-tag-sub">미래 예측</div>
                             </div>
-                            <div class="summary-tag">
-                                <div class="summary-tag-icon">🎯</div>
-                                <div class="summary-tag-text">Action</div>
-                                <div class="summary-tag-sub">행동 가이드</div>
+                            <div class="v6_2_summary-tag">
+                                <div class="v6_2_summary-tag-icon">🎯</div>
+                                <div class="v6_2_summary-tag-text">Action</div>
+                                <div class="v6_2_summary-tag-sub">행동 가이드</div>
                             </div>
                         </div>
                     </section>
@@ -2504,9 +2571,9 @@
             </div>
         </div>
 
-        <!-- Slide 8: AI Dashboard Solution (v6_4) -->
+        <!-- Slide 5-3: AI Dashboard Solution (v6_4) -->
         <style>
-            .slide-8 .slide-container {
+            .v6_4_slide-container {
                 position: relative;
                 z-index: 10;
                 flex: 1;
@@ -2515,7 +2582,7 @@
                 padding: 24px 40px;
             }
 
-            .slide-8 .bg-decoration {
+            .v6_4_bg-decoration {
                 position: absolute;
                 border-radius: 50%;
                 filter: blur(80px);
@@ -2523,7 +2590,7 @@
                 z-index: 0;
             }
 
-            .slide-8 .bg-decoration.blue {
+            .v6_4_bg-decoration.v6_4_blue {
                 width: 300px;
                 height: 300px;
                 background: #3b82f6;
@@ -2532,7 +2599,7 @@
                 opacity: 0.1;
             }
 
-            .slide-8 .bg-decoration.cyan {
+            .v6_4_bg-decoration.v6_4_cyan {
                 width: 200px;
                 height: 200px;
                 background: #06b6d4;
@@ -2541,7 +2608,7 @@
                 opacity: 0.08;
             }
 
-            .slide-8 .grid-pattern {
+            .v6_4_grid-pattern {
                 position: absolute;
                 inset: 0;
                 background-image:
@@ -2551,12 +2618,12 @@
                 z-index: 0;
             }
 
-            .slide-8 .title-section {
+            .v6_4_title-section {
                 text-align: center;
                 margin-bottom: 16px;
             }
 
-            .slide-8 .main-title {
+            .v6_4_main-title {
                 font-size: 1.6rem;
                 font-weight: 900;
                 color: #0f172a;
@@ -2565,25 +2632,25 @@
                 letter-spacing: -0.5px;
             }
 
-            .slide-8 .main-title .highlight {
+            .v6_4_main-title .v6_4_highlight {
                 background: linear-gradient(135deg, #3b82f6, #06b6d4);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
             }
 
-            .slide-8 .subtitle {
+            .v6_4_subtitle {
                 font-size: 12px;
                 color: #64748b;
                 font-weight: 400;
             }
 
-            .slide-8 .subtitle strong {
+            .v6_4_subtitle strong {
                 color: #3b82f6;
                 font-weight: 600;
             }
 
-            .slide-8 .main-content {
+            .v6_4_main-content {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
                 gap: 14px;
@@ -2591,7 +2658,7 @@
                 flex: 1;
             }
 
-            .slide-8 .ps-card {
+            .v6_4_ps-card {
                 background: white;
                 border-radius: 14px;
                 overflow: hidden;
@@ -2601,26 +2668,26 @@
                 flex-direction: column;
                 transition: all 0.3s ease;
                 opacity: 0;
-                animation: fadeInUp-slide8 0.6s ease-out forwards;
+                animation: v6_4_fadeInUp 0.6s ease-out forwards;
             }
 
-            .slide-8 .ps-card:hover {
+            .v6_4_ps-card:hover {
                 transform: translateY(-3px);
                 box-shadow: 0 8px 30px rgba(59, 130, 246, 0.1);
                 border-color: rgba(59, 130, 246, 0.2);
             }
 
-            .slide-8 .ps-card:nth-child(1) { animation-delay: 0.1s; }
-            .slide-8 .ps-card:nth-child(2) { animation-delay: 0.2s; }
-            .slide-8 .ps-card:nth-child(3) { animation-delay: 0.3s; }
+            .v6_4_ps-card:nth-child(1) { animation-delay: 0.1s; }
+            .v6_4_ps-card:nth-child(2) { animation-delay: 0.2s; }
+            .v6_4_ps-card:nth-child(3) { animation-delay: 0.3s; }
 
-            .slide-8 .card-header {
+            .v6_4_card-header {
                 padding: 12px 14px 10px;
                 background: linear-gradient(135deg, rgba(59, 130, 246, 0.04), rgba(6, 182, 212, 0.04));
                 border-bottom: 1px solid rgba(0,0,0,0.04);
             }
 
-            .slide-8 .card-number {
+            .v6_4_card-number {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
@@ -2635,7 +2702,7 @@
                 margin-bottom: 8px;
             }
 
-            .slide-8 .card-title {
+            .v6_4_card-title {
                 font-size: 12px;
                 font-weight: 800;
                 color: #0f172a;
@@ -2643,7 +2710,7 @@
                 margin-bottom: 4px;
             }
 
-            .slide-8 .card-title .en {
+            .v6_4_card-title .v6_4_en {
                 font-family: 'Poppins', sans-serif;
                 font-size: 9px;
                 font-weight: 600;
@@ -2652,13 +2719,13 @@
                 margin-top: 2px;
             }
 
-            .slide-8 .card-desc {
+            .v6_4_card-desc {
                 font-size: 9px;
                 color: #64748b;
                 line-height: 1.5;
             }
 
-            .slide-8 .card-body {
+            .v6_4_card-body {
                 padding: 10px 14px 14px;
                 flex: 1;
                 display: flex;
@@ -2666,7 +2733,7 @@
                 gap: 8px;
             }
 
-            .slide-8 .feature-item {
+            .v6_4_feature-item {
                 display: flex;
                 gap: 10px;
                 align-items: flex-start;
@@ -2677,12 +2744,12 @@
                 transition: all 0.2s ease;
             }
 
-            .slide-8 .feature-item:hover {
+            .v6_4_feature-item:hover {
                 background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(6, 182, 212, 0.05));
                 border-color: rgba(59, 130, 246, 0.1);
             }
 
-            .slide-8 .feature-icon {
+            .v6_4_feature-icon {
                 width: 26px;
                 height: 26px;
                 border-radius: 8px;
@@ -2692,25 +2759,25 @@
                 flex-shrink: 0;
             }
 
-            .slide-8 .feature-icon.blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
-            .slide-8 .feature-icon.cyan { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
-            .slide-8 .feature-icon.emerald { background: linear-gradient(135deg, #10b981, #34d399); }
-            .slide-8 .feature-icon.amber { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
-            .slide-8 .feature-icon.purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
-            .slide-8 .feature-icon.rose { background: linear-gradient(135deg, #f43f5e, #fb7185); }
+            .v6_4_feature-icon.v6_4_blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+            .v6_4_feature-icon.v6_4_cyan { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
+            .v6_4_feature-icon.v6_4_emerald { background: linear-gradient(135deg, #10b981, #34d399); }
+            .v6_4_feature-icon.v6_4_amber { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+            .v6_4_feature-icon.v6_4_purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+            .v6_4_feature-icon.v6_4_rose { background: linear-gradient(135deg, #f43f5e, #fb7185); }
 
-            .slide-8 .feature-icon svg {
+            .v6_4_feature-icon svg {
                 width: 13px;
                 height: 13px;
                 stroke: white;
                 fill: none;
             }
 
-            .slide-8 .feature-content {
+            .v6_4_feature-content {
                 flex: 1;
             }
 
-            .slide-8 .feature-content h4 {
+            .v6_4_feature-content h4 {
                 font-size: 10px;
                 font-weight: 700;
                 color: #0f172a;
@@ -2720,7 +2787,7 @@
                 gap: 6px;
             }
 
-            .slide-8 .priority-tag {
+            .v6_4_priority-tag {
                 display: inline-flex;
                 align-items: center;
                 gap: 2px;
@@ -2732,13 +2799,13 @@
                 border-radius: 3px;
             }
 
-            .slide-8 .feature-content p {
+            .v6_4_feature-content p {
                 font-size: 8px;
                 color: #64748b;
                 line-height: 1.45;
             }
 
-            .slide-8 .feature-example {
+            .v6_4_feature-example {
                 margin-top: 6px;
                 padding: 6px 8px;
                 background: white;
@@ -2747,12 +2814,12 @@
                 font-size: 8px;
             }
 
-            .slide-8 .feature-example .label {
+            .v6_4_feature-example .v6_4_label {
                 color: #64748b;
                 margin-bottom: 2px;
             }
 
-            .slide-8 .feature-example .value {
+            .v6_4_feature-example .v6_4_value {
                 color: #0f172a;
                 font-weight: 600;
                 display: flex;
@@ -2760,7 +2827,7 @@
                 gap: 4px;
             }
 
-            .slide-8 .feature-example .value .effect {
+            .v6_4_feature-example .v6_4_value .v6_4_effect {
                 color: #10b981;
                 font-size: 7px;
                 padding: 1px 4px;
@@ -2768,13 +2835,13 @@
                 border-radius: 3px;
             }
 
-            .slide-8 .status-card-example {
+            .v6_4_status-card-example {
                 display: flex;
                 gap: 6px;
                 margin-top: 6px;
             }
 
-            .slide-8 .mini-status {
+            .v6_4_mini-status {
                 flex: 1;
                 padding: 6px;
                 border-radius: 6px;
@@ -2783,37 +2850,37 @@
                 font-weight: 600;
             }
 
-            .slide-8 .mini-status.green {
+            .v6_4_mini-status.v6_4_green {
                 background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
                 color: #059669;
                 border: 1px solid rgba(16, 185, 129, 0.2);
             }
 
-            .slide-8 .mini-status.yellow {
+            .v6_4_mini-status.v6_4_yellow {
                 background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
                 color: #d97706;
                 border: 1px solid rgba(245, 158, 11, 0.2);
             }
 
-            .slide-8 .mini-status.red {
+            .v6_4_mini-status.v6_4_red {
                 background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
                 color: #dc2626;
                 border: 1px solid rgba(239, 68, 68, 0.2);
             }
 
-            .slide-8 .mini-status.blue {
+            .v6_4_mini-status.v6_4_blue {
                 background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05));
                 color: #2563eb;
                 border: 1px solid rgba(59, 130, 246, 0.2);
             }
 
-            .slide-8 .mini-status span {
+            .v6_4_mini-status span {
                 display: block;
                 font-size: 10px;
                 margin-bottom: 1px;
             }
 
-            .slide-8 .prophet-mini {
+            .v6_4_prophet-mini {
                 margin-top: 6px;
                 padding: 8px;
                 background: white;
@@ -2821,7 +2888,7 @@
                 border: 1px solid rgba(59, 130, 246, 0.1);
             }
 
-            .slide-8 .prophet-labels {
+            .v6_4_prophet-labels {
                 display: flex;
                 justify-content: space-between;
                 font-size: 7px;
@@ -2829,7 +2896,7 @@
                 margin-bottom: 6px;
             }
 
-            .slide-8 .prophet-chart {
+            .v6_4_prophet-chart {
                 height: 35px;
                 position: relative;
                 display: flex;
@@ -2837,19 +2904,19 @@
                 gap: 2px;
             }
 
-            .slide-8 .prophet-bar {
+            .v6_4_prophet-bar {
                 flex: 1;
                 background: linear-gradient(180deg, #3b82f6, #60a5fa);
                 border-radius: 2px 2px 0 0;
                 position: relative;
             }
 
-            .slide-8 .prophet-bar.forecast {
+            .v6_4_prophet-bar.v6_4_forecast {
                 background: linear-gradient(180deg, rgba(59, 130, 246, 0.4), rgba(96, 165, 250, 0.3));
                 border: 1px dashed rgba(59, 130, 246, 0.5);
             }
 
-            .slide-8 .prophet-bar::after {
+            .v6_4_prophet-bar::after {
                 content: '';
                 position: absolute;
                 top: -3px;
@@ -2861,12 +2928,12 @@
                 background: #3b82f6;
             }
 
-            .slide-8 .prophet-bar.forecast::after {
+            .v6_4_prophet-bar.v6_4_forecast::after {
                 background: rgba(59, 130, 246, 0.5);
                 border: 1px solid #3b82f6;
             }
 
-            .slide-8 .confidence-band {
+            .v6_4_confidence-band {
                 position: absolute;
                 left: 60%;
                 right: 0;
@@ -2877,31 +2944,31 @@
                 border: 1px dashed rgba(59, 130, 246, 0.2);
             }
 
-            .slide-8 .prophet-legend {
+            .v6_4_prophet-legend {
                 display: flex;
                 gap: 8px;
                 margin-top: 6px;
                 font-size: 7px;
             }
 
-            .slide-8 .legend-item {
+            .v6_4_legend-item {
                 display: flex;
                 align-items: center;
                 gap: 3px;
                 color: #64748b;
             }
 
-            .slide-8 .legend-dot {
+            .v6_4_legend-dot {
                 width: 6px;
                 height: 6px;
                 border-radius: 2px;
             }
 
-            .slide-8 .legend-dot.actual { background: #3b82f6; }
-            .slide-8 .legend-dot.forecast { background: rgba(59, 130, 246, 0.4); border: 1px dashed #3b82f6; }
-            .slide-8 .legend-dot.confidence { background: rgba(59, 130, 246, 0.15); }
+            .v6_4_legend-dot.v6_4_actual { background: #3b82f6; }
+            .v6_4_legend-dot.v6_4_forecast { background: rgba(59, 130, 246, 0.4); border: 1px dashed #3b82f6; }
+            .v6_4_legend-dot.v6_4_confidence { background: rgba(59, 130, 246, 0.15); }
 
-            .slide-8 .summary-section {
+            .v6_4_summary-section {
                 background: linear-gradient(135deg, #0f172a, #1e3a5f);
                 border-radius: 12px;
                 padding: 14px 20px;
@@ -2910,10 +2977,10 @@
                 gap: 16px;
                 box-shadow: 0 8px 30px rgba(15, 23, 42, 0.2);
                 opacity: 0;
-                animation: fadeInUp-slide8 0.6s ease-out 0.4s forwards;
+                animation: v6_4_fadeInUp 0.6s ease-out 0.4s forwards;
             }
 
-            .slide-8 .summary-icon {
+            .v6_4_summary-icon {
                 width: 40px;
                 height: 40px;
                 background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
@@ -2925,15 +2992,15 @@
                 border: 1px solid rgba(255,255,255,0.1);
             }
 
-            .slide-8 .summary-icon span {
+            .v6_4_summary-icon span {
                 font-size: 18px;
             }
 
-            .slide-8 .summary-content {
+            .v6_4_summary-content {
                 flex: 1;
             }
 
-            .slide-8 .summary-label {
+            .v6_4_summary-label {
                 font-size: 8px;
                 color: #94a3b8;
                 font-weight: 500;
@@ -2943,37 +3010,37 @@
                 gap: 6px;
             }
 
-            .slide-8 .summary-label::before {
+            .v6_4_summary-label::before {
                 content: '';
                 width: 10px;
                 height: 2px;
                 background: #06b6d4;
             }
 
-            .slide-8 .summary-title {
+            .v6_4_summary-title {
                 font-size: 13px;
                 font-weight: 800;
                 color: white;
                 margin-bottom: 4px;
             }
 
-            .slide-8 .summary-title .accent {
+            .v6_4_summary-title .v6_4_accent {
                 color: #06b6d4;
             }
 
-            .slide-8 .summary-desc {
+            .v6_4_summary-desc {
                 font-size: 9px;
                 color: #cbd5e1;
                 line-height: 1.5;
             }
 
-            .slide-8 .summary-keywords {
+            .v6_4_summary-keywords {
                 display: flex;
                 gap: 8px;
                 flex-shrink: 0;
             }
 
-            .slide-8 .keyword-tag {
+            .v6_4_keyword-tag {
                 padding: 8px 12px;
                 background: rgba(255,255,255,0.08);
                 border: 1px solid rgba(255,255,255,0.12);
@@ -2982,29 +3049,29 @@
                 transition: all 0.3s ease;
             }
 
-            .slide-8 .keyword-tag:hover {
+            .v6_4_keyword-tag:hover {
                 background: rgba(255,255,255,0.12);
                 transform: translateY(-2px);
             }
 
-            .slide-8 .keyword-icon {
+            .v6_4_keyword-icon {
                 font-size: 14px;
                 margin-bottom: 4px;
             }
 
-            .slide-8 .keyword-text {
+            .v6_4_keyword-text {
                 font-size: 9px;
                 color: white;
                 font-weight: 700;
             }
 
-            .slide-8 .keyword-sub {
+            .v6_4_keyword-sub {
                 font-size: 7px;
                 color: #94a3b8;
                 margin-top: 1px;
             }
 
-            @keyframes fadeInUp-slide8 {
+            @keyframes v6_4_fadeInUp {
                 from {
                     opacity: 0;
                     transform: translateY(20px);
@@ -3016,76 +3083,76 @@
             }
         </style>
 
-        <div class="slide slide-8" data-slide="8">
-            <div class="bg-decoration blue"></div>
-            <div class="bg-decoration cyan"></div>
-            <div class="grid-pattern"></div>
+        <div class="slide slide-5-3" data-slide="5.3">
+            <div class="v6_4_bg-decoration v6_4_blue"></div>
+            <div class="v6_4_bg-decoration v6_4_cyan"></div>
+            <div class="v6_4_grid-pattern"></div>
 
-            <div class="slide-container">
+            <div class="v6_4_slide-container">
                 <!-- Title Section -->
-                <section class="title-section">
-                    <h1 class="main-title">데이터를 <span class="highlight">'근거(Why)'</span>와 <span class="highlight">'행동(Action)'</span>으로 변환하다</h1>
-                    <p class="subtitle">단순 현상 통보가 아닌, <strong>전략 제안</strong> · <strong>시계열 예측</strong> · <strong>직관적 커뮤니케이션</strong>을 제공합니다</p>
+                <section class="v6_4_title-section">
+                    <h1 class="v6_4_main-title">데이터를 <span class="v6_4_highlight">'근거(Why)'</span>와 <span class="v6_4_highlight">'행동(Action)'</span>으로 변환하다</h1>
+                    <p class="v6_4_subtitle">단순 현상 통보가 아닌, <strong>전략 제안</strong> · <strong>시계열 예측</strong> · <strong>직관적 커뮤니케이션</strong>을 제공합니다</p>
                 </section>
 
                 <!-- Main Content -->
-                <section class="main-content">
+                <section class="v6_4_main-content">
                     <!-- Card 1: Actionable Insight -->
-                    <div class="ps-card">
-                        <div class="card-header">
-                            <div class="card-number">1</div>
-                            <h3 class="card-title">
+                    <div class="v6_4_ps-card">
+                        <div class="v6_4_card-header">
+                            <div class="v6_4_card-number">1</div>
+                            <h3 class="v6_4_card-title">
                                 '현상 통보'에서 '전략 제안'으로
-                                <span class="en">Actionable Insight</span>
+                                <span class="v6_4_en">Actionable Insight</span>
                             </h3>
-                            <p class="card-desc">"이탈률 30%"라는 통보 대신, "로딩 속도를 개선하라"는 구체적 제안</p>
+                            <p class="v6_4_card-desc">"이탈률 30%"라는 통보 대신, "로딩 속도를 개선하라"는 구체적 제안</p>
                         </div>
-                        <div class="card-body">
-                            <div class="feature-item">
-                                <div class="feature-icon blue">
+                        <div class="v6_4_card-body">
+                            <div class="v6_4_feature-item">
+                                <div class="v6_4_feature-icon v6_4_blue">
                                     <svg viewBox="0 0 24 24" stroke-width="2">
                                         <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                                     </svg>
                                 </div>
-                                <div class="feature-content">
+                                <div class="v6_4_feature-content">
                                     <h4>투자 제안의 구체성</h4>
                                     <p>구체적 행동 지시 + 예측 수치로 의사결정 리스크 최소화</p>
-                                    <div class="feature-example">
-                                        <div class="label">AI 추천</div>
-                                        <div class="value">
+                                    <div class="v6_4_feature-example">
+                                        <div class="v6_4_label">AI 추천</div>
+                                        <div class="v6_4_value">
                                             Google 검색광고 예산 20% 확대
-                                            <span class="effect">ROAS +25%</span>
+                                            <span class="v6_4_effect">ROAS +25%</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="feature-item">
-                                <div class="feature-icon amber">
+                            <div class="v6_4_feature-item">
+                                <div class="v6_4_feature-icon v6_4_amber">
                                     <svg viewBox="0 0 24 24" stroke-width="2">
                                         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                                     </svg>
                                 </div>
-                                <div class="feature-content">
+                                <div class="v6_4_feature-content">
                                     <h4>
                                         우선순위 지정
-                                        <span class="priority-tag">🔥 높음</span>
+                                        <span class="v6_4_priority-tag">🔥 높음</span>
                                     </h4>
                                     <p>무엇을 먼저 해야 할지 필터링하여 집중할 업무 명확히 제시</p>
                                 </div>
                             </div>
-                            <div class="feature-item">
-                                <div class="feature-icon rose">
+                            <div class="v6_4_feature-item">
+                                <div class="v6_4_feature-icon v6_4_rose">
                                     <svg viewBox="0 0 24 24" stroke-width="2">
                                         <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
                                         <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
                                     </svg>
                                 </div>
-                                <div class="feature-content">
+                                <div class="v6_4_feature-content">
                                     <h4>맥락 있는 경고</h4>
                                     <p>지표 악화 + 원인 가설 함께 제시</p>
-                                    <div class="feature-example">
-                                        <div class="label">⚠️ CPA 급등 감지</div>
-                                        <div class="value" style="font-size: 7px; color: #64748b;">
+                                    <div class="v6_4_feature-example">
+                                        <div class="v6_4_label">⚠️ CPA 급등 감지</div>
+                                        <div class="v6_4_value" style="font-size: 7px; color: #64748b;">
                                             원인: 크리에이티브 피로도 또는 경쟁 심화
                                         </div>
                                     </div>
@@ -3095,70 +3162,70 @@
                     </div>
 
                     <!-- Card 2: Prophet -->
-                    <div class="ps-card">
-                        <div class="card-header">
-                            <div class="card-number">2</div>
-                            <h3 class="card-title">
+                    <div class="v6_4_ps-card">
+                        <div class="v6_4_card-header">
+                            <div class="v6_4_card-number">2</div>
+                            <h3 class="v6_4_card-title">
                                 단순 비교를 넘어 시계열 예측으로
-                                <span class="en">Prophet Algorithm</span>
+                                <span class="v6_4_en">Prophet Algorithm</span>
                             </h3>
-                            <p class="card-desc">엑셀의 단순 전월 대비 증감률은 계절성을 무시합니다</p>
+                            <p class="v6_4_card-desc">엑셀의 단순 전월 대비 증감률은 계절성을 무시합니다</p>
                         </div>
-                        <div class="card-body">
-                            <div class="feature-item">
-                                <div class="feature-icon purple">
+                        <div class="v6_4_card-body">
+                            <div class="v6_4_feature-item">
+                                <div class="v6_4_feature-icon v6_4_purple">
                                     <svg viewBox="0 0 24 24" stroke-width="2">
                                         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
                                     </svg>
                                 </div>
-                                <div class="feature-content">
+                                <div class="v6_4_feature-content">
                                     <h4>Prophet 시계열 예측</h4>
                                     <p>계절성과 트렌드 반영한 예측치 + 신뢰 구간</p>
-                                    <div class="prophet-mini">
-                                        <div class="prophet-labels">
+                                    <div class="v6_4_prophet-mini">
+                                        <div class="v6_4_prophet-labels">
                                             <span>과거 실적</span>
                                             <span>예측 (30일)</span>
                                         </div>
-                                        <div class="prophet-chart">
-                                            <div class="confidence-band"></div>
-                                            <div class="prophet-bar" style="height: 60%"></div>
-                                            <div class="prophet-bar" style="height: 75%"></div>
-                                            <div class="prophet-bar" style="height: 65%"></div>
-                                            <div class="prophet-bar" style="height: 80%"></div>
-                                            <div class="prophet-bar" style="height: 70%"></div>
-                                            <div class="prophet-bar forecast" style="height: 85%"></div>
-                                            <div class="prophet-bar forecast" style="height: 90%"></div>
-                                            <div class="prophet-bar forecast" style="height: 82%"></div>
+                                        <div class="v6_4_prophet-chart">
+                                            <div class="v6_4_confidence-band"></div>
+                                            <div class="v6_4_prophet-bar" style="height: 60%"></div>
+                                            <div class="v6_4_prophet-bar" style="height: 75%"></div>
+                                            <div class="v6_4_prophet-bar" style="height: 65%"></div>
+                                            <div class="v6_4_prophet-bar" style="height: 80%"></div>
+                                            <div class="v6_4_prophet-bar" style="height: 70%"></div>
+                                            <div class="v6_4_prophet-bar v6_4_forecast" style="height: 85%"></div>
+                                            <div class="v6_4_prophet-bar v6_4_forecast" style="height: 90%"></div>
+                                            <div class="v6_4_prophet-bar v6_4_forecast" style="height: 82%"></div>
                                         </div>
-                                        <div class="prophet-legend">
-                                            <div class="legend-item"><div class="legend-dot actual"></div>실제값</div>
-                                            <div class="legend-item"><div class="legend-dot forecast"></div>예측값</div>
-                                            <div class="legend-item"><div class="legend-dot confidence"></div>신뢰구간</div>
+                                        <div class="v6_4_prophet-legend">
+                                            <div class="v6_4_legend-item"><div class="v6_4_legend-dot v6_4_actual"></div>실제값</div>
+                                            <div class="v6_4_legend-item"><div class="v6_4_legend-dot v6_4_forecast"></div>예측값</div>
+                                            <div class="v6_4_legend-item"><div class="v6_4_legend-dot v6_4_confidence"></div>신뢰구간</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="feature-item">
-                                <div class="feature-icon cyan">
+                            <div class="v6_4_feature-item">
+                                <div class="v6_4_feature-icon v6_4_cyan">
                                     <svg viewBox="0 0 24 24" stroke-width="2">
                                         <polygon points="12 2 2 7 12 12 22 7 12 2"/>
                                         <polyline points="2 17 12 22 22 17"/>
                                         <polyline points="2 12 12 17 22 12"/>
                                     </svg>
                                 </div>
-                                <div class="feature-content">
+                                <div class="v6_4_feature-content">
                                     <h4>변동 원인 분해</h4>
                                     <p>Trend, Seasonal, Residual로 분해하여 성장의 '질' 분석</p>
                                 </div>
                             </div>
-                            <div class="feature-item">
-                                <div class="feature-icon emerald">
+                            <div class="v6_4_feature-item">
+                                <div class="v6_4_feature-icon v6_4_emerald">
                                     <svg viewBox="0 0 24 24" stroke-width="2">
                                         <rect x="3" y="3" width="18" height="18" rx="2"/>
                                         <path d="M3 9h18M9 21V9"/>
                                     </svg>
                                 </div>
-                                <div class="feature-content">
+                                <div class="v6_4_feature-content">
                                     <h4>다차원 세그먼트 비교</h4>
                                     <p>채널, 제품, 브랜드 등 다양한 축으로 교차 분석</p>
                                 </div>
@@ -3167,65 +3234,65 @@
                     </div>
 
                     <!-- Card 3: Zero Cognitive Load -->
-                    <div class="ps-card">
-                        <div class="card-header">
-                            <div class="card-number">3</div>
-                            <h3 class="card-title">
+                    <div class="v6_4_ps-card">
+                        <div class="v6_4_card-header">
+                            <div class="v6_4_card-number">3</div>
+                            <h3 class="v6_4_card-title">
                                 '해석 비용'을 제거하는 직관적 UI
-                                <span class="en">Zero Cognitive Load</span>
+                                <span class="v6_4_en">Zero Cognitive Load</span>
                             </h3>
-                            <p class="card-desc">"붉은색이 좋은 건가?" 고민하게 만드는 시각화는 '실패'</p>
+                            <p class="v6_4_card-desc">"붉은색이 좋은 건가?" 고민하게 만드는 시각화는 '실패'</p>
                         </div>
-                        <div class="card-body">
-                            <div class="feature-item">
-                                <div class="feature-icon emerald">
+                        <div class="v6_4_card-body">
+                            <div class="v6_4_feature-item">
+                                <div class="v6_4_feature-icon v6_4_emerald">
                                     <svg viewBox="0 0 24 24" stroke-width="2">
                                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                         <polyline points="22 4 12 14.01 9 11.01"/>
                                     </svg>
                                 </div>
-                                <div class="feature-content">
+                                <div class="v6_4_feature-content">
                                     <h4>결론부터 말하는 상태 카드</h4>
                                     <p>"✅ 성과가 안정적입니다"라는 결론을 먼저 제시</p>
                                 </div>
                             </div>
-                            <div class="feature-item">
-                                <div class="feature-icon blue">
+                            <div class="v6_4_feature-item">
+                                <div class="v6_4_feature-icon v6_4_blue">
                                     <svg viewBox="0 0 24 24" stroke-width="2">
                                         <circle cx="12" cy="12" r="10"/>
                                         <circle cx="12" cy="12" r="3"/>
                                     </svg>
                                 </div>
-                                <div class="feature-content">
+                                <div class="v6_4_feature-content">
                                     <h4>명확한 색상 체계 (Traffic Light)</h4>
                                     <p>진입 1초 만에 현재 상황 인지 가능</p>
-                                    <div class="status-card-example">
-                                        <div class="mini-status green">
+                                    <div class="v6_4_status-card-example">
+                                        <div class="v6_4_mini-status v6_4_green">
                                             <span>🟢</span>
                                             양호
                                         </div>
-                                        <div class="mini-status yellow">
+                                        <div class="v6_4_mini-status v6_4_yellow">
                                             <span>🟡</span>
                                             주의
                                         </div>
-                                        <div class="mini-status red">
+                                        <div class="v6_4_mini-status v6_4_red">
                                             <span>🔴</span>
                                             경고
                                         </div>
-                                        <div class="mini-status blue">
+                                        <div class="v6_4_mini-status v6_4_blue">
                                             <span>🔵</span>
                                             분석중
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="feature-item">
-                                <div class="feature-icon amber">
+                            <div class="v6_4_feature-item">
+                                <div class="v6_4_feature-icon v6_4_amber">
                                     <svg viewBox="0 0 24 24" stroke-width="2">
                                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                                     </svg>
                                 </div>
-                                <div class="feature-content">
+                                <div class="v6_4_feature-content">
                                     <h4>비즈니스 언어로 번역</h4>
                                     <p>통계 용어 대신 자연어로 요약하여 경영진도 즉시 이해</p>
                                 </div>
@@ -3235,38 +3302,38 @@
                 </section>
 
                 <!-- Summary Section -->
-                <section class="summary-section">
-                    <div class="summary-icon">
+                <section class="v6_4_summary-section">
+                    <div class="v6_4_summary-icon">
                         <span>🎯</span>
                     </div>
-                    <div class="summary-content">
-                        <div class="summary-label">AI 대시보드의 핵심 가치</div>
-                        <h2 class="summary-title"><span class="accent">Why</span>(근거)와 <span class="accent">Action</span>(행동)을 함께 제공합니다</h2>
-                        <p class="summary-desc">데이터를 단순히 보여주는 것이 아니라, 비즈니스적 의미를 해석하고 구체적인 행동 가이드를 제시합니다.</p>
+                    <div class="v6_4_summary-content">
+                        <div class="v6_4_summary-label">AI 대시보드의 핵심 가치</div>
+                        <h2 class="v6_4_summary-title"><span class="v6_4_accent">Why</span>(근거)와 <span class="v6_4_accent">Action</span>(행동)을 함께 제공합니다</h2>
+                        <p class="v6_4_summary-desc">데이터를 단순히 보여주는 것이 아니라, 비즈니스적 의미를 해석하고 구체적인 행동 가이드를 제시합니다.</p>
                     </div>
-                    <div class="summary-keywords">
-                        <div class="keyword-tag">
-                            <div class="keyword-icon">💡</div>
-                            <div class="keyword-text">Actionable</div>
-                            <div class="keyword-sub">전략 제안</div>
+                    <div class="v6_4_summary-keywords">
+                        <div class="v6_4_keyword-tag">
+                            <div class="v6_4_keyword-icon">💡</div>
+                            <div class="v6_4_keyword-text">Actionable</div>
+                            <div class="v6_4_keyword-sub">전략 제안</div>
                         </div>
-                        <div class="keyword-tag">
-                            <div class="keyword-icon">📈</div>
-                            <div class="keyword-text">Predictive</div>
-                            <div class="keyword-sub">시계열 예측</div>
+                        <div class="v6_4_keyword-tag">
+                            <div class="v6_4_keyword-icon">📈</div>
+                            <div class="v6_4_keyword-text">Predictive</div>
+                            <div class="v6_4_keyword-sub">시계열 예측</div>
                         </div>
-                        <div class="keyword-tag">
-                            <div class="keyword-icon">👁️</div>
-                            <div class="keyword-text">Intuitive</div>
-                            <div class="keyword-sub">직관적 UI</div>
+                        <div class="v6_4_keyword-tag">
+                            <div class="v6_4_keyword-icon">👁️</div>
+                            <div class="v6_4_keyword-text">Intuitive</div>
+                            <div class="v6_4_keyword-sub">직관적 UI</div>
                         </div>
                     </div>
                 </section>
             </div>
         </div>
 
-        <!-- Slide 9: AI Action Plan -->
-        <div class="slide slide-9" data-slide="9">
+        <!-- Slide 6: AI Action Plan -->
+        <div class="slide slide-6" data-slide="6">
             <div class="left-section">
                 <div class="ai-badge">
                     <i class="fas fa-robot"></i>
@@ -3305,8 +3372,8 @@
             </div>
         </div>
 
-        <!-- Slide 10: Human Touch -->
-        <div class="slide slide-10" data-slide="10">
+        <!-- Slide 7: Human Touch -->
+        <div class="slide slide-7" data-slide="7">
             <div class="left-section">
                 <div class="human-badge">
                     <i class="fas fa-user-check"></i>
@@ -3342,7 +3409,7 @@
         </div>
 
         <!-- Slide 8: Value Summary -->
-        <div class="slide slide-11" data-slide="11">
+        <div class="slide slide-8" data-slide="8">
             <div class="content-wrapper">
                 <h1 class="main-title">AI 대시보드로 성장을 실행하세요</h1>
                 <div class="cards-grid">
@@ -3401,7 +3468,7 @@
         </div>
 
         <!-- Slide 9: CTA -->
-        <div class="slide slide-12" data-slide="12">
+        <div class="slide slide-9" data-slide="9">
             <div class="content-wrapper">
                 <div class="growth-icon">
                     <i class="fas fa-rocket"></i>
