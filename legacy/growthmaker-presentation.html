@@ -232,7 +232,7 @@
         }
 
         .slide-1 .main-title .highlight {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            background: linear-gradient(135deg, #34d399, #10b981);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -2578,7 +2578,636 @@
                 width: 100%;
             }
         }
-    </style>
+    
+        /* Background Effects */
+        .bg-pattern_persona {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 10% 90%, rgba(59, 130, 246, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 90% 10%, rgba(6, 182, 212, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.04) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .bg-grid_persona {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+        }
+
+        /* Header */
+        .slide-header_persona {
+            padding: 32px 60px 20px;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .header-tag_persona {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(6, 182, 212, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 16px;
+        }
+
+        .slide-title_persona {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #1e40af;
+            letter-spacing: -0.02em;
+            animation: fadeInDown_persona 0.8s ease-out forwards;
+        }
+
+        .slide-title_persona .highlight_persona {
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes fadeInDown_persona {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Main Content */
+        .main-content_persona {
+            flex: 1;
+            display: flex;
+            gap: 24px;
+            padding: 10px 60px 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Persona Card */
+        .persona-card_persona {
+            flex: 1;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 20px;
+            padding: 28px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: fadeInUp_persona 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .persona-card_persona:nth-child(1) { animation-delay: 0.1s; }
+        .persona-card_persona:nth-child(2) { animation-delay: 0.25s; }
+        .persona-card_persona:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp_persona {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .persona-card_persona::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .persona-card_persona.growth_persona::before { background: linear-gradient(90deg, #10b981, #34d399); }
+        .persona-card_persona.ceo_persona::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .persona-card_persona.leader_persona::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+        .persona-card_persona:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+            border-color: transparent;
+        }
+
+        .persona-card_persona.growth_persona:hover { border-color: #10b981; }
+        .persona-card_persona.ceo_persona:hover { border-color: #8b5cf6; }
+        .persona-card_persona.leader_persona:hover { border-color: #f59e0b; }
+
+        /* Persona Header */
+        .persona-header_persona {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .persona-icon_persona {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .persona-card_persona.growth_persona .persona-icon_persona { background: linear-gradient(135deg, #10b981, #059669); }
+        .persona-card_persona.ceo_persona .persona-icon_persona { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .persona-card_persona.leader_persona .persona-icon_persona { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+        .persona-title-group_persona h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .persona-title-group_persona p {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        /* Core Value */
+        .core-value_persona {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            border-left: 4px solid;
+        }
+
+        .persona-card_persona.growth_persona .core-value_persona { border-color: #10b981; }
+        .persona-card_persona.ceo_persona .core-value_persona { border-color: #8b5cf6; }
+        .persona-card_persona.leader_persona .core-value_persona { border-color: #f59e0b; }
+
+        .core-value-label_persona {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .persona-card_persona.growth_persona .core-value-label_persona { color: #059669; }
+        .persona-card_persona.ceo_persona .core-value-label_persona { color: #7c3aed; }
+        .persona-card_persona.leader_persona .core-value-label_persona { color: #d97706; }
+
+        .core-value-text_persona {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        /* Story Section */
+        .story-section_persona {
+            flex: 1;
+            margin-bottom: 16px;
+        }
+
+        .feature-tag_persona {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .persona-card_persona.growth_persona .feature-tag_persona { background: rgba(16, 185, 129, 0.1); color: #059669; }
+        .persona-card_persona.ceo_persona .feature-tag_persona { background: rgba(139, 92, 246, 0.1); color: #7c3aed; }
+        .persona-card_persona.leader_persona .feature-tag_persona { background: rgba(245, 158, 11, 0.1); color: #d97706; }
+
+        .story-text_persona {
+            font-size: 0.82rem;
+            color: #475569;
+            line-height: 1.65;
+        }
+
+        .story-text_persona strong {
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        /* Result Box */
+        .result-box_persona {
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .persona-card_persona.growth_persona .result-box_persona { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
+        .persona-card_persona.ceo_persona .result-box_persona { background: linear-gradient(135deg, #f5f3ff, #ede9fe); }
+        .persona-card_persona.leader_persona .result-box_persona { background: linear-gradient(135deg, #fffbeb, #fef3c7); }
+
+        .result-label_persona {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .persona-card_persona.growth_persona .result-label_persona { color: #059669; }
+        .persona-card_persona.ceo_persona .result-label_persona { color: #7c3aed; }
+        .persona-card_persona.leader_persona .result-label_persona { color: #d97706; }
+
+        .result-metric_persona {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+
+        .result-number_persona {
+            font-size: 2.2rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .persona-card_persona.growth_persona .result-number_persona { color: #059669; }
+        .persona-card_persona.ceo_persona .result-number_persona { color: #7c3aed; }
+        .persona-card_persona.leader_persona .result-number_persona { color: #d97706; }
+
+        .result-unit_persona {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .persona-card_persona.growth_persona .result-unit_persona { color: #10b981; }
+        .persona-card_persona.ceo_persona .result-unit_persona { color: #8b5cf6; }
+        .persona-card_persona.leader_persona .result-unit_persona { color: #f59e0b; }
+
+        .result-title_persona {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .result-desc_persona {
+            font-size: 0.68rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* Hover animations */
+        .persona-card_persona:hover .persona-icon_persona {
+            transform: scale(1.1) rotate(5deg);
+            transition: transform 0.3s ease;
+        }
+
+        .persona-card_persona:hover .result-number_persona {
+            animation: countPulse_persona 0.6s ease-in-out;
+        }
+
+        @keyframes countPulse_persona {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    
+
+        /* Slide Persona: Use Cases */
+        .slide-persona {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: white;
+            overflow: hidden;
+        }
+
+        .slide-persona.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Background Effects */
+        .bg-pattern_persona {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 10% 90%, rgba(59, 130, 246, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 90% 10%, rgba(6, 182, 212, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.04) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .bg-grid_persona {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+        }
+
+        /* Header */
+        .slide-header_persona {
+            padding: 32px 60px 20px;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .header-tag_persona {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(6, 182, 212, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 16px;
+        }
+
+        .slide-title_persona {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #1e40af;
+            letter-spacing: -0.02em;
+            animation: fadeInDown_persona 0.8s ease-out forwards;
+        }
+
+        .slide-title_persona .highlight_persona {
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes fadeInDown_persona {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Main Content */
+        .main-content_persona {
+            flex: 1;
+            display: flex;
+            gap: 24px;
+            padding: 10px 60px 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Persona Card */
+        .persona-card_persona {
+            flex: 1;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 20px;
+            padding: 28px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: fadeInUp_persona 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .persona-card_persona:nth-child(1) { animation-delay: 0.1s; }
+        .persona-card_persona:nth-child(2) { animation-delay: 0.25s; }
+        .persona-card_persona:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp_persona {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .persona-card_persona::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .persona-card_persona.growth_persona::before { background: linear-gradient(90deg, #10b981, #34d399); }
+        .persona-card_persona.ceo_persona::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .persona-card_persona.leader_persona::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+        .persona-card_persona:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+            border-color: transparent;
+        }
+
+        .persona-card_persona.growth_persona:hover { border-color: #10b981; }
+        .persona-card_persona.ceo_persona:hover { border-color: #8b5cf6; }
+        .persona-card_persona.leader_persona:hover { border-color: #f59e0b; }
+
+        /* Persona Header */
+        .persona-header_persona {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .persona-icon_persona {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .persona-card_persona.growth_persona .persona-icon_persona { background: linear-gradient(135deg, #10b981, #059669); }
+        .persona-card_persona.ceo_persona .persona-icon_persona { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .persona-card_persona.leader_persona .persona-icon_persona { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+        .persona-title-group_persona h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .persona-title-group_persona p {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        /* Core Value */
+        .core-value_persona {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            border-left: 4px solid;
+        }
+
+        .persona-card_persona.growth_persona .core-value_persona { border-color: #10b981; }
+        .persona-card_persona.ceo_persona .core-value_persona { border-color: #8b5cf6; }
+        .persona-card_persona.leader_persona .core-value_persona { border-color: #f59e0b; }
+
+        .core-value-label_persona {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .persona-card_persona.growth_persona .core-value-label_persona { color: #059669; }
+        .persona-card_persona.ceo_persona .core-value-label_persona { color: #7c3aed; }
+        .persona-card_persona.leader_persona .core-value-label_persona { color: #d97706; }
+
+        .core-value-text_persona {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        /* Story Section */
+        .story-section_persona {
+            flex: 1;
+            margin-bottom: 16px;
+        }
+
+        .feature-tag_persona {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .persona-card_persona.growth_persona .feature-tag_persona { background: rgba(16, 185, 129, 0.1); color: #059669; }
+        .persona-card_persona.ceo_persona .feature-tag_persona { background: rgba(139, 92, 246, 0.1); color: #7c3aed; }
+        .persona-card_persona.leader_persona .feature-tag_persona { background: rgba(245, 158, 11, 0.1); color: #d97706; }
+
+        .story-text_persona {
+            font-size: 0.82rem;
+            color: #475569;
+            line-height: 1.65;
+        }
+
+        .story-text_persona strong {
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        /* Result Box */
+        .result-box_persona {
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .persona-card_persona.growth_persona .result-box_persona { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
+        .persona-card_persona.ceo_persona .result-box_persona { background: linear-gradient(135deg, #f5f3ff, #ede9fe); }
+        .persona-card_persona.leader_persona .result-box_persona { background: linear-gradient(135deg, #fffbeb, #fef3c7); }
+
+        .result-label_persona {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .persona-card_persona.growth_persona .result-label_persona { color: #059669; }
+        .persona-card_persona.ceo_persona .result-label_persona { color: #7c3aed; }
+        .persona-card_persona.leader_persona .result-label_persona { color: #d97706; }
+
+        .result-metric_persona {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+
+        .result-number_persona {
+            font-size: 2.2rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .persona-card_persona.growth_persona .result-number_persona { color: #059669; }
+        .persona-card_persona.ceo_persona .result-number_persona { color: #7c3aed; }
+        .persona-card_persona.leader_persona .result-number_persona { color: #d97706; }
+
+        .result-unit_persona {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .persona-card_persona.growth_persona .result-unit_persona { color: #10b981; }
+        .persona-card_persona.ceo_persona .result-unit_persona { color: #8b5cf6; }
+        .persona-card_persona.leader_persona .result-unit_persona { color: #f59e0b; }
+
+        .result-title_persona {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .result-desc_persona {
+            font-size: 0.68rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* Hover animations */
+        .persona-card_persona:hover .persona-icon_persona {
+            transform: scale(1.1) rotate(5deg);
+            transition: transform 0.3s ease;
+        }
+
+        .persona-card_persona:hover .result-number_persona {
+            animation: countPulse_persona 0.6s ease-in-out;
+        }
+
+        @keyframes countPulse_persona {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    
+
+</style>
 </head>
 <body>
     <div class="presentation-container">
@@ -4893,6 +5522,365 @@
                     transform: translateY(0);
                 }
             }
+
+            /* =====================================================
+               Pricing Slide Styles (pricing_ prefix)
+               ===================================================== */
+            .slide-pricing {
+                background: white;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .pricing_bg-pattern {
+                position: absolute;
+                inset: 0;
+                background-image:
+                    radial-gradient(circle at 10% 90%, rgba(59, 130, 246, 0.06) 0%, transparent 40%),
+                    radial-gradient(circle at 90% 10%, rgba(6, 182, 212, 0.06) 0%, transparent 40%),
+                    radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.04) 0%, transparent 50%);
+                z-index: 0;
+            }
+
+            .pricing_bg-grid {
+                position: absolute;
+                inset: 0;
+                background-image:
+                    linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+                background-size: 40px 40px;
+                z-index: 0;
+            }
+
+            .pricing_slide-header {
+                padding: 20px 60px 12px;
+                position: relative;
+                z-index: 10;
+                text-align: center;
+            }
+
+            .pricing_header-tag {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 6px 16px;
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(6, 182, 212, 0.1));
+                border: 1px solid rgba(59, 130, 246, 0.2);
+                border-radius: 50px;
+                font-size: 12px;
+                font-weight: 600;
+                color: #3b82f6;
+                margin-bottom: 10px;
+            }
+
+            .pricing_slide-title {
+                font-size: 1.8rem;
+                font-weight: 900;
+                color: #1e40af;
+                letter-spacing: -0.02em;
+                animation: pricing_fadeInDown 0.8s ease-out forwards;
+            }
+
+            .pricing_slide-title .pricing_highlight {
+                background: linear-gradient(135deg, #3b82f6, #06b6d4);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .pricing_slide-subtitle {
+                font-size: 0.85rem;
+                color: #64748b;
+                margin-top: 4px;
+            }
+
+            @keyframes pricing_fadeInDown {
+                from { opacity: 0; transform: translateY(-20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            .pricing_main-content {
+                flex: 1;
+                display: flex;
+                gap: 20px;
+                padding: 10px 50px 16px;
+                position: relative;
+                z-index: 10;
+            }
+
+            .pricing_pricing-card {
+                flex: 1;
+                background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+                border-radius: 16px;
+                padding: 0;
+                border: 2px solid #e2e8f0;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                animation: pricing_fadeInUp 0.6s ease-out forwards;
+                opacity: 0;
+            }
+
+            .pricing_pricing-card:nth-child(1) { animation-delay: 0.1s; }
+            .pricing_pricing-card:nth-child(2) { animation-delay: 0.25s; }
+            .pricing_pricing-card:nth-child(3) { animation-delay: 0.4s; }
+
+            @keyframes pricing_fadeInUp {
+                from { opacity: 0; transform: translateY(30px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            .pricing_pricing-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 25px 50px rgba(59, 130, 246, 0.2);
+            }
+
+            .pricing_pricing-card.pricing_standard:hover { border-color: #64748b; }
+            .pricing_pricing-card.pricing_daily:hover { border-color: #3b82f6; }
+            .pricing_pricing-card.pricing_premium:hover { border-color: #8b5cf6; }
+
+            .pricing_popular-badge {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                padding: 4px 10px;
+                background: linear-gradient(135deg, #3b82f6, #06b6d4);
+                color: white;
+                font-size: 0.6rem;
+                font-weight: 700;
+                border-radius: 20px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .pricing_premium-badge {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                padding: 4px 10px;
+                background: linear-gradient(135deg, #8b5cf6, #a855f7);
+                color: white;
+                font-size: 0.6rem;
+                font-weight: 700;
+                border-radius: 20px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .pricing_card-header {
+                padding: 16px 20px 12px;
+                text-align: center;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .pricing_plan-icon {
+                width: 44px;
+                height: 44px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                color: white;
+                margin: 0 auto 10px;
+                transition: transform 0.3s ease;
+            }
+
+            .pricing_pricing-card:hover .pricing_plan-icon {
+                transform: scale(1.1) rotate(5deg);
+            }
+
+            .pricing_pricing-card.pricing_standard .pricing_plan-icon { background: linear-gradient(135deg, #64748b, #475569); }
+            .pricing_pricing-card.pricing_daily .pricing_plan-icon { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+            .pricing_pricing-card.pricing_premium .pricing_plan-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+
+            .pricing_plan-name {
+                font-size: 1.1rem;
+                font-weight: 800;
+                color: #1e293b;
+                margin-bottom: 2px;
+            }
+
+            .pricing_plan-desc {
+                font-size: 0.75rem;
+                color: #64748b;
+            }
+
+            .pricing_pricing-section {
+                padding: 14px 20px;
+                background: #f8fafc;
+            }
+
+            .pricing_price-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+
+            .pricing_price-row:last-child {
+                margin-bottom: 0;
+            }
+
+            .pricing_price-label {
+                font-size: 0.75rem;
+                color: #64748b;
+            }
+
+            .pricing_price-value {
+                font-size: 1rem;
+                font-weight: 800;
+            }
+
+            .pricing_pricing-card.pricing_standard .pricing_price-value { color: #475569; }
+            .pricing_pricing-card.pricing_daily .pricing_price-value { color: #2563eb; }
+            .pricing_pricing-card.pricing_premium .pricing_price-value { color: #7c3aed; }
+
+            .pricing_price-value.pricing_highlight {
+                font-size: 1.2rem;
+            }
+
+            .pricing_price-note {
+                font-size: 0.65rem;
+                color: #94a3b8;
+                margin-left: 3px;
+                font-weight: 400;
+            }
+
+            .pricing_features-section {
+                padding: 14px 20px;
+                flex: 1;
+            }
+
+            .pricing_feature-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                margin-bottom: 8px;
+                font-size: 0.78rem;
+                color: #475569;
+                line-height: 1.4;
+            }
+
+            .pricing_feature-item:last-child {
+                margin-bottom: 0;
+            }
+
+            .pricing_feature-icon {
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                font-size: 0.6rem;
+                margin-top: 1px;
+            }
+
+            .pricing_pricing-card.pricing_standard .pricing_feature-icon { background: rgba(100, 116, 139, 0.15); color: #64748b; }
+            .pricing_pricing-card.pricing_daily .pricing_feature-icon { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+            .pricing_pricing-card.pricing_premium .pricing_feature-icon { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
+
+            .pricing_feature-highlight {
+                font-weight: 700;
+                color: #1e293b;
+            }
+
+            .pricing_dashboard-frequency {
+                padding: 10px 20px;
+                border-top: 1px solid #e2e8f0;
+                text-align: center;
+            }
+
+            .pricing_frequency-label {
+                font-size: 0.65rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 4px;
+            }
+
+            .pricing_pricing-card.pricing_standard .pricing_frequency-label { color: #64748b; }
+            .pricing_pricing-card.pricing_daily .pricing_frequency-label { color: #3b82f6; }
+            .pricing_pricing-card.pricing_premium .pricing_frequency-label { color: #8b5cf6; }
+
+            .pricing_frequency-value {
+                font-size: 0.9rem;
+                font-weight: 800;
+                color: #1e293b;
+            }
+
+            .pricing_cta-section {
+                padding: 0 20px 16px;
+            }
+
+            .pricing_cta-button {
+                width: 100%;
+                padding: 10px 20px;
+                border-radius: 10px;
+                font-size: 0.85rem;
+                font-weight: 700;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                border: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .pricing_pricing-card.pricing_standard .pricing_cta-button {
+                background: #f1f5f9;
+                color: #475569;
+                border: 2px solid #e2e8f0;
+            }
+
+            .pricing_pricing-card.pricing_standard .pricing_cta-button:hover {
+                background: #e2e8f0;
+                border-color: #cbd5e1;
+            }
+
+            .pricing_pricing-card.pricing_daily .pricing_cta-button {
+                background: linear-gradient(135deg, #3b82f6, #2563eb);
+                color: white;
+                box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+            }
+
+            .pricing_pricing-card.pricing_daily .pricing_cta-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
+            }
+
+            .pricing_pricing-card.pricing_premium .pricing_cta-button {
+                background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+                color: white;
+                box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+            }
+
+            .pricing_pricing-card.pricing_premium .pricing_cta-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
+            }
+
+            .pricing_footer-note {
+                text-align: center;
+                padding: 0 50px 16px;
+                position: relative;
+                z-index: 10;
+            }
+
+            .pricing_footer-note p {
+                font-size: 0.75rem;
+                color: #94a3b8;
+            }
+
+            .pricing_footer-note strong {
+                color: #64748b;
+            }
         </style>
 
         <div class="slide slide-8" data-slide="8">
@@ -5226,6 +6214,338 @@
             </div>
         </div>
 
+        
+        
+        <!-- Slide Persona: Use Cases -->
+        <div class="slide slide-persona" data-slide="persona">
+            <!-- Background Effects -->
+            <div class="bg-pattern_persona"></div>
+            <div class="bg-grid_persona"></div>
+
+            <!-- Header -->
+            <div class="slide-header_persona">
+                <div class="header-tag_persona">
+                    <i class="fas fa-users"></i>
+                    USE CASES
+                </div>
+                <h1 class="slide-title_persona">
+                    누가 <span class="highlight_persona">AI 대시보드</span>를 사용하나요?
+                </h1>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content_persona">
+                <!-- Growth Marketer -->
+                <div class="persona-card_persona growth_persona">
+                    <div class="persona-header_persona">
+                        <div class="persona-icon_persona">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="persona-title-group_persona">
+                            <h3>그로스 마케터</h3>
+                            <p>Growth Marketer</p>
+                        </div>
+                    </div>
+
+                    <div class="core-value_persona">
+                        <div class="core-value-label_persona">핵심 가치</div>
+                        <p class="core-value-text_persona">"본 것을 믿는 것이 아니라,<br/>문제 되는 곳을 찾아 고칩니다."</p>
+                    </div>
+
+                    <div class="story-section_persona">
+                        <div class="feature-tag_persona">
+                            <i class="fas fa-filter"></i>
+                            Funnel Dashboard
+                        </div>
+                        <p class="story-text_persona">
+                            퍼널 분석 덕분에 유입은 시켰는데 구매가 일어나지 않던 <strong>'밑 빠진 독(병목 구간)'</strong>을 시각적으로 찾아내어, 이탈이 심한 장바구니 페이지를 <strong>즉시 개선</strong>하는 액션을 했어요.
+                        </p>
+                    </div>
+
+                    <div class="result-box_persona">
+                        <div class="result-label_persona">
+                            <i class="fas fa-arrow-trend-up"></i>
+                            AI 대시보드 도입 후
+                        </div>
+                        <div class="result-metric_persona">
+                            <span class="result-number_persona">18</span>
+                            <span class="result-unit_persona">%</span>
+                        </div>
+                        <div class="result-title_persona">구매 전환율(CVR) 개선</div>
+                        <p class="result-desc_persona">채널별/캠페인별 이탈률을 시각적으로 식별하여,<br/>병목 구간을 집중적으로 해결</p>
+                    </div>
+                </div>
+
+                <!-- Startup CEO -->
+                <div class="persona-card_persona ceo_persona">
+                    <div class="persona-header_persona">
+                        <div class="persona-icon_persona">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div class="persona-title-group_persona">
+                            <h3>스타트업 대표</h3>
+                            <p>Startup CEO</p>
+                        </div>
+                    </div>
+
+                    <div class="core-value_persona">
+                        <div class="core-value-label_persona">핵심 가치</div>
+                        <p class="core-value-text_persona">"감(Feeling)이 아닌 예측(Forecast)으로<br/>미래를 경영합니다."</p>
+                    </div>
+
+                    <div class="story-section_persona">
+                        <div class="feature-tag_persona">
+                            <i class="fas fa-chart-area"></i>
+                            Timeseries Analysis
+                        </div>
+                        <p class="story-text_persona">
+                            시계열 예측 덕분에 매월 말마다 "다음 달에 이만큼 써도 될까?" 막막했던 <strong>감(Feeling) 경영을 멈추고</strong>, AI가 예측해 준 향후 90일 목표치에 맞춰 <strong>자신 있게 자금을 집행</strong>했어요.
+                        </p>
+                    </div>
+
+                    <div class="result-box_persona">
+                        <div class="result-label_persona">
+                            <i class="fas fa-bullseye"></i>
+                            AI 대시보드 도입 후
+                        </div>
+                        <div class="result-metric_persona">
+                            <span class="result-number_persona">92</span>
+                            <span class="result-unit_persona">%</span>
+                        </div>
+                        <div class="result-title_persona">예산 계획 대비 집행 정확도</div>
+                        <p class="result-desc_persona">Prophet 알고리즘을 활용해 불확실성 최소화,<br/>미래 성과 예측으로 예산 오차 범위 축소</p>
+                    </div>
+                </div>
+
+                <!-- Head of Department -->
+                <div class="persona-card_persona leader_persona">
+                    <div class="persona-header_persona">
+                        <div class="persona-icon_persona">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="persona-title-group_persona">
+                            <h3>마케터 없는 본부장</h3>
+                            <p>Head of Department</p>
+                        </div>
+                    </div>
+
+                    <div class="core-value_persona">
+                        <div class="core-value-label_persona">핵심 가치</div>
+                        <p class="core-value-text_persona">"반복 작업은 AI에게 맡기고,<br/>당신은 리더의 결정을 내리세요."</p>
+                    </div>
+
+                    <div class="story-section_persona">
+                        <div class="feature-tag_persona">
+                            <i class="fas fa-robot"></i>
+                            Marketing Dashboard + LLM
+                        </div>
+                        <p class="story-text_persona">
+                            자동화와 AI 협업 덕분에 매일 반복되던 <strong>엑셀 피벗 테이블 작업에서 완전히 해방</strong>되어, 대시보드 캡처 한 장으로 AI에게 <strong>전문적인 전략을 제안</strong>받아 즉시 실행했어요.
+                        </p>
+                    </div>
+
+                    <div class="result-box_persona">
+                        <div class="result-label_persona">
+                            <i class="fas fa-clock"></i>
+                            AI 대시보드 도입 후
+                        </div>
+                        <div class="result-metric_persona">
+                            <span class="result-number_persona">80</span>
+                            <span class="result-unit_persona">%</span>
+                        </div>
+                        <div class="result-title_persona">반복 업무 시간 단축</div>
+                        <p class="result-desc_persona">매일 반복되는 엑셀 작업(수집, 가공, 피벗)을<br/>완전 자동화하여 물리적 시간 절감</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide Pricing: Pricing Plans -->
+        <div class="slide slide-pricing" data-slide="pricing">
+            <!-- Background Effects -->
+            <div class="pricing_bg-pattern"></div>
+            <div class="pricing_bg-grid"></div>
+
+            <!-- Header -->
+            <div class="pricing_slide-header">
+                <div class="pricing_header-tag">
+                    <i class="fas fa-tags"></i>
+                    PRICING PLANS
+                </div>
+                <h1 class="pricing_slide-title">
+                    비즈니스에 맞는 <span class="pricing_highlight">플랜</span>을 선택하세요
+                </h1>
+                <p class="pricing_slide-subtitle">모든 플랜에 전문 마케터 1:1 미팅과 이벤트/텍소노미 설계가 포함됩니다</p>
+            </div>
+
+            <!-- Main Content -->
+            <div class="pricing_main-content">
+                <!-- Standard Plan -->
+                <div class="pricing_pricing-card pricing_standard">
+                    <div class="pricing_card-header">
+                        <div class="pricing_plan-icon">
+                            <i class="fas fa-chart-simple"></i>
+                        </div>
+                        <h3 class="pricing_plan-name">Standard</h3>
+                        <p class="pricing_plan-desc">데이터 분석 시작을 위한 기본 플랜</p>
+                    </div>
+
+                    <div class="pricing_pricing-section">
+                        <div class="pricing_price-row">
+                            <span class="pricing_price-label">최초 비용</span>
+                            <span class="pricing_price-value">50만원</span>
+                        </div>
+                        <div class="pricing_price-row">
+                            <span class="pricing_price-label">월 비용</span>
+                            <span class="pricing_price-value pricing_highlight">10만원</span>
+                        </div>
+                    </div>
+
+                    <div class="pricing_features-section">
+                        <div class="pricing_feature-item">
+                            <div class="pricing_feature-icon"><i class="fas fa-check"></i></div>
+                            <span>전문 마케터와 담당자가 <span class="pricing_feature-highlight">직접 미팅</span></span>
+                        </div>
+                        <div class="pricing_feature-item">
+                            <div class="pricing_feature-icon"><i class="fas fa-check"></i></div>
+                            <span>이벤트 및 텍소노미 <span class="pricing_feature-highlight">설계 및 세팅</span></span>
+                        </div>
+                        <div class="pricing_feature-item">
+                            <div class="pricing_feature-icon"><i class="fas fa-check"></i></div>
+                            <span>기본 대시보드 리포트 제공</span>
+                        </div>
+                    </div>
+
+                    <div class="pricing_dashboard-frequency">
+                        <div class="pricing_frequency-label">대시보드 제공</div>
+                        <div class="pricing_frequency-value">주 1회 (월요일)</div>
+                    </div>
+
+                    <div class="pricing_cta-section">
+                        <button class="pricing_cta-button">
+                            시작하기
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Daily Enterprise Plan -->
+                <div class="pricing_pricing-card pricing_daily">
+                    <div class="pricing_popular-badge">
+                        <i class="fas fa-star"></i> POPULAR
+                    </div>
+
+                    <div class="pricing_card-header">
+                        <div class="pricing_plan-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="pricing_plan-name">Daily Ent.</h3>
+                        <p class="pricing_plan-desc">매일 인사이트가 필요한 팀을 위한 플랜</p>
+                    </div>
+
+                    <div class="pricing_pricing-section">
+                        <div class="pricing_price-row">
+                            <span class="pricing_price-label">최초 비용</span>
+                            <span class="pricing_price-value">50만원</span>
+                        </div>
+                        <div class="pricing_price-row">
+                            <span class="pricing_price-label">월 비용</span>
+                            <span class="pricing_price-value pricing_highlight">30만원</span>
+                        </div>
+                    </div>
+
+                    <div class="pricing_features-section">
+                        <div class="pricing_feature-item">
+                            <div class="pricing_feature-icon"><i class="fas fa-check"></i></div>
+                            <span>전문 마케터와 담당자가 <span class="pricing_feature-highlight">직접 미팅</span></span>
+                        </div>
+                        <div class="pricing_feature-item">
+                            <div class="pricing_feature-icon"><i class="fas fa-check"></i></div>
+                            <span>이벤트 및 텍소노미 <span class="pricing_feature-highlight">설계 및 세팅</span></span>
+                        </div>
+                        <div class="pricing_feature-item">
+                            <div class="pricing_feature-icon"><i class="fas fa-check"></i></div>
+                            <span><span class="pricing_feature-highlight">매주 1회</span> 마케팅 전략, 액션 컨설팅</span>
+                        </div>
+                    </div>
+
+                    <div class="pricing_dashboard-frequency">
+                        <div class="pricing_frequency-label">대시보드 제공</div>
+                        <div class="pricing_frequency-value">주 5회 (매일 오전)</div>
+                    </div>
+
+                    <div class="pricing_cta-section">
+                        <button class="pricing_cta-button">
+                            가장 인기 있는 플랜
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Premium Growth Plan -->
+                <div class="pricing_pricing-card pricing_premium">
+                    <div class="pricing_premium-badge">
+                        <i class="fas fa-crown"></i> PREMIUM
+                    </div>
+
+                    <div class="pricing_card-header">
+                        <div class="pricing_plan-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3 class="pricing_plan-name">Premium Growth</h3>
+                        <p class="pricing_plan-desc">전문가와 함께 성장하는 풀 서비스</p>
+                    </div>
+
+                    <div class="pricing_pricing-section">
+                        <div class="pricing_price-row">
+                            <span class="pricing_price-label">최초 비용</span>
+                            <span class="pricing_price-value">50만원</span>
+                        </div>
+                        <div class="pricing_price-row">
+                            <span class="pricing_price-label">월 비용</span>
+                            <span class="pricing_price-value pricing_highlight">별도 협의<span class="pricing_price-note">(+α)</span></span>
+                        </div>
+                    </div>
+
+                    <div class="pricing_features-section">
+                        <div class="pricing_feature-item">
+                            <div class="pricing_feature-icon"><i class="fas fa-check"></i></div>
+                            <span>전문 마케터와 담당자가 <span class="pricing_feature-highlight">직접 미팅</span></span>
+                        </div>
+                        <div class="pricing_feature-item">
+                            <div class="pricing_feature-icon"><i class="fas fa-check"></i></div>
+                            <span>이벤트 및 텍소노미 <span class="pricing_feature-highlight">설계 및 세팅</span></span>
+                        </div>
+                        <div class="pricing_feature-item">
+                            <div class="pricing_feature-icon"><i class="fas fa-check"></i></div>
+                            <span><span class="pricing_feature-highlight">그로스마케팅</span> 기획 전략 및 실행</span>
+                        </div>
+                        <div class="pricing_feature-item">
+                            <div class="pricing_feature-icon"><i class="fas fa-check"></i></div>
+                            <span><span class="pricing_feature-highlight">매일</span> 마케팅 전략, 액션 컨설팅</span>
+                        </div>
+                    </div>
+
+                    <div class="pricing_dashboard-frequency">
+                        <div class="pricing_frequency-label">대시보드 제공</div>
+                        <div class="pricing_frequency-value">주 5회 (매일 오전)</div>
+                    </div>
+
+                    <div class="pricing_cta-section">
+                        <button class="pricing_cta-button">
+                            맞춤 상담 신청
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Note -->
+            <div class="pricing_footer-note">
+                <p><strong>※</strong> 모든 플랜은 최초 세팅 후 월 단위 구독으로 운영됩니다. 자세한 문의는 상담을 통해 안내드립니다.</p>
+            </div>
+        </div>
+
         <!-- Slide 8: Value Summary -->
         <div class="slide slide-11" data-slide="11">
             <!-- Background Decorations -->
@@ -5351,7 +6671,7 @@
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
         </div>
-        <span class="slide-counter" id="slideCounter">1 / 10</span>
+        <span class="slide-counter" id="slideCounter">1 / 14</span>
         <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">
             <i class="fas fa-chevron-right"></i>
         </button>
@@ -5362,7 +6682,7 @@
 
     <script>
         let currentSlide = 1;
-        const totalSlides = 12;
+        const totalSlides = 14;
 
         function showSlide(n) {
             const slides = document.querySelectorAll('.slide');

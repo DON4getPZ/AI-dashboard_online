@@ -918,6 +918,11 @@
             color: var(--gm-primary);
         }
 
+        .badge.prophet {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            color: #e65100;
+        }
+
         .badge.chart {
             background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
             color: #e65100;
@@ -1062,28 +1067,60 @@
         .funnel-stage:nth-child(4) .funnel-bar { width: 30%; opacity: 0.7; }
         .funnel-stage:nth-child(5) .funnel-bar { width: 20%; opacity: 0.6; }
 
-        /* BCG Demo */
+        /* BCG Matrix Demo */
         .bcg-demo {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin: 16px 0;
+            margin: 20px 0;
         }
 
         .bcg-card {
             padding: 16px;
             border-radius: var(--radius-md);
-            text-align: center;
+            border: 1px solid;
         }
 
-        .bcg-card.cashcow { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); }
-        .bcg-card.gem { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); }
-        .bcg-card.question { background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); }
-        .bcg-card.dog { background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); }
+        .bcg-card.cashcow {
+            background: #e8f5e9;
+            border-color: #c8e6c9;
+        }
 
-        .bcg-icon { font-size: 28px; margin-bottom: 8px; }
-        .bcg-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-        .bcg-desc { font-size: 11px; color: var(--grey-600); line-height: 1.5; }
+        .bcg-card.gem {
+            background: #e3f2fd;
+            border-color: #bbdefb;
+        }
+
+        .bcg-card.pit {
+            background: #fff3e0;
+            border-color: #ffe0b2;
+        }
+
+        .bcg-card.dog {
+            background: #fce4ec;
+            border-color: #f8bbd0;
+        }
+
+        .bcg-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .bcg-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .bcg-card.cashcow .bcg-title { color: #2e7d32; }
+        .bcg-card.gem .bcg-title { color: #1565c0; }
+        .bcg-card.pit .bcg-title { color: #e65100; }
+        .bcg-card.dog .bcg-title { color: #c2185b; }
+
+        .bcg-desc {
+            font-size: 12px;
+            color: var(--grey-600);
+        }
 
         /* Alert Demo */
         .alert-demo {
@@ -1669,6 +1706,14 @@
             .filter-arrow {
                 transform: rotate(90deg);
             }
+
+            .bcg-demo {
+                grid-template-columns: 1fr;
+            }
+
+            .matrix-demo {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Print */
@@ -1753,8 +1798,10 @@
                 <div class="nav-sub" id="sub-funnel">
                     <a class="nav-sub-link" onclick="navigateTo('funnel', 'intro')">시작하기</a>
                     <a class="nav-sub-link" onclick="navigateTo('funnel', 'funnel')">퍼널 차트</a>
-                    <a class="nav-sub-link" onclick="navigateTo('funnel', 'metrics')">단계별 지표</a>
-                    <a class="nav-sub-link" onclick="navigateTo('funnel', 'analysis')">분석 활용</a>
+                    <a class="nav-sub-link" onclick="navigateTo('funnel', 'insights')">인사이트</a>
+                    <a class="nav-sub-link" onclick="navigateTo('funnel', 'decision')">의사결정 도구</a>
+                    <a class="nav-sub-link" onclick="navigateTo('funnel', 'channel')">채널 분석</a>
+                    <a class="nav-sub-link" onclick="navigateTo('funnel', 'customer')">고객 분석</a>
                     <a class="nav-sub-link" onclick="navigateTo('funnel', 'faq')">FAQ</a>
                 </div>
 
@@ -1765,9 +1812,11 @@
                 </div>
                 <div class="nav-sub" id="sub-timeseries">
                     <a class="nav-sub-link" onclick="navigateTo('timeseries', 'intro')">시작하기</a>
-                    <a class="nav-sub-link" onclick="navigateTo('timeseries', 'chart')">차트 분석</a>
-                    <a class="nav-sub-link" onclick="navigateTo('timeseries', 'trend')">추세 분석</a>
-                    <a class="nav-sub-link" onclick="navigateTo('timeseries', 'forecast')">예측</a>
+                    <a class="nav-sub-link" onclick="navigateTo('timeseries', 'status')">AI 상태 요약</a>
+                    <a class="nav-sub-link" onclick="navigateTo('timeseries', 'kpi')">KPI 카드</a>
+                    <a class="nav-sub-link" onclick="navigateTo('timeseries', 'insights')">AI 인사이트</a>
+                    <a class="nav-sub-link" onclick="navigateTo('timeseries', 'analysis')">성과 분석</a>
+                    <a class="nav-sub-link" onclick="navigateTo('timeseries', 'algorithm')">분석 알고리즘</a>
                     <a class="nav-sub-link" onclick="navigateTo('timeseries', 'faq')">FAQ</a>
                 </div>
             </div>
@@ -4012,6 +4061,7 @@
                         <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
                             ROAS, CPA, 전환수, 매출 4개 지표에 대해 <strong>상태 아이콘</strong>과 함께
                             현재 성과가 좋은지, 개선이 필요한지 한눈에 파악할 수 있습니다.
+                            <strong>각 카드에 마우스를 올리면</strong> 해당 지표의 의미와 활용 팁을 확인할 수 있습니다.
                         </p>
 
                         <div class="insight-demo" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
@@ -4058,6 +4108,41 @@
                                     👍 <strong>양호</strong> - 목표 달성 중<br>
                                     📊 <strong>보통</strong> - 개선 여지 있음<br>
                                     ⚠️ <strong>개선 필요</strong> - 즉각적인 조치 권장
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 한줄 요약 (스토리텔링) -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">💬</div>
+                            <div>
+                                <h3 class="card-title">한줄 요약 (스토리텔링)</h3>
+                                <p class="card-subtitle">현재 광고 성과를 한 문장으로 요약합니다</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            핵심 지표 대시보드 아래에 표시되는 <strong>한줄 요약</strong>은
+                            최근 성과 트렌드와 가장 효율적인 채널을 한눈에 파악할 수 있도록 도와줍니다.
+                        </p>
+
+                        <div style="padding: 16px 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px; border-left: 4px solid var(--gm-success); margin-bottom: 16px;">
+                            <div style="font-size: 14px; color: var(--grey-900); line-height: 1.7;">
+                                <span style="font-size: 18px; margin-right: 8px;">📈</span>
+                                <strong>최근 7일간 ROAS가 상승세</strong>입니다.
+                                현재 <strong style="color: #2e7d32;">Meta</strong> 채널이 ROAS 245.3%로 가장 좋은 성과를 보이고 있습니다.
+                            </div>
+                        </div>
+
+                        <div class="callout tip">
+                            <div class="callout-icon">💡</div>
+                            <div class="callout-content">
+                                <div class="callout-title">활용 Tip</div>
+                                <div class="callout-text">
+                                    한줄 요약을 통해 현재 가장 주목해야 할 채널과 트렌드를 빠르게 파악하고,
+                                    상세 분석 전에 전체적인 성과 방향을 이해할 수 있습니다.
                                 </div>
                             </div>
                         </div>
@@ -4412,13 +4497,48 @@
                     <div class="faq-list">
                         <div class="faq-item">
                             <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>데이터는 얼마나 자주 업데이트되나요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    대시보드 데이터는 <strong>매일 자동으로 업데이트</strong>됩니다.
+                                    각 광고 플랫폼(Meta, Google, Naver, Kakao 등)의 API를 통해 전일 데이터를 수집하며,
+                                    보통 오전 중으로 전날까지의 성과가 반영됩니다.
+                                    실시간 데이터가 아닌 점 참고해 주세요.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>ROAS가 100% 미만이면 문제가 있는 건가요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    ROAS 100% 미만은 광고비보다 매출이 적다는 의미입니다.
+                                    단, 이것이 항상 나쁜 것은 아닙니다. <strong>브랜드 인지도 캠페인</strong>이나
+                                    <strong>신규 고객 확보</strong> 목적의 광고는 단기 ROAS보다
+                                    LTV(고객 생애 가치)를 고려해야 합니다.
+                                    지속적으로 ROAS가 낮다면 타겟팅, 크리에이티브, 랜딩페이지 등을 점검해 보세요.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
                                 <span>AI 예측은 얼마나 정확한가요?</span>
                                 <span class="faq-icon">▼</span>
                             </button>
                             <div class="faq-answer">
                                 <div class="faq-answer-content">
                                     AI 예측은 과거 데이터 패턴을 학습하여 미래를 예측합니다.
-                                    데이터가 많을수록, 패턴이 일정할수록 정확도가 높습니다.
+                                    일반적으로 데이터가 많을수록, 패턴이 일정할수록 정확도가 높습니다.
+                                    다만, 예상치 못한 외부 요인(시즌, 경쟁사 활동, 시장 변화 등)에 따라
+                                    실제 결과는 달라질 수 있습니다.
+                                    <strong>예측은 의사결정의 참고 자료</strong>로 활용하시고,
+                                    정기적으로 실제 성과와 비교하여 검증하세요.
                                 </div>
                             </div>
                         </div>
@@ -4516,8 +4636,10 @@
                 <div class="section-nav-container">
                     <div class="section-nav-item active" onclick="showSection('funnel', 'intro')">시작하기</div>
                     <div class="section-nav-item" onclick="showSection('funnel', 'funnel')">퍼널 차트</div>
-                    <div class="section-nav-item" onclick="showSection('funnel', 'metrics')">단계별 지표</div>
-                    <div class="section-nav-item" onclick="showSection('funnel', 'analysis')">분석 활용</div>
+                    <div class="section-nav-item" onclick="showSection('funnel', 'insights')">인사이트</div>
+                    <div class="section-nav-item" onclick="showSection('funnel', 'decision')">의사결정 도구</div>
+                    <div class="section-nav-item" onclick="showSection('funnel', 'channel')">채널 분석</div>
+                    <div class="section-nav-item" onclick="showSection('funnel', 'customer')">고객 분석</div>
                     <div class="section-nav-item" onclick="showSection('funnel', 'faq')">FAQ</div>
                 </div>
             </nav>
@@ -4528,7 +4650,7 @@
                     <div class="section-header">
                         <div class="section-number">1</div>
                         <h2 class="section-title">대시보드 시작하기</h2>
-                        <p class="section-desc">AARRR 퍼널 분석 대시보드의 핵심 기능을 알아봅니다.</p>
+                        <p class="section-desc">AARRR 퍼널 분석 대시보드의 핵심 기능과 구조를 알아봅니다.</p>
                     </div>
 
                     <div class="card">
@@ -4546,8 +4668,10 @@
                                 <div class="callout-title">AARRR 프레임워크 이해하기</div>
                                 <div class="callout-text">
                                     <strong>A</strong>cquisition (유입) → <strong>A</strong>ctivation (활성화) →
-                                    <strong>R</strong>etention (재방문) → <strong>R</strong>evenue (결제) →
-                                    <strong>R</strong>eferral (추천/구매완료)
+                                    <strong>R</strong>etention (관심/재방문) → <strong>R</strong>evenue (결제) →
+                                    <strong>R</strong>eferral (추천/구매완료)<br><br>
+                                    이 대시보드에서는 <strong>유입 → 활동 → 관심 → 결제진행 → 구매완료</strong>의
+                                    5단계 퍼널로 고객 여정을 분석합니다.
                                 </div>
                             </div>
                         </div>
@@ -4555,28 +4679,30 @@
                         <p style="font-size: 14px; color: var(--grey-700); line-height: 1.8; margin-bottom: 20px;">
                             AARRR 퍼널 분석 대시보드는 <strong>GA4 데이터</strong>를 기반으로
                             고객이 웹사이트에 방문하여 최종 구매에 이르기까지의 여정을 분석합니다.
+                            각 단계별 <strong>전환율과 이탈률</strong>을 파악하여
+                            병목 구간을 발견하고 개선 전략을 수립할 수 있습니다.
                         </p>
 
                         <div class="feature-grid">
                             <div class="feature-item">
                                 <div class="feature-icon">📊</div>
                                 <div class="feature-name">D3.js 퍼널 차트</div>
-                                <div class="feature-desc">인터랙티브한 5단계 퍼널 시각화</div>
+                                <div class="feature-desc">인터랙티브한 5단계 퍼널 시각화 및 기간별 비교</div>
                             </div>
                             <div class="feature-item">
                                 <div class="feature-icon">💡</div>
                                 <div class="feature-name">AI 인사이트</div>
-                                <div class="feature-desc">자동 분석된 경고, 기회 요소 제공</div>
+                                <div class="feature-desc">자동 분석된 경고, 기회 요소, 채널 전략 제공</div>
                             </div>
                             <div class="feature-item">
                                 <div class="feature-icon">🔬</div>
                                 <div class="feature-name">의사결정 도구</div>
-                                <div class="feature-desc">예산 가이드, 이탈 경고, 성과 개선</div>
+                                <div class="feature-desc">예산 가이드, 이탈 경고, 성과 개선 분석</div>
                             </div>
                             <div class="feature-item">
                                 <div class="feature-icon">👥</div>
                                 <div class="feature-name">고객 분석</div>
-                                <div class="feature-desc">신규/재방문 비교, 채널 품질 분석</div>
+                                <div class="feature-desc">신규/재방문 비교, 채널 품질 매트릭스</div>
                             </div>
                         </div>
                     </div>
@@ -4601,7 +4727,7 @@
                                 <div class="tab-icon">📈</div>
                                 <div class="tab-info">
                                     <div class="tab-name">성과 요약 배너 & KPI 카드</div>
-                                    <div class="tab-desc">이번 달 방문자, 구매자, 전환율 요약</div>
+                                    <div class="tab-desc">이번 달 방문자, 구매자, 전환율 요약 (상단 고정)</div>
                                 </div>
                                 <span class="badge core">GA4</span>
                             </div>
@@ -4609,7 +4735,7 @@
                                 <div class="tab-icon">🎯</div>
                                 <div class="tab-info">
                                     <div class="tab-name">고객 구매 여정 5단계</div>
-                                    <div class="tab-desc">D3.js 인터랙티브 퍼널 차트</div>
+                                    <div class="tab-desc">D3.js 인터랙티브 퍼널 차트, 기간별 비교 모드</div>
                                 </div>
                                 <span class="badge chart">D3.js</span>
                             </div>
@@ -4640,64 +4766,6 @@
                                 <div class="tab-info">
                                     <div class="tab-name">고객 재방문 및 이탈 분석</div>
                                     <div class="tab-desc">신규 vs 재방문, 이탈률, 채널 품질 매트릭스</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">🔻</div>
-                            <div>
-                                <h3 class="card-title">퍼널 단계 미리보기</h3>
-                                <p class="card-subtitle">5단계 전환율 예시</p>
-                            </div>
-                        </div>
-
-                        <div class="funnel-demo">
-                            <div class="funnel-stage">
-                                <div class="funnel-bar">
-                                    <span class="funnel-label">유입 (Acquisition)</span>
-                                    <span class="funnel-value">125,430명</span>
-                                </div>
-                            </div>
-                            <div class="funnel-arrow">↓ 71.1% 전환 / 28.9% 이탈</div>
-                            <div class="funnel-stage">
-                                <div class="funnel-bar">
-                                    <span class="funnel-label">활동 (Activation)</span>
-                                    <span class="funnel-value">89,201명</span>
-                                </div>
-                            </div>
-                            <div class="funnel-arrow">↓ 51.2% 전환 / 48.8% 이탈</div>
-                            <div class="funnel-stage">
-                                <div class="funnel-bar">
-                                    <span class="funnel-label">관심 (Retention)</span>
-                                    <span class="funnel-value">45,678명</span>
-                                </div>
-                            </div>
-                            <div class="funnel-arrow">↓ 27.0% 전환 / 73.0% 이탈 ⚠️</div>
-                            <div class="funnel-stage">
-                                <div class="funnel-bar">
-                                    <span class="funnel-label">결제진행 (Revenue)</span>
-                                    <span class="funnel-value">12,345명</span>
-                                </div>
-                            </div>
-                            <div class="funnel-arrow">↓ 72.8% 전환 / 27.2% 이탈</div>
-                            <div class="funnel-stage">
-                                <div class="funnel-bar">
-                                    <span class="funnel-label">구매완료 (Referral)</span>
-                                    <span class="funnel-value">8,987명</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="callout warning">
-                            <div class="callout-icon">⚠️</div>
-                            <div class="callout-content">
-                                <div class="callout-title">병목 구간 발견</div>
-                                <div class="callout-text">
-                                    관심 → 결제진행 구간에서 <strong>73% 이탈</strong>이 발생하고 있습니다.
-                                    장바구니 이탈 원인 분석 및 리타겟팅 캠페인을 검토하세요.
                                 </div>
                             </div>
                         </div>
@@ -4763,83 +4831,200 @@
                 <div class="content-section" id="funnel-funnel">
                     <div class="section-header">
                         <div class="section-number">2</div>
-                        <h2 class="section-title">퍼널 차트</h2>
-                        <p class="section-desc">각 단계별 전환율을 시각화하여 확인합니다.</p>
+                        <h2 class="section-title">고객 구매 여정 5단계</h2>
+                        <p class="section-desc">D3.js 기반 인터랙티브 퍼널 차트를 활용하세요.</p>
                     </div>
 
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">📊</div>
+                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">🎯</div>
                             <div>
-                                <h3 class="card-title">퍼널 시각화</h3>
-                                <p class="card-subtitle">단계별 이탈률과 전환율을 한눈에 확인</p>
+                                <h3 class="card-title">퍼널 차트 이해하기</h3>
+                                <p class="card-subtitle">각 단계별 전환율과 이탈률을 시각적으로 확인합니다</p>
+                            </div>
+                            <span class="badge chart">D3.js</span>
+                        </div>
+
+                        <div class="funnel-demo">
+                            <div class="funnel-stage">
+                                <div class="funnel-bar">
+                                    <span class="funnel-label">유입 (Acquisition)</span>
+                                    <span class="funnel-value">125,430명</span>
+                                </div>
+                            </div>
+                            <div class="funnel-arrow">↓ 71.1% 전환 / 28.9% 이탈</div>
+                            <div class="funnel-stage">
+                                <div class="funnel-bar">
+                                    <span class="funnel-label">활동 (Activation)</span>
+                                    <span class="funnel-value">89,201명</span>
+                                </div>
+                            </div>
+                            <div class="funnel-arrow">↓ 51.2% 전환 / 48.8% 이탈</div>
+                            <div class="funnel-stage">
+                                <div class="funnel-bar">
+                                    <span class="funnel-label">관심 (Retention)</span>
+                                    <span class="funnel-value">45,678명</span>
+                                </div>
+                            </div>
+                            <div class="funnel-arrow">↓ 27.0% 전환 / 73.0% 이탈 ⚠️</div>
+                            <div class="funnel-stage">
+                                <div class="funnel-bar">
+                                    <span class="funnel-label">결제 진행 (Revenue)</span>
+                                    <span class="funnel-value">12,345명</span>
+                                </div>
+                            </div>
+                            <div class="funnel-arrow">↓ 72.1% 전환</div>
+                            <div class="funnel-stage">
+                                <div class="funnel-bar">
+                                    <span class="funnel-label">구매 완료 (Referral)</span>
+                                    <span class="funnel-value">8,901명</span>
+                                </div>
                             </div>
                         </div>
 
                         <div class="screenshot-placeholder">
-                            <div class="screenshot-icon">📊</div>
-                            <div class="screenshot-label">퍼널 차트 영역</div>
-                            <div class="screenshot-hint">각 단계별 전환율과 이탈률 시각화</div>
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">D3.js 퍼널 차트 스크린샷</div>
+                            <div class="screenshot-hint">마우스 호버 시 인사이트 툴팁이 표시되는 화면</div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- 단계별 지표 -->
-                <div class="content-section" id="funnel-metrics">
-                    <div class="section-header">
-                        <div class="section-number">3</div>
-                        <h2 class="section-title">단계별 지표</h2>
-                        <p class="section-desc">각 퍼널 단계의 상세 지표를 확인합니다.</p>
                     </div>
 
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">📈</div>
+                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">🔄</div>
                             <div>
-                                <h3 class="card-title">핵심 지표</h3>
-                                <p class="card-subtitle">전환율, 이탈률, 평균 체류 시간 등</p>
+                                <h3 class="card-title">비교 모드 & 채널 필터</h3>
+                                <p class="card-subtitle">기간별 비교와 채널별 필터링으로 심층 분석하세요</p>
                             </div>
                         </div>
 
-                        <div class="kpi-demo-grid">
-                            <div class="kpi-demo-card">
-                                <div class="kpi-label">Acquisition</div>
-                                <div class="kpi-value">10,000</div>
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
+                            📊 비교 모드
+                        </h4>
+                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                            "비교" 버튼을 클릭하면 두 기간의 퍼널을 나란히 비교할 수 있습니다.
+                            성과가 개선된 단계와 악화된 단계를 한눈에 파악하세요.
+                        </p>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">퍼널 컨트롤</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">단일 뷰</button>
+                                <button class="demo-btn">비교</button>
+                                <button class="demo-btn">필터</button>
                             </div>
-                            <div class="kpi-demo-card">
-                                <div class="kpi-label">Activation</div>
-                                <div class="kpi-value">7,500</div>
+                        </div>
+
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                            🔍 채널 필터
+                        </h4>
+                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                            "필터" 버튼을 클릭하면 특정 채널의 퍼널만 볼 수 있습니다.
+                            Meta, Google, Naver 등 채널별 고객 여정을 개별적으로 분석하세요.
+                        </p>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">채널 선택</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">전체</button>
+                                <button class="demo-btn">Meta</button>
+                                <button class="demo-btn">Google</button>
+                                <button class="demo-btn">Naver</button>
+                                <button class="demo-btn">Kakao</button>
                             </div>
-                            <div class="kpi-demo-card">
-                                <div class="kpi-label">Retention</div>
-                                <div class="kpi-value">5,000</div>
-                            </div>
-                            <div class="kpi-demo-card">
-                                <div class="kpi-label">Revenue</div>
-                                <div class="kpi-value">3,000</div>
-                            </div>
-                            <div class="kpi-demo-card highlight">
-                                <div class="kpi-label">Referral</div>
-                                <div class="kpi-value">2,000</div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">퍼널 비교 모드 스크린샷</div>
+                            <div class="screenshot-hint">두 기간 퍼널이 나란히 표시된 화면</div>
+                        </div>
+
+                        <div class="callout info">
+                            <div class="callout-icon">ℹ️</div>
+                            <div class="callout-content">
+                                <div class="callout-title">채널별 필터 활용 방법</div>
+                                <div class="callout-text">
+                                    채널 필터를 활용하면 <strong>채널별 병목 구간</strong>을 파악할 수 있습니다.
+                                    예를 들어, Meta는 유입→활동 이탈이 높고, Google은 관심→결제 이탈이 높다면,
+                                    각 채널에 맞는 차별화된 전략을 수립할 수 있습니다.
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 분석 활용 -->
-                <div class="content-section" id="funnel-analysis">
+                <!-- 인사이트 & 채널 전략 -->
+                <div class="content-section" id="funnel-insights">
                     <div class="section-header">
-                        <div class="section-number">4</div>
-                        <h2 class="section-title">분석 활용</h2>
-                        <p class="section-desc">퍼널 데이터를 활용한 개선 전략을 수립하세요.</p>
+                        <div class="section-number">3</div>
+                        <h2 class="section-title">인사이트 & 채널 전략</h2>
+                        <p class="section-desc">AI가 분석한 핵심 인사이트와 채널별 전략을 확인하세요.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">💡</div>
+                            <div>
+                                <h3 class="card-title">인사이트 탭 구성</h3>
+                                <p class="card-subtitle">3개의 탭에서 다양한 인사이트를 제공합니다</p>
+                            </div>
+                            <span class="badge ai">AI 분석</span>
+                        </div>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">인사이트 탭</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">핵심 요약</button>
+                                <button class="demo-btn">긴급 개선</button>
+                                <button class="demo-btn">채널 전략</button>
+                            </div>
+                        </div>
+
+                        <div class="toggle-demo" style="margin-top: 12px;">
+                            <div class="toggle-demo-label">분석 기간</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn period active">전체</button>
+                                <button class="demo-btn period">180일</button>
+                                <button class="demo-btn period">90일</button>
+                                <button class="demo-btn period">30일</button>
+                            </div>
+                        </div>
+
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                            📊 핵심 요약 탭
+                        </h4>
+
+                        <div style="display: grid; gap: 12px; margin-bottom: 20px;">
+                            <div style="padding: 16px; background: #e8f5e9; border-radius: 12px; border-left: 4px solid #4caf50;">
+                                <div style="font-size: 14px; font-weight: 600; color: #2e7d32; margin-bottom: 6px;">📊 전체 전환율</div>
+                                <div style="font-size: 14px; color: var(--grey-700);">현재 전환율: <strong>7.1%</strong> (전월 대비 +1.2%p)</div>
+                            </div>
+                            <div style="padding: 16px; background: #e3f2fd; border-radius: 12px; border-left: 4px solid #2196f3;">
+                                <div style="font-size: 14px; font-weight: 600; color: #1565c0; margin-bottom: 6px;">🏆 최고 성과 채널</div>
+                                <div style="font-size: 14px; color: var(--grey-700);"><strong>Google</strong>: 12.3% / <strong>Naver</strong>: 9.8% / <strong>Meta</strong>: 6.5%</div>
+                            </div>
+                            <div style="padding: 16px; background: #ffebee; border-radius: 12px; border-left: 4px solid #ef5350;">
+                                <div style="font-size: 14px; font-weight: 600; color: #c62828; margin-bottom: 6px;">⚠️ 주의 필요</div>
+                                <div style="font-size: 14px; color: var(--grey-700);">Kakao 채널 전환율 2.1%로 평균 대비 -67% 하락</div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="card">
                         <div class="card-header">
                             <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">🚨</div>
                             <div>
-                                <h3 class="card-title">이탈 경고 알림</h3>
-                                <p class="card-subtitle">주요 이탈 구간 즉시 파악</p>
+                                <h3 class="card-title">긴급 개선 탭</h3>
+                                <p class="card-subtitle">즉시 조치가 필요한 이슈와 개선 권장 사항</p>
+                            </div>
+                        </div>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">심각도 필터</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active" style="background: #ef5350; color: white; border-color: #ef5350;">즉시 조치 필요</button>
+                                <button class="demo-btn" style="border-color: #ffa726; color: #e65100;">개선 권장</button>
                             </div>
                         </div>
 
@@ -4855,22 +5040,33 @@
                             <div class="alert-card medium">
                                 <div class="alert-icon">⚠️</div>
                                 <div class="alert-content">
-                                    <div class="alert-severity">모니터링 필요 (MEDIUM)</div>
-                                    <div class="alert-message">관심 → 결제 진행 전환율 하락 (-8%)</div>
-                                    <div class="alert-action">💡 추천 액션: 장바구니 리마인더 이메일 발송</div>
+                                    <div class="alert-severity">개선 권장 (MEDIUM)</div>
+                                    <div class="alert-message">Instagram 채널 유입 후 활동 전환율 35% 하락</div>
+                                    <div class="alert-action">💡 추천 액션: 랜딩 페이지 콘텐츠 일관성 점검</div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">긴급 개선 탭 스크린샷</div>
+                            <div class="screenshot-hint">심각도별 경고 카드가 표시된 화면</div>
                         </div>
                     </div>
 
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">📊</div>
+                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">🎯</div>
                             <div>
-                                <h3 class="card-title">BCG 매트릭스</h3>
-                                <p class="card-subtitle">채널별 투자 전략 가이드</p>
+                                <h3 class="card-title">채널 전략 (BCG Matrix)</h3>
+                                <p class="card-subtitle">채널을 4가지 유형으로 분류하여 전략을 제시합니다</p>
                             </div>
                         </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            BCG 매트릭스는 <strong>트래픽(규모)</strong>과 <strong>전환율(효율)</strong>을 기준으로
+                            채널을 분류합니다. 각 유형에 맞는 차별화된 투자 전략을 수립하세요.
+                        </p>
 
                         <div class="bcg-demo">
                             <div class="bcg-card cashcow">
@@ -4883,28 +5079,45 @@
                                 <div class="bcg-title">Hidden Gem (숨은 보석)</div>
                                 <div class="bcg-desc">낮은 트래픽 + 높은 전환율<br>예산 확대로 성장 가속화</div>
                             </div>
-                            <div class="bcg-card question">
-                                <div class="bcg-icon">❓</div>
-                                <div class="bcg-title">Question Mark (물음표)</div>
-                                <div class="bcg-desc">높은 트래픽 + 낮은 전환율<br>전환율 개선 또는 예산 재검토</div>
+                            <div class="bcg-card pit">
+                                <div class="bcg-icon">🕳️</div>
+                                <div class="bcg-title">Money Pit (밑 빠진 독)</div>
+                                <div class="bcg-desc">높은 트래픽 + 낮은 전환율<br>랜딩/타겟팅 개선 필요</div>
                             </div>
                             <div class="bcg-card dog">
                                 <div class="bcg-icon">🐕</div>
-                                <div class="bcg-title">Dog (재고려 채널)</div>
-                                <div class="bcg-desc">낮은 트래픽 + 낮은 전환율<br>예산 축소 또는 중단 검토</div>
+                                <div class="bcg-title">Dog (재검토 필요)</div>
+                                <div class="bcg-desc">낮은 트래픽 + 낮은 전환율<br>철수 또는 전면 개편 검토</div>
                             </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">BCG 매트릭스 스크린샷</div>
+                            <div class="screenshot-hint">채널별 4분면 분류 화면</div>
                         </div>
 
                         <div class="callout tip">
                             <div class="callout-icon">💡</div>
                             <div class="callout-content">
-                                <div class="callout-title">퍼널 최적화 Tip</div>
+                                <div class="callout-title">BCG 매트릭스 활용 전략</div>
                                 <div class="callout-text">
-                                    이탈률이 가장 높은 단계에 집중하여 UX 개선, 콘텐츠 최적화,
-                                    리타겟팅 캠페인 등을 진행하면 효과적으로 전환율을 높일 수 있습니다.
+                                    <strong>Hidden Gem</strong> 채널에 예산을 우선 투자하세요.
+                                    전환율이 이미 검증되었으므로 트래픽만 늘리면 성과가 비례하여 증가합니다.
+                                    <strong>Money Pit</strong> 채널은 즉시 개선하지 않으면 예산 낭비가 지속됩니다.
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- 의사결정 도구 -->
+                <div class="content-section" id="funnel-decision">
+                    <div class="section-header">
+                        <div class="section-number">4</div>
+                        <h2 class="section-title">데이터 기반 의사결정 도구</h2>
+                        <p class="section-desc">예산 투자, 이탈 위험, 성과 개선을 위한 분석 도구입니다.</p>
+                    </div>
 
                     <div class="card">
                         <div class="card-header">
@@ -4966,28 +5179,34 @@
                             </div>
                         </div>
 
-                        <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 16px;">
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
                             각 채널에 <strong>100만원을 투자했을 때</strong> 예상되는
                             방문자, 전환수, 매출을 시뮬레이션합니다.
                             <strong>신뢰도</strong>가 함께 표시되어 예측의 정확도를 파악할 수 있습니다.
                         </p>
 
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 16px 0;">
-                            <div style="padding: 14px; background: #e8f5e9; border-radius: 12px; text-align: center;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 20px 0;">
+                            <div style="padding: 16px; background: #e8f5e9; border-radius: 12px; text-align: center;">
                                 <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 4px;">Google</div>
-                                <div style="font-size: 18px; font-weight: 700; color: #2e7d32;">₩3.2M 예상 매출</div>
-                                <div style="font-size: 11px; color: #4caf50;">ROAS 320% | 신뢰도 92%</div>
+                                <div style="font-size: 20px; font-weight: 700; color: #2e7d32;">₩3.2M 예상 매출</div>
+                                <div style="font-size: 12px; color: #4caf50;">ROAS 320% | 신뢰도 92%</div>
                             </div>
-                            <div style="padding: 14px; background: #e3f2fd; border-radius: 12px; text-align: center;">
+                            <div style="padding: 16px; background: #e3f2fd; border-radius: 12px; text-align: center;">
                                 <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 4px;">Naver</div>
-                                <div style="font-size: 18px; font-weight: 700; color: #1565c0;">₩2.8M 예상 매출</div>
-                                <div style="font-size: 11px; color: #2196f3;">ROAS 280% | 신뢰도 88%</div>
+                                <div style="font-size: 20px; font-weight: 700; color: #1565c0;">₩2.8M 예상 매출</div>
+                                <div style="font-size: 12px; color: #2196f3;">ROAS 280% | 신뢰도 88%</div>
                             </div>
-                            <div style="padding: 14px; background: #fff3e0; border-radius: 12px; text-align: center;">
+                            <div style="padding: 16px; background: #fff3e0; border-radius: 12px; text-align: center;">
                                 <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 4px;">Meta</div>
-                                <div style="font-size: 18px; font-weight: 700; color: #e65100;">₩1.5M 예상 매출</div>
-                                <div style="font-size: 11px; color: #ff9800;">ROAS 150% | 신뢰도 85%</div>
+                                <div style="font-size: 20px; font-weight: 700; color: #e65100;">₩1.5M 예상 매출</div>
+                                <div style="font-size: 12px; color: #ff9800;">ROAS 150% | 신뢰도 85%</div>
                             </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">예산 투자 가이드 스크린샷</div>
+                            <div class="screenshot-hint">채널별 투자 효율성 분석 화면</div>
                         </div>
                     </div>
 
@@ -5025,111 +5244,15 @@
                                 <div class="callout-title">이탈 경고 대응 가이드</div>
                                 <div class="callout-text">
                                     이탈률이 <strong>주간 기준 10%p 이상</strong> 증가하면 즉각적인 조치가 필요합니다.
-                                    먼저 기술적 이슈(페이지 오류, 결제 오류)를 점검하고, 그 다음 UX/콘텐츠 개선을 검토하세요.
+                                    먼저 기술적 이슈(페이지 오류, 결제 오류)를 점검하고,
+                                    그 다음 UX/콘텐츠 개선을 검토하세요.
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">👥</div>
-                            <div>
-                                <h3 class="card-title">고객 재방문 및 이탈 분석</h3>
-                                <p class="card-subtitle">신규/재방문 고객 비교와 채널 품질을 분석합니다</p>
-                            </div>
-                        </div>
-
-                        <div class="toggle-demo">
-                            <div class="toggle-demo-label">고객 분석 탭</div>
-                            <div class="toggle-buttons">
-                                <button class="demo-btn active">신규 vs 재방문 추세</button>
-                                <button class="demo-btn">전환율 비교</button>
-                                <button class="demo-btn">이탈률 분석</button>
-                                <button class="demo-btn">채널 품질 매트릭스</button>
-                            </div>
-                        </div>
-
-                        <div class="tab-overview" style="margin-top: 20px;">
-                            <div class="tab-row">
-                                <div class="tab-icon">📈</div>
-                                <div class="tab-info">
-                                    <div class="tab-name">신규 vs 재방문 추세</div>
-                                    <div class="tab-desc">월별/주별/일별 신규 고객 비율과 재방문율 추이</div>
-                                </div>
-                            </div>
-                            <div class="tab-row">
-                                <div class="tab-icon">🔄</div>
-                                <div class="tab-info">
-                                    <div class="tab-name">전환율 비교</div>
-                                    <div class="tab-desc">신규 vs 재방문 고객의 퍼널 단계별 전환율 비교</div>
-                                </div>
-                            </div>
-                            <div class="tab-row">
-                                <div class="tab-icon">📉</div>
-                                <div class="tab-info">
-                                    <div class="tab-name">이탈률 분석</div>
-                                    <div class="tab-desc">채널별 퍼널 단계별 이탈률 및 정렬 기능</div>
-                                </div>
-                            </div>
-                            <div class="tab-row">
-                                <div class="tab-icon">🎯</div>
-                                <div class="tab-info">
-                                    <div class="tab-name">채널 품질 매트릭스</div>
-                                    <div class="tab-desc">재방문율 vs 이탈률 기준 4분면 분류</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="callout info">
-                            <div class="callout-icon">ℹ️</div>
-                            <div class="callout-content">
-                                <div class="callout-title">재방문 고객의 가치</div>
-                                <div class="callout-text">
-                                    재방문 고객은 신규 고객 대비 <strong>전환율이 2~3배 높고</strong>,
-                                    획득 비용은 1/5 수준입니다. 재방문율을 높이는 것이 효율적인 마케팅의 핵심입니다.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">🎯</div>
-                            <div>
-                                <h3 class="card-title">채널 품질 매트릭스</h3>
-                                <p class="card-subtitle">재방문율과 이탈률로 채널 품질을 4분면으로 분류합니다</p>
-                            </div>
-                        </div>
-
-                        <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 16px;">
-                            <strong>재방문율</strong>(높을수록 좋음)과 <strong>이탈률</strong>(낮을수록 좋음)을
-                            기준으로 채널을 4가지 유형으로 분류합니다.
-                        </p>
-
-                        <div class="matrix-demo">
-                            <div class="matrix-quadrant star">
-                                <div class="matrix-label">⭐ 스타 채널</div>
-                                <div class="matrix-desc">높은 재방문율 + 낮은 이탈률<br>최우선 투자 채널</div>
-                            </div>
-                            <div class="matrix-quadrant growth">
-                                <div class="matrix-label">🚀 성장 채널</div>
-                                <div class="matrix-desc">높은 재방문율 + 높은 이탈률<br>이탈 원인 개선 필요</div>
-                            </div>
-                            <div class="matrix-quadrant stable">
-                                <div class="matrix-label">📊 안정 채널</div>
-                                <div class="matrix-desc">낮은 재방문율 + 낮은 이탈률<br>재방문 유도 전략 필요</div>
-                            </div>
-                            <div class="matrix-quadrant problem">
-                                <div class="matrix-label">🔴 문제 채널</div>
-                                <div class="matrix-desc">낮은 재방문율 + 높은 이탈률<br>전면 재검토 필요</div>
-                            </div>
-                        </div>
-                    </div>
                     </div>
                 </div>
 
-                <!-- 유입 채널별 상세 분석 -->
+                <!-- 채널 분석 -->
                 <div class="content-section" id="funnel-channel">
                     <div class="section-header">
                         <div class="section-number">5</div>
@@ -5156,20 +5279,21 @@
                             </div>
                         </div>
 
-                        <h4 style="font-size: 14px; font-weight: 600; margin: 20px 0 10px; color: var(--grey-800);">
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
                             📋 채널별 고객 흐름 테이블
                         </h4>
-                        <p style="font-size: 13px; color: var(--grey-600); margin-bottom: 14px;">
-                            채널별로 5단계 퍼널 데이터를 테이블로 확인합니다. 컬럼 헤더를 클릭하면 정렬할 수 있습니다.
+                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                            채널별로 5단계 퍼널 데이터를 테이블로 확인합니다.
+                            컬럼 헤더를 클릭하면 정렬할 수 있습니다.
                         </p>
 
                         <div class="screenshot-placeholder">
                             <div class="screenshot-icon">🖼️</div>
-                            <div class="screenshot-label">채널별 퍼널 테이블</div>
+                            <div class="screenshot-label">채널별 퍼널 테이블 스크린샷</div>
                             <div class="screenshot-hint">정렬 기능이 있는 데이터 테이블</div>
                         </div>
 
-                        <h4 style="font-size: 14px; font-weight: 600; margin: 20px 0 10px; color: var(--grey-800);">
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
                             📊 지표별 비교 차트
                         </h4>
 
@@ -5178,11 +5302,21 @@
                             <div class="toggle-buttons">
                                 <button class="demo-btn active">전환율</button>
                                 <button class="demo-btn">방문자 수</button>
+                                <button class="demo-btn">활성 사용자</button>
+                                <button class="demo-btn">관심 고객</button>
+                                <button class="demo-btn">결제 시도</button>
+                                <button class="demo-btn">구매 건수</button>
                                 <button class="demo-btn">매출액</button>
                             </div>
                         </div>
 
-                        <h4 style="font-size: 14px; font-weight: 600; margin: 20px 0 10px; color: var(--grey-800);">
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">지표별 비교 막대 차트 스크린샷</div>
+                            <div class="screenshot-hint">채널별 선택 지표 비교 화면</div>
+                        </div>
+
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
                             📈 전환율 TOP 10
                         </h4>
 
@@ -5191,6 +5325,7 @@
                             <div class="toggle-buttons">
                                 <button class="demo-btn">활동 전환율</button>
                                 <button class="demo-btn">관심 전환율</button>
+                                <button class="demo-btn">결제진행 전환율</button>
                                 <button class="demo-btn active">구매완료 전환율</button>
                             </div>
                         </div>
@@ -5209,8 +5344,8 @@
                     </div>
                 </div>
 
-                <!-- 고객 재방문 및 이탈 분석 -->
-                <div class="content-section" id="funnel-retention">
+                <!-- 고객 분석 -->
+                <div class="content-section" id="funnel-customer">
                     <div class="section-header">
                         <div class="section-number">6</div>
                         <h2 class="section-title">고객 재방문 및 이탈 분석</h2>
@@ -5219,7 +5354,7 @@
 
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-icon">👥</div>
+                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">👥</div>
                             <div>
                                 <h3 class="card-title">고객 분석 탭 구성</h3>
                                 <p class="card-subtitle">5개의 탭에서 고객 행동을 심층 분석합니다</p>
@@ -5278,6 +5413,46 @@
 
                     <div class="card">
                         <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);">🎯</div>
+                            <div>
+                                <h3 class="card-title">채널 품질 매트릭스</h3>
+                                <p class="card-subtitle">재방문율과 이탈률로 채널 품질을 4분면으로 분류합니다</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            <strong>재방문율</strong>(높을수록 좋음)과 <strong>이탈률</strong>(낮을수록 좋음)을
+                            기준으로 채널을 4가지 유형으로 분류합니다.
+                        </p>
+
+                        <div class="matrix-demo">
+                            <div class="matrix-quadrant star">
+                                <div class="matrix-label">⭐ 스타 채널</div>
+                                <div class="matrix-desc">높은 재방문율 + 낮은 이탈률<br>최우선 투자 채널</div>
+                            </div>
+                            <div class="matrix-quadrant growth">
+                                <div class="matrix-label">🚀 성장 채널</div>
+                                <div class="matrix-desc">높은 재방문율 + 높은 이탈률<br>이탈 원인 개선 필요</div>
+                            </div>
+                            <div class="matrix-quadrant stable">
+                                <div class="matrix-label">📊 안정 채널</div>
+                                <div class="matrix-desc">낮은 재방문율 + 낮은 이탈률<br>재방문 유도 전략 필요</div>
+                            </div>
+                            <div class="matrix-quadrant problem">
+                                <div class="matrix-label">🔴 문제 채널</div>
+                                <div class="matrix-desc">낮은 재방문율 + 높은 이탈률<br>전면 재검토 필요</div>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">채널 품질 매트릭스 산점도 스크린샷</div>
+                            <div class="screenshot-hint">4분면 분류 산점도 차트</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
                             <div class="card-icon">📉</div>
                             <div>
                                 <h3 class="card-title">이탈률 분석</h3>
@@ -5323,6 +5498,7 @@
                         </div>
                     </div>
                 </div>
+
 
                 <!-- FAQ -->
                 <div class="content-section" id="funnel-faq">
@@ -5496,9 +5672,11 @@
             <nav class="section-nav">
                 <div class="section-nav-container">
                     <div class="section-nav-item active" onclick="showSection('timeseries', 'intro')">시작하기</div>
-                    <div class="section-nav-item" onclick="showSection('timeseries', 'chart')">차트 분석</div>
-                    <div class="section-nav-item" onclick="showSection('timeseries', 'trend')">추세 분석</div>
-                    <div class="section-nav-item" onclick="showSection('timeseries', 'forecast')">예측</div>
+                    <div class="section-nav-item" onclick="showSection('timeseries', 'status')">AI 상태 요약</div>
+                    <div class="section-nav-item" onclick="showSection('timeseries', 'kpi')">KPI 카드</div>
+                    <div class="section-nav-item" onclick="showSection('timeseries', 'insights')">AI 인사이트</div>
+                    <div class="section-nav-item" onclick="showSection('timeseries', 'analysis')">성과 분석</div>
+                    <div class="section-nav-item" onclick="showSection('timeseries', 'algorithm')">분석 알고리즘</div>
                     <div class="section-nav-item" onclick="showSection('timeseries', 'faq')">FAQ</div>
                 </div>
             </nav>
@@ -6375,12 +6553,13 @@
                         <p class="section-desc">예측 모델과 데이터 품질 분석 방법을 이해하세요.</p>
                     </div>
 
+                    <!-- 예측 & 트렌드 -->
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-icon" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">🔮</div>
+                            <div class="card-icon">🔮</div>
                             <div>
                                 <h3 class="card-title">예측 & 트렌드</h3>
-                                <p class="card-subtitle">Prophet 시계열 예측과 계절성 분해</p>
+                                <p class="card-subtitle">Prophet 시계열 예측과 계절성 분해를 이해합니다</p>
                             </div>
                             <span class="badge prophet">Prophet</span>
                         </div>
@@ -6393,63 +6572,75 @@
                             </div>
                         </div>
 
-                        <h4 style="font-size: 14px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
                             📈 Prophet 시계열 예측
                         </h4>
-                        <p style="font-size: 13px; color: var(--grey-600); margin-bottom: 14px;">
-                            Facebook에서 개발한 Prophet 알고리즘은 트렌드, 계절성, 휴일 효과를 자동 감지하여 예측합니다.
+                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                            Facebook에서 개발한 Prophet 알고리즘은 트렌드, 계절성, 휴일 효과를 자동으로 감지하여
+                            시계열 데이터를 예측합니다.
                         </p>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">Prophet 예측 차트 스크린샷</div>
+                            <div class="screenshot-hint">timeseries_forecast.png</div>
+                        </div>
 
                         <div class="callout info">
                             <div class="callout-icon">ℹ️</div>
                             <div class="callout-content">
                                 <div class="callout-title">차트 읽는 법</div>
                                 <div class="callout-text">
-                                    <strong>검은 점</strong>: 실제 데이터 /
-                                    <strong>파란 선</strong>: 예측 값 /
-                                    <strong>파란 영역</strong>: 신뢰 구간<br>
+                                    <strong>검은 점</strong>: 실제 데이터<br>
+                                    <strong>파란 선</strong>: 예측 값 (중앙값)<br>
+                                    <strong>파란 영역</strong>: 신뢰 구간 (예측 범위)<br>
                                     신뢰 구간이 좁을수록 예측 정확도가 높습니다.
                                 </div>
                             </div>
                         </div>
 
-                        <h4 style="font-size: 14px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
-                            🌊 계절성 분해
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                            🔄 계절성 분해 분석
                         </h4>
-                        <p style="font-size: 13px; color: var(--grey-600); margin-bottom: 14px;">
-                            시계열 데이터를 <strong>트렌드 + 계절성 + 잔차</strong>로 분해하여 각 요소의 영향을 파악합니다.
+                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                            시계열 데이터를 Trend(추세), Seasonal(계절성), Residual(잔차)로 분해하여
+                            각 요소의 영향을 파악합니다.
                         </p>
 
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0;">
-                            <div style="padding: 12px; background: #e3f2fd; border-radius: 8px; text-align: center;">
-                                <div style="font-size: 12px; font-weight: 600; color: #1565c0;">📈 트렌드</div>
-                                <div style="font-size: 11px; color: var(--grey-600); margin-top: 4px;">장기적 방향성</div>
-                            </div>
-                            <div style="padding: 12px; background: #e8f5e9; border-radius: 8px; text-align: center;">
-                                <div style="font-size: 12px; font-weight: 600; color: #2e7d32;">🔄 계절성</div>
-                                <div style="font-size: 11px; color: var(--grey-600); margin-top: 4px;">주기적 패턴</div>
-                            </div>
-                            <div style="padding: 12px; background: #fff3e0; border-radius: 8px; text-align: center;">
-                                <div style="font-size: 12px; font-weight: 600; color: #e65100;">📊 잔차</div>
-                                <div style="font-size: 11px; color: var(--grey-600); margin-top: 4px;">설명 안 되는 변동</div>
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">계절성 분해 차트 스크린샷</div>
+                            <div class="screenshot-hint">seasonal_decomposition.png</div>
+                        </div>
+
+                        <div class="callout tip">
+                            <div class="callout-icon">💡</div>
+                            <div class="callout-content">
+                                <div class="callout-title">실무 활용 Tip</div>
+                                <div class="callout-text">
+                                    <strong>Trend</strong>가 상승 추세면 장기적으로 성과가 개선되고 있는 것입니다.
+                                    <strong>Seasonal</strong> 패턴을 파악하면 특정 요일/시즌에 예산을 집중할 수 있습니다.
+                                    <strong>Residual</strong>이 크면 예측 모델이 설명하지 못하는 변동이 있다는 의미입니다.
+                                </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- 관계 & 품질 -->
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-icon" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">🔗</div>
+                            <div class="card-icon">🧮</div>
                             <div>
                                 <h3 class="card-title">관계 & 품질</h3>
-                                <p class="card-subtitle">지표 간 상관관계와 데이터 품질 분석</p>
+                                <p class="card-subtitle">상관관계, 이상치, 데이터 분포를 분석합니다</p>
                             </div>
                         </div>
 
-                        <h4 style="font-size: 14px; font-weight: 600; margin: 16px 0 12px; color: var(--grey-800);">
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
                             🔥 상관관계 히트맵
                         </h4>
-                        <p style="font-size: 13px; color: var(--grey-600); margin-bottom: 14px;">
-                            비용, ROAS, 전환수 등 주요 지표 간의 상관관계를 히트맵으로 시각화합니다.
+                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
+                            지표 간 상관관계를 히트맵으로 시각화합니다.
                             색상이 진할수록 상관관계가 강합니다.
                         </p>
 
@@ -6459,22 +6650,10 @@
                             <div class="screenshot-hint">correlation_heatmap.png</div>
                         </div>
 
-                        <div class="callout tip">
-                            <div class="callout-icon">💡</div>
-                            <div class="callout-content">
-                                <div class="callout-title">상관관계 해석</div>
-                                <div class="callout-text">
-                                    <strong>+1에 가까운 빨간색</strong>: 강한 양의 상관관계<br>
-                                    <strong>-1에 가까운 파란색</strong>: 강한 음의 상관관계<br>
-                                    <strong>0에 가까운 흰색</strong>: 상관관계 없음
-                                </div>
-                            </div>
-                        </div>
-
-                        <h4 style="font-size: 14px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
                             📦 이상치 분석 (박스플롯)
                         </h4>
-                        <p style="font-size: 13px; color: var(--grey-600); margin-bottom: 14px;">
+                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
                             데이터 분포에서 벗어난 이상치를 감지합니다.
                             이상치는 데이터 오류이거나 특별한 이벤트일 수 있습니다.
                         </p>
@@ -6485,10 +6664,10 @@
                             <div class="screenshot-hint">boxplot_outliers.png</div>
                         </div>
 
-                        <h4 style="font-size: 14px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
                             📊 데이터 분포 분석
                         </h4>
-                        <p style="font-size: 13px; color: var(--grey-600); margin-bottom: 14px;">
+                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
                             각 지표의 분포 형태를 히스토그램으로 확인합니다.
                         </p>
 
@@ -6508,29 +6687,6 @@
                                     ✅ 데이터 분포가 예상과 일치하는지 확인<br>
                                     ✅ 상관관계가 비즈니스 로직과 맞는지 검증
                                 </div>
-                            </div>
-                        </div>
-
-                        <h4 style="font-size: 14px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
-                            🔍 데이터 품질 지표
-                        </h4>
-
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 14px 0;">
-                            <div style="padding: 12px; background: var(--grey-50); border-radius: 8px;">
-                                <div style="font-size: 12px; font-weight: 600; margin-bottom: 4px;">완전성</div>
-                                <div style="font-size: 11px; color: var(--grey-600);">결측치 비율 확인</div>
-                            </div>
-                            <div style="padding: 12px; background: var(--grey-50); border-radius: 8px;">
-                                <div style="font-size: 12px; font-weight: 600; margin-bottom: 4px;">일관성</div>
-                                <div style="font-size: 11px; color: var(--grey-600);">이상치 탐지</div>
-                            </div>
-                            <div style="padding: 12px; background: var(--grey-50); border-radius: 8px;">
-                                <div style="font-size: 12px; font-weight: 600; margin-bottom: 4px;">최신성</div>
-                                <div style="font-size: 11px; color: var(--grey-600);">데이터 업데이트 주기</div>
-                            </div>
-                            <div style="padding: 12px; background: var(--grey-50); border-radius: 8px;">
-                                <div style="font-size: 12px; font-weight: 600; margin-bottom: 4px;">정확성</div>
-                                <div style="font-size: 11px; color: var(--grey-600);">예측 vs 실제 오차율</div>
                             </div>
                         </div>
                     </div>
