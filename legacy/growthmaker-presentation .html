@@ -112,7 +112,102 @@
             background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
         }
 
+        .slide-1 .slide-container {
+            width: 100%;
+            min-height: 720px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .slide-1 .bg-decoration {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+        }
+
+        .slide-1 .bg-decoration.blue {
+            width: 400px;
+            height: 400px;
+            background: #60a5fa;
+            top: -150px;
+            right: -100px;
+            opacity: 0.3;
+        }
+
+        .slide-1 .bg-decoration.cyan {
+            width: 350px;
+            height: 350px;
+            background: #06b6d4;
+            bottom: -100px;
+            left: -100px;
+            opacity: 0.25;
+        }
+
+        .slide-1 .bg-decoration.purple {
+            width: 250px;
+            height: 250px;
+            background: #8b5cf6;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.15;
+        }
+
+        .slide-1 .grid-pattern {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+        }
+
+        .slide-1 .floating-shapes {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .slide-1 .shape {
+            position: absolute;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: float-slide1 6s ease-in-out infinite;
+        }
+
+        .slide-1 .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 15%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .slide-1 .shape:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 70%;
+            right: 15%;
+            animation-delay: 1s;
+        }
+
+        .slide-1 .shape:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+
         .slide-1 .content-wrapper {
+            position: relative;
+            z-index: 10;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -121,42 +216,106 @@
             padding: 0 80px;
             color: white;
             text-align: center;
-            position: relative;
         }
 
         .slide-1 .main-title {
-            font-size: 3.5rem;
+            font-size: 3.2rem;
             font-weight: 900;
-            line-height: 1.2;
+            line-height: 1.3;
             margin-bottom: 1.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             letter-spacing: -0.02em;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInUp-slide1 0.8s ease-out forwards;
+        }
+
+        .slide-1 .main-title .highlight {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .slide-1 .sub-title {
-            font-size: 1.5rem;
-            font-weight: 300;
-            margin-bottom: 2rem;
-            opacity: 0.9;
+            display: block;
+            width: 100%;
+            font-size: 1.6rem;
+            font-weight: 500;
+            margin-bottom: 0;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInUp-slide1 0.8s ease-out 0.2s forwards;
+        }
+
+        .slide-1 .sub-title .badge {
+            position: static;
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 28px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
             letter-spacing: 0.05em;
+            backdrop-filter: blur(10px);
+            top: auto;
+            right: auto;
         }
 
         .slide-1 .brand-logo {
             position: absolute;
             bottom: 40px;
-            right: 60px;
-            font-size: 1.25rem;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 10;
+            opacity: 0;
+            animation: fadeInUp-slide1 0.8s ease-out 0.4s forwards;
+        }
+
+        .slide-1 .brand-logo .logo-text {
+            font-size: 1.2rem;
             font-weight: 700;
-            opacity: 0.8;
-            letter-spacing: 0.1em;
-            text-align: right;
+            letter-spacing: 0.15em;
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .slide-1 .brand-subtitle {
-            font-size: 0.875rem;
-            font-weight: 300;
-            opacity: 0.7;
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.6);
             margin-top: 0.25rem;
+            letter-spacing: 0.05em;
+        }
+
+        .slide-1 .decorative-line {
+            width: 60px;
+            height: 3px;
+            margin-top: 2.5rem;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            opacity: 0;
+            animation: fadeIn-slide1 1s ease-out 0.6s forwards;
+        }
+
+        @keyframes fadeInUp-slide1 {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn-slide1 {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes float-slide1 {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
         }
 
         /* Slide 2 - Problem */
@@ -659,99 +818,255 @@
 
         /* Slide 12 - CTA */
         .slide-12 {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1e40af 100%);
+        }
+
+        .slide-12 .slide-container {
+            width: 100%;
+            min-height: 720px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-12 .bg-decoration {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+        }
+
+        .slide-12 .bg-decoration.blue {
+            width: 500px;
+            height: 500px;
+            background: #3b82f6;
+            top: -200px;
+            right: -150px;
+            opacity: 0.25;
+        }
+
+        .slide-12 .bg-decoration.cyan {
+            width: 400px;
+            height: 400px;
+            background: #06b6d4;
+            bottom: -150px;
+            left: -100px;
+            opacity: 0.2;
+        }
+
+        .slide-12 .bg-decoration.emerald {
+            width: 300px;
+            height: 300px;
+            background: #10b981;
+            top: 60%;
+            right: 10%;
+            opacity: 0.15;
+        }
+
+        .slide-12 .grid-pattern {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
         }
 
         .slide-12 .content-wrapper {
+            position: relative;
+            z-index: 10;
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 0 80px;
+            align-items: center;
+            padding: 40px 80px;
             color: white;
-            position: relative;
+        }
+
+        .slide-12 .rocket-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: rocketFloat-slide12 3s ease-in-out infinite, fadeInUp-slide12 0.8s ease-out forwards;
         }
 
         .slide-12 .main-title {
-            font-size: 3.5rem;
+            font-size: 2.8rem;
             font-weight: 900;
             text-align: center;
-            margin-bottom: 2.5rem;
-            line-height: 1.2;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+            letter-spacing: -0.02em;
+            opacity: 0;
+            animation: fadeInUp-slide12 0.8s ease-out 0.1s forwards;
+        }
+
+        .slide-12 .main-title .highlight {
+            background: linear-gradient(135deg, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .slide-12 .subtitle {
-            font-size: 1.4rem;
-            font-weight: 300;
+            font-size: 1.2rem;
+            font-weight: 400;
             text-align: center;
-            margin-bottom: 3rem;
-            opacity: 0.9;
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            color: #cbd5e1;
+            line-height: 1.6;
+            animation: fadeInUp-slide12 0.8s ease-out 0.2s forwards;
         }
 
-        .cta-container {
+        .slide-12 .cta-container {
             display: flex;
             justify-content: center;
-            gap: 2rem;
-            margin-bottom: 3rem;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            animation: fadeInUp-slide12 0.8s ease-out 0.3s forwards;
         }
 
-        .cta-button {
-            background: #10b981;
+        .slide-12 .cta-button {
+            background: linear-gradient(135deg, #10b981, #059669);
             color: white;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            font-size: 1.2rem;
+            padding: 1rem 2rem;
+            border-radius: 14px;
+            font-size: 1.1rem;
             font-weight: 700;
             text-decoration: none;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            box-shadow: 0 8px 20px rgba(16,185,129,0.3);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.3);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        .cta-button:hover {
-            background: #059669;
-            transform: translateY(-2px);
+        .slide-12 .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(16, 185, 129, 0.4);
         }
 
-        .contact-info {
+        .slide-12 .cta-button.secondary {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .slide-12 .cta-button.secondary:hover {
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .slide-12 .contact-info {
             display: flex;
             justify-content: center;
-            gap: 3rem;
-            font-size: 1.1rem;
-            opacity: 0.9;
+            gap: 2rem;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp-slide12 0.8s ease-out 0.4s forwards;
         }
 
-        .contact-item {
+        .slide-12 .contact-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
         }
 
-        .promise-box {
+        .slide-12 .contact-item:hover {
             background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 2rem;
+            transform: translateY(-2px);
+        }
+
+        .slide-12 .contact-item i {
+            color: #06b6d4;
+        }
+
+        .slide-12 .promise-box {
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 1.5rem 2.5rem;
             text-align: center;
-            position: relative;
+            max-width: 700px;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            animation: fadeInUp-slide12 0.8s ease-out 0.5s forwards;
         }
 
-        .promise-text {
-            font-size: 1.2rem;
-            font-weight: 600;
-            line-height: 1.5;
+        .slide-12 .promise-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            line-height: 1.7;
+            color: #e2e8f0;
         }
 
-        .growth-icon {
+        .slide-12 .promise-text strong {
+            color: #06b6d4;
+            font-weight: 700;
+        }
+
+        .slide-12 .brand-footer {
             position: absolute;
-            top: 2rem;
-            right: 2rem;
-            font-size: 3rem;
-            opacity: 0.2;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            animation: fadeIn-slide12 1s ease-out 0.7s forwards;
+        }
+
+        .slide-12 .brand-footer .logo-text {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .slide-12 .brand-footer .divider {
+            width: 1px;
+            height: 16px;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .slide-12 .brand-footer .tagline {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 0.05em;
+        }
+
+        @keyframes fadeInUp-slide12 {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn-slide12 {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes rocketFloat-slide12 {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         /* Keyboard hints */
@@ -792,16 +1107,33 @@
     <div class="presentation-container">
         <!-- Slide 1: Title -->
         <div class="slide slide-1 active" data-slide="1">
-            <div class="content-wrapper">
-                <h1 class="main-title">
-                    수백만 원짜리 대시보드가<br/>
-                    결국 '예쁜 엑셀'이 되는 이유
-                </h1>
-                <h2 class="sub-title">
-                    그로스메이커 AI 대시보드
-                </h2>
+            <div class="slide-container">
+                <!-- Background Decorations -->
+                <div class="bg-decoration blue"></div>
+                <div class="bg-decoration cyan"></div>
+                <div class="bg-decoration purple"></div>
+                <div class="grid-pattern"></div>
+
+                <!-- Floating Shapes -->
+                <div class="floating-shapes">
+                    <div class="shape"></div>
+                    <div class="shape"></div>
+                    <div class="shape"></div>
+                </div>
+
+                <div class="content-wrapper">
+                    <h1 class="main-title">
+                        수백만 원짜리 대시보드가<br/>
+                        결국 <span class="highlight">'예쁜 엑셀'</span>이 되는 이유
+                    </h1>
+                    <h2 class="sub-title">
+                        <span class="badge">그로스메이커 AI 대시보드</span>
+                    </h2>
+                </div>
+
+                <!-- Brand Logo - positioned at bottom center -->
                 <div class="brand-logo">
-                    <div>GROWTHMAKER</div>
+                    <div class="logo-text">GROWTHMAKER</div>
                     <div class="brand-subtitle">AI Dashboard Solution</div>
                 </div>
             </div>
@@ -3441,40 +3773,53 @@
 
         <!-- Slide 9: CTA -->
         <div class="slide slide-12" data-slide="12">
-            <div class="content-wrapper">
-                <div class="growth-icon">
-                    <i class="fas fa-rocket"></i>
-                </div>
-                <h1 class="main-title">실행하는 데이터 환경으로의 전환점</h1>
-                <p class="subtitle">더 이상 엑셀과 복잡한 대시보드에 시간을 낭비하지 마세요<br/>마케팅에 집중할 수 있는 환경으로 전환할 때 입니다</p>
-                <div class="cta-container">
-                    <a class="cta-button" href="https://www.growthmaker.kr/">
-                        <i class="fas fa-play-circle"></i>
-                        데모 요청하기
-                    </a>
-                    <a class="cta-button" href="https://www.growthmaker.kr/"">
-                        <i class="fas fa-calendar-alt"></i>
-                        상담 예약하기
-                    </a>
-                </div>
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <span>help@growthmaker.kr</span>
+            <div class="slide-container">
+                <!-- Background Decorations -->
+                <div class="bg-decoration blue"></div>
+                <div class="bg-decoration cyan"></div>
+                <div class="bg-decoration emerald"></div>
+                <div class="grid-pattern"></div>
+
+                <div class="content-wrapper">
+                    <div class="rocket-icon">
+                        <i class="fas fa-rocket"></i>
                     </div>
-                    <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <span>02-0000-0000</span>
+                    <h1 class="main-title"><span class="highlight">실행하는 데이터 환경</span>으로의 전환점</h1>
+                    <p class="subtitle">더 이상 엑셀과 복잡한 대시보드에 시간을 낭비하지 마세요<br/>마케팅에 집중할 수 있는 환경으로 전환할 때 입니다</p>
+                    <div class="cta-container">
+                        <a class="cta-button" href="https://www.growthmaker.kr/">
+                            <i class="fas fa-play-circle"></i>
+                            데모 요청하기
+                        </a>
+                        <a class="cta-button secondary" href="https://www.growthmaker.kr/">
+                            <i class="fas fa-calendar-alt"></i>
+                            상담 예약하기
+                        </a>
                     </div>
-                    <div class="contact-item">
-                        <i class="fas fa-globe"></i>
-                        <span>growthmaker.kr</span>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>help@growthmaker.kr</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>02-0000-0000</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-globe"></i>
+                            <span>growthmaker.kr</span>
+                        </div>
                     </div>
-                </div>
-                <div class="promise-box">
-                    <p class="promise-text">
-                        데이터 세팅부터 마케팅 실행까지<br/>그로스메이커와 함께 지속 가능한 성장 엔진을 만드세요
-                    </p>
+                    <div class="promise-box">
+                        <p class="promise-text">
+                            <strong>데이터 세팅</strong>부터 <strong>마케팅 실행</strong>까지<br/>그로스메이커와 함께 지속 가능한 성장 엔진을 만드세요
+                        </p>
+                    </div>
+                    <div class="brand-footer">
+                        <span class="logo-text">GROWTHMAKER</span>
+                        <span class="divider"></span>
+                        <span class="tagline">AI Dashboard Solution</span>
+                    </div>
                 </div>
             </div>
         </div>
