@@ -1034,7 +1034,7 @@
                 justify-content: space-between;
             }
 
-            .slide-6 .legacy-card .slide-6 .card-header {
+            .slide-6 .legacy-card .card-header {
                 background: rgba(0,0,0,0.3);
                 border-bottom: 1px solid #334155;
             }
@@ -1042,9 +1042,10 @@
             .slide-6 .card-title {
                 font-size: 14px;
                 font-weight: 700;
+                margin-bottom: 0;
             }
 
-            .slide-6 .legacy-card .slide-6 .card-title {
+            .slide-6 .legacy-card .card-title {
                 color: #94a3b8;
             }
 
@@ -1061,12 +1062,12 @@
                 font-weight: 600;
             }
 
-            .slide-6 .status-badge.slide-6 .problem {
+            .slide-6 .status-badge.problem {
                 background: rgba(239, 68, 68, 0.2);
                 color: #fca5a5;
             }
 
-            .slide-6 .status-badge.slide-6 .solution {
+            .slide-6 .status-badge.solution {
                 background: rgba(16, 185, 129, 0.2);
                 color: #6ee7b7;
             }
@@ -1123,7 +1124,7 @@
                 padding: 2px;
             }
 
-            .slide-6 .table-cell.slide-6 .highlight-cell {
+            .slide-6 .table-cell.highlight-cell {
                 background: rgba(234, 179, 8, 0.2);
                 color: #fcd34d;
                 border-radius: 2px;
@@ -1141,6 +1142,9 @@
                 display: flex;
                 gap: 8px;
                 align-items: flex-start;
+                margin-bottom: 0;
+                font-size: inherit;
+                line-height: inherit;
             }
 
             .slide-6 .problem-icon {
@@ -1154,6 +1158,13 @@
                 flex-shrink: 0;
                 font-size: 10px;
                 color: #f87171;
+            }
+
+            .slide-6 .problem-icon i {
+                margin: 0;
+                color: inherit;
+                font-size: inherit;
+                width: auto;
             }
 
             .slide-6 .problem-text h4 {
@@ -1176,16 +1187,16 @@
                 animation-delay: 0.3s;
             }
 
-            .slide-6 .ai-card .slide-6 .card-header {
+            .slide-6 .ai-card .card-header {
                 background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(6, 182, 212, 0.08));
                 border-bottom: 1px solid rgba(59, 130, 246, 0.15);
             }
 
-            .slide-6 .ai-card .slide-6 .card-title {
+            .slide-6 .ai-card .card-title {
                 color: #1e40af;
             }
 
-            .slide-6 .ai-card .slide-6 .card-subtitle {
+            .slide-6 .ai-card .card-subtitle {
                 color: #64748b;
             }
 
@@ -1208,12 +1219,12 @@
                 gap: 10px;
             }
 
-            .slide-6 .alert-card.slide-6 .green {
+            .slide-6 .alert-card.green {
                 background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.06));
                 border: 1px solid rgba(16, 185, 129, 0.25);
             }
 
-            .slide-6 .alert-card.slide-6 .red {
+            .slide-6 .alert-card.red {
                 background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.06));
                 border: 1px solid rgba(239, 68, 68, 0.25);
             }
@@ -1243,8 +1254,8 @@
                 margin-bottom: 1px;
             }
 
-            .slide-6 .green .slide-6 .alert-info h4 { color: #059669; }
-            .slide-6 .red .slide-6 .alert-info h4 { color: #dc2626; }
+            .slide-6 .green .alert-info h4 { color: #059669; }
+            .slide-6 .red .alert-info h4 { color: #dc2626; }
 
             .slide-6 .alert-info p {
                 font-size: 9px;
@@ -1252,6 +1263,7 @@
             }
 
             .slide-6 .action-badge {
+                position: static;
                 margin-left: auto;
                 padding: 4px 8px;
                 border-radius: 4px;
@@ -1260,8 +1272,8 @@
                 background: white;
             }
 
-            .slide-6 .green .slide-6 .action-badge { color: #059669; border: 1px solid rgba(16, 185, 129, 0.3); }
-            .slide-6 .red .slide-6 .action-badge { color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.3); }
+            .slide-6 .green .action-badge { color: #059669; border: 1px solid rgba(16, 185, 129, 0.3); }
+            .slide-6 .red .action-badge { color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.3); }
 
             .slide-6 .matrix-funnel {
                 display: grid;
@@ -1311,22 +1323,22 @@
                 text-align: center;
             }
 
-            .slide-6 .bcg-cell.slide-6 .hidden-gem {
+            .slide-6 .bcg-cell.hidden-gem {
                 background: rgba(6, 182, 212, 0.2);
                 color: #0891b2;
             }
 
-            .slide-6 .bcg-cell.slide-6 .cash-cow {
+            .slide-6 .bcg-cell.cash-cow {
                 background: rgba(16, 185, 129, 0.2);
                 color: #059669;
             }
 
-            .slide-6 .bcg-cell.slide-6 .dog {
+            .slide-6 .bcg-cell.dog {
                 background: rgba(100, 116, 139, 0.15);
                 color: #64748b;
             }
 
-            .slide-6 .bcg-cell.slide-6 .money-pit {
+            .slide-6 .bcg-cell.money-pit {
                 background: rgba(245, 158, 11, 0.2);
                 color: #d97706;
             }
@@ -1361,11 +1373,11 @@
                 color: white;
             }
 
-            .slide-6 .funnel-stage:nth-child(1) .slide-6 .funnel-bar { width: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa); }
-            .slide-6 .funnel-stage:nth-child(2) .slide-6 .funnel-bar { width: 80%; background: linear-gradient(90deg, #06b6d4, #22d3ee); }
-            .slide-6 .funnel-stage:nth-child(3) .slide-6 .funnel-bar { width: 60%; background: linear-gradient(90deg, #10b981, #34d399); }
-            .slide-6 .funnel-stage:nth-child(4) .slide-6 .funnel-bar { width: 40%; background: linear-gradient(90deg, #f59e0b, #fbbf24); }
-            .slide-6 .funnel-stage:nth-child(5) .slide-6 .funnel-bar { width: 25%; background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+            .slide-6 .funnel-stage:nth-child(1) .funnel-bar { width: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+            .slide-6 .funnel-stage:nth-child(2) .funnel-bar { width: 80%; background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+            .slide-6 .funnel-stage:nth-child(3) .funnel-bar { width: 60%; background: linear-gradient(90deg, #10b981, #34d399); }
+            .slide-6 .funnel-stage:nth-child(4) .funnel-bar { width: 40%; background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+            .slide-6 .funnel-stage:nth-child(5) .funnel-bar { width: 25%; background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
 
             .slide-6 .funnel-label {
                 font-size: 8px;
@@ -1404,6 +1416,11 @@
                 flex-shrink: 0;
                 font-size: 10px;
                 color: white;
+            }
+
+            .slide-6 .benefit-icon i {
+                font-size: inherit;
+                color: inherit;
             }
 
             .slide-6 .benefit-text h4 {
@@ -1447,6 +1464,7 @@
             }
 
             .slide-6 .feature-card {
+                position: static;
                 background: #f8fafc;
                 border-radius: 10px;
                 padding: 16px;
@@ -1480,10 +1498,16 @@
                 color: white;
             }
 
-            .slide-6 .feature-icon-box.slide-6 .blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
-            .slide-6 .feature-icon-box.slide-6 .cyan { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
-            .slide-6 .feature-icon-box.slide-6 .emerald { background: linear-gradient(135deg, #10b981, #34d399); }
-            .slide-6 .feature-icon-box.slide-6 .purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+            .slide-6 .feature-icon-box i {
+                font-size: inherit;
+                color: inherit;
+                margin: 0;
+            }
+
+            .slide-6 .feature-icon-box.blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+            .slide-6 .feature-icon-box.cyan { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
+            .slide-6 .feature-icon-box.emerald { background: linear-gradient(135deg, #10b981, #34d399); }
+            .slide-6 .feature-icon-box.purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
 
             .slide-6 .feature-card h3 {
                 font-size: 12px;
@@ -1847,7 +1871,7 @@
                 z-index: 0;
             }
 
-            .slide-7 .bg-decoration.slide-7 .blue {
+            .slide-7 .bg-decoration.blue {
                 width: 300px;
                 height: 300px;
                 background: #3b82f6;
@@ -1856,7 +1880,7 @@
                 opacity: 0.1;
             }
 
-            .slide-7 .bg-decoration.slide-7 .cyan {
+            .slide-7 .bg-decoration.cyan {
                 width: 200px;
                 height: 200px;
                 background: #06b6d4;
@@ -1905,7 +1929,7 @@
                 letter-spacing: -0.5px;
             }
 
-            .slide-7 .main-title .slide-7 .highlight {
+            .slide-7 .main-title .highlight {
                 background: linear-gradient(135deg, #3b82f6, #06b6d4);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
@@ -2099,6 +2123,9 @@
                 border-radius: 10px;
                 border: 1px solid rgba(0,0,0,0.03);
                 transition: all 0.2s ease;
+                margin-bottom: 0;
+                font-size: inherit;
+                line-height: inherit;
             }
 
             .slide-7 .feature-item:hover {
@@ -2114,18 +2141,24 @@
                 align-items: center;
                 justify-content: center;
                 flex-shrink: 0;
+                font-size: inherit;
+                color: inherit;
+                margin-bottom: 0;
             }
 
-            .slide-7 .feature-icon.slide-7 .blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
-            .slide-7 .feature-icon.slide-7 .cyan { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
-            .slide-7 .feature-icon.slide-7 .emerald { background: linear-gradient(135deg, #10b981, #34d399); }
-            .slide-7 .feature-icon.slide-7 .amber { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
-            .slide-7 .feature-icon.slide-7 .purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
-            .slide-7 .feature-icon.slide-7 .rose { background: linear-gradient(135deg, #f43f5e, #fb7185); }
+            .slide-7 .feature-icon.blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+            .slide-7 .feature-icon.cyan { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
+            .slide-7 .feature-icon.emerald { background: linear-gradient(135deg, #10b981, #34d399); }
+            .slide-7 .feature-icon.amber { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+            .slide-7 .feature-icon.purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+            .slide-7 .feature-icon.rose { background: linear-gradient(135deg, #f43f5e, #fb7185); }
 
             .slide-7 .feature-icon i {
                 font-size: 12px;
                 color: white;
+                margin: 0;
+                width: auto;
+                text-align: inherit;
             }
 
             .slide-7 .feature-content h4 {
@@ -2208,7 +2241,7 @@
                 margin-bottom: 4px;
             }
 
-            .slide-7 .summary-title .slide-7 .accent {
+            .slide-7 .summary-title .accent {
                 color: #06b6d4;
             }
 
@@ -2675,6 +2708,9 @@
                 border-radius: 10px;
                 border: 1px solid rgba(0,0,0,0.03);
                 transition: all 0.2s ease;
+                margin-bottom: 0;
+                font-size: inherit;
+                line-height: inherit;
             }
 
             .slide-8 .feature-item:hover {
@@ -2690,6 +2726,9 @@
                 align-items: center;
                 justify-content: center;
                 flex-shrink: 0;
+                font-size: inherit;
+                color: inherit;
+                margin-bottom: 0;
             }
 
             .slide-8 .feature-icon.blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
