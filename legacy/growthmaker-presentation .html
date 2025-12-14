@@ -36,6 +36,7 @@
             width: 100%;
             min-height: 720px;
             background: white;
+            overflow: hidden;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             border-radius: 8px;
             overflow: hidden;
@@ -318,137 +319,965 @@
             50% { transform: translateY(-20px) rotate(5deg); }
         }
 
-        /* Slide 2 - Problem */
+        /* Slide 2 - Problem (v6 Style Upgrade) */
         .slide-2 {
             flex-direction: row !important;
+            position: relative;
+            overflow: hidden;
         }
 
         .slide-2 .left-section {
             flex: 1;
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 40%, #dc2626 70%, #ef4444 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 0 60px;
+            padding: 50px 60px;
             color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 배경 데코레이션 - 슬라이드 6,7,8,12 스타일 */
+        .slide-2 .bg-decoration {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .slide-2 .bg-decoration.amber {
+            width: 400px;
+            height: 400px;
+            background: #fbbf24;
+            top: -150px;
+            right: -100px;
+            opacity: 0.15;
+            animation: floatDecoration-slide2 8s ease-in-out infinite;
+        }
+
+        .slide-2 .bg-decoration.orange {
+            width: 300px;
+            height: 300px;
+            background: #f97316;
+            bottom: -100px;
+            left: -80px;
+            opacity: 0.12;
+            animation: floatDecoration-slide2 10s ease-in-out infinite reverse;
+        }
+
+        .slide-2 .bg-decoration.rose {
+            width: 250px;
+            height: 250px;
+            background: #f43f5e;
+            top: 50%;
+            left: 30%;
+            opacity: 0.08;
+            animation: floatDecoration-slide2 12s ease-in-out infinite;
+        }
+
+        .slide-2 .left-section::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse-glow-slide2 4s ease-in-out infinite;
+        }
+
+        .slide-2 .left-section::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            left: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0,0,0,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse-glow-slide2 5s ease-in-out infinite reverse;
+        }
+
+        .slide-2 .grid-pattern-red {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: 0;
+            pointer-events: none;
+            animation: gridFade-slide2 1s ease-out forwards;
+        }
+
+        .slide-2 .left-content {
+            position: relative;
+            z-index: 1;
         }
 
         .slide-2 .right-section {
             width: 450px;
-            background: #f1f5f9;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 오른쪽 섹션 배경 데코레이션 */
+        .slide-2 .right-section::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: floatDecoration-slide2 6s ease-in-out infinite;
+        }
+
+        .slide-2 .right-section::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: floatDecoration-slide2 8s ease-in-out infinite reverse;
         }
 
         .slide-2 .main-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            line-height: 1.3;
-            margin-bottom: 2.5rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            font-size: 2.3rem;
+            font-weight: 900;
+            line-height: 1.35;
+            margin-bottom: 2rem;
+            letter-spacing: -0.02em;
+            opacity: 0;
+            animation: fadeInUp-slide2 0.8s ease-out forwards;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.1);
         }
 
-        .problem-item {
+        .slide-2 .main-title .highlight-text {
+            background: linear-gradient(135deg, #fef08a, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            display: inline-block;
+        }
+
+        .slide-2 .main-title .highlight-text::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #fbbf24, transparent);
+            border-radius: 2px;
+            animation: expandWidth-slide2 0.8s ease-out 0.5s forwards;
+            transform-origin: left;
+            transform: scaleX(0);
+        }
+
+        .slide-2 .problem-item {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            font-size: 1rem;
             line-height: 1.5;
+            padding: 14px 18px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            animation: slideInDown-slide2 0.6s ease-out forwards;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .problem-item i {
-            margin-right: 12px;
-            margin-top: 4px;
-            color: #fee2e2;
-            font-size: 1.4rem;
-            width: 24px;
-            text-align: center;
+        .slide-2 .problem-item:nth-child(1) { animation-delay: 0.3s; }
+        .slide-2 .problem-item:nth-child(2) { animation-delay: 0.4s; }
+        .slide-2 .problem-item:nth-child(3) { animation-delay: 0.5s; }
+        .slide-2 .problem-item:nth-child(4) { animation-delay: 0.6s; }
+        .slide-2 .problem-item:nth-child(5) { animation-delay: 0.7s; }
+        .slide-2 .problem-item:nth-child(6) { animation-delay: 0.8s; }
+
+        .slide-2 .problem-item:hover {
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08));
+            transform: translateX(8px) translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: rgba(255,255,255,0.25);
         }
 
-        .highlight-box {
-            background: rgba(255,255,255,0.1);
-            border-left: 4px solid #fee2e2;
-            padding: 1.5rem;
+        .slide-2 .problem-item i {
+            margin-right: 14px;
+            margin-top: 2px;
+            color: #fef08a;
+            font-size: 1rem;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.25), rgba(245, 158, 11, 0.15));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2);
+        }
+
+        .slide-2 .problem-item:hover i {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.35), rgba(245, 158, 11, 0.25));
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+        }
+
+        .slide-2 .highlight-box {
+            background: linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0.15));
+            border-left: 4px solid #fbbf24;
+            padding: 1.25rem 1.5rem;
             margin-bottom: 1.5rem;
-            border-radius: 0 8px 8px 0;
+            border-radius: 0 14px 14px 0;
+            backdrop-filter: blur(15px);
+            opacity: 0;
+            animation: fadeInUp-slide2 0.8s ease-out 0.15s forwards;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
         }
 
-        /* Slide 3 - Gap */
-        .slide-3 {
+        .slide-2 .highlight-box:hover {
+            transform: translateX(5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .slide-2 .right-section img {
+            border-radius: 16px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.2), 0 10px 20px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            animation: zoomIn-slide2 0.8s ease-out 0.3s forwards;
+        }
+
+        .slide-2 .right-section img:hover {
+            transform: scale(1.03) translateY(-5px);
+            box-shadow: 0 35px 80px rgba(0,0,0,0.25), 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        /* 슬라이드 2 전용 애니메이션 - v6 스타일 */
+        @keyframes fadeInUp-slide2 {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft-slide2 {
+            from {
+                opacity: 0;
+                transform: translateX(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInDown-slide2 {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes zoomIn-slide2 {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes expandWidth-slide2 {
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        @keyframes floatDecoration-slide2 {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            50% {
+                transform: translate(20px, -20px);
+            }
+        }
+
+        @keyframes pulse-glow-slide2 {
+            0%, 100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes gridFade-slide2 {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Slide 3 - Gap (v6 Style Upgrade) */
+        .slide-3.active {
+            display: flex !important;
             flex-direction: row !important;
+            position: relative;
+            overflow: hidden;
+            align-items: stretch;
+            justify-content: center;
+            outline: none;
+            border: none;
+        }
+
+        .slide-3 *:focus {
+            outline: none;
         }
 
         .slide-3 .developer-section {
-            flex: 1;
-            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+            flex: 1 1 50%;
+            max-width: 50%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #334155 70%, #475569 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 0 60px;
+            padding: 40px 60px;
             color: white;
+            position: relative;
+            overflow: hidden;
+            transition: flex 0.4s ease, max-width 0.4s ease, opacity 0.4s ease;
+            opacity: 0.88;
+        }
+
+        .slide-3 .developer-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(148, 163, 184, 0.03) 100%);
+            pointer-events: none;
+            z-index: 0;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide-3 .developer-section:hover {
+            opacity: 1;
+            box-shadow: 10px 0 60px rgba(148, 163, 184, 0.15);
+        }
+
+        .slide-3 .developer-section:hover::before {
+            background: linear-gradient(135deg, transparent 0%, rgba(148, 163, 184, 0.1) 100%);
+        }
+
+        .slide-3 .developer-section:hover .bg-decoration.gray {
+            opacity: 0.4 !important;
+            filter: blur(90px) !important;
+            transform: translate(-20px, 15px) scale(1.1) !important;
+        }
+
+        .slide-3 .developer-section:hover .bg-decoration.slate {
+            opacity: 0.35 !important;
+            filter: blur(80px) !important;
+            transform: translate(20px, -15px) scale(1.1) !important;
+        }
+
+        .slide-3 .developer-section:hover .section-title i {
+            transform: scale(1.12) rotate(-5deg) !important;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.35) !important;
+        }
+
+        .slide-3 .developer-section:hover .priority-item {
+            border-color: rgba(148, 163, 184, 0.25);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.2), 0 0 15px rgba(148, 163, 184, 0.08);
+        }
+
+        .slide-3 .developer-section:hover .result-box {
+            border-left-color: #cbd5e1;
+            box-shadow: 0 12px 45px rgba(0,0,0,0.25), 0 0 25px rgba(148, 163, 184, 0.1);
         }
 
         .slide-3 .marketer-section {
-            flex: 1;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            flex: 1 1 50%;
+            max-width: 50%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #1e40af 70%, #3b82f6 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 0 60px;
+            padding: 40px 60px;
             color: white;
+            position: relative;
+            overflow: hidden;
+            transition: flex 0.4s ease, max-width 0.4s ease;
+            box-shadow: inset 5px 0 30px rgba(59, 130, 246, 0.1);
+            outline: none !important;
+            border: none !important;
         }
 
-        .section-title {
-            font-size: 1.8rem;
+        .slide-3 .marketer-section::-webkit-scrollbar {
+            display: none;
+        }
+
+        .slide-3 .marketer-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(59, 130, 246, 0.08) 100%);
+            pointer-events: none;
+            z-index: 0;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide-3 .marketer-section:hover {
+            flex: 1.15 1 auto;
+            max-width: none;
+            box-shadow: inset 8px 0 40px rgba(59, 130, 246, 0.15);
+            outline: none !important;
+            border: none !important;
+        }
+
+        .slide-3:has(.marketer-section:hover) .developer-section {
+            flex: 0.85 1 auto;
+            max-width: none;
+            opacity: 0.85;
+        }
+
+        .slide-3:has(.marketer-section:hover) .vs-divider {
+            left: 46%;
+        }
+
+        .slide-3 .marketer-section:hover::before {
+            background: linear-gradient(135deg, transparent 0%, rgba(59, 130, 246, 0.08) 100%);
+        }
+
+        .slide-3 .marketer-section:hover .bg-decoration.blue {
+            opacity: 0.4 !important;
+            filter: blur(90px) !important;
+            transform: translate(20px, -15px) scale(1.05) !important;
+        }
+
+        .slide-3 .marketer-section:hover .bg-decoration.cyan {
+            opacity: 0.3 !important;
+            filter: blur(80px) !important;
+            transform: translate(-15px, 10px) scale(1.05) !important;
+        }
+
+        .slide-3 .marketer-section:hover .section-title i {
+            transform: scale(1.08) !important;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4) !important;
+        }
+
+        .slide-3 .marketer-section:hover .section-title::after {
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.5);
+        }
+
+        .slide-3 .marketer-section:hover .priority-item {
+            border-color: rgba(96, 165, 250, 0.25);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15), 0 0 15px rgba(59, 130, 246, 0.1);
+        }
+
+        .slide-3 .marketer-section:hover .result-box {
+            border-left-color: #7dd3fc;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.2), 0 0 20px rgba(59, 130, 246, 0.1);
+        }
+
+        /* 강조 배지 - 마케터 섹션 */
+        .slide-3 .marketer-section .section-title::after {
+            content: '핵심';
+            margin-left: 12px;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 20px;
+            font-size: 0.7rem;
             font-weight: 700;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            animation: badgePulse-slide3 2s ease-in-out infinite;
         }
 
-        .priority-item {
+        @keyframes badgePulse-slide3 {
+            0%, 100% {
+                box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 6px 25px rgba(16, 185, 129, 0.6);
+                transform: scale(1.05);
+            }
+        }
+
+        /* 배경 데코레이션 - v6/v12 스타일 강화 */
+        .slide-3 .bg-decoration {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .slide-3 .developer-section .bg-decoration.gray {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #9ca3af 0%, #64748b 100%);
+            top: -150px;
+            right: -100px;
+            opacity: 0.25;
+            animation: floatDecoration-slide3 8s ease-in-out infinite, glowPulse-slide3 4s ease-in-out infinite;
+        }
+
+        .slide-3 .developer-section .bg-decoration.slate {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, #94a3b8 0%, #475569 100%);
+            bottom: -120px;
+            left: -80px;
+            opacity: 0.2;
+            animation: floatDecoration-slide3 10s ease-in-out infinite reverse, glowPulse-slide3 5s ease-in-out infinite 1s;
+        }
+
+        .slide-3 .marketer-section .bg-decoration.blue {
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, #60a5fa 0%, #3b82f6 50%, #1e40af 100%);
+            top: -180px;
+            right: -120px;
+            opacity: 0.35;
+            animation: floatDecoration-slide3 9s ease-in-out infinite, glowPulse-slide3 4s ease-in-out infinite;
+        }
+
+        .slide-3 .marketer-section .bg-decoration.cyan {
+            width: 380px;
+            height: 380px;
+            background: radial-gradient(circle, #22d3ee 0%, #06b6d4 50%, #0891b2 100%);
+            bottom: -140px;
+            left: -100px;
+            opacity: 0.25;
+            animation: floatDecoration-slide3 11s ease-in-out infinite reverse, glowPulse-slide3 5s ease-in-out infinite 1s;
+        }
+
+        /* 그리드 패턴 - v7/v8 스타일 */
+        .slide-3 .grid-pattern {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0;
+            animation: gridFade-slide3 1.2s ease-out forwards;
+        }
+
+        .slide-3 .section-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+        }
+
+        .slide-3 .section-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 2rem;
+            text-align: center;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            opacity: 0;
+            animation: fadeInDown-slide3 0.8s ease-out forwards;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .slide-3 .section-title i {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            font-size: 1.4rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide-3 .developer-section .section-title i {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: iconFloat-slide3 3s ease-in-out infinite;
+        }
+
+        .slide-3 .marketer-section .section-title i {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border: 1px solid rgba(255,255,255,0.25);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+            animation: iconFloat-slide3 3s ease-in-out infinite 0.5s;
+        }
+
+        .slide-3 .priority-item {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
             font-size: 1rem;
             line-height: 1.5;
-            opacity: 0.9;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.15);
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            animation: slideInUp-slide3 0.6s ease-out forwards;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
         }
 
-        .priority-item i {
-            margin-right: 12px;
-            margin-top: 4px;
-            width: 24px;
-            text-align: center;
-            font-size: 1.2rem;
-            opacity: 0.8;
+        .slide-3 .priority-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.6s ease;
         }
 
-        .result-box {
-            margin-top: 1.5rem;
-            padding: 1.5rem;
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
-            border-left: 4px solid rgba(255,255,255,0.3);
+        .slide-3 .priority-item:hover::before {
+            left: 100%;
+        }
+
+        .slide-3 .developer-section .section-content > .priority-item:nth-child(2) { animation-delay: 0.15s; }
+        .slide-3 .developer-section .section-content > .priority-item:nth-child(3) { animation-delay: 0.25s; }
+        .slide-3 .developer-section .section-content > .priority-item:nth-child(4) { animation-delay: 0.35s; }
+
+        .slide-3 .marketer-section .section-content > .priority-item:nth-child(2) { animation-delay: 0.2s; }
+        .slide-3 .marketer-section .section-content > .priority-item:nth-child(3) { animation-delay: 0.3s; }
+        .slide-3 .marketer-section .section-content > .priority-item:nth-child(4) { animation-delay: 0.4s; }
+
+        .slide-3 .priority-item:hover {
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08));
+            transform: translateY(-4px) scale(1.02);
+            border-color: rgba(255,255,255,0.25);
+        }
+
+        .slide-3 .developer-section .priority-item:hover {
+            box-shadow: 0 12px 35px rgba(0,0,0,0.25), 0 0 30px rgba(148, 163, 184, 0.15);
+        }
+
+        .slide-3 .marketer-section .priority-item:hover {
+            box-shadow: 0 12px 35px rgba(0,0,0,0.25), 0 0 30px rgba(59, 130, 246, 0.2);
+        }
+
+        .slide-3 .priority-item i {
+            margin-right: 16px;
+            margin-top: 2px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 1rem;
+            flex-shrink: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide-3 .developer-section .priority-item i {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .slide-3 .marketer-section .priority-item i {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.25);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+        }
+
+        .slide-3 .priority-item:hover i {
+            transform: scale(1.15) rotate(8deg);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .slide-3 .marketer-section .priority-item:hover i {
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .slide-3 .result-box {
+            margin-top: 1.8rem;
+            padding: 1.6rem;
+            background: linear-gradient(135deg, rgba(0,0,0,0.35), rgba(0,0,0,0.2));
+            border-radius: 16px;
+            border-left: 5px solid;
             width: 100%;
             align-self: stretch;
+            backdrop-filter: blur(20px);
+            opacity: 0;
+            animation: fadeInUp-slide3 0.8s ease-out 0.5s forwards;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+            border-top: 1px solid rgba(255,255,255,0.12);
+            border-right: 1px solid rgba(255,255,255,0.08);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
-        .result-title {
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+        .slide-3 .result-box::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .slide-3 .developer-section .result-box {
+            border-left-color: #94a3b8;
+        }
+
+        .slide-3 .marketer-section .result-box {
+            border-left-color: #60a5fa;
+        }
+
+        .slide-3 .result-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .slide-3 .developer-section .result-box:hover {
+            box-shadow: 0 16px 50px rgba(0,0,0,0.25), 0 0 40px rgba(148, 163, 184, 0.1);
+        }
+
+        .slide-3 .marketer-section .result-box:hover {
+            box-shadow: 0 16px 50px rgba(0,0,0,0.25), 0 0 40px rgba(59, 130, 246, 0.15);
+        }
+
+        .slide-3 .result-title {
+            font-weight: 800;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.01em;
+        }
+
+        .slide-3 .result-title::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse-dot-slide3 2s ease-in-out infinite;
+        }
+
+        .slide-3 .developer-section .result-title::before {
+            background: #94a3b8;
+            box-shadow: 0 0 12px #94a3b8, 0 0 24px rgba(148, 163, 184, 0.5);
+        }
+
+        .slide-3 .marketer-section .result-title::before {
+            background: #60a5fa;
+            box-shadow: 0 0 12px #60a5fa, 0 0 24px rgba(96, 165, 250, 0.5);
+        }
+
+        .slide-3 .result-text {
+            font-size: 0.98rem;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        /* VS 구분선 - v6/v7 스타일 강화 */
+        .slide-3 .vs-divider {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: left 0.4s ease;
+        }
+
+        .slide-3 .vs-circle {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #e2e8f0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
             font-size: 1.1rem;
+            color: #1e40af;
+            box-shadow:
+                0 0 0 4px rgba(255,255,255,0.2),
+                0 0 0 8px rgba(59, 130, 246, 0.1),
+                0 10px 40px rgba(0,0,0,0.3),
+                0 0 60px rgba(59, 130, 246, 0.2);
+            animation: pulse-vs-slide3-fixed 2.5s ease-in-out infinite;
+            letter-spacing: 0.05em;
         }
 
-        .result-text {
-            font-size: 0.95rem;
-            opacity: 0.9;
-            line-height: 1.4;
+        /* 슬라이드 3 전용 애니메이션 - v7/v8 스타일 강화 */
+        @keyframes fadeInDown-slide3 {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp-slide3 {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp-slide3 {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes floatDecoration-slide3 {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(15px, -25px) rotate(2deg);
+            }
+            50% {
+                transform: translate(30px, -15px) rotate(0deg);
+            }
+            75% {
+                transform: translate(15px, -30px) rotate(-2deg);
+            }
+        }
+
+        @keyframes glowPulse-slide3 {
+            0%, 100% {
+                opacity: 0.2;
+                filter: blur(120px);
+            }
+            50% {
+                opacity: 0.35;
+                filter: blur(100px);
+            }
+        }
+
+        @keyframes gridFade-slide3 {
+            from {
+                opacity: 0;
+                transform: scale(1.1);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse-dot-slide3 {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+                box-shadow: 0 0 12px currentColor;
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.3);
+                box-shadow: 0 0 20px currentColor;
+            }
+        }
+
+        @keyframes pulse-vs-slide3-fixed {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow:
+                    0 0 0 4px rgba(255,255,255,0.2),
+                    0 0 0 8px rgba(59, 130, 246, 0.1),
+                    0 10px 40px rgba(0,0,0,0.3),
+                    0 0 60px rgba(59, 130, 246, 0.2);
+            }
+            50% {
+                transform: scale(1.08);
+                box-shadow:
+                    0 0 0 6px rgba(255,255,255,0.25),
+                    0 0 0 12px rgba(59, 130, 246, 0.15),
+                    0 15px 50px rgba(0,0,0,0.35),
+                    0 0 80px rgba(59, 130, 246, 0.3);
+            }
+        }
+
+        @keyframes iconFloat-slide3 {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-4px);
+            }
         }
 
         /* Slide 4 - Philosophy */
@@ -1142,29 +1971,36 @@
         <!-- Slide 2: Problem -->
         <div class="slide slide-2" data-slide="2">
             <div class="left-section">
-                <h1 class="main-title">
-                    비싼 대시보드<br/>
-                    하지만 마케터는 다시 엑셀로 돌아갑니다
-                </h1>
-                <div class="highlight-box">
-                    <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">만든 사람과 쓰는 사람이 다른 대시보드</p>
-                    <p style="opacity: 0.9;">'데이터 전처리'와 '시각적 요소'는 있지만 <strong>'진짜 액션'</strong>을 위한 내용은 없습니다.</p> 
-                </div>
-                <div class="problem-item">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <p><span style="font-weight: 600;">막대한 투자:</span> 수백만 원 짜리 대시보드를 구축했지만 실제 사용률은 20% 미만</p>
-                </div>
-                <div class="problem-item">
-                    <i class="fas fa-download"></i>
-                    <p><span style="font-weight: 600;">결국 다시 다운로드:</span> 대시보드 대신 매일 엑셀 파일을 받아 직접 분석</p>
-                </div>
-                <div class="problem-item">
-                    <i class="fas fa-chart-bar"></i>
-                    <p><span style="font-weight: 600;">피벗 테이블 재작성:</span> 원하는 답을 얻기 위한 끝없는 재가공</p>
-                </div>
-                <div class="problem-item">
-                    <i class="fas fa-clock"></i>
-                    <p><span style="font-weight: 600;">시간 낭비:</span> 대시보드를 배워도 '무엇을 해야하는 지'는 여전히 공백</p>
+                <!-- 배경 데코레이션 - v6 스타일 -->
+                <div class="bg-decoration amber"></div>
+                <div class="bg-decoration orange"></div>
+                <div class="bg-decoration rose"></div>
+                <div class="grid-pattern-red"></div>
+                <div class="left-content">
+                    <h1 class="main-title">
+                        비싼 대시보드<br/>
+                        하지만 마케터는 다시 <span class="highlight-text">엑셀로 돌아갑니다</span>
+                    </h1>
+                    <div class="highlight-box">
+                        <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">만든 사람과 쓰는 사람이 다른 대시보드</p>
+                        <p style="opacity: 0.9;">'데이터 전처리'와 '시각적 요소'는 있지만 <strong>'진짜 액션'</strong>을 위한 내용은 없습니다.</p>
+                    </div>
+                    <div class="problem-item">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p><span style="font-weight: 600;">막대한 투자:</span> 수백만 원 짜리 대시보드를 구축했지만 실제 사용률은 20% 미만</p>
+                    </div>
+                    <div class="problem-item">
+                        <i class="fas fa-download"></i>
+                        <p><span style="font-weight: 600;">결국 다시 다운로드:</span> 대시보드 대신 매일 엑셀 파일을 받아 직접 분석</p>
+                    </div>
+                    <div class="problem-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <p><span style="font-weight: 600;">피벗 테이블 재작성:</span> 원하는 답을 얻기 위한 끝없는 재가공</p>
+                    </div>
+                    <div class="problem-item">
+                        <i class="fas fa-clock"></i>
+                        <p><span style="font-weight: 600;">시간 낭비:</span> 대시보드를 배워도 '무엇을 해야하는 지'는 여전히 공백</p>
+                    </div>
                 </div>
             </div>
             <div class="right-section">
@@ -1174,48 +2010,64 @@
 
         <!-- Slide 3: Gap -->
         <div class="slide slide-3" data-slide="3">
+            <!-- VS 구분선 -->
+            <div class="vs-divider">
+                <div class="vs-circle">VS</div>
+            </div>
             <div class="developer-section">
-                <div class="section-title">
-                    <i class="fas fa-cogs" style="margin-right: 8px;"></i>
-                    대시보드의 현실
-                </div>
-                <div class="priority-item">
-                    <i class="fas fa-bullseye"></i>
-                    <p><span style="font-weight: 600;">과도한 자동화, 기획·개발자만 수월한 전처리</span></p>
-                </div>
-                <div class="priority-item">
-                    <i class="fas fa-palette"></i>
-                    <p><span style="font-weight: 600;">편리함보다 우선된 디자인 통일성</span></p>
-                </div>
-                <div class="priority-item">
-                    <i class="fas fa-chart-bar"></i>
-                    <p><span style="font-weight: 600;">필요 이상으로 많은 차트·필터</span></p>
-                </div>
-                <div class="result-box">
-                    <p class="result-title">결과:</p>
-                    <p class="result-text">화려하지만, <strong>무엇을 해야 할지</strong> 알려주지 못하는 대시보드</p>
+                <!-- 배경 데코레이션 -->
+                <div class="bg-decoration gray"></div>
+                <div class="bg-decoration slate"></div>
+                <div class="grid-pattern"></div>
+                <div class="section-content">
+                    <div class="section-title">
+                        <i class="fas fa-cogs"></i>
+                        대시보드의 현실
+                    </div>
+                    <div class="priority-item">
+                        <i class="fas fa-bullseye"></i>
+                        <p><span style="font-weight: 600;">과도한 자동화, 기획·개발자만 수월한 전처리</span></p>
+                    </div>
+                    <div class="priority-item">
+                        <i class="fas fa-palette"></i>
+                        <p><span style="font-weight: 600;">편리함보다 우선된 디자인 통일성</span></p>
+                    </div>
+                    <div class="priority-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <p><span style="font-weight: 600;">필요 이상으로 많은 차트·필터</span></p>
+                    </div>
+                    <div class="result-box">
+                        <p class="result-title">결과:</p>
+                        <p class="result-text">화려하지만, <strong>무엇을 해야 할지</strong> 알려주지 못하는 대시보드</p>
+                    </div>
                 </div>
             </div>
             <div class="marketer-section">
-                <div class="section-title">
-                    <i class="fas fa-user-tie" style="margin-right: 8px;"></i>
-                    마케터의 니즈
-                </div>
-                <div class="priority-item">
-                    <i class="fas fa-rocket"></i>
-                    <p><span style="font-weight: 600;">액션을 위한 <strong>'자연어'</strong> 인사이트 필요</span></p>
-                </div>
-                <div class="priority-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <p><span style="font-weight: 600;">전략 수립을 위한 <strong>현재 상황 분석</strong> 자료</span></p>
-                </div>
-                <div class="priority-item">
-                    <i class="fas fa-brain"></i>
-                    <p><span style="font-weight: 600;">타겟별 <strong>'아하 모먼트'</strong></span></p>
-                </div>
-                <div class="result-box">
-                    <p class="result-title">결과:</p>
-                    <p class="result-text">엑셀 전처리 → 피벗 테이블 기반 분석 → LLM툴을 활용한 전략개발<br/> <strong>익숙하지만 복잡한 스텝으로 회귀</strong></p>
+                <!-- 배경 데코레이션 -->
+                <div class="bg-decoration blue"></div>
+                <div class="bg-decoration cyan"></div>
+                <div class="grid-pattern"></div>
+                <div class="section-content">
+                    <div class="section-title">
+                        <i class="fas fa-user-tie"></i>
+                        마케터의 니즈
+                    </div>
+                    <div class="priority-item">
+                        <i class="fas fa-rocket"></i>
+                        <p><span style="font-weight: 600;">액션을 위한 <strong>'자연어'</strong> 인사이트 필요</span></p>
+                    </div>
+                    <div class="priority-item">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <p><span style="font-weight: 600;">전략 수립을 위한 <strong>현재 상황 분석</strong> 자료</span></p>
+                    </div>
+                    <div class="priority-item">
+                        <i class="fas fa-brain"></i>
+                        <p><span style="font-weight: 600;">타겟별 <strong>'아하 모먼트'</strong></span></p>
+                    </div>
+                    <div class="result-box">
+                        <p class="result-title">결과:</p>
+                        <p class="result-text">엑셀 전처리 → 피벗 테이블 기반 분석 → LLM툴을 활용한 전략개발<br/> <strong>익숙하지만 복잡한 스텝으로 회귀</strong></p>
+                    </div>
                 </div>
             </div>
         </div>
