@@ -3411,28 +3411,28 @@
                             <i class="fas fa-user-tie"></i>
                         </div>
                         <div class="feature-title">마케터 중심 설계</div>
-                        <div class="feature-desc">시니어 마케터가 <br/><strong>직접 디자인/기획/개발,</strong><br/> 실행 가능한 정보만 제공</div>
+                        <div class="feature-desc">시니어 마케터가 <br/><strong>직접 디자인/기획/개발</strong><br/> 실행 가능한 정보만 제공</div>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">
                             <i class="fas fa-robot"></i>
                         </div>
                         <div class="feature-title">AI 액션 플랜</div>
-                        <div class="feature-desc">마케터가 학습시킨 <br/><strong>AI 인사이트를 기반,</strong><br/>상황에 맞춰 즉시 실행 가능한 전략 제안</div>
+                        <div class="feature-desc">마케터가 학습시킨 <br/><strong>AI 인사이트를 기반</strong><br/>상황에 맞춰 즉시 실행 가능한 전략 제안</div>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">
                             <i class="fas fa-hand-holding-heart"></i>
                         </div>
                         <div class="feature-title">휴먼 터치</div>
-                        <div class="feature-desc">분석의 정확한 맥락을 위해<br/><strong>자동화 일부를 과감히 배제,</strong><br/>더 적합하고 더 실용적인<br/>대시보드</div>
+                        <div class="feature-desc">분석의 정확한 맥락을 위해<br/><strong>자동화 일부를 과감히 배제</strong><br/>더 적합하고 더 실용적인<br/>대시보드</div>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">
                             <i class="fas fa-chart-line"></i>
                         </div>
                         <div class="feature-title">성과 예측</div>
-                        <div class="feature-desc">데이터 성과 분석을 통해 <br/><strong>계절성·시계열·향후 30일 예측,</strong><br/>현재 상황을 바탕으로 더욱<br/>'투명한' 분석</div>
+                        <div class="feature-desc">데이터 성과 분석을 통해 <br/><strong>계절성·시계열·향후 30일 예측</strong><br/>현재 상황을 바탕으로 더욱<br/>'투명한' 분석</div>
                     </div>
                 </div>
                 <div class="key-highlight">
@@ -3457,13 +3457,20 @@
             .slide-6 .main-title {
                 font-size: 1.6rem;
                 font-weight: 900;
-                color: #1e40af;
+                color: #000000;
                 text-align: center;
                 margin-bottom: 4px;
                 line-height: 1.3;
                 letter-spacing: -0.02em;
                 opacity: 0;
                 animation: fadeInUp-slide6 0.6s ease-out forwards;
+            }
+
+            .slide-6 .main-title .highlight {
+                background: linear-gradient(135deg, #3b82f6, #06b6d4);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
             }
 
             .slide-6 .sub-title {
@@ -3537,7 +3544,7 @@
 
             .slide-6 .status-badge.solution {
                 background: rgba(16, 185, 129, 0.2);
-                color: #6ee7b7;
+                color: #11a96d;
             }
 
             .slide-6 .legacy-content {
@@ -3922,7 +3929,8 @@
                 font-size: 12px;
                 color: white;
                 box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-                animation: pulse-slide6 2s ease-in-out infinite;
+                opacity: 0;
+                animation: fadeInVs-slide6 0.5s ease-out 0.25s forwards, pulse-slide6 2s ease-in-out 0.75s infinite;
             }
 
             .slide-6 .features-grid {
@@ -4041,9 +4049,26 @@
                 }
             }
 
+            @keyframes fadeInVs-slide6 {
+                from {
+                    opacity: 0;
+                    transform: scale(0.5);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+
             @keyframes pulse-slide6 {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.05); }
+                0%, 100% {
+                    transform: scale(1);
+                    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+                }
+                50% {
+                    transform: scale(1.15);
+                    box-shadow: 0 6px 25px rgba(59, 130, 246, 0.5), 0 0 40px rgba(59, 130, 246, 0.3);
+                }
             }
 
             @keyframes lightPulse-slide6 {
@@ -4055,8 +4080,8 @@
         <div class="slide slide-6" data-slide="6">
             <div class="slide-container">
                 <!-- Title -->
-                <h1 class="main-title">단순 데이터 나열을 넘어, '행동'과 '직관'을 설계하다</h1>
-                <p class="sub-title">데이터를 통해 진단하고, 기술로 실행하며, 전략으로 성장시키는 Growth Partner</p>
+                <h1 class="main-title">단순 데이터 나열을 넘어, <span class="highlight">'행동'과 '직관'</span>을 설계합니다.</h1>
+                <p class="sub-title">데이터로 진단하고 기술로 실행하며 전략으로 성장을 만들어가는 Growth Partner</p>
 
                 <!-- Comparison Section -->
                 <div class="comparison-section">
@@ -4156,7 +4181,7 @@
                                     </div>
                                     <div class="alert-info">
                                         <h4>전환율 (+5% Green)</h4>
-                                        <p>전환율 개선 추세 유지</p>
+                                        <p>A 채널에 예산을 더 투자하세요</p>
                                     </div>
                                     <div class="action-badge">성과 개선</div>
                                 </div>
@@ -4168,7 +4193,7 @@
                                     </div>
                                     <div class="alert-info">
                                         <h4>이탈률 (High Risk)</h4>
-                                        <p>결제 오류 점검 필요</p>
+                                        <p>결제 시스템을 간소화 해야합니다</p>
                                     </div>
                                     <div class="action-badge">긴급 개선</div>
                                 </div>
@@ -4252,7 +4277,7 @@
                                     </div>
                                     <div class="benefit-text">
                                         <h4>Zero Learning Curve</h4>
-                                        <p>신호등 시스템, 표준 모델 활용</p>
+                                        <p>신호등 시스템, 액션을 만드는 마케팅 UX</p>
                                     </div>
                                 </div>
                             </div>
@@ -4267,7 +4292,7 @@
                             <i class="fas fa-filter"></i>
                         </div>
                         <h3>핵심 시각화 및 퍼널 분석</h3>
-                        <p>D3.js 기반 인터랙티브 퍼널 차트로 고객 구매 여정 5단계 시각화</p>
+                        <p>D3.js 기반 인터랙티브 퍼널 차트로<br/>고객 구매 여정 5단계 시각화</p>
                         <div class="feature-tags">
                             <span class="feature-tag">AARRR 퍼널</span>
                             <span class="feature-tag">기간 비교</span>
@@ -4278,7 +4303,7 @@
                             <i class="fas fa-brain"></i>
                         </div>
                         <h3>AI 인사이트 및 전략 도구</h3>
-                        <p>핵심 요약, 긴급 개선 사항 AI 자동 분석. BCG 매트릭스 전략</p>
+                        <p>AI가 분석한 핵심 요약과 긴급개선 포인트 제공<br/>직관적이고 합리적인 전략 설계 지원</p>
                         <div class="feature-tags">
                             <span class="feature-tag">AI 자동 분석</span>
                             <span class="feature-tag">BCG 매트릭스</span>
@@ -4289,10 +4314,10 @@
                             <i class="fas fa-chart-line"></i>
                         </div>
                         <h3>데이터 기반 의사결정</h3>
-                        <p>예산 투자 시뮬레이션, 이탈 위험 경고 시스템 실시간 대응</p>
+                        <p>기존 데이터와 성과 예측 데이터를 활용한<br/>예산 투자 시뮬레이션 제공</p>
                         <div class="feature-tags">
                             <span class="feature-tag">예산 시뮬레이션</span>
-                            <span class="feature-tag">이탈 경고</span>
+                            <span class="feature-tag">이탈 위험 경고 시스템</span>
                         </div>
                     </div>
                     <div class="feature-card">
@@ -4300,7 +4325,7 @@
                             <i class="fas fa-users"></i>
                         </div>
                         <h3>상세 분석 (채널/고객)</h3>
-                        <p>채널별 퍼널 데이터, 신규 vs 재방문, 채널 품질 매트릭스</p>
+                        <p>채널별 퍼널 데이터와 신규 vs 재방문 고객 추이 분석<br/>니치 영역까지 확인 가능한 정밀 분석</p>
                         <div class="feature-tags">
                             <span class="feature-tag">채널 분석</span>
                             <span class="feature-tag">고객 세분화</span>
@@ -4311,9 +4336,7 @@
                 <!-- Key Message -->
                 <div class="key-message">
                     <p class="key-message-text">
-                        <span class="highlight-text-white">AI가 분석</span>하고,
-                        <span class="highlight-text-white">신호등이 알리고</span>,
-                        <span class="highlight-text-white">BCG가 전략</span>을 제시합니다
+                        <span class="highlight-text-white">그로스 마케터의 시선으로</span> 정제된 인사이트. 이제 결정만 내리세요.
                     </p>
                 </div>
             </div>
@@ -4782,8 +4805,8 @@
 
                     <!-- Title Section -->
                     <section class="title-section">
-                        <h1 class="main-title">보는 데이터를 넘어, <span class="highlight">'행동하는 데이터'</span>로</h1>
-                        <p class="subtitle">AI가 <strong>진단(Diagnosis)</strong>하고, <strong>예측(Prophet)</strong>하며, 구체적인 <strong>할 일(Action Item)</strong>을 제시합니다</p>
+                        <h1 class="main-title">보고용 데이터를 넘어, <span class="highlight">'행동을 만드는 데이터'</span>로</h1>
+                        <p class="subtitle">AI가 <strong>진단(Diagnosis)</strong>하고, <strong>예측(Prophet)</strong>하며 즉시 실행 가능한 <strong>할 일(Action Item)</strong>을 제시합니다</p>
                     </section>
 
                     <!-- Main Content -->
@@ -4794,8 +4817,8 @@
                                 <div class="problem-header">
                                     <span class="problem-badge">Problem</span>
                                 </div>
-                                <h3 class="problem-title">"자동화는 되었지만, 분석은 없다"</h3>
-                                <p class="problem-desc">숫자 나열은 기계의 영역. '왜?' '무엇을?'에 대한 답이 없다.</p>
+                                <h3 class="problem-title">"정리는 되었지만, 뭘 해야할지 모르겠어.."</h3>
+                                <p class="problem-desc">보고는 숫자를 나열하지만, ‘왜’와 ‘무엇을 해야 하는지’는 말해주지 않습니다.</p>
                                 <div class="problem-visual">
                                     <div class="problem-icon-box">
                                         <i class="fas fa-question-circle"></i>
@@ -4814,7 +4837,7 @@
                             <div class="solution-section">
                                 <div class="solution-header">
                                     <span class="solution-badge">Solution</span>
-                                    <h3 class="solution-title">AI 기반 인사이트 & 진단</h3>
+                                    <h3 class="solution-title">마케터 시선으로 완성한 AI 종합 진단</h3>
                                 </div>
                                 <div class="feature-list">
                                     <div class="feature-item">
@@ -4822,8 +4845,8 @@
                                             <i class="fas fa-chart-pie"></i>
                                         </div>
                                         <div class="feature-content">
-                                            <h4>AI 컨설턴트 종합 진단</h4>
-                                            <p>현황을 명확한 언어로 요약</p>
+                                            <h4>맥락을 짚어내는 종합 진단</h4>
+                                            <p>현재 상황을 실무자가 이해하는 언어로 명확하게 요약합니다.</p>
                                         </div>
                                     </div>
                                     <div class="feature-item">
@@ -4831,9 +4854,9 @@
                                             <i class="fas fa-check-circle"></i>
                                         </div>
                                         <div class="feature-content">
-                                            <h4>AI 핵심 추천 사항</h4>
-                                            <p>우선순위별 구체적 행동 가이드</p>
-                                            <span class="feature-tag">예: A브랜드 예산 15% 확대</span>
+                                            <h4>핵심 추천 사항</h4>
+                                            <p>우선순위에 따라 지금 해야 할 행동을 구체적으로 제시합니다.</p>
+                                            <span class="feature-tag">예: A브랜드 예산을 B채널의 C제품에 15% 확대</span>
                                         </div>
                                     </div>
                                     <div class="feature-item">
@@ -4841,8 +4864,8 @@
                                             <i class="fas fa-exclamation-triangle"></i>
                                         </div>
                                         <div class="feature-content">
-                                            <h4>주의 필요 알림</h4>
-                                            <p>재무적 영향 계산 + 조치 안내</p>
+                                            <h4>사전 경고 · 영향 안내</h4>
+                                            <p>의사결정 전, 재무적 영향 계산과 필요한 조치를 함께 제공합니다.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -4855,15 +4878,15 @@
                                 <div class="problem-header">
                                     <span class="problem-badge">Problem</span>
                                 </div>
-                                <h3 class="problem-title">"예쁜 차트, 해석하려면 공부가 필요"</h3>
-                                <p class="problem-desc">화려한 히트맵이 실무자 시간을 빼앗는다.</p>
+                                <h3 class="problem-title">"차트가 많아서 해석하려면 따로 공부가 필요해요"</h3>
+                                <p class="problem-desc">화려한 히트맵과 다차원 그래프. 실무자의 시간만 빼앗습니다.</p>
                                 <div class="problem-visual">
                                     <div class="problem-icon-box">
                                         <i class="fas fa-th"></i>
                                     </div>
                                     <div class="problem-visual-text">
-                                        복잡한 히트맵, 다차원 그래프<br/>
-                                        <strong>"이거 어떻게 해석해?"</strong>
+                                        복잡한 상관 계수, 다채로운 색상 스케일<br/>
+                                        <strong>"이걸.. 어떻게 해석하죠?"</strong>
                                     </div>
                                 </div>
                             </div>
@@ -4875,7 +4898,7 @@
                             <div class="solution-section">
                                 <div class="solution-header">
                                     <span class="solution-badge">Solution</span>
-                                    <h3 class="solution-title">직관적 상태 표시 & 요약</h3>
+                                    <h3 class="solution-title">직관적 상태 표시 · 핵심 요약</h3>
                                 </div>
                                 <div class="feature-list">
                                     <div class="feature-item">
@@ -4885,7 +4908,7 @@
                                         <div class="feature-content">
                                             <h4>상태 아이콘 시각화</h4>
                                             <p>이모지와 텍스트로 한눈에 판단</p>
-                                            <span class="feature-tag">ROAS 2.8 🎉 매우 좋음</span>
+                                            <span class="feature-tag">ROAS 2.8 🎉 성과가 매우 좋습니다. B제품에 더 투자하세요.</span>
                                         </div>
                                     </div>
                                     <div class="feature-item">
@@ -4894,8 +4917,8 @@
                                         </div>
                                         <div class="feature-content">
                                             <h4>단순화된 KPI 카드</h4>
-                                            <p>주요(5개) ↔ 세부(9개) 토글</p>
-                                            <span class="feature-tag">정보 과부하 방지</span>
+                                            <p>주요(5개) ↔ 세부(9개)</p>
+                                            <span class="feature-tag">필요할 때만 확장해서 정보 과부하를 방지하세요.</span>
                                         </div>
                                     </div>
                                     <div class="feature-item">
@@ -4904,7 +4927,7 @@
                                         </div>
                                         <div class="feature-content">
                                             <h4>Zero Learning Curve</h4>
-                                            <p>직관적으로 이해 가능한 UI</p>
+                                            <p>사용자의 부담을 덜어 배우지 않아도 바로 이해되는 UI</p>
                                         </div>
                                     </div>
                                 </div>
@@ -4917,15 +4940,15 @@
                                 <div class="problem-header">
                                     <span class="problem-badge">Problem</span>
                                 </div>
-                                <h3 class="problem-title">"결국 엑셀을 켜는 현실"</h3>
-                                <p class="problem-desc">대시보드가 질문에 답 못해 엑셀로 회귀.</p>
+                                <h3 class="problem-title">"결국 엑셀을 다시 켜야해요"</h3>
+                                <p class="problem-desc">대시보드는 질문에 답하지 못하고, 실무자는 다시 엑셀로 회귀합니다.</p>
                                 <div class="problem-visual">
                                     <div class="problem-icon-box">
                                         <i class="fas fa-file-excel"></i>
                                     </div>
                                     <div class="problem-visual-text">
                                         =VLOOKUP... =SUMIFS...<br/>
-                                        <strong>"다시 가공해야지..."</strong>
+                                        <strong>"다시 가공해야겠네..."</strong>
                                     </div>
                                 </div>
                             </div>
@@ -4937,7 +4960,7 @@
                             <div class="solution-section">
                                 <div class="solution-header">
                                     <span class="solution-badge">Solution</span>
-                                    <h3 class="solution-title">자체 심층 분석 & 예측</h3>
+                                    <h3 class="solution-title">자체 심층 분석 · 성과 예측</h3>
                                 </div>
                                 <div class="feature-list">
                                     <div class="feature-item">
@@ -4946,8 +4969,8 @@
                                         </div>
                                         <div class="feature-content">
                                             <h4>다차원 피벗 분석</h4>
-                                            <p>광고세트, 성별, 연령 조합 분석</p>
-                                            <span class="feature-tag">엑셀 다운로드 불필요</span>
+                                            <p>광고세트 x 성별 x 연령 등 다양한 조합 분석을 기본 제공</p>
+                                            <span class="feature-tag">엑셀 다운로드 없이 대시보드 안에서 바로 확인 · 바로 결정</span>
                                         </div>
                                     </div>
                                     <div class="feature-item">
@@ -4955,8 +4978,8 @@
                                             <i class="fas fa-chart-line"></i>
                                         </div>
                                         <div class="feature-content">
-                                            <h4>Prophet 예측</h4>
-                                            <p>향후 30일 성과 예측 제공</p>
+                                            <h4>예측 분석</h4>
+                                            <p>향후 30일 세부 성과 예측을 통해 선제적 리스크 관리</p>
                                             <span class="feature-tag">Facebook Prophet 내장</span>
                                         </div>
                                     </div>
@@ -4966,7 +4989,7 @@
                                         </div>
                                         <div class="feature-content">
                                             <h4>리타겟팅 효율 등급표</h4>
-                                            <p>조합별 효율 테이블 즉시 제공</p>
+                                            <p>조합별 효율을 테이블로 즉시 제공</p>
                                         </div>
                                     </div>
                                 </div>
@@ -4980,9 +5003,9 @@
                             <span>💡</span>
                         </div>
                         <div class="summary-content">
-                            <div class="summary-label">철학의 구현체</div>
-                            <h2 class="summary-title">'예쁜 쓰레기'가 아닌, <span class="accent">'액션'과 '해석'</span> 중심 설계</h2>
-                            <p class="summary-desc">AI 대시보드는 실무자가 즉시 행동할 수 있는 인사이트를 제공합니다. 데이터를 통해 진단하고, 기술로 실행하며, 전략으로 성장시키는 Growth Partner.</p>
+                            <div class="summary-label">대시보드는 액션을 위한 도구입니다.</div>
+                            <h2 class="summary-title">'예쁜 차트'가 아닌, <span class="accent">'해석'과 '실험'</span>을 중심으로 설계되어야 합니다.</h2>
+                            <p class="summary-desc">AI 대시보드는 실무자가 즉시 행동할 수 있는 인사이트를 제공합니다. 데이터를 통해 진단하고, 기술로 실행하며, 전략으로 성장을 만드는 Growth Partner 입니다.</p>
                         </div>
                         <div class="summary-tags">
                             <div class="summary-tag">
@@ -5891,8 +5914,8 @@
             <div class="slide-container">
                 <!-- Title Section -->
                 <section class="title-section">
-                    <h1 class="main-title">데이터를 <span class="highlight">'근거(Why)'</span>와 <span class="highlight">'행동(Action)'</span>으로 변환하다</h1>
-                    <p class="subtitle">단순 현상 통보가 아닌, <strong>전략 제안</strong> · <strong>시계열 예측</strong> · <strong>직관적 커뮤니케이션</strong>을 제공합니다</p>
+                    <h1 class="main-title">데이터를 <span class="highlight">'근거(Why)'</span>와 <span class="highlight">'행동(Action)'</span>으로 전환합니다.</h1>
+                    <p class="subtitle">단순한 업무 보고가 아닌, <strong>전략 제안</strong> · <strong>시계열 예측</strong> · <strong>직관적 커뮤니케이션</strong>을 제공합니다</p>
                 </section>
 
                 <!-- Main Content -->
@@ -5902,10 +5925,10 @@
                         <div class="card-header">
                             <div class="card-number">1</div>
                             <h3 class="card-title">
-                                '현상 통보'에서 '전략 제안'으로
+                                '상황 보고'에서 '전략 제안'으로
                                 <span class="en">Actionable Insight</span>
                             </h3>
-                            <p class="card-desc">"이탈률 30%"라는 통보 대신, "로딩 속도를 개선하라"는 구체적 제안</p>
+                            <p class="card-desc">"이탈률 30%"라는 결과 보고 대신, <br/>"결제 페이지 로딩 속도를 개선해주세요" 라는 구체적 실행 제안을 제공합니다.</p>
                         </div>
                         <div class="card-body">
                             <div class="feature-item">
@@ -5916,12 +5939,12 @@
                                 </div>
                                 <div class="feature-content">
                                     <h4>투자 제안의 구체성</h4>
-                                    <p>구체적 행동 지시 + 예측 수치로 의사결정 리스크 최소화</p>
+                                    <p>구체적 행동 지시 + 성과 예측 수치로 의사결정 리스크를 최소화</p>
                                     <div class="feature-example">
                                         <div class="label">AI 추천</div>
                                         <div class="value">
                                             Google 검색광고 예산 20% 확대
-                                            <span class="effect">ROAS +25%</span>
+                                            <span class="effect">ROAS +25% 예상</span>
                                         </div>
                                     </div>
                                 </div>
@@ -5937,7 +5960,7 @@
                                         우선순위 지정
                                         <span class="priority-tag">🔥 높음</span>
                                     </h4>
-                                    <p>무엇을 먼저 해야 할지 필터링하여 집중할 업무 명확히 제시</p>
+                                    <p>무엇을 먼저 해야 할지 필터링하여 명확한 우선순위로 제시</p>
                                 </div>
                             </div>
                             <div class="feature-item">
@@ -5949,7 +5972,7 @@
                                 </div>
                                 <div class="feature-content">
                                     <h4>맥락 있는 경고</h4>
-                                    <p>지표 악화 + 원인 가설 함께 제시</p>
+                                    <p>지표 악화만 알리는 것이 아니라, 원인 가설 함께 제시</p>
                                     <div class="feature-example">
                                         <div class="label">⚠️ CPA 급등 감지</div>
                                         <div class="value" style="font-size: 7px; color: #64748b;">
@@ -5969,7 +5992,7 @@
                                 단순 비교를 넘어 시계열 예측으로
                                 <span class="en">Prophet Algorithm</span>
                             </h3>
-                            <p class="card-desc">엑셀의 단순 전월 대비 증감률은 계절성을 무시합니다</p>
+                            <p class="card-desc">엑셀의 전월 대비 증감률은 계절성과 구조적 변화를 반영하지 못합니다.</p>
                         </div>
                         <div class="card-body">
                             <div class="feature-item">
@@ -5980,7 +6003,7 @@
                                 </div>
                                 <div class="feature-content">
                                     <h4>Prophet 시계열 예측</h4>
-                                    <p>계절성과 트렌드 반영한 예측치 + 신뢰 구간</p>
+                                    <p>계절성과 트렌드 반영한 예측치 제공 + 신뢰 구간 포함으로 불확실성까지 함께 제시</p>
                                     <div class="prophet-mini">
                                         <div class="prophet-labels">
                                             <span>과거 실적</span>
@@ -6015,7 +6038,7 @@
                                 </div>
                                 <div class="feature-content">
                                     <h4>변동 원인 분해</h4>
-                                    <p>Trend, Seasonal, Residual로 분해하여 성장의 '질' 분석</p>
+                                    <p>Trend, Seasonal, Residual로 분해하여 성장의 '양'이 아닌 '질'을 분석</p>
                                 </div>
                             </div>
                             <div class="feature-item">
@@ -6027,7 +6050,7 @@
                                 </div>
                                 <div class="feature-content">
                                     <h4>다차원 세그먼트 비교</h4>
-                                    <p>채널, 제품, 브랜드 등 다양한 축으로 교차 분석</p>
+                                    <p>채널 · 제품 · 브랜드 등 다양한 축의 교차 분석으로 어디에서 성장이 발생하는지 명확히 파악</p>
                                 </div>
                             </div>
                         </div>
@@ -6041,7 +6064,7 @@
                                 '해석 비용'을 제거하는 직관적 UI
                                 <span class="en">Zero Cognitive Load</span>
                             </h3>
-                            <p class="card-desc">"붉은색이 좋은 건가?" 고민하게 만드는 시각화는 '실패'</p>
+                            <p class="card-desc">"붉은색이 좋은 건가?" 고민하게 만드는 시각화는 실패한 UI입니다.</p>
                         </div>
                         <div class="card-body">
                             <div class="feature-item">
@@ -6053,7 +6076,7 @@
                                 </div>
                                 <div class="feature-content">
                                     <h4>결론부터 말하는 상태 카드</h4>
-                                    <p>"✅ 성과가 안정적입니다"라는 결론을 먼저 제시</p>
+                                    <p>"✅ 성과가 안정적입니다"라는 판단을 먼저 제시</p>
                                 </div>
                             </div>
                             <div class="feature-item">
@@ -6094,7 +6117,7 @@
                                 </div>
                                 <div class="feature-content">
                                     <h4>비즈니스 언어로 번역</h4>
-                                    <p>통계 용어 대신 자연어로 요약하여 경영진도 즉시 이해</p>
+                                    <p>통계 용어 대신 자연어로 요약하여 경영진도 즉시 이해 가능한 커뮤니케이션 제공</p>
                                 </div>
                             </div>
                         </div>
@@ -6109,7 +6132,7 @@
                     <div class="summary-content">
                         <div class="summary-label">AI 대시보드의 핵심 가치</div>
                         <h2 class="summary-title"><span class="accent">Why</span>(근거)와 <span class="accent">Action</span>(행동)을 함께 제공합니다</h2>
-                        <p class="summary-desc">데이터를 단순히 보여주는 것이 아니라, 비즈니스적 의미를 해석하고 구체적인 행동 가이드를 제시합니다.</p>
+                        <p class="summary-desc">데이터를 단순히 나열하지 않습니다. 비즈니스 맥락으로 해석하고, 지금 실행해야할 행동 가이드를 제시합니다.</p>
                     </div>
                     <div class="summary-keywords">
                         <div class="keyword-tag">
@@ -6190,19 +6213,19 @@
                 </h1>
                 <div class="feature-item">
                     <i class="fas fa-hand-holding"></i>
-                    <p><span style="font-weight: 500;">운영팀 전문 마케터가 직접 <strong>데이터 전처리·핵심 텍소노미</strong>를 관리</span></p>
+                    <p><span style="font-weight: 500;">운영팀 전담 마케터가 직접 <strong>데이터 전처리·핵심 텍소노미</strong>를 관리</span></p>
                 </div>
                 <div class="feature-item">
                     <i class="fas fa-shield-alt"></i>
-                    <p><span style="font-weight: 500;">비즈니스 맥락 유지를 위해 <strong>운영팀 전문 마케터가 직접 CS 대응</strong></span></p>
+                    <p><span style="font-weight: 500;">비즈니스 맥락 유지를 위해 <strong>전문 마케터가 직접 CS 대응</strong></span></p>
                 </div>
                 <div class="feature-item">
                     <i class="fas fa-link"></i>
-                    <p><span style="font-weight: 500;">운영팀 전문 마케터 <strong>직접 컨택</strong>하여 사용자의 갭 해소</span></p>
+                    <p><span style="font-weight: 500;">대시보드 운영팀이 <strong>직접 컨택</strong>하여 사용자-대시보드 간 갭 해소</span></p>
                 </div>
                 <div class="feature-item">
                     <i class="fas fa-tools"></i>
-                    <p><span style="font-weight: 500;">운영팀 전문 마케터가 직접 <strong>유지보수·기능 개선</strong>을 수행해 시장 변화에 즉각 대응</span></p>
+                    <p><span style="font-weight: 500;">전문 그로스 마케터가 직접 <strong>유지보수·기능 개선</strong>을 수행해 시장 변화에 즉각 대응</span></p>
                 </div>
                 <div class="highlight-box">
                     <p style="font-weight: 700; margin-bottom: 0.5rem;">시장은 사람으로 완성됩니다.</p>
