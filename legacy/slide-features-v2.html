@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 대시보드 - 핵심 기능</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
+        }
+
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: white;
+            box-shadow: 0 25px 80px rgba(30, 64, 175, 0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-radius: 16px;
+        }
+
+        /* Background Effects */
+        .bg-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 10% 90%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 10%, rgba(6, 182, 212, 0.05) 0%, transparent 40%);
+            z-index: 0;
+        }
+
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: 0;
+        }
+
+        /* Header */
+        .slide-header {
+            padding: 20px 50px 12px;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .header-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 14px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(6, 182, 212, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 10px;
+        }
+
+        .slide-title {
+            font-size: 1.7rem;
+            font-weight: 900;
+            color: #1e40af;
+            letter-spacing: -0.02em;
+            animation: fadeInDown 0.6s ease-out forwards;
+        }
+
+        .slide-title .highlight {
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Main Content - 5 Column Grid */
+        .main-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            padding: 8px 24px 18px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Feature Card */
+        .feature-card {
+            background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
+            border-radius: 14px;
+            border: 1.5px solid #e2e8f0;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: fadeInUp 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.05s; }
+        .feature-card:nth-child(2) { animation-delay: 0.1s; }
+        .feature-card:nth-child(3) { animation-delay: 0.15s; }
+        .feature-card:nth-child(4) { animation-delay: 0.2s; }
+        .feature-card:nth-child(5) { animation-delay: 0.25s; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .feature-card.marketing::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .feature-card.type::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .feature-card.timeseries::before { background: linear-gradient(90deg, #10b981, #34d399); }
+        .feature-card.funnel::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .feature-card.creative::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            border-color: transparent;
+        }
+
+        .feature-card.marketing:hover { border-color: #3b82f6; }
+        .feature-card.type:hover { border-color: #8b5cf6; }
+        .feature-card.timeseries:hover { border-color: #10b981; }
+        .feature-card.funnel:hover { border-color: #f59e0b; }
+        .feature-card.creative:hover { border-color: #ec4899; }
+
+        /* Card Header */
+        .card-header {
+            padding: 12px 12px 8px;
+            text-align: center;
+        }
+
+        .card-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 5px;
+            font-size: 0.6rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 6px;
+        }
+
+        .feature-card.marketing .card-number { background: #3b82f6; }
+        .feature-card.type .card-number { background: #8b5cf6; }
+        .feature-card.timeseries .card-number { background: #10b981; }
+        .feature-card.funnel .card-number { background: #f59e0b; }
+        .feature-card.creative .card-number { background: #ec4899; }
+
+        .card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+            margin: 0 auto 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-card.marketing .card-icon { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .feature-card.type .card-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .feature-card.timeseries .card-icon { background: linear-gradient(135deg, #10b981, #059669); }
+        .feature-card.funnel .card-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .feature-card.creative .card-icon { background: linear-gradient(135deg, #ec4899, #db2777); }
+
+        .card-title {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 1px;
+            line-height: 1.3;
+        }
+
+        .card-subtitle {
+            font-size: 0.55rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        /* Quote */
+        .card-quote {
+            padding: 0 10px;
+            margin-bottom: 6px;
+        }
+
+        .quote-text {
+            font-size: 0.55rem;
+            color: #64748b;
+            font-style: italic;
+            line-height: 1.4;
+            padding: 6px 8px;
+            background: #f8fafc;
+            border-radius: 6px;
+            border-left: 2px solid;
+        }
+
+        .feature-card.marketing .quote-text { border-color: #3b82f6; }
+        .feature-card.type .quote-text { border-color: #8b5cf6; }
+        .feature-card.timeseries .quote-text { border-color: #10b981; }
+        .feature-card.funnel .quote-text { border-color: #f59e0b; }
+        .feature-card.creative .quote-text { border-color: #ec4899; }
+
+        /* Metrics */
+        .card-metrics {
+            padding: 0 12px 10px;
+            min-height: 72px;
+        }
+
+        .metrics-label {
+            font-size: 0.58rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .feature-card.marketing .metrics-label { color: #3b82f6; }
+        .feature-card.type .metrics-label { color: #8b5cf6; }
+        .feature-card.timeseries .metrics-label { color: #10b981; }
+        .feature-card.funnel .metrics-label { color: #f59e0b; }
+        .feature-card.creative .metrics-label { color: #ec4899; }
+
+        .metric-item {
+            font-size: 0.54rem;
+            color: #475569;
+            line-height: 1.45;
+            padding-left: 10px;
+            position: relative;
+            margin-bottom: 4px;
+        }
+
+        .metric-item::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #94a3b8;
+        }
+
+        /* Growth Points */
+        .card-growth {
+            padding: 10px 12px;
+            background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+            border-top: 1px solid #e2e8f0;
+            flex: 1;
+            min-height: 240px;
+        }
+
+        .growth-label {
+            font-size: 0.58rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .feature-card.marketing .growth-label { color: #3b82f6; }
+        .feature-card.type .growth-label { color: #8b5cf6; }
+        .feature-card.timeseries .growth-label { color: #10b981; }
+        .feature-card.funnel .growth-label { color: #f59e0b; }
+        .feature-card.creative .growth-label { color: #ec4899; }
+
+        .growth-item {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: flex-start;
+        }
+
+        .growth-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .growth-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.55rem;
+            color: white;
+            margin-top: 1px;
+        }
+
+        .feature-card.marketing .growth-icon { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+        .feature-card.type .growth-icon { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
+        .feature-card.timeseries .growth-icon { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .feature-card.funnel .growth-icon { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .feature-card.creative .growth-icon { background: rgba(236, 72, 153, 0.15); color: #ec4899; }
+
+        .growth-content {
+            flex: 1;
+        }
+
+        .growth-title {
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .growth-desc {
+            font-size: 0.54rem;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        /* Advanced Growth Section */
+        .growth-advanced {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #e2e8f0;
+        }
+
+        .growth-advanced-label {
+            font-size: 0.54rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #64748b;
+        }
+
+        .growth-advanced-item {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 7px;
+            align-items: flex-start;
+        }
+
+        .growth-advanced-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .growth-emoji {
+            font-size: 0.6rem;
+            flex-shrink: 0;
+            margin-top: 0px;
+        }
+
+        .growth-advanced-content {
+            flex: 1;
+        }
+
+        .growth-advanced-title {
+            font-size: 0.56rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 2px;
+        }
+
+        .growth-advanced-desc {
+            font-size: 0.5rem;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Background Effects -->
+        <div class="bg-pattern"></div>
+        <div class="bg-grid"></div>
+
+        <!-- Header -->
+        <div class="slide-header">
+            <div class="header-tag">
+                <i class="fas fa-cubes"></i>
+                DASHBOARD FEATURES
+            </div>
+            <h1 class="slide-title">
+                <span class="highlight">5가지 핵심 대시보드</span>로 성장을 가속화하세요
+            </h1>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- ① Marketing Dashboard -->
+            <div class="feature-card marketing">
+                <div class="card-header">
+                    <div class="card-number">①</div>
+                    <div class="card-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="card-title">Marketing Dashboard</h3>
+                    <p class="card-subtitle">성과 트렌드 탐색</p>
+                </div>
+
+                <div class="card-quote">
+                    <p class="quote-text">"최소한의 필터로 성과 추이를 모니터링하고 문제를 빠르게 감지합니다"</p>
+                </div>
+
+                <div class="card-metrics">
+                    <div class="metrics-label">
+                        <i class="fas fa-chart-bar"></i> 주요 지표
+                    </div>
+                    <div class="metric-item">일별/주별/월별 성과 추이</div>
+                    <div class="metric-item">채널/브랜드/캠페인 다차원 분석</div>
+                    <div class="metric-item">핵심 KPI 효율성 검증</div>
+                </div>
+
+                <div class="card-growth">
+                    <div class="growth-label">
+                        <i class="fas fa-rocket"></i> Growth Point
+                    </div>
+                    <div class="growth-item">
+                        <div class="growth-icon"><i class="fas fa-search"></i></div>
+                        <div class="growth-content">
+                            <div class="growth-title">자유로운 데이터 탐색</div>
+                            <div class="growth-desc">드롭다운으로 조치/투자 필요한 광고세트 확인</div>
+                        </div>
+                    </div>
+                    <div class="growth-item">
+                        <div class="growth-icon"><i class="fas fa-balance-scale"></i></div>
+                        <div class="growth-content">
+                            <div class="growth-title">채널 간 비교 분석</div>
+                            <div class="growth-desc">매체 효율 비교로 Media Mix 전략 수정</div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Growth Points -->
+                    <div class="growth-advanced">
+                        <div class="growth-advanced-label">
+                            <i class="fas fa-star"></i> 심화 활용
+                        </div>
+                        <div class="growth-advanced-item">
+                            <span class="growth-emoji">✂️</span>
+                            <div class="growth-advanced-content">
+                                <div class="growth-advanced-title">가차 없는 가지치기</div>
+                                <div class="growth-advanced-desc">'좀비 광고' 발굴 → Off → 위닝 캠페인으로 예산 이관</div>
+                            </div>
+                        </div>
+                        <div class="growth-advanced-item">
+                            <span class="growth-emoji">📈</span>
+                            <div class="growth-advanced-content">
+                                <div class="growth-advanced-title">스케일업 임계점 발견</div>
+                                <div class="growth-advanced-desc">한계효용 체감 지점까지만 예산 증액하는 정교한 튜닝</div>
+                            </div>
+                        </div>
+                        <div class="growth-advanced-item">
+                            <span class="growth-emoji">⏰</span>
+                            <div class="growth-advanced-content">
+                                <div class="growth-advanced-title">골든타임 공략</div>
+                                <div class="growth-advanced-desc">거시적 성과흐름 한눈에 확인 → 빠른 대처</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ② Type Dashboard -->
+            <div class="feature-card type">
+                <div class="card-header">
+                    <div class="card-number">②</div>
+                    <div class="card-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="card-title">Type Dashboard</h3>
+                    <p class="card-subtitle">채널별 AI 종합 분석</p>
+                </div>
+
+                <div class="card-quote">
+                    <p class="quote-text">"개요부터 세부 분석까지 원스텝으로 건강 상태를 진단합니다"</p>
+                </div>
+
+                <div class="card-metrics">
+                    <div class="metrics-label">
+                        <i class="fas fa-chart-bar"></i> 주요 지표
+                    </div>
+                    <div class="metric-item">오늘의 AI 추천 & 이상 징후 알림</div>
+                    <div class="metric-item">요일별/분기별 계절성 분석</div>
+                    <div class="metric-item">연령/성별/기기 세그먼트 효율</div>
+                </div>
+
+                <div class="card-growth">
+                    <div class="growth-label">
+                        <i class="fas fa-rocket"></i> Growth Point
+                    </div>
+                    <div class="growth-item">
+                        <div class="growth-icon"><i class="fas fa-bell"></i></div>
+                        <div class="growth-content">
+                            <div class="growth-title">이상 징후 포착</div>
+                            <div class="growth-desc">니치한 문제를 빠르게 인지하여 최적화</div>
+                        </div>
+                    </div>
+                    <div class="growth-item">
+                        <div class="growth-icon"><i class="fas fa-users"></i></div>
+                        <div class="growth-content">
+                            <div class="growth-title">경영진 커뮤니케이션</div>
+                            <div class="growth-desc">C-Level 보고 및 예산 증액 근거 자료</div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Growth Points -->
+                    <div class="growth-advanced">
+                        <div class="growth-advanced-label">
+                            <i class="fas fa-star"></i> 심화 활용
+                        </div>
+                        <div class="growth-advanced-item">
+                            <span class="growth-emoji">🚨</span>
+                            <div class="growth-advanced-content">
+                                <div class="growth-advanced-title">빠른 의사결정</div>
+                                <div class="growth-advanced-desc">ROAS 20% 하락 → 즉시 예산 감액/입찰 전략 변경 트리거</div>
+                            </div>
+                        </div>
+                        <div class="growth-advanced-item">
+                            <span class="growth-emoji">🎯</span>
+                            <div class="growth-advanced-content">
+                                <div class="growth-advanced-title">페르소나 핏 검증</div>
+                                <div class="growth-advanced-desc">고효율 타겟 세그먼트에 예산 '몰아주는' 집중 전략</div>
+                            </div>
+                        </div>
+                        <div class="growth-advanced-item">
+                            <span class="growth-emoji">💰</span>
+                            <div class="growth-advanced-content">
+                                <div class="growth-advanced-title">생애가치 관점 접근</div>
+                                <div class="growth-advanced-desc">단순 CPA 절감 아닌 핵심 소비자 타겟 식별</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ③ Timeseries Analysis -->
+            <div class="feature-card timeseries">
+                <div class="card-header">
+                    <div class="card-number">③</div>
+                    <div class="card-icon">
+                        <i class="fas fa-chart-area"></i>
+                    </div>
+                    <h3 class="card-title">Timeseries Analysis</h3>
+                    <p class="card-subtitle">AI 예측 & 시나리오 플래닝</p>
+                </div>
+
+                <div class="card-quote">
+                    <p class="quote-text">"과거 데이터로 미래 불확실성을 줄이고 선제적으로 움직입니다"</p>
+                </div>
+
+                <div class="card-metrics">
+                    <div class="metrics-label">
+                        <i class="fas fa-chart-bar"></i> 주요 지표
+                    </div>
+                    <div class="metric-item">향후 30일 예상 비용/전환 가치</div>
+                    <div class="metric-item">Trend + Seasonality 분해 차트</div>
+                    <div class="metric-item">예측 신뢰구간 검증</div>
+                </div>
+
+                <div class="card-growth">
+                    <div class="growth-label">
+                        <i class="fas fa-rocket"></i> Growth Point
+                    </div>
+                    <div class="growth-item">
+                        <div class="growth-icon"><i class="fas fa-coins"></i></div>
+                        <div class="growth-content">
+                            <div class="growth-title">예산 최적화</div>
+                            <div class="growth-desc">목표 CPA 달성을 위한 적정 예산 가이드</div>
+                        </div>
+                    </div>
+                    <div class="growth-item">
+                        <div class="growth-icon"><i class="fas fa-bullseye"></i></div>
+                        <div class="growth-content">
+                            <div class="growth-title">현실적 목표 설정</div>
+                            <div class="growth-desc">달성 가능한 OKR 수립 및 계절 대비</div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Growth Points -->
+                    <div class="growth-advanced">
+                        <div class="growth-advanced-label">
+                            <i class="fas fa-star"></i> 심화 활용
+                        </div>
+                        <div class="growth-advanced-item">
+                            <span class="growth-emoji">📦</span>
+                            <div class="growth-advanced-content">
+                                <div class="growth-advanced-title">오퍼레이션 리스크 관리</div>
+                                <div class="growth-advanced-desc">전환수 급증 시 물류/CS팀과 전사 차원 업무 논의</div>
+                            </div>
+                        </div>
+                        <div class="growth-advanced-item">
+                            <span class="growth-emoji">⚠️</span>
+                            <div class="growth-advanced-content">
+                                <div class="growth-advanced-title">조기 위험 감지</div>
+                                <div class="growth-advanced-desc">하한선 도달 시 시장 분석 및 원인 분석(RCA) 착수</div>
+                            </div>
+                        </div>
+                        <div class="growth-advanced-item">
+                            <span class="growth-emoji">💸</span>
+                            <div class="growth-advanced-content">
+                                <div class="growth-advanced-title">예산 시나리오 게임</div>
+                                <div class="growth-advanced-desc">"예산 20% 증액 시 매출 변화" 시뮬레이션</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ④ Funnel Dashboard -->
+            <div class="feature-card funnel">
+                <div class="card-header">
+                    <div class="card-number">④</div>
+                    <div class="card-icon">
+                        <i class="fas fa-filter"></i>
+                    </div>
+                    <h3 class="card-title">Funnel Dashboard</h3>
+                    <p class="card-subtitle">퍼널 분석 & CRO</p>
+                </div>
+
+                <div class="card-quote">
+                    <p class="quote-text">"고객 여정의 병목을 뚫어 구매 전환율을 극대화합니다"</p>
+                </div>
+
+                <div class="card-metrics">
+                    <div class="metrics-label">
+                        <i class="fas fa-chart-bar"></i> 주요 지표
+                    </div>
+                    <div class="metric-item">단계별 전환율 (유입→구매완료)</div>
+                    <div class="metric-item">채널/캠페인별 퍼널 & 건전성</div>
+                    <div class="metric-item">신규 vs 재방문 유저 퍼널 차이</div>
+                </div>
+
+                <div class="card-growth">
+                    <div class="growth-label">
+                        <i class="fas fa-rocket"></i> Growth Point
+                    </div>
+                    <div class="growth-item">
+                        <div class="growth-icon"><i class="fas fa-flask"></i></div>
+                        <div class="growth-content">
+                            <div class="growth-title">CRO 전환율 최적화</div>
+                            <div class="growth-desc">이탈 급증 페이지 A/B Test 제안</div>
+                        </div>
+                    </div>
+                    <div class="growth-item">
+                        <div class="growth-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="growth-content">
+                            <div class="growth-title">트래픽 퀄리티 진단</div>
+                            <div class="growth-desc">'허수 유입' 채널 식별로 예산 낭비 방지</div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Growth Points -->
+                    <div class="growth-advanced">
+                        <div class="growth-advanced-label">
+                            <i class="fas fa-star"></i> 심화 활용
+                        </div>
+                        <div class="growth-advanced-item">
+                            <span class="growth-emoji">🔍</span>
+                            <div class="growth-advanced-content">
+                                <div class="growth-advanced-title">마찰 구간 제거</div>
+                                <div class="growth-advanced-desc">결제 이탈 시 간편결제/무료배송 기준 변경 제안</div>
+                            </div>
+                        </div>
+                        <div class="growth-advanced-item">
+                            <span class="growth-emoji">🎯</span>
+                            <div class="growth-advanced-content">
+                                <div class="growth-advanced-title">타겟팅 리마케팅</div>
+                                <div class="growth-advanced-desc">이탈 유저 Audience 추출 → 맞춤형 CRM 발송</div>
+                            </div>
+                        </div>
+                        <div class="growth-advanced-item">
+                            <span class="growth-emoji">🧪</span>
+                            <div class="growth-advanced-content">
+                                <div class="growth-advanced-title">채널별 유저 퀄리티</div>
+                                <div class="growth-advanced-desc">'진성 유저' 유입 채널에 집중 투자</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ⑤ Creative Analysis -->
+            <div class="feature-card creative">
+                <div class="card-header">
+                    <div class="card-number">⑤</div>
+                    <div class="card-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3 class="card-title">Creative Analysis</h3>
+                    <p class="card-subtitle">소재 성과 & 추이</p>
+                </div>
+
+                <div class="card-quote">
+                    <p class="quote-text">"모든 매체의 광고 성과를 한 페이지에서 확인하고 비교합니다"</p>
+                </div>
+
+                <div class="card-metrics">
+                    <div class="metrics-label">
+                        <i class="fas fa-chart-bar"></i> 주요 지표
+                    </div>
+                    <div class="metric-item">소재별 ROAS, CTR, CVR, CPA</div>
+                    <div class="metric-item">이미지/영상 성과 집계 및 추이</div>
+                    <div class="metric-item">채널별 고성과 소재 서머리</div>
+                </div>
+
+                <div class="card-growth">
+                    <div class="growth-label">
+                        <i class="fas fa-rocket"></i> Growth Point
+                    </div>
+                    <div class="growth-item">
+                        <div class="growth-icon"><i class="fas fa-magic"></i></div>
+                        <div class="growth-content">
+                            <div class="growth-title">크리에이티브 기획</div>
+                            <div class="growth-desc">고성과 소재 베리에이션 최적화 환경</div>
+                        </div>
+                    </div>
+                    <div class="growth-item">
+                        <div class="growth-icon"><i class="fas fa-clock"></i></div>
+                        <div class="growth-content">
+                            <div class="growth-title">소재 수명 관리</div>
+                            <div class="growth-desc">성과 하락 소재 적시 교체로 효율 유지</div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Growth Points -->
+                    <div class="growth-advanced">
+                        <div class="growth-advanced-label">
+                            <i class="fas fa-star"></i> 심화 활용
+                        </div>
+                        <div class="growth-advanced-item">
+                            <span class="growth-emoji">🧬</span>
+                            <div class="growth-advanced-content">
+                                <div class="growth-advanced-title">A/B 테스트 최적화</div>
+                                <div class="growth-advanced-desc">다양한 채널 성과 비교 → 공통점/차이점 빠르게 도출</div>
+                            </div>
+                        </div>
+                        <div class="growth-advanced-item">
+                            <span class="growth-emoji">📉</span>
+                            <div class="growth-advanced-content">
+                                <div class="growth-advanced-title">성공/실패 요인 추적</div>
+                                <div class="growth-advanced-desc">필터/검색으로 가설 검증 → 다음 소재 기획 반영</div>
+                            </div>
+                        </div>
+                        <div class="growth-advanced-item">
+                            <span class="growth-emoji">🔄</span>
+                            <div class="growth-advanced-content">
+                                <div class="growth-advanced-title">크로스 채널 인사이트</div>
+                                <div class="growth-advanced-desc">채널별 위닝 요소 분석 → 전체 소재 전략에 적용</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
