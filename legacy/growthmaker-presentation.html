@@ -2293,6 +2293,324 @@
             50% { transform: translate(20px, -20px); }
         }
 
+        /* Slide 8.5 - Journey Map */
+        .slide-map {
+            background: linear-gradient(180deg, #f0f4f8 0%, #e2e8f0 100%);
+        }
+
+        .slide-map .map_slide-container {
+            width: 100%;
+            height: 720px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-map .map_slide-header {
+            padding: 20px 50px 30px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .slide-map .map_header-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 6px;
+        }
+
+        .slide-map .map_slide-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #1e293b;
+            margin-top: 19px;
+            margin-bottom: 10px;
+        }
+
+        .slide-map .map_slide-title .map_highlight {
+            background: linear-gradient(135deg, #3b82f6, #1e3a8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .slide-map .map_journey-wrapper {
+            padding: 0 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .slide-map .map_phase-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .slide-map .map_phase-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-map .map_phase-card-header {
+            padding: 14px 16px;
+            text-align: center;
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .slide-map .map_phase-card-header.map_phase-1 { background: linear-gradient(135deg, #93c5fd, #60a5fa); }
+        .slide-map .map_phase-card-header.map_phase-2 { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
+        .slide-map .map_phase-card-header.map_phase-3 { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .slide-map .map_phase-card-header.map_phase-4 { background: linear-gradient(135deg, #2563eb, #1e3a8a); }
+
+        .slide-map .map_phase-card-header .map_phase-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            opacity: 0.9;
+            letter-spacing: 1px;
+        }
+
+        .slide-map .map_phase-card-header .map_phase-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            margin-top: 2px;
+        }
+
+        .slide-map .map_phase-card-body {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .slide-map .map_icon-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .slide-map .map_icon-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+
+        .slide-map .map_icon-box.map_phase-1 { background: #93c5fd; color: #1e3a8a; }
+        .slide-map .map_icon-box.map_phase-2 { background: #60a5fa; }
+        .slide-map .map_icon-box.map_phase-3 { background: #3b82f6; }
+        .slide-map .map_icon-box.map_phase-4 { background: #1e3a8a; }
+
+        .slide-map .map_section-item {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 10px 12px;
+            border-left: 4px solid transparent;
+        }
+
+        .slide-map .map_section-item.map_voice {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border-left-color: #93c5fd;
+        }
+
+        .slide-map .map_section-item.map_process {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #60a5fa;
+        }
+
+        .slide-map .map_section-item.map_outcome {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-left-color: #3b82f6;
+        }
+
+        .slide-map .map_section-title {
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .slide-map .map_section-title i {
+            font-size: 0.6rem;
+        }
+
+        .slide-map .map_section-item.map_voice .map_section-title { color: #1e3a8a; }
+        .slide-map .map_section-item.map_process .map_section-title { color: #3b82f6; }
+        .slide-map .map_section-item.map_outcome .map_section-title { color: #1e3a8a; }
+
+        .slide-map .map_quote-question {
+            font-size: 0.64rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 4px;
+        }
+
+        .slide-map .map_quote-question::before {
+            content: '" ';
+        }
+
+        .slide-map .map_quote-question::after {
+            content: ' "';
+        }
+
+        .slide-map .map_quote-answer {
+            font-size: 0.64rem;
+            color: #64748b;
+            line-height: 1.45;
+        }
+
+        .slide-map .map_cell-text {
+            font-size: 0.60rem;
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        .slide-map .map_cell-text strong {
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        /* Slide-map Animations */
+        @keyframes fadeInUp-map {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown-map {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn-map {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInLeft-map {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulseGlow-map {
+            0%, 100% { box-shadow: 0 3px 10px rgba(0,0,0,0.15); }
+            50% { box-shadow: 0 5px 20px rgba(59, 130, 246, 0.3); }
+        }
+
+        .slide-map.active .map_header-tag {
+            opacity: 0;
+            animation: fadeInDown-map 0.6s ease-out 0.1s forwards;
+        }
+
+        .slide-map.active .map_slide-title {
+            opacity: 0;
+            animation: fadeInUp-map 0.7s ease-out 0.2s forwards;
+        }
+
+        .slide-map.active .map_phase-card {
+            opacity: 0;
+        }
+
+        .slide-map.active .map_phase-card:nth-child(1) {
+            animation: fadeInUp-map 0.6s ease-out 0.3s forwards;
+        }
+
+        .slide-map.active .map_phase-card:nth-child(2) {
+            animation: fadeInUp-map 0.6s ease-out 0.45s forwards;
+        }
+
+        .slide-map.active .map_phase-card:nth-child(3) {
+            animation: fadeInUp-map 0.6s ease-out 0.6s forwards;
+        }
+
+        .slide-map.active .map_phase-card:nth-child(4) {
+            animation: fadeInUp-map 0.6s ease-out 0.75s forwards;
+        }
+
+        .slide-map.active .map_icon-box {
+            animation: pulseGlow-map 2s ease-in-out infinite;
+            animation-delay: 1s;
+        }
+
+        .slide-map.active .map_section-item {
+            opacity: 0;
+            animation: slideInLeft-map 0.5s ease-out forwards;
+        }
+
+        .slide-map.active .map_phase-card:nth-child(1) .map_section-item.map_voice { animation-delay: 0.5s; }
+        .slide-map.active .map_phase-card:nth-child(1) .map_section-item.map_process { animation-delay: 0.6s; }
+        .slide-map.active .map_phase-card:nth-child(1) .map_section-item.map_outcome { animation-delay: 0.7s; }
+
+        .slide-map.active .map_phase-card:nth-child(2) .map_section-item.map_voice { animation-delay: 0.65s; }
+        .slide-map.active .map_phase-card:nth-child(2) .map_section-item.map_process { animation-delay: 0.75s; }
+        .slide-map.active .map_phase-card:nth-child(2) .map_section-item.map_outcome { animation-delay: 0.85s; }
+
+        .slide-map.active .map_phase-card:nth-child(3) .map_section-item.map_voice { animation-delay: 0.8s; }
+        .slide-map.active .map_phase-card:nth-child(3) .map_section-item.map_process { animation-delay: 0.9s; }
+        .slide-map.active .map_phase-card:nth-child(3) .map_section-item.map_outcome { animation-delay: 1.0s; }
+
+        .slide-map.active .map_phase-card:nth-child(4) .map_section-item.map_voice { animation-delay: 0.95s; }
+        .slide-map.active .map_phase-card:nth-child(4) .map_section-item.map_process { animation-delay: 1.05s; }
+        .slide-map.active .map_phase-card:nth-child(4) .map_section-item.map_outcome { animation-delay: 1.15s; }
+
+        .slide-map.active .map_icon-cell {
+            opacity: 0;
+            animation: scaleIn-map 0.5s ease-out forwards;
+        }
+
+        .slide-map.active .map_phase-card:nth-child(1) .map_icon-cell { animation-delay: 0.4s; }
+        .slide-map.active .map_phase-card:nth-child(2) .map_icon-cell { animation-delay: 0.55s; }
+        .slide-map.active .map_phase-card:nth-child(3) .map_icon-cell { animation-delay: 0.7s; }
+        .slide-map.active .map_phase-card:nth-child(4) .map_icon-cell { animation-delay: 0.85s; }
+
         /* Slide 12 - CTA */
         .slide-12 {
             background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1e40af 100%);
@@ -3547,7 +3865,7 @@
                 display: grid;
                 grid-template-columns: repeat(5, 1fr);
                 gap: 10px;
-                padding: 6px 20px 12px;
+                padding: 30px 20px 12px;
                 position: relative;
                 z-index: 10;
                 align-items: stretch;
@@ -3687,7 +4005,7 @@
             .features_feature-card.features_creative .features_metrics-label { color: #ec4899; }
 
             .features_metric-item {
-                font-size: 0.68rem;
+                font-size: 0.78rem;
                 color: #475569;
                 line-height: 1.35;
                 padding-left: 10px;
@@ -3761,7 +4079,7 @@
             }
 
             .features_growth-title {
-                font-size: 0.7rem;
+                font-size: 0.78rem;
                 font-weight: 700;
                 color: #1e293b;
                 margin-bottom: 2px;
@@ -3813,14 +4131,14 @@
             }
 
             .features_growth-advanced-title {
-                font-size: 0.7rem;
+                font-size: 0.78rem;
                 font-weight: 700;
                 color: #374151;
                 margin-bottom: 2px;
             }
 
             .features_growth-advanced-desc {
-                font-size: 0.7rem;
+                font-size: 0.75rem;
                 color: #6b7280;
                 line-height: 1.4;
             }
@@ -3870,7 +4188,7 @@
                                 <div class="features_growth-icon"><i class="fas fa-search"></i></div>
                                 <div class="features_growth-content">
                                     <div class="features_growth-title">자유로운 데이터 탐색</div>
-                                    <div class="features_growth-desc">드롭다운으로 조치/투자 필요한 광고세트 확인</div>
+                                    <div class="features_growth-desc">드롭다운으로 조치/투자 필요한<br/>광고세트 확인</div>
                                 </div>
                             </div>
                             <div class="features_growth-item">
@@ -3889,21 +4207,21 @@
                                     <span class="features_growth-emoji">✂️</span>
                                     <div class="features_growth-advanced-content">
                                         <div class="features_growth-advanced-title">가차 없는 가지치기</div>
-                                        <div class="features_growth-advanced-desc">'좀비 광고' 발굴 → Off → 위닝 캠페인으로 예산 이관</div>
+                                        <div class="features_growth-advanced-desc">'좀비 광고' 발굴 → Off → 위닝 캠페인 빠른 예산 이관</div>
                                     </div>
                                 </div>
                                 <div class="features_growth-advanced-item">
                                     <span class="features_growth-emoji">📈</span>
                                     <div class="features_growth-advanced-content">
                                         <div class="features_growth-advanced-title">스케일업 임계점 발견</div>
-                                        <div class="features_growth-advanced-desc">한계효용 체감 지점까지만 예산 증액하는 정교한 튜닝</div>
+                                        <div class="features_growth-advanced-desc">한계효용 체감 지점까지 예산을<br/>유연하게 실험,관리</div>
                                     </div>
                                 </div>
                                 <div class="features_growth-advanced-item">
                                     <span class="features_growth-emoji">⏰</span>
                                     <div class="features_growth-advanced-content">
                                         <div class="features_growth-advanced-title">골든타임 공략</div>
-                                        <div class="features_growth-advanced-desc">거시적 성과흐름 한눈에 확인 → 빠른 대처</div>
+                                        <div class="features_growth-advanced-desc">거시적익 성과흐름 한눈에 확인하고<br/>한 발 빠른 대처</div>
                                     </div>
                                 </div>
                             </div>
@@ -3957,21 +4275,21 @@
                                     <span class="features_growth-emoji">🚨</span>
                                     <div class="features_growth-advanced-content">
                                         <div class="features_growth-advanced-title">빠른 의사결정</div>
-                                        <div class="features_growth-advanced-desc">ROAS 20% 하락 → 즉시 예산 감액/입찰 전략 변경 트리거</div>
+                                        <div class="features_growth-advanced-desc">A채널 B상품에서 ROAS 20% 하락<br/>→ 매체 접속 없이도 즉시 판단</div>
                                     </div>
                                 </div>
                                 <div class="features_growth-advanced-item">
                                     <span class="features_growth-emoji">🎯</span>
                                     <div class="features_growth-advanced-content">
                                         <div class="features_growth-advanced-title">페르소나 핏 검증</div>
-                                        <div class="features_growth-advanced-desc">고효율 타겟 세그먼트에 예산 '몰아주는' 집중 전략</div>
+                                        <div class="features_growth-advanced-desc">고효율/저효율 타겟 세그먼트에<br/>유연한 예산 전략 수립</div>
                                     </div>
                                 </div>
                                 <div class="features_growth-advanced-item">
                                     <span class="features_growth-emoji">💰</span>
                                     <div class="features_growth-advanced-content">
                                         <div class="features_growth-advanced-title">생애가치 관점 접근</div>
-                                        <div class="features_growth-advanced-desc">단순 CPA 절감 아닌 핵심 소비자 타겟 식별</div>
+                                        <div class="features_growth-advanced-desc">CPA·ROAS 개선뿐만이 아닌,<br/>핵심 소비자 타겟 식별</div>
                                     </div>
                                 </div>
                             </div>
@@ -4025,7 +4343,7 @@
                                     <span class="features_growth-emoji">📦</span>
                                     <div class="features_growth-advanced-content">
                                         <div class="features_growth-advanced-title">오퍼레이션 리스크 관리</div>
-                                        <div class="features_growth-advanced-desc">전환수 급증 시 물류/CS팀과 전사 차원 업무 논의</div>
+                                        <div class="features_growth-advanced-desc">구매 예측치 급증 시 물류/CS팀과<br/> 전사 차원 업무 논의</div>
                                     </div>
                                 </div>
                                 <div class="features_growth-advanced-item">
@@ -5994,7 +6312,7 @@
             }
 
             .slide-8 .feature-content h4 {
-                font-size: 10px;
+                font-size: 11px;
                 font-weight: 700;
                 color: #0f172a;
                 margin-bottom: 3px;
@@ -6016,7 +6334,7 @@
             }
 
             .slide-8 .feature-content p {
-                font-size: 8px;
+                font-size: 10px;
                 color: #64748b;
                 line-height: 1.45;
             }
@@ -6027,7 +6345,7 @@
                 background: white;
                 border-radius: 6px;
                 border: 1px solid rgba(59, 130, 246, 0.15);
-                font-size: 8px;
+                font-size: 10px;
             }
 
             .slide-8 .feature-example .label {
@@ -6045,7 +6363,7 @@
 
             .slide-8 .feature-example .value .effect {
                 color: #10b981;
-                font-size: 7px;
+                font-size: 8px;
                 padding: 1px 4px;
                 background: rgba(16, 185, 129, 0.1);
                 border-radius: 3px;
@@ -6727,7 +7045,7 @@
                                     <p>지표 악화만 알리는 것이 아니라, 원인 가설 함께 제시</p>
                                     <div class="feature-example">
                                         <div class="label">⚠️ CPA 급등 감지</div>
-                                        <div class="value" style="font-size: 7px; color: #64748b;">
+                                        <div class="value" style="font-size: 9px; color: #64748b;">
                                             원인: 크리에이티브 피로도 또는 경쟁 심화
                                         </div>
                                     </div>
@@ -7214,7 +7532,7 @@
                         <div class="pricing_plan-icon">
                             <i class="fas fa-chart-line"></i>
                         </div>
-                        <h3 class="pricing_plan-name">Daily Ent.</h3>
+                        <h3 class="pricing_plan-name">Weekly Growth</h3>
                         <p class="pricing_plan-desc">매일 인사이트가 필요한 팀을 위한 플랜</p>
                     </div>
 
@@ -7246,7 +7564,7 @@
 
                     <div class="pricing_dashboard-frequency">
                         <div class="pricing_frequency-label">대시보드 제공</div>
-                        <div class="pricing_frequency-value">주 5회 (매일 오전)</div>
+                        <div class="pricing_frequency-value">주 1회 (월요일)</div>
                     </div>
 
                     <div class="pricing_cta-section">
@@ -7384,6 +7702,128 @@
             </div>
         </div>
 
+        <!-- Slide 8.5: Journey Map -->
+        <div class="slide slide-map" data-slide="map">
+            <div class="map_slide-container">
+                <div class="map_slide-header">
+                    <div class="map_header-tag">
+                        <i class="fas fa-route"></i> USER JOURNEY MAP
+                    </div>
+                    <h1 class="map_slide-title">
+                        <span class="map_highlight">4일</span> 만에 완성되는 AI 대시보드 도입 여정
+                    </h1>
+                </div>
+
+                <div class="map_journey-wrapper">
+                    <div class="map_phase-cards">
+                        <!-- Phase 1: DAY 1 -->
+                        <div class="map_phase-card">
+                            <div class="map_phase-card-header map_phase-1">
+                                <div class="map_phase-label">DAY 1</div>
+                                <div class="map_phase-title">진단 및 착수</div>
+                            </div>
+                            <div class="map_phase-card-body">
+                                <div class="map_icon-cell">
+                                    <div class="map_icon-box map_phase-1"><i class="fas fa-search-dollar"></i></div>
+                                </div>
+                                <div class="map_section-item map_voice">
+                                    <div class="map_section-title"><i class="fas fa-comment-dots"></i> 실제 경험</div>
+                                    <div class="map_quote-question">저희는 어떤 목표를 세워야해요?</div>
+                                    <div class="map_quote-answer">막연했던 목표를 전문 마케터와 상담하며<br/> <strong>'핵심 퍼널'</strong> 세팅과 <strong>목표 KPI</strong> 를 재정립</div>
+                                </div>
+                                <div class="map_section-item map_process">
+                                    <div class="map_section-title"><i class="fas fa-cogs"></i> 프로세스</div>
+                                    <div class="map_cell-text">비즈니스 분석을 위해 <strong>광고 매체, GA4, MMP 툴</strong> 정보 인계</div>
+                                </div>
+                                <div class="map_section-item map_outcome">
+                                    <div class="map_section-title"><i class="fas fa-chart-line"></i> 기대 성과</div>
+                                    <div class="map_cell-text">현재 우리 회사의 현황 파악 및 <br/><strong>퍼널 전략</strong> 및 <strong>그로스 포인트</strong> 검진</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Phase 2: DAY 2 -->
+                        <div class="map_phase-card">
+                            <div class="map_phase-card-header map_phase-2">
+                                <div class="map_phase-label">DAY 2</div>
+                                <div class="map_phase-title">설계 및 가공</div>
+                            </div>
+                            <div class="map_phase-card-body">
+                                <div class="map_icon-cell">
+                                    <div class="map_icon-box map_phase-2"><i class="fas fa-sitemap"></i></div>
+                                </div>
+                                <div class="map_section-item map_voice">
+                                    <div class="map_section-title"><i class="fas fa-comment-dots"></i> 실제 경험</div>
+                                    <div class="map_quote-question">데이터를 체계적으로 관리해 본 적이 없어요..</div>
+                                    <div class="map_quote-answer">마케팅 데이터 전문가가 맥락을 이해하고 분류해주니<br/><strong>데이터 활용도</strong> 상승</div>
+                                </div>
+                                <div class="map_section-item map_process">
+                                    <div class="map_section-title"><i class="fas fa-cogs"></i> 프로세스</div>
+                                    <div class="map_cell-text">데이터 <strong>텍소노미 설계</strong> 및 <strong>데이터 전처리</strong> 전략 안내</div>
+                                </div>
+                                <div class="map_section-item map_outcome">
+                                    <div class="map_section-title"><i class="fas fa-chart-line"></i> 기대 성과</div>
+                                    <div class="map_cell-text">뒤죽박죽이던 데이터를 분석 가능하고 <br/>DB 친화적인 형태로 <strong>정규화 및 구조화</strong></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Phase 3: DAY 3 -->
+                        <div class="map_phase-card">
+                            <div class="map_phase-card-header map_phase-3">
+                                <div class="map_phase-label">DAY 3</div>
+                                <div class="map_phase-title">검증 및 동기화</div>
+                            </div>
+                            <div class="map_phase-card-body">
+                                <div class="map_icon-cell">
+                                    <div class="map_icon-box map_phase-3"><i class="fas fa-check-double"></i></div>
+                                </div>
+                                <div class="map_section-item map_voice">
+                                    <div class="map_section-title"><i class="fas fa-comment-dots"></i> 실제 경험</div>
+                                    <div class="map_quote-question">그럼에도 엑셀로 같이 확인해야 안정돼요</div>
+                                    <div class="map_quote-answer">SQL과 엑셀함수로 정리된 대시보드를<br/><strong>스프레드 시트</strong> 로 제공하여 <strong>RAW데이터</strong> 관리 가능</div>
+                                </div>
+                                <div class="map_section-item map_process">
+                                    <div class="map_section-title"><i class="fas fa-cogs"></i> 프로세스</div>
+                                    <div class="map_cell-text">캠페인/이벤트 반영 세팅, 설계된 전략 기준 <strong>2차 미팅</strong> 진행</div>
+                                </div>
+                                <div class="map_section-item map_outcome">
+                                    <div class="map_section-title"><i class="fas fa-chart-line"></i> 기대 성과</div>
+                                    <div class="map_cell-text">언제든 활용·조회가 가능한 <strong>스프레드 시트 대시보드</strong> 공유<br/>회사에 필요한 요청사항 <strong>커스터마이징</strong></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Phase 4: DAY 4 -->
+                        <div class="map_phase-card">
+                            <div class="map_phase-card-header map_phase-4">
+                                <div class="map_phase-label">DAY 4</div>
+                                <div class="map_phase-title">제공 및 실행</div>
+                            </div>
+                            <div class="map_phase-card-body">
+                                <div class="map_icon-cell">
+                                    <div class="map_icon-box map_phase-4"><i class="fas fa-rocket"></i></div>
+                                </div>
+                                <div class="map_section-item map_voice">
+                                    <div class="map_section-title"><i class="fas fa-comment-dots"></i> 실제 경험</div>
+                                    <div class="map_quote-question">로그인이나 설치는 번거로워요</div>
+                                    <div class="map_quote-answer">한번 파일을 다운로드 받으면<br/><strong>장소와 시간 상관없이</strong> 확인 가능</div>
+                                </div>
+                                <div class="map_section-item map_process">
+                                    <div class="map_section-title"><i class="fas fa-cogs"></i> 프로세스</div>
+                                    <div class="map_cell-text"><strong>Standalone HTML 대시보드</strong> 제공 및<br/><strong>LLM(ChatGPT, Gemini)</strong> 활용 가이드 교육</div>
+                                </div>
+                                <div class="map_section-item map_outcome">
+                                    <div class="map_section-title"><i class="fas fa-chart-line"></i> 기대 성과</div>
+                                    <div class="map_cell-text">다운로드 받으면 <strong>오프라인에서도 실행 가능</strong>하고<br/><strong>주별로 누적 가능한</strong> 대시보드 제공</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Slide 9: CTA -->
         <div class="slide slide-12" data-slide="12">
             <div class="slide-container">
@@ -7457,7 +7897,7 @@
 
     <script>
         let currentSlide = 1;
-        const totalSlides = 15;
+        const totalSlides = 16;
 
         function showSlide(n) {
             const slides = document.querySelectorAll('.slide');

@@ -424,6 +424,40 @@
             color: white;
         }
 
+        .filter-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .filter-section-header .filter-header {
+            margin-bottom: 0;
+        }
+
+        .reset-btn {
+            padding: 8px 16px;
+            border: none;
+            background: var(--paper);
+            color: var(--grey-700);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .reset-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .reset-btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
         .collapsible-toggle-icon {
             transition: transform 0.2s ease;
             transform: rotate(180deg);
@@ -1229,6 +1263,10 @@
                     <div class="collapsible-content" id="filterCollapsibleContent">
                         <!-- 기간 선택 + 기본 필터 -->
                         <div class="filter-section card" style="margin-bottom: 16px;">
+                            <div class="filter-section-header">
+                                <div class="filter-header">기간 및 기본 필터</div>
+                                <button class="reset-btn" onclick="resetBasicFilters()">초기화</button>
+                            </div>
                             <div class="filter-inline-container">
                                 <!-- 기간 선택 -->
                                 <div class="filter-date-section">
@@ -1273,7 +1311,10 @@
                         </div>
                         <!-- 세부 필터 -->
                         <div class="filter-section card">
-                            <div class="filter-header">세부 필터</div>
+                            <div class="filter-section-header">
+                                <div class="filter-header">세부 필터</div>
+                                <button class="reset-btn" onclick="resetDetailFilters()">초기화</button>
+                            </div>
                             <div class="filter-row">
                                 <div class="filter-group">
                                     <label>캠페인</label>
@@ -1908,6 +1949,44 @@
                 filters.setName = '';
                 setNameSelect.value = '';
             }
+        }
+
+        // 기간 및 기본 필터 초기화
+        function resetBasicFilters() {
+            // 날짜 범위 초기화 (전체 기간으로)
+            setDateRange();
+
+            // 기본 필터 초기화
+            filters.type = '';
+            filters.brand = '';
+            filters.product = '';
+            filters.promotion = '';
+
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterBrand').value = '';
+            document.getElementById('filterProduct').value = '';
+            document.getElementById('filterPromotion').value = '';
+
+            // 계층 구조 필터 다시 로드
+            updateBrandFilter();
+
+            // 세부 필터도 업데이트
+            updateDetailFilters();
+
+            // 대시보드 갱신
+            updateDashboard();
+        }
+
+        // 세부 필터 초기화
+        function resetDetailFilters() {
+            filters.campaign = '';
+            filters.setName = '';
+
+            document.getElementById('filterCampaign').value = '';
+            document.getElementById('filterSetName').value = '';
+
+            // 대시보드 갱신
+            updateDashboard();
         }
 
         // 날짜 범위 설정

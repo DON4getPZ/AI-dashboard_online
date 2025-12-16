@@ -7,7 +7,9 @@
       "Bash(cat:*)",
       "Bash(__NEW_LINE__ echo \"=== v6_2_ 접두사 클래스 목록 ===\")",
       "Bash(__NEW_LINE__ echo \"\")",
-      "Bash(python insert_persona_slide.py:*)"
+      "Bash(python insert_persona_slide.py:*)",
+      "Bash(python scripts/generate_insights_multiperiod.py:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []

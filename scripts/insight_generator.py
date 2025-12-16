@@ -219,6 +219,58 @@ class InsightGenerator:
             print(f"   Warning: Date filtering failed - {e}")
             return df
 
+    def _calculate_segment_stats_from_data(self) -> dict:
+        """segment_data에서 기간별 통계를 직접 계산 (segment_stats.json 대체)
+
+        각 세그먼트별로 actual 데이터만 사용하여 ROAS, CPA, CVR 등을 계산합니다.
+        기간 필터링이 이미 적용된 segment_data를 사용하므로 기간별로 다른 결과가 나옵니다.
+
+        Returns:
+            dict: 세그먼트별 통계 (channel, brand, product, promotion)
+        """
+        stats = {}
+
+        for segment_name, df in self.segment_data.items():
+            if df.empty:
+                continue
+
+            # actual 데이터만 사용 (예측 데이터 제외)
+            actual_df = df[df['type'] == 'actual'].copy() if 'type' in df.columns else df.copy()
+
+            if actual_df.empty:
+                continue
+
+            segment_col = segment_name
+            segment_stats = {}
+
+            for segment_value in actual_df[segment_col].unique():
+                seg_data = actual_df[actual_df[segment_col] == segment_value]
+
+                # 합계 계산
+                total_cost = seg_data['비용_예측'].sum() if '비용_예측' in seg_data.columns else 0
+                total_revenue = seg_data['전환값_예측'].sum() if '전환값_예측' in seg_data.columns else 0
+                total_conversions = seg_data['전환수_예측'].sum() if '전환수_예측' in seg_data.columns else 0
+                total_clicks = seg_data['클릭_예측'].sum() if '클릭_예측' in seg_data.columns else 0
+
+                # 비율 지표 계산 (총합 기준 - RATIO_METRIC_CALCULATION_FIX.md 참조)
+                roas = round((total_revenue / total_cost * 100), 2) if total_cost > 0 else 0
+                cpa = round((total_cost / total_conversions), 2) if total_conversions > 0 else 0
+                cvr = round((total_conversions / total_clicks * 100), 2) if total_clicks > 0 else 0
+
+                segment_stats[segment_value] = {
+                    'total_cost': total_cost,
+                    'total_revenue': total_revenue,
+                    'total_conversions': total_conversions,
+                    'roas': roas,
+                    'cpa': cpa,
+                    'cvr': cvr
+                }
+
+            if segment_stats:
+                stats[segment_name] = segment_stats
+
+        return stats
+
     def load_data(self) -> bool:
         """세그먼트 데이터 로드 및 기간 필터링"""
         print("\n" + "="*60)
@@ -252,14 +304,10 @@ class InsightGenerator:
             else:
                 print(f"   Warning: {filepath.name} not found")
 
-        # 세그먼트 통계 로드 (JSON은 필터링 불가, 전체 데이터 사용)
-        stats_file = FORECAST_DIR / 'segment_stats.json'
-        if stats_file.exists():
-            with open(stats_file, 'r', encoding='utf-8') as f:
-                self.segment_stats = json.load(f)
-            print(f"   Loaded: {stats_file.name}")
-        else:
-            print(f"   Warning: {stats_file.name} not found")
+        # 세그먼트 통계를 segment_data에서 직접 계산 (기간별 필터링 적용)
+        self.segment_stats = self._calculate_segment_stats_from_data()
+        if self.segment_stats:
+            print(f"   Calculated segment_stats from filtered data ({len(self.segment_stats)} segments)")
 
         # predictions_*.csv 파일 로드
         predictions_files = {
