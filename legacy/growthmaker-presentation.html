@@ -2064,235 +2064,6 @@
             50% { transform: translate(-15px, -15px); }
         }
 
-        /* Slide 11 - Value Summary (v6/v7/v8 Style Upgrade) */
-        .slide-11 {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .slide-11::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            z-index: 0;
-        }
-
-        .slide-11 .bg-decoration {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .slide-11 .bg-decoration.blue {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, #3b82f6 0%, #1e40af 100%);
-            top: -150px;
-            right: -100px;
-            opacity: 0.12;
-            animation: floatDecoration-slide11 10s ease-in-out infinite;
-        }
-
-        .slide-11 .bg-decoration.cyan {
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, #06b6d4 0%, #0891b2 100%);
-            bottom: -100px;
-            left: -80px;
-            opacity: 0.1;
-            animation: floatDecoration-slide11 12s ease-in-out infinite reverse;
-        }
-
-        .slide-11 .bg-decoration.purple {
-            width: 250px;
-            height: 250px;
-            background: radial-gradient(circle, #8b5cf6 0%, #6d28d9 100%);
-            top: 40%;
-            left: 5%;
-            opacity: 0.08;
-            animation: floatDecoration-slide11 14s ease-in-out infinite;
-        }
-
-        .slide-11 .content-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 25px 60px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .slide-11 .main-title {
-            font-size: 2.2rem;
-            font-weight: 900;
-            color: #0f172a;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.02em;
-            opacity: 0;
-            animation: fadeInDown-slide11 0.8s ease-out forwards;
-        }
-
-        .slide-11 .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .slide-11 .value-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-radius: 14px;
-            padding: 1.2rem;
-            border: 1px solid rgba(59, 130, 246, 0.1);
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-            opacity: 0;
-            animation: fadeInUp-slide11 0.6s ease-out forwards;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-        }
-
-        .slide-11 .value-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #3b82f6, #06b6d4);
-            transform: scaleX(0);
-            transition: transform 0.4s ease;
-        }
-
-        .slide-11 .value-card:nth-child(1) { animation-delay: 0.1s; }
-        .slide-11 .value-card:nth-child(2) { animation-delay: 0.2s; }
-        .slide-11 .value-card:nth-child(3) { animation-delay: 0.3s; }
-        .slide-11 .value-card:nth-child(4) { animation-delay: 0.4s; }
-
-        .slide-11 .value-card:hover {
-            border-color: rgba(59, 130, 246, 0.3);
-            transform: translateY(-6px);
-            box-shadow: 0 15px 40px rgba(59,130,246,0.18);
-        }
-
-        .slide-11 .value-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .slide-11 .card-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 0.8rem;
-            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
-            transition: all 0.4s ease;
-        }
-
-        .slide-11 .card-icon i {
-            font-size: 1.2rem;
-            color: white;
-        }
-
-        .slide-11 .value-card:hover .card-icon {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
-        }
-
-        .slide-11 .card-title {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 0.4rem;
-            letter-spacing: -0.01em;
-        }
-
-        .slide-11 .card-desc {
-            font-size: 0.85rem;
-            color: #64748b;
-            line-height: 1.5;
-        }
-
-        .highlight-text-blue {
-            color: #3b82f6;
-            font-weight: 700;
-        }
-
-        .slide-11 .summary-box {
-            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1e40af 100%);
-            color: white;
-            padding: 1.2rem 2rem;
-            border-radius: 14px;
-            text-align: center;
-            margin-top: 1rem;
-            opacity: 0;
-            animation: fadeInUp-slide11 0.8s ease-out 0.5s forwards;
-            box-shadow: 0 10px 40px rgba(30, 64, 175, 0.25);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .slide-11 .summary-box::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, transparent 0%, rgba(59, 130, 246, 0.1) 100%);
-            pointer-events: none;
-        }
-
-        .slide-11 .summary-text {
-            font-size: 1.15rem;
-            font-weight: 700;
-            line-height: 1.5;
-            position: relative;
-            z-index: 1;
-        }
-
-        .slide-11 .benefit-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            padding: 0.4rem 0.9rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-            z-index: 2;
-        }
-
-        /* Slide 11 Animations */
-        @keyframes fadeInDown-slide11 {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInUp-slide11 {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes floatDecoration-slide11 {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(20px, -20px); }
-        }
-
         /* Slide 8.5 - Journey Map */
         .slide-map {
             background: linear-gradient(180deg, #f0f4f8 0%, #e2e8f0 100%);
@@ -2308,7 +2079,7 @@
         }
 
         .slide-map .map_slide-header {
-            padding: 20px 50px 30px;
+            padding: 22px 50px 33px;
             text-align: center;
             position: relative;
             z-index: 10;
@@ -2317,26 +2088,26 @@
         .slide-map .map_header-tag {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 5px 14px;
+            gap: 7px;
+            padding: 6px 16px;
             background: rgba(59, 130, 246, 0.1);
             border-radius: 50px;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
             color: #3b82f6;
-            margin-bottom: 6px;
+            margin-bottom: 7px;
         }
 
         .slide-map .map_slide-title {
-            font-size: 1.5rem;
+            font-size: 1.65rem;
             font-weight: 900;
             color: #1e293b;
-            margin-top: 19px;
-            margin-bottom: 10px;
+            margin-top: 21px;
+            margin-bottom: 11px;
         }
 
-        .slide-map .map_slide-title .map_highlight {
-            background: linear-gradient(135deg, #3b82f6, #1e3a8a);
+        .slide-map .map_slide-title .highlight_persona {
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -2344,7 +2115,7 @@
         }
 
         .slide-map .map_journey-wrapper {
-            padding: 0 40px;
+            padding: 0 30px;
             position: relative;
             z-index: 10;
         }
@@ -2352,23 +2123,23 @@
         .slide-map .map_phase-cards {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            gap: 14px;
         }
 
         .slide-map .map_phase-card {
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            border-radius: 18px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.08);
             overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
         .slide-map .map_phase-card-header {
-            padding: 14px 16px;
+            padding: 16px 18px;
             text-align: center;
             color: white;
-            border-radius: 12px 12px 0 0;
+            border-radius: 14px 14px 0 0;
         }
 
         .slide-map .map_phase-card-header.map_phase-1 { background: linear-gradient(135deg, #93c5fd, #60a5fa); }
@@ -2377,23 +2148,23 @@
         .slide-map .map_phase-card-header.map_phase-4 { background: linear-gradient(135deg, #2563eb, #1e3a8a); }
 
         .slide-map .map_phase-card-header .map_phase-label {
-            font-size: 0.6rem;
+            font-size: 0.66rem;
             font-weight: 600;
             opacity: 0.9;
             letter-spacing: 1px;
         }
 
         .slide-map .map_phase-card-header .map_phase-title {
-            font-size: 0.85rem;
+            font-size: 0.94rem;
             font-weight: 800;
             margin-top: 2px;
         }
 
         .slide-map .map_phase-card-body {
-            padding: 12px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 11px;
             flex: 1;
         }
 
@@ -2401,21 +2172,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 12px;
+            padding: 14px;
             background: #f8fafc;
-            border-radius: 12px;
+            border-radius: 14px;
         }
 
         .slide-map .map_icon-box {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+            width: 44px;
+            height: 44px;
+            border-radius: 11px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: white;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 3px 11px rgba(0,0,0,0.15);
         }
 
         .slide-map .map_icon-box.map_phase-1 { background: #93c5fd; color: #1e3a8a; }
@@ -2425,8 +2196,8 @@
 
         .slide-map .map_section-item {
             background: #f8fafc;
-            border-radius: 10px;
-            padding: 10px 12px;
+            border-radius: 11px;
+            padding: 11px 14px;
             border-left: 4px solid transparent;
         }
 
@@ -2447,18 +2218,18 @@
         }
 
         .slide-map .map_section-title {
-            font-size: 0.6rem;
+            font-size: 0.66rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            margin-bottom: 7px;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
         }
 
         .slide-map .map_section-title i {
-            font-size: 0.6rem;
+            font-size: 0.66rem;
         }
 
         .slide-map .map_section-item.map_voice .map_section-title { color: #1e3a8a; }
@@ -2466,10 +2237,10 @@
         .slide-map .map_section-item.map_outcome .map_section-title { color: #1e3a8a; }
 
         .slide-map .map_quote-question {
-            font-size: 0.64rem;
+            font-size: 0.70rem;
             font-weight: 700;
             color: #1e3a8a;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
 
         .slide-map .map_quote-question::before {
@@ -2481,13 +2252,13 @@
         }
 
         .slide-map .map_quote-answer {
-            font-size: 0.64rem;
+            font-size: 0.70rem;
             color: #64748b;
             line-height: 1.45;
         }
 
         .slide-map .map_cell-text {
-            font-size: 0.60rem;
+            font-size: 0.66rem;
             color: #475569;
             line-height: 1.5;
         }
@@ -5386,7 +5157,7 @@
                             <i class="fas fa-users"></i>
                         </div>
                         <h3>상세 분석 (채널/고객)</h3>
-                        <p>채널별 퍼널 데이터와 신규 vs 재방문 고객 추이 분석<br/>니치 영역까지 확인 가능한 정밀 분석</p>
+                        <p>채널별 퍼널 데이터와<br/>신규 vs 재방문 고객 추이 분석<br/>니치 영역까지 확인 가능한 정밀 분석</p>
                         <div class="feature-tags">
                             <span class="feature-tag">채널 분석</span>
                             <span class="feature-tag">고객 세분화</span>
@@ -6687,6 +6458,8 @@
                 font-size: 0.85rem;
                 color: #64748b;
                 margin-top: 4px;
+                opacity: 0;
+                animation: pricing_fadeInDown 0.7s ease-out 0.2s forwards;
             }
 
             @keyframes pricing_fadeInDown {
@@ -7641,69 +7414,6 @@
             </div>
         </div>
 
-        <!-- Slide 8: Value Summary -->
-        <div class="slide slide-11" data-slide="11">
-            <!-- Background Decorations -->
-            <div class="bg-decoration blue"></div>
-            <div class="bg-decoration cyan"></div>
-            <div class="bg-decoration purple"></div>
-            <div class="content-wrapper">
-                <h1 class="main-title">AI 대시보드로 성장을 실행하세요</h1>
-                <div class="cards-grid">
-                    <div class="value-card">
-                        <div class="benefit-badge">
-                            <i class="fas fa-user"></i>
-                            마케터 중심
-                        </div>
-                        <div class="card-icon">
-                            <i class="fas fa-mouse-pointer"></i>
-                        </div>
-                        <h3 class="card-title">최적화된 UX</h3>
-                        <p class="card-desc">고민 없이 즉시 <span class="highlight-text-blue">결정·실행</span>이 가능하도록 설계된 직관적 인터페이스</p>
-                    </div>
-                    <div class="value-card">
-                        <div class="benefit-badge">
-                            <i class="fas fa-rocket"></i>
-                            액션 중심
-                        </div>
-                        <div class="card-icon">
-                            <i class="fas fa-bullseye"></i>
-                        </div>
-                        <h3 class="card-title">실행 가능한 인사이트</h3>
-                        <p class="card-desc">'무엇을 해야 하는가'를 명확히 보여주는 <span class="highlight-text-blue">즉시 실행 가능한</span> 액션 제안</p>
-                    </div>
-                    <div class="value-card">
-                        <div class="benefit-badge">
-                            <i class="fas fa-brain"></i>
-                            분석 중심
-                        </div>
-                        <div class="card-icon">
-                            <i class="fas fa-search-plus"></i>
-                        </div>
-                        <h3 class="card-title">맥락 있는 데이터 품질</h3>
-                        <p class="card-desc">마케터가 직접 관리하여 <span class="highlight-text-blue">정합성과 해석력을 높인</span> 고품질 데이터</p>
-                    </div>
-                    <div class="value-card">
-                        <div class="benefit-badge">
-                            <i class="fas fa-dollar-sign"></i>
-                            비용 효율
-                        </div>
-                        <div class="card-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <h3 class="card-title">데이터 기반 성과 관리</h3>
-                        <p class="card-desc">계절성·시계열 분석을 통해 <span class="highlight-text-blue">효율적인 예산 집행</span>과 <span class="highlight-text-blue">명확한 성과관리</span> 실현</p>
-                    </div>
-                </div>
-                <div class="summary-box">
-                    <p class="summary-text">
-                        <span style="font-weight: 700; opacity: 0.97;">데이터 분석부터 마케팅 실행까지</span> - <br/>
-                        <span style="opacity: 1.0;">지속 가능한 성장 엔진을 구축하세요</span>
-                    </p>
-                </div>
-            </div>
-        </div>
-
         <!-- Slide 8.5: Journey Map -->
         <div class="slide slide-map" data-slide="map">
             <div class="map_slide-container">
@@ -7712,7 +7422,7 @@
                         <i class="fas fa-route"></i> USER JOURNEY MAP
                     </div>
                     <h1 class="map_slide-title">
-                        <span class="map_highlight">4일</span> 만에 완성되는 AI 대시보드 도입 여정
+                        <span class="highlight_persona">4일 만에 완성되는</span> AI 대시보드 도입 여정
                     </h1>
                 </div>
 
@@ -7731,11 +7441,11 @@
                                 <div class="map_section-item map_voice">
                                     <div class="map_section-title"><i class="fas fa-comment-dots"></i> 실제 경험</div>
                                     <div class="map_quote-question">저희는 어떤 목표를 세워야해요?</div>
-                                    <div class="map_quote-answer">막연했던 목표를 전문 마케터와 상담하며<br/> <strong>'핵심 퍼널'</strong> 세팅과 <strong>목표 KPI</strong> 를 재정립</div>
+                                    <div class="map_quote-answer">막연했던 목표를 전문 마케터와의 상담을 통해<br/> <strong>'핵심 퍼널'</strong> 세팅과 <strong>목표 KPI</strong> 를 재정립</div>
                                 </div>
                                 <div class="map_section-item map_process">
                                     <div class="map_section-title"><i class="fas fa-cogs"></i> 프로세스</div>
-                                    <div class="map_cell-text">비즈니스 분석을 위해 <strong>광고 매체, GA4, MMP 툴</strong> 정보 인계</div>
+                                    <div class="map_cell-text">분석을 위한 <strong>광고 매체, GA4, MMP 툴</strong> 정보 인계</div>
                                 </div>
                                 <div class="map_section-item map_outcome">
                                     <div class="map_section-title"><i class="fas fa-chart-line"></i> 기대 성과</div>
@@ -7757,7 +7467,7 @@
                                 <div class="map_section-item map_voice">
                                     <div class="map_section-title"><i class="fas fa-comment-dots"></i> 실제 경험</div>
                                     <div class="map_quote-question">데이터를 체계적으로 관리해 본 적이 없어요..</div>
-                                    <div class="map_quote-answer">마케팅 데이터 전문가가 맥락을 이해하고 분류해주니<br/><strong>데이터 활용도</strong> 상승</div>
+                                    <div class="map_quote-answer">마케팅 데이터 전문가가 맥락을 분석하여<br/><strong>활용도 높은 데이터 구조도</strong> 정립</div>
                                 </div>
                                 <div class="map_section-item map_process">
                                     <div class="map_section-title"><i class="fas fa-cogs"></i> 프로세스</div>
@@ -7787,11 +7497,11 @@
                                 </div>
                                 <div class="map_section-item map_process">
                                     <div class="map_section-title"><i class="fas fa-cogs"></i> 프로세스</div>
-                                    <div class="map_cell-text">캠페인/이벤트 반영 세팅, 설계된 전략 기준 <strong>2차 미팅</strong> 진행</div>
+                                    <div class="map_cell-text">전략을 기반으로 광고 캠페인·이벤트 반영 및 세팅<br/>반영된 결과물을 토대로 <strong>2차 미팅</strong>및 <strong>전략 보충</strong></div>
                                 </div>
                                 <div class="map_section-item map_outcome">
                                     <div class="map_section-title"><i class="fas fa-chart-line"></i> 기대 성과</div>
-                                    <div class="map_cell-text">언제든 활용·조회가 가능한 <strong>스프레드 시트 대시보드</strong> 공유<br/>회사에 필요한 요청사항 <strong>커스터마이징</strong></div>
+                                    <div class="map_cell-text">활용·조회가 즉시 가능한 <strong>스프레드 시트 대시보드</strong> 및<br/>회사에 필요한 <strong>커스터마이징</strong> 사항 공유</div>
                                 </div>
                             </div>
                         </div>
@@ -7899,7 +7609,7 @@
 
     <script>
         let currentSlide = 1;
-        const totalSlides = 16;
+        const totalSlides = 15;
 
         function showSlide(n) {
             const slides = document.querySelectorAll('.slide');
