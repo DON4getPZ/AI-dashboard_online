@@ -1242,6 +1242,68 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* 예산 시뮬레이션 슬라이더 */
+        .simulation-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: linear-gradient(to right, #c62828 0%, #c62828 37.5%, #e0e0e0 37.5%, #e0e0e0 62.5%, #2e7d32 62.5%, #2e7d32 100%);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .simulation-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border: 2px solid var(--primary-main);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+
+        .simulation-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+
+        .simulation-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: white;
+            border: 2px solid var(--primary-main);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        /* 초기화 버튼 */
+        .reset-btn {
+            padding: 8px 16px;
+            border: none;
+            background: var(--paper);
+            color: var(--grey-700);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .reset-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .reset-btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
@@ -1491,9 +1553,9 @@
                                 <span style="font-size: 16px;">📊</span>
                                 <span style="font-size: 13px; font-weight: 600; color: #1565c0;">비교 기간:</span>
                                 <div style="display: flex; gap: 6px;">
-                                    <button class="trend-period-btn active" data-trend-period="7d" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #673ab7; color: white;">7일</button>
-                                    <button class="trend-period-btn" data-trend-period="14d" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">14일</button>
                                     <button class="trend-period-btn" data-trend-period="30d" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">30일</button>
+                                    <button class="trend-period-btn" data-trend-period="14d" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">14일</button>
+                                    <button class="trend-period-btn active" data-trend-period="7d" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #673ab7; color: white;">7일</button>
                                 </div>
                                 <span id="trendPeriodText" style="font-size: 12px; color: #37474f; margin-left: auto;"></span>
                             </div>
@@ -1551,9 +1613,9 @@
                         <div id="forecastTab" class="analysis-tab-content active">
                             <!-- 뷰 타입 선택 -->
                             <div class="view-type-section">
-                                <button class="view-btn forecast-view-btn active" data-view="daily">일별</button>
+                                <button class="view-btn forecast-view-btn active" data-view="monthly">월별</button>
                                 <button class="view-btn forecast-view-btn" data-view="weekly">주별</button>
-                                <button class="view-btn forecast-view-btn" data-view="monthly">월별</button>
+                                <button class="view-btn forecast-view-btn" data-view="daily">일별</button>
                             </div>
 
                             <!-- 예측 차트 -->
@@ -1593,9 +1655,53 @@
                         <div id="segmentCompareTab" class="analysis-tab-content" style="display: none;">
                             <!-- 세그먼트 탭 및 차트 -->
                             <div class="chart-section card">
-                                <div style="margin-bottom: 20px;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                                        <div class="chart-header" style="margin-bottom: 0;">세그먼트별 성과 비교</div>
+                                <!-- 상단 헤더 -->
+                                <div style="margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                    <div class="chart-header" style="margin-bottom: 4px;">세그먼트별 성과 비교</div>
+                                    <p style="color: var(--grey-600); font-size: 13px; margin: 0;">
+                                        각 세그먼트별로 실제 성과와 예측 성과를 비교하여 투자 우선순위를 파악할 수 있습니다.
+                                    </p>
+                                </div>
+
+                                <!-- 지표 선택 -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                                    <div style="flex: 0 0 auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
+                                        <select id="segmentCompareMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;">
+                                            <option value="roas">ROAS</option>
+                                            <option value="conversions">전환수</option>
+                                            <option value="revenue">매출</option>
+                                            <option value="cost">비용</option>
+                                            <option value="cvr">전환율</option>
+                                        </select>
+                                    </div>
+                                    <!-- 데이터 기준 날짜 -->
+                                    <div style="flex: 0 0 auto; text-align: right;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📊 데이터 기준</div>
+                                        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+                                            <div style="display: flex; align-items: center; gap: 8px; justify-content: flex-end;">
+                                                <span style="color: #2196F3; font-weight: 600;">실제 성과</span>
+                                                <span id="segmentCompareActualDateRange" style="color: var(--grey-600);">-</span>
+                                            </div>
+                                            <div style="display: flex; align-items: center; gap: 8px; justify-content: flex-end;">
+                                                <span style="color: #FF9800; font-weight: 600;">예측 성과</span>
+                                                <span id="segmentCompareForecastDateRange" style="color: var(--grey-600);">-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 세그먼트 선택 영역 -->
+                                <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 세그먼트 선택</div>
+                                        <div style="font-size: 12px; color: #2e7d32; font-weight: 600;">
+                                            🎯 <span id="selectedCompareSegmentCount">0</span>개 선택됨
+                                        </div>
+                                    </div>
+
+                                    <!-- 세그먼트 타입 버튼 -->
+                                    <div style="margin-bottom: 14px;">
                                         <div class="view-type-section" style="margin-bottom: 0;">
                                             <button class="view-btn segment-type-btn active" data-segment="channel">채널별</button>
                                             <button class="view-btn segment-type-btn" data-segment="product">제품별</button>
@@ -1603,20 +1709,30 @@
                                             <button class="view-btn segment-type-btn" data-segment="promotion">프로모션별</button>
                                         </div>
                                     </div>
-                                    <p style="color: var(--grey-600); font-size: 13px; margin-bottom: 16px;">
-                                        각 세그먼트별로 실제 성과와 예측 성과를 비교하여 투자 우선순위를 파악할 수 있습니다.
-                                    </p>
-                                </div>
 
-                                <!-- 메트릭 선택 -->
-                                <div style="margin-bottom: 20px;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📊 비교 지표 선택</div>
-                                    <div class="view-type-section" style="margin-bottom: 0;">
-                                        <button class="view-btn segment-metric-btn active" data-metric="roas">ROAS</button>
-                                        <button class="view-btn segment-metric-btn" data-metric="conversions">전환수</button>
-                                        <button class="view-btn segment-metric-btn" data-metric="revenue">매출</button>
-                                        <button class="view-btn segment-metric-btn" data-metric="cost">비용</button>
-                                        <button class="view-btn segment-metric-btn" data-metric="cvr">전환율</button>
+                                    <!-- 항목 선택 (드롭다운) -->
+                                    <div>
+                                        <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 10px;">항목 선택 (최대 10개)</div>
+                                        <div style="position: relative;">
+                                            <button type="button" id="segmentCompareDropdownBtn" style="width: 100%; max-width: 300px; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                                <span id="segmentCompareDropdownLabel" style="font-weight: 500;">항목을 선택하세요</span>
+                                                <span style="display: flex; align-items: center; gap: 6px;">
+                                                    <span id="segmentCompareSelectedCount" style="font-size: 11px; color: var(--grey-500);"></span>
+                                                    <span style="font-size: 10px;">▼</span>
+                                                </span>
+                                            </button>
+                                            <div id="segmentCompareDropdownList" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; max-width: 300px; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                                <div style="padding: 8px;">
+                                                    <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px; z-index: 1;">
+                                                        <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                            <input type="checkbox" id="segmentCompareSelectAll" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                            전체 선택 (최대 10개)
+                                                        </label>
+                                                    </div>
+                                                    <div id="segmentCompareCheckboxes" class="segment-compare-checkbox-list"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1639,17 +1755,58 @@
 
                         <!-- 탭 3: 세그먼트 트렌드 -->
                         <div id="segmentTrendTab" class="analysis-tab-content" style="display: none;">
-                            <!-- 뷰 타입 선택 (일별/주별/월별) -->
-                            <div class="view-type-section" style="margin-bottom: 16px;">
-                                <button class="view-btn segment-trend-view-btn active" data-view="daily">일별</button>
-                                <button class="view-btn segment-trend-view-btn" data-view="weekly">주별</button>
-                                <button class="view-btn segment-trend-view-btn" data-view="monthly">월별</button>
-                            </div>
-
                             <div class="chart-section card">
-                                <div style="margin-bottom: 20px;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                                        <div class="chart-header" style="margin-bottom: 0;">시간에 따른 세그먼트 성과 추이</div>
+                                <!-- 상단 헤더 및 집계 단위 -->
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                    <div>
+                                        <div class="chart-header" style="margin-bottom: 4px;">시간에 따른 세그먼트 성과 추이</div>
+                                        <p style="color: var(--grey-600); font-size: 13px; margin: 0;">
+                                            시간에 따른 각 세그먼트의 성과 변화를 추적하여 트렌드를 파악할 수 있습니다.
+                                        </p>
+                                    </div>
+                                    <!-- 집계 단위 선택 버튼 -->
+                                    <div class="view-type-section" style="margin-bottom: 0;">
+                                        <button class="view-btn segment-trend-view-btn active" data-view="monthly">월별</button>
+                                        <button class="view-btn segment-trend-view-btn" data-view="weekly">주별</button>
+                                        <button class="view-btn segment-trend-view-btn" data-view="daily">일별</button>
+                                    </div>
+                                </div>
+
+                                <!-- 지표 선택 및 기간 선택 -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                                    <!-- 지표 선택 -->
+                                    <div style="flex: 0 0 auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📈 지표 선택</div>
+                                        <select id="segmentTrendMetricDropdown" style="min-width: 200px; padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                            <option value="roas">ROAS</option>
+                                            <option value="cost">비용</option>
+                                            <option value="revenue">전환값</option>
+                                            <option value="conversions">전환수</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 기간 선택 -->
+                                    <div style="flex: 0 0 auto; margin-left: auto;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <input type="date" id="segmentTrendStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                            <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                            <input type="date" id="segmentTrendEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 세그먼트 타입 선택 및 필터 영역 -->
+                                <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 세그먼트 선택</div>
+                                        <div style="font-size: 12px; color: #2e7d32; font-weight: 600;">
+                                            🎯 <span id="selectedSegmentCount">0</span>개 선택됨
+                                        </div>
+                                    </div>
+
+                                    <!-- 세그먼트 타입 버튼 -->
+                                    <div style="margin-bottom: 14px;">
                                         <div class="view-type-section" style="margin-bottom: 0;">
                                             <button class="view-btn segment-trend-type-btn active" data-segment="channel">채널별</button>
                                             <button class="view-btn segment-trend-type-btn" data-segment="product">제품별</button>
@@ -1657,17 +1814,29 @@
                                             <button class="view-btn segment-trend-type-btn" data-segment="promotion">프로모션별</button>
                                         </div>
                                     </div>
-                                    <p style="color: var(--grey-600); font-size: 13px; margin-bottom: 16px;">
-                                        시간에 따른 각 세그먼트의 성과 변화를 추적하여 트렌드를 파악할 수 있습니다.
-                                    </p>
-                                </div>
 
-                                <!-- 항목 선택 (체크박스) -->
-                                <div style="margin-bottom: 20px;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">🎯 항목 선택 (최대 5개)</div>
-                                    <div class="chart-checkbox-group" id="segmentTrendCheckboxes" style="flex-wrap: wrap;">
-                                        <div class="insight-card neutral" style="padding: 12px; width: 100%;">
-                                            <div class="insight-text" style="text-align: center;">세그먼트 타입을 선택하면 항목이 표시됩니다.</div>
+                                    <!-- 항목 선택 (드롭다운) -->
+                                    <div>
+                                        <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 10px;">항목 선택 (최대 5개)</div>
+                                        <div style="position: relative;">
+                                            <button type="button" id="segmentTrendDropdownBtn" style="width: 100%; max-width: 300px; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
+                                                <span id="segmentTrendDropdownLabel" style="font-weight: 500;">항목을 선택하세요</span>
+                                                <span style="display: flex; align-items: center; gap: 6px;">
+                                                    <span id="segmentTrendSelectedCount" style="font-size: 11px; color: var(--grey-500);"></span>
+                                                    <span style="font-size: 10px;">▼</span>
+                                                </span>
+                                            </button>
+                                            <div id="segmentTrendDropdownList" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; max-width: 300px; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                                <div style="padding: 8px;">
+                                                    <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px; z-index: 1;">
+                                                        <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px; border-radius: 4px; transition: background 0.2s;">
+                                                            <input type="checkbox" id="segmentTrendSelectAll" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                            전체 선택 (최대 5개)
+                                                        </label>
+                                                    </div>
+                                                    <div id="segmentTrendCheckboxes" class="segment-trend-checkbox-list"></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1675,6 +1844,16 @@
                                 <!-- 트렌드 차트 -->
                                 <div class="chart-container">
                                     <canvas id="segmentTrendChart"></canvas>
+                                </div>
+
+                                <!-- 트렌드 분석 팁 -->
+                                <div style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%); border-radius: 10px; border-left: 4px solid #2196f3;">
+                                    <div style="font-size: 13px; font-weight: 600; color: #2196f3; margin-bottom: 8px;">
+                                        💡 트렌드 분석 팁
+                                    </div>
+                                    <div style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">
+                                        상승 추세를 보이는 세그먼트는 예산을 확대하고, 하락 추세를 보이는 세그먼트는 원인을 분석하여 개선하세요.
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1696,6 +1875,7 @@
                             <div class="view-type-section" style="margin-bottom: 24px;">
                                 <button class="view-btn business-subtab-btn active" data-business-tab="channel-roas">📊 채널별 ROAS</button>
                                 <button class="view-btn business-subtab-btn" data-business-tab="product-budget">🎯 제품 매출 & 예산</button>
+                                <button class="view-btn business-subtab-btn" data-business-tab="budget-simulation">💰 예산 시뮬레이션</button>
                             </div>
 
                             <!-- 서브 탭 1: 채널별 ROAS 비교 -->
@@ -1906,6 +2086,115 @@
                                                 권장 소진율 <strong>95-100%</strong><br>
                                                 현재 대비 <strong>-9%p 조정</strong> 필요<br>
                                                 최적 집행률 달성
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 서브 탭 3: 예산 시나리오 시뮬레이션 -->
+                            <div id="budgetSimulationTab" class="business-subtab-content" style="display: none;">
+                                <div class="card" style="padding: 24px;">
+                                    <!-- 섹션 설명 -->
+                                    <div style="font-size: 13px; color: var(--grey-700); padding: 16px; background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); line-height: 1.7; border-radius: 8px; margin-bottom: 24px;">
+                                        <strong style="color: #f57c00;">💰 예산 시나리오 시뮬레이션이란?</strong><br>
+                                        세그먼트별 예산 변경 시 예상되는 <strong>매출 변화</strong>를 시뮬레이션합니다.<br>
+                                        <span style="color: var(--grey-600);">ROAS 기반 선형 모델 + 로그 체감 수익 함수를 적용하여 현실적인 예측을 제공합니다.</span>
+                                    </div>
+
+                                    <!-- 세그먼트 타입 선택 -->
+                                    <div style="margin-bottom: 20px;">
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📊 세그먼트 유형 선택</div>
+                                        <div class="view-type-section" style="margin-bottom: 0;">
+                                            <button class="view-btn simulation-segment-btn active" data-sim-segment="all">전체</button>
+                                            <button class="view-btn simulation-segment-btn" data-sim-segment="channel">채널별</button>
+                                            <button class="view-btn simulation-segment-btn" data-sim-segment="product">제품별</button>
+                                            <button class="view-btn simulation-segment-btn" data-sim-segment="brand">브랜드별</button>
+                                            <button class="view-btn simulation-segment-btn" data-sim-segment="promotion">프로모션별</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- 세그먼트별 예산 조정 슬라이더 -->
+                                    <div style="margin-bottom: 24px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                            <div style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📈 세그먼트별 예산 조정</div>
+                                            <button id="resetSimulationBtn" class="reset-btn">초기화</button>
+                                        </div>
+                                        <div id="simulationSlidersContainer" style="display: flex; flex-direction: column; gap: 16px;">
+                                            <!-- JavaScript에서 동적 생성 -->
+                                        </div>
+                                    </div>
+
+                                    <!-- 시뮬레이션 결과 -->
+                                    <div style="background: var(--grey-50); border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+                                        <div style="font-size: 14px; font-weight: 700; color: var(--grey-900); margin-bottom: 16px;">📊 시뮬레이션 결과</div>
+
+                                        <!-- 결과 요약 카드 -->
+                                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px;">
+                                            <div style="background: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                                                <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">총 비용</div>
+                                                <div style="font-size: 12px; color: var(--grey-500); margin-bottom: 4px;">
+                                                    <span id="simCurrentCost">-</span> → <span id="simNewCost" style="font-weight: 700; color: var(--primary-main);">-</span>
+                                                </div>
+                                                <div id="simCostChange" style="font-size: 11px; font-weight: 600; color: var(--grey-600);">-</div>
+                                            </div>
+                                            <div style="background: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                                                <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">예상 매출</div>
+                                                <div style="font-size: 12px; color: var(--grey-500); margin-bottom: 4px;">
+                                                    <span id="simCurrentRevenue">-</span> → <span id="simNewRevenue" style="font-weight: 700; color: #2e7d32;">-</span>
+                                                </div>
+                                                <div id="simRevenueChange" style="font-size: 11px; font-weight: 600; color: var(--grey-600);">-</div>
+                                            </div>
+                                            <div style="background: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                                                <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">평균 ROAS</div>
+                                                <div style="font-size: 12px; color: var(--grey-500); margin-bottom: 4px;">
+                                                    <span id="simCurrentRoas">-</span> → <span id="simNewRoas" style="font-weight: 700; color: #1565c0;">-</span>
+                                                </div>
+                                                <div id="simRoasChange" style="font-size: 11px; font-weight: 600; color: var(--grey-600);">-</div>
+                                            </div>
+                                            <div style="background: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                                                <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">투자 효율</div>
+                                                <div id="simInvestmentEfficiency" style="font-size: 15px; font-weight: 700; color: #7b1fa2; margin-top: 8px;">-</div>
+                                                <div style="font-size: 10px; color: var(--grey-500);">추가투자 대비 추가매출</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 세그먼트별 상세 결과 테이블 -->
+                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📋 세그먼트별 상세 결과</div>
+                                        <div style="overflow-x: auto;">
+                                            <table id="simulationResultTable" style="width: 100%; font-size: 12px; border-collapse: collapse;">
+                                                <thead>
+                                                    <tr style="background: var(--grey-100);">
+                                                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid var(--grey-300);">세그먼트</th>
+                                                        <th style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-300);">현재 비용</th>
+                                                        <th style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-300);">변경 비용</th>
+                                                        <th style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-300);">현재 ROAS</th>
+                                                        <th style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-300);">조정 ROAS</th>
+                                                        <th style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-300);">예상 매출</th>
+                                                        <th style="text-align: center; padding: 10px; border-bottom: 1px solid var(--grey-300);">추천</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="simulationResultBody">
+                                                    <!-- JavaScript에서 동적 생성 -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- 인사이트 및 주의사항 -->
+                                    <div class="insight-content" style="grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                                        <div class="insight-card positive">
+                                            <div class="insight-title" style="font-size: 13px;">💡 시뮬레이션 인사이트</div>
+                                            <div id="simulationInsight" class="insight-text" style="font-size: 12px; line-height: 1.6;">
+                                                세그먼트별 예산을 조정하면 예상 결과가 표시됩니다.
+                                            </div>
+                                        </div>
+                                        <div class="insight-card neutral" style="border-left-color: #ff9800;">
+                                            <div class="insight-title" style="font-size: 13px;">⚠️ 주의사항</div>
+                                            <div class="insight-text" style="font-size: 12px; line-height: 1.6;">
+                                                • 예산 증가 시 <strong>체감 수익 효과</strong>가 적용됩니다 (ROAS 하락)<br>
+                                                • 실제 결과는 시장 상황, 경쟁, 계절성에 따라 달라질 수 있습니다<br>
+                                                • 본 시뮬레이션은 의사결정 <strong>참고용</strong>으로 활용하세요
                                             </div>
                                         </div>
                                     </div>
@@ -2172,7 +2461,7 @@
     <script>
         // 전역 변수
         let forecastData = [];
-        let currentView = 'daily';
+        let currentView = 'monthly';
         let forecastChart = null;
         let insightsData = null;
         let currentPeriod = 'full';  // 분석 기간 (full, 180d, 90d)
@@ -2340,7 +2629,10 @@
         let segmentCompareChart = null;
         let segmentTrendChart = null;
         let currentTrendSegmentType = 'channel';
-        let segmentTrendViewType = 'daily';  // 세그먼트 트렌드 뷰 타입 (daily, weekly, monthly)
+        let segmentTrendViewType = 'monthly';  // 세그먼트 트렌드 뷰 타입 (monthly, weekly, daily)
+        let segmentTrendMetric = 'roas';  // 세그먼트 트렌드 지표 (roas, cost, revenue, conversions)
+        let segmentTrendStartDate = '';   // 세그먼트 트렌드 시작일
+        let segmentTrendEndDate = '';     // 세그먼트 트렌드 종료일
         let dailyDataForKPI = [];  // KPI 요약용 일별 원본 데이터 (뷰 타입과 독립)
 
         // 숫자 포맷
@@ -2494,9 +2786,135 @@
 
         // 세그먼트 분석 초기화
         function initSegmentAnalysis() {
+            updateSegmentCompareCheckboxes();  // 세그먼트 비교 드롭다운 초기화
             updateSegmentCompareChart();
             updateSegmentDetailCards();
             updateSegmentTrendCheckboxes();
+            initSegmentTrendDateRange();  // 기간 초기값 설정
+        }
+
+        // 세그먼트 비교 드롭다운 라벨 업데이트
+        function updateSegmentCompareDropdownLabel() {
+            const checkedBoxes = document.querySelectorAll('.segment-compare-checkbox:checked');
+            const labelEl = document.getElementById('segmentCompareDropdownLabel');
+            const countEl = document.getElementById('segmentCompareSelectedCount');
+            const countEl2 = document.getElementById('selectedCompareSegmentCount');
+
+            if (labelEl) {
+                if (checkedBoxes.length === 0) {
+                    labelEl.textContent = '항목을 선택하세요';
+                } else if (checkedBoxes.length === 1) {
+                    labelEl.textContent = checkedBoxes[0].dataset.segment;
+                } else {
+                    labelEl.textContent = `${checkedBoxes[0].dataset.segment} 외 ${checkedBoxes.length - 1}개`;
+                }
+            }
+
+            if (countEl) {
+                countEl.textContent = checkedBoxes.length > 0 ? `${checkedBoxes.length}개` : '';
+            }
+
+            if (countEl2) {
+                countEl2.textContent = checkedBoxes.length;
+            }
+        }
+
+        // 세그먼트 비교 체크박스 업데이트
+        function updateSegmentCompareCheckboxes() {
+            const container = document.getElementById('segmentCompareCheckboxes');
+            if (!container) return;
+
+            const data = segmentData[currentSegmentType];
+            if (!data || data.length === 0) {
+                container.innerHTML = `
+                    <div style="padding: 12px; text-align: center; color: var(--grey-600); font-size: 12px;">
+                        해당 세그먼트 데이터가 없습니다.
+                    </div>
+                `;
+                updateSegmentCompareDropdownLabel();
+                return;
+            }
+
+            // 세그먼트 이름 추출
+            const segmentNames = [...new Set(data.map(row =>
+                row[currentSegmentType] || row.channel || row.product || row.brand || row.promotion
+            ))].filter(Boolean);
+
+            // 드롭다운 체크박스 아이템 생성
+            const html = segmentNames.map((name, index) => `
+                <label style="display: flex; align-items: center; padding: 6px 10px; cursor: pointer; font-size: 12px;">
+                    <input type="checkbox" class="segment-compare-checkbox" data-segment="${name}" ${index < 5 ? 'checked' : ''} style="margin-right: 10px; width: 14px; height: 14px; cursor: pointer;">
+                    <span>${name}</span>
+                </label>
+            `).join('');
+
+            container.innerHTML = html;
+
+            // 전체 선택 체크박스 상태 업데이트
+            updateCompareSelectAllState();
+
+            // 체크박스 이벤트 추가
+            document.querySelectorAll('.segment-compare-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    // 최대 10개만 선택 가능
+                    const checkedCount = document.querySelectorAll('.segment-compare-checkbox:checked').length;
+                    if (checkedCount > 10) {
+                        this.checked = false;
+                        alert('최대 10개 항목까지만 선택할 수 있습니다.');
+                        return;
+                    }
+                    updateCompareSelectAllState();
+                    updateSegmentCompareDropdownLabel();
+                    updateSegmentCompareChart();
+                    updateSegmentDetailCards();
+                });
+            });
+
+            // 드롭다운 라벨 업데이트
+            updateSegmentCompareDropdownLabel();
+        }
+
+        // 세그먼트 비교 전체 선택 체크박스 상태 업데이트
+        function updateCompareSelectAllState() {
+            const selectAllCheckbox = document.getElementById('segmentCompareSelectAll');
+            const allCheckboxes = document.querySelectorAll('.segment-compare-checkbox');
+            const checkedCount = document.querySelectorAll('.segment-compare-checkbox:checked').length;
+
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = (checkedCount === allCheckboxes.length) || (checkedCount === 10);
+                selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < Math.min(10, allCheckboxes.length);
+            }
+        }
+
+        // 세그먼트 트렌드 기간 초기값 설정
+        function initSegmentTrendDateRange() {
+            const data = segmentData['channel'];  // 기본적으로 channel 데이터 사용
+            if (!data || data.length === 0) return;
+
+            // 날짜 추출 및 정렬
+            const dates = data.map(row => row['일 구분']).filter(Boolean).sort();
+            if (dates.length === 0) return;
+
+            const minDate = dates[0];
+            const maxDate = dates[dates.length - 1];
+
+            // 날짜 입력 필드에 초기값 설정
+            const startInput = document.getElementById('segmentTrendStartDate');
+            const endInput = document.getElementById('segmentTrendEndDate');
+
+            if (startInput) {
+                startInput.value = minDate;
+                startInput.min = minDate;
+                startInput.max = maxDate;
+                segmentTrendStartDate = minDate;
+            }
+
+            if (endInput) {
+                endInput.value = maxDate;
+                endInput.min = minDate;
+                endInput.max = maxDate;
+                segmentTrendEndDate = maxDate;
+            }
         }
 
         // 세그먼트 비교 차트 업데이트
@@ -2507,11 +2925,41 @@
                 return;
             }
 
+            // 선택된 세그먼트 가져오기
+            const selectedSegments = Array.from(document.querySelectorAll('.segment-compare-checkbox:checked'))
+                .map(cb => cb.dataset.segment);
+
+            // 선택된 항목이 없으면 차트 및 상세 카드, 데이터 기준 초기화
+            if (selectedSegments.length === 0) {
+                if (segmentCompareChart) {
+                    segmentCompareChart.destroy();
+                    segmentCompareChart = null;
+                }
+                window.currentSegments = {};
+                const container = document.getElementById('segmentDetailCards');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="insight-card neutral" style="grid-column: 1 / -1;">
+                            <div class="insight-text" style="text-align: center;">항목을 선택하면 상세 분석이 표시됩니다.</div>
+                        </div>
+                    `;
+                }
+                // 데이터 기준 날짜 초기화
+                const actualRangeEl = document.getElementById('segmentCompareActualDateRange');
+                const forecastRangeEl = document.getElementById('segmentCompareForecastDateRange');
+                if (actualRangeEl) actualRangeEl.textContent = '-';
+                if (forecastRangeEl) forecastRangeEl.textContent = '-';
+                return;
+            }
+
             // 세그먼트별로 그룹화
             const segments = {};
             data.forEach(row => {
                 const segmentName = row[currentSegmentType] || row.channel || row.product || row.brand || row.promotion;
                 if (!segmentName) return;
+
+                // 선택된 세그먼트만 포함
+                if (!selectedSegments.includes(segmentName)) return;
 
                 if (!segments[segmentName]) {
                     segments[segmentName] = {
@@ -2528,8 +2976,40 @@
                 segments[segmentName][type].impressions += parseFloat(row['노출_예측']) || 0;
             });
 
-            // 차트 데이터 준비
-            const labels = Object.keys(segments);
+            // 실제/예측 데이터 날짜 범위 계산 및 표시 (선택된 세그먼트만)
+            const actualDates = [];
+            const forecastDates = [];
+            data.forEach(row => {
+                const segmentName = row[currentSegmentType] || row.channel || row.product || row.brand || row.promotion;
+                // 선택된 세그먼트만 포함
+                if (!selectedSegments.includes(segmentName)) return;
+
+                const rowDate = row['일 구분'];
+                if (row.type === 'actual') actualDates.push(rowDate);
+                if (row.type === 'forecast') forecastDates.push(rowDate);
+            });
+
+            const actualRangeEl = document.getElementById('segmentCompareActualDateRange');
+            const forecastRangeEl = document.getElementById('segmentCompareForecastDateRange');
+            if (actualRangeEl) {
+                if (actualDates.length > 0) {
+                    const uniqueActualDates = [...new Set(actualDates)].sort();
+                    actualRangeEl.textContent = `${uniqueActualDates[0]} ~ ${uniqueActualDates[uniqueActualDates.length - 1]}`;
+                } else {
+                    actualRangeEl.textContent = '-';
+                }
+            }
+            if (forecastRangeEl) {
+                if (forecastDates.length > 0) {
+                    const uniqueForecastDates = [...new Set(forecastDates)].sort();
+                    forecastRangeEl.textContent = `${uniqueForecastDates[0]} ~ ${uniqueForecastDates[uniqueForecastDates.length - 1]}`;
+                } else {
+                    forecastRangeEl.textContent = '-';
+                }
+            }
+
+            // 차트 데이터 준비 (선택된 순서 유지)
+            const labels = selectedSegments.filter(s => segments[s]);
             const actualValues = [];
             const forecastValues = [];
 
@@ -2731,6 +3211,32 @@
             container.innerHTML = html;
         }
 
+        // 세그먼트 트렌드 드롭다운 라벨 업데이트
+        function updateSegmentTrendDropdownLabel() {
+            const checkedBoxes = document.querySelectorAll('.segment-trend-checkbox:checked');
+            const labelEl = document.getElementById('segmentTrendDropdownLabel');
+            const countEl = document.getElementById('segmentTrendSelectedCount');
+            const countEl2 = document.getElementById('selectedSegmentCount');
+
+            if (labelEl) {
+                if (checkedBoxes.length === 0) {
+                    labelEl.textContent = '항목을 선택하세요';
+                } else if (checkedBoxes.length === 1) {
+                    labelEl.textContent = checkedBoxes[0].dataset.segment;
+                } else {
+                    labelEl.textContent = `${checkedBoxes[0].dataset.segment} 외 ${checkedBoxes.length - 1}개`;
+                }
+            }
+
+            if (countEl) {
+                countEl.textContent = checkedBoxes.length > 0 ? `${checkedBoxes.length}개` : '';
+            }
+
+            if (countEl2) {
+                countEl2.textContent = checkedBoxes.length;
+            }
+        }
+
         // 세그먼트 트렌드 체크박스 업데이트
         function updateSegmentTrendCheckboxes() {
             const container = document.getElementById('segmentTrendCheckboxes');
@@ -2739,10 +3245,11 @@
             const data = segmentData[currentTrendSegmentType];
             if (!data || data.length === 0) {
                 container.innerHTML = `
-                    <div class="insight-card neutral" style="padding: 12px; width: 100%;">
-                        <div class="insight-text" style="text-align: center;">해당 세그먼트 데이터가 없습니다.</div>
+                    <div style="padding: 12px; text-align: center; color: var(--grey-600); font-size: 12px;">
+                        해당 세그먼트 데이터가 없습니다.
                     </div>
                 `;
+                updateSegmentTrendDropdownLabel();
                 return;
             }
 
@@ -2751,17 +3258,18 @@
                 row[currentTrendSegmentType] || row.channel || row.product || row.brand || row.promotion
             ))].filter(Boolean);
 
-            // 체크박스 생성 (최대 5개 선택 가능)
-            const colors = ['#673ab7', '#2196f3', '#ff9800', '#4caf50', '#00c853', '#9c27b0', '#03a9f4', '#8bc34a', '#ff5722'];
-
+            // 드롭다운 체크박스 아이템 생성
             const html = segmentNames.map((name, index) => `
-                <label class="chart-checkbox" style="border-left: 3px solid ${colors[index % colors.length]};">
-                    <input type="checkbox" class="segment-trend-checkbox" data-segment="${name}" ${index < 3 ? 'checked' : ''}>
+                <label style="display: flex; align-items: center; padding: 6px 10px; cursor: pointer; font-size: 12px;">
+                    <input type="checkbox" class="segment-trend-checkbox" data-segment="${name}" ${index < 3 ? 'checked' : ''} style="margin-right: 10px; width: 14px; height: 14px; cursor: pointer;">
                     <span>${name}</span>
                 </label>
             `).join('');
 
             container.innerHTML = html;
+
+            // 전체 선택 체크박스 상태 업데이트
+            updateSelectAllState();
 
             // 체크박스 이벤트 추가
             document.querySelectorAll('.segment-trend-checkbox').forEach(checkbox => {
@@ -2773,12 +3281,30 @@
                         alert('최대 5개 항목까지만 선택할 수 있습니다.');
                         return;
                     }
+                    updateSelectAllState();
+                    updateSegmentTrendDropdownLabel();
                     updateSegmentTrendChart();
                 });
             });
 
+            // 드롭다운 라벨 업데이트
+            updateSegmentTrendDropdownLabel();
+
             // 초기 차트 그리기
             updateSegmentTrendChart();
+        }
+
+        // 전체 선택 체크박스 상태 업데이트
+        function updateSelectAllState() {
+            const selectAllCheckbox = document.getElementById('segmentTrendSelectAll');
+            const allCheckboxes = document.querySelectorAll('.segment-trend-checkbox');
+            const checkedCount = document.querySelectorAll('.segment-trend-checkbox:checked').length;
+
+            if (selectAllCheckbox) {
+                // 5개 또는 전체가 선택되어 있으면 체크
+                selectAllCheckbox.checked = (checkedCount === allCheckboxes.length) || (checkedCount === 5);
+                selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < Math.min(5, allCheckboxes.length);
+            }
         }
 
         // 세그먼트 트렌드 차트 업데이트
@@ -2789,6 +3315,12 @@
             // 선택된 세그먼트 가져오기
             const selectedSegments = Array.from(document.querySelectorAll('.segment-trend-checkbox:checked'))
                 .map(cb => cb.dataset.segment);
+
+            // 선택된 개수 업데이트
+            const countEl = document.getElementById('selectedSegmentCount');
+            if (countEl) {
+                countEl.textContent = selectedSegments.length;
+            }
 
             if (selectedSegments.length === 0) {
                 // 차트 초기화
@@ -2815,10 +3347,16 @@
                 return dateStr;  // daily
             };
 
-            // 날짜별로 데이터 그룹화 (뷰 타입 적용)
+            // 날짜별로 데이터 그룹화 (뷰 타입 적용 + 기간 필터)
             const dateGroups = {};
             data.forEach(row => {
-                const dateKey = getDateKey(row['일 구분']);
+                const rowDate = row['일 구분'];
+
+                // 기간 필터 적용
+                if (segmentTrendStartDate && rowDate < segmentTrendStartDate) return;
+                if (segmentTrendEndDate && rowDate > segmentTrendEndDate) return;
+
+                const dateKey = getDateKey(rowDate);
                 const segmentName = row[currentTrendSegmentType] || row.channel || row.product || row.brand || row.promotion;
 
                 if (!selectedSegments.includes(segmentName)) return;
@@ -2848,14 +3386,37 @@
             // 날짜 정렬
             const dates = Object.keys(dateGroups).sort();
 
+            // 지표별 값 계산 함수
+            const getMetricValue = (seg) => {
+                if (!seg) return 0;
+                switch (segmentTrendMetric) {
+                    case 'roas':
+                        return seg.cost > 0 ? (seg.revenue / seg.cost * 100) : 0;
+                    case 'cost':
+                        return seg.cost;
+                    case 'revenue':
+                        return seg.revenue;
+                    case 'conversions':
+                        return seg.conversions;
+                    default:
+                        return seg.cost > 0 ? (seg.revenue / seg.cost * 100) : 0;
+                }
+            };
+
+            // 지표별 Y축 라벨
+            const metricLabels = {
+                roas: 'ROAS (%)',
+                cost: '비용 (원)',
+                revenue: '전환값 (원)',
+                conversions: '전환수'
+            };
+
             // 데이터셋 생성
             const colors = ['#673ab7', '#2196f3', '#ff9800', '#4caf50', '#00c853', '#9c27b0', '#03a9f4', '#8bc34a', '#ff5722'];
             const datasets = selectedSegments.map((segmentName, index) => {
                 const values = dates.map(date => {
                     const seg = dateGroups[date][segmentName];
-                    if (!seg) return 0;
-                    // ROAS 계산
-                    return seg.cost > 0 ? (seg.revenue / seg.cost * 100) : 0;
+                    return getMetricValue(seg);
                 });
 
                 // 실제/예측 구분 (주별/월별 집계 시 혼합 처리)
@@ -2954,7 +3515,15 @@
                                     if (label) {
                                         label += ': ';
                                     }
-                                    label += formatDecimal(context.parsed.y) + '%';
+
+                                    // 지표별 포맷팅
+                                    if (segmentTrendMetric === 'roas') {
+                                        label += formatDecimal(context.parsed.y) + '%';
+                                    } else if (segmentTrendMetric === 'conversions') {
+                                        label += formatNumber(context.parsed.y) + '건';
+                                    } else {
+                                        label += formatNumber(context.parsed.y) + '원';
+                                    }
 
                                     // 예측값 여부 표시
                                     if (context.dataset.borderDash) {
@@ -2979,7 +3548,18 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'ROAS (%)'
+                                text: metricLabels[segmentTrendMetric] || 'ROAS (%)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    if (segmentTrendMetric === 'roas') {
+                                        return value + '%';
+                                    } else if (segmentTrendMetric === 'conversions') {
+                                        return formatNumber(value);
+                                    } else {
+                                        return formatNumber(value);
+                                    }
+                                }
                             }
                         }
                     }
@@ -4279,6 +4859,9 @@
                         document.getElementById('channelRoasTab').style.display = 'block';
                     } else if (targetTab === 'product-budget') {
                         document.getElementById('productBudgetTab').style.display = 'block';
+                    } else if (targetTab === 'budget-simulation') {
+                        document.getElementById('budgetSimulationTab').style.display = 'block';
+                        initBudgetSimulation();
                     }
                 });
             });
@@ -4311,20 +4894,62 @@
                     document.querySelectorAll('.segment-type-btn').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     currentSegmentType = this.dataset.segment;
+                    updateSegmentCompareCheckboxes();  // 드롭다운 체크박스 업데이트
                     updateSegmentCompareChart();
                     updateSegmentDetailCards();
                 });
             });
 
-            // 세그먼트 메트릭 버튼 이벤트 (ROAS/전환수/매출/비용/CVR)
-            document.querySelectorAll('.segment-metric-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.segment-metric-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentSegmentMetric = this.dataset.metric;
+            // 세그먼트 비교 지표 선택 드롭다운 이벤트
+            const segmentCompareMetricDropdown = document.getElementById('segmentCompareMetricDropdown');
+            if (segmentCompareMetricDropdown) {
+                segmentCompareMetricDropdown.addEventListener('change', function() {
+                    currentSegmentMetric = this.value;
                     updateSegmentCompareChart();
                 });
-            });
+            }
+
+            // 세그먼트 비교 드롭다운 토글 이벤트
+            const segmentCompareDropdownBtn = document.getElementById('segmentCompareDropdownBtn');
+            const segmentCompareDropdownList = document.getElementById('segmentCompareDropdownList');
+
+            if (segmentCompareDropdownBtn && segmentCompareDropdownList) {
+                segmentCompareDropdownBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isOpen = segmentCompareDropdownList.style.display === 'block';
+                    segmentCompareDropdownList.style.display = isOpen ? 'none' : 'block';
+                });
+
+                // 드롭다운 외부 클릭 시 닫기
+                document.addEventListener('click', function(e) {
+                    if (!segmentCompareDropdownBtn.contains(e.target) && !segmentCompareDropdownList.contains(e.target)) {
+                        segmentCompareDropdownList.style.display = 'none';
+                    }
+                });
+            }
+
+            // 세그먼트 비교 전체 선택 이벤트
+            const segmentCompareSelectAll = document.getElementById('segmentCompareSelectAll');
+            if (segmentCompareSelectAll) {
+                segmentCompareSelectAll.addEventListener('change', function() {
+                    const allCheckboxes = document.querySelectorAll('.segment-compare-checkbox');
+                    const maxSelect = Math.min(10, allCheckboxes.length);
+
+                    if (this.checked) {
+                        allCheckboxes.forEach((cb, index) => {
+                            cb.checked = index < maxSelect;
+                        });
+                    } else {
+                        allCheckboxes.forEach(cb => {
+                            cb.checked = false;
+                        });
+                    }
+
+                    updateSegmentCompareDropdownLabel();
+                    updateSegmentCompareChart();
+                    updateSegmentDetailCards();
+                });
+            }
 
             // 세그먼트 트렌드 타입 버튼 이벤트
             document.querySelectorAll('.segment-trend-type-btn').forEach(btn => {
@@ -4336,6 +4961,49 @@
                 });
             });
 
+            // 세그먼트 트렌드 드롭다운 토글 이벤트
+            const segmentTrendDropdownBtn = document.getElementById('segmentTrendDropdownBtn');
+            const segmentTrendDropdownList = document.getElementById('segmentTrendDropdownList');
+
+            if (segmentTrendDropdownBtn && segmentTrendDropdownList) {
+                segmentTrendDropdownBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isOpen = segmentTrendDropdownList.style.display === 'block';
+                    segmentTrendDropdownList.style.display = isOpen ? 'none' : 'block';
+                });
+
+                // 드롭다운 외부 클릭 시 닫기
+                document.addEventListener('click', function(e) {
+                    if (!segmentTrendDropdownBtn.contains(e.target) && !segmentTrendDropdownList.contains(e.target)) {
+                        segmentTrendDropdownList.style.display = 'none';
+                    }
+                });
+            }
+
+            // 세그먼트 트렌드 전체 선택 이벤트
+            const segmentTrendSelectAll = document.getElementById('segmentTrendSelectAll');
+            if (segmentTrendSelectAll) {
+                segmentTrendSelectAll.addEventListener('change', function() {
+                    const allCheckboxes = document.querySelectorAll('.segment-trend-checkbox');
+                    const maxSelect = Math.min(5, allCheckboxes.length);
+
+                    if (this.checked) {
+                        // 최대 5개까지만 선택
+                        allCheckboxes.forEach((cb, index) => {
+                            cb.checked = index < maxSelect;
+                        });
+                    } else {
+                        // 전체 해제
+                        allCheckboxes.forEach(cb => {
+                            cb.checked = false;
+                        });
+                    }
+
+                    updateSegmentTrendDropdownLabel();
+                    updateSegmentTrendChart();
+                });
+            }
+
             // 세그먼트 트렌드 뷰 타입 버튼 이벤트 (일별/주별/월별)
             document.querySelectorAll('.segment-trend-view-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -4345,6 +5013,36 @@
                     updateSegmentTrendChart();
                 });
             });
+
+            // 세그먼트 트렌드 지표 선택 이벤트
+            const segmentTrendMetricDropdown = document.getElementById('segmentTrendMetricDropdown');
+            if (segmentTrendMetricDropdown) {
+                segmentTrendMetricDropdown.addEventListener('change', function() {
+                    segmentTrendMetric = this.value;
+                    updateSegmentTrendChart();
+                });
+            }
+
+            // 세그먼트 트렌드 기간 선택 이벤트
+            const segmentTrendStartDateInput = document.getElementById('segmentTrendStartDate');
+            const segmentTrendEndDateInput = document.getElementById('segmentTrendEndDate');
+
+            if (segmentTrendStartDateInput) {
+                segmentTrendStartDateInput.addEventListener('change', function() {
+                    segmentTrendStartDate = this.value;
+                    updateSegmentTrendChart();
+                });
+            }
+
+            if (segmentTrendEndDateInput) {
+                segmentTrendEndDateInput.addEventListener('change', function() {
+                    segmentTrendEndDate = this.value;
+                    updateSegmentTrendChart();
+                });
+            }
+
+            // 세그먼트 트렌드 기간 초기값 설정
+            initSegmentTrendDateRange();
 
             // 접기/펼치기 이벤트 초기화
             initCollapsibles();
@@ -4373,6 +5071,352 @@
                     }
                 });
             });
+        }
+
+        // =====================================================
+        // 예산 시나리오 시뮬레이션 모듈
+        // =====================================================
+
+        // 시뮬레이션 상태 변수
+        let currentSimSegmentType = 'all';
+        let simulationData = {};
+        let budgetAdjustments = {};
+        const DIMINISHING_FACTOR = 0.15; // 체감 수익 계수
+
+        // 통화 포맷
+        function formatSimCurrency(value) {
+            if (value >= 100000000) {
+                return (value / 100000000).toFixed(1) + '억';
+            } else if (value >= 10000000) {
+                return (value / 10000).toFixed(0) + '만';
+            } else if (value >= 10000) {
+                return (value / 10000).toFixed(1) + '만';
+            }
+            return value.toLocaleString() + '원';
+        }
+
+        // 시뮬레이션 초기화
+        function initBudgetSimulation() {
+            loadSimulationData();
+            renderSimulationSliders();
+            updateSimulationResults();
+            bindSimulationEvents();
+        }
+
+        // 세그먼트 데이터 로드
+        function loadSimulationData() {
+            simulationData = {};
+
+            // '전체' 선택 시 모든 데이터를 하나로 통합
+            if (currentSimSegmentType === 'all') {
+                simulationData['전체'] = {
+                    cost: 0,
+                    revenue: 0,
+                    conversions: 0,
+                    clicks: 0
+                };
+
+                // 채널 데이터 기준으로 전체 집계 (중복 방지)
+                const data = segmentData['channel'];
+                if (data && data.length > 0) {
+                    data.forEach(row => {
+                        if (row.type !== 'actual') return;
+                        simulationData['전체'].cost += parseFloat(row['비용_예측']) || 0;
+                        simulationData['전체'].revenue += parseFloat(row['전환값_예측']) || 0;
+                        simulationData['전체'].conversions += parseFloat(row['전환수_예측']) || 0;
+                        simulationData['전체'].clicks += parseFloat(row['클릭_예측']) || 0;
+                    });
+                }
+            } else {
+                const data = segmentData[currentSimSegmentType];
+                if (!data || data.length === 0) return;
+
+                // 실제 데이터만 집계
+                data.forEach(row => {
+                    if (row.type !== 'actual') return;
+
+                    const segmentName = row[currentSimSegmentType] || row.channel || row.product || row.brand || row.promotion;
+                    if (!segmentName) return;
+
+                    if (!simulationData[segmentName]) {
+                        simulationData[segmentName] = {
+                            cost: 0,
+                            revenue: 0,
+                            conversions: 0,
+                            clicks: 0
+                        };
+                    }
+
+                    simulationData[segmentName].cost += parseFloat(row['비용_예측']) || 0;
+                    simulationData[segmentName].revenue += parseFloat(row['전환값_예측']) || 0;
+                    simulationData[segmentName].conversions += parseFloat(row['전환수_예측']) || 0;
+                    simulationData[segmentName].clicks += parseFloat(row['클릭_예측']) || 0;
+                });
+            }
+
+            // ROAS 계산 및 초기 조정값 설정
+            Object.keys(simulationData).forEach(segment => {
+                const seg = simulationData[segment];
+                seg.roas = seg.cost > 0 ? (seg.revenue / seg.cost * 100) : 0;
+                seg.cvr = seg.clicks > 0 ? (seg.conversions / seg.clicks * 100) : 0;
+                budgetAdjustments[segment] = 0; // 초기값 0%
+            });
+        }
+
+        // 슬라이더 렌더링
+        function renderSimulationSliders() {
+            const container = document.getElementById('simulationSlidersContainer');
+            if (!container) return;
+
+            const segments = Object.keys(simulationData).sort((a, b) => {
+                return simulationData[b].cost - simulationData[a].cost; // 비용 높은 순
+            });
+
+            if (segments.length === 0) {
+                container.innerHTML = '<div style="color: var(--grey-600); text-align: center; padding: 20px;">데이터가 없습니다.</div>';
+                return;
+            }
+
+            container.innerHTML = segments.map(segment => {
+                const seg = simulationData[segment];
+                const currentAdjust = budgetAdjustments[segment] || 0;
+                const roasColor = seg.roas >= 150 ? '#2e7d32' : seg.roas >= 100 ? '#1565c0' : '#c62828';
+
+                return `
+                    <div style="background: white; padding: 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div>
+                                <span style="font-weight: 600; color: var(--grey-900);">${segment}</span>
+                                <span style="font-size: 11px; color: ${roasColor}; margin-left: 8px; font-weight: 600;">ROAS ${seg.roas.toFixed(0)}%</span>
+                            </div>
+                            <div style="font-size: 12px; color: var(--grey-600);">
+                                현재: ${formatSimCurrency(seg.cost)}
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 11px; color: var(--grey-500); width: 35px;">-30%</span>
+                            <input type="range"
+                                   class="simulation-slider"
+                                   data-segment="${segment}"
+                                   min="-30" max="50" value="${currentAdjust}" step="5"
+                                   style="flex: 1; cursor: pointer;">
+                            <span style="font-size: 11px; color: var(--grey-500); width: 35px;">+50%</span>
+                            <span class="slider-value" data-segment="${segment}"
+                                  style="min-width: 50px; text-align: right; font-weight: 600; font-size: 13px; color: ${currentAdjust > 0 ? '#2e7d32' : currentAdjust < 0 ? '#c62828' : 'var(--grey-700)'};">
+                                ${currentAdjust > 0 ? '+' : ''}${currentAdjust}%
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // 슬라이더 이벤트 바인딩
+            container.querySelectorAll('.simulation-slider').forEach(slider => {
+                slider.addEventListener('input', function() {
+                    const segment = this.dataset.segment;
+                    const value = parseInt(this.value);
+                    budgetAdjustments[segment] = value;
+
+                    // 값 표시 업데이트
+                    const valueDisplay = container.querySelector(`.slider-value[data-segment="${segment}"]`);
+                    if (valueDisplay) {
+                        valueDisplay.textContent = (value > 0 ? '+' : '') + value + '%';
+                        valueDisplay.style.color = value > 0 ? '#2e7d32' : value < 0 ? '#c62828' : 'var(--grey-700)';
+                    }
+
+                    updateSimulationResults();
+                });
+            });
+        }
+
+        // 로그 체감 함수 적용 ROAS 계산
+        function calculateAdjustedRoas(currentRoas, budgetChangeRatio) {
+            if (budgetChangeRatio > 0) {
+                // 예산 증가: ROAS 하락 (체감 수익)
+                return currentRoas * (1 - DIMINISHING_FACTOR * Math.log(1 + budgetChangeRatio));
+            } else if (budgetChangeRatio < 0) {
+                // 예산 감소: ROAS 상승 (효율적 타겟 집중)
+                return currentRoas * (1 + DIMINISHING_FACTOR * Math.log(1 + Math.abs(budgetChangeRatio)) * 0.5);
+            }
+            return currentRoas;
+        }
+
+        // 시뮬레이션 결과 업데이트
+        function updateSimulationResults() {
+            let totalCurrentCost = 0;
+            let totalCurrentRevenue = 0;
+            let totalNewCost = 0;
+            let totalNewRevenue = 0;
+            const segmentResults = [];
+
+            Object.keys(simulationData).forEach(segment => {
+                const seg = simulationData[segment];
+                const adjustment = (budgetAdjustments[segment] || 0) / 100;
+
+                const newCost = seg.cost * (1 + adjustment);
+                const adjustedRoas = calculateAdjustedRoas(seg.roas, adjustment);
+                const newRevenue = newCost * (adjustedRoas / 100);
+
+                totalCurrentCost += seg.cost;
+                totalCurrentRevenue += seg.revenue;
+                totalNewCost += newCost;
+                totalNewRevenue += newRevenue;
+
+                // 추천 등급 결정
+                let recommendation = '';
+                let recColor = '';
+                if (adjustedRoas >= 150) {
+                    recommendation = '증액 추천';
+                    recColor = '#2e7d32';
+                } else if (adjustedRoas >= 100) {
+                    recommendation = '유지';
+                    recColor = '#1565c0';
+                } else if (adjustedRoas >= 50) {
+                    recommendation = '효율 점검';
+                    recColor = '#f57c00';
+                } else {
+                    recommendation = '감액 검토';
+                    recColor = '#c62828';
+                }
+
+                segmentResults.push({
+                    segment,
+                    currentCost: seg.cost,
+                    newCost,
+                    currentRoas: seg.roas,
+                    adjustedRoas,
+                    newRevenue,
+                    recommendation,
+                    recColor,
+                    adjustment: budgetAdjustments[segment] || 0
+                });
+            });
+
+            // 요약 카드 업데이트
+            const currentRoas = totalCurrentCost > 0 ? (totalCurrentRevenue / totalCurrentCost * 100) : 0;
+            const newRoas = totalNewCost > 0 ? (totalNewRevenue / totalNewCost * 100) : 0;
+            const costChange = totalCurrentCost > 0 ? ((totalNewCost - totalCurrentCost) / totalCurrentCost * 100) : 0;
+            const revenueChange = totalCurrentRevenue > 0 ? ((totalNewRevenue - totalCurrentRevenue) / totalCurrentRevenue * 100) : 0;
+            const roasChange = newRoas - currentRoas;
+
+            document.getElementById('simCurrentCost').textContent = formatSimCurrency(totalCurrentCost);
+            document.getElementById('simNewCost').textContent = formatSimCurrency(totalNewCost);
+            document.getElementById('simCostChange').textContent = (costChange >= 0 ? '+' : '') + costChange.toFixed(1) + '%';
+            document.getElementById('simCostChange').style.color = costChange > 0 ? '#c62828' : costChange < 0 ? '#2e7d32' : 'var(--grey-600)';
+
+            document.getElementById('simCurrentRevenue').textContent = formatSimCurrency(totalCurrentRevenue);
+            document.getElementById('simNewRevenue').textContent = formatSimCurrency(totalNewRevenue);
+            document.getElementById('simRevenueChange').textContent = (revenueChange >= 0 ? '+' : '') + revenueChange.toFixed(1) + '%';
+            document.getElementById('simRevenueChange').style.color = revenueChange > 0 ? '#2e7d32' : revenueChange < 0 ? '#c62828' : 'var(--grey-600)';
+
+            document.getElementById('simCurrentRoas').textContent = currentRoas.toFixed(0) + '%';
+            document.getElementById('simNewRoas').textContent = newRoas.toFixed(0) + '%';
+            document.getElementById('simRoasChange').textContent = (roasChange >= 0 ? '+' : '') + roasChange.toFixed(1) + '%p';
+            document.getElementById('simRoasChange').style.color = roasChange > 0 ? '#2e7d32' : roasChange < 0 ? '#c62828' : 'var(--grey-600)';
+
+            // 투자 효율 계산
+            const additionalCost = totalNewCost - totalCurrentCost;
+            const additionalRevenue = totalNewRevenue - totalCurrentRevenue;
+            let efficiencyText = '-';
+            if (additionalCost > 0 && additionalRevenue > 0) {
+                const efficiency = (additionalRevenue / additionalCost * 100).toFixed(0);
+                efficiencyText = efficiency + '%';
+            } else if (additionalCost < 0 && additionalRevenue < 0) {
+                efficiencyText = '비용 절감';
+            } else if (additionalCost === 0) {
+                efficiencyText = '변동 없음';
+            }
+            document.getElementById('simInvestmentEfficiency').textContent = efficiencyText;
+
+            // 테이블 업데이트
+            const tbody = document.getElementById('simulationResultBody');
+            tbody.innerHTML = segmentResults.map(r => `
+                <tr style="background: ${r.adjustment !== 0 ? '#fffde7' : 'white'};">
+                    <td style="padding: 10px; border-bottom: 1px solid var(--grey-200);"><strong>${r.segment}</strong></td>
+                    <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200);">${formatSimCurrency(r.currentCost)}</td>
+                    <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200); font-weight: 600; color: ${r.adjustment > 0 ? '#c62828' : r.adjustment < 0 ? '#2e7d32' : 'inherit'};">
+                        ${formatSimCurrency(r.newCost)} <span style="font-size: 10px; font-weight: normal;">(${r.adjustment > 0 ? '+' : ''}${r.adjustment}%)</span>
+                    </td>
+                    <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200);">${r.currentRoas.toFixed(0)}%</td>
+                    <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200); font-weight: 600; color: ${r.adjustedRoas >= 100 ? '#2e7d32' : '#c62828'};">${r.adjustedRoas.toFixed(0)}%</td>
+                    <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200); font-weight: 600;">${formatSimCurrency(r.newRevenue)}</td>
+                    <td style="text-align: center; padding: 10px; border-bottom: 1px solid var(--grey-200);">
+                        <span style="background: ${r.recColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">${r.recommendation}</span>
+                    </td>
+                </tr>
+            `).join('');
+
+            // 인사이트 업데이트
+            updateSimulationInsight(segmentResults, costChange, revenueChange, roasChange);
+        }
+
+        // 시뮬레이션 인사이트 생성
+        function updateSimulationInsight(results, costChange, revenueChange, roasChange) {
+            const insightEl = document.getElementById('simulationInsight');
+            if (!insightEl) return;
+
+            const changedSegments = results.filter(r => r.adjustment !== 0);
+
+            if (changedSegments.length === 0) {
+                insightEl.innerHTML = '세그먼트별 예산을 조정하면 예상 결과가 표시됩니다.';
+                return;
+            }
+
+            const increased = changedSegments.filter(r => r.adjustment > 0);
+            const decreased = changedSegments.filter(r => r.adjustment < 0);
+
+            let insight = '';
+
+            if (revenueChange > 0 && roasChange >= -5) {
+                insight = `<strong style="color: #2e7d32;">✅ 긍정적 시나리오</strong><br>`;
+                insight += `예산 ${costChange > 0 ? '증액' : '조정'}으로 매출이 <strong>${revenueChange.toFixed(1)}%</strong> 증가할 것으로 예상됩니다.`;
+                if (roasChange < 0) {
+                    insight += ` 다만 ROAS가 ${Math.abs(roasChange).toFixed(1)}%p 하락하므로 효율성 모니터링이 필요합니다.`;
+                }
+            } else if (revenueChange > 0 && roasChange < -5) {
+                insight = `<strong style="color: #f57c00;">⚠️ 주의 필요</strong><br>`;
+                insight += `매출은 ${revenueChange.toFixed(1)}% 증가하지만, ROAS가 <strong>${Math.abs(roasChange).toFixed(1)}%p</strong> 크게 하락합니다. `;
+                insight += `체감 수익 효과로 인한 효율 저하를 고려하세요.`;
+            } else if (revenueChange < 0) {
+                insight = `<strong style="color: #c62828;">📉 재검토 필요</strong><br>`;
+                insight += `현재 설정으로는 매출이 ${Math.abs(revenueChange).toFixed(1)}% 감소할 것으로 예상됩니다. `;
+                insight += `예산 배분을 다시 검토해보세요.`;
+            }
+
+            if (increased.length > 0) {
+                const topIncreased = increased.sort((a, b) => b.adjustment - a.adjustment)[0];
+                insight += `<br><br>• <strong>${topIncreased.segment}</strong>에 가장 많은 증액(+${topIncreased.adjustment}%)이 설정되었습니다.`;
+            }
+
+            insightEl.innerHTML = insight;
+        }
+
+        // 시뮬레이션 이벤트 바인딩
+        function bindSimulationEvents() {
+            // 세그먼트 타입 버튼
+            document.querySelectorAll('.simulation-segment-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.simulation-segment-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSimSegmentType = this.dataset.simSegment;
+                    budgetAdjustments = {}; // 조정값 초기화
+                    loadSimulationData();
+                    renderSimulationSliders();
+                    updateSimulationResults();
+                });
+            });
+
+            // 초기화 버튼
+            const resetBtn = document.getElementById('resetSimulationBtn');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', function() {
+                    Object.keys(budgetAdjustments).forEach(key => {
+                        budgetAdjustments[key] = 0;
+                    });
+                    renderSimulationSliders();
+                    updateSimulationResults();
+                });
+            }
         }
     </script>
 </body>

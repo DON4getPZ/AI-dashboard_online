@@ -727,6 +727,38 @@
             margin-bottom: 16px;
         }
 
+        .modal-data-label-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: none;
+            background: var(--paper);
+            color: var(--grey-700);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .modal-data-label-toggle:hover {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .modal-data-label-toggle.active {
+            background: var(--primary-main);
+            color: white;
+            box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+        }
+
+        .modal-data-label-toggle .toggle-checkbox {
+            font-size: 14px;
+        }
+
         .modal-chart {
             width: 100%;
             height: 300px;
@@ -775,8 +807,16 @@
         /* 모달 차트 체크박스 */
         .modal-chart-controls {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
             gap: 12px;
             margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .modal-chart-checkbox-group {
+            display: flex;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
@@ -1705,26 +1745,32 @@
                 <div class="modal-chart-section">
                     <div class="modal-chart-title">성과 추이</div>
                     <div class="modal-chart-controls">
-                        <label class="modal-chart-checkbox cost">
-                            <input type="checkbox" id="modalChartCost" checked onchange="updateModalChart()">
-                            <span>비용</span>
-                        </label>
-                        <label class="modal-chart-checkbox cpm">
-                            <input type="checkbox" id="modalChartCPM" onchange="updateModalChart()">
-                            <span>CPM</span>
-                        </label>
-                        <label class="modal-chart-checkbox cpc">
-                            <input type="checkbox" id="modalChartCPC" onchange="updateModalChart()">
-                            <span>CPC</span>
-                        </label>
-                        <label class="modal-chart-checkbox cpa">
-                            <input type="checkbox" id="modalChartCPA" onchange="updateModalChart()">
-                            <span>CPA</span>
-                        </label>
-                        <label class="modal-chart-checkbox roas">
-                            <input type="checkbox" id="modalChartROAS" checked onchange="updateModalChart()">
-                            <span>ROAS</span>
-                        </label>
+                        <div class="modal-chart-checkbox-group">
+                            <label class="modal-chart-checkbox cost">
+                                <input type="checkbox" id="modalChartCost" checked onchange="updateModalChart()">
+                                <span>비용</span>
+                            </label>
+                            <label class="modal-chart-checkbox cpm">
+                                <input type="checkbox" id="modalChartCPM" onchange="updateModalChart()">
+                                <span>CPM</span>
+                            </label>
+                            <label class="modal-chart-checkbox cpc">
+                                <input type="checkbox" id="modalChartCPC" onchange="updateModalChart()">
+                                <span>CPC</span>
+                            </label>
+                            <label class="modal-chart-checkbox cpa">
+                                <input type="checkbox" id="modalChartCPA" onchange="updateModalChart()">
+                                <span>CPA</span>
+                            </label>
+                            <label class="modal-chart-checkbox roas">
+                                <input type="checkbox" id="modalChartROAS" checked onchange="updateModalChart()">
+                                <span>ROAS</span>
+                            </label>
+                        </div>
+                        <button class="modal-data-label-toggle" id="modalDataLabelToggle">
+                            <span class="toggle-checkbox">☐</span>
+                            <span>데이터 라벨</span>
+                        </button>
                     </div>
                     <div class="modal-chart">
                         <canvas id="modalChart"></canvas>
@@ -1769,8 +1815,12 @@
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js Datalabels Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
     <script>
+        // Chart.js Datalabels 플러그인 등록
+        Chart.register(ChartDataLabels);
         // 전역 변수
         let allData = [];
         let imageUrlMap = {}; // 소재이름 -> 이미지 URL 매핑 (1순위)
@@ -2500,6 +2550,7 @@
         let currentModalViewType = 'daily';
         let isModalTableExpanded = false;
         let modalTableSortOrder = 'desc'; // 'desc': 내림차순(최신순), 'asc': 오름차순(과거순)
+        let showModalDataLabels = false;
 
         // 소재 세부 성과 모달 표시
         function showCreativeDetail(creativeName) {
@@ -2900,6 +2951,27 @@
                                     return label;
                                 }
                             }
+                        },
+                        datalabels: {
+                            display: showModalDataLabels,
+                            anchor: 'end',
+                            align: 'top',
+                            offset: 4,
+                            font: {
+                                family: "'Inter', sans-serif",
+                                size: 11,
+                                weight: '600'
+                            },
+                            color: function(context) {
+                                return context.dataset.borderColor || context.dataset.backgroundColor;
+                            },
+                            formatter: function(value, context) {
+                                if (context.dataset.label === 'ROAS') {
+                                    return Math.round(value) + '%';
+                                } else {
+                                    return formatNumber(Math.round(value));
+                                }
+                            }
                         }
                     },
                     scales: {
@@ -3197,6 +3269,22 @@
                     sortConfig.order = e.target.value;
                     updateDashboard();
                 });
+            });
+
+            // 모달 데이터 라벨 토글 버튼 이벤트
+            document.getElementById('modalDataLabelToggle').addEventListener('click', function() {
+                showModalDataLabels = !showModalDataLabels;
+                const toggleCheckbox = this.querySelector('.toggle-checkbox');
+
+                if (showModalDataLabels) {
+                    this.classList.add('active');
+                    toggleCheckbox.textContent = '☑';
+                } else {
+                    this.classList.remove('active');
+                    toggleCheckbox.textContent = '☐';
+                }
+
+                updateModalChart();
             });
         });
     </script>

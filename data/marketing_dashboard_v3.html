@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js Datalabels Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <style>
         :root {
             /* Berry Theme Colors */
@@ -925,6 +927,49 @@
             border-radius: 2px;
         }
 
+        .chart-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-section-header .chart-header {
+            margin-bottom: 0;
+        }
+
+        .data-label-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: none;
+            background: var(--paper);
+            color: var(--grey-700);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .data-label-toggle:hover {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .data-label-toggle.active {
+            background: var(--primary-main);
+            color: white;
+            box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+        }
+
+        .data-label-toggle .toggle-checkbox {
+            font-size: 14px;
+        }
+
         .chart-container {
             position: relative;
             height: 300px;
@@ -1572,7 +1617,13 @@
 
                 <!-- 차트 섹션 -->
                 <div class="chart-section card">
-                    <div class="chart-header">성과 지표 추이</div>
+                    <div class="chart-section-header">
+                        <div class="chart-header">성과 지표 추이</div>
+                        <button class="data-label-toggle" id="dataLabelToggle">
+                            <span class="toggle-checkbox">☐</span>
+                            <span>데이터 라벨</span>
+                        </button>
+                    </div>
                     <div class="chart-controls">
                         <div class="chart-checkbox-group">
                             <label class="chart-checkbox cost">
@@ -1640,9 +1691,13 @@
     </div>
 
     <script>
+        // Chart.js Datalabels 플러그인 등록
+        Chart.register(ChartDataLabels);
+
         // 전역 변수
         let allData = [];
-        let currentView = 'daily';
+        let currentView = 'monthly';
+        let showDataLabels = false;
         let filters = {
             type: '',
             brand: '',
@@ -2305,6 +2360,35 @@
                                     return label;
                                 }
                             }
+                        },
+                        datalabels: {
+                            display: showDataLabels,
+                            anchor: function(context) {
+                                // bar 차트는 end, line 차트는 end
+                                return 'end';
+                            },
+                            align: function(context) {
+                                // bar 차트는 top, line 차트는 top
+                                return 'top';
+                            },
+                            offset: 4,
+                            font: {
+                                family: "'Inter', sans-serif",
+                                size: 11,
+                                weight: '600'
+                            },
+                            color: function(context) {
+                                // 데이터셋의 색상 사용
+                                return context.dataset.borderColor || context.dataset.backgroundColor;
+                            },
+                            formatter: function(value, context) {
+                                if (context.dataset.label === 'ROAS (%)') {
+                                    return Math.round(value) + '%';
+                                } else {
+                                    // 모든 숫자를 콤마로 구분하여 표시
+                                    return formatNumber(Math.round(value));
+                                }
+                            }
                         }
                     },
                     scales: {
@@ -2840,6 +2924,22 @@
                 document.getElementById(id).addEventListener('change', () => {
                     renderChart();
                 });
+            });
+
+            // 데이터 라벨 토글 버튼 이벤트
+            document.getElementById('dataLabelToggle').addEventListener('click', function() {
+                showDataLabels = !showDataLabels;
+                const toggleCheckbox = this.querySelector('.toggle-checkbox');
+
+                if (showDataLabels) {
+                    this.classList.add('active');
+                    toggleCheckbox.textContent = '☑';
+                } else {
+                    this.classList.remove('active');
+                    toggleCheckbox.textContent = '☐';
+                }
+
+                renderChart();
             });
 
             // 더 보기 버튼 이벤트
