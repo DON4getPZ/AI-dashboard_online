@@ -1304,6 +1304,147 @@
             transform: scale(0.97);
             box-shadow: 0 1px 4px rgba(0,0,0,0.1);
         }
+
+        /* 예산 시뮬레이션 슬라이더 스타일 */
+        .sim-slider-group {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            transition: all 0.25s ease;
+        }
+        .sim-slider-group:hover {
+            border-color: rgba(0, 0, 0, 0.12);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        .sim-slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .sim-segment-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sim-segment-badge {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .sim-segment-badge.high { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .sim-segment-badge.medium { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .sim-segment-badge.low { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .sim-segment-name { font-weight: 600; font-size: 13px; color: var(--grey-800); }
+        .sim-segment-metrics {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sim-roas-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .sim-roas-badge.high { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .sim-roas-badge.medium { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .sim-roas-badge.low { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .sim-current-budget { font-size: 12px; color: var(--grey-600); font-weight: 500; }
+        .sim-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .sim-slider-label {
+            font-size: 11px;
+            color: var(--grey-500);
+            min-width: 32px;
+        }
+        .sim-slider-track {
+            flex: 1;
+            position: relative;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: visible;
+        }
+        .sim-slider-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #d6beff, #be9ff2 25%, #ab87ea 50%, #8c63d3 75%, #673ab7);
+            border-radius: 4px;
+            transition: width 0.15s ease;
+        }
+        .sim-slider {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            width: 100%;
+            height: 24px;
+            background: transparent;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            z-index: 2;
+        }
+        .sim-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+            transition: transform 0.15s ease;
+        }
+        .sim-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+        .sim-slider::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.1); }
+        .sim-slider-thumb-value {
+            position: absolute;
+            top: -26px;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            pointer-events: none;
+            transition: left 0.15s ease;
+        }
+        .sim-slider-thumb-value::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid #1e293b;
+        }
+        .sim-slider-result {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .sim-result-label { font-size: 12px; color: var(--grey-500); }
+        .sim-result-value { font-size: 13px; font-weight: 600; }
+        .sim-result-value.positive { color: #10b981; }
+        .sim-result-value.negative { color: #ef4444; }
+        .sim-result-value small { font-size: 11px; opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -2104,13 +2245,42 @@
 
                                     <!-- 세그먼트 타입 선택 -->
                                     <div style="margin-bottom: 20px;">
-                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📊 세그먼트 유형 선택</div>
-                                        <div class="view-type-section" style="margin-bottom: 0;">
-                                            <button class="view-btn simulation-segment-btn active" data-sim-segment="all">전체</button>
-                                            <button class="view-btn simulation-segment-btn" data-sim-segment="channel">채널별</button>
-                                            <button class="view-btn simulation-segment-btn" data-sim-segment="product">제품별</button>
-                                            <button class="view-btn simulation-segment-btn" data-sim-segment="brand">브랜드별</button>
-                                            <button class="view-btn simulation-segment-btn" data-sim-segment="promotion">프로모션별</button>
+                                        <div style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
+                                            <!-- 세그먼트 유형 선택 -->
+                                            <div>
+                                                <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📊 세그먼트 유형 선택</div>
+                                                <div class="view-type-section" style="margin-bottom: 0;">
+                                                    <button class="view-btn simulation-segment-btn active" data-sim-segment="all">전체</button>
+                                                    <button class="view-btn simulation-segment-btn" data-sim-segment="channel">채널별</button>
+                                                    <button class="view-btn simulation-segment-btn" data-sim-segment="product">제품별</button>
+                                                    <button class="view-btn simulation-segment-btn" data-sim-segment="brand">브랜드별</button>
+                                                    <button class="view-btn simulation-segment-btn" data-sim-segment="promotion">프로모션별</button>
+                                                </div>
+                                            </div>
+                                            <!-- 항목 선택 드롭다운 -->
+                                            <div>
+                                                <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">🎯 항목 선택 <span id="simSelectedItemCount" style="font-size: 11px; color: #2e7d32; font-weight: 600;"></span></div>
+                                                <div style="position: relative;">
+                                                    <button type="button" id="simItemDropdownBtn" style="min-width: 220px; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                                        <span id="simItemDropdownLabel" style="font-weight: 500;">항목을 선택하세요</span>
+                                                        <span style="display: flex; align-items: center; gap: 6px;">
+                                                            <span id="simItemSelectedCount" style="font-size: 11px; color: var(--grey-500);"></span>
+                                                            <span style="font-size: 10px;">▼</span>
+                                                        </span>
+                                                    </button>
+                                                    <div id="simItemDropdownList" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; min-width: 220px; margin-top: 4px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 100;">
+                                                        <div style="padding: 8px;">
+                                                            <div style="position: sticky; top: 0; background: white; padding: 6px 0; border-bottom: 1px solid var(--grey-200); margin-bottom: 6px; z-index: 1;">
+                                                                <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                                                    <input type="checkbox" id="simItemSelectAll" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                                    전체 선택
+                                                                </label>
+                                                            </div>
+                                                            <div id="simItemCheckboxes"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -5161,6 +5331,92 @@
                 seg.cvr = seg.clicks > 0 ? (seg.conversions / seg.clicks * 100) : 0;
                 budgetAdjustments[segment] = 0; // 초기값 0%
             });
+
+            // 체크박스 렌더링
+            renderSimItemCheckboxes();
+        }
+
+        // 시뮬레이션 항목 선택 체크박스 렌더링
+        function renderSimItemCheckboxes() {
+            const container = document.getElementById('simItemCheckboxes');
+            if (!container) return;
+
+            const segments = Object.keys(simulationData).sort((a, b) => {
+                return simulationData[b].cost - simulationData[a].cost;
+            });
+
+            if (segments.length === 0) {
+                container.innerHTML = '<div style="padding: 10px; color: var(--grey-500); font-size: 12px;">항목이 없습니다.</div>';
+                return;
+            }
+
+            container.innerHTML = segments.map((segment, index) => {
+                const seg = simulationData[segment];
+                return `
+                    <label style="display: flex; align-items: center; padding: 6px 10px; cursor: pointer; font-size: 12px;">
+                        <input type="checkbox" class="sim-item-checkbox" data-segment="${segment}" ${index < segments.length ? 'checked' : ''} style="margin-right: 10px; width: 14px; height: 14px; cursor: pointer;">
+                        <span>${segment}</span>
+                        <span style="margin-left: auto; font-size: 10px; color: var(--grey-500);">${formatSimCurrency(seg.cost)}</span>
+                    </label>
+                `;
+            }).join('');
+
+            // 체크박스 이벤트 바인딩
+            container.querySelectorAll('.sim-item-checkbox').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    updateSimItemDropdownLabel();
+                    updateSimItemSelectAllState();
+                    renderSimulationSliders();
+                    updateSimulationResults();
+                });
+            });
+
+            updateSimItemDropdownLabel();
+            updateSimItemSelectAllState();
+        }
+
+        // 시뮬레이션 항목 드롭다운 라벨 업데이트
+        function updateSimItemDropdownLabel() {
+            const checkedBoxes = document.querySelectorAll('.sim-item-checkbox:checked');
+            const labelEl = document.getElementById('simItemDropdownLabel');
+            const countEl = document.getElementById('simItemSelectedCount');
+            const countEl2 = document.getElementById('simSelectedItemCount');
+
+            if (labelEl) {
+                if (checkedBoxes.length === 0) {
+                    labelEl.textContent = '항목을 선택하세요';
+                } else if (checkedBoxes.length === 1) {
+                    labelEl.textContent = checkedBoxes[0].dataset.segment;
+                } else {
+                    labelEl.textContent = `${checkedBoxes[0].dataset.segment} 외 ${checkedBoxes.length - 1}개`;
+                }
+            }
+
+            if (countEl) {
+                countEl.textContent = checkedBoxes.length > 0 ? `${checkedBoxes.length}개` : '';
+            }
+
+            if (countEl2) {
+                countEl2.textContent = checkedBoxes.length > 0 ? `(${checkedBoxes.length}개 선택됨)` : '';
+            }
+        }
+
+        // 시뮬레이션 항목 전체선택 상태 업데이트
+        function updateSimItemSelectAllState() {
+            const allCheckboxes = document.querySelectorAll('.sim-item-checkbox');
+            const checkedBoxes = document.querySelectorAll('.sim-item-checkbox:checked');
+            const selectAllCb = document.getElementById('simItemSelectAll');
+
+            if (selectAllCb) {
+                selectAllCb.checked = allCheckboxes.length > 0 && allCheckboxes.length === checkedBoxes.length;
+                selectAllCb.indeterminate = checkedBoxes.length > 0 && checkedBoxes.length < allCheckboxes.length;
+            }
+        }
+
+        // 선택된 시뮬레이션 항목 가져오기
+        function getSelectedSimItems() {
+            const checkedBoxes = document.querySelectorAll('.sim-item-checkbox:checked');
+            return Array.from(checkedBoxes).map(cb => cb.dataset.segment);
         }
 
         // 슬라이더 렌더링
@@ -5168,42 +5424,50 @@
             const container = document.getElementById('simulationSlidersContainer');
             if (!container) return;
 
-            const segments = Object.keys(simulationData).sort((a, b) => {
-                return simulationData[b].cost - simulationData[a].cost; // 비용 높은 순
-            });
+            // 선택된 항목만 필터링
+            const selectedItems = getSelectedSimItems();
+            const segments = Object.keys(simulationData)
+                .filter(seg => selectedItems.length === 0 || selectedItems.includes(seg))
+                .sort((a, b) => simulationData[b].cost - simulationData[a].cost);
 
             if (segments.length === 0) {
-                container.innerHTML = '<div style="color: var(--grey-600); text-align: center; padding: 20px;">데이터가 없습니다.</div>';
+                container.innerHTML = '<div style="color: var(--grey-600); text-align: center; padding: 20px;">표시할 항목을 선택하세요.</div>';
                 return;
             }
 
             container.innerHTML = segments.map(segment => {
                 const seg = simulationData[segment];
                 const currentAdjust = budgetAdjustments[segment] || 0;
-                const roasColor = seg.roas >= 150 ? '#2e7d32' : seg.roas >= 100 ? '#1565c0' : '#c62828';
+                const roasLevel = seg.roas >= 150 ? 'high' : seg.roas >= 50 ? 'medium' : 'low';
+                const fillPercent = ((currentAdjust - (-30)) / (50 - (-30))) * 100;
+                const newBudget = seg.cost * (1 + currentAdjust / 100);
 
                 return `
-                    <div style="background: white; padding: 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                            <div>
-                                <span style="font-weight: 600; color: var(--grey-900);">${segment}</span>
-                                <span style="font-size: 11px; color: ${roasColor}; margin-left: 8px; font-weight: 600;">ROAS ${seg.roas.toFixed(0)}%</span>
+                    <div class="sim-slider-group" data-segment="${segment}">
+                        <div class="sim-slider-header">
+                            <div class="sim-segment-info">
+                                <div class="sim-segment-badge ${roasLevel}">${roasLevel === 'high' ? '고효율' : roasLevel === 'medium' ? '중효율' : '저효율'}</div>
+                                <span class="sim-segment-name">${segment}</span>
                             </div>
-                            <div style="font-size: 12px; color: var(--grey-600);">
-                                현재: ${formatSimCurrency(seg.cost)}
+                            <div class="sim-segment-metrics">
+                                <span class="sim-roas-badge ${roasLevel}">ROAS ${seg.roas.toFixed(0)}%</span>
+                                <span class="sim-current-budget">${formatSimCurrency(seg.cost)}</span>
                             </div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-size: 11px; color: var(--grey-500); width: 35px;">-30%</span>
-                            <input type="range"
-                                   class="simulation-slider"
-                                   data-segment="${segment}"
-                                   min="-30" max="50" value="${currentAdjust}" step="5"
-                                   style="flex: 1; cursor: pointer;">
-                            <span style="font-size: 11px; color: var(--grey-500); width: 35px;">+50%</span>
-                            <span class="slider-value" data-segment="${segment}"
-                                  style="min-width: 50px; text-align: right; font-weight: 600; font-size: 13px; color: ${currentAdjust > 0 ? '#2e7d32' : currentAdjust < 0 ? '#c62828' : 'var(--grey-700)'};">
-                                ${currentAdjust > 0 ? '+' : ''}${currentAdjust}%
+                        <div class="sim-slider-container">
+                            <span class="sim-slider-label">-30%</span>
+                            <div class="sim-slider-track">
+                                <input type="range" min="-30" max="50" value="${currentAdjust}" step="5"
+                                       class="sim-slider simulation-slider" data-segment="${segment}">
+                                <div class="sim-slider-fill" style="width: ${fillPercent}%;"></div>
+                                <div class="sim-slider-thumb-value" style="left: ${fillPercent}%;">${currentAdjust > 0 ? '+' : ''}${currentAdjust}%</div>
+                            </div>
+                            <span class="sim-slider-label">+50%</span>
+                        </div>
+                        <div class="sim-slider-result">
+                            <span class="sim-result-label">변경 예산</span>
+                            <span class="sim-result-value ${currentAdjust >= 0 ? 'positive' : 'negative'}">
+                                ${formatSimCurrency(newBudget)} <small>(${currentAdjust > 0 ? '+' : ''}${currentAdjust}%)</small>
                             </span>
                         </div>
                     </div>
@@ -5215,13 +5479,32 @@
                 slider.addEventListener('input', function() {
                     const segment = this.dataset.segment;
                     const value = parseInt(this.value);
+                    const min = parseInt(this.min);
+                    const max = parseInt(this.max);
+                    const percentage = ((value - min) / (max - min)) * 100;
                     budgetAdjustments[segment] = value;
 
-                    // 값 표시 업데이트
-                    const valueDisplay = container.querySelector(`.slider-value[data-segment="${segment}"]`);
-                    if (valueDisplay) {
-                        valueDisplay.textContent = (value > 0 ? '+' : '') + value + '%';
-                        valueDisplay.style.color = value > 0 ? '#2e7d32' : value < 0 ? '#c62828' : 'var(--grey-700)';
+                    const group = this.closest('.sim-slider-group');
+                    const track = this.parentElement;
+
+                    // 슬라이더 필 업데이트
+                    const fill = track.querySelector('.sim-slider-fill');
+                    if (fill) fill.style.width = percentage + '%';
+
+                    // 썸 값 업데이트
+                    const thumbValue = track.querySelector('.sim-slider-thumb-value');
+                    if (thumbValue) {
+                        thumbValue.textContent = (value > 0 ? '+' : '') + value + '%';
+                        thumbValue.style.left = percentage + '%';
+                    }
+
+                    // 결과 값 업데이트
+                    const resultValue = group.querySelector('.sim-result-value');
+                    if (resultValue) {
+                        const seg = simulationData[segment];
+                        const newBudget = seg.cost * (1 + value / 100);
+                        resultValue.innerHTML = `${formatSimCurrency(newBudget)} <small>(${value > 0 ? '+' : ''}${value}%)</small>`;
+                        resultValue.className = 'sim-result-value ' + (value >= 0 ? 'positive' : 'negative');
                     }
 
                     updateSimulationResults();
@@ -5249,7 +5532,12 @@
             let totalNewRevenue = 0;
             const segmentResults = [];
 
-            Object.keys(simulationData).forEach(segment => {
+            // 선택된 항목만 필터링
+            const selectedItems = getSelectedSimItems();
+            const segmentsToProcess = Object.keys(simulationData)
+                .filter(seg => selectedItems.length === 0 || selectedItems.includes(seg));
+
+            segmentsToProcess.forEach(segment => {
                 const seg = simulationData[segment];
                 const adjustment = (budgetAdjustments[segment] || 0) / 100;
 
@@ -5330,21 +5618,31 @@
 
             // 테이블 업데이트
             const tbody = document.getElementById('simulationResultBody');
-            tbody.innerHTML = segmentResults.map(r => `
-                <tr style="background: ${r.adjustment !== 0 ? '#fffde7' : 'white'};">
-                    <td style="padding: 10px; border-bottom: 1px solid var(--grey-200);"><strong>${r.segment}</strong></td>
-                    <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200);">${formatSimCurrency(r.currentCost)}</td>
-                    <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200); font-weight: 600; color: ${r.adjustment > 0 ? '#c62828' : r.adjustment < 0 ? '#2e7d32' : 'inherit'};">
-                        ${formatSimCurrency(r.newCost)} <span style="font-size: 10px; font-weight: normal;">(${r.adjustment > 0 ? '+' : ''}${r.adjustment}%)</span>
-                    </td>
-                    <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200);">${r.currentRoas.toFixed(0)}%</td>
-                    <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200); font-weight: 600; color: ${r.adjustedRoas >= 100 ? '#2e7d32' : '#c62828'};">${r.adjustedRoas.toFixed(0)}%</td>
-                    <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200); font-weight: 600;">${formatSimCurrency(r.newRevenue)}</td>
-                    <td style="text-align: center; padding: 10px; border-bottom: 1px solid var(--grey-200);">
-                        <span style="background: ${r.recColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">${r.recommendation}</span>
-                    </td>
-                </tr>
-            `).join('');
+            if (segmentResults.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="padding: 20px; text-align: center; color: var(--grey-500);">
+                            표시할 항목을 선택하세요.
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = segmentResults.map(r => `
+                    <tr style="background: ${r.adjustment !== 0 ? '#fffde7' : 'white'};">
+                        <td style="padding: 10px; border-bottom: 1px solid var(--grey-200);"><strong>${r.segment}</strong></td>
+                        <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200);">${formatSimCurrency(r.currentCost)}</td>
+                        <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200); font-weight: 600; color: ${r.adjustment > 0 ? '#c62828' : r.adjustment < 0 ? '#2e7d32' : 'inherit'};">
+                            ${formatSimCurrency(r.newCost)} <span style="font-size: 10px; font-weight: normal;">(${r.adjustment > 0 ? '+' : ''}${r.adjustment}%)</span>
+                        </td>
+                        <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200);">${r.currentRoas.toFixed(0)}%</td>
+                        <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200); font-weight: 600; color: ${r.adjustedRoas >= 100 ? '#2e7d32' : '#c62828'};">${r.adjustedRoas.toFixed(0)}%</td>
+                        <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200); font-weight: 600;">${formatSimCurrency(r.newRevenue)}</td>
+                        <td style="text-align: center; padding: 10px; border-bottom: 1px solid var(--grey-200);">
+                            <span style="background: ${r.recColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">${r.recommendation}</span>
+                        </td>
+                    </tr>
+                `).join('');
+            }
 
             // 인사이트 업데이트
             updateSimulationInsight(segmentResults, costChange, revenueChange, roasChange);
@@ -5413,6 +5711,47 @@
                     Object.keys(budgetAdjustments).forEach(key => {
                         budgetAdjustments[key] = 0;
                     });
+                    renderSimulationSliders();
+                    updateSimulationResults();
+                });
+            }
+
+            // 시뮬레이션 항목 드롭다운 이벤트
+            const simItemDropdownBtn = document.getElementById('simItemDropdownBtn');
+            const simItemDropdownList = document.getElementById('simItemDropdownList');
+
+            if (simItemDropdownBtn && simItemDropdownList) {
+                simItemDropdownBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isOpen = simItemDropdownList.style.display === 'block';
+                    simItemDropdownList.style.display = isOpen ? 'none' : 'block';
+                });
+
+                // 드롭다운 외부 클릭 시 닫기
+                document.addEventListener('click', function(e) {
+                    if (!simItemDropdownBtn.contains(e.target) && !simItemDropdownList.contains(e.target)) {
+                        simItemDropdownList.style.display = 'none';
+                    }
+                });
+            }
+
+            // 시뮬레이션 항목 전체 선택 이벤트
+            const simItemSelectAll = document.getElementById('simItemSelectAll');
+            if (simItemSelectAll) {
+                simItemSelectAll.addEventListener('change', function() {
+                    const allCheckboxes = document.querySelectorAll('.sim-item-checkbox');
+
+                    if (this.checked) {
+                        allCheckboxes.forEach(cb => {
+                            cb.checked = true;
+                        });
+                    } else {
+                        allCheckboxes.forEach(cb => {
+                            cb.checked = false;
+                        });
+                    }
+
+                    updateSimItemDropdownLabel();
                     renderSimulationSliders();
                     updateSimulationResults();
                 });

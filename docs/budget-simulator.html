@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예산 시나리오 시뮬레이터 | Growthmaker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 라이트 모드 배경 */
+            --bg-primary: #f8fafc;
+            --bg-secondary: #f1f5f9;
+            --bg-elevated: #ffffff;
+            --bg-card: #ffffff;
+            --bg-hover: #e2e8f0;
+            /* 라이트 모드 텍스트 */
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            /* 라이트 모드 테두리 */
+            --border-default: rgba(0, 0, 0, 0.06);
+            --border-hover: rgba(0, 0, 0, 0.12);
+            /* 액센트 컬러 */
+            --accent-green: #10b981;
+            --accent-green-soft: rgba(16, 185, 129, 0.1);
+            --accent-red: #ef4444;
+            --accent-red-soft: rgba(239, 68, 68, 0.1);
+            --accent-blue: #3b82f6;
+            --accent-blue-soft: rgba(59, 130, 246, 0.1);
+            --accent-purple: #8b5cf6;
+            --accent-purple-soft: rgba(139, 92, 246, 0.1);
+            --accent-yellow: #f59e0b;
+            --accent-yellow-soft: rgba(245, 158, 11, 0.1);
+            /* 세그먼트 컬러 */
+            --segment-conversion: #10b981;
+            --segment-traffic: #f59e0b;
+            --segment-reach: #8b5cf6;
+            /* 슬라이더 그라데이션 팔레트 */
+            --slider-1: #d6beff;
+            --slider-2: #be9ff2;
+            --slider-3: #ab87ea;
+            --slider-4: #8c63d3;
+            --slider-5: #673ab7;
+            /* 그림자 */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 14px; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.5; min-height: 100vh; }
+        .app-container { max-width: 1600px; margin: 0 auto; padding: var(--space-lg); display: flex; flex-direction: column; gap: var(--space-lg); min-height: 100vh; }
+        .header { padding: var(--space-md) 0; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: var(--space-sm); }
+        .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; }
+        .logo-text { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+        .header-actions { display: flex; gap: var(--space-sm); }
+        .btn-secondary, .btn-reset { display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); border: 1px solid var(--border-default); background: var(--bg-elevated); color: var(--text-secondary); }
+        .btn-secondary:hover, .btn-reset:hover { background: var(--bg-hover); border-color: var(--border-hover); color: var(--text-primary); }
+        .info-banner { display: flex; gap: var(--space-md); padding: var(--space-lg); background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.08)); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: var(--radius-lg); position: relative; overflow: hidden; }
+        .info-banner::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent); }
+        .info-icon { flex-shrink: 0; width: 40px; height: 40px; background: var(--accent-purple-soft); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--accent-purple); }
+        .info-content h3 { font-size: 1rem; font-weight: 600; margin-bottom: var(--space-xs); color: var(--text-primary); }
+        .info-content p { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; }
+        .info-content strong { color: var(--accent-purple); }
+        .main-content { display: grid; grid-template-columns: 1fr 1.4fr; gap: var(--space-lg); flex: 1; }
+        .panel { background: var(--bg-card); border: 1px solid var(--border-default); border-radius: var(--radius-xl); padding: var(--space-xl); display: flex; flex-direction: column; animation: fadeIn 0.5s ease-out; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl); flex-wrap: wrap; gap: var(--space-md); }
+        .panel-header h2 { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.01em; }
+        .segment-tabs { display: flex; gap: var(--space-xs); background: var(--bg-secondary); padding: var(--space-xs); border-radius: var(--radius-md); }
+        .tab { padding: var(--space-sm) var(--space-md); border-radius: var(--radius-sm); font-size: 0.8125rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); border: none; background: transparent; color: var(--text-muted); }
+        .tab:hover { color: var(--text-secondary); }
+        .tab.active { background: var(--accent-blue); color: white; }
+        .budget-sliders { display: flex; flex-direction: column; gap: var(--space-lg); }
+        .slider-group { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-lg); border: 1px solid var(--border-default); transition: all var(--transition-normal); }
+        .slider-group:hover { border-color: var(--border-hover); box-shadow: var(--shadow-md); }
+        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); }
+        .segment-info { display: flex; align-items: center; gap: var(--space-sm); }
+        .segment-badge { padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-sm); font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .segment-badge.conversion { background: var(--accent-green-soft); color: var(--accent-green); }
+        .segment-badge.traffic { background: var(--accent-yellow-soft); color: var(--accent-yellow); }
+        .segment-badge.reach { background: var(--accent-purple-soft); color: var(--accent-purple); }
+        .segment-name { font-weight: 600; font-size: 0.9375rem; }
+        .segment-metrics { display: flex; align-items: center; gap: var(--space-md); }
+        .roas-badge { font-size: 0.75rem; font-weight: 600; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-sm); }
+        .roas-badge.high { background: var(--accent-green-soft); color: var(--accent-green); }
+        .roas-badge.medium { background: var(--accent-yellow-soft); color: var(--accent-yellow); }
+        .roas-badge.low { background: var(--accent-red-soft); color: var(--accent-red); }
+        .current-budget { font-size: 0.875rem; color: var(--text-secondary); font-weight: 500; }
+        .slider-container { display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md); }
+        .slider-label { font-size: 0.75rem; color: var(--text-muted); min-width: 36px; }
+        .slider-track { flex: 1; position: relative; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: visible; }
+        .slider-fill { position: absolute; top: 0; left: 0; height: 100%; width: var(--fill, 50%); background: linear-gradient(90deg, #d6beff, #be9ff2 25%, #ab87ea 50%, #8c63d3 75%, #673ab7); border-radius: 4px; transition: width var(--transition-fast); }
+        .slider { position: absolute; top: 50%; left: 0; transform: translateY(-50%); width: 100%; height: 24px; background: transparent; cursor: pointer; -webkit-appearance: none; appearance: none; z-index: 2; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: white; border-radius: 50%; cursor: grab; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); transition: transform var(--transition-fast); }
+        .slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+        .slider::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.1); }
+        .slider-thumb-value { position: absolute; top: -28px; left: 56.25%; transform: translateX(-50%); background: var(--text-primary); color: white; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 600; white-space: nowrap; pointer-events: none; transition: left var(--transition-fast); }
+        .slider-result { display: flex; justify-content: space-between; align-items: center; padding-top: var(--space-md); border-top: 1px solid var(--border-default); }
+        .result-label { font-size: 0.8125rem; color: var(--text-muted); }
+        .result-value { font-size: 0.9375rem; font-weight: 600; }
+        .result-value.positive { color: var(--accent-green); }
+        .result-value.negative { color: var(--accent-red); }
+        .result-value small { font-size: 0.75rem; opacity: 0.8; }
+        .results-panel { gap: var(--space-lg); }
+        .update-indicator { display: flex; align-items: center; gap: var(--space-sm); font-size: 0.75rem; color: var(--text-muted); }
+        .pulse { width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } }
+        .summary-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md); }
+        .summary-card { background: white; border: 1px solid var(--border-default); border-radius: var(--radius-lg); padding: var(--space-lg); display: flex; gap: var(--space-md); transition: all var(--transition-normal); }
+        .summary-card:hover { border-color: var(--border-hover); transform: translateY(-3px); box-shadow: var(--shadow-md); }
+        .summary-card.highlight { border-color: rgba(16, 185, 129, 0.3); background: linear-gradient(135deg, white, rgba(16, 185, 129, 0.03)); }
+        .summary-card.featured { border-color: rgba(59, 130, 246, 0.3); background: linear-gradient(135deg, white, rgba(59, 130, 246, 0.03)); }
+        .card-icon { flex-shrink: 0; width: 40px; height: 40px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; }
+        .card-icon.cost { background: var(--accent-purple-soft); color: var(--accent-purple); }
+        .card-icon.revenue { background: var(--accent-green-soft); color: var(--accent-green); }
+        .card-icon.roas { background: var(--accent-yellow-soft); color: var(--accent-yellow); }
+        .card-icon.roi { background: var(--accent-blue-soft); color: var(--accent-blue); }
+        .card-content { display: flex; flex-direction: column; gap: var(--space-xs); min-width: 0; }
+        .card-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+        .card-values { display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
+        .card-before { font-size: 0.875rem; color: var(--text-muted); text-decoration: line-through; text-decoration-color: rgba(0, 0, 0, 0.2); }
+        .arrow { color: var(--text-muted); flex-shrink: 0; }
+        .card-after { font-size: 1.125rem; font-weight: 700; color: var(--text-primary); }
+        .card-after.warning { color: var(--accent-yellow); }
+        .card-change { font-size: 0.75rem; font-weight: 600; padding: 2px 6px; border-radius: var(--radius-sm); }
+        .card-change.positive { background: var(--accent-green-soft); color: var(--accent-green); }
+        .card-change.negative { background: var(--accent-red-soft); color: var(--accent-red); }
+        .card-value-large { font-size: 1.75rem; font-weight: 800; color: var(--accent-blue); line-height: 1; }
+        .card-subtitle { font-size: 0.6875rem; color: var(--text-muted); }
+        .detail-section { flex: 1; }
+        .detail-section h3 { font-size: 0.9375rem; font-weight: 600; margin-bottom: var(--space-md); color: var(--text-secondary); }
+        .table-container { overflow-x: auto; border-radius: var(--radius-lg); border: 1px solid var(--border-default); }
+        .detail-table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+        .detail-table th { text-align: left; padding: var(--space-md); background: var(--bg-secondary); color: var(--text-muted); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border-default); }
+        .detail-table td { padding: var(--space-md); border-bottom: 1px solid var(--border-default); color: var(--text-secondary); }
+        .detail-table tr:last-child td { border-bottom: none; }
+        .detail-table tr:hover td { background: var(--bg-hover); }
+        .segment-cell { display: flex; align-items: center; gap: var(--space-sm); font-weight: 500; color: var(--text-primary); }
+        .segment-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .segment-dot.conversion { background: var(--segment-conversion); }
+        .segment-dot.traffic { background: var(--segment-traffic); }
+        .segment-dot.reach { background: var(--segment-reach); }
+        .highlight-cell { font-weight: 600; }
+        .highlight-cell.positive { color: var(--accent-green); }
+        .highlight-cell.negative { color: var(--accent-red); }
+        .highlight-cell .change { font-size: 0.6875rem; opacity: 0.8; }
+        .roas-cell.high { color: var(--accent-green); font-weight: 600; }
+        .roas-cell.medium { color: var(--accent-yellow); font-weight: 600; }
+        .roas-cell.low { color: var(--accent-red); font-weight: 600; }
+        .revenue-cell { font-weight: 600; color: var(--text-primary); }
+        .badge { display: inline-block; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-sm); font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+        .badge.recommend { background: var(--accent-green-soft); color: var(--accent-green); }
+        .badge.review { background: var(--accent-yellow-soft); color: var(--accent-yellow); }
+        .badge.warning { background: var(--accent-red-soft); color: var(--accent-red); }
+        .insight-box { background: linear-gradient(135deg, rgba(245, 158, 11, 0.06), rgba(249, 115, 22, 0.06)); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: var(--radius-lg); padding: var(--space-lg); }
+        .insight-header { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm); color: var(--accent-yellow); font-weight: 600; font-size: 0.875rem; }
+        .insight-box p { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.7; }
+        .insight-box strong { color: var(--text-primary); }
+        .footer { text-align: center; padding: var(--space-lg) 0; color: var(--text-muted); font-size: 0.8125rem; border-top: 1px solid var(--border-default); }
+        .footer strong { color: var(--accent-blue); }
+        .footer .divider { margin: 0 var(--space-sm); opacity: 0.3; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .summary-card { animation: fadeIn 0.5s ease-out; }
+        .summary-card:nth-child(1) { animation-delay: 0.1s; }
+        .summary-card:nth-child(2) { animation-delay: 0.15s; }
+        .summary-card:nth-child(3) { animation-delay: 0.2s; }
+        .summary-card:nth-child(4) { animation-delay: 0.25s; }
+        .slider-group { animation: fadeIn 0.4s ease-out; }
+        .slider-group:nth-child(1) { animation-delay: 0.1s; }
+        .slider-group:nth-child(2) { animation-delay: 0.2s; }
+        .slider-group:nth-child(3) { animation-delay: 0.3s; }
+        @media (max-width: 1200px) { .main-content { grid-template-columns: 1fr; } .summary-cards { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .app-container { padding: var(--space-md); } .header-content { flex-direction: column; gap: var(--space-md); } .header-actions { width: 100%; justify-content: center; } .panel { padding: var(--space-lg); } .summary-cards { grid-template-columns: 1fr; } .segment-tabs { width: 100%; overflow-x: auto; } .detail-table { font-size: 0.75rem; } .detail-table th, .detail-table td { padding: var(--space-sm); } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 3h7v7H3V3z" fill="currentColor" opacity="0.9"/><path d="M14 3h7v7h-7V3z" fill="currentColor" opacity="0.6"/><path d="M3 14h7v7H3v-7z" fill="currentColor" opacity="0.6"/><path d="M14 14h7v7h-7v-7z" fill="currentColor" opacity="0.3"/></svg>
+                    </div>
+                    <span class="logo-text">Budget Simulator</span>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        리포트 내보내기
+                    </button>
+                    <button class="btn-reset" id="resetBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                        초기화
+                    </button>
+                </div>
+            </div>
+        </header>
+        <section class="info-banner">
+            <div class="info-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            </div>
+            <div class="info-content">
+                <h3>예산 시나리오 시뮬레이션</h3>
+                <p>세그먼트별 예산 변경 시 예상되는 <strong>매출 변화</strong>를 시뮬레이션합니다. ROAS 기반 선형 모델 + 로그 체감 수익 함수를 적용하여 현실적인 예측을 제공합니다.</p>
+            </div>
+        </section>
+        <main class="main-content">
+            <section class="panel budget-panel">
+                <div class="panel-header">
+                    <h2>세그먼트별 예산 조정</h2>
+                    <div class="segment-tabs">
+                        <button class="tab active">채널별</button>
+                        <button class="tab">제품별</button>
+                        <button class="tab">브랜드별</button>
+                        <button class="tab">프로모션별</button>
+                    </div>
+                </div>
+                <div class="budget-sliders">
+                    <div class="slider-group" data-segment="conversion">
+                        <div class="slider-header">
+                            <div class="segment-info">
+                                <div class="segment-badge conversion">전환</div>
+                                <span class="segment-name">Meta_전환</span>
+                            </div>
+                            <div class="segment-metrics">
+                                <span class="roas-badge high">ROAS 197%</span>
+                                <span class="current-budget">₩1,924만</span>
+                            </div>
+                        </div>
+                        <div class="slider-container">
+                            <span class="slider-label">-30%</span>
+                            <div class="slider-track">
+                                <input type="range" min="-30" max="50" value="15" class="slider" id="conversionSlider">
+                                <div class="slider-fill" style="--fill: 56.25%;"></div>
+                                <div class="slider-thumb-value">+15%</div>
+                            </div>
+                            <span class="slider-label">+50%</span>
+                        </div>
+                        <div class="slider-result">
+                            <span class="result-label">변경 예산</span>
+                            <span class="result-value positive">₩2,213만 <small>(+15%)</small></span>
+                        </div>
+                    </div>
+                    <div class="slider-group" data-segment="traffic">
+                        <div class="slider-header">
+                            <div class="segment-info">
+                                <div class="segment-badge traffic">트래픽</div>
+                                <span class="segment-name">Meta_트래픽</span>
+                            </div>
+                            <div class="segment-metrics">
+                                <span class="roas-badge medium">ROAS 23%</span>
+                                <span class="current-budget">₩102.8만</span>
+                            </div>
+                        </div>
+                        <div class="slider-container">
+                            <span class="slider-label">-30%</span>
+                            <div class="slider-track">
+                                <input type="range" min="-30" max="50" value="-5" class="slider" id="trafficSlider">
+                                <div class="slider-fill" style="--fill: 31.25%;"></div>
+                                <div class="slider-thumb-value">-5%</div>
+                            </div>
+                            <span class="slider-label">+50%</span>
+                        </div>
+                        <div class="slider-result">
+                            <span class="result-label">변경 예산</span>
+                            <span class="result-value negative">₩97.6만 <small>(-5%)</small></span>
+                        </div>
+                    </div>
+                    <div class="slider-group" data-segment="reach">
+                        <div class="slider-header">
+                            <div class="segment-info">
+                                <div class="segment-badge reach">도달</div>
+                                <span class="segment-name">Meta_도달</span>
+                            </div>
+                            <div class="segment-metrics">
+                                <span class="roas-badge low">ROAS 0%</span>
+                                <span class="current-budget">₩23.6만</span>
+                            </div>
+                        </div>
+                        <div class="slider-container">
+                            <span class="slider-label">-30%</span>
+                            <div class="slider-track">
+                                <input type="range" min="-30" max="50" value="15" class="slider" id="reachSlider">
+                                <div class="slider-fill" style="--fill: 56.25%;"></div>
+                                <div class="slider-thumb-value">+15%</div>
+                            </div>
+                            <span class="slider-label">+50%</span>
+                        </div>
+                        <div class="slider-result">
+                            <span class="result-label">변경 예산</span>
+                            <span class="result-value positive">₩27.1만 <small>(+15%)</small></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="panel results-panel">
+                <div class="panel-header">
+                    <h2>시뮬레이션 결과</h2>
+                    <div class="update-indicator">
+                        <div class="pulse"></div>
+                        <span>실시간 반영</span>
+                    </div>
+                </div>
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="card-icon cost">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                        </div>
+                        <div class="card-content">
+                            <span class="card-label">총 비용</span>
+                            <div class="card-values">
+                                <span class="card-before">₩2,051만</span>
+                                <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                                <span class="card-after">₩2,338만</span>
+                            </div>
+                            <span class="card-change positive">+14.0%</span>
+                        </div>
+                    </div>
+                    <div class="summary-card highlight">
+                        <div class="card-icon revenue">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        </div>
+                        <div class="card-content">
+                            <span class="card-label">예상 매출</span>
+                            <div class="card-values">
+                                <span class="card-before">₩3,815만</span>
+                                <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                                <span class="card-after">₩4,292만</span>
+                            </div>
+                            <span class="card-change positive">+12.5%</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon roas">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+                        </div>
+                        <div class="card-content">
+                            <span class="card-label">평균 ROAS</span>
+                            <div class="card-values">
+                                <span class="card-before">186%</span>
+                                <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                                <span class="card-after warning">184%</span>
+                            </div>
+                            <span class="card-change negative">-2.5%p</span>
+                        </div>
+                    </div>
+                    <div class="summary-card featured">
+                        <div class="card-icon roi">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="7.5 4.21 12 6.81 16.5 4.21"/><polyline points="7.5 19.79 7.5 14.6 3 12"/><polyline points="21 12 16.5 14.6 16.5 19.79"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                        </div>
+                        <div class="card-content">
+                            <span class="card-label">투자 효율</span>
+                            <div class="card-value-large">166%</div>
+                            <span class="card-subtitle">추가투자 대비 추가매출</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h3>세그먼트별 상세 결과</h3>
+                    <div class="table-container">
+                        <table class="detail-table">
+                            <thead>
+                                <tr><th>세그먼트</th><th>현재 비용</th><th>변경 비용</th><th>현재 ROAS</th><th>조정 ROAS</th><th>예상 매출</th><th>추천</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><div class="segment-cell"><div class="segment-dot conversion"></div>Meta_전환</div></td><td>₩1,924만</td><td class="highlight-cell positive">₩2,213만 <span class="change">(+15%)</span></td><td>197%</td><td class="roas-cell high">193%</td><td class="revenue-cell">₩4,269만</td><td><span class="badge recommend">증액 추천</span></td></tr>
+                                <tr><td><div class="segment-cell"><div class="segment-dot traffic"></div>Meta_트래픽</div></td><td>₩102.8만</td><td class="highlight-cell negative">₩97.6만 <span class="change">(-5%)</span></td><td>23%</td><td class="roas-cell medium">24%</td><td class="revenue-cell">₩23.0만</td><td><span class="badge review">감액 검토</span></td></tr>
+                                <tr><td><div class="segment-cell"><div class="segment-dot reach"></div>Meta_도달</div></td><td>₩23.6만</td><td class="highlight-cell positive">₩27.1만 <span class="change">(+15%)</span></td><td>0%</td><td class="roas-cell low">0%</td><td class="revenue-cell">₩0</td><td><span class="badge warning">감액 검토</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                        <span>AI 인사이트</span>
+                    </div>
+                    <p>Meta_전환 캠페인의 ROAS가 가장 높아 <strong>증액 시 매출 성장 효과가 큽니다.</strong> 반면 Meta_도달은 ROAS 0%로 브랜딩 목적 외 전환 기여도가 낮아 예산 재검토를 권장합니다.</p>
+                </div>
+            </section>
+        </main>
+        <footer class="footer">
+            <span>Powered by <strong>Growthmaker</strong></span>
+            <span class="divider">|</span>
+            <span>Data-Driven Growth Partner</span>
+        </footer>
+    </div>
+    <script>
+        document.querySelectorAll('.slider').forEach(slider => {
+            slider.addEventListener('input', function() {
+                const value = parseInt(this.value);
+                const min = parseInt(this.min);
+                const max = parseInt(this.max);
+                const percentage = ((value - min) / (max - min)) * 100;
+                const track = this.parentElement;
+                const fill = track.querySelector('.slider-fill');
+                const thumbValue = track.querySelector('.slider-thumb-value');
+                fill.style.setProperty('--fill', percentage + '%');
+                thumbValue.textContent = (value >= 0 ? '+' : '') + value + '%';
+                thumbValue.style.left = percentage + '%';
+                const group = this.closest('.slider-group');
+                const resultValue = group.querySelector('.result-value');
+                resultValue.classList.toggle('positive', value >= 0);
+                resultValue.classList.toggle('negative', value < 0);
+            });
+        });
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            document.querySelectorAll('.slider').forEach(slider => {
+                slider.value = 0;
+                slider.dispatchEvent(new Event('input'));
+            });
+        });
+    </script>
+</body>
+</html>
