@@ -1445,6 +1445,368 @@
         .sim-result-value.positive { color: #10b981; }
         .sim-result-value.negative { color: #ef4444; }
         .sim-result-value small { font-size: 11px; opacity: 0.8; }
+
+        /* 시뮬레이션 결과 카드 */
+        .sim-result-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .sim-result-card {
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            transition: all 0.25s ease;
+        }
+        .sim-result-card:hover {
+            border-color: rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .sim-result-card.highlight {
+            border-color: rgba(16, 185, 129, 0.25);
+            background: linear-gradient(135deg, white, rgba(16, 185, 129, 0.03));
+        }
+        .sim-result-card.featured {
+            border-color: rgba(59, 130, 246, 0.25);
+            background: linear-gradient(135deg, white, rgba(59, 130, 246, 0.03));
+        }
+        .sim-card-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sim-card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+        .sim-card-label {
+            font-size: 11px;
+            color: var(--grey-500);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .sim-card-values {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .sim-card-before {
+            font-size: 12px;
+            color: var(--grey-400);
+            text-decoration: line-through;
+        }
+        .sim-card-arrow {
+            font-size: 11px;
+            color: var(--grey-400);
+        }
+        .sim-card-after {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--grey-800);
+        }
+        .sim-card-change {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+        }
+        .sim-card-value-large {
+            font-size: 20px;
+            font-weight: 800;
+            color: #3b82f6;
+            line-height: 1;
+            margin-top: 4px;
+        }
+        .sim-card-subtitle {
+            font-size: 10px;
+            color: var(--grey-500);
+        }
+
+        /* 시뮬레이션 결과 테이블 */
+        .sim-table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .sim-detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .sim-detail-table th {
+            padding: 14px 16px;
+            background: #f8fafc;
+            color: var(--grey-500);
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+        }
+        .sim-detail-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            color: var(--grey-600);
+            vertical-align: middle;
+        }
+        .sim-detail-table tr:last-child td {
+            border-bottom: none;
+        }
+        .sim-detail-table tbody tr:not(.sim-total-row):hover td {
+            background: rgba(139, 92, 246, 0.04);
+        }
+        /* 세그먼트 셀 */
+        .sim-segment-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            color: var(--grey-800);
+        }
+        .sim-segment-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .sim-segment-dot.high { background: #10b981; }
+        .sim-segment-dot.medium { background: #f59e0b; }
+        .sim-segment-dot.low { background: #ef4444; }
+        /* 하이라이트 셀 */
+        .sim-highlight-cell {
+            font-weight: 600;
+        }
+        .sim-highlight-cell.positive { color: #10b981; }
+        .sim-highlight-cell.negative { color: #ef4444; }
+        .sim-highlight-cell.neutral { color: var(--grey-600); }
+        /* 추천 뱃지 */
+        .sim-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .sim-badge.recommend {
+            background: rgba(16, 185, 129, 0.12);
+            color: #059669;
+        }
+        .sim-badge.maintain {
+            background: rgba(59, 130, 246, 0.12);
+            color: #2563eb;
+        }
+        .sim-badge.review {
+            background: rgba(245, 158, 11, 0.12);
+            color: #d97706;
+        }
+        .sim-badge.warning {
+            background: rgba(239, 68, 68, 0.12);
+            color: #dc2626;
+        }
+        /* 총합 행 */
+        .sim-total-row {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+        }
+        .sim-total-row td {
+            border-top: 2px solid var(--grey-300) !important;
+            border-bottom: none !important;
+            padding: 16px !important;
+        }
+        .sim-total-row:hover td {
+            background: transparent !important;
+        }
+        .sim-total-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--grey-800);
+        }
+        .sim-total-icon {
+            width: 22px;
+            height: 22px;
+            background: linear-gradient(135deg, #8b5cf6, #673ab7);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .sim-total-value {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--grey-800);
+        }
+        /* 변경된 행 하이라이트 */
+        .sim-changed-row {
+            background: rgba(255, 251, 235, 0.8);
+        }
+        .sim-changed-row td:first-child {
+            position: relative;
+        }
+        .sim-changed-row td:first-child::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #f59e0b, #fbbf24);
+        }
+        /* 통합 인사이트 박스 */
+        .sim-insight-box {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.04), rgba(103, 58, 183, 0.04));
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .sim-insight-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+        .sim-insight-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .sim-insight-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(103, 58, 183, 0.15));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8b5cf6;
+            flex-shrink: 0;
+        }
+        .sim-insight-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-800);
+        }
+        .sim-insight-status {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        .sim-insight-status.positive {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+        .sim-insight-status.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+        }
+        .sim-insight-status.negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+        .sim-insight-status.neutral {
+            background: rgba(100, 116, 139, 0.1);
+            color: #64748b;
+        }
+        .sim-insight-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .sim-insight-main {
+            background: white;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+        .sim-insight-main-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .sim-insight-main-text {
+            font-size: 13px;
+            color: var(--grey-700);
+            line-height: 1.7;
+        }
+        .sim-insight-main-text strong {
+            color: var(--grey-800);
+        }
+        .sim-insight-notes {
+            background: rgba(245, 158, 11, 0.05);
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid rgba(245, 158, 11, 0.12);
+        }
+        .sim-insight-notes-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #b45309;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .sim-insight-notes-list {
+            font-size: 12px;
+            color: var(--grey-600);
+            line-height: 1.8;
+        }
+        .sim-insight-notes-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .sim-insight-notes-list li::before {
+            content: '•';
+            color: #f59e0b;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .sim-insight-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 1200px) {
+            .sim-result-cards { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .sim-result-cards { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -2300,48 +2662,83 @@
                                         <div style="font-size: 14px; font-weight: 700; color: var(--grey-900); margin-bottom: 16px;">📊 시뮬레이션 결과</div>
 
                                         <!-- 결과 요약 카드 -->
-                                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px;">
-                                            <div style="background: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                                                <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">총 비용</div>
-                                                <div style="font-size: 12px; color: var(--grey-500); margin-bottom: 4px;">
-                                                    <span id="simCurrentCost">-</span> → <span id="simNewCost" style="font-weight: 700; color: var(--primary-main);">-</span>
+                                        <div class="sim-result-cards">
+                                            <div class="sim-result-card">
+                                                <div class="sim-card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                                                 </div>
-                                                <div id="simCostChange" style="font-size: 11px; font-weight: 600; color: var(--grey-600);">-</div>
-                                            </div>
-                                            <div style="background: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                                                <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">예상 매출</div>
-                                                <div style="font-size: 12px; color: var(--grey-500); margin-bottom: 4px;">
-                                                    <span id="simCurrentRevenue">-</span> → <span id="simNewRevenue" style="font-weight: 700; color: #2e7d32;">-</span>
+                                                <div class="sim-card-content">
+                                                    <div class="sim-card-label">총 비용</div>
+                                                    <div class="sim-card-values">
+                                                        <span id="simCurrentCost" class="sim-card-before">-</span>
+                                                        <span class="sim-card-arrow">→</span>
+                                                        <span id="simNewCost" class="sim-card-after">-</span>
+                                                    </div>
+                                                    <div id="simCostChange" class="sim-card-change">-</div>
                                                 </div>
-                                                <div id="simRevenueChange" style="font-size: 11px; font-weight: 600; color: var(--grey-600);">-</div>
                                             </div>
-                                            <div style="background: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                                                <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">평균 ROAS</div>
-                                                <div style="font-size: 12px; color: var(--grey-500); margin-bottom: 4px;">
-                                                    <span id="simCurrentRoas">-</span> → <span id="simNewRoas" style="font-weight: 700; color: #1565c0;">-</span>
+                                            <div class="sim-result-card highlight">
+                                                <div class="sim-card-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                                                 </div>
-                                                <div id="simRoasChange" style="font-size: 11px; font-weight: 600; color: var(--grey-600);">-</div>
+                                                <div class="sim-card-content">
+                                                    <div class="sim-card-label">예상 매출</div>
+                                                    <div class="sim-card-values">
+                                                        <span id="simCurrentRevenue" class="sim-card-before">-</span>
+                                                        <span class="sim-card-arrow">→</span>
+                                                        <span id="simNewRevenue" class="sim-card-after" style="color: #10b981;">-</span>
+                                                    </div>
+                                                    <div id="simRevenueChange" class="sim-card-change">-</div>
+                                                </div>
                                             </div>
-                                            <div style="background: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                                                <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">투자 효율</div>
-                                                <div id="simInvestmentEfficiency" style="font-size: 15px; font-weight: 700; color: #7b1fa2; margin-top: 8px;">-</div>
-                                                <div style="font-size: 10px; color: var(--grey-500);">추가투자 대비 추가매출</div>
+                                            <div class="sim-result-card">
+                                                <div class="sim-card-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+                                                </div>
+                                                <div class="sim-card-content">
+                                                    <div class="sim-card-label">평균 ROAS</div>
+                                                    <div class="sim-card-values">
+                                                        <span id="simCurrentRoas" class="sim-card-before">-</span>
+                                                        <span class="sim-card-arrow">→</span>
+                                                        <span id="simNewRoas" class="sim-card-after" style="color: #f59e0b;">-</span>
+                                                    </div>
+                                                    <div id="simRoasChange" class="sim-card-change">-</div>
+                                                </div>
+                                            </div>
+                                            <div class="sim-result-card featured">
+                                                <div class="sim-card-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                                                </div>
+                                                <div class="sim-card-content">
+                                                    <div class="sim-card-label">투자 효율</div>
+                                                    <div id="simInvestmentEfficiency" class="sim-card-value-large">-</div>
+                                                    <div class="sim-card-subtitle">추가투자 대비 추가매출</div>
+                                                </div>
                                             </div>
                                         </div>
 
                                         <!-- 세그먼트별 상세 결과 테이블 -->
-                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📋 세그먼트별 상세 결과</div>
-                                        <div style="overflow-x: auto;">
-                                            <table id="simulationResultTable" style="width: 100%; font-size: 12px; border-collapse: collapse;">
+                                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                                            <div style="width: 28px; height: 28px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(103, 58, 183, 0.1)); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2">
+                                                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                                    <path d="M9 14l2 2 4-4"/>
+                                                </svg>
+                                            </div>
+                                            <span style="font-size: 14px; font-weight: 600; color: var(--grey-800);">세그먼트별 상세 결과</span>
+                                            <span style="font-size: 12px; color: var(--grey-400); margin-left: auto;">효율 기준: 고(150%+) / 중(50-150%) / 저(50%-)</span>
+                                        </div>
+                                        <div class="sim-table-container">
+                                            <table id="simulationResultTable" class="sim-detail-table">
                                                 <thead>
-                                                    <tr style="background: var(--grey-100);">
-                                                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid var(--grey-300);">세그먼트</th>
-                                                        <th style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-300);">현재 비용</th>
-                                                        <th style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-300);">변경 비용</th>
-                                                        <th style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-300);">현재 ROAS</th>
-                                                        <th style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-300);">조정 ROAS</th>
-                                                        <th style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-300);">예상 매출</th>
-                                                        <th style="text-align: center; padding: 10px; border-bottom: 1px solid var(--grey-300);">추천</th>
+                                                    <tr>
+                                                        <th style="text-align: left;">세그먼트</th>
+                                                        <th style="text-align: right;">현재 비용</th>
+                                                        <th style="text-align: right;">변경 비용</th>
+                                                        <th style="text-align: right;">현재 ROAS</th>
+                                                        <th style="text-align: right;">조정 ROAS</th>
+                                                        <th style="text-align: right;">예상 매출</th>
+                                                        <th style="text-align: center;">추천</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="simulationResultBody">
@@ -2351,20 +2748,43 @@
                                         </div>
                                     </div>
 
-                                    <!-- 인사이트 및 주의사항 -->
-                                    <div class="insight-content" style="grid-template-columns: repeat(2, 1fr); gap: 16px;">
-                                        <div class="insight-card positive">
-                                            <div class="insight-title" style="font-size: 13px;">💡 시뮬레이션 인사이트</div>
-                                            <div id="simulationInsight" class="insight-text" style="font-size: 12px; line-height: 1.6;">
-                                                세그먼트별 예산을 조정하면 예상 결과가 표시됩니다.
+                                    <!-- 통합 인사이트 박스 -->
+                                    <div class="sim-insight-box" id="simulationInsightBox">
+                                        <div class="sim-insight-header">
+                                            <div class="sim-insight-icon">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                                </svg>
+                                            </div>
+                                            <span class="sim-insight-title">시뮬레이션 분석</span>
+                                            <div id="simulationInsightStatus" class="sim-insight-status neutral">
+                                                <span>대기 중</span>
                                             </div>
                                         </div>
-                                        <div class="insight-card neutral" style="border-left-color: #ff9800;">
-                                            <div class="insight-title" style="font-size: 13px;">⚠️ 주의사항</div>
-                                            <div class="insight-text" style="font-size: 12px; line-height: 1.6;">
-                                                • 예산 증가 시 <strong>체감 수익 효과</strong>가 적용됩니다 (ROAS 하락)<br>
-                                                • 실제 결과는 시장 상황, 경쟁, 계절성에 따라 달라질 수 있습니다<br>
-                                                • 본 시뮬레이션은 의사결정 <strong>참고용</strong>으로 활용하세요
+                                        <div class="sim-insight-content">
+                                            <div class="sim-insight-main">
+                                                <div class="sim-insight-main-title">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                                                    </svg>
+                                                    분석 결과
+                                                </div>
+                                                <div id="simulationInsight" class="sim-insight-main-text">
+                                                    세그먼트별 예산을 조정하면 예상 결과가 표시됩니다.
+                                                </div>
+                                            </div>
+                                            <div class="sim-insight-notes">
+                                                <div class="sim-insight-notes-title">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                                    </svg>
+                                                    시뮬레이션 주의사항
+                                                </div>
+                                                <ul class="sim-insight-notes-list" style="list-style: none; padding: 0; margin: 0;">
+                                                    <li>예산 증가 시 <strong>체감 수익 효과</strong>가 적용됩니다</li>
+                                                    <li>실제 결과는 시장 상황, 경쟁에 따라 달라질 수 있습니다</li>
+                                                    <li>본 시뮬레이션은 의사결정 <strong>참고용</strong>입니다</li>
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
@@ -5621,27 +6041,106 @@
             if (segmentResults.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" style="padding: 20px; text-align: center; color: var(--grey-500);">
-                            표시할 항목을 선택하세요.
+                        <td colspan="7" style="padding: 30px; text-align: center; color: var(--grey-500);">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity: 0.5;">
+                                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                                <span>표시할 항목을 선택하세요.</span>
+                            </div>
                         </td>
                     </tr>
                 `;
             } else {
-                tbody.innerHTML = segmentResults.map(r => `
-                    <tr style="background: ${r.adjustment !== 0 ? '#fffde7' : 'white'};">
-                        <td style="padding: 10px; border-bottom: 1px solid var(--grey-200);"><strong>${r.segment}</strong></td>
-                        <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200);">${formatSimCurrency(r.currentCost)}</td>
-                        <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200); font-weight: 600; color: ${r.adjustment > 0 ? '#c62828' : r.adjustment < 0 ? '#2e7d32' : 'inherit'};">
-                            ${formatSimCurrency(r.newCost)} <span style="font-size: 10px; font-weight: normal;">(${r.adjustment > 0 ? '+' : ''}${r.adjustment}%)</span>
+                // 뱃지 클래스 매핑 함수
+                const getBadgeClass = (rec) => {
+                    if (rec === '증액 추천') return 'recommend';
+                    if (rec === '유지') return 'maintain';
+                    if (rec === '효율 점검') return 'review';
+                    return 'warning';
+                };
+
+                // ROAS 레벨에 따른 dot 클래스
+                const getDotClass = (roas) => {
+                    if (roas >= 150) return 'high';
+                    if (roas >= 50) return 'medium';
+                    return 'low';
+                };
+
+                // 개별 행
+                const rowsHtml = segmentResults.map(r => {
+                    const dotClass = getDotClass(r.currentRoas);
+                    const badgeClass = getBadgeClass(r.recommendation);
+                    const rowClass = r.adjustment !== 0 ? 'sim-changed-row' : '';
+                    const costChangeClass = r.adjustment > 0 ? 'positive' : r.adjustment < 0 ? 'negative' : 'neutral';
+                    const roasClass = r.adjustedRoas >= 100 ? 'positive' : 'negative';
+
+                    return `
+                    <tr class="${rowClass}">
+                        <td>
+                            <div class="sim-segment-cell">
+                                <span class="sim-segment-dot ${dotClass}"></span>
+                                <span>${r.segment}</span>
+                            </div>
                         </td>
-                        <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200);">${r.currentRoas.toFixed(0)}%</td>
-                        <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200); font-weight: 600; color: ${r.adjustedRoas >= 100 ? '#2e7d32' : '#c62828'};">${r.adjustedRoas.toFixed(0)}%</td>
-                        <td style="text-align: right; padding: 10px; border-bottom: 1px solid var(--grey-200); font-weight: 600;">${formatSimCurrency(r.newRevenue)}</td>
-                        <td style="text-align: center; padding: 10px; border-bottom: 1px solid var(--grey-200);">
-                            <span style="background: ${r.recColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">${r.recommendation}</span>
+                        <td style="text-align: right;">${formatSimCurrency(r.currentCost)}</td>
+                        <td style="text-align: right;">
+                            <span class="sim-highlight-cell ${costChangeClass}">
+                                ${formatSimCurrency(r.newCost)}
+                            </span>
+                            <span style="font-size: 10px; color: var(--grey-400); margin-left: 4px;">(${r.adjustment > 0 ? '+' : ''}${r.adjustment}%)</span>
+                        </td>
+                        <td style="text-align: right;">${r.currentRoas.toFixed(0)}%</td>
+                        <td style="text-align: right;">
+                            <span class="sim-highlight-cell ${roasClass}">${r.adjustedRoas.toFixed(0)}%</span>
+                        </td>
+                        <td style="text-align: right; font-weight: 600;">${formatSimCurrency(r.newRevenue)}</td>
+                        <td style="text-align: center;">
+                            <span class="sim-badge ${badgeClass}">${r.recommendation}</span>
                         </td>
                     </tr>
-                `).join('');
+                `}).join('');
+
+                // 총합 행
+                const costChangeClass = costChange > 0 ? 'positive' : costChange < 0 ? 'negative' : 'neutral';
+                const roasChangeClass = newRoas >= currentRoas ? 'positive' : 'negative';
+                const totalHtml = `
+                    <tr class="sim-total-row">
+                        <td>
+                            <div class="sim-total-cell">
+                                <div class="sim-total-icon">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <path d="M4 6h16M4 12h16M4 18h16"/>
+                                    </svg>
+                                </div>
+                                <span>총합</span>
+                            </div>
+                        </td>
+                        <td style="text-align: right;">
+                            <span class="sim-total-value">${formatSimCurrency(totalCurrentCost)}</span>
+                        </td>
+                        <td style="text-align: right;">
+                            <span class="sim-total-value sim-highlight-cell ${costChangeClass}">
+                                ${formatSimCurrency(totalNewCost)}
+                            </span>
+                            <span style="font-size: 10px; color: var(--grey-500); margin-left: 4px;">(${costChange > 0 ? '+' : ''}${costChange.toFixed(1)}%)</span>
+                        </td>
+                        <td style="text-align: right;">
+                            <span class="sim-total-value">${currentRoas.toFixed(0)}%</span>
+                        </td>
+                        <td style="text-align: right;">
+                            <span class="sim-total-value sim-highlight-cell ${roasChangeClass}">${newRoas.toFixed(0)}%</span>
+                        </td>
+                        <td style="text-align: right;">
+                            <span class="sim-total-value" style="color: #10b981;">${formatSimCurrency(totalNewRevenue)}</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span style="font-size: 11px; color: var(--grey-400);">—</span>
+                        </td>
+                    </tr>
+                `;
+
+                tbody.innerHTML = rowsHtml + totalHtml;
             }
 
             // 인사이트 업데이트
@@ -5651,12 +6150,22 @@
         // 시뮬레이션 인사이트 생성
         function updateSimulationInsight(results, costChange, revenueChange, roasChange) {
             const insightEl = document.getElementById('simulationInsight');
+            const statusEl = document.getElementById('simulationInsightStatus');
             if (!insightEl) return;
 
             const changedSegments = results.filter(r => r.adjustment !== 0);
 
+            // 상태 업데이트 헬퍼
+            const updateStatus = (statusClass, statusText) => {
+                if (statusEl) {
+                    statusEl.className = `sim-insight-status ${statusClass}`;
+                    statusEl.innerHTML = `<span>${statusText}</span>`;
+                }
+            };
+
             if (changedSegments.length === 0) {
                 insightEl.innerHTML = '세그먼트별 예산을 조정하면 예상 결과가 표시됩니다.';
+                updateStatus('neutral', '대기 중');
                 return;
             }
 
@@ -5664,29 +6173,48 @@
             const decreased = changedSegments.filter(r => r.adjustment < 0);
 
             let insight = '';
+            let statusClass = 'neutral';
+            let statusText = '분석 중';
 
             if (revenueChange > 0 && roasChange >= -5) {
-                insight = `<strong style="color: #2e7d32;">✅ 긍정적 시나리오</strong><br>`;
+                statusClass = 'positive';
+                statusText = '긍정적';
+                insight = `<strong style="color: #059669;">긍정적 시나리오</strong><br>`;
                 insight += `예산 ${costChange > 0 ? '증액' : '조정'}으로 매출이 <strong>${revenueChange.toFixed(1)}%</strong> 증가할 것으로 예상됩니다.`;
                 if (roasChange < 0) {
                     insight += ` 다만 ROAS가 ${Math.abs(roasChange).toFixed(1)}%p 하락하므로 효율성 모니터링이 필요합니다.`;
                 }
             } else if (revenueChange > 0 && roasChange < -5) {
-                insight = `<strong style="color: #f57c00;">⚠️ 주의 필요</strong><br>`;
+                statusClass = 'warning';
+                statusText = '주의 필요';
+                insight = `<strong style="color: #d97706;">주의가 필요한 시나리오</strong><br>`;
                 insight += `매출은 ${revenueChange.toFixed(1)}% 증가하지만, ROAS가 <strong>${Math.abs(roasChange).toFixed(1)}%p</strong> 크게 하락합니다. `;
                 insight += `체감 수익 효과로 인한 효율 저하를 고려하세요.`;
             } else if (revenueChange < 0) {
-                insight = `<strong style="color: #c62828;">📉 재검토 필요</strong><br>`;
+                statusClass = 'negative';
+                statusText = '재검토';
+                insight = `<strong style="color: #dc2626;">재검토가 필요한 시나리오</strong><br>`;
                 insight += `현재 설정으로는 매출이 ${Math.abs(revenueChange).toFixed(1)}% 감소할 것으로 예상됩니다. `;
                 insight += `예산 배분을 다시 검토해보세요.`;
+            } else {
+                statusClass = 'neutral';
+                statusText = '변동 없음';
+                insight = `<strong style="color: #64748b;">변동 없음</strong><br>`;
+                insight += `현재 설정에서는 매출 변화가 없습니다.`;
             }
 
+            // 추가 정보
             if (increased.length > 0) {
                 const topIncreased = increased.sort((a, b) => b.adjustment - a.adjustment)[0];
-                insight += `<br><br>• <strong>${topIncreased.segment}</strong>에 가장 많은 증액(+${topIncreased.adjustment}%)이 설정되었습니다.`;
+                insight += `<br><br><span style="color: var(--grey-500);">▸</span> <strong>${topIncreased.segment}</strong>에 가장 많은 증액(+${topIncreased.adjustment}%)이 설정됨`;
+            }
+            if (decreased.length > 0) {
+                const topDecreased = decreased.sort((a, b) => a.adjustment - b.adjustment)[0];
+                insight += `<br><span style="color: var(--grey-500);">▸</span> <strong>${topDecreased.segment}</strong>에 가장 많은 감액(${topDecreased.adjustment}%)이 설정됨`;
             }
 
             insightEl.innerHTML = insight;
+            updateStatus(statusClass, statusText);
         }
 
         // 시뮬레이션 이벤트 바인딩
