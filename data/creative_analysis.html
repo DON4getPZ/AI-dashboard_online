@@ -814,42 +814,43 @@
             flex-wrap: wrap;
         }
 
-        .modal-chart-checkbox-group {
+        .modal-chart-toggle-group {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
-        .modal-chart-checkbox {
+        .modal-chart-toggle-group .data-label-toggle {
             display: flex;
             align-items: center;
             gap: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
+            padding: 8px 16px;
+            border: none;
+            background: var(--paper);
             color: var(--grey-700);
-            padding: 6px 12px;
-            border-radius: 16px;
-            transition: all 0.2s ease;
-            background: var(--grey-100);
-        }
-
-        .modal-chart-checkbox:hover {
-            background: var(--grey-200);
-        }
-
-        .modal-chart-checkbox input {
-            width: 14px;
-            height: 14px;
-            accent-color: var(--primary-main);
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
-        .modal-chart-checkbox.cost { border-left: 3px solid #673ab7; }
-        .modal-chart-checkbox.cpm { border-left: 3px solid #9c27b0; }
-        .modal-chart-checkbox.cpc { border-left: 3px solid #2196f3; }
-        .modal-chart-checkbox.cpa { border-left: 3px solid #ff9800; }
-        .modal-chart-checkbox.roas { border-left: 3px solid #00c853; }
+        .modal-chart-toggle-group .data-label-toggle:hover {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .modal-chart-toggle-group .data-label-toggle.active {
+            background: var(--primary-main);
+            color: white;
+            box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+        }
+
+        .modal-chart-toggle-group .data-label-toggle .toggle-checkbox {
+            font-size: 14px;
+        }
 
         /* 모달 테이블 */
         .modal-table-section {
@@ -1745,27 +1746,35 @@
                 <div class="modal-chart-section">
                     <div class="modal-chart-title">성과 추이</div>
                     <div class="modal-chart-controls">
-                        <div class="modal-chart-checkbox-group">
-                            <label class="modal-chart-checkbox cost">
-                                <input type="checkbox" id="modalChartCost" checked onchange="updateModalChart()">
+                        <div class="modal-chart-toggle-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button type="button" class="data-label-toggle active" data-chart-toggle="modalChartCost">
+                                <span class="toggle-checkbox">✓</span>
                                 <span>비용</span>
-                            </label>
-                            <label class="modal-chart-checkbox cpm">
-                                <input type="checkbox" id="modalChartCPM" onchange="updateModalChart()">
+                            </button>
+                            <button type="button" class="data-label-toggle" data-chart-toggle="modalChartCPM">
+                                <span class="toggle-checkbox">☐</span>
                                 <span>CPM</span>
-                            </label>
-                            <label class="modal-chart-checkbox cpc">
-                                <input type="checkbox" id="modalChartCPC" onchange="updateModalChart()">
+                            </button>
+                            <button type="button" class="data-label-toggle" data-chart-toggle="modalChartCPC">
+                                <span class="toggle-checkbox">☐</span>
                                 <span>CPC</span>
-                            </label>
-                            <label class="modal-chart-checkbox cpa">
-                                <input type="checkbox" id="modalChartCPA" onchange="updateModalChart()">
+                            </button>
+                            <button type="button" class="data-label-toggle" data-chart-toggle="modalChartCPA">
+                                <span class="toggle-checkbox">☐</span>
                                 <span>CPA</span>
-                            </label>
-                            <label class="modal-chart-checkbox roas">
-                                <input type="checkbox" id="modalChartROAS" checked onchange="updateModalChart()">
+                            </button>
+                            <button type="button" class="data-label-toggle active" data-chart-toggle="modalChartROAS">
+                                <span class="toggle-checkbox">✓</span>
                                 <span>ROAS</span>
-                            </label>
+                            </button>
+                        </div>
+                        <!-- 숨겨진 체크박스 (기존 기능 유지용) -->
+                        <div style="display: none;">
+                            <input type="checkbox" id="modalChartCost" checked>
+                            <input type="checkbox" id="modalChartCPM">
+                            <input type="checkbox" id="modalChartCPC">
+                            <input type="checkbox" id="modalChartCPA">
+                            <input type="checkbox" id="modalChartROAS" checked>
                         </div>
                         <button class="modal-data-label-toggle" id="modalDataLabelToggle">
                             <span class="toggle-checkbox">☐</span>
@@ -3268,6 +3277,28 @@
                 radio.addEventListener('change', e => {
                     sortConfig.order = e.target.value;
                     updateDashboard();
+                });
+            });
+
+            // 모달 차트 토글 버튼 이벤트 (data-label-toggle 스타일)
+            document.querySelectorAll('.modal-chart-toggle-group .data-label-toggle').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const checkboxId = this.dataset.chartToggle;
+                    const checkbox = document.getElementById(checkboxId);
+                    const toggleCheckbox = this.querySelector('.toggle-checkbox');
+
+                    // 토글 상태 전환
+                    checkbox.checked = !checkbox.checked;
+
+                    if (checkbox.checked) {
+                        this.classList.add('active');
+                        toggleCheckbox.textContent = '✓';
+                    } else {
+                        this.classList.remove('active');
+                        toggleCheckbox.textContent = '☐';
+                    }
+
+                    updateModalChart();
                 });
             });
 

@@ -866,42 +866,6 @@
             flex-wrap: wrap;
         }
 
-        .chart-checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .chart-checkbox {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--grey-700);
-            padding: 6px 12px;
-            border-radius: 20px;
-            transition: all 0.2s ease;
-            background: var(--grey-100);
-        }
-
-        .chart-checkbox:hover {
-            background: var(--grey-200);
-        }
-
-        .chart-checkbox input {
-            width: 16px;
-            height: 16px;
-            accent-color: var(--primary-main);
-            cursor: pointer;
-        }
-
-        .chart-checkbox.cost { border-left: 3px solid #673ab7; }
-        .chart-checkbox.cpm { border-left: 3px solid #ffab00; }
-        .chart-checkbox.cpc { border-left: 3px solid #2196f3; }
-        .chart-checkbox.cpa { border-left: 3px solid #ff9800; }
-        .chart-checkbox.roas { border-left: 3px solid #00c853; }
 
         /* 차트 섹션 */
         .chart-section {
@@ -1625,27 +1589,35 @@
                         </button>
                     </div>
                     <div class="chart-controls">
-                        <div class="chart-checkbox-group">
-                            <label class="chart-checkbox cost">
-                                <input type="checkbox" id="chartCost" checked>
+                        <div class="chart-toggle-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button type="button" class="data-label-toggle active" data-chart-toggle="chartCost">
+                                <span class="toggle-checkbox">✓</span>
                                 <span>비용</span>
-                            </label>
-                            <label class="chart-checkbox cpm">
-                                <input type="checkbox" id="chartCPM">
+                            </button>
+                            <button type="button" class="data-label-toggle" data-chart-toggle="chartCPM">
+                                <span class="toggle-checkbox">☐</span>
                                 <span>CPM</span>
-                            </label>
-                            <label class="chart-checkbox cpc">
-                                <input type="checkbox" id="chartCPC">
+                            </button>
+                            <button type="button" class="data-label-toggle" data-chart-toggle="chartCPC">
+                                <span class="toggle-checkbox">☐</span>
                                 <span>CPC</span>
-                            </label>
-                            <label class="chart-checkbox cpa">
-                                <input type="checkbox" id="chartCPA">
+                            </button>
+                            <button type="button" class="data-label-toggle" data-chart-toggle="chartCPA">
+                                <span class="toggle-checkbox">☐</span>
                                 <span>CPA</span>
-                            </label>
-                            <label class="chart-checkbox roas">
-                                <input type="checkbox" id="chartROAS" checked>
+                            </button>
+                            <button type="button" class="data-label-toggle active" data-chart-toggle="chartROAS">
+                                <span class="toggle-checkbox">✓</span>
                                 <span>ROAS</span>
-                            </label>
+                            </button>
+                        </div>
+                        <!-- 숨겨진 체크박스 (기존 기능 유지용) -->
+                        <div style="display: none;">
+                            <input type="checkbox" id="chartCost" checked>
+                            <input type="checkbox" id="chartCPM">
+                            <input type="checkbox" id="chartCPC">
+                            <input type="checkbox" id="chartCPA">
+                            <input type="checkbox" id="chartROAS" checked>
                         </div>
                     </div>
                     <div class="chart-container">
@@ -2919,9 +2891,24 @@
                 });
             });
 
-            // 차트 체크박스 이벤트
-            ['chartCost', 'chartCPM', 'chartCPC', 'chartCPA', 'chartROAS'].forEach(id => {
-                document.getElementById(id).addEventListener('change', () => {
+            // 차트 토글 버튼 이벤트 (data-label-toggle 스타일)
+            document.querySelectorAll('.chart-toggle-group .data-label-toggle').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const checkboxId = this.dataset.chartToggle;
+                    const checkbox = document.getElementById(checkboxId);
+                    const toggleCheckbox = this.querySelector('.toggle-checkbox');
+
+                    // 토글 상태 전환
+                    checkbox.checked = !checkbox.checked;
+
+                    if (checkbox.checked) {
+                        this.classList.add('active');
+                        toggleCheckbox.textContent = '✓';
+                    } else {
+                        this.classList.remove('active');
+                        toggleCheckbox.textContent = '☐';
+                    }
+
                     renderChart();
                 });
             });
