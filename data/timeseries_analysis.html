@@ -2571,71 +2571,82 @@
                                 • <strong>예산 소진율</strong>: 100% 초과 시 긴급 예산 조정 필요, 미달 시 집행 가속화 검토
                             </div>
 
-                            <!-- 비즈니스 인사이트 서브 탭 -->
-                            <div class="view-type-section" style="margin-bottom: 24px;">
-                                <button class="view-btn business-subtab-btn active" data-business-tab="channel-roas">📊 채널별 ROAS</button>
-                                <button class="view-btn business-subtab-btn" data-business-tab="product-budget">🎯 제품 매출 & 예산</button>
-                            </div>
-
-                            <!-- 서브 탭 1: 채널별 ROAS 비교 -->
-                            <div id="channelRoasTab" class="business-subtab-content" style="display: block;">
+                            <!-- 제품 매출 & 예산 -->
+                            <div>
                                 <div class="card" style="padding: 24px; margin-bottom: 24px;">
-                                    <div class="visualization-title" style="margin-bottom: 16px;">📊 채널별 ROAS 비교</div>
-                                    <div class="img-tooltip-wrapper" data-tooltip="각 마케팅 채널의 ROAS(광고 수익률)를 비교합니다. 100% 이상이면 수익, 이하면 손실을 의미합니다." style="margin-bottom: 20px;">
-                                        <img src="visualizations/channel_roas_comparison.png" alt="채널 ROAS" class="visualization-img">
+
+                                    <!-- 1. 예산 초과 경고 (가장 긴급한 정보 먼저) -->
+                                    <div style="background: linear-gradient(135deg, #fff4f0 0%, #ffebe8 100%); padding: 16px; border-radius: 8px; border-left: 4px solid var(--error-main); margin-bottom: 24px;">
+                                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                            <span style="font-size: 20px;">🚨</span>
+                                            <strong style="color: var(--error-main); font-size: 15px;">예산 초과 경고 (109.0%)</strong>
+                                        </div>
+                                        <p style="font-size: 13px; color: var(--grey-700); margin-bottom: 12px; line-height: 1.6;">
+                                            현재 월 예산을 <strong style="color: var(--error-main);">9% 초과</strong> 집행 중입니다.
+                                            즉시 예산 조정이 필요하며, 아래 액션 플랜을 참고하세요.
+                                        </p>
+
+                                        <!-- 긴급 액션 플랜 -->
+                                        <div style="background: white; padding: 12px; border-radius: 6px;">
+                                            <div style="font-weight: 600; font-size: 13px; margin-bottom: 8px; color: var(--grey-900);">🎯 즉시 실행 가능한 액션 플랜</div>
+                                            <div style="display: grid; gap: 8px;">
+                                                <div style="display: flex; gap: 8px; align-items: start;">
+                                                    <span style="color: var(--error-main); font-weight: 600; font-size: 12px;">1.</span>
+                                                    <span style="font-size: 12px; line-height: 1.5;">
+                                                        <strong>저성과 채널 일시 중단</strong>: ROAS 100% 미만 채널의 캠페인을 즉시 중단하거나 예산 50% 삭감
+                                                    </span>
+                                                </div>
+                                                <div style="display: flex; gap: 8px; align-items: start;">
+                                                    <span style="color: var(--error-main); font-weight: 600; font-size: 12px;">2.</span>
+                                                    <span style="font-size: 12px; line-height: 1.5;">
+                                                        <strong>일일 예산 한도 설정</strong>: 남은 기간 동안 일평균 예산을 재계산하여 상한선 설정
+                                                    </span>
+                                                </div>
+                                                <div style="display: flex; gap: 8px; align-items: start;">
+                                                    <span style="color: var(--warning-main); font-weight: 600; font-size: 12px;">3.</span>
+                                                    <span style="font-size: 12px; line-height: 1.5;">
+                                                        <strong>고성과 채널 유지</strong>: ROAS 150% 이상인 채널은 현 수준을 유지하되, 불필요한 키워드 제거
+                                                    </span>
+                                                </div>
+                                                <div style="display: flex; gap: 8px; align-items: start;">
+                                                    <span style="color: var(--secondary-main); font-weight: 600; font-size: 12px;">4.</span>
+                                                    <span style="font-size: 12px; line-height: 1.5;">
+                                                        <strong>추가 예산 승인 요청</strong>: 고성과 채널의 ROI를 근거로 예산 추가 승인 건의
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <!-- ROAS 인사이트 카드 -->
-                                    <div class="insight-header" style="font-size: 14px; margin-bottom: 12px;">💡 핵심 인사이트</div>
-                                    <div class="insight-content" style="grid-template-columns: repeat(3, 1fr); gap: 12px;">
-                                        <div class="insight-card positive">
-                                            <div class="insight-title" style="font-size: 13px;">✅ 고성과 채널</div>
+                                    <!-- 2. 예산 관리 인사이트 (현황 요약) -->
+                                    <div class="insight-content" style="grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;">
+                                        <div class="insight-card negative">
+                                            <div class="insight-title" style="font-size: 13px;">⚠️ 현재 상태</div>
                                             <div class="insight-text" style="font-size: 12px;">
-                                                ROAS 150% 이상인 채널에 <strong>예산 추가 배정</strong>을 권장합니다.
-                                                투자 대비 높은 수익을 창출하고 있습니다.
+                                                예산 소진율 <strong>109%</strong><br>
+                                                초과 집행 <strong>9%</strong><br>
+                                                즉시 조치 필요
                                             </div>
                                         </div>
                                         <div class="insight-card neutral">
-                                            <div class="insight-title" style="font-size: 13px;">⚠️ 개선 필요 채널</div>
+                                            <div class="insight-title" style="font-size: 13px;">📊 예상 영향</div>
                                             <div class="insight-text" style="font-size: 12px;">
-                                                ROAS 100% 미만인 채널은 <strong>타겟팅 및 소재 최적화</strong>가 필요합니다.
-                                                손실이 발생하고 있는 상태입니다.
+                                                현 추세 유지 시<br>
+                                                월말까지 <strong>15% 추가 초과</strong> 예상<br>
+                                                예산 통제 시급
                                             </div>
                                         </div>
                                         <div class="insight-card positive" style="border-left-color: var(--secondary-main);">
-                                            <div class="insight-title" style="font-size: 13px;">📈 액션 아이템</div>
+                                            <div class="insight-title" style="font-size: 13px;">✅ 목표 수준</div>
                                             <div class="insight-text" style="font-size: 12px;">
-                                                고성과 채널의 <strong>성공 요인을 분석</strong>하여
-                                                저성과 채널에 적용해보세요.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 서브 탭 2: 제품 매출 & 예산 -->
-                            <div id="productBudgetTab" class="business-subtab-content" style="display: none;">
-                                <div class="card" style="padding: 24px; margin-bottom: 24px;">
-                                    <!-- 이미지 좌우 배치 -->
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; align-items: start;">
-                                        <!-- 왼쪽: 제품별 매출 기여도 -->
-                                        <div style="text-align: center;">
-                                            <div class="visualization-title" style="margin-bottom: 16px;">🎯 제품별 매출 기여도</div>
-                                            <div class="img-tooltip-wrapper" data-tooltip="각 제품이 전체 매출에서 차지하는 비중을 표시합니다. 주력 제품과 개선 필요 제품을 파악할 수 있습니다;">
-                                                <img src="visualizations/product_revenue_pie.png" alt="제품 매출" class="visualization-img" style="max-width: 90%; margin: 0 auto;">
-                                            </div>
-                                        </div>
-
-                                        <!-- 오른쪽: 월 예산 소진율 -->
-                                        <div style="text-align: center;">
-                                            <div class="visualization-title" style="margin-bottom: 16px;">💰 월 예산 소진율</div>
-                                            <div class="img-tooltip-wrapper" data-tooltip="현재 월 예산 대비 실제 소진율을 게이지로 표시합니다. 100% 초과 시 예산을 다시 살펴보시는 것을 추천드려요;">
-                                                <img src="visualizations/budget_gauge.png" alt="예산 게이지" class="visualization-img" style="max-width: 80%; margin: 0 auto;">
+                                                권장 소진율 <strong>95-100%</strong><br>
+                                                현재 대비 <strong>-9%p 조정</strong> 필요<br>
+                                                최적 집행률 달성
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- 제품별 상세 분석 테이블 -->
+                                    <!-- 3. 제품별 상세 분석 테이블 -->
                                     <div class="insight-header" style="font-size: 14px; margin-bottom: 12px;">📋 제품별 상세 현황</div>
                                     <div style="overflow-x: auto; margin-bottom: 16px;">
                                         <table style="width: 100%; font-size: 13px;">
@@ -2700,8 +2711,8 @@
                                         </table>
                                     </div>
 
-                                    <!-- 제품 포트폴리오 인사이트 -->
-                                    <div class="insight-content" style="grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px;">
+                                    <!-- 4. 제품 포트폴리오 인사이트 -->
+                                    <div class="insight-content" style="grid-template-columns: repeat(2, 1fr); gap: 12px;">
                                         <div class="insight-card positive">
                                             <div class="insight-title" style="font-size: 13px;">🎯 포트폴리오 분석</div>
                                             <div class="insight-text" style="font-size: 12px;">
@@ -2718,76 +2729,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- 예산 초과 경고 -->
-                                    <div style="background: linear-gradient(135deg, #fff4f0 0%, #ffebe8 100%); padding: 16px; border-radius: 8px; border-left: 4px solid var(--error-main); margin-bottom: 16px;">
-                                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                                            <span style="font-size: 20px;">🚨</span>
-                                            <strong style="color: var(--error-main); font-size: 15px;">예산 초과 경고 (109.0%)</strong>
-                                        </div>
-                                        <p style="font-size: 13px; color: var(--grey-700); margin-bottom: 12px; line-height: 1.6;">
-                                            현재 월 예산을 <strong style="color: var(--error-main);">9% 초과</strong> 집행 중입니다.
-                                            즉시 예산 조정이 필요하며, 아래 액션 플랜을 참고하세요.
-                                        </p>
-
-                                        <!-- 긴급 액션 플랜 -->
-                                        <div style="background: white; padding: 12px; border-radius: 6px;">
-                                            <div style="font-weight: 600; font-size: 13px; margin-bottom: 8px; color: var(--grey-900);">🎯 즉시 실행 가능한 액션 플랜</div>
-                                            <div style="display: grid; gap: 8px;">
-                                                <div style="display: flex; gap: 8px; align-items: start;">
-                                                    <span style="color: var(--error-main); font-weight: 600; font-size: 12px;">1.</span>
-                                                    <span style="font-size: 12px; line-height: 1.5;">
-                                                        <strong>저성과 채널 일시 중단</strong>: ROAS 100% 미만 채널의 캠페인을 즉시 중단하거나 예산 50% 삭감
-                                                    </span>
-                                                </div>
-                                                <div style="display: flex; gap: 8px; align-items: start;">
-                                                    <span style="color: var(--error-main); font-weight: 600; font-size: 12px;">2.</span>
-                                                    <span style="font-size: 12px; line-height: 1.5;">
-                                                        <strong>일일 예산 한도 설정</strong>: 남은 기간 동안 일평균 예산을 재계산하여 상한선 설정
-                                                    </span>
-                                                </div>
-                                                <div style="display: flex; gap: 8px; align-items: start;">
-                                                    <span style="color: var(--warning-main); font-weight: 600; font-size: 12px;">3.</span>
-                                                    <span style="font-size: 12px; line-height: 1.5;">
-                                                        <strong>고성과 채널 유지</strong>: ROAS 150% 이상인 채널은 현 수준을 유지하되, 불필요한 키워드 제거
-                                                    </span>
-                                                </div>
-                                                <div style="display: flex; gap: 8px; align-items: start;">
-                                                    <span style="color: var(--secondary-main); font-weight: 600; font-size: 12px;">4.</span>
-                                                    <span style="font-size: 12px; line-height: 1.5;">
-                                                        <strong>추가 예산 승인 요청</strong>: 고성과 채널의 ROI를 근거로 예산 추가 승인 건의
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- 예산 관리 인사이트 -->
-                                    <div class="insight-content" style="grid-template-columns: repeat(3, 1fr); gap: 12px;">
-                                        <div class="insight-card negative">
-                                            <div class="insight-title" style="font-size: 13px;">⚠️ 현재 상태</div>
-                                            <div class="insight-text" style="font-size: 12px;">
-                                                예산 소진율 <strong>109%</strong><br>
-                                                초과 집행 <strong>9%</strong><br>
-                                                즉시 조치 필요
-                                            </div>
-                                        </div>
-                                        <div class="insight-card neutral">
-                                            <div class="insight-title" style="font-size: 13px;">📊 예상 영향</div>
-                                            <div class="insight-text" style="font-size: 12px;">
-                                                현 추세 유지 시<br>
-                                                월말까지 <strong>15% 추가 초과</strong> 예상<br>
-                                                예산 통제 시급
-                                            </div>
-                                        </div>
-                                        <div class="insight-card positive" style="border-left-color: var(--secondary-main);">
-                                            <div class="insight-title" style="font-size: 13px;">✅ 목표 수준</div>
-                                            <div class="insight-text" style="font-size: 12px;">
-                                                권장 소진율 <strong>95-100%</strong><br>
-                                                현재 대비 <strong>-9%p 조정</strong> 필요<br>
-                                                최적 집행률 달성
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -5432,29 +5373,6 @@
                         document.getElementById('segmentTrendTab').style.display = 'block';
                     } else if (targetTab === 'business-insights') {
                         document.getElementById('businessInsightsTab').style.display = 'block';
-                    }
-                });
-            });
-
-
-            // 비즈니스 인사이트 서브 탭 전환 이벤트
-            document.querySelectorAll('.business-subtab-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // 버튼 활성화 상태 전환
-                    document.querySelectorAll('.business-subtab-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-
-                    // 탭 컨텐츠 표시/숨김
-                    const targetTab = this.dataset.businessTab;
-                    document.querySelectorAll('.business-subtab-content').forEach(content => {
-                        content.style.display = 'none';
-                    });
-
-                    // 선택된 서브 탭 표시
-                    if (targetTab === 'channel-roas') {
-                        document.getElementById('channelRoasTab').style.display = 'block';
-                    } else if (targetTab === 'product-budget') {
-                        document.getElementById('productBudgetTab').style.display = 'block';
                     }
                 });
             });

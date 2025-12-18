@@ -1576,9 +1576,9 @@
                                     </div>
                                     <!-- 집계 단위 선택 버튼 -->
                                     <div class="view-type-section" style="margin-bottom: 0;">
-                                        <button class="view-btn timeseries-period-btn active" data-period="daily">일별</button>
+                                        <button class="view-btn timeseries-period-btn active" data-period="monthly">월별</button>
                                         <button class="view-btn timeseries-period-btn" data-period="weekly">주별</button>
-                                        <button class="view-btn timeseries-period-btn" data-period="monthly">월별</button>
+                                        <button class="view-btn timeseries-period-btn" data-period="daily">일별</button>
                                     </div>
                                 </div>
 
@@ -1783,9 +1783,9 @@
                                     </div>
                                     <!-- 집계 단위 선택 버튼 -->
                                     <div class="view-type-section" style="margin-bottom: 0;">
-                                        <button class="view-btn gender-period-btn active" data-period="daily">일별</button>
+                                        <button class="view-btn gender-period-btn active" data-period="monthly">월별</button>
                                         <button class="view-btn gender-period-btn" data-period="weekly">주별</button>
-                                        <button class="view-btn gender-period-btn" data-period="monthly">월별</button>
+                                        <button class="view-btn gender-period-btn" data-period="daily">일별</button>
                                     </div>
                                 </div>
 
@@ -2006,9 +2006,9 @@
                                     </div>
                                     <!-- 집계 단위 선택 버튼 -->
                                     <div class="view-type-section" style="margin-bottom: 0;">
-                                        <button class="view-btn age-period-btn active" data-period="daily">일별</button>
+                                        <button class="view-btn age-period-btn active" data-period="monthly">월별</button>
                                         <button class="view-btn age-period-btn" data-period="weekly">주별</button>
-                                        <button class="view-btn age-period-btn" data-period="monthly">월별</button>
+                                        <button class="view-btn age-period-btn" data-period="daily">일별</button>
                                     </div>
                                 </div>
 
@@ -2229,9 +2229,9 @@
                                     </div>
                                     <!-- 집계 단위 선택 버튼 -->
                                     <div class="view-type-section" style="margin-bottom: 0;">
-                                        <button class="view-btn platform-period-btn active" data-period="daily">일별</button>
+                                        <button class="view-btn platform-period-btn active" data-period="monthly">월별</button>
                                         <button class="view-btn platform-period-btn" data-period="weekly">주별</button>
-                                        <button class="view-btn platform-period-btn" data-period="monthly">월별</button>
+                                        <button class="view-btn platform-period-btn" data-period="daily">일별</button>
                                     </div>
                                 </div>
 
@@ -2452,9 +2452,9 @@
                                     </div>
                                     <!-- 집계 단위 선택 버튼 -->
                                     <div class="view-type-section" style="margin-bottom: 0;">
-                                        <button class="view-btn deviceplatform-period-btn active" data-period="daily">일별</button>
+                                        <button class="view-btn deviceplatform-period-btn active" data-period="monthly">월별</button>
                                         <button class="view-btn deviceplatform-period-btn" data-period="weekly">주별</button>
-                                        <button class="view-btn deviceplatform-period-btn" data-period="monthly">월별</button>
+                                        <button class="view-btn deviceplatform-period-btn" data-period="daily">일별</button>
                                     </div>
                                 </div>
 
@@ -2675,9 +2675,9 @@
                                     </div>
                                     <!-- 집계 단위 선택 버튼 -->
                                     <div class="view-type-section" style="margin-bottom: 0;">
-                                        <button class="view-btn device-period-btn active" data-period="daily">일별</button>
+                                        <button class="view-btn device-period-btn active" data-period="monthly">월별</button>
                                         <button class="view-btn device-period-btn" data-period="weekly">주별</button>
-                                        <button class="view-btn device-period-btn" data-period="monthly">월별</button>
+                                        <button class="view-btn device-period-btn" data-period="daily">일별</button>
                                     </div>
                                 </div>
 
@@ -4741,7 +4741,7 @@
                 seasonality_insights: insightsData.seasonality_insights || []
             };
         }
-        let currentTimeseriesPeriod = 'daily';
+        let currentTimeseriesPeriod = 'monthly';
         let currentTimeseriesMetric = 'roas';
         let timeseriesFilters = {
             channel: [],
@@ -4756,7 +4756,7 @@
 
         // 성별 추이 관련 변수
         let currentGenderFilter = 'channel';
-        let currentGenderPeriod = 'daily';
+        let currentGenderPeriod = 'monthly';
         let currentGenderMetric = 'roas';
         let genderStartDate = '';
         let genderEndDate = '';
@@ -4766,7 +4766,7 @@
 
         // 연령 추이 관련 변수
         let currentAgeFilter = 'channel';
-        let currentAgePeriod = 'daily';
+        let currentAgePeriod = 'monthly';
         let currentAgeMetric = 'roas';
         let ageStartDate = '';
         let ageEndDate = '';
@@ -4776,7 +4776,7 @@
 
         // 플랫폼 추이 관련 변수
         let currentPlatformFilter = 'channel';
-        let currentPlatformPeriod = 'daily';
+        let currentPlatformPeriod = 'monthly';
         let currentPlatformMetric = 'roas';
         let platformStartDate = '';
         let platformEndDate = '';
@@ -4786,7 +4786,7 @@
 
         // 기기플랫폼 추이 관련 변수
         let currentDevicePlatformFilter = 'channel';
-        let currentDevicePlatformPeriod = 'daily';
+        let currentDevicePlatformPeriod = 'monthly';
         let currentDevicePlatformMetric = 'roas';
         let devicePlatformStartDate = '';
         let devicePlatformEndDate = '';
@@ -4796,7 +4796,7 @@
 
         // 기기유형 추이 관련 변수
         let currentDeviceTypeFilter = 'channel';
-        let currentDeviceTypePeriod = 'daily';
+        let currentDeviceTypePeriod = 'monthly';
         let currentDeviceTypeMetric = 'roas';
         let deviceTypeStartDate = '';
         let deviceTypeEndDate = '';
@@ -14586,9 +14586,15 @@
             if (period === 'daily') {
                 return dateString;
             } else if (period === 'weekly') {
-                const year = date.getFullYear();
-                const weekNum = getWeekNumber(date);
-                return `${year}-W${String(weekNum).padStart(2, '0')}`;
+                // 해당 주의 월요일(시작일)을 구함
+                const day = date.getDay();
+                const diff = date.getDate() - day + (day === 0 ? -6 : 1); // 월요일로 조정
+                const monday = new Date(date);
+                monday.setDate(diff);
+                const year = monday.getFullYear();
+                const month = String(monday.getMonth() + 1).padStart(2, '0');
+                const dayOfMonth = String(monday.getDate()).padStart(2, '0');
+                return `${year}-${month}-${dayOfMonth}`;
             } else if (period === 'monthly') {
                 const year = date.getFullYear();
                 const month = date.getMonth() + 1;

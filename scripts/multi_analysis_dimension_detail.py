@@ -96,6 +96,27 @@ PLATFORM_MAP = {
     'pc': '웹'
 }
 
+# 유형구분 통합 매핑 (광고세트 기준 KPI 분류)
+# '광고세트' 컬럼에 '트래픽' 키워드 포함 → 트래픽 (메인 KPI: CPC)
+# 그 외 → 전환 (메인 KPI: ROAS, CPA)
+# SQL: WHERE 광고세트 LIKE '%트래픽%' → '트래픽', ELSE → '전환'
+
+def apply_campaign_type_mapping(df):
+    """유형구분 통합 컬럼 추가 (광고세트 기준 트래픽/전환 분류)"""
+    if '광고세트' in df.columns:
+        def map_campaign_type(adset_value):
+            if pd.isna(adset_value) or adset_value == '-':
+                return '전환'
+            # 광고세트에 '트래픽' 키워드가 포함된 경우 '트래픽'
+            adset_str = str(adset_value)
+            if '트래픽' in adset_str:
+                return '트래픽'
+            # 그 외는 모두 '전환'
+            return '전환'
+
+        df['유형구분_통합'] = df['광고세트'].apply(map_campaign_type)
+    return df
+
 def apply_gender_mapping(df):
     """성별 통합 컬럼 추가"""
     if '성별' in df.columns:
@@ -198,6 +219,10 @@ if len(type1_data) > 0:
 
     type1_analysis['ROAS'] = (type1_analysis['전환값'] / type1_analysis['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     type1_analysis['CPA'] = (type1_analysis['비용'] / type1_analysis['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    type1_analysis['CPC'] = (type1_analysis['비용'] / type1_analysis['클릭']).replace([np.inf, -np.inf], 0).fillna(0)
+
+    # 유형구분_통합 컬럼 추가
+    type1_analysis = apply_campaign_type_mapping(type1_analysis)
 
     output_file = f"{output_dir}/dimension_type1_campaign_adset.csv"
     type1_analysis.to_csv(output_file, index=False, encoding='utf-8-sig')
@@ -225,10 +250,12 @@ if len(type2_data) > 0:
 
     type2_analysis['ROAS'] = (type2_analysis['전환값'] / type2_analysis['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     type2_analysis['CPA'] = (type2_analysis['비용'] / type2_analysis['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    type2_analysis['CPC'] = (type2_analysis['비용'] / type2_analysis['클릭']).replace([np.inf, -np.inf], 0).fillna(0)
 
-    # 성별_통합, 연령_통합 컬럼 추가
+    # 성별_통합, 연령_통합, 유형구분_통합 컬럼 추가
     type2_analysis = apply_gender_mapping(type2_analysis)
     type2_analysis = apply_age_mapping(type2_analysis)
+    type2_analysis = apply_campaign_type_mapping(type2_analysis)
 
     output_file = f"{output_dir}/dimension_type2_adset_age_gender.csv"
     type2_analysis.to_csv(output_file, index=False, encoding='utf-8-sig')
@@ -283,9 +310,11 @@ if len(type3_data) > 0:
 
     type3_analysis['ROAS'] = (type3_analysis['전환값'] / type3_analysis['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     type3_analysis['CPA'] = (type3_analysis['비용'] / type3_analysis['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    type3_analysis['CPC'] = (type3_analysis['비용'] / type3_analysis['클릭']).replace([np.inf, -np.inf], 0).fillna(0)
 
-    # 연령_통합 컬럼 추가
+    # 연령_통합, 유형구분_통합 컬럼 추가
     type3_analysis = apply_age_mapping(type3_analysis)
+    type3_analysis = apply_campaign_type_mapping(type3_analysis)
 
     output_file = f"{output_dir}/dimension_type3_adset_age.csv"
     type3_analysis.to_csv(output_file, index=False, encoding='utf-8-sig')
@@ -314,9 +343,11 @@ if len(type4_data) > 0:
 
     type4_analysis['ROAS'] = (type4_analysis['전환값'] / type4_analysis['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     type4_analysis['CPA'] = (type4_analysis['비용'] / type4_analysis['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    type4_analysis['CPC'] = (type4_analysis['비용'] / type4_analysis['클릭']).replace([np.inf, -np.inf], 0).fillna(0)
 
-    # 성별_통합 컬럼 추가
+    # 성별_통합, 유형구분_통합 컬럼 추가
     type4_analysis = apply_gender_mapping(type4_analysis)
+    type4_analysis = apply_campaign_type_mapping(type4_analysis)
 
     output_file = f"{output_dir}/dimension_type4_adset_gender.csv"
     type4_analysis.to_csv(output_file, index=False, encoding='utf-8-sig')
@@ -354,9 +385,11 @@ if len(type5_data) > 0:
 
     type5_analysis['ROAS'] = (type5_analysis['전환값'] / type5_analysis['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     type5_analysis['CPA'] = (type5_analysis['비용'] / type5_analysis['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    type5_analysis['CPC'] = (type5_analysis['비용'] / type5_analysis['클릭']).replace([np.inf, -np.inf], 0).fillna(0)
 
-    # 기기유형_통합 컬럼 추가
+    # 기기유형_통합, 유형구분_통합 컬럼 추가
     type5_analysis = apply_device_mapping(type5_analysis)
+    type5_analysis = apply_campaign_type_mapping(type5_analysis)
 
     output_file = f"{output_dir}/dimension_type5_adset_device.csv"
     type5_analysis.to_csv(output_file, index=False, encoding='utf-8-sig')
@@ -385,6 +418,10 @@ if len(type6_data) > 0:
 
     type6_analysis['ROAS'] = (type6_analysis['전환값'] / type6_analysis['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     type6_analysis['CPA'] = (type6_analysis['비용'] / type6_analysis['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    type6_analysis['CPC'] = (type6_analysis['비용'] / type6_analysis['클릭']).replace([np.inf, -np.inf], 0).fillna(0)
+
+    # 유형구분_통합 컬럼 추가
+    type6_analysis = apply_campaign_type_mapping(type6_analysis)
 
     output_file = f"{output_dir}/dimension_type6_adset_platform.csv"
     type6_analysis.to_csv(output_file, index=False, encoding='utf-8-sig')
@@ -412,9 +449,11 @@ if len(type7_data) > 0:
 
     type7_analysis['ROAS'] = (type7_analysis['전환값'] / type7_analysis['비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     type7_analysis['CPA'] = (type7_analysis['비용'] / type7_analysis['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    type7_analysis['CPC'] = (type7_analysis['비용'] / type7_analysis['클릭']).replace([np.inf, -np.inf], 0).fillna(0)
 
-    # 기기플랫폼_통합 컬럼 추가
+    # 기기플랫폼_통합, 유형구분_통합 컬럼 추가
     type7_analysis = apply_platform_mapping(type7_analysis)
+    type7_analysis = apply_campaign_type_mapping(type7_analysis)
 
     output_file = f"{output_dir}/dimension_type7_adset_deviceplatform.csv"
     type7_analysis.to_csv(output_file, index=False, encoding='utf-8-sig')

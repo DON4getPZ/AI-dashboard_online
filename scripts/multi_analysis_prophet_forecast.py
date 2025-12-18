@@ -141,6 +141,11 @@ def combine_metric_forecasts(forecasts, key_column=None, key_value=None):
         result['예측_CPA'] = (result['예측_비용'] / result['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
         result['예측_CPA'] = result['예측_CPA'].clip(lower=0)
 
+    # 예측 CPC 계산 (v1.6 추가)
+    if '예측_비용' in result.columns and '예측_클릭' in result.columns:
+        result['예측_CPC'] = (result['예측_비용'] / result['예측_클릭']).replace([np.inf, -np.inf], 0).fillna(0)
+        result['예측_CPC'] = result['예측_CPC'].clip(lower=0)
+
     # 키 컬럼 추가
     if key_column and key_value:
         result[key_column] = key_value
@@ -177,6 +182,10 @@ def create_actual_data(daily_data, key_column=None, key_value=None):
 
     if '예측_비용' in result.columns and '예측_전환수' in result.columns:
         result['예측_CPA'] = (result['예측_비용'] / result['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+
+    # CPC 계산 (v1.6 추가)
+    if '예측_비용' in result.columns and '예측_클릭' in result.columns:
+        result['예측_CPC'] = (result['예측_비용'] / result['예측_클릭']).replace([np.inf, -np.inf], 0).fillna(0)
 
     # 타입 표시
     result['type'] = 'actual'
@@ -282,6 +291,7 @@ daily_data = df.groupby('일').agg({
 # KPI 계산
 daily_data['ROAS'] = (daily_data['전환값'] / daily_data['비용'] * 100).fillna(0).replace([np.inf, -np.inf], 0)
 daily_data['CPA'] = (daily_data['비용'] / daily_data['전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+daily_data['CPC'] = (daily_data['비용'] / daily_data['클릭']).replace([np.inf, -np.inf], 0).fillna(0)  # v1.6 추가
 
 print(f"\n일별 집계 데이터: {len(daily_data)}일")
 print("\n주요 지표 (일평균):")
@@ -419,6 +429,8 @@ if PROPHET_AVAILABLE:
             cols.append('예측_ROAS')
         if '예측_CPA' in combined_category.columns:
             cols.append('예측_CPA')
+        if '예측_CPC' in combined_category.columns:
+            cols.append('예측_CPC')
         cols.append('type')
         combined_category = combined_category[[c for c in cols if c in combined_category.columns]]
         combined_category.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_category.csv',
@@ -564,9 +576,10 @@ if PROPHET_AVAILABLE:
     for metric, forecast_df in history_forecasts.items():
         history_df[f'예측_{metric}'] = forecast_df['yhat'].values
 
-    # ROAS, CPA 계산
+    # ROAS, CPA, CPC 계산
     history_df['예측_ROAS'] = (history_df['예측_전환값'] / history_df['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     history_df['예측_CPA'] = (history_df['예측_비용'] / history_df['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    history_df['예측_CPC'] = (history_df['예측_비용'] / history_df['예측_클릭']).replace([np.inf, -np.inf], 0).fillna(0)  # v1.6 추가
 
     # 요일/월/분기 정보 추가
     history_df['요일번호'] = pd.to_datetime(history_df['일자']).dt.dayofweek
@@ -590,13 +603,14 @@ if PROPHET_AVAILABLE:
 
     dow_forecast['예측_ROAS'] = (dow_forecast['예측_전환값'] / dow_forecast['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     dow_forecast['예측_CPA'] = (dow_forecast['예측_비용'] / dow_forecast['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    dow_forecast['예측_CPC'] = (dow_forecast['예측_비용'] / dow_forecast['예측_클릭']).replace([np.inf, -np.inf], 0).fillna(0)  # v1.6 추가
     dow_forecast['요일'] = [dow_names[i] for i in dow_forecast['요일번호']]
 
     print("\n전체 요일별 예측 성과:")
     for _, row in dow_forecast.iterrows():
         print(f"  {row['요일']}: 비용 {row['예측_비용']:,.0f}원, 전환값 {row['예측_전환값']:,.0f}원, ROAS {row['예측_ROAS']:.1f}%")
 
-    dow_output = dow_forecast[['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']].copy()
+    dow_output = dow_forecast[['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA', '예측_CPC']].copy()
     dow_output['유형구분'] = '전체'
     dow_output['기간유형'] = '요일별'
 
@@ -625,6 +639,7 @@ if PROPHET_AVAILABLE:
 
             cat_forecast_df['예측_ROAS'] = (cat_forecast_df['예측_전환값'] / cat_forecast_df['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
             cat_forecast_df['예측_CPA'] = (cat_forecast_df['예측_비용'] / cat_forecast_df['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+            cat_forecast_df['예측_CPC'] = (cat_forecast_df['예측_비용'] / cat_forecast_df['예측_클릭']).replace([np.inf, -np.inf], 0).fillna(0)  # v1.6 추가
             cat_forecast_df['요일번호'] = pd.to_datetime(cat_forecast_df['일자']).dt.dayofweek
 
             # 요일별 집계
@@ -634,13 +649,14 @@ if PROPHET_AVAILABLE:
             }).reset_index()
             cat_dow['예측_ROAS'] = (cat_dow['예측_전환값'] / cat_dow['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
             cat_dow['예측_CPA'] = (cat_dow['예측_비용'] / cat_dow['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+            cat_dow['예측_CPC'] = (cat_dow['예측_비용'] / cat_dow['예측_클릭']).replace([np.inf, -np.inf], 0).fillna(0)  # v1.6 추가
             cat_dow['요일'] = [dow_names[i] for i in cat_dow['요일번호']]
 
             print(f"\n[{category}]")
             for _, row in cat_dow.iterrows():
                 print(f"  {row['요일']}: 비용 {row['예측_비용']:,.0f}원, 전환값 {row['예측_전환값']:,.0f}원, ROAS {row['예측_ROAS']:.1f}%")
 
-            cat_dow_output = cat_dow[['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']].copy()
+            cat_dow_output = cat_dow[['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA', '예측_CPC']].copy()
             cat_dow_output['유형구분'] = category
             cat_dow_output['기간유형'] = '요일별'
             all_seasonality_data.append(cat_dow_output)
@@ -658,10 +674,11 @@ if PROPHET_AVAILABLE:
     }).reset_index()
     monthly_forecast['예측_ROAS'] = (monthly_forecast['예측_전환값'] / monthly_forecast['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     monthly_forecast['예측_CPA'] = (monthly_forecast['예측_비용'] / monthly_forecast['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    monthly_forecast['예측_CPC'] = (monthly_forecast['예측_비용'] / monthly_forecast['예측_클릭']).replace([np.inf, -np.inf], 0).fillna(0)  # v1.6 추가
     monthly_forecast['월명'] = monthly_forecast['월'].apply(lambda x: f"{x}월")
 
-    monthly_output = monthly_forecast[['월명', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']].copy()
-    monthly_output.columns = ['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']
+    monthly_output = monthly_forecast[['월명', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA', '예측_CPC']].copy()
+    monthly_output.columns = ['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA', '예측_CPC']
     monthly_output['유형구분'] = '전체'
     monthly_output['기간유형'] = '월별'
 
@@ -679,9 +696,10 @@ if PROPHET_AVAILABLE:
     }).reset_index()
     quarterly_forecast['예측_ROAS'] = (quarterly_forecast['예측_전환값'] / quarterly_forecast['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     quarterly_forecast['예측_CPA'] = (quarterly_forecast['예측_비용'] / quarterly_forecast['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    quarterly_forecast['예측_CPC'] = (quarterly_forecast['예측_비용'] / quarterly_forecast['예측_클릭']).replace([np.inf, -np.inf], 0).fillna(0)  # v1.6 추가
 
-    quarterly_output = quarterly_forecast[['분기', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']].copy()
-    quarterly_output.columns = ['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']
+    quarterly_output = quarterly_forecast[['분기', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA', '예측_CPC']].copy()
+    quarterly_output.columns = ['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA', '예측_CPC']
     quarterly_output['유형구분'] = '전체'
     quarterly_output['기간유형'] = '분기별'
 
@@ -701,16 +719,17 @@ if PROPHET_AVAILABLE:
 
     future_df['예측_ROAS'] = (future_df['예측_전환값'] / future_df['예측_비용'] * 100).replace([np.inf, -np.inf], 0).fillna(0)
     future_df['예측_CPA'] = (future_df['예측_비용'] / future_df['예측_전환수']).replace([np.inf, -np.inf], 0).fillna(0)
+    future_df['예측_CPC'] = (future_df['예측_비용'] / future_df['예측_클릭']).replace([np.inf, -np.inf], 0).fillna(0)  # v1.6 추가
 
     # 과거 fitted + 미래 예측 결합
     combined_daily = pd.concat([
-        history_df[['일자', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']],
-        future_df[['일자', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']]
+        history_df[['일자', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA', '예측_CPC']],
+        future_df[['일자', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA', '예측_CPC']]
     ], ignore_index=True)
 
     daily_output = combined_daily.copy()
     daily_output['일자'] = pd.to_datetime(daily_output['일자']).dt.strftime('%Y-%m-%d')
-    daily_output.columns = ['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']
+    daily_output.columns = ['요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA', '예측_CPC']
     daily_output['유형구분'] = '전체'
     daily_output['기간유형'] = '일별'
     print(f"  ✓ 일별 예측 데이터: {len(daily_output)}행 (과거 {len(history_df)}일 + 미래 {len(future_df)}일)")
@@ -721,12 +740,12 @@ if PROPHET_AVAILABLE:
     quarterly_df = pd.concat(all_quarterly_data, ignore_index=True)
 
     final_seasonality_df = pd.concat([seasonality_df, monthly_df, quarterly_df, daily_output], ignore_index=True)
-    final_seasonality_df = final_seasonality_df[['유형구분', '기간유형', '요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA']]
+    final_seasonality_df = final_seasonality_df[['유형구분', '기간유형', '요일', '예측_비용', '예측_노출', '예측_클릭', '예측_전환수', '예측_전환값', '예측_ROAS', '예측_CPA', '예측_CPC']]
     final_seasonality_df.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_seasonality.csv',
                          index=False, encoding='utf-8-sig')
     print("\n✓ 계절성 예측 결과 저장: data/type/prophet_forecast_by_seasonality.csv")
     print("  포함 데이터: 요일별, 월별, 분기별 (과거 fitted 기반), 일별 (과거 fitted + 90일 미래 예측)")
-    print("  포함 지표: 예측_비용, 예측_노출, 예측_클릭, 예측_전환수, 예측_전환값, 예측_ROAS, 예측_CPA")
+    print("  포함 지표: 예측_비용, 예측_노출, 예측_클릭, 예측_전환수, 예측_전환값, 예측_ROAS, 예측_CPA, 예측_CPC")
 
     print("\n" + "=" * 100)
     print("5. 이상치 탐지 (유형구분별)")
@@ -829,6 +848,8 @@ if PROPHET_AVAILABLE:
             cols.append('예측_ROAS')
         if '예측_CPA' in combined_brand.columns:
             cols.append('예측_CPA')
+        if '예측_CPC' in combined_brand.columns:
+            cols.append('예측_CPC')
         cols.append('type')
         combined_brand = combined_brand[[c for c in cols if c in combined_brand.columns]]
         combined_brand.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_brand.csv',
@@ -897,6 +918,8 @@ if PROPHET_AVAILABLE:
             cols.append('예측_ROAS')
         if '예측_CPA' in combined_product.columns:
             cols.append('예측_CPA')
+        if '예측_CPC' in combined_product.columns:
+            cols.append('예측_CPC')
         cols.append('type')
         combined_product = combined_product[[c for c in cols if c in combined_product.columns]]
         combined_product.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_product.csv',
@@ -973,6 +996,8 @@ if PROPHET_AVAILABLE:
                 cols.append('예측_ROAS')
             if '예측_CPA' in combined_gender.columns:
                 cols.append('예측_CPA')
+            if '예측_CPC' in combined_gender.columns:
+                cols.append('예측_CPC')
             cols.append('type')
             combined_gender = combined_gender[[c for c in cols if c in combined_gender.columns]]
             combined_gender.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_gender.csv',
@@ -1053,6 +1078,8 @@ if PROPHET_AVAILABLE:
                 cols.append('예측_ROAS')
             if '예측_CPA' in combined_age.columns:
                 cols.append('예측_CPA')
+            if '예측_CPC' in combined_age.columns:
+                cols.append('예측_CPC')
             cols.append('type')
             combined_age = combined_age[[c for c in cols if c in combined_age.columns]]
             combined_age.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_age.csv',
@@ -1131,6 +1158,8 @@ if PROPHET_AVAILABLE:
                 cols.append('예측_ROAS')
             if '예측_CPA' in combined_platform.columns:
                 cols.append('예측_CPA')
+            if '예측_CPC' in combined_platform.columns:
+                cols.append('예측_CPC')
             cols.append('type')
             combined_platform = combined_platform[[c for c in cols if c in combined_platform.columns]]
             combined_platform.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_deviceplatform.csv',
@@ -1209,6 +1238,8 @@ if PROPHET_AVAILABLE:
                 cols.append('예측_ROAS')
             if '예측_CPA' in combined_platform6.columns:
                 cols.append('예측_CPA')
+            if '예측_CPC' in combined_platform6.columns:
+                cols.append('예측_CPC')
             cols.append('type')
             combined_platform6 = combined_platform6[[c for c in cols if c in combined_platform6.columns]]
             combined_platform6.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_platform.csv',
@@ -1287,6 +1318,8 @@ if PROPHET_AVAILABLE:
                 cols.append('예측_ROAS')
             if '예측_CPA' in combined_device.columns:
                 cols.append('예측_CPA')
+            if '예측_CPC' in combined_device.columns:
+                cols.append('예측_CPC')
             cols.append('type')
             combined_device = combined_device[[c for c in cols if c in combined_device.columns]]
             combined_device.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_device.csv',
@@ -1357,6 +1390,8 @@ if PROPHET_AVAILABLE:
             cols.append('예측_ROAS')
         if '예측_CPA' in combined_promotion.columns:
             cols.append('예측_CPA')
+        if '예측_CPC' in combined_promotion.columns:
+            cols.append('예측_CPC')
         cols.append('type')
         combined_promotion = combined_promotion[[c for c in cols if c in combined_promotion.columns]]
         combined_promotion.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_promotion.csv',
@@ -1455,6 +1490,8 @@ if PROPHET_AVAILABLE:
                 cols.append('예측_ROAS')
             if '예측_CPA' in combined_age_gender.columns:
                 cols.append('예측_CPA')
+            if '예측_CPC' in combined_age_gender.columns:
+                cols.append('예측_CPC')
             cols.append('type')
             combined_age_gender = combined_age_gender[[c for c in cols if c in combined_age_gender.columns]]
             combined_age_gender.to_csv(DATA_TYPE_DIR / 'prophet_forecast_by_age_gender.csv',
@@ -1485,7 +1522,7 @@ if total_data_days < TRAINING_DAYS:
 else:
     print(f"  - 연간 계절성: 활성화")
 
-print("\n생성된 파일 목록 (다중 지표 예측: 비용, 노출, 클릭, 전환수, 전환값, ROAS, CPA):")
+print("\n생성된 파일 목록 (다중 지표 예측: 비용, 노출, 클릭, 전환수, 전환값, ROAS, CPA, CPC):")
 print("  1. prophet_forecast_overall.csv - 전체 다중 지표 예측")
 print("  2. prophet_forecast_by_category.csv - 유형구분별 다중 지표 예측")
 print("  3. prophet_trend_analysis.csv - 트렌드 분석")
@@ -1504,3 +1541,4 @@ print("\n각 CSV 파일에는 다음 컬럼이 포함됩니다:")
 print("  - 예측_비용, 예측_노출, 예측_클릭, 예측_전환수, 예측_전환값")
 print("  - 예측_ROAS (= 예측_전환값 / 예측_비용 * 100)")
 print("  - 예측_CPA (= 예측_비용 / 예측_전환수)")
+print("  - 예측_CPC (= 예측_비용 / 예측_클릭)")

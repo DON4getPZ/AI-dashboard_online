@@ -20,12 +20,18 @@
   - [2.2 입력 데이터](#22-입력-데이터)
   - [2.3 출력 JSON 구조](#23-출력-json-구조)
   - [2.4 커스터마이징 포인트](#24-커스터마이징-포인트)
-- [3. generate_funnel_data.py](#3-generate_funnel_datapy)
-  - [3.1 파일 위치 및 실행](#31-파일-위치-및-실행)
-  - [3.2 입력 데이터](#32-입력-데이터)
-  - [3.3 퍼널 단계 정의](#33-퍼널-단계-정의)
-  - [3.4 출력 JSON 구조](#34-출력-json-구조)
-  - [3.5 커스터마이징 포인트](#35-커스터마이징-포인트)
+  - [2.5 THRESHOLDS 상세](#25-thresholds-상세)
+  - [2.6 Alert Trigger 조건](#26-alert-trigger-조건)
+  - [2.7 Opportunity 유형별 Trigger 조건](#27-opportunity-유형별-trigger-조건)
+- [3. 다중 기간 인사이트 생성 스크립트](#3-다중-기간-인사이트-생성-스크립트)
+  - [3.1 generate_insights_multiperiod.py](#31-generate_insights_multiperiodpy)
+  - [3.2 generate_type_insights_multiperiod.py](#32-generate_type_insights_multiperiodpy)
+- [4. generate_funnel_data.py](#4-generate_funnel_datapy)
+  - [4.1 파일 위치 및 실행](#41-파일-위치-및-실행)
+  - [4.2 입력 데이터](#42-입력-데이터)
+  - [4.3 퍼널 단계 정의](#43-퍼널-단계-정의)
+  - [4.4 출력 JSON 구조](#44-출력-json-구조)
+  - [4.5 커스터마이징 포인트](#45-커스터마이징-포인트)
 
 ### 공통 가이드
 - [공통 수정 가이드](#공통-수정-가이드)
@@ -33,12 +39,12 @@
 - [문의 및 참고](#문의-및-참고)
 
 ### 자연어 인사이트 생성 체계
-- [4. 자연어 인사이트 생성 체계](#4-자연어-인사이트-생성-체계)
-  - [4.1 AI 비서 톤앤매너](#41-ai-비서-톤앤매너)
-  - [4.2 메시지 템플릿 구조](#42-메시지-템플릿-구조)
-  - [4.3 페르소나 기반 액션 가이드](#43-페르소나-기반-액션-가이드)
-  - [4.4 인사이트 유형별 JSON 구조](#44-인사이트-유형별-json-구조)
-  - [4.5 MCP 통합 활용 가이드](#45-mcp-통합-활용-가이드)
+- [5. 자연어 인사이트 생성 체계](#5-자연어-인사이트-생성-체계)
+  - [5.1 AI 비서 톤앤매너](#51-ai-비서-톤앤매너)
+  - [5.2 메시지 템플릿 구조](#52-메시지-템플릿-구조)
+  - [5.3 페르소나 기반 액션 가이드](#53-페르소나-기반-액션-가이드)
+  - [5.4 인사이트 유형별 JSON 구조](#54-인사이트-유형별-json-구조)
+  - [5.5 MCP 통합 활용 가이드](#55-mcp-통합-활용-가이드)
 
 ---
 
@@ -232,21 +238,180 @@ else:
 ```
 **수정 방법**: ROAS 기준값과 예산 증액 비율 조정
 
+#### E. THRESHOLDS 상세 (라인 64-72)
+
+```python
+THRESHOLDS = {
+    'high_roas': 300.0,       # 고효율 기준 (%) - scale_up 트리거
+    'low_roas': 150.0,        # 저효율 기준 (%)
+    'growth_star': 10.0,      # 고성장 기준 (%) - growth_momentum 트리거
+    'risk_critical': -20.0,   # 위험 경고 기준 (%) - severity: high
+    'risk_warning': -10.0,    # 주의 필요 기준 (%) - severity: medium
+    'budget_alert': 90.0,     # 예산 소진 경고 (%)
+    'opportunity_roas': 200.0 # 기회 발굴 기준 (%) - hidden_gem 트리거
+}
+```
+
+#### F. Alert Trigger 조건
+
+| Alert Type | Trigger 조건 | Severity | Financial Impact |
+|------------|-------------|----------|------------------|
+| `conversion_decline` | 전환수 변화 < -10% | medium (< -20%: high) | 예상 손실 전환: N건 |
+| `revenue_decline` | 전환값 변화 < -10% | medium (< -20%: high) | 예상 손실액: N만 원 |
+| `roas_decline` | ROAS 변화 < -10%p | medium (< -20%p: high) | ROAS 변화 표시 |
+
+```python
+# detect_alerts() 로직 (라인 859-935)
+if conv_change < -self.thresholds['decline_alert_pct']:  # -10%
+    severity = 'high' if conv_change < -self.thresholds['critical_decline_pct'] else 'medium'
+    alerts.append({
+        'type': 'conversion_decline',
+        'severity': severity,
+        'title': "🛒 {segment_value} 전환율 하락",
+        'message': f"다음 주 전환수가 {abs(conv_change):.1f}% 감소할 것으로 예상됩니다.",
+        'action': ACTION_GUIDES['conversion_drop'],
+        'financial_impact': f"예상 손실 전환: {int(loss_conversions):,}건"
+    })
+```
+
+#### G. Opportunity 유형별 Trigger 조건
+
+| Opportunity Type | Trigger 조건 | Priority | 메시지 |
+|-----------------|--------------|----------|--------|
+| `scale_up` | ROAS > 300% | 1 | "🚀 수익성 최고조! 예산 20% 증액 권장" |
+| `hidden_gem` | ROAS > 200% AND 비용 < 100만원 | 2 | "💎 숨은 보석 발견! 테스트 예산 2배 확대" |
+| `growth_momentum` | 전환수 증가 > 10% AND ROAS > 150% | 3 | "📈 성장 가속 중! 예산 10% 증액" |
+
+```python
+# find_opportunities() 로직 (라인 940-1028)
+# Opportunity 1: High ROAS (Star/Cash Cow)
+if roas > THRESHOLDS['high_roas']:  # > 300%
+    opportunities.append({
+        'type': 'scale_up',
+        'tag': "🚀 강력 추천: 예산 증액",
+        'action': "물 들어올 때 노 저으세요! 성과가 좋은 이 영역에 예산을 20% 증액",
+        'financial_impact': f"예산 20% 증액 시, 약 {format_currency(potential_uplift)} 추가 매출 기대",
+        'priority': 1
+    })
+
+# Opportunity 2: Hidden Gem (저예산 고효율)
+elif roas > THRESHOLDS['opportunity_roas'] and total_cost < 1000000:  # > 200%, < 100만원
+    opportunities.append({
+        'type': 'hidden_gem',
+        'tag': "💎 숨은 보석 발견",
+        'action': "아직 예산은 적지만 효율이 터지고 있습니다. 테스트 예산을 2배로 늘려보세요.",
+        'priority': 2
+    })
+
+# Opportunity 3: Growth Momentum
+elif changes.get('전환수', 0) > THRESHOLDS['growth_star'] and roas > THRESHOLDS['low_roas']:  # > 10%, > 150%
+    opportunities.append({
+        'type': 'growth_momentum',
+        'tag': "📈 성장 모멘텀",
+        'action': "현재 전략을 유지하고, 예산을 10% 증액하여 성장을 가속화하세요.",
+        'priority': 3
+    })
+```
+
 ---
 
-## 3. generate_funnel_data.py
+## 3. 다중 기간 인사이트 생성 스크립트
 
-### 3.1 파일 위치 및 실행
+### 3.1 generate_insights_multiperiod.py
+
+> insight_generator.py를 여러 기간에 대해 실행하여 통합 JSON 생성
+
+#### 파일 위치 및 실행
+```bash
+python scripts/generate_insights_multiperiod.py
+```
+
+#### 분석 기간
+| 기간 Key | 설명 | 사용 데이터 |
+|---------|------|-----------|
+| `full` | 전체 기간 | 모든 데이터 |
+| `180d` | 최근 180일 | 최근 6개월 |
+| `90d` | 최근 90일 | 최근 3개월 |
+| `30d` | 최근 30일 | 최근 1개월 |
+
+#### 출력 JSON 구조
+```json
+{
+  "generated_at": "2024-12-18T...",
+  "by_period": {
+    "full": { /* insight_generator.py 결과 */ },
+    "180d": { /* 180일 기준 결과 */ },
+    "90d": { /* 90일 기준 결과 */ },
+    "30d": { /* 30일 기준 결과 */ }
+  }
+}
+```
+
+#### 출력 파일
+- `data/forecast/insights.json`
+
+### 3.2 generate_type_insights_multiperiod.py
+
+> generate_type_insights.py를 여러 기간에 대해 실행 (Prophet 예측 포함)
+
+#### 파일 위치 및 실행
+```bash
+python scripts/generate_type_insights_multiperiod.py
+```
+
+#### 분석 기간
+| 기간 Key | 설명 | Prophet 학습 데이터 |
+|---------|------|-------------------|
+| `full` | 전체 기간 (365일) | 전체 데이터 |
+| `180d` | 최근 180일 | 최근 6개월 |
+| `90d` | 최근 90일 | 최근 3개월 |
+
+> **참고**: 30일은 Prophet 학습에 충분하지 않아 제외
+
+#### 실행 순서
+1. 각 기간별 Prophet 예측 생성 (`multi_analysis_prophet_forecast.py --days N`)
+2. 각 기간별 인사이트 생성 (`generate_type_insights.py --days N`)
+3. 결과 통합
+
+#### 출력 JSON 구조
+```json
+{
+  "by_period": {
+    "full": { /* generate_type_insights.py 결과 (seasonality 제외) */ },
+    "180d": { /* 180일 기준 결과 */ },
+    "90d": { /* 90일 기준 결과 */ }
+  },
+  "seasonality": {
+    "seasonality_analysis": { /* 전체 기간 기준 요일별 분석 */ },
+    "seasonality_insights": [ /* 요일별 인사이트 */ ]
+  },
+  "generated_at": "2024-12-18T...",
+  "available_periods": [
+    {"key": "full", "label": "전체 기간"},
+    {"key": "180d", "label": "최근 180일"},
+    {"key": "90d", "label": "최근 90일"}
+  ]
+}
+```
+
+#### 출력 파일
+- `data/type/insights.json`
+
+---
+
+## 4. generate_funnel_data.py
+
+### 4.1 파일 위치 및 실행
 ```bash
 python scripts/generate_funnel_data.py
 ```
 
-### 3.2 입력 데이터
+### 4.2 입력 데이터
 | 파일명 | 설명 |
 |-------|------|
 | `data/GA4/2025-11.csv` | GA4 퍼널 이벤트 데이터 |
 
-### 3.3 퍼널 단계 정의 (라인 23-29)
+### 4.3 퍼널 단계 정의 (라인 23-29)
 ```python
 FUNNEL_MAPPING = {
     '유입': 'Acquisition',      # 방문
@@ -257,7 +422,7 @@ FUNNEL_MAPPING = {
 }
 ```
 
-### 3.4 출력 JSON 구조
+### 4.4 출력 JSON 구조
 ```json
 {
   "generated_at": "2024-...",
@@ -284,7 +449,7 @@ FUNNEL_MAPPING = {
 }
 ```
 
-### 3.5 커스터마이징 포인트
+### 4.5 커스터마이징 포인트
 
 #### A. 퍼널 이탈 경고 기준 (라인 208-224)
 ```python
@@ -395,11 +560,11 @@ python scripts/generate_funnel_data.py        # 퍼널 인사이트
 
 ---
 
-## 4. 자연어 인사이트 생성 체계
+## 5. 자연어 인사이트 생성 체계
 
 > MCP(Model Context Protocol)를 활용해 외부 컨텍스트와 조합하여 사용자 친화적인 분석 결과를 제공하기 위한 가이드
 
-### 4.1 AI 비서 톤앤매너
+### 5.1 AI 비서 톤앤매너
 
 모든 스크립트는 **친화적인 AI 마케팅 컨설턴트** 톤을 사용합니다.
 
@@ -421,7 +586,7 @@ severity_levels = {
 }
 ```
 
-### 4.2 메시지 템플릿 구조
+### 5.2 메시지 템플릿 구조
 
 #### generate_type_insights.py - 광고 성과 메시지
 
@@ -462,7 +627,126 @@ FRIENDLY_MESSAGES = {
         'title': "🔮 다음 30일, 맑음이 예상됩니다!",
         'message': "AI가 분석한 결과, 약 {forecast}의 매출이 예상됩니다.",
         'action': "재고 부족이 발생하지 않도록 미리 물류를 점검해주세요."
+    },
+    # 트래픽 캠페인용 메시지 템플릿 (v1.7 추가)
+    'excellent_cpc_opportunity': {
+        'title': "🎯 '{target}' 트래픽 캠페인이 효율적이에요!",
+        'message': "{target}의 CPC가 {cpc:,}원으로 매우 우수합니다.",
+        'action': "현재 전략을 유지하면서 예산 확대를 고려하세요."
+    },
+    'high_cpc_warning': {
+        'title': "⚠️ '{target}' 트래픽 비용이 높아요",
+        'message': "{target}의 CPC가 {cpc:,}원으로 높습니다.",
+        'action': "타겟팅을 좁히거나 소재를 개선해보세요."
+    },
+    'high_ctr_opportunity': {
+        'title': "👆 '{target}'의 클릭률이 좋아요!",
+        'message': "{target}의 CTR이 {ctr:.2f}%로 우수합니다.",
+        'action': "관심을 끌고 있으니 랜딩페이지 최적화에 집중하세요."
+    },
+    'low_ctr_warning': {
+        'title': "⚠️ '{target}' 클릭률이 낮아요",
+        'message': "{target}의 CTR이 {ctr:.2f}%로 저조합니다.",
+        'action': "광고 소재와 카피를 개선해보세요."
     }
+}
+```
+
+#### 유형구분_통합 기반 KPI 분기 (v1.7)
+
+> **중요**: `유형구분_통합`은 `광고세트` 컬럼에 '트래픽' 문구 포함 여부로 결정됩니다.
+> - 광고세트에 '트래픽' 포함 → `유형구분_통합 = '트래픽'` → **CPC 기준** 인사이트
+> - 그 외 → `유형구분_통합 = '전환'` → **ROAS/CPA 기준** 인사이트
+
+##### KPI 임계값 설정 (THRESHOLDS)
+
+```python
+# generate_type_insights.py (라인 58-73)
+THRESHOLDS = {
+    # ═══════════════════════════════════════════════════════════════
+    # 전환 캠페인용 (ROAS/CPA 기준)
+    # ═══════════════════════════════════════════════════════════════
+    'excellent_roas': 1000.0,  # ROAS 매우 우수 기준 (%)
+    'high_roas': 500.0,        # ROAS 우수 기준 (%)
+    'low_roas': 100.0,         # ROAS 저조 기준 (%) - 경고 트리거
+    'high_cpa': 50000,         # CPA 경고 기준 (원)
+    'growth_signal': 20.0,     # 매출 급상승 기준 (%)
+    'drop_signal': -20.0,      # 매출 급락 기준 (%)
+
+    # ═══════════════════════════════════════════════════════════════
+    # 트래픽 캠페인용 (CPC/CTR 기준)
+    # ═══════════════════════════════════════════════════════════════
+    'excellent_cpc': 200,      # CPC 매우 우수 (원) - 낮을수록 좋음
+    'good_cpc': 500,           # CPC 우수 (원)
+    'warning_cpc': 1000,       # CPC 경고 (원) - 높으면 경고
+    'high_ctr': 3.0,           # CTR 우수 (%) - 높을수록 좋음
+    'low_ctr': 1.0,            # CTR 저조 (%)
+}
+```
+
+##### 성과 레벨 판단 로직
+
+| 캠페인 유형 | 기준 지표 | 매우 우수 | 우수 | 양호 | 개선 필요 |
+|------------|----------|----------|------|------|----------|
+| **전환** (유형구분_통합='전환') | ROAS | > 5000% | > 1000% | > 200% | ≤ 200% |
+| **트래픽** (유형구분_통합='트래픽') | CPC | ≤ 200원 | ≤ 500원 | ≤ 1000원 | > 1000원 |
+
+```python
+# 전환 캠페인 성과 레벨 판단 (ROAS 기준 - 높을수록 우수)
+if roas_val > 5000:
+    performance = "매우 우수"
+elif roas_val > 1000:
+    performance = "우수"
+elif roas_val > 200:
+    performance = "양호"
+else:
+    performance = "개선 필요"
+
+# 트래픽 캠페인 성과 레벨 판단 (CPC 기준 - 낮을수록 우수)
+if cpc_val <= THRESHOLDS['excellent_cpc']:  # ≤ 200원
+    performance = "매우 우수"
+elif cpc_val <= THRESHOLDS['good_cpc']:      # ≤ 500원
+    performance = "우수"
+elif cpc_val <= THRESHOLDS['warning_cpc']:   # ≤ 1000원
+    performance = "양호"
+else:                                         # > 1000원
+    performance = "개선 필요"
+```
+
+##### Alert Trigger 조건
+
+| Alert Type | 캠페인 유형 | Trigger 조건 | Severity |
+|------------|------------|--------------|----------|
+| `high_roas_opportunity` | 전환 | ROAS > 1000% | opportunity |
+| `low_roas_warning` | 전환 | ROAS < 100% | warning |
+| `excellent_cpc_opportunity` | 트래픽 | CPC ≤ 200원 | opportunity |
+| `high_cpc_warning` | 트래픽 | CPC > 1000원 | warning |
+| `high_ctr_opportunity` | 트래픽 | CTR ≥ 3.0% | opportunity |
+| `revenue_growth` | 공통 | 30일 매출 변화 > +20% | positive |
+| `revenue_decline` | 공통 | 30일 매출 변화 < -20% | high |
+| `forecast_overperformance` | 공통 | 예측 대비 > +20% | positive |
+| `forecast_underperformance` | 공통 | 예측 대비 < -20% | warning |
+
+##### 차원별 분석 분기 (v1.7)
+
+각 차원(성별, 연령, 기기 등) 분석에서 `유형구분_통합`에 따라 다른 KPI로 인사이트를 생성합니다.
+
+| 차원 | 전환 캠페인 (ROAS 기준) | 트래픽 캠페인 (CPC 기준) |
+|------|------------------------|------------------------|
+| 성별 | `gender_insights` | `gender_traffic_insights` |
+| 연령×성별 | `age_gender_insights` | `age_gender_traffic_insights` |
+| 기기유형 | `device_insights` | `device_traffic_insights` |
+| 기기플랫폼 | `deviceplatform_insights` | `deviceplatform_traffic_insights` |
+
+**JSON 출력 예시**:
+```json
+{
+  "gender_performance": [
+    {"gender": "여성", "campaign_type": "전환", "roas": 850, "performance_level": "우수"}
+  ],
+  "gender_traffic_performance": [
+    {"gender": "여성", "campaign_type": "트래픽", "cpc": 180, "ctr": 3.5, "performance_level": "매우 우수"}
+  ]
 }
 ```
 
@@ -552,7 +836,7 @@ BCG_MATRIX = {
 }
 ```
 
-### 4.3 페르소나 기반 액션 가이드
+### 5.3 페르소나 기반 액션 가이드
 
 #### 연령+성별 조합별 추천 액션
 
@@ -604,7 +888,7 @@ def get_persona_action(age=None, gender=None, device=None, platform=None):
     return None
 ```
 
-### 4.4 인사이트 유형별 JSON 구조
+### 5.4 인사이트 유형별 JSON 구조
 
 #### Alert (경고/알림) 구조
 
@@ -675,7 +959,7 @@ def get_persona_action(age=None, gender=None, device=None, platform=None):
 }
 ```
 
-### 4.5 MCP 통합 활용 가이드
+### 5.5 MCP 통합 활용 가이드
 
 #### MCP 서버에서 인사이트 JSON 활용 방법
 
@@ -854,3 +1138,5 @@ def format_korean_currency(value: float) -> str:
 | 날짜 | 버전 | 변경 내용 |
 |-----|------|----------|
 | 2024-12-08 | v2.0 | 자연어 인사이트 생성 체계 섹션 추가 (MCP 통합 가이드 포함) |
+| 2024-12-18 | v2.1 | 유형구분_통합 기반 KPI 분기 상세 기재 (트래픽: CPC, 전환: ROAS) |
+| 2024-12-18 | v2.2 | 다중 기간 스크립트 섹션 추가, insight_generator.py Alert/Opportunity Trigger 조건 상세화 |

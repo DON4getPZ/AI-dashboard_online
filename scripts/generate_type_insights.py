@@ -56,12 +56,20 @@ def filter_by_days(df, days, date_column='일'):
 # 분석 임계값 설정 (업종에 맞게 튜닝 가능)
 # ============================================================================
 THRESHOLDS = {
+    # 전환 캠페인용 (ROAS/CPA 기준)
     'high_roas': 500.0,      # 성과 우수 기준 (%)
     'low_roas': 100.0,       # 성과 저조 기준 (%)
     'growth_signal': 20.0,   # 급상승 기준 (%)
     'drop_signal': -20.0,    # 급락 기준 (%)
     'high_cpa': 50000,       # CPA 경고 기준 (원)
-    'excellent_roas': 1000.0 # 매우 우수 기준 (%)
+    'excellent_roas': 1000.0, # 매우 우수 기준 (%)
+
+    # 트래픽 캠페인용 (CPC 기준)
+    'excellent_cpc': 200,    # CPC 매우 우수 (원)
+    'good_cpc': 500,         # CPC 우수 (원)
+    'warning_cpc': 1000,     # CPC 경고 (원)
+    'high_ctr': 3.0,         # CTR 우수 (%)
+    'low_ctr': 1.0,          # CTR 저조 (%)
 }
 
 # 업종별 임계값 프리셋 (필요시 활성화)
@@ -149,6 +157,27 @@ FRIENDLY_MESSAGES = {
         'title': "🚀 라이징 스타: '{product}'",
         'message': "{product} 상품의 ROAS가 {roas:.0f}%로 가장 효율적입니다.",
         'action': "이 상품을 메인 배너 가장 잘 보이는 곳에 배치하세요."
+    },
+    # 트래픽 캠페인용 메시지 템플릿
+    'excellent_cpc_opportunity': {
+        'title': "🎯 '{target}' 트래픽 캠페인이 효율적이에요!",
+        'message': "{target}의 CPC가 {cpc:,}원으로 매우 우수합니다.",
+        'action': "현재 전략을 유지하면서 예산 확대를 고려하세요."
+    },
+    'high_cpc_warning': {
+        'title': "⚠️ '{target}' 트래픽 비용이 높아요",
+        'message': "{target}의 CPC가 {cpc:,}원으로 높습니다.",
+        'action': "타겟팅을 좁히거나 소재를 개선해보세요."
+    },
+    'high_ctr_opportunity': {
+        'title': "👆 '{target}'의 클릭률이 좋아요!",
+        'message': "{target}의 CTR이 {ctr:.2f}%로 우수합니다.",
+        'action': "관심을 끌고 있으니 랜딩페이지 최적화에 집중하세요."
+    },
+    'low_ctr_warning': {
+        'title': "⚠️ '{target}' 클릭률이 낮아요",
+        'message': "{target}의 CTR이 {ctr:.2f}%로 저조합니다.",
+        'action': "광고 소재와 카피를 개선해보세요."
     }
 }
 
@@ -467,6 +496,7 @@ summary = {
 
 # ============================================================================
 # 상위 유형구분 (필터링된 dimensions['type1']에서 재계산)
+# 유형구분_통합 기준: 트래픽은 CPC, 전환은 ROAS 메인 KPI
 # ============================================================================
 print("상위 유형구분 분석 중...")
 
@@ -475,11 +505,13 @@ if 'type1' in dimensions and '유형구분' in dimensions['type1'].columns:
     type1_df = dimensions['type1'].copy()
     category_agg = type1_df.groupby('유형구분').agg({
         '비용': 'sum',
+        '노출': 'sum',
+        '클릭': 'sum',
         '전환수': 'sum',
         '전환값': 'sum'
     }).reset_index()
 
-    # ROAS, CPA 재계산 (총합 기준)
+    # ROAS, CPA, CPC, CTR 계산 (총합 기준)
     category_agg['ROAS'] = np.where(
         category_agg['비용'] > 0,
         (category_agg['전환값'] / category_agg['비용']) * 100,
@@ -490,15 +522,81 @@ if 'type1' in dimensions and '유형구분' in dimensions['type1'].columns:
         category_agg['비용'] / category_agg['전환수'],
         0
     )
+    category_agg['CPC'] = np.where(
+        category_agg['클릭'] > 0,
+        category_agg['비용'] / category_agg['클릭'],
+        0
+    )
+    category_agg['CTR'] = np.where(
+        category_agg['노출'] > 0,
+        (category_agg['클릭'] / category_agg['노출']) * 100,
+        0
+    )
+
+    # 유형구분_통합 매핑 적용
+    def get_campaign_type(value):
+        if pd.isna(value) or value == '-':
+            return '전환'
+        value_str = str(value)
+        if '트래픽' in value_str:
+            return '트래픽'
+        return '전환'
+
+    category_agg['유형구분_통합'] = category_agg['유형구분'].apply(get_campaign_type)
 
     # 비용이 있는 유형구분만 필터링
     paid_categories = category_agg[category_agg['비용'] > 0].copy()
+
+    # 전환 캠페인: ROAS 기준 상위 5개
+    conversion_categories = paid_categories[paid_categories['유형구분_통합'] == '전환']
+    top_conversion = conversion_categories.nlargest(5, 'ROAS')[['유형구분', '유형구분_통합', '비용', '클릭', '전환수', '전환값', 'ROAS', 'CPA', 'CPC', 'CTR']].to_dict('records') if len(conversion_categories) > 0 else []
+
+    # 트래픽 캠페인: CPC 기준 상위 5개 (낮은 순)
+    traffic_categories = paid_categories[paid_categories['유형구분_통합'] == '트래픽']
+    top_traffic = traffic_categories.nsmallest(5, 'CPC')[['유형구분', '유형구분_통합', '비용', '클릭', '전환수', '전환값', 'ROAS', 'CPA', 'CPC', 'CTR']].to_dict('records') if len(traffic_categories) > 0 else []
+
+    # 기존 호환성을 위해 전체 top_categories도 유지 (ROAS 기준)
     top_categories = paid_categories.nlargest(5, 'ROAS')[['유형구분', '비용', '전환수', '전환값', 'ROAS', 'CPA']].to_dict('records')
 else:
     # fallback: 기존 category_summary 사용 (필터링 불가)
     paid_categories = category_summary[category_summary['비용'] > 0].copy()
     top_categories = paid_categories.nlargest(5, 'ROAS')[['유형구분', '비용', '전환수', '전환값', 'ROAS', 'CPA']].to_dict('records')
+    top_conversion = []
+    top_traffic = []
 
+# 전환 캠페인 리스트
+top_conversion_list = []
+for cat in top_conversion:
+    top_conversion_list.append({
+        "name": cat['유형구분'],
+        "campaign_type": cat['유형구분_통합'],
+        "cost": float(cat['비용']),
+        "clicks": float(cat['클릭']),
+        "conversions": float(cat['전환수']),
+        "revenue": float(cat['전환값']),
+        "roas": float(cat['ROAS']),
+        "cpa": float(cat['CPA']),
+        "cpc": float(cat['CPC']),
+        "ctr": float(cat['CTR'])
+    })
+
+# 트래픽 캠페인 리스트
+top_traffic_list = []
+for cat in top_traffic:
+    top_traffic_list.append({
+        "name": cat['유형구분'],
+        "campaign_type": cat['유형구분_통합'],
+        "cost": float(cat['비용']),
+        "clicks": float(cat['클릭']),
+        "conversions": float(cat['전환수']),
+        "revenue": float(cat['전환값']),
+        "roas": float(cat['ROAS']),
+        "cpa": float(cat['CPA']),
+        "cpc": float(cat['CPC']),
+        "ctr": float(cat['CTR'])
+    })
+
+# 기존 호환성을 위한 전체 리스트
 top_categories_list = []
 for cat in top_categories:
     top_categories_list.append({
@@ -516,6 +614,7 @@ for cat in top_categories:
 print("성별 인사이트 생성 중...")
 
 gender_insights = []
+gender_traffic_insights = []  # v1.7 추가: 트래픽 캠페인용 성별 인사이트
 if 'type4' in dimensions:
     type4_df = dimensions['type4'].copy()
 
@@ -530,28 +629,39 @@ if 'type4' in dimensions:
         type4_df['성별_정규화'] = type4_df['성별'].apply(normalize_gender)
         type4_df = type4_df[type4_df['성별_정규화'].notna()]
 
-    # 성별별 집계
-    gender_summary = type4_df.groupby('성별_정규화').agg({
-        '비용': 'sum',
-        '전환수': 'sum',
-        '전환값': 'sum'
-    }).reset_index()
+    # v1.7: 유형구분_통합별 분기 처리
+    has_campaign_type = '유형구분_통합' in type4_df.columns
 
-    # ROAS 재계산 (전체 기간 기준) - 평균이 아닌 총합 기준
+    # 성별별 집계 (클릭 추가)
+    agg_cols = {'비용': 'sum', '전환수': 'sum', '전환값': 'sum'}
+    if '클릭' in type4_df.columns:
+        agg_cols['클릭'] = 'sum'
+
+    gender_summary = type4_df.groupby('성별_정규화').agg(agg_cols).reset_index()
+
+    # ROAS, CPC 계산
     gender_summary['ROAS'] = np.where(
         gender_summary['비용'] > 0,
         (gender_summary['전환값'] / gender_summary['비용']) * 100,
         0
     )
+    if '클릭' in gender_summary.columns:
+        gender_summary['CPC'] = np.where(
+            gender_summary['클릭'] > 0,
+            gender_summary['비용'] / gender_summary['클릭'],
+            0
+        )
+    else:
+        gender_summary['CPC'] = 0
 
-    # 성별별 성과가 있는 것만
-    gender_summary = gender_summary[gender_summary['전환수'] > 0]
+    # 성별별 성과가 있는 것만 (전환 캠페인용)
+    gender_conversion = gender_summary[gender_summary['전환수'] > 0]
 
-    for _, row in gender_summary.iterrows():
+    for _, row in gender_conversion.iterrows():
         gender_name = row['성별_정규화']
         roas_val = float(row['ROAS']) if pd.notna(row['ROAS']) else 0
 
-        # 성과 레벨 판단
+        # 성과 레벨 판단 (ROAS 기준)
         if roas_val > 5000:
             performance = "매우 우수"
         elif roas_val > 1000:
@@ -563,12 +673,61 @@ if 'type4' in dimensions:
 
         gender_insights.append({
             "gender": gender_name,
+            "campaign_type": "전환",
             "cost": float(row['비용']),
+            "clicks": float(row['클릭']) if '클릭' in row else 0,
             "conversions": float(row['전환수']),
             "revenue": float(row['전환값']),
             "roas": roas_val,
+            "cpc": float(row['CPC']),
             "performance_level": performance
         })
+
+    # v1.7: 트래픽 캠페인용 성별 분석 (CPC 기준)
+    if has_campaign_type:
+        traffic_df = type4_df[type4_df['유형구분_통합'] == '트래픽']
+        if len(traffic_df) > 0 and '클릭' in traffic_df.columns:
+            traffic_gender = traffic_df.groupby('성별_정규화').agg({
+                '비용': 'sum', '클릭': 'sum', '노출': 'sum'
+            }).reset_index()
+
+            traffic_gender['CPC'] = np.where(
+                traffic_gender['클릭'] > 0,
+                traffic_gender['비용'] / traffic_gender['클릭'],
+                0
+            )
+            traffic_gender['CTR'] = np.where(
+                traffic_gender['노출'] > 0,
+                (traffic_gender['클릭'] / traffic_gender['노출']) * 100,
+                0
+            )
+
+            # 클릭이 있는 것만
+            traffic_gender = traffic_gender[traffic_gender['클릭'] > 0]
+
+            for _, row in traffic_gender.iterrows():
+                cpc_val = float(row['CPC'])
+
+                # 성과 레벨 판단 (CPC 기준 - 낮을수록 우수)
+                if cpc_val <= THRESHOLDS['excellent_cpc']:
+                    performance = "매우 우수"
+                elif cpc_val <= THRESHOLDS['good_cpc']:
+                    performance = "우수"
+                elif cpc_val <= THRESHOLDS['warning_cpc']:
+                    performance = "양호"
+                else:
+                    performance = "개선 필요"
+
+                gender_traffic_insights.append({
+                    "gender": row['성별_정규화'],
+                    "campaign_type": "트래픽",
+                    "cost": float(row['비용']),
+                    "clicks": float(row['클릭']),
+                    "impressions": float(row['노출']),
+                    "cpc": cpc_val,
+                    "ctr": float(row['CTR']),
+                    "performance_level": performance
+                })
 
 # ============================================================================
 # 최고 성과 광고세트 (Type1)
@@ -621,6 +780,7 @@ if 'type1' in dimensions:
 print("연령x성별 인사이트 생성 중...")
 
 age_gender_insights = []
+age_gender_traffic_insights = []  # v1.7 추가: 트래픽 캠페인용
 if 'type2' in dimensions:
     type2_df = dimensions['type2'].copy()
 
@@ -639,33 +799,78 @@ if 'type2' in dimensions:
     type2_df = type2_df[type2_df[age_col].apply(is_valid_age)]
     type2_df['연령_정규화'] = type2_df[age_col]
 
-    # 연령x성별 조합별로 전체 기간 데이터 집계 (일별 데이터를 합산)
-    age_gender_agg = type2_df.groupby(['광고세트', '연령_정규화', '성별_정규화']).agg({
-        '비용': 'sum',
-        '전환수': 'sum',
-        '전환값': 'sum'
-    }).reset_index()
+    # v1.7: 유형구분_통합별 분기 처리
+    has_campaign_type = '유형구분_통합' in type2_df.columns
 
-    # ROAS 재계산 (전체 기간 기준)
+    # 연령x성별 조합별로 전체 기간 데이터 집계 (클릭 추가)
+    agg_cols = {'비용': 'sum', '전환수': 'sum', '전환값': 'sum'}
+    if '클릭' in type2_df.columns:
+        agg_cols['클릭'] = 'sum'
+    if '노출' in type2_df.columns:
+        agg_cols['노출'] = 'sum'
+
+    age_gender_agg = type2_df.groupby(['광고세트', '연령_정규화', '성별_정규화']).agg(agg_cols).reset_index()
+
+    # ROAS, CPC 계산
     age_gender_agg['ROAS'] = np.where(
         age_gender_agg['비용'] > 0,
         (age_gender_agg['전환값'] / age_gender_agg['비용']) * 100,
         0
     )
+    if '클릭' in age_gender_agg.columns:
+        age_gender_agg['CPC'] = np.where(
+            age_gender_agg['클릭'] > 0,
+            age_gender_agg['비용'] / age_gender_agg['클릭'],
+            0
+        )
 
-    # 전환수 > 0인 것만 필터링하고 ROAS 기준 상위 5개
+    # 전환수 > 0인 것만 필터링하고 ROAS 기준 상위 5개 (전환 캠페인용)
     age_gender_filtered = age_gender_agg[age_gender_agg['전환수'] > 0].copy()
     top_combinations = age_gender_filtered.nlargest(5, 'ROAS')
 
     for _, row in top_combinations.iterrows():
-        age_gender_insights.append({
+        insight = {
             "adset": row['광고세트'],
             "age": row['연령_정규화'],
             "gender": row['성별_정규화'],
+            "campaign_type": "전환",
             "roas": float(row['ROAS']),
             "conversions": float(row['전환수']),
             "recommendation": f"{row['연령_정규화']} {row['성별_정규화']} 타겟팅이 효과적입니다"
-        })
+        }
+        if '클릭' in row:
+            insight['cpc'] = float(row['CPC']) if 'CPC' in row else 0
+        age_gender_insights.append(insight)
+
+    # v1.7: 트래픽 캠페인용 연령x성별 분석 (CPC 기준)
+    if has_campaign_type and '클릭' in type2_df.columns:
+        traffic_df = type2_df[type2_df['유형구분_통합'] == '트래픽']
+        if len(traffic_df) > 0:
+            traffic_agg = traffic_df.groupby(['광고세트', '연령_정규화', '성별_정규화']).agg({
+                '비용': 'sum', '클릭': 'sum', '노출': 'sum'
+            }).reset_index()
+
+            traffic_agg['CPC'] = np.where(
+                traffic_agg['클릭'] > 0,
+                traffic_agg['비용'] / traffic_agg['클릭'],
+                0
+            )
+
+            # 클릭 > 0인 것만, CPC 기준 상위 5개 (낮은 순)
+            traffic_filtered = traffic_agg[traffic_agg['클릭'] > 0].copy()
+            top_traffic = traffic_filtered.nsmallest(5, 'CPC')
+
+            for _, row in top_traffic.iterrows():
+                cpc_val = float(row['CPC'])
+                age_gender_traffic_insights.append({
+                    "adset": row['광고세트'],
+                    "age": row['연령_정규화'],
+                    "gender": row['성별_정규화'],
+                    "campaign_type": "트래픽",
+                    "cpc": cpc_val,
+                    "clicks": float(row['클릭']),
+                    "recommendation": f"{row['연령_정규화']} {row['성별_정규화']} 타겟에서 CPC가 효율적입니다"
+                })
 
 # ============================================================================
 # 기기유형 분석 (Type5)
@@ -673,29 +878,90 @@ if 'type2' in dimensions:
 print("기기유형 인사이트 생성 중...")
 
 device_insights = []
+device_traffic_insights = []  # v1.7 추가: 트래픽 캠페인용
 if 'type5' in dimensions:
-    type5_df = dimensions['type5']
+    type5_df = dimensions['type5'].copy()
 
     # 기기유형_통합 컬럼 사용 (fallback: 기기유형)
     device_col = '기기유형_통합' if '기기유형_통합' in type5_df.columns else '기기유형'
+    has_campaign_type = '유형구분_통합' in type5_df.columns
 
-    device_summary = type5_df.groupby(device_col).agg({
-        '비용': 'sum',
-        '전환수': 'sum',
-        '전환값': 'sum'
-    }).reset_index()
+    # 집계 컬럼 (클릭/노출 추가)
+    agg_cols = {'비용': 'sum', '전환수': 'sum', '전환값': 'sum'}
+    if '클릭' in type5_df.columns:
+        agg_cols['클릭'] = 'sum'
+    if '노출' in type5_df.columns:
+        agg_cols['노출'] = 'sum'
+
+    device_summary = type5_df.groupby(device_col).agg(agg_cols).reset_index()
 
     device_summary['ROAS'] = (device_summary['전환값'] / device_summary['비용'] * 100).replace([np.inf, -np.inf], 0)
-    device_summary = device_summary[device_summary['전환수'] > 0]
+    if '클릭' in device_summary.columns:
+        device_summary['CPC'] = np.where(
+            device_summary['클릭'] > 0,
+            device_summary['비용'] / device_summary['클릭'],
+            0
+        )
 
-    for _, row in device_summary.iterrows():
-        device_insights.append({
+    # 전환 캠페인용 (ROAS 기준)
+    device_conversion = device_summary[device_summary['전환수'] > 0]
+
+    for _, row in device_conversion.iterrows():
+        insight = {
             "device": row[device_col],
+            "campaign_type": "전환",
             "cost": float(row['비용']),
             "conversions": float(row['전환수']),
             "revenue": float(row['전환값']),
             "roas": float(row['ROAS'])
-        })
+        }
+        if '클릭' in row:
+            insight['clicks'] = float(row['클릭'])
+            insight['cpc'] = float(row['CPC']) if 'CPC' in row else 0
+        device_insights.append(insight)
+
+    # v1.7: 트래픽 캠페인용 기기유형 분석 (CPC 기준)
+    if has_campaign_type and '클릭' in type5_df.columns:
+        traffic_df = type5_df[type5_df['유형구분_통합'] == '트래픽']
+        if len(traffic_df) > 0:
+            traffic_device = traffic_df.groupby(device_col).agg({
+                '비용': 'sum', '클릭': 'sum', '노출': 'sum'
+            }).reset_index()
+
+            traffic_device['CPC'] = np.where(
+                traffic_device['클릭'] > 0,
+                traffic_device['비용'] / traffic_device['클릭'],
+                0
+            )
+            traffic_device['CTR'] = np.where(
+                traffic_device['노출'] > 0,
+                (traffic_device['클릭'] / traffic_device['노출']) * 100,
+                0
+            )
+
+            traffic_device = traffic_device[traffic_device['클릭'] > 0]
+
+            for _, row in traffic_device.iterrows():
+                cpc_val = float(row['CPC'])
+                if cpc_val <= THRESHOLDS['excellent_cpc']:
+                    performance = "매우 우수"
+                elif cpc_val <= THRESHOLDS['good_cpc']:
+                    performance = "우수"
+                elif cpc_val <= THRESHOLDS['warning_cpc']:
+                    performance = "양호"
+                else:
+                    performance = "개선 필요"
+
+                device_traffic_insights.append({
+                    "device": row[device_col],
+                    "campaign_type": "트래픽",
+                    "cost": float(row['비용']),
+                    "clicks": float(row['클릭']),
+                    "impressions": float(row['노출']),
+                    "cpc": cpc_val,
+                    "ctr": float(row['CTR']),
+                    "performance_level": performance
+                })
 
 # ============================================================================
 # 기기플랫폼 분석 (Type7)
@@ -703,29 +969,90 @@ if 'type5' in dimensions:
 print("기기플랫폼 인사이트 생성 중...")
 
 deviceplatform_insights = []
+deviceplatform_traffic_insights = []  # v1.7 추가: 트래픽 캠페인용
 if 'type7' in dimensions:
-    type7_df = dimensions['type7']
+    type7_df = dimensions['type7'].copy()
 
     # 기기플랫폼_통합 컬럼 사용 (fallback: 기기플랫폼)
     deviceplatform_col = '기기플랫폼_통합' if '기기플랫폼_통합' in type7_df.columns else '기기플랫폼'
+    has_campaign_type = '유형구분_통합' in type7_df.columns
 
-    deviceplatform_summary = type7_df.groupby(deviceplatform_col).agg({
-        '비용': 'sum',
-        '전환수': 'sum',
-        '전환값': 'sum'
-    }).reset_index()
+    # 집계 컬럼 (클릭/노출 추가)
+    agg_cols = {'비용': 'sum', '전환수': 'sum', '전환값': 'sum'}
+    if '클릭' in type7_df.columns:
+        agg_cols['클릭'] = 'sum'
+    if '노출' in type7_df.columns:
+        agg_cols['노출'] = 'sum'
+
+    deviceplatform_summary = type7_df.groupby(deviceplatform_col).agg(agg_cols).reset_index()
 
     deviceplatform_summary['ROAS'] = (deviceplatform_summary['전환값'] / deviceplatform_summary['비용'] * 100).replace([np.inf, -np.inf], 0)
-    deviceplatform_summary = deviceplatform_summary[deviceplatform_summary['전환수'] > 0]
+    if '클릭' in deviceplatform_summary.columns:
+        deviceplatform_summary['CPC'] = np.where(
+            deviceplatform_summary['클릭'] > 0,
+            deviceplatform_summary['비용'] / deviceplatform_summary['클릭'],
+            0
+        )
 
-    for _, row in deviceplatform_summary.iterrows():
-        deviceplatform_insights.append({
+    # 전환 캠페인용 (ROAS 기준)
+    deviceplatform_conversion = deviceplatform_summary[deviceplatform_summary['전환수'] > 0]
+
+    for _, row in deviceplatform_conversion.iterrows():
+        insight = {
             "deviceplatform": row[deviceplatform_col],
+            "campaign_type": "전환",
             "cost": float(row['비용']),
             "conversions": float(row['전환수']),
             "revenue": float(row['전환값']),
             "roas": float(row['ROAS'])
-        })
+        }
+        if '클릭' in row:
+            insight['clicks'] = float(row['클릭'])
+            insight['cpc'] = float(row['CPC']) if 'CPC' in row else 0
+        deviceplatform_insights.append(insight)
+
+    # v1.7: 트래픽 캠페인용 기기플랫폼 분석 (CPC 기준)
+    if has_campaign_type and '클릭' in type7_df.columns:
+        traffic_df = type7_df[type7_df['유형구분_통합'] == '트래픽']
+        if len(traffic_df) > 0:
+            traffic_platform = traffic_df.groupby(deviceplatform_col).agg({
+                '비용': 'sum', '클릭': 'sum', '노출': 'sum'
+            }).reset_index()
+
+            traffic_platform['CPC'] = np.where(
+                traffic_platform['클릭'] > 0,
+                traffic_platform['비용'] / traffic_platform['클릭'],
+                0
+            )
+            traffic_platform['CTR'] = np.where(
+                traffic_platform['노출'] > 0,
+                (traffic_platform['클릭'] / traffic_platform['노출']) * 100,
+                0
+            )
+
+            traffic_platform = traffic_platform[traffic_platform['클릭'] > 0]
+
+            for _, row in traffic_platform.iterrows():
+                cpc_val = float(row['CPC'])
+                if cpc_val <= THRESHOLDS['excellent_cpc']:
+                    performance = "매우 우수"
+                elif cpc_val <= THRESHOLDS['good_cpc']:
+                    performance = "우수"
+                elif cpc_val <= THRESHOLDS['warning_cpc']:
+                    performance = "양호"
+                else:
+                    performance = "개선 필요"
+
+                deviceplatform_traffic_insights.append({
+                    "deviceplatform": row[deviceplatform_col],
+                    "campaign_type": "트래픽",
+                    "cost": float(row['비용']),
+                    "clicks": float(row['클릭']),
+                    "impressions": float(row['노출']),
+                    "cpc": cpc_val,
+                    "ctr": float(row['CTR']),
+                    "performance_level": performance
+                })
 
 # ============================================================================
 # 브랜드명별 분석
@@ -1798,15 +2125,20 @@ if len(top_categories_list) > 0:
             "value": best_category['roas']
         })
 
-# 2. 저성과 유형구분 경고
-low_roas_categories = paid_categories[paid_categories['ROAS'] < THRESHOLDS['low_roas']]
+# 2. 저성과 유형구분 경고 (전환 캠페인만 - ROAS 기준)
+if '유형구분_통합' in paid_categories.columns:
+    conversion_paid = paid_categories[paid_categories['유형구분_통합'] == '전환']
+    low_roas_categories = conversion_paid[conversion_paid['ROAS'] < THRESHOLDS['low_roas']]
+else:
+    low_roas_categories = paid_categories[paid_categories['ROAS'] < THRESHOLDS['low_roas']]
+
 if len(low_roas_categories) > 0:
     for idx, (_, cat) in enumerate(low_roas_categories.iterrows()):
         if idx >= 3:  # 최대 3개만
             break
         alerts.append({
             "type": "low_roas_warning",
-            "title": f"⚠️ '{cat['유형구분']}' 캠페인 점검이 필요해요",
+            "title": f"⚠️ '{cat['유형구분']}' 전환 캠페인 점검이 필요해요",
             "message": f"{cat['유형구분']}의 ROAS가 {cat['ROAS']:.0f}%로 낮습니다.",
             "action": "소재를 교체하거나, 타겟팅을 좁혀보세요.",
             "severity": "warning",
@@ -1814,6 +2146,60 @@ if len(low_roas_categories) > 0:
             "score": 4,
             "target": cat['유형구분'],
             "value": float(cat['ROAS'])
+        })
+
+# 2-1. 트래픽 캠페인 성과 인사이트 (CPC 기준)
+if len(top_traffic_list) > 0:
+    best_traffic = top_traffic_list[0]
+    if best_traffic['cpc'] <= THRESHOLDS['excellent_cpc']:
+        alerts.append({
+            "type": "excellent_cpc_opportunity",
+            "title": f"🎯 '{best_traffic['name']}' 트래픽 캠페인이 효율적이에요!",
+            "message": f"{best_traffic['name']}의 CPC가 {best_traffic['cpc']:,.0f}원으로 매우 우수합니다.",
+            "action": "현재 전략을 유지하면서 예산 확대를 고려하세요.",
+            "severity": "opportunity",
+            "category": "트래픽 최적화",
+            "score": 5,
+            "target": best_traffic['name'],
+            "value": best_traffic['cpc']
+        })
+
+# 2-2. 트래픽 캠페인 CPC 경고
+if '유형구분_통합' in paid_categories.columns:
+    traffic_paid = paid_categories[paid_categories['유형구분_통합'] == '트래픽']
+    high_cpc_categories = traffic_paid[traffic_paid['CPC'] > THRESHOLDS['warning_cpc']]
+    if len(high_cpc_categories) > 0:
+        for idx, (_, cat) in enumerate(high_cpc_categories.iterrows()):
+            if idx >= 2:  # 최대 2개만
+                break
+            alerts.append({
+                "type": "high_cpc_warning",
+                "title": f"⚠️ '{cat['유형구분']}' 트래픽 비용이 높아요",
+                "message": f"{cat['유형구분']}의 CPC가 {cat['CPC']:,.0f}원으로 높습니다.",
+                "action": "타겟팅을 좁히거나 소재를 개선해보세요.",
+                "severity": "warning",
+                "category": "트래픽 최적화",
+                "score": 4,
+                "target": cat['유형구분'],
+                "value": float(cat['CPC'])
+            })
+
+# 2-3. 트래픽 캠페인 CTR 인사이트
+if '유형구분_통합' in paid_categories.columns:
+    traffic_paid = paid_categories[paid_categories['유형구분_통합'] == '트래픽']
+    high_ctr_categories = traffic_paid[traffic_paid['CTR'] >= THRESHOLDS['high_ctr']]
+    if len(high_ctr_categories) > 0:
+        best_ctr = high_ctr_categories.nlargest(1, 'CTR').iloc[0]
+        alerts.append({
+            "type": "high_ctr_opportunity",
+            "title": f"👆 '{best_ctr['유형구분']}'의 클릭률이 좋아요!",
+            "message": f"{best_ctr['유형구분']}의 CTR이 {best_ctr['CTR']:.2f}%로 우수합니다.",
+            "action": "관심을 끌고 있으니 랜딩페이지 최적화에 집중하세요.",
+            "severity": "opportunity",
+            "category": "트래픽 최적화",
+            "score": 4,
+            "target": best_ctr['유형구분'],
+            "value": float(best_ctr['CTR'])
         })
 
 # 3. 성별 타겟팅 추천
@@ -2692,11 +3078,17 @@ insights = {
     "summary_card": summary_card,  # AI 비서 스타일 요약 카드
     "top_recommendations": top_recommendations,  # Score 기반 상위 5개 핵심 제안
     "top_categories": top_categories_list,
+    "top_conversion_categories": top_conversion_list,  # 전환 캠페인 (ROAS 기준)
+    "top_traffic_categories": top_traffic_list,        # 트래픽 캠페인 (CPC 기준)
     "gender_performance": gender_insights,
+    "gender_traffic_performance": gender_traffic_insights,  # v1.7 추가: 트래픽용 성별 (CPC 기준)
     "top_adsets": top_adsets[:10] if len(top_adsets) > 0 else [],
     "age_gender_combinations": age_gender_insights,
+    "age_gender_traffic_combinations": age_gender_traffic_insights,  # v1.7 추가: 트래픽용 연령x성별 (CPC 기준)
     "device_performance": device_insights,
+    "device_traffic_performance": device_traffic_insights,  # v1.7 추가: 트래픽용 기기 (CPC 기준)
     "deviceplatform_performance": deviceplatform_insights,
+    "deviceplatform_traffic_performance": deviceplatform_traffic_insights,  # v1.7 추가: 트래픽용 플랫폼 (CPC 기준)
     "brand_performance": brand_insights[:10] if len(brand_insights) > 0 else [],
     "product_performance": product_insights[:10] if len(product_insights) > 0 else [],
     "promotion_performance": promotion_insights[:10] if len(promotion_insights) > 0 else [],
