@@ -273,22 +273,72 @@
         }
 
         .insight-card {
-            padding: 20px;
-            background: linear-gradient(135deg, var(--grey-50) 0%, var(--paper) 100%);
-            border-radius: 12px;
+            padding: 16px 20px;
+            background: var(--grey-50);
+            border-radius: 10px;
             border-left: 4px solid var(--primary-main);
+            transition: all 0.2s ease;
         }
 
-        .insight-card.positive {
+        .insight-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .insight-card.positive,
+        .insight-card.low {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
             border-left-color: var(--success-main);
         }
 
-        .insight-card.negative {
+        .insight-card.negative,
+        .insight-card.high {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
             border-left-color: var(--error-main);
         }
 
-        .insight-card.neutral {
+        .insight-card.neutral,
+        .insight-card.medium {
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
             border-left-color: var(--warning-main);
+        }
+
+        .insight-card.opportunity {
+            background: linear-gradient(135deg, #e3f2fd 0%, #e1f5fe 100%);
+            border-left-color: var(--secondary-main);
+        }
+
+        /* 인사이트 카드 내부 스타일 (type_dashboard 스타일) */
+        .insight-type {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            color: var(--grey-500);
+        }
+
+        .insight-message {
+            font-size: 14px;
+            color: var(--grey-900);
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .insight-value {
+            font-size: 12px;
+            color: var(--grey-600);
+            line-height: 1.6;
+        }
+
+        /* 탭 컨텐츠 스타일 */
+        .insights-tab-content {
+            background: var(--paper);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid var(--grey-200);
         }
 
         /* Overall 성과 카드 그리드 레이아웃 */
@@ -717,6 +767,29 @@
             background: var(--primary-main);
             color: white;
             box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+        }
+
+        /* 기간 필터 적용 탭 스타일 */
+        .view-btn.period-filter-enabled {
+            position: relative;
+        }
+
+        .view-btn.period-filter-enabled::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 4px;
+            background: #673ab7;
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+
+        .view-btn.period-filter-enabled.active::before {
+            background: white;
+            opacity: 1;
         }
 
         /* 시각화 이미지 섹션 */
@@ -2018,33 +2091,70 @@
                             </div>
                         </div>
 
-                        <!-- 탭 버튼 -->
+                        <!-- 탭 버튼 (데이터 기반 의사결정 도구 스타일) -->
                         <div class="view-type-section" style="margin-bottom: 16px; flex-wrap: wrap; gap: 6px; align-items: center;">
-                            <button class="view-btn insights-tab-btn active" data-insights-tab="alerts" style="padding: 8px 14px; font-size: 12px;">
+                            <button class="view-btn insights-tab-btn period-filter-enabled active" data-insights-tab="alerts" style="padding: 8px 14px; font-size: 12px;" title="선택한 기간 필터가 적용됩니다">
                                 ⚠️ 경고 및 추천 <span id="alertsBadge" style="display: none; padding: 2px 8px; background: #ef5350; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
                             </button>
-                            <button class="view-btn insights-tab-btn" data-insights-tab="opportunities" style="padding: 8px 14px; font-size: 12px;">
+                            <button class="view-btn insights-tab-btn period-filter-enabled" data-insights-tab="opportunities" style="padding: 8px 14px; font-size: 12px;" title="선택한 기간 필터가 적용됩니다">
                                 🎯 기회 요소 <span id="opportunitiesBadge" style="display: none; padding: 2px 8px; background: #4caf50; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
                             </button>
+                            <!-- 범례 -->
+                            <div style="margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 10px; color: #6c757d;">
+                                <span style="display: flex; align-items: center; gap: 4px;">
+                                    <span style="width: 8px; height: 8px; background: #673ab7; border-radius: 2px;"></span>
+                                    기간 필터 적용
+                                </span>
+                            </div>
                         </div>
 
                         <!-- 탭 1: 경고 및 추천 -->
                         <div id="alertsTab" class="insights-tab-content" style="display: block;">
-                            <div class="compact-grid-2" style="margin-bottom: 0;">
+                            <!-- 탭 헤더 배너 -->
+                            <div style="padding: 16px 24px; background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-bottom: 1px solid #ffcc80;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="width: 40px; height: 40px; background: rgba(230, 81, 0, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                        <span style="font-size: 20px;">⚠️</span>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 15px; font-weight: 700; color: #e65100;">경고 및 추천</div>
+                                        <div style="font-size: 12px; color: #f57c00; margin-top: 2px;">주의가 필요한 항목과 개선 추천사항을 확인하세요</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 2열 그리드 컨텐츠 -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; min-height: 300px;">
                                 <!-- 주요 경고 -->
-                                <div style="padding: 24px;">
-                                    <div class="insight-header">🚨 주요 경고 <span id="alertsCountBadge" style="font-size: 12px; color: var(--grey-500); font-weight: 400;"></span></div>
-                                    <div class="insight-content" id="insightContent">
+                                <div style="padding: 24px; border-right: 1px solid var(--grey-200); background: #fafafa;">
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #ef5350;">
+                                        <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #ef5350 0%, #f44336 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                            <span style="font-size: 14px; filter: brightness(10);">🚨</span>
+                                        </div>
+                                        <div>
+                                            <span style="font-size: 14px; font-weight: 700; color: var(--grey-900);">주요 경고</span>
+                                            <span id="alertsCountBadge" style="font-size: 11px; color: var(--grey-500); font-weight: 500; margin-left: 8px;"></span>
+                                        </div>
+                                    </div>
+                                    <div class="insight-content" id="insightContent" style="display: flex; flex-direction: column; gap: 12px;">
                                         <!-- JS로 동적 생성 -->
                                     </div>
                                 </div>
 
                                 <!-- 투자 추천 -->
-                                <div style="padding: 24px;">
-                                    <div class="insight-header">💡 투자 추천 <span id="recommendationsCountBadge" style="font-size: 12px; color: var(--grey-500); font-weight: 400;"></span></div>
-                                    <div class="insight-content recommendation-list" id="recommendationContent">
+                                <div style="padding: 24px; background: #fafafa;">
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #4caf50;">
+                                        <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                            <span style="font-size: 14px; filter: brightness(10);">💡</span>
+                                        </div>
+                                        <div>
+                                            <span style="font-size: 14px; font-weight: 700; color: var(--grey-900);">투자 추천</span>
+                                            <span id="recommendationsCountBadge" style="font-size: 11px; color: var(--grey-500); font-weight: 500; margin-left: 8px;"></span>
+                                        </div>
+                                    </div>
+                                    <div class="insight-content recommendation-list" id="recommendationContent" style="display: flex; flex-direction: column; gap: 12px;">
                                         <div class="insight-card neutral">
-                                            <div class="insight-text">데이터를 불러오는 중...</div>
+                                            <div class="insight-type">로딩</div>
+                                            <div class="insight-message">데이터를 불러오는 중...</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2053,15 +2163,33 @@
 
                         <!-- 탭 2: 기회 요소 (opportunities) -->
                         <div id="opportunitiesTab" class="insights-tab-content" style="display: none;">
-                            <div style="padding: 24px;">
-                                <div style="font-size: 13px; color: var(--grey-700); padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); line-height: 1.7; border-radius: 8px; margin-bottom: 16px;">
-                                    <strong style="color: #2e7d32;">💡 기회 요소란?</strong><br>
-                                    AI가 분석한 데이터에서 <strong>성장 가능성이 높은 영역</strong>을 보여드립니다.<br>
-                                    이 기회를 활용하면 광고 성과를 더 높일 수 있습니다.
+                            <!-- 탭 헤더 배너 -->
+                            <div style="padding: 16px 24px; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-bottom: 1px solid #a5d6a7;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="width: 40px; height: 40px; background: rgba(46, 125, 50, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                        <span style="font-size: 20px;">🎯</span>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 15px; font-weight: 700; color: #2e7d32;">기회 요소</div>
+                                        <div style="font-size: 12px; color: #43a047; margin-top: 2px;">AI가 분석한 성장 가능성이 높은 영역을 확인하세요</div>
+                                    </div>
                                 </div>
-                                <div id="opportunitiesContent" class="insight-content">
-                                    <div class="insight-card neutral">
-                                        <div class="insight-text">현재 발견된 기회 요소가 없습니다.</div>
+                            </div>
+                            <!-- 컨텐츠 영역 -->
+                            <div style="padding: 24px; background: #fafafa; min-height: 250px;">
+                                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #2196f3;">
+                                    <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                        <span style="font-size: 14px; filter: brightness(10);">💎</span>
+                                    </div>
+                                    <div>
+                                        <span style="font-size: 14px; font-weight: 700; color: var(--grey-900);">성장 기회 발견</span>
+                                    </div>
+                                </div>
+                                <div id="opportunitiesContent" class="insight-content" style="display: flex; flex-direction: column; gap: 12px;">
+                                    <div class="insight-card opportunity">
+                                        <div class="insight-type">분석 중</div>
+                                        <div class="insight-message">현재 발견된 기회 요소가 없습니다.</div>
+                                        <div class="insight-value">데이터가 축적되면 성장 기회가 표시됩니다.</div>
                                     </div>
                                 </div>
                             </div>
@@ -3748,9 +3876,13 @@
                 return categories.info;
             };
 
-            // 이모지 제거 함수 (유니코드 이모지 패턴)
+            // 이모지 및 중복 접두사 제거 함수
             const removeEmoji = (text) => {
-                return text.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]/gu, '').trim();
+                // 1. 이모지 제거
+                let cleaned = text.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]/gu, '').trim();
+                // 2. 중복 접두사 제거 (카테고리 라벨과 중복되는 텍스트)
+                cleaned = cleaned.replace(/^(주의|경고|권장|추천|정보|알림|참고)\s*[:：]\s*/i, '');
+                return cleaned;
             };
 
             // 증감 강조 함수
@@ -3786,15 +3918,17 @@
                 const cleanText = highlightChanges(removeEmoji(group.main));
 
                 html += `
-                    <div style="padding: 16px; background: ${cat.bg}; border-radius: 12px; border: 1px solid ${cat.border}30;">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
-                            <span style="font-size: 18px;">${cat.icon}</span>
-                            <span style="font-size: 11px; font-weight: 600; color: ${cat.color}; text-transform: uppercase; letter-spacing: 0.5px;">${cat.label}</span>
+                    <div style="padding: 18px 20px; background: ${cat.bg}; border-radius: 12px; border-left: 4px solid ${cat.border}; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: all 0.2s ease;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                            <div style="width: 32px; height: 32px; background: ${cat.border}20; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                <span style="font-size: 16px;">${cat.icon}</span>
+                            </div>
+                            <span style="font-size: 11px; font-weight: 700; color: ${cat.color}; text-transform: uppercase; letter-spacing: 0.8px;">${cat.label}</span>
                         </div>
-                        <div style="font-size: 13px; color: var(--grey-800); line-height: 1.6;">${cleanText}</div>
+                        <div style="font-size: 14px; font-weight: 500; color: var(--grey-900); line-height: 1.7;">${cleanText}</div>
                         ${group.subLines.length > 0 ? `
-                            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed ${cat.border}40;">
-                                ${group.subLines.map(sub => `<div style="font-size: 12px; color: var(--grey-600); line-height: 1.5;">→ ${highlightChanges(sub)}</div>`).join('')}
+                            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed ${cat.border}50;">
+                                ${group.subLines.map(sub => `<div style="font-size: 13px; font-weight: 500; color: var(--grey-700); line-height: 1.6; margin-bottom: 4px;">→ ${highlightChanges(sub)}</div>`).join('')}
                             </div>
                         ` : ''}
                     </div>
