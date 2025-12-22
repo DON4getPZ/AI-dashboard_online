@@ -2864,14 +2864,16 @@ if 'type2' in dimensions:
 # Type5에서 리타겟팅 기기유형 분석
 if 'type5' in dimensions:
     type5_df = dimensions['type5'].copy()
+    # 기기유형_통합 컬럼 사용 (fallback: 기기유형)
+    device_col = '기기유형_통합' if '기기유형_통합' in type5_df.columns else '기기유형'
 
-    if '타겟팅' in type5_df.columns and '기기유형' in type5_df.columns:
+    if '타겟팅' in type5_df.columns and device_col in type5_df.columns:
         retargeting_device = type5_df[type5_df['타겟팅'] == '리타겟팅'].copy()
 
         if len(retargeting_device) > 0:
             print(f"  - Type5 리타겟팅 데이터: {len(retargeting_device)}행")
 
-            device_summary = retargeting_device.groupby('기기유형').agg({
+            device_summary = retargeting_device.groupby(device_col).agg({
                 '비용': 'sum',
                 '전환수': 'sum',
                 '전환값': 'sum'
@@ -2882,7 +2884,7 @@ if 'type5' in dimensions:
 
             for _, row in device_summary.iterrows():
                 retargeting_analysis['by_device'].append({
-                    "device": row['기기유형'],
+                    "device": row[device_col],
                     "cost": float(row['비용']),
                     "conversions": float(row['전환수']),
                     "revenue": float(row['전환값']),
@@ -2922,14 +2924,16 @@ if 'type6' in dimensions:
 # Type7에서 리타겟팅 노출기기(기기플랫폼) 분석
 if 'type7' in dimensions:
     type7_df = dimensions['type7'].copy()
+    # 기기플랫폼_통합 컬럼 사용 (fallback: 기기플랫폼)
+    deviceplatform_col = '기기플랫폼_통합' if '기기플랫폼_통합' in type7_df.columns else '기기플랫폼'
 
-    if '타겟팅' in type7_df.columns and '기기플랫폼' in type7_df.columns:
+    if '타겟팅' in type7_df.columns and deviceplatform_col in type7_df.columns:
         retargeting_deviceplatform = type7_df[type7_df['타겟팅'] == '리타겟팅'].copy()
 
         if len(retargeting_deviceplatform) > 0:
             print(f"  - Type7 리타겟팅 데이터: {len(retargeting_deviceplatform)}행")
 
-            deviceplatform_summary = retargeting_deviceplatform.groupby('기기플랫폼').agg({
+            deviceplatform_summary = retargeting_deviceplatform.groupby(deviceplatform_col).agg({
                 '비용': 'sum',
                 '전환수': 'sum',
                 '전환값': 'sum'
@@ -2940,7 +2944,7 @@ if 'type7' in dimensions:
 
             for _, row in deviceplatform_summary.iterrows():
                 retargeting_analysis['by_device_platform'].append({
-                    "device_platform": row['기기플랫폼'],
+                    "device_platform": row[deviceplatform_col],
                     "cost": float(row['비용']),
                     "conversions": float(row['전환수']),
                     "revenue": float(row['전환값']),
