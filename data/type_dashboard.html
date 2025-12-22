@@ -9243,13 +9243,13 @@
 
             let html = '';
             sortedData.forEach(item => {
-                const platformIcon = getPlatformIcon(item.deviceplatform);
+                const platformIcon = getPlatformIcon(item.platform);
                 const roasColor = item.roas >= 150 ? '#2e7d32' : item.roas >= 50 ? '#1565c0' : item.roas > 0 ? '#e65100' : '#9e9e9e';
                 const efficiencyGrade = item.roas > 0 ? getEfficiencyGrade(item.roas, maxRoas) : '<span style="background: #f5f5f5; color: #9e9e9e; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">-</span>';
 
                 html += `
                     <tr>
-                        <td style="font-weight: 500;">${platformIcon} ${item.deviceplatform}</td>
+                        <td style="font-weight: 500;">${platformIcon} ${item.platform}</td>
                         <td style="text-align: right; font-weight: 700; color: ${roasColor};">${item.roas > 0 ? formatPercent(item.roas) : '-'}</td>
                         <td style="text-align: right;">${item.cpa > 0 ? formatCurrency(item.cpa) : '-'}</td>
                         <td style="text-align: right;">${formatCurrency(item.cost)}</td>
@@ -9263,12 +9263,12 @@
             tbody.innerHTML = html;
 
             // 인사이트 업데이트
-            const platformInsight = insights.find(i => i.type === 'retargeting_best_deviceplatform');
+            const platformInsight = insights.find(i => i.type === 'retargeting_best_platform');
             const insightText = document.getElementById('platformRetargetInsightText');
             if (insightText && platformInsight) {
                 insightText.innerHTML = platformInsight.message;
             } else if (insightText && sortedData.length > 0 && sortedData[0].roas > 0) {
-                insightText.innerHTML = `<strong>${sortedData[0].deviceplatform}</strong> 기기플랫폼이 ROAS <strong>${formatPercent(sortedData[0].roas)}</strong>로 가장 높은 효율을 기록 중입니다.`;
+                insightText.innerHTML = `<strong>${sortedData[0].platform}</strong> 플랫폼이 ROAS <strong>${formatPercent(sortedData[0].roas)}</strong>로 가장 높은 효율을 기록 중입니다.`;
             }
         }
 

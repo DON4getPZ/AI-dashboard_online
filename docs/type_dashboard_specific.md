@@ -2077,3 +2077,6 @@ body {
 | 2025-12-09 | KPI 카드 디자인 업그레이드: kpi-grid 레이아웃, kpi-header/title/icon/value/trend 구조, 아이콘 이모지 추가 |
 | 2025-12-09 | KPI 카드 CSS 전면 개편: kpi-row → kpi-grid, 좌측 바 색상 → highlight 클래스, secondary 카드 스타일 추가 |
 | 2025-12-09 | 문서 업데이트: KPI 카드 컴포넌트 섹션 전면 개편 (3.1~3.6), HTML 구조 및 아이콘 매핑 테이블 추가 |
+| 2025-12-22 | 리타겟팅 분석 버그 수정: `renderPlatformRetargetTable()` 필드명 `item.deviceplatform` → `item.platform` 수정 |
+| 2025-12-22 | 리타겟팅 분석 인사이트 타입 수정: `retargeting_best_deviceplatform` → `retargeting_best_platform` |
+| 2025-12-22 | `generate_type_insights.py` 수정: 리타겟팅 분석 시 `기기유형_통합`, `기기플랫폼_통합` 컬럼 우선 사용 (fallback: 원본 컬럼) |

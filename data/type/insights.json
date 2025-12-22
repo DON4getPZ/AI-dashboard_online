@@ -3254,7 +3254,7 @@
           "based_on": "prophet_forecast"
         }
       ],
-      "generated_at": "2025-12-22T20:07:54.218962",
+      "generated_at": "2025-12-22T20:18:14.460734",
       "filter_info": {
         "days": 0,
         "label": "전체 기간",
@@ -3422,30 +3422,6 @@
         ],
         "by_device": [
           {
-            "device": "Android Smartphone",
-            "cost": 162.53446,
-            "conversions": 6.0,
-            "revenue": 520.59,
-            "roas": 320.2951546398222,
-            "cpa": 27.089076666666667
-          },
-          {
-            "device": "Android Tablet",
-            "cost": 0.1,
-            "conversions": 0.0,
-            "revenue": 0.0,
-            "roas": 0.0,
-            "cpa": 0.0
-          },
-          {
-            "device": "Desktop",
-            "cost": 0.47000000000000003,
-            "conversions": 0.0,
-            "revenue": 0.0,
-            "roas": 0.0,
-            "cpa": 0.0
-          },
-          {
             "device": "Other",
             "cost": 0.0,
             "conversions": 0.0,
@@ -3454,20 +3430,28 @@
             "cpa": 0.0
           },
           {
-            "device": "iPad",
-            "cost": 0.640343,
+            "device": "안드로이드",
+            "cost": 162.63446,
+            "conversions": 6.0,
+            "revenue": 520.59,
+            "roas": 320.0982128879698,
+            "cpa": 27.105743333333333
+          },
+          {
+            "device": "애플",
+            "cost": 188.785541,
+            "conversions": 4.0,
+            "revenue": 468.85,
+            "roas": 248.350587400123,
+            "cpa": 47.19638525
+          },
+          {
+            "device": "웹",
+            "cost": 0.47000000000000003,
             "conversions": 0.0,
             "revenue": 0.0,
             "roas": 0.0,
             "cpa": 0.0
-          },
-          {
-            "device": "iPhone",
-            "cost": 188.145198,
-            "conversions": 4.0,
-            "revenue": 468.85,
-            "roas": 249.19583650495295,
-            "cpa": 47.0362995
           }
         ],
         "by_platform": [
@@ -3522,23 +3506,15 @@
         ],
         "by_device_platform": [
           {
-            "device_platform": "Desktop",
-            "cost": 0.47000000000000003,
+            "device_platform": "Uncategorized",
+            "cost": 0.0,
             "conversions": 0.0,
             "revenue": 0.0,
             "roas": 0.0,
             "cpa": 0.0
           },
           {
-            "device_platform": "Mobile app",
-            "cost": 350.87,
-            "conversions": 10.0,
-            "revenue": 989.44,
-            "roas": 281.9961809217089,
-            "cpa": 35.087
-          },
-          {
-            "device_platform": "Mobile web",
+            "device_platform": "모바일웹",
             "cost": 0.55,
             "conversions": 0.0,
             "revenue": 0.0,
@@ -3546,8 +3522,16 @@
             "cpa": 0.0
           },
           {
-            "device_platform": "Uncategorized",
-            "cost": 0.0,
+            "device_platform": "앱",
+            "cost": 350.87,
+            "conversions": 10.0,
+            "revenue": 989.44,
+            "roas": 281.9961809217089,
+            "cpa": 35.087
+          },
+          {
+            "device_platform": "웹",
+            "cost": 0.47000000000000003,
             "conversions": 0.0,
             "revenue": 0.0,
             "roas": 0.0,
@@ -3571,10 +3555,10 @@
         },
         {
           "type": "retargeting_best_device",
-          "message": "리타겟팅에서 Android Smartphone 기기가 ROAS 320.3%로 가장 효율적입니다.",
+          "message": "리타겟팅에서 안드로이드 기기가 ROAS 320.1%로 가장 효율적입니다.",
           "severity": "opportunity",
-          "device": "Android Smartphone",
-          "value": 320.2951546398222
+          "device": "안드로이드",
+          "value": 320.0982128879698
         },
         {
           "type": "retargeting_best_platform",
@@ -3585,9 +3569,9 @@
         },
         {
           "type": "retargeting_best_device_platform",
-          "message": "리타겟팅에서 Mobile app 노출기기가 ROAS 282.0%로 가장 효율적입니다.",
+          "message": "리타겟팅에서 앱 노출기기가 ROAS 282.0%로 가장 효율적입니다.",
           "severity": "opportunity",
-          "device_platform": "Mobile app",
+          "device_platform": "앱",
           "value": 281.9961809217089
         }
       ],
@@ -6476,7 +6460,7 @@
           "based_on": "prophet_forecast"
         }
       ],
-      "generated_at": "2025-12-22T20:08:23.741147",
+      "generated_at": "2025-12-22T20:18:44.499118",
       "filter_info": {
         "days": 180,
         "label": "최근 180일",
@@ -6644,30 +6628,6 @@
         ],
         "by_device": [
           {
-            "device": "Android Smartphone",
-            "cost": 133.59446,
-            "conversions": 6.0,
-            "revenue": 520.59,
-            "roas": 389.6793325112434,
-            "cpa": 22.265743333333333
-          },
-          {
-            "device": "Android Tablet",
-            "cost": 0.1,
-            "conversions": 0.0,
-            "revenue": 0.0,
-            "roas": 0.0,
-            "cpa": 0.0
-          },
-          {
-            "device": "Desktop",
-            "cost": 0.47000000000000003,
-            "conversions": 0.0,
-            "revenue": 0.0,
-            "roas": 0.0,
-            "cpa": 0.0
-          },
-          {
             "device": "Other",
             "cost": 0.0,
             "conversions": 0.0,
@@ -6676,20 +6636,28 @@
             "cpa": 0.0
           },
           {
-            "device": "iPad",
-            "cost": 0.400343,
+            "device": "안드로이드",
+            "cost": 133.69446,
+            "conversions": 6.0,
+            "revenue": 520.59,
+            "roas": 389.3878624439637,
+            "cpa": 22.28241
+          },
+          {
+            "device": "애플",
+            "cost": 177.525541,
+            "conversions": 4.0,
+            "revenue": 468.85,
+            "roas": 264.1028425312615,
+            "cpa": 44.38138525
+          },
+          {
+            "device": "웹",
+            "cost": 0.47000000000000003,
             "conversions": 0.0,
             "revenue": 0.0,
             "roas": 0.0,
             "cpa": 0.0
-          },
-          {
-            "device": "iPhone",
-            "cost": 177.125198,
-            "conversions": 4.0,
-            "revenue": 468.85,
-            "roas": 264.69977467576354,
-            "cpa": 44.2812995
           }
         ],
         "by_platform": [
@@ -6744,23 +6712,15 @@
         ],
         "by_device_platform": [
           {
-            "device_platform": "Desktop",
-            "cost": 0.47000000000000003,
+            "device_platform": "Uncategorized",
+            "cost": 0.0,
             "conversions": 0.0,
             "revenue": 0.0,
             "roas": 0.0,
             "cpa": 0.0
           },
           {
-            "device_platform": "Mobile app",
-            "cost": 310.67,
-            "conversions": 10.0,
-            "revenue": 989.44,
-            "roas": 318.485853156082,
-            "cpa": 31.067
-          },
-          {
-            "device_platform": "Mobile web",
+            "device_platform": "모바일웹",
             "cost": 0.55,
             "conversions": 0.0,
             "revenue": 0.0,
@@ -6768,8 +6728,16 @@
             "cpa": 0.0
           },
           {
-            "device_platform": "Uncategorized",
-            "cost": 0.0,
+            "device_platform": "앱",
+            "cost": 310.67,
+            "conversions": 10.0,
+            "revenue": 989.44,
+            "roas": 318.485853156082,
+            "cpa": 31.067
+          },
+          {
+            "device_platform": "웹",
+            "cost": 0.47000000000000003,
             "conversions": 0.0,
             "revenue": 0.0,
             "roas": 0.0,
@@ -6793,10 +6761,10 @@
         },
         {
           "type": "retargeting_best_device",
-          "message": "리타겟팅에서 Android Smartphone 기기가 ROAS 389.7%로 가장 효율적입니다.",
+          "message": "리타겟팅에서 안드로이드 기기가 ROAS 389.4%로 가장 효율적입니다.",
           "severity": "opportunity",
-          "device": "Android Smartphone",
-          "value": 389.6793325112434
+          "device": "안드로이드",
+          "value": 389.3878624439637
         },
         {
           "type": "retargeting_best_platform",
@@ -6807,9 +6775,9 @@
         },
         {
           "type": "retargeting_best_device_platform",
-          "message": "리타겟팅에서 Mobile app 노출기기가 ROAS 318.5%로 가장 효율적입니다.",
+          "message": "리타겟팅에서 앱 노출기기가 ROAS 318.5%로 가장 효율적입니다.",
           "severity": "opportunity",
-          "device_platform": "Mobile app",
+          "device_platform": "앱",
           "value": 318.485853156082
         }
       ],
@@ -9259,7 +9227,7 @@
           "based_on": "prophet_forecast"
         }
       ],
-      "generated_at": "2025-12-22T20:09:07.433327",
+      "generated_at": "2025-12-22T20:19:30.060847",
       "filter_info": {
         "days": 90,
         "label": "최근 90일",
@@ -9427,30 +9395,6 @@
         ],
         "by_device": [
           {
-            "device": "Android Smartphone",
-            "cost": 71.54696,
-            "conversions": 2.0,
-            "revenue": 168.95,
-            "roas": 236.1386144149241,
-            "cpa": 35.77348
-          },
-          {
-            "device": "Android Tablet",
-            "cost": 0.06,
-            "conversions": 0.0,
-            "revenue": 0.0,
-            "roas": 0.0,
-            "cpa": 0.0
-          },
-          {
-            "device": "Desktop",
-            "cost": 0.0,
-            "conversions": 0.0,
-            "revenue": 0.0,
-            "roas": 0.0,
-            "cpa": 0.0
-          },
-          {
             "device": "Other",
             "cost": 0.0,
             "conversions": 0.0,
@@ -9459,20 +9403,28 @@
             "cpa": 0.0
           },
           {
-            "device": "iPad",
-            "cost": 0.169981,
+            "device": "안드로이드",
+            "cost": 71.60696,
+            "conversions": 2.0,
+            "revenue": 168.95,
+            "roas": 235.9407521280054,
+            "cpa": 35.80348
+          },
+          {
+            "device": "애플",
+            "cost": 116.113041,
+            "conversions": 3.0,
+            "revenue": 374.23,
+            "roas": 322.29799235040275,
+            "cpa": 38.704347
+          },
+          {
+            "device": "웹",
+            "cost": 0.0,
             "conversions": 0.0,
             "revenue": 0.0,
             "roas": 0.0,
             "cpa": 0.0
-          },
-          {
-            "device": "iPhone",
-            "cost": 115.94306,
-            "conversions": 3.0,
-            "revenue": 374.23,
-            "roas": 322.7705047632864,
-            "cpa": 38.647686666666665
           }
         ],
         "by_platform": [
@@ -9519,7 +9471,7 @@
         ],
         "by_device_platform": [
           {
-            "device_platform": "Desktop",
+            "device_platform": "Uncategorized",
             "cost": 0.0,
             "conversions": 0.0,
             "revenue": 0.0,
@@ -9527,7 +9479,7 @@
             "cpa": 0.0
           },
           {
-            "device_platform": "Mobile app",
+            "device_platform": "앱",
             "cost": 187.72,
             "conversions": 5.0,
             "revenue": 543.18,
@@ -9535,7 +9487,7 @@
             "cpa": 37.544
           },
           {
-            "device_platform": "Uncategorized",
+            "device_platform": "웹",
             "cost": 0.0,
             "conversions": 0.0,
             "revenue": 0.0,
@@ -9560,10 +9512,10 @@
         },
         {
           "type": "retargeting_best_device",
-          "message": "리타겟팅에서 iPhone 기기가 ROAS 322.8%로 가장 효율적입니다.",
+          "message": "리타겟팅에서 애플 기기가 ROAS 322.3%로 가장 효율적입니다.",
           "severity": "opportunity",
-          "device": "iPhone",
-          "value": 322.7705047632864
+          "device": "애플",
+          "value": 322.29799235040275
         },
         {
           "type": "retargeting_best_platform",
@@ -9574,9 +9526,9 @@
         },
         {
           "type": "retargeting_best_device_platform",
-          "message": "리타겟팅에서 Mobile app 노출기기가 ROAS 289.4%로 가장 효율적입니다.",
+          "message": "리타겟팅에서 앱 노출기기가 ROAS 289.4%로 가장 효율적입니다.",
           "severity": "opportunity",
-          "device_platform": "Mobile app",
+          "device_platform": "앱",
           "value": 289.35648838695926
         }
       ],
@@ -13095,7 +13047,7 @@
       }
     ]
   },
-  "generated_at": "2025-12-22T20:09:07.538510",
+  "generated_at": "2025-12-22T20:19:30.158755",
   "available_periods": [
     {
       "key": "full",
