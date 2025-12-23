@@ -1,5 +1,7 @@
 import os
 import json
+import base64
+import re
 from pathlib import Path
 
 # Base directory
@@ -7,6 +9,58 @@ BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / 'data'
 
 print("📦 Starting standalone dashboard generation...")
+
+# ========================================
+# Image embedding helper function
+# ========================================
+def get_mime_type(file_path):
+    """Get MIME type based on file extension"""
+    ext = file_path.suffix.lower()
+    mime_types = {
+        '.png': 'image/png',
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.gif': 'image/gif',
+        '.svg': 'image/svg+xml',
+        '.webp': 'image/webp',
+        '.ico': 'image/x-icon'
+    }
+    return mime_types.get(ext, 'application/octet-stream')
+
+def embed_images_in_html(html_content, base_dir):
+    """Find all image tags and convert local images to base64 data URLs"""
+    # Pattern to match img src attributes
+    img_pattern = re.compile(r'<img\s+[^>]*src=["\']([^"\']+)["\']', re.IGNORECASE)
+
+    def replace_image(match):
+        full_match = match.group(0)
+        src = match.group(1)
+
+        # Skip already embedded images (data URLs) and external URLs
+        if src.startswith('data:') or src.startswith('http://') or src.startswith('https://'):
+            return full_match
+
+        # Resolve the image path
+        img_path = base_dir / src
+
+        if img_path.exists():
+            try:
+                with open(img_path, 'rb') as img_file:
+                    img_data = img_file.read()
+                    img_base64 = base64.b64encode(img_data).decode('utf-8')
+                    mime_type = get_mime_type(img_path)
+                    data_url = f'data:{mime_type};base64,{img_base64}'
+                    new_tag = full_match.replace(src, data_url)
+                    print(f"    ✓ Embedded image: {src} ({len(img_data):,} bytes)")
+                    return new_tag
+            except Exception as e:
+                print(f"    ✗ Failed to embed image: {src} - {e}")
+                return full_match
+        else:
+            print(f"    ✗ Image not found: {src}")
+            return full_match
+
+    return img_pattern.sub(replace_image, html_content)
 
 # ========================================
 # Step 1: Read all JSON files
@@ -249,6 +303,10 @@ for key, filename in html_files.items():
         # Inject CSS and JavaScript before </head>
         if '</head>' in html_content:
             html_content = html_content.replace('</head>', f'{embedded_css}{embedded_js}</head>')
+
+        # Embed local images as base64 data URLs
+        print(f"  📷 Embedding images for {filename}...")
+        html_content = embed_images_in_html(html_content, DATA_DIR)
 
         modified_html[key] = html_content
         print(f"  ✓ {filename} ({len(html_content):,} bytes)")

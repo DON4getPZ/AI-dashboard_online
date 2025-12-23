@@ -126,9 +126,22 @@
 #### 2.5 AI 예측 탭
 | 항목 | 내용 |
 |------|------|
-| **JS 함수** | `renderForecastTab()`, `generateAIOpportunities()`, `generateAIActions()`, `initForecastSubtabs()`, `initForecastAccordions()` |
-| **참조 데이터** | `insights.json` → `prophet_forecast`, `summary`, `top_categories`, `gender_performance`, `product_performance`, `device_performance` |
-| **기능** | - Prophet 예측 데이터 시각화<br>- AI가 발견한 기회<br>- AI 추천 액션<br>- 채널별 ROAS 순위 |
+| **JS 함수** | `renderForecastTab()`, `generateAIOpportunities()`, `generateAIActions()`, `initForecastSubtabs()`, `initForecastAccordions()`, `renderForecastSubtab()` |
+| **참조 데이터** | `insights.json` → `prophet_forecast` (향후 30일 예측 데이터) |
+| **폴백 데이터** | forecast 없는 경우: `summary`, `top_categories`, `gender_performance`, `product_performance` |
+| **기능** | - 핵심 성과 요약 (예측 ROAS/CPA/전환)<br>- 최적 타겟 (기기/성별/연령)<br>- 서브탭 (상품별/성별&연령/기기플랫폼/채널)<br>- AI가 발견한 기회<br>- AI 추천 액션 |
+
+**데이터 소스 상세:**
+| 섹션 | 데이터 소스 (forecast 있는 경우) |
+|------|--------------------------------|
+| 핵심 성과 요약 | `prophet_forecast.summary.overall.avg_forecast_roas/cpa`, `total_forecast_conversions` |
+| 최적 타겟 | `prophet_forecast.by_device/by_gender/by_age` → `avg_forecast_roas` |
+| 서브탭 - 상품별 | `prophet_forecast.by_product` → `avg_forecast_roas/cpa` |
+| 서브탭 - 성별&연령 | `prophet_forecast.by_gender/by_age` → `avg_forecast_roas` |
+| 서브탭 - 기기플랫폼 | `prophet_forecast.by_deviceplatform` → `avg_forecast_roas` |
+| 서브탭 - 채널 | `prophet_forecast.by_category` → `avg_forecast_roas` |
+| AI가 발견한 기회 | `prophet_forecast.by_deviceplatform/by_category/by_gender/by_product` |
+| AI 추천 액션 | `prophet_forecast.by_product/by_deviceplatform/by_category` |
 
 #### 2.6 계절성 분석 탭
 | 항목 | 내용 |
@@ -2213,3 +2226,9 @@ body {
 | 2025-12-23 | '성과 추이 분석' 탭 순서: 광고세트→성별→연령→플랫폼→기기플랫폼→기기 (6개) |
 | 2025-12-23 | '성과 테이블 분석' 탭 순서: 광고세트→성별→연령→성별연령→플랫폼→기기플랫폼→기기 (7개) |
 | 2025-12-23 | perfTableState 업데이트: `genderAge` 상태 객체 추가 (filters, startDate, endDate) |
+| 2025-12-23 | **AI 예측 탭 데이터 소스 전면 변경**: 모든 데이터를 `prophet_forecast` (향후 30일 예측) 기준으로 수정 |
+| 2025-12-23 | AI 예측 - 핵심 성과 요약: `summary.overall_roas/cpa` → `forecast.summary.overall.avg_forecast_roas/cpa` |
+| 2025-12-23 | AI 예측 - 최적 타겟: `periodData.device/gender/age_performance` → `forecast.by_device/gender/age.avg_forecast_roas` |
+| 2025-12-23 | AI 예측 - generateAIOpportunities(): `periodData` 기반 → `forecast.by_*` 기반으로 변경 |
+| 2025-12-23 | AI 예측 - generateAIActions(): `periodData` 기반 → `forecast.by_*` 기반으로 변경 |
+| 2025-12-23 | AI 예측 - 라벨 변경: '전체 ROAS/CPA' → '예측 ROAS/CPA', '전환 수' → '예측 전환' |

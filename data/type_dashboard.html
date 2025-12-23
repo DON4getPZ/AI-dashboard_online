@@ -8085,94 +8085,80 @@
                 </div>
             `;
 
-            // 1. 핵심 성과 요약 (선택된 기간의 실제 데이터) - 기간별로 다른 데이터 표시
-            if (periodData && periodData.summary) {
-                const summary = periodData.summary;
-                const actualRoas = summary.overall_roas || 0;
-                const actualCpa = summary.overall_cpa || 0;
-                const isPositiveRoas = actualRoas >= 100;
-                const totalConversions = summary.total_conversions || 0;
+            // 1. 핵심 성과 요약 (향후 30일 예측 데이터) - 기간별로 다른 예측 데이터 표시
+            if (forecast && forecast.summary && forecast.summary.overall) {
+                const forecastSummary = forecast.summary.overall;
+                const forecastRoas = forecastSummary.avg_forecast_roas || 0;
+                const forecastCpa = forecastSummary.avg_forecast_cpa || 0;
+                const isPositiveRoas = forecastRoas >= 100;
+                const forecastConversions = forecastSummary.total_forecast_conversions || 0;
 
                 html += `
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px;">
                         <div style="padding: 14px; background: ${isPositiveRoas ? 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)' : 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)'}; border-radius: 10px; text-align: center;">
                             <div style="font-size: 10px; color: ${isPositiveRoas ? '#2e7d32' : '#c62828'}; font-weight: 600; margin-bottom: 2px;">
-                                ${isPositiveRoas ? '📈 현재 ROAS' : '📉 현재 ROAS'}
+                                ${isPositiveRoas ? '📈 예측 ROAS' : '📉 예측 ROAS'}
                             </div>
-                            <div style="font-size: 22px; font-weight: 800; color: ${isPositiveRoas ? '#1b5e20' : '#b71c1c'};">${actualRoas.toFixed(0)}%</div>
+                            <div style="font-size: 22px; font-weight: 800; color: ${isPositiveRoas ? '#1b5e20' : '#b71c1c'};">${forecastRoas.toFixed(0)}%</div>
                         </div>
                         <div style="padding: 14px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 10px; text-align: center;">
-                            <div style="font-size: 10px; color: #1565c0; font-weight: 600; margin-bottom: 2px;">💰 현재 CPA</div>
-                            <div style="font-size: 18px; font-weight: 800; color: #0d47a1;">${formatCurrency(actualCpa)}</div>
+                            <div style="font-size: 10px; color: #1565c0; font-weight: 600; margin-bottom: 2px;">💰 예측 CPA</div>
+                            <div style="font-size: 18px; font-weight: 800; color: #0d47a1;">${formatCurrency(forecastCpa)}</div>
                         </div>
                         <div style="padding: 14px; background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-radius: 10px; text-align: center;">
-                            <div style="font-size: 10px; color: #e65100; font-weight: 600; margin-bottom: 2px;">🎯 전환 수</div>
-                            <div style="font-size: 16px; font-weight: 700; color: #bf360c;">${formatNumber(totalConversions)}</div>
+                            <div style="font-size: 10px; color: #e65100; font-weight: 600; margin-bottom: 2px;">🎯 예측 전환</div>
+                            <div style="font-size: 16px; font-weight: 700; color: #bf360c;">${forecastConversions.toFixed(0)}</div>
                         </div>
                     </div>
                 `;
             }
 
-            // 2. 최적 타겟 (선택된 기간의 실제 데이터 사용) - 기간별로 다른 데이터 표시
+            // 2. 최적 타겟 (향후 30일 예측 데이터 사용)
             html += `<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">`;
 
-            // 최적 기기유형 (periodData 사용)
-            if (periodData && periodData.device_performance && periodData.device_performance.length > 0) {
-                const validDevices = periodData.device_performance.filter(d => d.cost > 0 && d.device !== 'Uncategorized' && d.device !== 'unknown');
+            // 최적 기기유형 (forecast.by_device 사용)
+            if (forecast.by_device && forecast.by_device.length > 0) {
+                const validDevices = forecast.by_device.filter(d => d.device !== 'Uncategorized' && d.device !== 'unknown');
                 if (validDevices.length > 0) {
-                    const sortedDevices = [...validDevices].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                    const sortedDevices = [...validDevices].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
                     const topDevice = sortedDevices[0];
                     html += `
                         <div style="padding: 12px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 10px; text-align: center;">
                             <div style="font-size: 9px; color: #1565c0; font-weight: 600; margin-bottom: 2px;">📱 최적 기기</div>
                             <div style="font-size: 12px; font-weight: 700; color: #0d47a1;">${topDevice.device}</div>
-                            <div style="font-size: 10px; color: #1565c0;">ROAS ${(topDevice.roas || 0).toFixed(0)}%</div>
+                            <div style="font-size: 10px; color: #1565c0;">ROAS ${(topDevice.avg_forecast_roas || 0).toFixed(0)}%</div>
                         </div>
                     `;
                 }
             }
 
-            // 최적 성별 (periodData 사용)
-            if (periodData && periodData.gender_performance && periodData.gender_performance.length > 0) {
-                const validGenders = periodData.gender_performance.filter(g => g.cost > 0 && isValidGender(g.gender));
+            // 최적 성별 (forecast.by_gender 사용)
+            if (forecast.by_gender && forecast.by_gender.length > 0) {
+                const validGenders = forecast.by_gender.filter(g => isValidGender(g.gender));
                 if (validGenders.length > 0) {
-                    const sorted = [...validGenders].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                    const sorted = [...validGenders].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
                     const top = sorted[0];
                     html += `
                         <div style="padding: 12px; background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); border-radius: 10px; text-align: center;">
                             <div style="font-size: 9px; color: #c2185b; font-weight: 600; margin-bottom: 2px;">👫 최적 성별</div>
                             <div style="font-size: 12px; font-weight: 700; color: #880e4f;">${normalizeGender(top.gender) || top.gender}</div>
-                            <div style="font-size: 10px; color: #c2185b;">ROAS ${(top.roas || 0).toFixed(0)}%</div>
+                            <div style="font-size: 10px; color: #c2185b;">ROAS ${(top.avg_forecast_roas || 0).toFixed(0)}%</div>
                         </div>
                     `;
                 }
             }
 
-            // 최적 연령 (periodData 사용) - age_gender_combinations에서 추출
-            if (periodData && periodData.age_gender_combinations && periodData.age_gender_combinations.length > 0) {
-                // 연령별로 그룹핑하여 ROAS 계산
-                const ageGroups = {};
-                periodData.age_gender_combinations.forEach(item => {
-                    const age = item.age;
-                    if (!ageGroups[age]) {
-                        ageGroups[age] = {age: age, totalRevenue: 0, totalCost: 0};
-                    }
-                    ageGroups[age].totalRevenue += item.revenue || 0;
-                    ageGroups[age].totalCost += item.cost || 0;
-                });
-                const agePerformance = Object.values(ageGroups).map(g => ({
-                    age: g.age,
-                    roas: g.totalCost > 0 ? (g.totalRevenue / g.totalCost * 100) : 0
-                })).filter(a => isValidAge(a.age) && a.roas > 0);
-
-                if (agePerformance.length > 0) {
-                    const sorted = agePerformance.sort((a, b) => b.roas - a.roas);
+            // 최적 연령 (forecast.by_age 사용)
+            if (forecast.by_age && forecast.by_age.length > 0) {
+                const validAges = forecast.by_age.filter(a => isValidAge(a.age));
+                if (validAges.length > 0) {
+                    const sorted = [...validAges].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
                     const top = sorted[0];
                     html += `
                         <div style="padding: 12px; background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%); border-radius: 10px; text-align: center;">
                             <div style="font-size: 9px; color: #3949ab; font-weight: 600; margin-bottom: 2px;">👤 최적 연령</div>
                             <div style="font-size: 11px; font-weight: 700; color: #1a237e;">${top.age}</div>
-                            <div style="font-size: 10px; color: #3949ab;">ROAS ${top.roas.toFixed(0)}%</div>
+                            <div style="font-size: 10px; color: #3949ab;">ROAS ${(top.avg_forecast_roas || 0).toFixed(0)}%</div>
                         </div>
                     `;
                 }
@@ -8350,84 +8336,85 @@
             }
         }
 
-        // AI가 발견한 기회 데이터 생성 (5개) - periodData 기반
+        // AI가 발견한 기회 데이터 생성 (5개) - forecast 기반 (향후 30일 예측)
         function generateAIOpportunities(forecast) {
             const opportunities = [];
-            const periodData = getPeriodData();
+
+            if (!forecast) return opportunities;
 
             try {
-                // 1. 최고 성과 기기플랫폼 기회
-                if (periodData && periodData.deviceplatform_performance && periodData.deviceplatform_performance.length > 0) {
-                    const validPlatforms = periodData.deviceplatform_performance.filter(p => p.cost > 0 && p.deviceplatform !== 'Uncategorized');
+                // 1. 최고 성과 기기플랫폼 기회 (forecast.by_deviceplatform)
+                if (forecast.by_deviceplatform && forecast.by_deviceplatform.length > 0) {
+                    const validPlatforms = forecast.by_deviceplatform.filter(p => p.deviceplatform !== 'Uncategorized');
                     if (validPlatforms.length > 0) {
-                        const sorted = [...validPlatforms].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                        const sorted = [...validPlatforms].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
                         const top = sorted[0];
-                        if (top && (top.roas || 0) >= 100) {
+                        if (top && (top.avg_forecast_roas || 0) >= 100) {
                             opportunities.push({
                                 icon: '📱',
-                                title: top.deviceplatform + ' 기기플랫폼 고효율 기회',
-                                description: top.deviceplatform + '에서 ROAS ' + (top.roas || 0).toFixed(0) + '%로 가장 높은 효율을 보이고 있습니다. 해당 기기플랫폼의 예산을 확대하면 전체 캠페인 성과 개선이 기대됩니다.',
-                                metric: 'ROAS ' + (top.roas || 0).toFixed(0) + '%'
+                                title: top.deviceplatform + ' 기기플랫폼 고효율 예측',
+                                description: top.deviceplatform + '에서 향후 30일 예측 ROAS ' + (top.avg_forecast_roas || 0).toFixed(0) + '%로 높은 효율이 예상됩니다. 해당 기기플랫폼의 예산을 확대하면 성과 개선이 기대됩니다.',
+                                metric: '예측 ROAS ' + (top.avg_forecast_roas || 0).toFixed(0) + '%'
                             });
                         }
                     }
                 }
 
-                // 2. 고성과 채널 기회
-                if (periodData && periodData.top_categories && periodData.top_categories.length > 0) {
-                    const sorted = [...periodData.top_categories].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                // 2. 고성과 채널 기회 (forecast.by_category)
+                if (forecast.by_category && forecast.by_category.length > 0) {
+                    const sorted = [...forecast.by_category].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
                     const top = sorted[0];
-                    if (top && (top.roas || 0) >= 100) {
+                    if (top && (top.avg_forecast_roas || 0) >= 100) {
                         opportunities.push({
                             icon: '📊',
-                            title: top.name + ' 채널 확대 기회',
-                            description: top.name + ' 채널의 ROAS가 ' + (top.roas || 0).toFixed(0) + '%로 매우 높습니다. 이 채널에 예산을 집중하면 높은 수익을 기대할 수 있습니다.',
-                            metric: 'ROAS ' + (top.roas || 0).toFixed(0) + '%'
+                            title: top.category + ' 채널 확대 기회',
+                            description: top.category + ' 채널의 향후 30일 예측 ROAS가 ' + (top.avg_forecast_roas || 0).toFixed(0) + '%로 매우 높습니다. 이 채널에 예산을 집중하면 높은 수익을 기대할 수 있습니다.',
+                            metric: '예측 ROAS ' + (top.avg_forecast_roas || 0).toFixed(0) + '%'
                         });
                     }
                 }
 
-                // 3. 최적 성별 기회
-                if (periodData && periodData.gender_performance && periodData.gender_performance.length > 0) {
-                    const validGenders = periodData.gender_performance.filter(function(g) { return g.cost > 0 && isValidGender(g.gender); });
+                // 3. 최적 성별 기회 (forecast.by_gender)
+                if (forecast.by_gender && forecast.by_gender.length > 0) {
+                    const validGenders = forecast.by_gender.filter(function(g) { return isValidGender(g.gender); });
                     if (validGenders.length > 0) {
-                        const sorted = [...validGenders].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                        const sorted = [...validGenders].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
                         const top = sorted[0];
-                        if (top && (top.roas || 0) >= 100) {
+                        if (top && (top.avg_forecast_roas || 0) >= 100) {
                             const genderName = normalizeGender(top.gender) || top.gender;
                             opportunities.push({
                                 icon: '👫',
                                 title: genderName + ' 타겟 확대 기회',
-                                description: genderName + ' 타겟에서 ROAS ' + (top.roas || 0).toFixed(0) + '%로 우수한 성과를 보이고 있습니다. 성별 맞춤 메시지 전략을 강화하세요.',
-                                metric: 'ROAS ' + (top.roas || 0).toFixed(0) + '%'
+                                description: genderName + ' 타겟에서 향후 30일 예측 ROAS ' + (top.avg_forecast_roas || 0).toFixed(0) + '%로 우수한 성과가 예상됩니다. 성별 맞춤 메시지 전략을 강화하세요.',
+                                metric: '예측 ROAS ' + (top.avg_forecast_roas || 0).toFixed(0) + '%'
                             });
                         }
                     }
                 }
 
-                // 4. 고성과 상품 기회
-                if (periodData && periodData.product_performance && periodData.product_performance.length > 0) {
-                    const sorted = [...periodData.product_performance].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                // 4. 고성과 상품 기회 (forecast.by_product)
+                if (forecast.by_product && forecast.by_product.length > 0) {
+                    const sorted = [...forecast.by_product].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
                     const top = sorted[0];
-                    if (top && (top.roas || 0) >= 100) {
+                    if (top && (top.avg_forecast_roas || 0) >= 100) {
                         opportunities.push({
                             icon: '🛍️',
                             title: top.product + ' 상품 확대 기회',
-                            description: top.product + ' 상품의 ROAS가 ' + (top.roas || 0).toFixed(0) + '%로 가장 높습니다. 해당 상품 중심의 프로모션 및 광고 예산 집중을 권장합니다.',
-                            metric: 'ROAS ' + (top.roas || 0).toFixed(0) + '%'
+                            description: top.product + ' 상품의 향후 30일 예측 ROAS가 ' + (top.avg_forecast_roas || 0).toFixed(0) + '%로 가장 높습니다. 해당 상품 중심의 프로모션 및 광고 예산 집중을 권장합니다.',
+                            metric: '예측 ROAS ' + (top.avg_forecast_roas || 0).toFixed(0) + '%'
                         });
                     }
                 }
 
-                // 5. 전체 성과 기회
-                if (periodData && periodData.summary) {
-                    const overallRoas = periodData.summary.overall_roas || 0;
+                // 5. 전체 예측 성과 기회 (forecast.summary.overall)
+                if (forecast.summary && forecast.summary.overall) {
+                    const overallRoas = forecast.summary.overall.avg_forecast_roas || 0;
                     if (overallRoas >= 100) {
                         opportunities.push({
                             icon: '📈',
                             title: '전체 캠페인 성장 기회',
-                            description: '전체 ROAS가 ' + overallRoas.toFixed(0) + '%로 양호합니다. 현재 전략을 유지하면서 고효율 채널에 추가 투자를 검토하세요.',
-                            metric: '전체 ROAS ' + overallRoas.toFixed(0) + '%'
+                            description: '향후 30일 예측 ROAS가 ' + overallRoas.toFixed(0) + '%로 양호합니다. 현재 전략을 유지하면서 고효율 채널에 추가 투자를 검토하세요.',
+                            metric: '예측 ROAS ' + overallRoas.toFixed(0) + '%'
                         });
                     }
                 }
@@ -8437,7 +8424,7 @@
 
             // 최소 5개 보장 - 기본값 추가
             const defaults = [
-                { icon: '🎯', title: '타겟 최적화 기회', description: '현재 데이터를 기반으로 타겟팅 전략을 개선하면 더 높은 성과를 기대할 수 있습니다.', metric: null },
+                { icon: '🎯', title: '타겟 최적화 기회', description: '예측 데이터를 기반으로 타겟팅 전략을 개선하면 더 높은 성과를 기대할 수 있습니다.', metric: null },
                 { icon: '💰', title: '예산 재배분 기회', description: '고효율 채널로 예산을 재배분하여 전체 ROAS를 개선할 수 있는 기회가 있습니다.', metric: null },
                 { icon: '🔄', title: '크리에이티브 갱신 기회', description: '새로운 크리에이티브 테스트를 통해 광고 피로도를 낮추고 성과를 개선할 수 있습니다.', metric: null },
                 { icon: '📊', title: '데이터 기반 최적화 기회', description: 'A/B 테스트를 통해 더 효과적인 광고 소재와 타겟을 발굴할 기회가 있습니다.', metric: null },
@@ -8453,38 +8440,39 @@
             return opportunities.slice(0, 5);
         }
 
-        // AI 추천 액션 데이터 생성 (5개) - periodData 기반
+        // AI 추천 액션 데이터 생성 (5개) - forecast 기반 (향후 30일 예측)
         function generateAIActions(forecast) {
             const actions = [];
-            const periodData = getPeriodData();
+
+            if (!forecast) return actions;
 
             try {
-                // 1. 저효율 상품 개선 액션
-                if (periodData && periodData.product_performance && periodData.product_performance.length > 0) {
-                    const sorted = [...periodData.product_performance].sort((a, b) => (a.roas || 0) - (b.roas || 0));
+                // 1. 저효율 상품 개선 액션 (forecast.by_product)
+                if (forecast.by_product && forecast.by_product.length > 0) {
+                    const sorted = [...forecast.by_product].sort((a, b) => (a.avg_forecast_roas || 0) - (b.avg_forecast_roas || 0));
                     const worst = sorted[0];
-                    if (worst && (worst.roas || 0) < 100) {
+                    if (worst && (worst.avg_forecast_roas || 0) < 100) {
                         actions.push({
                             icon: '🔧',
                             title: worst.product + ' 상품 광고 개선',
-                            description: worst.product + '의 ROAS가 ' + (worst.roas || 0).toFixed(0) + '%로 낮습니다. 타겟 재설정, 크리에이티브 교체, 또는 예산 축소를 검토하세요.',
+                            description: worst.product + '의 향후 30일 예측 ROAS가 ' + (worst.avg_forecast_roas || 0).toFixed(0) + '%로 낮습니다. 타겟 재설정, 크리에이티브 교체, 또는 예산 축소를 검토하세요.',
                             priority: 'high',
                             expectedEffect: 'CPA 15~20% 개선'
                         });
                     }
                 }
 
-                // 2. 고효율 기기플랫폼 예산 확대 액션
-                if (periodData && periodData.deviceplatform_performance && periodData.deviceplatform_performance.length > 0) {
-                    const validPlatforms = periodData.deviceplatform_performance.filter(function(p) { return p.cost > 0 && p.deviceplatform !== 'Uncategorized'; });
+                // 2. 고효율 기기플랫폼 예산 확대 액션 (forecast.by_deviceplatform)
+                if (forecast.by_deviceplatform && forecast.by_deviceplatform.length > 0) {
+                    const validPlatforms = forecast.by_deviceplatform.filter(function(p) { return p.deviceplatform !== 'Uncategorized'; });
                     if (validPlatforms.length > 0) {
-                        const sorted = [...validPlatforms].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                        const sorted = [...validPlatforms].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
                         const top = sorted[0];
-                        if (top && (top.roas || 0) >= 150) {
+                        if (top && (top.avg_forecast_roas || 0) >= 150) {
                             actions.push({
                                 icon: '💵',
                                 title: top.deviceplatform + ' 예산 20% 증액',
-                                description: top.deviceplatform + '의 ROAS가 ' + (top.roas || 0).toFixed(0) + '%로 매우 높습니다. 해당 기기플랫폼 예산을 20% 증액하여 성과를 극대화하세요.',
+                                description: top.deviceplatform + '의 향후 30일 예측 ROAS가 ' + (top.avg_forecast_roas || 0).toFixed(0) + '%로 매우 높습니다. 해당 기기플랫폼 예산을 20% 증액하여 성과를 극대화하세요.',
                                 priority: 'high',
                                 expectedEffect: '매출 증가 기대'
                             });
@@ -8492,32 +8480,32 @@
                     }
                 }
 
-                // 3. 고효율 채널 집중 액션
-                if (periodData && periodData.top_categories && periodData.top_categories.length > 0) {
-                    const sorted = [...periodData.top_categories].sort((a, b) => (b.roas || 0) - (a.roas || 0));
+                // 3. 고효율 채널 집중 액션 (forecast.by_category)
+                if (forecast.by_category && forecast.by_category.length > 0) {
+                    const sorted = [...forecast.by_category].sort((a, b) => (b.avg_forecast_roas || 0) - (a.avg_forecast_roas || 0));
                     const top = sorted[0];
                     if (top) {
                         actions.push({
                             icon: '🎯',
-                            title: top.name + ' 채널 캠페인 강화',
-                            description: top.name + ' 채널의 성과가 가장 우수합니다(ROAS ' + (top.roas || 0).toFixed(0) + '%). 해당 채널 전용 캠페인을 신설하거나 기존 캠페인의 예산 비중을 높이세요.',
+                            title: top.category + ' 채널 캠페인 강화',
+                            description: top.category + ' 채널의 향후 30일 예측 성과가 가장 우수합니다(ROAS ' + (top.avg_forecast_roas || 0).toFixed(0) + '%). 해당 채널 전용 캠페인을 신설하거나 기존 캠페인의 예산 비중을 높이세요.',
                             priority: 'medium',
                             expectedEffect: 'ROAS 10~15% 개선'
                         });
                     }
                 }
 
-                // 4. 저효율 기기플랫폼 개선 또는 축소 액션
-                if (periodData && periodData.deviceplatform_performance && periodData.deviceplatform_performance.length > 1) {
-                    const validPlatforms = periodData.deviceplatform_performance.filter(function(p) { return p.cost > 10000 && p.deviceplatform !== 'Uncategorized'; });
+                // 4. 저효율 기기플랫폼 개선 또는 축소 액션 (forecast.by_deviceplatform)
+                if (forecast.by_deviceplatform && forecast.by_deviceplatform.length > 1) {
+                    const validPlatforms = forecast.by_deviceplatform.filter(function(p) { return p.deviceplatform !== 'Uncategorized'; });
                     if (validPlatforms.length > 0) {
-                        const sorted = [...validPlatforms].sort((a, b) => (a.roas || 0) - (b.roas || 0));
+                        const sorted = [...validPlatforms].sort((a, b) => (a.avg_forecast_roas || 0) - (b.avg_forecast_roas || 0));
                         const worst = sorted[0];
-                        if (worst && (worst.roas || 0) < 100) {
+                        if (worst && (worst.avg_forecast_roas || 0) < 100) {
                             actions.push({
                                 icon: '⚠️',
                                 title: worst.deviceplatform + ' 예산 재검토',
-                                description: worst.deviceplatform + '의 ROAS가 ' + (worst.roas || 0).toFixed(0) + '%로 손익분기점 미달입니다. 타겟 및 소재 최적화 후에도 개선되지 않으면 예산 축소를 고려하세요.',
+                                description: worst.deviceplatform + '의 향후 30일 예측 ROAS가 ' + (worst.avg_forecast_roas || 0).toFixed(0) + '%로 손익분기점 미달입니다. 타겟 및 소재 최적화 후에도 개선되지 않으면 예산 축소를 고려하세요.',
                                 priority: 'medium',
                                 expectedEffect: '비용 효율화'
                             });
@@ -8525,13 +8513,13 @@
                     }
                 }
 
-                // 5. 전체 전략 액션
-                if (periodData && periodData.summary) {
-                    const avgCpa = periodData.summary.overall_cpa || 0;
+                // 5. 전체 전략 액션 (forecast.summary.overall)
+                if (forecast.summary && forecast.summary.overall) {
+                    const avgCpa = forecast.summary.overall.avg_forecast_cpa || 0;
                     actions.push({
                         icon: '📋',
                         title: 'CPA 기반 입찰 전략 최적화',
-                        description: '전체 CPA가 ' + formatCurrency(avgCpa) + '입니다. 목표 CPA를 기준으로 자동 입찰 전략을 조정하고, 고CPA 광고세트는 수동 검토하세요.',
+                        description: '향후 30일 예측 CPA가 ' + formatCurrency(avgCpa) + '입니다. 목표 CPA를 기준으로 자동 입찰 전략을 조정하고, 고CPA 광고세트는 수동 검토하세요.',
                         priority: 'low',
                         expectedEffect: '전체 CPA 5~10% 개선'
                     });
