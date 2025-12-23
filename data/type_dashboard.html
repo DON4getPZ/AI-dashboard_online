@@ -4195,6 +4195,884 @@
                 </div>
             </div>
 
+            <!-- 성과 테이블 분석 -->
+            <div class="collapsible-section">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📋</span>
+                        <span>성과 테이블 분석 - 상세 지표를 테이블로 확인하세요</span>
+                    </div>
+                    <button class="collapsible-toggle">
+                        <span>펼치기</span>
+                        <span class="collapsible-toggle-icon collapsed">▼</span>
+                    </button>
+                </div>
+                <div class="collapsible-content">
+                    <!-- 탭 버튼 -->
+                    <div class="view-type-section" style="margin-bottom: 24px;">
+                        <button class="view-btn perf-table-tab-btn active" data-tab="adset">광고세트</button>
+                        <button class="view-btn perf-table-tab-btn" data-tab="gender">성별</button>
+                        <button class="view-btn perf-table-tab-btn" data-tab="age">연령</button>
+                        <button class="view-btn perf-table-tab-btn" data-tab="platform">플랫폼</button>
+                        <button class="view-btn perf-table-tab-btn" data-tab="devicePlatform">기기플랫폼</button>
+                        <button class="view-btn perf-table-tab-btn" data-tab="deviceType">기기</button>
+                    </div>
+
+                    <!-- 광고세트 테이블 탭 -->
+                    <div class="perf-table-tab-content active" id="perfTableAdsetTab">
+                        <!-- 설명 섹션 -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">📊</span>
+                                    <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
+                                </div>
+                                <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
+                                    광고세트별 <strong style="color: #1565c0;">상세 성과 지표</strong>를 테이블 형식으로<br>
+                                    정렬하고 비교할 수 있습니다
+                                </p>
+                            </div>
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">💡</span>
+                                    <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
+                                </div>
+                                <div style="font-size: 12px; color: #424242; line-height: 1.6;">
+                                    <div style="display: flex; align-items: start; gap: 8px; margin-bottom: 4px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">1</span>
+                                        <span>드롭다운에서 원하는 필터 선택</span>
+                                    </div>
+                                    <div style="display: flex; align-items: start; gap: 8px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">2</span>
+                                        <span>컬럼 헤더 클릭으로 정렬</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <!-- 상단 헤더 -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                <div>
+                                    <div class="card-title" style="margin-bottom: 4px;">광고세트별 성과 테이블</div>
+                                    <p style="color: var(--grey-600); font-size: 13px; margin: 0;">
+                                        광고세트별 상세 지표를 테이블로 확인하고 정렬할 수 있습니다.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- 기간 선택 -->
+                            <div style="display: flex; justify-content: flex-end; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                                <div style="flex: 0 0 auto;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="date" id="perfTableAdsetStartDate" class="perf-table-date" data-tab="adset" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;">
+                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                        <input type="date" id="perfTableAdsetEndDate" class="perf-table-date" data-tab="adset" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 드롭다운 필터 -->
+                            <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 분류 기준</div>
+                                    <div style="font-size: 12px; color: #2e7d32; font-weight: 600;">
+                                        🎯 <span id="perfTableAdsetCount">0</span>개 광고세트
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap;">
+                                    <!-- 채널별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="channel" data-tab="adset" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">채널_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="channel" data-tab="adset" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="channel" data-tab="adset" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableAdsetChannelList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 제품별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="product" data-tab="adset" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">제품_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="product" data-tab="adset" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="product" data-tab="adset" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableAdsetProductList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 브랜드별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="brand" data-tab="adset" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">브랜드_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="brand" data-tab="adset" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="brand" data-tab="adset" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableAdsetBrandList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 프로모션별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="promotion" data-tab="adset" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">프로모션_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="promotion" data-tab="adset" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="promotion" data-tab="adset" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableAdsetPromotionList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 테이블 컨테이너 -->
+                            <div id="perfTableAdsetContainer" style="overflow-x: auto; overflow-y: visible;">
+                                <div style="text-align: center; padding: 60px 20px; color: var(--grey-500);">
+                                    <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+                                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">필터를 선택해주세요</div>
+                                    <div style="font-size: 13px; color: var(--grey-400);">위의 분류 기준에서 하나 이상의 항목을 선택해주세요.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 성별 테이블 탭 -->
+                    <div class="perf-table-tab-content" id="perfTableGenderTab" style="display: none;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">📊</span>
+                                    <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
+                                </div>
+                                <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
+                                    성별 <strong style="color: #1565c0;">상세 성과 지표</strong>를 테이블 형식으로<br>
+                                    정렬하고 비교할 수 있습니다
+                                </p>
+                            </div>
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">💡</span>
+                                    <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
+                                </div>
+                                <div style="font-size: 12px; color: #424242; line-height: 1.6;">
+                                    <div style="display: flex; align-items: start; gap: 8px; margin-bottom: 4px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">1</span>
+                                        <span>기간을 선택하여 데이터 필터링</span>
+                                    </div>
+                                    <div style="display: flex; align-items: start; gap: 8px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">2</span>
+                                        <span>컬럼 헤더 클릭으로 정렬</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                <div>
+                                    <div class="card-title" style="margin-bottom: 4px;">성별 성과 테이블</div>
+                                    <p style="color: var(--grey-600); font-size: 13px; margin: 0;">성별 상세 지표를 테이블로 확인하고 정렬할 수 있습니다.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                                <div>
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="date" id="perfTableGenderStartDate" class="perf-table-date" data-tab="gender" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                        <input type="date" id="perfTableGenderEndDate" class="perf-table-date" data-tab="gender" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 드롭다운 필터 -->
+                            <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 분류 기준</div>
+                                    <div style="font-size: 12px; color: #2e7d32; font-weight: 600;">
+                                        🎯 <span id="perfTableGenderCount">0</span>개 항목
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap;">
+                                    <!-- 채널별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="channel" data-tab="gender" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">채널_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="channel" data-tab="gender" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="channel" data-tab="gender" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableGenderChannelList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 제품별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="product" data-tab="gender" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">제품_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="product" data-tab="gender" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="product" data-tab="gender" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableGenderProductList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 브랜드별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="brand" data-tab="gender" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">브랜드_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="brand" data-tab="gender" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="brand" data-tab="gender" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableGenderBrandList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 프로모션별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="promotion" data-tab="gender" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">프로모션_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="promotion" data-tab="gender" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="promotion" data-tab="gender" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableGenderPromotionList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="perfTableGenderContainer" style="overflow-x: auto;"></div>
+                        </div>
+                    </div>
+
+                    <!-- 연령 테이블 탭 -->
+                    <div class="perf-table-tab-content" id="perfTableAgeTab" style="display: none;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">📊</span>
+                                    <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
+                                </div>
+                                <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
+                                    연령대별 <strong style="color: #1565c0;">상세 성과 지표</strong>를 테이블 형식으로<br>
+                                    정렬하고 비교할 수 있습니다
+                                </p>
+                            </div>
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">💡</span>
+                                    <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
+                                </div>
+                                <div style="font-size: 12px; color: #424242; line-height: 1.6;">
+                                    <div style="display: flex; align-items: start; gap: 8px; margin-bottom: 4px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">1</span>
+                                        <span>기간을 선택하여 데이터 필터링</span>
+                                    </div>
+                                    <div style="display: flex; align-items: start; gap: 8px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">2</span>
+                                        <span>컬럼 헤더 클릭으로 정렬</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                <div>
+                                    <div class="card-title" style="margin-bottom: 4px;">연령별 성과 테이블</div>
+                                    <p style="color: var(--grey-600); font-size: 13px; margin: 0;">연령대별 상세 지표를 테이블로 확인하고 정렬할 수 있습니다.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                                <div>
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="date" id="perfTableAgeStartDate" class="perf-table-date" data-tab="age" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                        <input type="date" id="perfTableAgeEndDate" class="perf-table-date" data-tab="age" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 드롭다운 필터 -->
+                            <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 분류 기준</div>
+                                    <div style="font-size: 12px; color: #2e7d32; font-weight: 600;">
+                                        🎯 <span id="perfTableAgeCount">0</span>개 항목
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap;">
+                                    <!-- 채널별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="channel" data-tab="age" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">채널_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="channel" data-tab="age" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="channel" data-tab="age" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableAgeChannelList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 제품별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="product" data-tab="age" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">제품_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="product" data-tab="age" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="product" data-tab="age" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableAgeProductList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 브랜드별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="brand" data-tab="age" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">브랜드_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="brand" data-tab="age" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="brand" data-tab="age" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableAgeBrandList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 프로모션별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="promotion" data-tab="age" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">프로모션_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="promotion" data-tab="age" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="promotion" data-tab="age" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableAgePromotionList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="perfTableAgeContainer" style="overflow-x: auto;"></div>
+                        </div>
+                    </div>
+
+                    <!-- 플랫폼 테이블 탭 -->
+                    <div class="perf-table-tab-content" id="perfTablePlatformTab" style="display: none;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">📊</span>
+                                    <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
+                                </div>
+                                <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
+                                    플랫폼별 <strong style="color: #1565c0;">상세 성과 지표</strong>를 테이블 형식으로<br>
+                                    정렬하고 비교할 수 있습니다
+                                </p>
+                            </div>
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">💡</span>
+                                    <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
+                                </div>
+                                <div style="font-size: 12px; color: #424242; line-height: 1.6;">
+                                    <div style="display: flex; align-items: start; gap: 8px; margin-bottom: 4px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">1</span>
+                                        <span>기간을 선택하여 데이터 필터링</span>
+                                    </div>
+                                    <div style="display: flex; align-items: start; gap: 8px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">2</span>
+                                        <span>컬럼 헤더 클릭으로 정렬</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                <div>
+                                    <div class="card-title" style="margin-bottom: 4px;">플랫폼별 성과 테이블</div>
+                                    <p style="color: var(--grey-600); font-size: 13px; margin: 0;">플랫폼별 상세 지표를 테이블로 확인하고 정렬할 수 있습니다.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                                <div>
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="date" id="perfTablePlatformStartDate" class="perf-table-date" data-tab="platform" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                        <input type="date" id="perfTablePlatformEndDate" class="perf-table-date" data-tab="platform" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 드롭다운 필터 -->
+                            <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 분류 기준</div>
+                                    <div style="font-size: 12px; color: #2e7d32; font-weight: 600;">
+                                        🎯 <span id="perfTablePlatformCount">0</span>개 항목
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap;">
+                                    <!-- 채널별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="channel" data-tab="platform" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">채널_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="channel" data-tab="platform" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="channel" data-tab="platform" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTablePlatformChannelList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 제품별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="product" data-tab="platform" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">제품_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="product" data-tab="platform" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="product" data-tab="platform" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTablePlatformProductList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 브랜드별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="brand" data-tab="platform" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">브랜드_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="brand" data-tab="platform" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="brand" data-tab="platform" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTablePlatformBrandList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 프로모션별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="promotion" data-tab="platform" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">프로모션_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="promotion" data-tab="platform" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="promotion" data-tab="platform" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTablePlatformPromotionList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="perfTablePlatformContainer" style="overflow-x: auto;"></div>
+                        </div>
+                    </div>
+
+                    <!-- 기기플랫폼 테이블 탭 -->
+                    <div class="perf-table-tab-content" id="perfTableDevicePlatformTab" style="display: none;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">📊</span>
+                                    <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
+                                </div>
+                                <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
+                                    기기플랫폼별 <strong style="color: #1565c0;">상세 성과 지표</strong>를 테이블 형식으로<br>
+                                    정렬하고 비교할 수 있습니다
+                                </p>
+                            </div>
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">💡</span>
+                                    <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
+                                </div>
+                                <div style="font-size: 12px; color: #424242; line-height: 1.6;">
+                                    <div style="display: flex; align-items: start; gap: 8px; margin-bottom: 4px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">1</span>
+                                        <span>기간을 선택하여 데이터 필터링</span>
+                                    </div>
+                                    <div style="display: flex; align-items: start; gap: 8px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">2</span>
+                                        <span>컬럼 헤더 클릭으로 정렬</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                <div>
+                                    <div class="card-title" style="margin-bottom: 4px;">기기플랫폼별 성과 테이블</div>
+                                    <p style="color: var(--grey-600); font-size: 13px; margin: 0;">기기플랫폼별 상세 지표를 테이블로 확인하고 정렬할 수 있습니다.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                                <div>
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="date" id="perfTableDevicePlatformStartDate" class="perf-table-date" data-tab="devicePlatform" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                        <input type="date" id="perfTableDevicePlatformEndDate" class="perf-table-date" data-tab="devicePlatform" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 드롭다운 필터 -->
+                            <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 분류 기준</div>
+                                    <div style="font-size: 12px; color: #2e7d32; font-weight: 600;">
+                                        🎯 <span id="perfTableDevicePlatformCount">0</span>개 항목
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap;">
+                                    <!-- 채널별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="channel" data-tab="devicePlatform" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">채널_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="channel" data-tab="devicePlatform" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="channel" data-tab="devicePlatform" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableDevicePlatformChannelList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 제품별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="product" data-tab="devicePlatform" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">제품_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="product" data-tab="devicePlatform" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="product" data-tab="devicePlatform" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableDevicePlatformProductList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 브랜드별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="brand" data-tab="devicePlatform" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">브랜드_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="brand" data-tab="devicePlatform" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="brand" data-tab="devicePlatform" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableDevicePlatformBrandList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 프로모션별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="promotion" data-tab="devicePlatform" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">프로모션_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="promotion" data-tab="devicePlatform" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="promotion" data-tab="devicePlatform" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableDevicePlatformPromotionList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="perfTableDevicePlatformContainer" style="overflow-x: auto;"></div>
+                        </div>
+                    </div>
+
+                    <!-- 기기 테이블 탭 -->
+                    <div class="perf-table-tab-content" id="perfTableDeviceTypeTab" style="display: none;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">📊</span>
+                                    <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
+                                </div>
+                                <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
+                                    기기유형별 <strong style="color: #1565c0;">상세 성과 지표</strong>를 테이블 형식으로<br>
+                                    정렬하고 비교할 수 있습니다
+                                </p>
+                            </div>
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">💡</span>
+                                    <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
+                                </div>
+                                <div style="font-size: 12px; color: #424242; line-height: 1.6;">
+                                    <div style="display: flex; align-items: start; gap: 8px; margin-bottom: 4px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">1</span>
+                                        <span>기간을 선택하여 데이터 필터링</span>
+                                    </div>
+                                    <div style="display: flex; align-items: start; gap: 8px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">2</span>
+                                        <span>컬럼 헤더 클릭으로 정렬</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                <div>
+                                    <div class="card-title" style="margin-bottom: 4px;">기기유형별 성과 테이블</div>
+                                    <p style="color: var(--grey-600); font-size: 13px; margin: 0;">기기유형별 상세 지표를 테이블로 확인하고 정렬할 수 있습니다.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                                <div>
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="date" id="perfTableDeviceTypeStartDate" class="perf-table-date" data-tab="deviceType" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                        <input type="date" id="perfTableDeviceTypeEndDate" class="perf-table-date" data-tab="deviceType" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 드롭다운 필터 -->
+                            <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 분류 기준</div>
+                                    <div style="font-size: 12px; color: #2e7d32; font-weight: 600;">
+                                        🎯 <span id="perfTableDeviceTypeCount">0</span>개 항목
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap;">
+                                    <!-- 채널별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="channel" data-tab="deviceType" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">채널_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="channel" data-tab="deviceType" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="channel" data-tab="deviceType" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableDeviceTypeChannelList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 제품별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="product" data-tab="deviceType" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">제품_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="product" data-tab="deviceType" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="product" data-tab="deviceType" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableDeviceTypeProductList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 브랜드별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="brand" data-tab="deviceType" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">브랜드_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="brand" data-tab="deviceType" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="brand" data-tab="deviceType" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableDeviceTypeBrandList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 프로모션별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="promotion" data-tab="deviceType" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">프로모션_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="promotion" data-tab="deviceType" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="promotion" data-tab="deviceType" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableDeviceTypePromotionList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="perfTableDeviceTypeContainer" style="overflow-x: auto;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- 1. 성과 분석 (브랜드/상품/프로모션/타겟팅) -->
             <div class="collapsible-section">
                 <div class="collapsible-header">
@@ -5121,6 +5999,7 @@
             initPerformanceCharts();
             initRetargetingAnalysis();
             initDetailAnalysis();
+            initPerfTableAnalysis();
         }
 
         // 기간 정보 업데이트
@@ -9135,6 +10014,619 @@
 
             // 더보기 버튼 이벤트 설정
             setupPerfShowMoreButtons();
+        }
+
+        // ========== 성과 테이블 분석 ==========
+
+        // 성과 테이블 상태 관리
+        const perfTableState = {
+            adset: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' },
+            gender: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' },
+            age: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' },
+            platform: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' },
+            devicePlatform: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' },
+            deviceType: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' }
+        };
+
+        // 테이블 지표 정의
+        const perfTableMetrics = [
+            { key: 'cost', label: '비용', format: (v) => formatCurrency(v) },
+            { key: 'impressions', label: '노출수', format: (v) => formatNumber(v) },
+            { key: 'cpm', label: 'CPM', format: (v) => formatCurrency(v) },
+            { key: 'clicks', label: '클릭수', format: (v) => formatNumber(v) },
+            { key: 'cpc', label: 'CPC', format: (v) => formatCurrency(v) },
+            { key: 'ctr', label: 'CTR', format: (v) => v.toFixed(2) + '%' },
+            { key: 'conversions', label: '전환수', format: (v) => formatNumber(v) },
+            { key: 'cpa', label: 'CPA', format: (v) => formatCurrency(v) },
+            { key: 'cvr', label: '전환율', format: (v) => v.toFixed(2) + '%' },
+            { key: 'revenue', label: '전환값', format: (v) => formatCurrency(v) },
+            { key: 'roas', label: 'ROAS', format: (v) => v.toFixed(1) + '%' }
+        ];
+
+        // 색상 스케일 함수
+        function getPerfTableColorScale(value, min, max, isInverse = false) {
+            if (max === min) return 'rgba(103, 58, 183, 0.1)';
+            let ratio = (value - min) / (max - min);
+            if (isInverse) ratio = 1 - ratio;
+            const r = Math.round(255 - (152 * ratio));
+            const g = Math.round(255 - (197 * ratio));
+            const b = Math.round(255 - (72 * ratio));
+            const alpha = 0.1 + (ratio * 0.3);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        // 모든 탭 필터 초기화
+        function initPerfTableFilters() {
+            if (!adsetDimensionData || adsetDimensionData.length === 0) return;
+
+            // 탭별 필터 설정
+            const tabConfigs = ['Adset', 'Gender', 'Age', 'Platform', 'DevicePlatform', 'DeviceType'];
+
+            tabConfigs.forEach(tabName => {
+                const tabKey = tabName === 'Adset' ? 'adset' :
+                               tabName === 'DevicePlatform' ? 'devicePlatform' :
+                               tabName === 'DeviceType' ? 'deviceType' : tabName.toLowerCase();
+
+                const filterConfigs = [
+                    { key: 'channel', column: '유형구분', listId: `perfTable${tabName}ChannelList` },
+                    { key: 'product', column: '상품명', listId: `perfTable${tabName}ProductList` },
+                    { key: 'brand', column: '브랜드명', listId: `perfTable${tabName}BrandList` },
+                    { key: 'promotion', column: '프로모션', listId: `perfTable${tabName}PromotionList` }
+                ];
+
+                filterConfigs.forEach(config => {
+                    const values = [...new Set(adsetDimensionData.map(row => row[config.column]).filter(v => v && v !== '' && v !== '-'))].sort();
+                    const listContainer = document.getElementById(config.listId);
+                    if (!listContainer) return;
+
+                    listContainer.innerHTML = values.map(value => `
+                        <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-size: 12px; color: var(--grey-700); transition: background 0.2s; border-radius: 4px;">
+                            <input type="checkbox" class="perf-table-filter-checkbox" data-filter="${config.key}" data-tab="${tabKey}" value="${value}" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                            ${value}
+                        </label>
+                    `).join('');
+                });
+            });
+        }
+
+        // 광고세트 테이블 렌더링
+        function renderPerfTableAdset() {
+            const container = document.getElementById('perfTableAdsetContainer');
+            if (!container || !adsetDimensionData) return;
+
+            const state = perfTableState.adset;
+            const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' };
+
+            // 필터 조건 확인
+            const allFiltersEmpty = Object.values(state.filters).every(arr => !arr || arr.length === 0);
+            if (allFiltersEmpty) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: var(--grey-500);">
+                        <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+                        <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">필터를 선택해주세요</div>
+                        <div style="font-size: 13px; color: var(--grey-400);">위의 분류 기준에서 하나 이상의 항목을 선택해주세요.</div>
+                    </div>
+                `;
+                document.getElementById('perfTableAdsetCount').textContent = '0';
+                return;
+            }
+
+            // 데이터 필터링 및 집계
+            const aggregatedData = {};
+            adsetDimensionData.forEach(row => {
+                // 필터 조건 확인
+                for (const filterKey of Object.keys(filterMap)) {
+                    const column = filterMap[filterKey];
+                    const selectedValues = state.filters[filterKey];
+                    if (selectedValues && selectedValues.length > 0) {
+                        if (!selectedValues.includes(row[column])) return;
+                    }
+                }
+
+                // 기간 필터링
+                const date = row['일'];
+                if (state.startDate || state.endDate) {
+                    const rowDate = new Date(date);
+                    if (isNaN(rowDate)) return;
+                    if (state.startDate && rowDate < new Date(state.startDate)) return;
+                    if (state.endDate && rowDate > new Date(state.endDate)) return;
+                }
+
+                const adset = row['광고세트'];
+                if (!adset || adset === '' || adset === '-') return;
+
+                if (!aggregatedData[adset]) {
+                    aggregatedData[adset] = { name: adset, cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 };
+                }
+
+                aggregatedData[adset].cost += parseFloat(row['비용']?.replace(/,/g, '') || row['비용']) || 0;
+                aggregatedData[adset].revenue += parseFloat(row['전환값']?.replace(/,/g, '') || row['전환값']) || 0;
+                aggregatedData[adset].conversions += parseFloat(row['전환수']?.replace(/,/g, '') || row['전환수']) || 0;
+                aggregatedData[adset].impressions += parseFloat(row['노출']?.replace(/,/g, '') || row['노출']) || 0;
+                aggregatedData[adset].clicks += parseFloat(row['클릭']?.replace(/,/g, '') || row['클릭']) || 0;
+            });
+
+            // 지표 계산
+            let dataList = Object.values(aggregatedData);
+            dataList.forEach(item => {
+                item.roas = item.cost > 0 ? (item.revenue / item.cost * 100) : 0;
+                item.cpm = item.impressions > 0 ? (item.cost / item.impressions * 1000) : 0;
+                item.cpc = item.clicks > 0 ? (item.cost / item.clicks) : 0;
+                item.cpa = item.conversions > 0 ? (item.cost / item.conversions) : 0;
+                item.ctr = item.impressions > 0 ? (item.clicks / item.impressions * 100) : 0;
+                item.cvr = item.clicks > 0 ? (item.conversions / item.clicks * 100) : 0;
+            });
+
+            document.getElementById('perfTableAdsetCount').textContent = dataList.length;
+
+            if (dataList.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: var(--grey-500);">
+                        <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+                        <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">데이터가 없습니다</div>
+                        <div style="font-size: 13px; color: var(--grey-400);">선택한 조건에 맞는 데이터가 없습니다.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            // 정렬
+            dataList.sort((a, b) => {
+                const aVal = a[state.sortColumn] || 0;
+                const bVal = b[state.sortColumn] || 0;
+                return state.sortDirection === 'desc' ? bVal - aVal : aVal - bVal;
+            });
+
+            // 지표별 최소/최대값 계산
+            const metricRanges = {};
+            perfTableMetrics.forEach(metric => {
+                let min = Infinity, max = -Infinity;
+                dataList.forEach(item => {
+                    const value = item[metric.key] || 0;
+                    if (value < min) min = value;
+                    if (value > max) max = value;
+                });
+                metricRanges[metric.key] = { min, max };
+            });
+
+            // 테이블 HTML 생성
+            const isInverseMetric = (key) => ['cpm', 'cpc', 'cpa'].includes(key);
+
+            let tableHTML = `
+                <table style="width: 100%; border-collapse: collapse; font-size: 12px; min-width: 1200px;">
+                    <thead>
+                        <tr style="background: var(--grey-100);">
+                            <th style="padding: 12px 10px; text-align: left; font-weight: 700; border: 1px solid var(--grey-300); background: var(--grey-200); min-width: 150px; position: sticky; left: 0; z-index: 10;">
+                                광고세트
+                            </th>
+            `;
+
+            perfTableMetrics.forEach(metric => {
+                const isSorted = state.sortColumn === metric.key;
+                const sortIcon = isSorted ? (state.sortDirection === 'desc' ? ' ▼' : ' ▲') : '';
+                tableHTML += `
+                    <th class="perf-table-sort-header" data-column="${metric.key}" data-tab="adset" style="padding: 12px 8px; text-align: right; font-weight: 600; border: 1px solid var(--grey-300); background: ${isSorted ? 'var(--primary-light)' : 'var(--grey-100)'}; cursor: pointer; white-space: nowrap; transition: background 0.2s;">
+                        ${metric.label}${sortIcon}
+                    </th>
+                `;
+            });
+
+            tableHTML += `</tr></thead><tbody>`;
+
+            dataList.forEach((item, index) => {
+                const rowBg = index % 2 === 0 ? 'var(--paper)' : 'var(--grey-50)';
+                tableHTML += `
+                    <tr style="background: ${rowBg};">
+                        <td style="padding: 10px; font-weight: 500; border: 1px solid var(--grey-300); background: var(--grey-50); position: sticky; left: 0; z-index: 5; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${item.name}">
+                            ${item.name}
+                        </td>
+                `;
+
+                perfTableMetrics.forEach(metric => {
+                    const value = item[metric.key] || 0;
+                    const range = metricRanges[metric.key];
+                    const bgColor = getPerfTableColorScale(value, range.min, range.max, isInverseMetric(metric.key));
+                    tableHTML += `
+                        <td style="padding: 10px 8px; text-align: right; border: 1px solid var(--grey-300); background: ${bgColor}; font-variant-numeric: tabular-nums;">
+                            ${metric.format(value)}
+                        </td>
+                    `;
+                });
+
+                tableHTML += `</tr>`;
+            });
+
+            tableHTML += `</tbody></table>`;
+            container.innerHTML = tableHTML;
+        }
+
+        // 범용 테이블 렌더링 함수 (성별, 연령, 플랫폼, 기기플랫폼, 기기용)
+        function renderPerfTableGeneric(tabName, dataSource, dimensionColumn, dimensionLabel) {
+            const tabNameCapitalized = tabName === 'devicePlatform' ? 'DevicePlatform' :
+                                       tabName === 'deviceType' ? 'DeviceType' :
+                                       tabName.charAt(0).toUpperCase() + tabName.slice(1);
+            const containerId = `perfTable${tabNameCapitalized}Container`;
+            const countId = `perfTable${tabNameCapitalized}Count`;
+            const container = document.getElementById(containerId);
+            if (!container || !dataSource || dataSource.length === 0) return;
+
+            const state = perfTableState[tabName];
+            const filterMap = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' };
+
+            // 필터 조건 확인
+            const allFiltersEmpty = !state.filters || Object.values(state.filters).every(arr => !arr || arr.length === 0);
+            if (allFiltersEmpty) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: var(--grey-500);">
+                        <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+                        <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">필터를 선택해주세요</div>
+                        <div style="font-size: 13px; color: var(--grey-400);">위의 분류 기준에서 하나 이상의 항목을 선택해주세요.</div>
+                    </div>
+                `;
+                const countEl = document.getElementById(countId);
+                if (countEl) countEl.textContent = '0';
+                return;
+            }
+
+            // 데이터 집계
+            const aggregatedData = {};
+            dataSource.forEach(row => {
+                // 필터 조건 확인 (adsetDimensionData에서 필터 컬럼 사용)
+                if (state.filters) {
+                    for (const filterKey of Object.keys(filterMap)) {
+                        const column = filterMap[filterKey];
+                        const selectedValues = state.filters[filterKey];
+                        if (selectedValues && selectedValues.length > 0) {
+                            if (!selectedValues.includes(row[column])) return;
+                        }
+                    }
+                }
+
+                // 기간 필터링
+                const date = row['일'];
+                if (state.startDate || state.endDate) {
+                    const rowDate = new Date(date);
+                    if (isNaN(rowDate)) return;
+                    if (state.startDate && rowDate < new Date(state.startDate)) return;
+                    if (state.endDate && rowDate > new Date(state.endDate)) return;
+                }
+
+                let dimensionValue = row[dimensionColumn + '_통합'] || row[dimensionColumn];
+                if (!dimensionValue || dimensionValue === '' || dimensionValue === '-') return;
+
+                // 성별 정규화
+                if (tabName === 'gender') {
+                    dimensionValue = normalizeGender(dimensionValue);
+                    if (!dimensionValue || dimensionValue === 'Unknown') return;
+                }
+
+                if (!aggregatedData[dimensionValue]) {
+                    aggregatedData[dimensionValue] = { name: dimensionValue, cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 };
+                }
+
+                aggregatedData[dimensionValue].cost += parseFloat(row['비용']?.replace(/,/g, '') || row['비용']) || 0;
+                aggregatedData[dimensionValue].revenue += parseFloat(row['전환값']?.replace(/,/g, '') || row['전환값']) || 0;
+                aggregatedData[dimensionValue].conversions += parseFloat(row['전환수']?.replace(/,/g, '') || row['전환수']) || 0;
+                aggregatedData[dimensionValue].impressions += parseFloat(row['노출']?.replace(/,/g, '') || row['노출']) || 0;
+                aggregatedData[dimensionValue].clicks += parseFloat(row['클릭']?.replace(/,/g, '') || row['클릭']) || 0;
+            });
+
+            // 지표 계산
+            let dataList = Object.values(aggregatedData);
+            dataList.forEach(item => {
+                item.roas = item.cost > 0 ? (item.revenue / item.cost * 100) : 0;
+                item.cpm = item.impressions > 0 ? (item.cost / item.impressions * 1000) : 0;
+                item.cpc = item.clicks > 0 ? (item.cost / item.clicks) : 0;
+                item.cpa = item.conversions > 0 ? (item.cost / item.conversions) : 0;
+                item.ctr = item.impressions > 0 ? (item.clicks / item.impressions * 100) : 0;
+                item.cvr = item.clicks > 0 ? (item.conversions / item.clicks * 100) : 0;
+            });
+
+            const countEl = document.getElementById(countId);
+            if (countEl) countEl.textContent = dataList.length;
+
+            if (dataList.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: var(--grey-500);">
+                        <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+                        <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">데이터가 없습니다</div>
+                        <div style="font-size: 13px; color: var(--grey-400);">선택한 조건에 맞는 데이터가 없습니다.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            // 정렬
+            dataList.sort((a, b) => {
+                const aVal = a[state.sortColumn] || 0;
+                const bVal = b[state.sortColumn] || 0;
+                return state.sortDirection === 'desc' ? bVal - aVal : aVal - bVal;
+            });
+
+            // 지표별 최소/최대값 계산
+            const metricRanges = {};
+            perfTableMetrics.forEach(metric => {
+                let min = Infinity, max = -Infinity;
+                dataList.forEach(item => {
+                    const value = item[metric.key] || 0;
+                    if (value < min) min = value;
+                    if (value > max) max = value;
+                });
+                metricRanges[metric.key] = { min, max };
+            });
+
+            const isInverseMetric = (key) => ['cpm', 'cpc', 'cpa'].includes(key);
+
+            let tableHTML = `
+                <table style="width: 100%; border-collapse: collapse; font-size: 12px; min-width: 1200px;">
+                    <thead>
+                        <tr style="background: var(--grey-100);">
+                            <th style="padding: 12px 10px; text-align: left; font-weight: 700; border: 1px solid var(--grey-300); background: var(--grey-200); min-width: 120px; position: sticky; left: 0; z-index: 10;">
+                                ${dimensionLabel}
+                            </th>
+            `;
+
+            perfTableMetrics.forEach(metric => {
+                const isSorted = state.sortColumn === metric.key;
+                const sortIcon = isSorted ? (state.sortDirection === 'desc' ? ' ▼' : ' ▲') : '';
+                tableHTML += `
+                    <th class="perf-table-sort-header" data-column="${metric.key}" data-tab="${tabName}" style="padding: 12px 8px; text-align: right; font-weight: 600; border: 1px solid var(--grey-300); background: ${isSorted ? 'var(--primary-light)' : 'var(--grey-100)'}; cursor: pointer; white-space: nowrap; transition: background 0.2s;">
+                        ${metric.label}${sortIcon}
+                    </th>
+                `;
+            });
+
+            tableHTML += `</tr></thead><tbody>`;
+
+            dataList.forEach((item, index) => {
+                const rowBg = index % 2 === 0 ? 'var(--paper)' : 'var(--grey-50)';
+                tableHTML += `
+                    <tr style="background: ${rowBg};">
+                        <td style="padding: 10px; font-weight: 500; border: 1px solid var(--grey-300); background: var(--grey-50); position: sticky; left: 0; z-index: 5;">
+                            ${item.name}
+                        </td>
+                `;
+
+                perfTableMetrics.forEach(metric => {
+                    const value = item[metric.key] || 0;
+                    const range = metricRanges[metric.key];
+                    const bgColor = getPerfTableColorScale(value, range.min, range.max, isInverseMetric(metric.key));
+                    tableHTML += `
+                        <td style="padding: 10px 8px; text-align: right; border: 1px solid var(--grey-300); background: ${bgColor}; font-variant-numeric: tabular-nums;">
+                            ${metric.format(value)}
+                        </td>
+                    `;
+                });
+
+                tableHTML += `</tr>`;
+            });
+
+            tableHTML += `</tbody></table>`;
+            container.innerHTML = tableHTML;
+        }
+
+        // 각 탭별 렌더링 래퍼 함수
+        function renderPerfTableGender() {
+            renderPerfTableGeneric('gender', genderDimensionData, '성별', '성별');
+        }
+
+        function renderPerfTableAge() {
+            renderPerfTableGeneric('age', ageDimensionData, '연령', '연령');
+        }
+
+        function renderPerfTablePlatform() {
+            renderPerfTableGeneric('platform', platformDimensionData, '플랫폼', '플랫폼');
+        }
+
+        function renderPerfTableDevicePlatform() {
+            renderPerfTableGeneric('devicePlatform', devicePlatformDimensionData, '기기플랫폼', '기기플랫폼');
+        }
+
+        function renderPerfTableDeviceType() {
+            renderPerfTableGeneric('deviceType', deviceTypeDimensionData, '기기유형', '기기유형');
+        }
+
+        // 성과 테이블 탭 전환
+        function setupPerfTableTabs() {
+            document.querySelectorAll('.perf-table-tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.perf-table-tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    document.querySelectorAll('.perf-table-tab-content').forEach(content => {
+                        content.style.display = 'none';
+                        content.classList.remove('active');
+                    });
+
+                    const targetTab = this.dataset.tab;
+                    const tabMap = {
+                        'adset': 'perfTableAdsetTab',
+                        'gender': 'perfTableGenderTab',
+                        'age': 'perfTableAgeTab',
+                        'platform': 'perfTablePlatformTab',
+                        'devicePlatform': 'perfTableDevicePlatformTab',
+                        'deviceType': 'perfTableDeviceTypeTab'
+                    };
+
+                    const targetElement = document.getElementById(tabMap[targetTab]);
+                    if (targetElement) {
+                        targetElement.style.display = 'block';
+                        targetElement.classList.add('active');
+
+                        // 탭 전환 시 렌더링
+                        if (targetTab === 'gender') renderPerfTableGender();
+                        else if (targetTab === 'age') renderPerfTableAge();
+                        else if (targetTab === 'platform') renderPerfTablePlatform();
+                        else if (targetTab === 'devicePlatform') renderPerfTableDevicePlatform();
+                        else if (targetTab === 'deviceType') renderPerfTableDeviceType();
+                    }
+                });
+            });
+        }
+
+        // 모든 탭 필터 드롭다운 이벤트
+        function setupPerfTableFilterEvents() {
+            // 드롭다운 버튼 클릭
+            document.querySelectorAll('.perf-table-filter-dropdown-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const filterKey = this.dataset.filter;
+                    const tabName = this.dataset.tab;
+                    const dropdown = document.querySelector(`.perf-table-filter-dropdown-list[data-filter="${filterKey}"][data-tab="${tabName}"]`);
+
+                    // 모든 드롭다운 닫기
+                    document.querySelectorAll('.perf-table-filter-dropdown-list').forEach(d => {
+                        if (d !== dropdown) d.style.display = 'none';
+                    });
+
+                    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+                });
+            });
+
+            // 전체 선택 체크박스
+            document.querySelectorAll('.perf-table-filter-select-all').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const filterKey = this.dataset.filter;
+                    const tabName = this.dataset.tab;
+                    const isChecked = this.checked;
+
+                    document.querySelectorAll(`.perf-table-filter-checkbox[data-filter="${filterKey}"][data-tab="${tabName}"]`).forEach(cb => {
+                        cb.checked = isChecked;
+                    });
+
+                    updatePerfTableFilters(tabName, filterKey);
+                });
+            });
+
+            // 개별 체크박스
+            document.addEventListener('change', function(e) {
+                if (e.target.classList.contains('perf-table-filter-checkbox')) {
+                    updatePerfTableFilters(e.target.dataset.tab, e.target.dataset.filter);
+                }
+            });
+
+            // 문서 클릭 시 드롭다운 닫기
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.perf-table-filter-dropdown-btn') && !e.target.closest('.perf-table-filter-dropdown-list')) {
+                    document.querySelectorAll('.perf-table-filter-dropdown-list').forEach(d => {
+                        d.style.display = 'none';
+                    });
+                }
+            });
+        }
+
+        // 필터 상태 업데이트 (범용)
+        function updatePerfTableFilters(tabName, filterKey) {
+            const selectedValues = [];
+            document.querySelectorAll(`.perf-table-filter-checkbox[data-filter="${filterKey}"][data-tab="${tabName}"]:checked`).forEach(cb => {
+                selectedValues.push(cb.value);
+            });
+
+            perfTableState[tabName].filters[filterKey] = selectedValues;
+
+            // 버튼 텍스트 업데이트
+            const btn = document.querySelector(`.perf-table-filter-dropdown-btn[data-filter="${filterKey}"][data-tab="${tabName}"]`);
+            if (btn) {
+                const countSpan = btn.querySelector('.perf-table-selected-count');
+                if (countSpan) {
+                    countSpan.textContent = selectedValues.length > 0 ? `${selectedValues.length}개` : '0개';
+                }
+            }
+
+            // 해당 탭 렌더링
+            if (tabName === 'adset') renderPerfTableAdset();
+            else if (tabName === 'gender') renderPerfTableGender();
+            else if (tabName === 'age') renderPerfTableAge();
+            else if (tabName === 'platform') renderPerfTablePlatform();
+            else if (tabName === 'devicePlatform') renderPerfTableDevicePlatform();
+            else if (tabName === 'deviceType') renderPerfTableDeviceType();
+        }
+
+        // 날짜 이벤트 설정
+        function setupPerfTableDateEvents() {
+            document.querySelectorAll('.perf-table-date').forEach(input => {
+                input.addEventListener('change', function() {
+                    const tabName = this.dataset.tab;
+                    const isStart = this.id.includes('Start');
+
+                    if (isStart) {
+                        perfTableState[tabName].startDate = this.value;
+                    } else {
+                        perfTableState[tabName].endDate = this.value;
+                    }
+
+                    // 렌더링
+                    if (tabName === 'adset') renderPerfTableAdset();
+                    else if (tabName === 'gender') renderPerfTableGender();
+                    else if (tabName === 'age') renderPerfTableAge();
+                    else if (tabName === 'platform') renderPerfTablePlatform();
+                    else if (tabName === 'devicePlatform') renderPerfTableDevicePlatform();
+                    else if (tabName === 'deviceType') renderPerfTableDeviceType();
+                });
+            });
+        }
+
+        // 정렬 헤더 이벤트 설정
+        function setupPerfTableSortEvents() {
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('perf-table-sort-header')) {
+                    const column = e.target.dataset.column;
+                    const tabName = e.target.dataset.tab;
+                    const state = perfTableState[tabName];
+
+                    if (state.sortColumn === column) {
+                        state.sortDirection = state.sortDirection === 'desc' ? 'asc' : 'desc';
+                    } else {
+                        state.sortColumn = column;
+                        state.sortDirection = 'desc';
+                    }
+
+                    // 렌더링
+                    if (tabName === 'adset') renderPerfTableAdset();
+                    else if (tabName === 'gender') renderPerfTableGender();
+                    else if (tabName === 'age') renderPerfTableAge();
+                    else if (tabName === 'platform') renderPerfTablePlatform();
+                    else if (tabName === 'devicePlatform') renderPerfTableDevicePlatform();
+                    else if (tabName === 'deviceType') renderPerfTableDeviceType();
+                }
+            });
+        }
+
+        // 날짜 초기화
+        function initPerfTableDates() {
+            if (!adsetDimensionData || adsetDimensionData.length === 0) return;
+
+            const dates = adsetDimensionData.map(row => row['일']).filter(d => d).sort();
+            if (dates.length === 0) return;
+
+            const minDate = dates[0];
+            const maxDate = dates[dates.length - 1];
+
+            // 모든 탭의 날짜 입력 초기화
+            ['Adset', 'Gender', 'Age', 'Platform', 'DevicePlatform', 'DeviceType'].forEach(tab => {
+                const startInput = document.getElementById(`perfTable${tab}StartDate`);
+                const endInput = document.getElementById(`perfTable${tab}EndDate`);
+                if (startInput) startInput.value = minDate;
+                if (endInput) endInput.value = maxDate;
+
+                const tabKey = tab.charAt(0).toLowerCase() + tab.slice(1);
+                if (perfTableState[tabKey]) {
+                    perfTableState[tabKey].startDate = minDate;
+                    perfTableState[tabKey].endDate = maxDate;
+                }
+            });
+        }
+
+        // 성과 테이블 분석 초기화
+        function initPerfTableAnalysis() {
+            initPerfTableDates();
+            initPerfTableFilters();  // 모든 탭 필터 초기화
+            setupPerfTableTabs();
+            setupPerfTableFilterEvents();  // 모든 탭 필터 이벤트 설정
+            setupPerfTableDateEvents();
+            setupPerfTableSortEvents();
+
+            // 초기 상태: 필터 선택 전이므로 렌더링은 필터 선택 시 수행됨
         }
 
         // ========== 리타겟팅 및 계절성 분석 ==========

@@ -13,7 +13,8 @@
   - [3.3 성과 추이 분석](#3-성과-추이-분석-collapsible-section-2)
   - [3.4 성과 상세 분석](#4-성과-상세-분석-collapsible-section-3)
   - [3.5 성과 분석](#5-성과-분석-collapsible-section-4)
-  - [3.6 리타겟팅 분석](#6-리타겟팅-분석-collapsible-section-5)
+  - [3.6 성과 테이블 분석](#6-성과-테이블-분석-collapsible-section-5)
+  - [3.7 리타겟팅 분석](#7-리타겟팅-분석-collapsible-section-6)
 - [4. 버튼 UI 컴포넌트](#버튼-ui-컴포넌트)
 - [5. 전역 변수 및 상태 관리](#전역-변수-및-상태-관리)
 - [6. 핵심 함수 목록](#핵심-함수-목록)
@@ -256,35 +257,102 @@
 
 ---
 
-### 6. 리타겟팅 분석 (collapsible-section #5)
+### 6. 성과 테이블 분석 (collapsible-section #5)
+| 항목 | 내용 |
+|------|------|
+| **섹션 헤드** | 📊 성과 테이블 분석 - 테이블 형태로 상세 성과를 확인하세요 |
+| **JS 함수** | `initPerfTableAnalysis()`, `setupPerfTableTabs()`, `setupPerfTableAdsetFilterEvents()`, `setupPerfTableDateEvents()`, `setupPerfTableSortEvents()` |
+| **참조 데이터** | `adsetDimensionData`, `ageGenderData`, `ageData`, `platformData`, `devicePlatformData`, `deviceTypeData` |
+| **기능** | - 6개 탭별 테이블 형태 성과 분석<br>- 날짜 범위 필터링<br>- 컬럼별 정렬(오름차순/내림차순)<br>- 색상 스케일 시각화 (성별 연령 PIVOT 스타일) |
+
+#### 6.1 광고세트 탭
+| 항목 | 내용 |
+|------|------|
+| **JS 함수** | `initPerfTableAdsetFilters()`, `renderPerfTableAdset()` |
+| **참조 데이터** | `adsetDimensionData` (dimension_type1_campaign_adset.csv) |
+| **기능** | - 채널/제품/브랜드/프로모션 다중 선택 드롭다운 필터<br>- 날짜 범위 필터링<br>- 광고세트별 11개 지표 테이블<br>- 컬럼별 정렬 |
+
+#### 6.2 성별 탭
+| 항목 | 내용 |
+|------|------|
+| **JS 함수** | `renderPerfTableGender()` → `renderPerfTableGeneric()` |
+| **참조 데이터** | `ageGenderData` (dimension_type2_adset_age_gender.csv) → `성별` 컬럼 |
+| **기능** | 성별별 성과 테이블 (날짜 필터, 정렬, 색상 스케일) |
+
+#### 6.3 연령 탭
+| 항목 | 내용 |
+|------|------|
+| **JS 함수** | `renderPerfTableAge()` → `renderPerfTableGeneric()` |
+| **참조 데이터** | `ageData` (dimension_type3_adset_age.csv) → `연령` 컬럼 |
+| **기능** | 연령대별 성과 테이블 (날짜 필터, 정렬, 색상 스케일) |
+
+#### 6.4 플랫폼 탭
+| 항목 | 내용 |
+|------|------|
+| **JS 함수** | `renderPerfTablePlatform()` → `renderPerfTableGeneric()` |
+| **참조 데이터** | `platformData` (dimension_type6_adset_platform.csv) → `플랫폼` 컬럼 |
+| **기능** | 플랫폼별 성과 테이블 (날짜 필터, 정렬, 색상 스케일) |
+
+#### 6.5 기기플랫폼 탭
+| 항목 | 내용 |
+|------|------|
+| **JS 함수** | `renderPerfTableDevicePlatform()` → `renderPerfTableGeneric()` |
+| **참조 데이터** | `devicePlatformData` (dimension_type7_adset_deviceplatform.csv) → `기기플랫폼` 컬럼 |
+| **기능** | 기기플랫폼별 성과 테이블 (날짜 필터, 정렬, 색상 스케일) |
+
+#### 6.6 기기 탭
+| 항목 | 내용 |
+|------|------|
+| **JS 함수** | `renderPerfTableDeviceType()` → `renderPerfTableGeneric()` |
+| **참조 데이터** | `deviceTypeData` (dimension_type5_adset_device.csv) → `기기유형` 컬럼 |
+| **기능** | 기기유형별 성과 테이블 (날짜 필터, 정렬, 색상 스케일) |
+
+#### 6.7 테이블 지표 (perfTableMetrics)
+| 지표 키 | 라벨 | 역방향 색상 |
+|---------|------|-------------|
+| `cost` | 비용 | ❌ |
+| `revenue` | 전환값 | ❌ |
+| `roas` | ROAS | ❌ |
+| `cpm` | CPM | ✅ (낮을수록 좋음) |
+| `cpc` | CPC | ✅ (낮을수록 좋음) |
+| `cpa` | CPA | ✅ (낮을수록 좋음) |
+| `ctr` | CTR | ❌ |
+| `cvr` | CVR | ❌ |
+| `impressions` | 노출 | ❌ |
+| `clicks` | 클릭 | ❌ |
+| `conversions` | 전환수 | ❌ |
+
+---
+
+### 7. 리타겟팅 분석 (collapsible-section #6)
 | 항목 | 내용 |
 |------|------|
 | **섹션 헤드** | 🎯 리타겟팅 분석 - 제품에 관심이 많은 소비자를 확인하세요 |
 | **위치** | Line 4451 |
 | **JS 함수** | `initRetargetingAnalysis()`, `setupRetargetingTabEvents()`, `setupRetargetingSortEvents()` |
 
-#### 6.1 성별/연령 탭
+#### 7.1 성별/연령 탭
 | 항목 | 내용 |
 |------|------|
 | **JS 함수** | `renderAgeGenderRetargetTable()` |
 | **참조 데이터** | `insights.json` → `retargeting_analysis.by_age_gender`, `retargeting_insights` |
 | **기능** | - 성별/연령 조합별 성과 테이블<br>- ROAS, CPA, 광고비, 전환수, 전환값<br>- 효율등급 표시<br>- 컬럼별 정렬 |
 
-#### 6.2 기기별 탭
+#### 7.2 기기별 탭
 | 항목 | 내용 |
 |------|------|
 | **JS 함수** | `renderDeviceRetargetTable()` |
 | **참조 데이터** | `insights.json` → `retargeting_analysis.by_device` |
 | **기능** | 기기별 리타겟팅 성과 테이블 |
 
-#### 6.3 플랫폼별 탭
+#### 7.3 플랫폼별 탭
 | 항목 | 내용 |
 |------|------|
 | **JS 함수** | `renderPlatformRetargetTable()` |
 | **참조 데이터** | `insights.json` → `retargeting_analysis.by_platform` |
 | **기능** | 플랫폼별 리타겟팅 성과 테이블 |
 
-#### 6.4 노출기기별 탭
+#### 7.4 노출기기별 탭
 | 항목 | 내용 |
 |------|------|
 | **JS 함수** | `renderDevicePlatformRetargetTable()`, `getDevicePlatformIcon()` |
@@ -457,6 +525,18 @@
 | `currentPeriod` | 현재 선택된 기간 | 'full' |
 | 옵션 | 'full', '180d', '90d' | - |
 
+### 성과 테이블 분석 상태
+| 변수명 | 설명 |
+|--------|------|
+| `perfTableState` | 6개 탭별 상태 관리 객체 |
+| `.adset` | 광고세트 탭 (filters, startDate, endDate, sortColumn, sortDirection) |
+| `.gender` | 성별 탭 (startDate, endDate, sortColumn, sortDirection) |
+| `.age` | 연령 탭 (startDate, endDate, sortColumn, sortDirection) |
+| `.platform` | 플랫폼 탭 (startDate, endDate, sortColumn, sortDirection) |
+| `.deviceplatform` | 기기플랫폼 탭 (startDate, endDate, sortColumn, sortDirection) |
+| `.device` | 기기 탭 (startDate, endDate, sortColumn, sortDirection) |
+| `perfTableMetrics` | 테이블 지표 정의 배열 (11개: cost, revenue, roas, cpm, cpc, cpa, ctr, cvr, impressions, clicks, conversions) |
+
 ---
 
 ## 핵심 함수 목록
@@ -537,6 +617,24 @@
 | `renderDeviceRetargetTable()` | 기기별 리타겟팅 테이블 |
 | `renderPlatformRetargetTable()` | 플랫폼별 리타겟팅 테이블 |
 | `renderDevicePlatformRetargetTable()` | 노출기기별 리타겟팅 테이블 |
+
+#### 성과 테이블 분석 렌더링
+| 함수명 | 대상 |
+|--------|------|
+| `initPerfTableAnalysis()` | 성과 테이블 분석 초기화 |
+| `initPerfTableAdsetFilters()` | 광고세트 탭 필터 초기화 |
+| `renderPerfTableAdset()` | 광고세트 테이블 렌더링 |
+| `renderPerfTableGeneric()` | 공통 테이블 렌더러 (탭명, 데이터소스, 컬럼명, 라벨) |
+| `renderPerfTableGender()` | 성별 테이블 렌더링 |
+| `renderPerfTableAge()` | 연령 테이블 렌더링 |
+| `renderPerfTablePlatform()` | 플랫폼 테이블 렌더링 |
+| `renderPerfTableDevicePlatform()` | 기기플랫폼 테이블 렌더링 |
+| `renderPerfTableDeviceType()` | 기기유형 테이블 렌더링 |
+| `setupPerfTableTabs()` | 탭 전환 이벤트 설정 |
+| `setupPerfTableAdsetFilterEvents()` | 광고세트 필터 이벤트 설정 |
+| `setupPerfTableDateEvents()` | 날짜 필터 이벤트 설정 |
+| `setupPerfTableSortEvents()` | 테이블 정렬 이벤트 설정 |
+| `getPerfTableColorScale()` | 테이블 셀 색상 스케일 계산 |
 
 ### 유틸리티 함수
 | 함수명 | 기능 |
@@ -2090,3 +2188,14 @@ body {
 | 2025-12-23 | 성과 분석 더보기 버튼 HTML: `perfBrandShowMoreContainer`, `perfProductShowMoreContainer`, `perfPromotionShowMoreContainer`, `perfTargetingShowMoreContainer` 추가 |
 | 2025-12-23 | 성과 분석 렌더링 함수 수정: `renderBrandPerformanceChart()` 외 3개 함수에 조건부 슬라이싱 및 버튼 업데이트 로직 추가 |
 | 2025-12-23 | 성과 분석 함수 추가: `updatePerfShowMoreButton()`, `setupPerfShowMoreButtons()` - 더보기 버튼 상태 관리 및 이벤트 설정 |
+| 2025-12-23 | **성과 테이블 분석 섹션 신규 추가**: 6개 탭(광고세트/성별/연령/플랫폼/기기플랫폼/기기)별 테이블 형태 성과 분석 기능 구현 |
+| 2025-12-23 | 성과 테이블 분석 HTML 구조: `perf-table-analysis-tabs`, 탭별 컨테이너, 필터 드롭다운, 날짜 선택기, 테이블 컨테이너 추가 |
+| 2025-12-23 | 성과 테이블 분석 상태 관리: `perfTableState` 객체 - 6개 탭별 필터, 날짜 범위, 정렬 상태 관리 |
+| 2025-12-23 | 성과 테이블 분석 지표 정의: `perfTableMetrics` - 비용, 전환값, ROAS, CPM, CPC, CPA, CTR, CVR, 노출, 클릭, 전환수 (11개 지표) |
+| 2025-12-23 | 성과 테이블 분석 색상 스케일 함수: `getPerfTableColorScale()` - 성별 연령 PIVOT 테이블 스타일 그라데이션 적용 |
+| 2025-12-23 | 성과 테이블 분석 역방향 색상: CPM, CPC, CPA 비용 지표는 `isInverse=true`로 낮을수록 좋은 성과 표현 |
+| 2025-12-23 | 성과 테이블 분석 광고세트 탭: 채널/제품/브랜드/프로모션 다중 선택 필터 드롭다운 구현 |
+| 2025-12-23 | 성과 테이블 분석 정렬 기능: 테이블 헤더 클릭 시 오름차순/내림차순 토글, `sortColumn`, `sortDirection` 상태 관리 |
+| 2025-12-23 | 성과 테이블 분석 날짜 필터: 시작일/종료일 date picker로 기간별 데이터 필터링 |
+| 2025-12-23 | 성과 테이블 분석 함수 추가: `initPerfTableAdsetFilters()`, `renderPerfTableAdset()`, `renderPerfTableGeneric()`, `setupPerfTableTabs()`, `setupPerfTableAdsetFilterEvents()`, `setupPerfTableDateEvents()`, `setupPerfTableSortEvents()`, `initPerfTableAnalysis()` |
+| 2025-12-23 | 성과 테이블 분석 디자인: 성과 추이 분석 필터/이벤트 패턴 + 성별 연령 PIVOT 테이블 색상 스케일 조합 |
