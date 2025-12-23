@@ -2080,3 +2080,13 @@ body {
 | 2025-12-22 | 리타겟팅 분석 버그 수정: `renderPlatformRetargetTable()` 필드명 `item.deviceplatform` → `item.platform` 수정 |
 | 2025-12-22 | 리타겟팅 분석 인사이트 타입 수정: `retargeting_best_deviceplatform` → `retargeting_best_platform` |
 | 2025-12-22 | `generate_type_insights.py` 수정: 리타겟팅 분석 시 `기기유형_통합`, `기기플랫폼_통합` 컬럼 우선 사용 (fallback: 원본 컬럼) |
+| 2025-12-23 | **성과 상세 분석 더보기 기능 추가**: 6개 탭(광고세트/성별/연령/플랫폼/기기플랫폼/기기) 차트에 더보기/접기 버튼 구현 |
+| 2025-12-23 | 성과 상세 분석 상태 변수 추가: `DETAIL_DEFAULT_LIMIT=10`, `DETAIL_EXPANDED_LIMIT=50`, 각 탭별 `showAll`, `TotalCount` |
+| 2025-12-23 | 성과 상세 분석 더보기 버튼 HTML: `detailAdsetShowMoreContainer`, `detailGenderShowMoreContainer` 등 6개 컨테이너 추가 |
+| 2025-12-23 | 성과 상세 분석 렌더링 함수 수정: `renderDetailAdsetBarChart()` 외 5개 함수에 조건부 슬라이싱 및 버튼 업데이트 로직 추가 |
+| 2025-12-23 | 성과 상세 분석 함수 추가: `updateDetailShowMoreButton()` - 더보기 버튼 상태 업데이트 |
+| 2025-12-23 | **성과 분석 더보기 기능 추가**: 4개 탭(브랜드/상품/프로모션/타겟팅) 차트에 더보기/접기 버튼 구현 |
+| 2025-12-23 | 성과 분석 상태 변수 추가: `PERF_DEFAULT_LIMIT=10`, `PERF_EXPANDED_LIMIT=50`, `perfChartState`에 `showAll`, `totalCount` 속성 추가 |
+| 2025-12-23 | 성과 분석 더보기 버튼 HTML: `perfBrandShowMoreContainer`, `perfProductShowMoreContainer`, `perfPromotionShowMoreContainer`, `perfTargetingShowMoreContainer` 추가 |
+| 2025-12-23 | 성과 분석 렌더링 함수 수정: `renderBrandPerformanceChart()` 외 3개 함수에 조건부 슬라이싱 및 버튼 업데이트 로직 추가 |
+| 2025-12-23 | 성과 분석 함수 추가: `updatePerfShowMoreButton()`, `setupPerfShowMoreButtons()` - 더보기 버튼 상태 관리 및 이벤트 설정 |

@@ -3238,6 +3238,13 @@
                             <div class="chart-container" style="height: 400px; border: 1px solid var(--grey-200); border-radius: 8px; padding: 16px;">
                                 <canvas id="detailAdsetBarChart"></canvas>
                             </div>
+                            <!-- 더보기/접기 버튼 -->
+                            <div id="detailAdsetShowMoreContainer" style="display: none; text-align: center; margin-top: 12px;">
+                                <button id="detailAdsetShowMoreBtn" class="detail-show-more-btn" data-tab="adset" style="padding: 8px 24px; font-size: 13px; font-weight: 500; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; background: white; color: #495057; transition: all 0.2s;">
+                                    <span class="btn-text">더보기</span>
+                                    <span class="btn-count" style="color: #868e96; margin-left: 4px;"></span>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -3419,6 +3426,13 @@
                             </div>
                             <div class="chart-container" style="height: 300px; border: 1px solid var(--grey-200); border-radius: 8px; padding: 16px;">
                                 <canvas id="detailGenderBarChart"></canvas>
+                            </div>
+                            <!-- 더보기/접기 버튼 -->
+                            <div id="detailGenderShowMoreContainer" style="display: none; text-align: center; margin-top: 12px;">
+                                <button id="detailGenderShowMoreBtn" class="detail-show-more-btn" data-tab="gender" style="padding: 8px 24px; font-size: 13px; font-weight: 500; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; background: white; color: #495057; transition: all 0.2s;">
+                                    <span class="btn-text">더보기</span>
+                                    <span class="btn-count" style="color: #868e96; margin-left: 4px;"></span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -3602,6 +3616,13 @@
                             <div class="chart-container" style="height: 350px; border: 1px solid var(--grey-200); border-radius: 8px; padding: 16px;">
                                 <canvas id="detailAgeBarChart"></canvas>
                             </div>
+                            <!-- 더보기/접기 버튼 -->
+                            <div id="detailAgeShowMoreContainer" style="display: none; text-align: center; margin-top: 12px;">
+                                <button id="detailAgeShowMoreBtn" class="detail-show-more-btn" data-tab="age" style="padding: 8px 24px; font-size: 13px; font-weight: 500; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; background: white; color: #495057; transition: all 0.2s;">
+                                    <span class="btn-text">더보기</span>
+                                    <span class="btn-count" style="color: #868e96; margin-left: 4px;"></span>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -3783,6 +3804,13 @@
                             </div>
                             <div class="chart-container" style="height: 300px; border: 1px solid var(--grey-200); border-radius: 8px; padding: 16px;">
                                 <canvas id="detailPlatformBarChart"></canvas>
+                            </div>
+                            <!-- 더보기/접기 버튼 -->
+                            <div id="detailPlatformShowMoreContainer" style="display: none; text-align: center; margin-top: 12px;">
+                                <button id="detailPlatformShowMoreBtn" class="detail-show-more-btn" data-tab="platform" style="padding: 8px 24px; font-size: 13px; font-weight: 500; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; background: white; color: #495057; transition: all 0.2s;">
+                                    <span class="btn-text">더보기</span>
+                                    <span class="btn-count" style="color: #868e96; margin-left: 4px;"></span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -3966,6 +3994,13 @@
                             <div class="chart-container" style="height: 300px; border: 1px solid var(--grey-200); border-radius: 8px; padding: 16px;">
                                 <canvas id="detailDevicePlatformBarChart"></canvas>
                             </div>
+                            <!-- 더보기/접기 버튼 -->
+                            <div id="detailDevicePlatformShowMoreContainer" style="display: none; text-align: center; margin-top: 12px;">
+                                <button id="detailDevicePlatformShowMoreBtn" class="detail-show-more-btn" data-tab="devicePlatform" style="padding: 8px 24px; font-size: 13px; font-weight: 500; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; background: white; color: #495057; transition: all 0.2s;">
+                                    <span class="btn-text">더보기</span>
+                                    <span class="btn-count" style="color: #868e96; margin-left: 4px;"></span>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -4148,6 +4183,13 @@
                             <div class="chart-container" style="height: 300px; border: 1px solid var(--grey-200); border-radius: 8px; padding: 16px;">
                                 <canvas id="detailDeviceTypeBarChart"></canvas>
                             </div>
+                            <!-- 더보기/접기 버튼 -->
+                            <div id="detailDeviceTypeShowMoreContainer" style="display: none; text-align: center; margin-top: 12px;">
+                                <button id="detailDeviceTypeShowMoreBtn" class="detail-show-more-btn" data-tab="deviceType" style="padding: 8px 24px; font-size: 13px; font-weight: 500; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; background: white; color: #495057; transition: all 0.2s;">
+                                    <span class="btn-text">더보기</span>
+                                    <span class="btn-count" style="color: #868e96; margin-left: 4px;"></span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -4271,6 +4313,10 @@
                                 <div class="chart-container" style="height: 350px;">
                                     <canvas id="brandPerformanceChart"></canvas>
                                 </div>
+                                <!-- 더보기 버튼 -->
+                                <div id="perfBrandShowMoreContainer" style="display: none; justify-content: center; margin-top: 12px;">
+                                    <button class="perf-show-more-btn" data-category="brand" style="padding: 8px 20px; font-size: 13px; font-weight: 500; border: none; border-radius: 6px; cursor: pointer; background: #e3f2fd; color: #1976d2;">더보기</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -4339,6 +4385,10 @@
                             <div style="padding: 20px;">
                                 <div class="chart-container" style="height: 350px;">
                                     <canvas id="productPerformanceChart"></canvas>
+                                </div>
+                                <!-- 더보기 버튼 -->
+                                <div id="perfProductShowMoreContainer" style="display: none; justify-content: center; margin-top: 12px;">
+                                    <button class="perf-show-more-btn" data-category="product" style="padding: 8px 20px; font-size: 13px; font-weight: 500; border: none; border-radius: 6px; cursor: pointer; background: #e3f2fd; color: #1976d2;">더보기</button>
                                 </div>
                             </div>
                         </div>
@@ -4409,6 +4459,10 @@
                                 <div class="chart-container" style="height: 350px;">
                                     <canvas id="promotionPerformanceChart"></canvas>
                                 </div>
+                                <!-- 더보기 버튼 -->
+                                <div id="perfPromotionShowMoreContainer" style="display: none; justify-content: center; margin-top: 12px;">
+                                    <button class="perf-show-more-btn" data-category="promotion" style="padding: 8px 20px; font-size: 13px; font-weight: 500; border: none; border-radius: 6px; cursor: pointer; background: #e3f2fd; color: #1976d2;">더보기</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -4477,6 +4531,10 @@
                             <div style="padding: 20px;">
                                 <div class="chart-container" style="height: 350px;">
                                     <canvas id="targetingPerformanceChart"></canvas>
+                                </div>
+                                <!-- 더보기 버튼 -->
+                                <div id="perfTargetingShowMoreContainer" style="display: none; justify-content: center; margin-top: 12px;">
+                                    <button class="perf-show-more-btn" data-category="targeting" style="padding: 8px 20px; font-size: 13px; font-weight: 500; border: none; border-radius: 6px; cursor: pointer; background: #e3f2fd; color: #1976d2;">더보기</button>
                                 </div>
                             </div>
                         </div>
@@ -4818,6 +4876,9 @@
         let pivotDimensionData = null;  // 성별연령 PIVOT 전용 데이터
 
         // ========== 성과 상세 분석 섹션 변수 (독립적) ==========
+        const DETAIL_DEFAULT_LIMIT = 10;  // 기본 표시 개수
+        const DETAIL_EXPANDED_LIMIT = 50; // 더보기 시 표시 개수
+
         // 광고세트 상세
         let detailAdsetFilters = { channel: [], product: [], brand: [], promotion: [] };
         let detailAdsetMetric = 'roas';
@@ -4828,6 +4889,8 @@
         let detailAdsetStartDateComp = '';
         let detailAdsetEndDateComp = '';
         let detailAdsetBarChart = null;
+        let detailAdsetShowAll = false;
+        let detailAdsetTotalCount = 0;
 
         // 성별 상세
         let detailGenderFilters = { channel: [], product: [], brand: [], promotion: [], adset: [] };
@@ -4839,6 +4902,8 @@
         let detailGenderStartDateComp = '';
         let detailGenderEndDateComp = '';
         let detailGenderBarChart = null;
+        let detailGenderShowAll = false;
+        let detailGenderTotalCount = 0;
 
         // 연령 상세
         let detailAgeFilters = { channel: [], product: [], brand: [], promotion: [], adset: [] };
@@ -4850,6 +4915,8 @@
         let detailAgeStartDateComp = '';
         let detailAgeEndDateComp = '';
         let detailAgeBarChart = null;
+        let detailAgeShowAll = false;
+        let detailAgeTotalCount = 0;
 
         // 플랫폼 상세
         let detailPlatformFilters = { channel: [], product: [], brand: [], promotion: [], adset: [] };
@@ -4861,6 +4928,8 @@
         let detailPlatformStartDateComp = '';
         let detailPlatformEndDateComp = '';
         let detailPlatformBarChart = null;
+        let detailPlatformShowAll = false;
+        let detailPlatformTotalCount = 0;
 
         // 기기플랫폼 상세
         let detailDevicePlatformFilters = { channel: [], product: [], brand: [], promotion: [], adset: [] };
@@ -4872,6 +4941,8 @@
         let detailDevicePlatformStartDateComp = '';
         let detailDevicePlatformEndDateComp = '';
         let detailDevicePlatformBarChart = null;
+        let detailDevicePlatformShowAll = false;
+        let detailDevicePlatformTotalCount = 0;
 
         // 기기 상세
         let detailDeviceTypeFilters = { channel: [], product: [], brand: [], promotion: [], adset: [] };
@@ -4883,6 +4954,8 @@
         let detailDeviceTypeStartDateComp = '';
         let detailDeviceTypeEndDateComp = '';
         let detailDeviceTypeBarChart = null;
+        let detailDeviceTypeShowAll = false;
+        let detailDeviceTypeTotalCount = 0;
 
         // 데이터 로딩
         async function loadData() {
@@ -7998,11 +8071,15 @@
 
         // 브랜드 성과 차트
         // 성과분석 차트 상태 관리
+        // 성과 분석 차트 기본 표시 개수
+        const PERF_DEFAULT_LIMIT = 10;
+        const PERF_EXPANDED_LIMIT = 50;
+
         let perfChartState = {
-            brand: { kpi: 'roas', sort: 'desc', chart: null, startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '' },
-            product: { kpi: 'roas', sort: 'desc', chart: null, startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '' },
-            promotion: { kpi: 'roas', sort: 'desc', chart: null, startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '' },
-            targeting: { kpi: 'roas', sort: 'desc', chart: null, startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '' }
+            brand: { kpi: 'roas', sort: 'desc', chart: null, startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '', showAll: false, totalCount: 0 },
+            product: { kpi: 'roas', sort: 'desc', chart: null, startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '', showAll: false, totalCount: 0 },
+            promotion: { kpi: 'roas', sort: 'desc', chart: null, startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '', showAll: false, totalCount: 0 },
+            targeting: { kpi: 'roas', sort: 'desc', chart: null, startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '', showAll: false, totalCount: 0 }
         };
 
         // KPI별 색상
@@ -8345,6 +8422,32 @@
             });
         }
 
+        // 성과 분석 더보기 버튼 업데이트 함수
+        function updatePerfShowMoreButton(category, totalCount, currentLimit, isExpanded) {
+            const container = document.getElementById(`perf${category.charAt(0).toUpperCase() + category.slice(1)}ShowMoreContainer`);
+            if (!container) return;
+
+            if (totalCount <= PERF_DEFAULT_LIMIT) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'flex';
+            const button = container.querySelector('.perf-show-more-btn');
+            if (!button) return;
+
+            if (isExpanded) {
+                button.textContent = '접기';
+                button.style.background = '#f5f5f5';
+                button.style.color = '#666';
+            } else {
+                const remaining = totalCount - currentLimit;
+                button.textContent = `더보기 (+${remaining}개)`;
+                button.style.background = '#e3f2fd';
+                button.style.color = '#1976d2';
+            }
+        }
+
         // 모든 성과분석 차트 렌더링
         function renderAllPerformanceCharts() {
             renderBrandPerformanceChart();
@@ -8393,11 +8496,14 @@
             }
 
             // 정렬 (현재 기간 기준)
-            let sorted = [...brandData].sort((a, b) => {
+            const allSorted = [...brandData].sort((a, b) => {
                 const aVal = a[state.kpi];
                 const bVal = b[state.kpi];
                 return state.sort === 'desc' ? bVal - aVal : aVal - bVal;
-            }).slice(0, 10);
+            });
+            state.totalCount = allSorted.length;
+            const limit = state.showAll ? PERF_EXPANDED_LIMIT : PERF_DEFAULT_LIMIT;
+            let sorted = allSorted.slice(0, limit);
 
             // 비교 데이터 매핑
             const prevDataMap = {};
@@ -8512,6 +8618,9 @@
                     }
                 }
             });
+
+            // 더보기 버튼 업데이트
+            updatePerfShowMoreButton('brand', state.totalCount, limit, state.showAll);
         }
 
         // 상품 성과 차트 - adsetDimensionData(dimension_type1_campaign_adset.csv) 사용
@@ -8551,11 +8660,14 @@
                 }
             }
 
-            let sorted = [...productData].sort((a, b) => {
+            const allSorted = [...productData].sort((a, b) => {
                 const aVal = a[state.kpi];
                 const bVal = b[state.kpi];
                 return state.sort === 'desc' ? bVal - aVal : aVal - bVal;
-            }).slice(0, 10);
+            });
+            state.totalCount = allSorted.length;
+            const limit = state.showAll ? PERF_EXPANDED_LIMIT : PERF_DEFAULT_LIMIT;
+            let sorted = allSorted.slice(0, limit);
 
             const prevDataMap = {};
             prevProductData.forEach(item => {
@@ -8661,6 +8773,9 @@
                     }
                 }
             });
+
+            // 더보기 버튼 업데이트
+            updatePerfShowMoreButton('product', state.totalCount, limit, state.showAll);
         }
 
         // 프로모션 성과 차트 - adsetDimensionData(dimension_type1_campaign_adset.csv) 사용
@@ -8700,11 +8815,14 @@
                 }
             }
 
-            let sorted = [...promotionData].sort((a, b) => {
+            const allSorted = [...promotionData].sort((a, b) => {
                 const aVal = a[state.kpi];
                 const bVal = b[state.kpi];
                 return state.sort === 'desc' ? bVal - aVal : aVal - bVal;
-            }).slice(0, 10);
+            });
+            state.totalCount = allSorted.length;
+            const limit = state.showAll ? PERF_EXPANDED_LIMIT : PERF_DEFAULT_LIMIT;
+            let sorted = allSorted.slice(0, limit);
 
             const prevDataMap = {};
             prevPromotionData.forEach(item => {
@@ -8810,6 +8928,9 @@
                     }
                 }
             });
+
+            // 더보기 버튼 업데이트
+            updatePerfShowMoreButton('promotion', state.totalCount, limit, state.showAll);
         }
 
         // 타겟팅 성과 차트 - adsetDimensionData(dimension_type1_campaign_adset.csv)의 '타겟팅' 컬럼 사용
@@ -8852,11 +8973,14 @@
                 }
             }
 
-            let sorted = [...targetingData].sort((a, b) => {
+            const allSorted = [...targetingData].sort((a, b) => {
                 const aVal = a[state.kpi];
                 const bVal = b[state.kpi];
                 return state.sort === 'desc' ? bVal - aVal : aVal - bVal;
-            }).slice(0, 10);
+            });
+            state.totalCount = allSorted.length;
+            const limit = state.showAll ? PERF_EXPANDED_LIMIT : PERF_DEFAULT_LIMIT;
+            let sorted = allSorted.slice(0, limit);
 
             const prevDataMap = {};
             prevTargetingData.forEach(item => {
@@ -8956,6 +9080,9 @@
                     }
                 }
             });
+
+            // 더보기 버튼 업데이트
+            updatePerfShowMoreButton('targeting', state.totalCount, limit, state.showAll);
         }
 
         // 성과분석 KPI/정렬 드롭다운 이벤트
@@ -8983,6 +9110,17 @@
             }
         }
 
+        // 성과 분석 더보기 버튼 이벤트 설정
+        function setupPerfShowMoreButtons() {
+            document.querySelectorAll('.perf-show-more-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    perfChartState[category].showAll = !perfChartState[category].showAll;
+                    renderPerformanceChart(category);
+                });
+            });
+        }
+
         // 모든 성과분석 차트 초기화
         function initPerformanceCharts() {
             // 공통 날짜 초기화
@@ -8994,6 +9132,9 @@
             // 차트 렌더링
             renderAllPerformanceCharts();
             setupPerformanceControls();
+
+            // 더보기 버튼 이벤트 설정
+            setupPerfShowMoreButtons();
         }
 
         // ========== 리타겟팅 및 계절성 분석 ==========
@@ -15026,6 +15167,32 @@
             });
         }
 
+        // 더보기 버튼 상태 업데이트 함수
+        function updateDetailShowMoreButton(tabName, totalCount, currentLimit, isExpanded) {
+            const container = document.getElementById(`detail${tabName.charAt(0).toUpperCase() + tabName.slice(1)}ShowMoreContainer`);
+            const btn = document.getElementById(`detail${tabName.charAt(0).toUpperCase() + tabName.slice(1)}ShowMoreBtn`);
+            if (!container || !btn) return;
+
+            // 기본 제한보다 데이터가 많을 때만 버튼 표시
+            if (totalCount > DETAIL_DEFAULT_LIMIT) {
+                container.style.display = 'block';
+                const btnText = btn.querySelector('.btn-text');
+                const btnCount = btn.querySelector('.btn-count');
+                if (isExpanded) {
+                    btnText.textContent = '접기';
+                    btnCount.textContent = '';
+                    btn.style.background = '#f8f9fa';
+                } else {
+                    const remaining = totalCount - currentLimit;
+                    btnText.textContent = '더보기';
+                    btnCount.textContent = `(+${remaining > DETAIL_EXPANDED_LIMIT - DETAIL_DEFAULT_LIMIT ? DETAIL_EXPANDED_LIMIT - DETAIL_DEFAULT_LIMIT : remaining}개)`;
+                    btn.style.background = 'white';
+                }
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
         // 공통 Bar 차트 렌더링 함수 (수평 막대) - 단순 버전
         function renderDetailBarChart(canvasId, chartVar, labels, values, metric, chartTitle) {
             const canvas = document.getElementById(canvasId);
@@ -15422,19 +15589,23 @@
                 const compData = aggregateData(detailAdsetStartDateComp, detailAdsetEndDateComp);
 
                 // 정렬 (기준 기간 기준)
-                const sortedAdsets = Object.keys(mainData)
+                const allSortedAdsets = Object.keys(mainData)
                     .sort((a, b) => {
                         const valA = calculateMetricValue(mainData[a], detailAdsetMetric);
                         const valB = calculateMetricValue(mainData[b], detailAdsetMetric);
                         return detailAdsetSortOrder === 'desc' ? valB - valA : valA - valB;
-                    })
-                    .slice(0, 15);
+                    });
+
+                detailAdsetTotalCount = allSortedAdsets.length;
+                const limit = detailAdsetShowAll ? DETAIL_EXPANDED_LIMIT : DETAIL_DEFAULT_LIMIT;
+                const sortedAdsets = allSortedAdsets.slice(0, limit);
 
                 const labels = sortedAdsets;
                 const values = sortedAdsets.map(adset => calculateMetricValue(mainData[adset] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailAdsetMetric));
                 const valuesComp = sortedAdsets.map(adset => calculateMetricValue(compData[adset] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailAdsetMetric));
 
                 detailAdsetBarChart = renderDetailCompareBarChart('detailAdsetBarChart', detailAdsetBarChart, labels, values, valuesComp, detailAdsetMetric, '기준 기간', '비교 기간');
+                updateDetailShowMoreButton('adset', detailAdsetTotalCount, limit, detailAdsetShowAll);
                 return;
             }
 
@@ -15501,7 +15672,10 @@
                     });
                     adsetTotals[adset] = total;
                 });
-                const sortedAdsets = Object.keys(adsetTotals).sort((a, b) => detailAdsetSortOrder === 'desc' ? adsetTotals[b] - adsetTotals[a] : adsetTotals[a] - adsetTotals[b]).slice(0, 15);
+                const allSortedAdsets = Object.keys(adsetTotals).sort((a, b) => detailAdsetSortOrder === 'desc' ? adsetTotals[b] - adsetTotals[a] : adsetTotals[a] - adsetTotals[b]);
+                detailAdsetTotalCount = allSortedAdsets.length;
+                const limit = detailAdsetShowAll ? DETAIL_EXPANDED_LIMIT : DETAIL_DEFAULT_LIMIT;
+                const sortedAdsets = allSortedAdsets.slice(0, limit);
 
                 // 모든 스택 값 수집
                 const allStackValues = new Set();
@@ -15522,9 +15696,11 @@
                 });
 
                 detailAdsetBarChart = renderDetailStackedBarChart('detailAdsetBarChart', detailAdsetBarChart, sortedAdsets, stackedData, detailAdsetMetric);
+                updateDetailShowMoreButton('adset', detailAdsetTotalCount, limit, detailAdsetShowAll);
             } else {
                 // 필터 없을 때: 초기화 상태 메시지 표시
                 detailAdsetBarChart = renderDetailBarChart('detailAdsetBarChart', detailAdsetBarChart, [], [], detailAdsetMetric, '필터를 선택해주세요');
+                updateDetailShowMoreButton('adset', 0, DETAIL_DEFAULT_LIMIT, false);
             }
         }
 
@@ -15645,18 +15821,23 @@
                 const mainData = aggregateData(detailGenderStartDate, detailGenderEndDate);
                 const compData = aggregateData(detailGenderStartDateComp, detailGenderEndDateComp);
 
-                const sortedGenders = Object.keys(mainData)
+                const allSortedGenders = Object.keys(mainData)
                     .sort((a, b) => {
                         const valA = calculateMetricValue(mainData[a], detailGenderMetric);
                         const valB = calculateMetricValue(mainData[b], detailGenderMetric);
                         return detailGenderSortOrder === 'desc' ? valB - valA : valA - valB;
                     });
 
+                detailGenderTotalCount = allSortedGenders.length;
+                const limit = detailGenderShowAll ? DETAIL_EXPANDED_LIMIT : DETAIL_DEFAULT_LIMIT;
+                const sortedGenders = allSortedGenders.slice(0, limit);
+
                 const labels = sortedGenders;
                 const values = sortedGenders.map(g => calculateMetricValue(mainData[g] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailGenderMetric));
                 const valuesComp = sortedGenders.map(g => calculateMetricValue(compData[g] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailGenderMetric));
 
                 detailGenderBarChart = renderDetailCompareBarChart('detailGenderBarChart', detailGenderBarChart, labels, values, valuesComp, detailGenderMetric, '기준 기간', '비교 기간');
+                updateDetailShowMoreButton('gender', detailGenderTotalCount, limit, detailGenderShowAll);
                 return;
             }
 
@@ -15712,7 +15893,10 @@
                     });
                     genderTotals[gender] = total;
                 });
-                const genderLabels = Object.keys(genderStackData).sort((a, b) => detailGenderSortOrder === 'desc' ? genderTotals[b] - genderTotals[a] : genderTotals[a] - genderTotals[b]);
+                const allGenderLabels = Object.keys(genderStackData).sort((a, b) => detailGenderSortOrder === 'desc' ? genderTotals[b] - genderTotals[a] : genderTotals[a] - genderTotals[b]);
+                detailGenderTotalCount = allGenderLabels.length;
+                const limit = detailGenderShowAll ? DETAIL_EXPANDED_LIMIT : DETAIL_DEFAULT_LIMIT;
+                const genderLabels = allGenderLabels.slice(0, limit);
                 const stackLabels = detailGenderFilters[activeFilterKey];
                 const stackedData = {};
 
@@ -15724,9 +15908,11 @@
                 });
 
                 detailGenderBarChart = renderDetailStackedBarChart('detailGenderBarChart', detailGenderBarChart, genderLabels, stackedData, detailGenderMetric);
+                updateDetailShowMoreButton('gender', detailGenderTotalCount, limit, detailGenderShowAll);
             } else {
                 // 필터 없을 때: 초기화 상태 메시지 표시
                 detailGenderBarChart = renderDetailBarChart('detailGenderBarChart', detailGenderBarChart, [], [], detailGenderMetric, '필터를 선택해주세요');
+                updateDetailShowMoreButton('gender', 0, DETAIL_DEFAULT_LIMIT, false);
             }
         }
 
@@ -15847,18 +16033,23 @@
                 const mainData = aggregateData(detailAgeStartDate, detailAgeEndDate);
                 const compData = aggregateData(detailAgeStartDateComp, detailAgeEndDateComp);
 
-                const sortedAges = Object.keys(mainData)
+                const allSortedAges = Object.keys(mainData)
                     .sort((a, b) => {
                         const valA = calculateMetricValue(mainData[a], detailAgeMetric);
                         const valB = calculateMetricValue(mainData[b], detailAgeMetric);
                         return detailAgeSortOrder === 'desc' ? valB - valA : valA - valB;
                     });
 
+                detailAgeTotalCount = allSortedAges.length;
+                const limit = detailAgeShowAll ? DETAIL_EXPANDED_LIMIT : DETAIL_DEFAULT_LIMIT;
+                const sortedAges = allSortedAges.slice(0, limit);
+
                 const labels = sortedAges;
                 const values = sortedAges.map(a => calculateMetricValue(mainData[a] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailAgeMetric));
                 const valuesComp = sortedAges.map(a => calculateMetricValue(compData[a] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailAgeMetric));
 
                 detailAgeBarChart = renderDetailCompareBarChart('detailAgeBarChart', detailAgeBarChart, labels, values, valuesComp, detailAgeMetric, '기준 기간', '비교 기간');
+                updateDetailShowMoreButton('age', detailAgeTotalCount, limit, detailAgeShowAll);
                 return;
             }
 
@@ -15914,7 +16105,10 @@
                     });
                     ageTotals[age] = total;
                 });
-                const ageLabels = Object.keys(ageStackData).sort((a, b) => detailAgeSortOrder === 'desc' ? ageTotals[b] - ageTotals[a] : ageTotals[a] - ageTotals[b]);
+                const allAgeLabels = Object.keys(ageStackData).sort((a, b) => detailAgeSortOrder === 'desc' ? ageTotals[b] - ageTotals[a] : ageTotals[a] - ageTotals[b]);
+                detailAgeTotalCount = allAgeLabels.length;
+                const limit = detailAgeShowAll ? DETAIL_EXPANDED_LIMIT : DETAIL_DEFAULT_LIMIT;
+                const ageLabels = allAgeLabels.slice(0, limit);
                 const stackLabels = detailAgeFilters[activeFilterKey];
                 const stackedData = {};
 
@@ -15926,9 +16120,11 @@
                 });
 
                 detailAgeBarChart = renderDetailStackedBarChart('detailAgeBarChart', detailAgeBarChart, ageLabels, stackedData, detailAgeMetric);
+                updateDetailShowMoreButton('age', detailAgeTotalCount, limit, detailAgeShowAll);
             } else {
                 // 필터 없을 때: 초기화 상태 메시지 표시
                 detailAgeBarChart = renderDetailBarChart('detailAgeBarChart', detailAgeBarChart, [], [], detailAgeMetric, '필터를 선택해주세요');
+                updateDetailShowMoreButton('age', 0, DETAIL_DEFAULT_LIMIT, false);
             }
         }
 
@@ -16049,18 +16245,23 @@
                 const mainData = aggregateData(detailPlatformStartDate, detailPlatformEndDate);
                 const compData = aggregateData(detailPlatformStartDateComp, detailPlatformEndDateComp);
 
-                const sortedPlatforms = Object.keys(mainData)
+                const allSortedPlatforms = Object.keys(mainData)
                     .sort((a, b) => {
                         const valA = calculateMetricValue(mainData[a], detailPlatformMetric);
                         const valB = calculateMetricValue(mainData[b], detailPlatformMetric);
                         return detailPlatformSortOrder === 'desc' ? valB - valA : valA - valB;
                     });
 
+                detailPlatformTotalCount = allSortedPlatforms.length;
+                const limit = detailPlatformShowAll ? DETAIL_EXPANDED_LIMIT : DETAIL_DEFAULT_LIMIT;
+                const sortedPlatforms = allSortedPlatforms.slice(0, limit);
+
                 const labels = sortedPlatforms;
                 const values = sortedPlatforms.map(p => calculateMetricValue(mainData[p] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailPlatformMetric));
                 const valuesComp = sortedPlatforms.map(p => calculateMetricValue(compData[p] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailPlatformMetric));
 
                 detailPlatformBarChart = renderDetailCompareBarChart('detailPlatformBarChart', detailPlatformBarChart, labels, values, valuesComp, detailPlatformMetric, '기준 기간', '비교 기간');
+                updateDetailShowMoreButton('platform', detailPlatformTotalCount, limit, detailPlatformShowAll);
                 return;
             }
 
@@ -16115,7 +16316,10 @@
                     });
                     platformTotals[platform] = total;
                 });
-                const platformLabels = Object.keys(platformStackData).sort((a, b) => detailPlatformSortOrder === 'desc' ? platformTotals[b] - platformTotals[a] : platformTotals[a] - platformTotals[b]);
+                const allPlatformLabels = Object.keys(platformStackData).sort((a, b) => detailPlatformSortOrder === 'desc' ? platformTotals[b] - platformTotals[a] : platformTotals[a] - platformTotals[b]);
+                detailPlatformTotalCount = allPlatformLabels.length;
+                const limit = detailPlatformShowAll ? DETAIL_EXPANDED_LIMIT : DETAIL_DEFAULT_LIMIT;
+                const platformLabels = allPlatformLabels.slice(0, limit);
                 const stackLabels = detailPlatformFilters[activeFilterKey];
                 const stackedData = {};
 
@@ -16127,9 +16331,11 @@
                 });
 
                 detailPlatformBarChart = renderDetailStackedBarChart('detailPlatformBarChart', detailPlatformBarChart, platformLabels, stackedData, detailPlatformMetric);
+                updateDetailShowMoreButton('platform', detailPlatformTotalCount, limit, detailPlatformShowAll);
             } else {
                 // 필터 없을 때: 초기화 상태 메시지 표시
                 detailPlatformBarChart = renderDetailBarChart('detailPlatformBarChart', detailPlatformBarChart, [], [], detailPlatformMetric, '필터를 선택해주세요');
+                updateDetailShowMoreButton('platform', 0, DETAIL_DEFAULT_LIMIT, false);
             }
         }
 
@@ -16261,12 +16467,16 @@
                 console.log('Main data:', JSON.stringify(mainData));
                 console.log('Comp data:', JSON.stringify(compData));
 
-                const sortedDPs = Object.keys(mainData)
+                const allSortedDPs = Object.keys(mainData)
                     .sort((a, b) => {
                         const valA = calculateMetricValue(mainData[a], detailDevicePlatformMetric);
                         const valB = calculateMetricValue(mainData[b], detailDevicePlatformMetric);
                         return detailDevicePlatformSortOrder === 'desc' ? valB - valA : valA - valB;
                     });
+
+                detailDevicePlatformTotalCount = allSortedDPs.length;
+                const limit = detailDevicePlatformShowAll ? DETAIL_EXPANDED_LIMIT : DETAIL_DEFAULT_LIMIT;
+                const sortedDPs = allSortedDPs.slice(0, limit);
 
                 const labels = sortedDPs;
                 const values = sortedDPs.map(dp => calculateMetricValue(mainData[dp] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailDevicePlatformMetric));
@@ -16276,6 +16486,7 @@
                 console.log('Values (comp):', valuesComp);
 
                 detailDevicePlatformBarChart = renderDetailCompareBarChart('detailDevicePlatformBarChart', detailDevicePlatformBarChart, labels, values, valuesComp, detailDevicePlatformMetric, '기준 기간', '비교 기간');
+                updateDetailShowMoreButton('devicePlatform', detailDevicePlatformTotalCount, limit, detailDevicePlatformShowAll);
                 return;
             }
 
@@ -16342,7 +16553,10 @@
                     });
                     devicePlatformTotals[dp] = total;
                 });
-                const sortedDevicePlatforms = Object.keys(devicePlatformTotals).sort((a, b) => detailDevicePlatformSortOrder === 'desc' ? devicePlatformTotals[b] - devicePlatformTotals[a] : devicePlatformTotals[a] - devicePlatformTotals[b]);
+                const allSortedDevicePlatforms = Object.keys(devicePlatformTotals).sort((a, b) => detailDevicePlatformSortOrder === 'desc' ? devicePlatformTotals[b] - devicePlatformTotals[a] : devicePlatformTotals[a] - devicePlatformTotals[b]);
+                detailDevicePlatformTotalCount = allSortedDevicePlatforms.length;
+                const limit = detailDevicePlatformShowAll ? DETAIL_EXPANDED_LIMIT : DETAIL_DEFAULT_LIMIT;
+                const sortedDevicePlatforms = allSortedDevicePlatforms.slice(0, limit);
 
                 // 모든 스택 값 수집
                 const allStackValues = new Set();
@@ -16363,9 +16577,11 @@
                 });
 
                 detailDevicePlatformBarChart = renderDetailStackedBarChart('detailDevicePlatformBarChart', detailDevicePlatformBarChart, sortedDevicePlatforms, stackedData, detailDevicePlatformMetric);
+                updateDetailShowMoreButton('devicePlatform', detailDevicePlatformTotalCount, limit, detailDevicePlatformShowAll);
             } else {
                 // 필터 없을 때: 초기화 상태 메시지 표시
                 detailDevicePlatformBarChart = renderDetailBarChart('detailDevicePlatformBarChart', detailDevicePlatformBarChart, [], [], detailDevicePlatformMetric, '필터를 선택해주세요');
+                updateDetailShowMoreButton('devicePlatform', 0, DETAIL_DEFAULT_LIMIT, false);
             }
         }
 
@@ -16486,18 +16702,23 @@
                 const mainData = aggregateData(detailDeviceTypeStartDate, detailDeviceTypeEndDate);
                 const compData = aggregateData(detailDeviceTypeStartDateComp, detailDeviceTypeEndDateComp);
 
-                const sortedDTs = Object.keys(mainData)
+                const allSortedDTs = Object.keys(mainData)
                     .sort((a, b) => {
                         const valA = calculateMetricValue(mainData[a], detailDeviceTypeMetric);
                         const valB = calculateMetricValue(mainData[b], detailDeviceTypeMetric);
                         return detailDeviceTypeSortOrder === 'desc' ? valB - valA : valA - valB;
                     });
 
+                detailDeviceTypeTotalCount = allSortedDTs.length;
+                const limit = detailDeviceTypeShowAll ? DETAIL_EXPANDED_LIMIT : DETAIL_DEFAULT_LIMIT;
+                const sortedDTs = allSortedDTs.slice(0, limit);
+
                 const labels = sortedDTs;
                 const values = sortedDTs.map(dt => calculateMetricValue(mainData[dt] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailDeviceTypeMetric));
                 const valuesComp = sortedDTs.map(dt => calculateMetricValue(compData[dt] || {cost:0,revenue:0,conversions:0,impressions:0,clicks:0}, detailDeviceTypeMetric));
 
                 detailDeviceTypeBarChart = renderDetailCompareBarChart('detailDeviceTypeBarChart', detailDeviceTypeBarChart, labels, values, valuesComp, detailDeviceTypeMetric, '기준 기간', '비교 기간');
+                updateDetailShowMoreButton('deviceType', detailDeviceTypeTotalCount, limit, detailDeviceTypeShowAll);
                 return;
             }
 
@@ -16564,7 +16785,10 @@
                     });
                     deviceTypeTotals[dt] = total;
                 });
-                const sortedDeviceTypes = Object.keys(deviceTypeTotals).sort((a, b) => detailDeviceTypeSortOrder === 'desc' ? deviceTypeTotals[b] - deviceTypeTotals[a] : deviceTypeTotals[a] - deviceTypeTotals[b]);
+                const allSortedDeviceTypes = Object.keys(deviceTypeTotals).sort((a, b) => detailDeviceTypeSortOrder === 'desc' ? deviceTypeTotals[b] - deviceTypeTotals[a] : deviceTypeTotals[a] - deviceTypeTotals[b]);
+                detailDeviceTypeTotalCount = allSortedDeviceTypes.length;
+                const limit = detailDeviceTypeShowAll ? DETAIL_EXPANDED_LIMIT : DETAIL_DEFAULT_LIMIT;
+                const sortedDeviceTypes = allSortedDeviceTypes.slice(0, limit);
 
                 // 모든 스택 값 수집
                 const allStackValues = new Set();
@@ -16585,9 +16809,11 @@
                 });
 
                 detailDeviceTypeBarChart = renderDetailStackedBarChart('detailDeviceTypeBarChart', detailDeviceTypeBarChart, sortedDeviceTypes, stackedData, detailDeviceTypeMetric);
+                updateDetailShowMoreButton('deviceType', detailDeviceTypeTotalCount, limit, detailDeviceTypeShowAll);
             } else {
                 // 필터 없을 때: 초기화 상태 메시지 표시
                 detailDeviceTypeBarChart = renderDetailBarChart('detailDeviceTypeBarChart', detailDeviceTypeBarChart, [], [], detailDeviceTypeMetric, '필터를 선택해주세요');
+                updateDetailShowMoreButton('deviceType', 0, DETAIL_DEFAULT_LIMIT, false);
             }
         }
 
@@ -16920,6 +17146,34 @@
                     else if (tab === 'platform') renderDetailPlatformBarChart();
                     else if (tab === 'device-platform') renderDetailDevicePlatformBarChart();
                     else if (tab === 'device-type') renderDetailDeviceTypeBarChart();
+                });
+            });
+
+            // 성과 상세 분석 - 더보기/접기 버튼 이벤트
+            document.querySelectorAll('.detail-show-more-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tab = this.getAttribute('data-tab');
+
+                    // 상태 토글
+                    if (tab === 'adset') {
+                        detailAdsetShowAll = !detailAdsetShowAll;
+                        renderDetailAdsetBarChart();
+                    } else if (tab === 'gender') {
+                        detailGenderShowAll = !detailGenderShowAll;
+                        renderDetailGenderBarChart();
+                    } else if (tab === 'age') {
+                        detailAgeShowAll = !detailAgeShowAll;
+                        renderDetailAgeBarChart();
+                    } else if (tab === 'platform') {
+                        detailPlatformShowAll = !detailPlatformShowAll;
+                        renderDetailPlatformBarChart();
+                    } else if (tab === 'devicePlatform') {
+                        detailDevicePlatformShowAll = !detailDevicePlatformShowAll;
+                        renderDetailDevicePlatformBarChart();
+                    } else if (tab === 'deviceType') {
+                        detailDeviceTypeShowAll = !detailDeviceTypeShowAll;
+                        renderDetailDeviceTypeBarChart();
+                    }
                 });
             });
         }
