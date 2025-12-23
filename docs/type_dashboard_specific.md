@@ -187,13 +187,6 @@
 | **참조 데이터** | `deviceTypeDimensionData` (dimension_type5_adset_device.csv) |
 | **기능** | 기기유형별 성과 추이 시각화 |
 
-#### 3.7 성별 연령 PIVOT 탭
-| 항목 | 내용 |
-|------|------|
-| **JS 함수** | `initPivotDropdowns()` |
-| **참조 데이터** | `pivotDimensionData` (dimension_type2_adset_age_gender.csv) |
-| **기능** | 성별×연령 조합 PIVOT 테이블 |
-
 ---
 
 ### 4. 성과 상세 분석 (collapsible-section #3)
@@ -261,14 +254,14 @@
 | 항목 | 내용 |
 |------|------|
 | **섹션 헤드** | 📊 성과 테이블 분석 - 테이블 형태로 상세 성과를 확인하세요 |
-| **JS 함수** | `initPerfTableAnalysis()`, `setupPerfTableTabs()`, `setupPerfTableAdsetFilterEvents()`, `setupPerfTableDateEvents()`, `setupPerfTableSortEvents()` |
-| **참조 데이터** | `adsetDimensionData`, `ageGenderData`, `ageData`, `platformData`, `devicePlatformData`, `deviceTypeData` |
-| **기능** | - 6개 탭별 테이블 형태 성과 분석<br>- 날짜 범위 필터링<br>- 컬럼별 정렬(오름차순/내림차순)<br>- 색상 스케일 시각화 (성별 연령 PIVOT 스타일) |
+| **JS 함수** | `initPerfTableAnalysis()`, `setupPerfTableTabs()`, `setupPerfTableFilterEvents()`, `setupPerfTableDateEvents()`, `setupPerfTableSortEvents()` |
+| **참조 데이터** | `adsetDimensionData`, `genderDimensionData`, `ageDimensionData`, `pivotDimensionData`, `platformDimensionData`, `devicePlatformDimensionData`, `deviceTypeDimensionData` |
+| **기능** | - 7개 탭별 테이블 형태 성과 분석 (광고세트/성별/연령/성별연령/플랫폼/기기플랫폼/기기)<br>- 날짜 범위 필터링<br>- 채널/제품/브랜드/프로모션 다중 필터 드롭다운<br>- 컬럼별 정렬(오름차순/내림차순)<br>- 색상 스케일 시각화 |
 
 #### 6.1 광고세트 탭
 | 항목 | 내용 |
 |------|------|
-| **JS 함수** | `initPerfTableAdsetFilters()`, `renderPerfTableAdset()` |
+| **JS 함수** | `initPerfTableFilters()`, `renderPerfTableAdset()` |
 | **참조 데이터** | `adsetDimensionData` (dimension_type1_campaign_adset.csv) |
 | **기능** | - 채널/제품/브랜드/프로모션 다중 선택 드롭다운 필터<br>- 날짜 범위 필터링<br>- 광고세트별 11개 지표 테이블<br>- 컬럼별 정렬 |
 
@@ -276,38 +269,45 @@
 | 항목 | 내용 |
 |------|------|
 | **JS 함수** | `renderPerfTableGender()` → `renderPerfTableGeneric()` |
-| **참조 데이터** | `ageGenderData` (dimension_type2_adset_age_gender.csv) → `성별` 컬럼 |
-| **기능** | 성별별 성과 테이블 (날짜 필터, 정렬, 색상 스케일) |
+| **참조 데이터** | `genderDimensionData` (dimension_type4_adset_gender.csv) → `성별` 컬럼 |
+| **기능** | 성별별 성과 테이블 (필터, 날짜 필터, 정렬, 색상 스케일) |
 
 #### 6.3 연령 탭
 | 항목 | 내용 |
 |------|------|
 | **JS 함수** | `renderPerfTableAge()` → `renderPerfTableGeneric()` |
-| **참조 데이터** | `ageData` (dimension_type3_adset_age.csv) → `연령` 컬럼 |
-| **기능** | 연령대별 성과 테이블 (날짜 필터, 정렬, 색상 스케일) |
+| **참조 데이터** | `ageDimensionData` (dimension_type3_adset_age.csv) → `연령` 컬럼 |
+| **기능** | 연령대별 성과 테이블 (필터, 날짜 필터, 정렬, 색상 스케일) |
 
-#### 6.4 플랫폼 탭
+#### 6.4 성별연령 PIVOT 탭
+| 항목 | 내용 |
+|------|------|
+| **JS 함수** | `renderPerfTableGenderAge()` |
+| **참조 데이터** | `pivotDimensionData` (dimension_type2_adset_age_gender.csv) |
+| **기능** | - 성별×연령 교차 분석 PIVOT 테이블<br>- 채널/제품/브랜드/프로모션 다중 필터<br>- 날짜 범위 필터링<br>- 지표별(비용/CPM/CPC/CPA/ROAS) 남성/여성 비교<br>- 색상 스케일 그라데이션<br>- 하단 통계 요약 카드 |
+
+#### 6.5 플랫폼 탭
 | 항목 | 내용 |
 |------|------|
 | **JS 함수** | `renderPerfTablePlatform()` → `renderPerfTableGeneric()` |
-| **참조 데이터** | `platformData` (dimension_type6_adset_platform.csv) → `플랫폼` 컬럼 |
-| **기능** | 플랫폼별 성과 테이블 (날짜 필터, 정렬, 색상 스케일) |
+| **참조 데이터** | `platformDimensionData` (dimension_type6_adset_platform.csv) → `플랫폼` 컬럼 |
+| **기능** | 플랫폼별 성과 테이블 (필터, 날짜 필터, 정렬, 색상 스케일) |
 
-#### 6.5 기기플랫폼 탭
+#### 6.6 기기플랫폼 탭
 | 항목 | 내용 |
 |------|------|
 | **JS 함수** | `renderPerfTableDevicePlatform()` → `renderPerfTableGeneric()` |
-| **참조 데이터** | `devicePlatformData` (dimension_type7_adset_deviceplatform.csv) → `기기플랫폼` 컬럼 |
-| **기능** | 기기플랫폼별 성과 테이블 (날짜 필터, 정렬, 색상 스케일) |
+| **참조 데이터** | `devicePlatformDimensionData` (dimension_type7_adset_deviceplatform.csv) → `기기플랫폼` 컬럼 |
+| **기능** | 기기플랫폼별 성과 테이블 (필터, 날짜 필터, 정렬, 색상 스케일) |
 
-#### 6.6 기기 탭
+#### 6.7 기기 탭
 | 항목 | 내용 |
 |------|------|
 | **JS 함수** | `renderPerfTableDeviceType()` → `renderPerfTableGeneric()` |
-| **참조 데이터** | `deviceTypeData` (dimension_type5_adset_device.csv) → `기기유형` 컬럼 |
-| **기능** | 기기유형별 성과 테이블 (날짜 필터, 정렬, 색상 스케일) |
+| **참조 데이터** | `deviceTypeDimensionData` (dimension_type5_adset_device.csv) → `기기유형` 컬럼 |
+| **기능** | 기기유형별 성과 테이블 (필터, 날짜 필터, 정렬, 색상 스케일) |
 
-#### 6.7 테이블 지표 (perfTableMetrics)
+#### 6.8 테이블 지표 (perfTableMetrics)
 | 지표 키 | 라벨 | 역방향 색상 |
 |---------|------|-------------|
 | `cost` | 비용 | ❌ |
@@ -528,14 +528,15 @@
 ### 성과 테이블 분석 상태
 | 변수명 | 설명 |
 |--------|------|
-| `perfTableState` | 6개 탭별 상태 관리 객체 |
+| `perfTableState` | 7개 탭별 상태 관리 객체 |
 | `.adset` | 광고세트 탭 (filters, startDate, endDate, sortColumn, sortDirection) |
-| `.gender` | 성별 탭 (startDate, endDate, sortColumn, sortDirection) |
-| `.age` | 연령 탭 (startDate, endDate, sortColumn, sortDirection) |
-| `.platform` | 플랫폼 탭 (startDate, endDate, sortColumn, sortDirection) |
-| `.deviceplatform` | 기기플랫폼 탭 (startDate, endDate, sortColumn, sortDirection) |
-| `.device` | 기기 탭 (startDate, endDate, sortColumn, sortDirection) |
-| `perfTableMetrics` | 테이블 지표 정의 배열 (11개: cost, revenue, roas, cpm, cpc, cpa, ctr, cvr, impressions, clicks, conversions) |
+| `.gender` | 성별 탭 (filters, startDate, endDate, sortColumn, sortDirection) |
+| `.age` | 연령 탭 (filters, startDate, endDate, sortColumn, sortDirection) |
+| `.genderAge` | 성별연령 PIVOT 탭 (filters, startDate, endDate) |
+| `.platform` | 플랫폼 탭 (filters, startDate, endDate, sortColumn, sortDirection) |
+| `.devicePlatform` | 기기플랫폼 탭 (filters, startDate, endDate, sortColumn, sortDirection) |
+| `.deviceType` | 기기 탭 (filters, startDate, endDate, sortColumn, sortDirection) |
+| `perfTableMetrics` | 테이블 지표 정의 배열 (11개: cost, impressions, cpm, clicks, cpc, ctr, conversions, cpa, cvr, revenue, roas) |
 
 ---
 
@@ -622,16 +623,19 @@
 | 함수명 | 대상 |
 |--------|------|
 | `initPerfTableAnalysis()` | 성과 테이블 분석 초기화 |
-| `initPerfTableAdsetFilters()` | 광고세트 탭 필터 초기화 |
+| `initPerfTableFilters()` | 모든 탭 필터 드롭다운 초기화 |
+| `initPerfTableDates()` | 날짜 입력 초기화 |
 | `renderPerfTableAdset()` | 광고세트 테이블 렌더링 |
 | `renderPerfTableGeneric()` | 공통 테이블 렌더러 (탭명, 데이터소스, 컬럼명, 라벨) |
 | `renderPerfTableGender()` | 성별 테이블 렌더링 |
 | `renderPerfTableAge()` | 연령 테이블 렌더링 |
+| `renderPerfTableGenderAge()` | 성별연령 PIVOT 테이블 렌더링 |
 | `renderPerfTablePlatform()` | 플랫폼 테이블 렌더링 |
 | `renderPerfTableDevicePlatform()` | 기기플랫폼 테이블 렌더링 |
 | `renderPerfTableDeviceType()` | 기기유형 테이블 렌더링 |
 | `setupPerfTableTabs()` | 탭 전환 이벤트 설정 |
-| `setupPerfTableAdsetFilterEvents()` | 광고세트 필터 이벤트 설정 |
+| `setupPerfTableFilterEvents()` | 필터 드롭다운 이벤트 설정 (전체 탭) |
+| `updatePerfTableFilters()` | 필터 상태 업데이트 및 렌더링 호출 |
 | `setupPerfTableDateEvents()` | 날짜 필터 이벤트 설정 |
 | `setupPerfTableSortEvents()` | 테이블 정렬 이벤트 설정 |
 | `getPerfTableColorScale()` | 테이블 셀 색상 스케일 계산 |
@@ -2199,3 +2203,13 @@ body {
 | 2025-12-23 | 성과 테이블 분석 날짜 필터: 시작일/종료일 date picker로 기간별 데이터 필터링 |
 | 2025-12-23 | 성과 테이블 분석 함수 추가: `initPerfTableAdsetFilters()`, `renderPerfTableAdset()`, `renderPerfTableGeneric()`, `setupPerfTableTabs()`, `setupPerfTableAdsetFilterEvents()`, `setupPerfTableDateEvents()`, `setupPerfTableSortEvents()`, `initPerfTableAnalysis()` |
 | 2025-12-23 | 성과 테이블 분석 디자인: 성과 추이 분석 필터/이벤트 패턴 + 성별 연령 PIVOT 테이블 색상 스케일 조합 |
+| 2025-12-23 | **성과 테이블 분석 필터 확장**: 모든 탭(성별/연령/플랫폼/기기플랫폼/기기)에 채널/제품/브랜드/프로모션 필터 드롭다운 추가 |
+| 2025-12-23 | 성과 테이블 분석 KPI 순서 변경: 비용→노출수→CPM→클릭수→CPC→CTR→전환수→CPA→전환율→전환값→ROAS |
+| 2025-12-23 | **성과 테이블 분석 섹션 위치 변경**: '성과 추이 분석' → '성과 상세 분석' 사이로 이동 |
+| 2025-12-23 | **성별연령 PIVOT 탭 이동**: '성과 추이 분석'에서 '성과 테이블 분석'으로 이동 (연령 탭 오른쪽에 배치) |
+| 2025-12-23 | 성별연령 PIVOT 함수 추가: `renderPerfTableGenderAge()` - 성별×연령 교차분석 PIVOT 테이블 렌더링 |
+| 2025-12-23 | 성별연령 PIVOT 기능: 채널/제품/브랜드/프로모션 필터, 날짜 필터, 지표별(비용/CPM/CPC/CPA/ROAS) 남성/여성 비교, 색상 스케일 그라데이션, 하단 통계 요약 카드 |
+| 2025-12-23 | '성과 추이 분석'에서 기존 '성별 연령 PIVOT' 탭 및 관련 코드 제거: `initPivotDropdowns()`, `updatePivotFilters()`, `updatePivotFilterButtonText()`, `renderAgeGenderPivotTable()` 삭제 |
+| 2025-12-23 | '성과 추이 분석' 탭 순서: 광고세트→성별→연령→플랫폼→기기플랫폼→기기 (6개) |
+| 2025-12-23 | '성과 테이블 분석' 탭 순서: 광고세트→성별→연령→성별연령→플랫폼→기기플랫폼→기기 (7개) |
+| 2025-12-23 | perfTableState 업데이트: `genderAge` 상태 객체 추가 (filters, startDate, endDate) |
