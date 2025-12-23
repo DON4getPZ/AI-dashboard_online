@@ -1527,7 +1527,6 @@
                             <button class="view-btn trend-analysis-tab-btn" data-tab="platform">플랫폼 추이</button>
                             <button class="view-btn trend-analysis-tab-btn" data-tab="device-platform">기기플랫폼 추이</button>
                             <button class="view-btn trend-analysis-tab-btn" data-tab="device-type">기기 추이</button>
-                            <button class="view-btn trend-analysis-tab-btn" data-tab="age-gender-pivot">성별 연령 PIVOT</button>
                         </div>
 
                         <!-- 탭 1: 광고세트 추이 -->
@@ -2851,183 +2850,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- 탭 7: 성별 연령 PIVOT -->
-                        <div class="trend-analysis-tab-content" id="ageGenderPivotTab" style="display: none;">
-                            <!-- 컴팩트 설명 섹션 -->
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-                                <!-- 분석 목적 카드 -->
-                                <div style="padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                                        <span style="font-size: 16px;">📊</span>
-                                        <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
-                                    </div>
-                                    <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
-                                        성별과 연령대별 <strong style="color: #1565c0;">교차 분석</strong>을 통해<br>
-                                        가장 효과적인 타겟 그룹을 파악합니다
-                                    </p>
-                                </div>
-
-                                <!-- 사용 방법 카드 -->
-                                <div style="padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                                        <span style="font-size: 16px;">💡</span>
-                                        <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
-                                    </div>
-                                    <div style="font-size: 12px; color: #424242; line-height: 1.6;">
-                                        <div style="display: flex; align-items: start; gap: 8px; margin-bottom: 4px;">
-                                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">1</span>
-                                            <span>분류 기준 드롭다운에서 필터 선택</span>
-                                        </div>
-                                        <div style="display: flex; align-items: start; gap: 8px;">
-                                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">2</span>
-                                            <span>색상 스케일로 높은/낮은 값 확인</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card">
-                                <!-- 상단: 제목 -->
-                                <div style="margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
-                                    <div class="card-title" style="margin-bottom: 4px;">성별 × 연령대 성과 분석</div>
-                                    <p style="color: var(--grey-600); font-size: 13px; margin: 0;">
-                                        성별과 연령대의 교차 분석으로 최적의 타겟을 발견하세요. 모든 주요 지표(비용, CPM, CPC, CPA, ROAS)를 한눈에 비교할 수 있습니다.
-                                    </p>
-                                </div>
-
-                                <!-- 기간 선택 -->
-                                <div style="display: flex; justify-content: flex-end; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
-                                    <div style="flex: 0 0 auto; margin-left: auto;">
-                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
-                                        <div style="display: flex; align-items: center; gap: 10px;">
-                                            <input type="date" id="pivotStartDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
-                                            <span style="color: var(--grey-600); font-weight: 500;">~</span>
-                                            <input type="date" id="pivotEndDate" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px; color: var(--grey-800); cursor: pointer; transition: all 0.2s;">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- 드롭다운 형태 필터 -->
-                                <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
-                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
-                                        <div style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 분류 기준</div>
-                                    </div>
-
-                                    <!-- 드롭다운 버튼들 -->
-                                    <div style="display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap;">
-                                        <!-- 채널별 드롭다운 -->
-                                        <div style="position: relative; min-width: 180px; flex: 1;">
-                                            <button type="button" class="pivot-filter-dropdown-btn" data-filter="channel" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
-                                                <span style="font-weight: 500;">채널_전체</span>
-                                                <div style="display: flex; align-items: center; gap: 6px;">
-                                                    <span class="pivot-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
-                                                    <span style="color: var(--grey-400); font-size: 10px;">▼</span>
-                                                </div>
-                                            </button>
-                                            <div class="pivot-filter-dropdown-list" data-filter="channel" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
-                                                <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
-                                                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
-                                                        <input type="checkbox" class="pivot-filter-select-all" data-filter="channel" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
-                                                        전체 선택
-                                                    </label>
-                                                </div>
-                                                <div id="pivotFilterChannelList" class="pivot-filter-checkbox-list"></div>
-                                            </div>
-                                        </div>
-
-                                        <!-- 제품별 드롭다운 -->
-                                        <div style="position: relative; min-width: 180px; flex: 1;">
-                                            <button type="button" class="pivot-filter-dropdown-btn" data-filter="product" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
-                                                <span style="font-weight: 500;">제품_전체</span>
-                                                <div style="display: flex; align-items: center; gap: 6px;">
-                                                    <span class="pivot-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
-                                                    <span style="color: var(--grey-400); font-size: 10px;">▼</span>
-                                                </div>
-                                            </button>
-                                            <div class="pivot-filter-dropdown-list" data-filter="product" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
-                                                <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
-                                                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
-                                                        <input type="checkbox" class="pivot-filter-select-all" data-filter="product" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
-                                                        전체 선택
-                                                    </label>
-                                                </div>
-                                                <div id="pivotFilterProductList" class="pivot-filter-checkbox-list"></div>
-                                            </div>
-                                        </div>
-
-                                        <!-- 브랜드별 드롭다운 -->
-                                        <div style="position: relative; min-width: 180px; flex: 1;">
-                                            <button type="button" class="pivot-filter-dropdown-btn" data-filter="brand" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
-                                                <span style="font-weight: 500;">브랜드_전체</span>
-                                                <div style="display: flex; align-items: center; gap: 6px;">
-                                                    <span class="pivot-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
-                                                    <span style="color: var(--grey-400); font-size: 10px;">▼</span>
-                                                </div>
-                                            </button>
-                                            <div class="pivot-filter-dropdown-list" data-filter="brand" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
-                                                <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
-                                                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
-                                                        <input type="checkbox" class="pivot-filter-select-all" data-filter="brand" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
-                                                        전체 선택
-                                                    </label>
-                                                </div>
-                                                <div id="pivotFilterBrandList" class="pivot-filter-checkbox-list"></div>
-                                            </div>
-                                        </div>
-
-                                        <!-- 프로모션별 드롭다운 -->
-                                        <div style="position: relative; min-width: 180px; flex: 1;">
-                                            <button type="button" class="pivot-filter-dropdown-btn" data-filter="promotion" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
-                                                <span style="font-weight: 500;">프로모션_전체</span>
-                                                <div style="display: flex; align-items: center; gap: 6px;">
-                                                    <span class="pivot-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
-                                                    <span style="color: var(--grey-400); font-size: 10px;">▼</span>
-                                                </div>
-                                            </button>
-                                            <div class="pivot-filter-dropdown-list" data-filter="promotion" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
-                                                <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
-                                                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
-                                                        <input type="checkbox" class="pivot-filter-select-all" data-filter="promotion" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
-                                                        전체 선택
-                                                    </label>
-                                                </div>
-                                                <div id="pivotFilterPromotionList" class="pivot-filter-checkbox-list"></div>
-                                            </div>
-                                        </div>
-
-                                        <!-- 광고세트별 드롭다운 -->
-                                        <div style="position: relative; min-width: 180px; flex: 1;">
-                                            <button type="button" class="pivot-filter-dropdown-btn" data-filter="adset" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; text-align: left;">
-                                                <span style="font-weight: 500;">광고세트_전체</span>
-                                                <div style="display: flex; align-items: center; gap: 6px;">
-                                                    <span class="pivot-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
-                                                    <span style="color: var(--grey-400); font-size: 10px;">▼</span>
-                                                </div>
-                                            </button>
-                                            <div class="pivot-filter-dropdown-list" data-filter="adset" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
-                                                <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
-                                                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
-                                                        <input type="checkbox" class="pivot-filter-select-all" data-filter="adset" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
-                                                        전체 선택
-                                                    </label>
-                                                </div>
-                                                <div id="pivotFilterAdsetList" class="pivot-filter-checkbox-list"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- PIVOT 테이블 -->
-                                <div style="margin-bottom: 20px;">
-                                    <div id="ageGenderPivotTableContainer" style="overflow-x: auto; overflow-y: visible;">
-                                        <p style="text-align: center; color: var(--grey-500); padding: 40px;">
-                                            데이터를 불러오는 중...
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -3050,6 +2872,7 @@
                         <button class="view-btn perf-table-tab-btn active" data-tab="adset">광고세트</button>
                         <button class="view-btn perf-table-tab-btn" data-tab="gender">성별</button>
                         <button class="view-btn perf-table-tab-btn" data-tab="age">연령</button>
+                        <button class="view-btn perf-table-tab-btn" data-tab="genderAge">성별연령</button>
                         <button class="view-btn perf-table-tab-btn" data-tab="platform">플랫폼</button>
                         <button class="view-btn perf-table-tab-btn" data-tab="devicePlatform">기기플랫폼</button>
                         <button class="view-btn perf-table-tab-btn" data-tab="deviceType">기기</button>
@@ -3491,6 +3314,153 @@
                         </div>
                     </div>
 
+                    <!-- 성별연령 PIVOT 테이블 탭 -->
+                    <div class="perf-table-tab-content" id="perfTableGenderAgeTab" style="display: none;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%); border-radius: 8px; border-left: 4px solid #2196f3; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">📊</span>
+                                    <strong style="color: #1976d2; font-size: 13px;">이 분석의 목적</strong>
+                                </div>
+                                <p style="margin: 0; font-size: 12px; color: #424242; line-height: 1.6;">
+                                    성별과 연령대별 <strong style="color: #1565c0;">교차 분석</strong>을 통해<br>
+                                    가장 효과적인 타겟 그룹을 파악합니다
+                                </p>
+                            </div>
+                            <div style="padding: 14px 16px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%); border-radius: 8px; border-left: 4px solid #4caf50; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="font-size: 16px;">💡</span>
+                                    <strong style="color: #388e3c; font-size: 13px;">사용 방법</strong>
+                                </div>
+                                <div style="font-size: 12px; color: #424242; line-height: 1.6;">
+                                    <div style="display: flex; align-items: start; gap: 8px; margin-bottom: 4px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">1</span>
+                                        <span>분류 기준 드롭다운에서 필터 선택</span>
+                                    </div>
+                                    <div style="display: flex; align-items: start; gap: 8px;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #4caf50; color: white; border-radius: 50%; font-size: 10px; font-weight: 600; flex-shrink: 0;">2</span>
+                                        <span>색상 스케일로 높은/낮은 값 확인</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div style="margin-bottom: 20px; border-bottom: 2px solid var(--grey-200); padding-bottom: 16px;">
+                                <div class="card-title" style="margin-bottom: 4px;">성별 × 연령대 성과 분석</div>
+                                <p style="color: var(--grey-600); font-size: 13px; margin: 0;">
+                                    성별과 연령대의 교차 분석으로 최적의 타겟을 발견하세요. 모든 주요 지표(비용, CPM, CPC, CPA, ROAS)를 한눈에 비교할 수 있습니다.
+                                </p>
+                            </div>
+
+                            <!-- 기간 선택 -->
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                                <div>
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700); margin-bottom: 12px;">📅 기간 선택</div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="date" id="perfTableGenderAgeStartDate" class="perf-table-date" data-tab="genderAge" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                        <span style="color: var(--grey-600); font-weight: 500;">~</span>
+                                        <input type="date" id="perfTableGenderAgeEndDate" class="perf-table-date" data-tab="genderAge" style="padding: 10px 12px; border: 1px solid var(--grey-300); border-radius: 6px; background: white; font-size: 13px;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 드롭다운 필터 -->
+                            <div style="margin-bottom: 20px; padding: 16px; background: var(--grey-50); border-radius: 8px; border: 1px solid var(--grey-200);">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--grey-700);">📊 분류 기준</div>
+                                </div>
+                                <div style="display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap;">
+                                    <!-- 채널별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="channel" data-tab="genderAge" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">채널_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="channel" data-tab="genderAge" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="channel" data-tab="genderAge" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableGenderAgeChannelList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 제품별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="product" data-tab="genderAge" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">제품_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="product" data-tab="genderAge" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="product" data-tab="genderAge" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableGenderAgeProductList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 브랜드별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="brand" data-tab="genderAge" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">브랜드_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="brand" data-tab="genderAge" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="brand" data-tab="genderAge" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableGenderAgeBrandList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 프로모션별 드롭다운 -->
+                                    <div style="position: relative; min-width: 180px; flex: 1;">
+                                        <button type="button" class="perf-table-filter-dropdown-btn" data-filter="promotion" data-tab="genderAge" style="width: 100%; padding: 10px 14px; background: white; border: 1px solid var(--grey-300); border-radius: 6px; font-size: 13px; color: var(--grey-800); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                                            <span style="font-weight: 500;">프로모션_전체</span>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <span class="perf-table-selected-count" style="font-size: 11px; background: var(--grey-200); padding: 2px 8px; border-radius: 10px; color: var(--grey-600);">0개</span>
+                                                <span style="color: var(--grey-400); font-size: 10px;">▼</span>
+                                            </div>
+                                        </button>
+                                        <div class="perf-table-filter-dropdown-list" data-filter="promotion" data-tab="genderAge" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--grey-300); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; margin-top: 4px;">
+                                            <div style="padding: 8px 10px; border-bottom: 1px solid var(--grey-200); background: var(--grey-50);">
+                                                <label style="display: flex; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--grey-700);">
+                                                    <input type="checkbox" class="perf-table-filter-select-all" data-filter="promotion" data-tab="genderAge" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
+                                                    전체 선택
+                                                </label>
+                                            </div>
+                                            <div id="perfTableGenderAgePromotionList" class="perf-table-filter-checkbox-list"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PIVOT 테이블 -->
+                            <div id="perfTableGenderAgeContainer" style="overflow-x: auto; overflow-y: visible;">
+                                <div style="text-align: center; padding: 60px 20px; color: var(--grey-500);">
+                                    <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+                                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">필터를 선택해주세요</div>
+                                    <div style="font-size: 13px; color: var(--grey-400);">위의 분류 기준에서 하나 이상의 항목을 선택해주세요.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- 플랫폼 테이블 탭 -->
                     <div class="perf-table-tab-content" id="perfTablePlatformTab" style="display: none;">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
@@ -3907,6 +3877,7 @@
                             <div id="perfTableDeviceTypeContainer" style="overflow-x: auto;"></div>
                         </div>
                     </div>
+
                 </div>
             </div>
 
@@ -5740,18 +5711,8 @@
         let deviceTypeTrendChart = null;
         let deviceTypeDimensionData = null;  // 기기유형 추이 전용 데이터
 
-        // 성별 연령 PIVOT 관련 변수
-        let currentPivotFilters = {
-            channel: [],
-            product: [],
-            brand: [],
-            promotion: [],
-            adset: []
-        };
-        let pivotStartDate = '';
-        let pivotEndDate = '';
-        let pivotDropdownsInitialized = false;
-        let pivotDimensionData = null;  // 성별연령 PIVOT 전용 데이터
+        // 성별연령 PIVOT 전용 데이터 (성과 테이블 분석에서 사용)
+        let pivotDimensionData = null;
 
         // ========== 성과 비교 분석 섹션 변수 (독립적) ==========
         const DETAIL_DEFAULT_LIMIT = 10;  // 기본 표시 개수
@@ -5995,7 +5956,6 @@
             initPlatformDropdowns();
             initDevicePlatformDropdowns();
             initDeviceTypeDropdowns();
-            initPivotDropdowns();
             initPerformanceCharts();
             initRetargetingAnalysis();
             initDetailAnalysis();
@@ -10025,7 +9985,8 @@
             age: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' },
             platform: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' },
             devicePlatform: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' },
-            deviceType: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' }
+            deviceType: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' },
+            genderAge: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '' }
         };
 
         // 테이블 지표 정의
@@ -10060,12 +10021,13 @@
             if (!adsetDimensionData || adsetDimensionData.length === 0) return;
 
             // 탭별 필터 설정
-            const tabConfigs = ['Adset', 'Gender', 'Age', 'Platform', 'DevicePlatform', 'DeviceType'];
+            const tabConfigs = ['Adset', 'Gender', 'Age', 'Platform', 'DevicePlatform', 'DeviceType', 'GenderAge'];
 
             tabConfigs.forEach(tabName => {
                 const tabKey = tabName === 'Adset' ? 'adset' :
                                tabName === 'DevicePlatform' ? 'devicePlatform' :
-                               tabName === 'DeviceType' ? 'deviceType' : tabName.toLowerCase();
+                               tabName === 'DeviceType' ? 'deviceType' :
+                               tabName === 'GenderAge' ? 'genderAge' : tabName.toLowerCase();
 
                 const filterConfigs = [
                     { key: 'channel', column: '유형구분', listId: `perfTable${tabName}ChannelList` },
@@ -10426,6 +10388,282 @@
             renderPerfTableGeneric('deviceType', deviceTypeDimensionData, '기기유형', '기기유형');
         }
 
+        // 성별연령 PIVOT 테이블 렌더링 (성과 테이블 분석 탭)
+        function renderPerfTableGenderAge() {
+            const container = document.getElementById('perfTableGenderAgeContainer');
+            if (!container || !pivotDimensionData) return;
+
+            const filterMap = {
+                'channel': '유형구분',
+                'product': '상품명',
+                'brand': '브랜드명',
+                'promotion': '프로모션'
+            };
+
+            const state = perfTableState.genderAge;
+
+            // 필터 조건을 만족하는 행만 필터링하는 헬퍼 함수
+            const rowMatchesFilters = (row) => {
+                // 모든 필터가 비어있는지 확인
+                const allFiltersEmpty = Object.values(state.filters).every(arr => !arr || arr.length === 0);
+
+                // 모든 필터가 비어있으면 false 반환 (데이터 표시 안 함)
+                if (allFiltersEmpty) {
+                    return false;
+                }
+
+                // 모든 필터를 AND 조건으로 확인
+                for (const filterKey of Object.keys(filterMap)) {
+                    const column = filterMap[filterKey];
+                    const selectedValues = state.filters[filterKey];
+
+                    if (selectedValues && selectedValues.length > 0) {
+                        const rowValue = row[column];
+                        if (!selectedValues.includes(rowValue)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            };
+
+            // 성별과 연령대별 데이터 집계
+            const pivotData = {};
+
+            pivotDimensionData.forEach(row => {
+                if (!rowMatchesFilters(row)) return;
+
+                // 성별_통합, 연령_통합 컬럼 우선 사용
+                const rawGender = row['성별_통합'] || row['성별'];
+                const normalizedGender = normalizeGender(rawGender);
+                const age = row['연령_통합'] || row['연령'];
+
+                if (!normalizedGender || !age || age === '' || age === '-') return;
+
+                // 기간 필터링
+                const date = row['일'];
+                if (state.startDate || state.endDate) {
+                    const rowDate = new Date(date);
+                    if (isNaN(rowDate)) return;
+                    if (state.startDate && rowDate < new Date(state.startDate)) return;
+                    if (state.endDate && rowDate > new Date(state.endDate)) return;
+                }
+
+                const key = `${normalizedGender}_${age}`;
+                if (!pivotData[key]) {
+                    pivotData[key] = {
+                        gender: normalizedGender,
+                        age: age,
+                        cost: 0,
+                        revenue: 0,
+                        conversions: 0,
+                        impressions: 0,
+                        clicks: 0
+                    };
+                }
+
+                const cost = parseFloat(row['비용']?.replace(/,/g, '') || row['비용']) || 0;
+                const revenue = parseFloat(row['전환값']?.replace(/,/g, '') || row['전환값']) || 0;
+                const conversions = parseFloat(row['전환수']?.replace(/,/g, '') || row['전환수']) || 0;
+                const impressions = parseFloat(row['노출']?.replace(/,/g, '') || row['노출']) || 0;
+                const clicks = parseFloat(row['클릭']?.replace(/,/g, '') || row['클릭']) || 0;
+
+                pivotData[key].cost += cost;
+                pivotData[key].revenue += revenue;
+                pivotData[key].conversions += conversions;
+                pivotData[key].impressions += impressions;
+                pivotData[key].clicks += clicks;
+            });
+
+            // 지표 계산
+            Object.keys(pivotData).forEach(key => {
+                const data = pivotData[key];
+                data.roas = data.cost > 0 ? (data.revenue / data.cost * 100) : 0;
+                data.cpm = data.impressions > 0 ? (data.cost / data.impressions * 1000) : 0;
+                data.cpc = data.clicks > 0 ? (data.cost / data.clicks) : 0;
+                data.cpa = data.conversions > 0 ? (data.cost / data.conversions) : 0;
+            });
+
+            // 고유한 성별과 연령 추출 및 정렬
+            let genders = [...new Set(Object.values(pivotData).map(d => d.gender))].sort();
+            const ages = [...new Set(Object.values(pivotData).map(d => d.age))].filter(a => isValidAge(a)).sort();
+
+            // Unknown 제외하고 남성, 여성만 사용
+            genders = genders.filter(g => g === '남성' || g === '여성');
+
+            // 모든 필터가 비어있는지 확인
+            const allFiltersEmpty = Object.values(state.filters).every(arr => !arr || arr.length === 0);
+
+            // 데이터가 없으면 안내 메시지 표시
+            if (allFiltersEmpty || Object.keys(pivotData).length === 0 || genders.length === 0 || ages.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: var(--grey-500);">
+                        <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+                        <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">${allFiltersEmpty ? '필터를 선택해주세요' : '데이터를 표시할 수 없습니다'}</div>
+                        <div style="font-size: 13px; color: var(--grey-400);">
+                            ${allFiltersEmpty ? '위의 분류 기준에서 하나 이상의 항목을 선택해주세요.' : '필터 조건에 맞는 데이터가 없습니다.'}
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // 테이블 HTML 생성 - 연령별 행, 지표별 남자/여자 컬럼
+            const metrics = [
+                { key: 'cost', label: '비용', format: (v) => formatCurrency(v) },
+                { key: 'cpm', label: 'CPM', format: (v) => formatCurrency(v) },
+                { key: 'cpc', label: 'CPC', format: (v) => formatCurrency(v) },
+                { key: 'cpa', label: 'CPA', format: (v) => formatCurrency(v) },
+                { key: 'roas', label: 'ROAS', format: (v) => v.toFixed(1) + '%' }
+            ];
+
+            // 지표별 최소/최대값 계산 (색상 스케일용)
+            const metricRanges = {};
+            metrics.forEach(metric => {
+                let min = Infinity;
+                let max = -Infinity;
+                Object.values(pivotData).forEach(data => {
+                    const value = data[metric.key];
+                    if (value < min) min = value;
+                    if (value > max) max = value;
+                });
+                metricRanges[metric.key] = { min, max };
+            });
+
+            // 색상 계산 함수 (지표별)
+            function getColorScaleForMetric(value, metricKey) {
+                const range = metricRanges[metricKey];
+                if (range.max === range.min) return 'rgba(103, 58, 183, 0.1)';
+
+                const ratio = (value - range.min) / (range.max - range.min);
+                const r = Math.round(255 - (152 * ratio));
+                const g = Math.round(255 - (197 * ratio));
+                const b = Math.round(255 - (72 * ratio));
+                const alpha = 0.1 + (ratio * 0.3);
+
+                return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            }
+
+            let tableHTML = `
+                <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                    <thead>
+                        <tr style="background: var(--grey-100);">
+                            <th rowspan="2" style="padding: 10px 8px; text-align: center; font-weight: 700; border: 1px solid var(--grey-300); background: var(--grey-200); width: 70px;">
+                                연령
+                            </th>
+            `;
+
+            // 헤더: 지표별로 남자/여자 컬럼
+            metrics.forEach(metric => {
+                tableHTML += `
+                    <th colspan="2" style="padding: 8px 6px; text-align: center; font-weight: 700; border: 1px solid var(--grey-300); background: var(--primary-light); color: var(--primary-dark); font-size: 11px;">
+                        ${metric.label}
+                    </th>
+                `;
+            });
+
+            tableHTML += `
+                        </tr>
+                        <tr style="background: var(--grey-50);">
+            `;
+
+            // 두 번째 헤더 행: 남자/여자 반복
+            metrics.forEach(metric => {
+                genders.forEach(gender => {
+                    tableHTML += `
+                        <th style="padding: 6px 4px; text-align: center; font-weight: 600; border: 1px solid var(--grey-300); font-size: 10px;">
+                            ${getGenderDisplayName(gender)}
+                        </th>
+                    `;
+                });
+            });
+
+            tableHTML += `</tr></thead><tbody>`;
+
+            // 데이터 행: 연령별
+            ages.forEach((age, ageIndex) => {
+                const rowBg = ageIndex % 2 === 0 ? 'var(--paper)' : 'var(--grey-50)';
+                tableHTML += `
+                    <tr style="background: ${rowBg};">
+                        <td style="padding: 8px 6px; font-weight: 600; text-align: center; border: 1px solid var(--grey-300); background: var(--grey-100); font-size: 11px;">
+                            ${age}
+                        </td>
+                `;
+
+                // 각 지표별로 남자/여자 데이터 출력
+                metrics.forEach(metric => {
+                    genders.forEach(gender => {
+                        const key = `${gender}_${age}`;
+                        const data = pivotData[key];
+
+                        if (data) {
+                            const value = data[metric.key];
+                            const bgColor = getColorScaleForMetric(value, metric.key);
+                            const formattedValue = metric.format(value);
+
+                            tableHTML += `
+                                <td style="padding: 6px 4px; text-align: right; background: ${bgColor}; border: 1px solid var(--grey-300); cursor: pointer; transition: all 0.2s; font-weight: 500; font-size: 10px; white-space: nowrap;"
+                                    onmouseover="this.style.background='var(--primary-light)'; this.style.transform='scale(1.02)';"
+                                    onmouseout="this.style.background='${bgColor}'; this.style.transform='scale(1)';"
+                                    title="${getGenderDisplayName(gender)} / ${age}&#10;${metric.label}: ${formattedValue}&#10;&#10;비용: ${formatCurrency(data.cost)}&#10;CPM: ${formatCurrency(data.cpm)}&#10;CPC: ${formatCurrency(data.cpc)}&#10;CPA: ${formatCurrency(data.cpa)}&#10;ROAS: ${data.roas.toFixed(1)}%&#10;전환수: ${data.conversions.toFixed(0)}">
+                                    ${formattedValue}
+                                </td>
+                            `;
+                        } else {
+                            tableHTML += `
+                                <td style="padding: 6px 4px; text-align: center; background: var(--grey-50); border: 1px solid var(--grey-300); color: var(--grey-400); font-size: 10px;">
+                                    -
+                                </td>
+                            `;
+                        }
+                    });
+                });
+
+                tableHTML += `</tr>`;
+            });
+
+            tableHTML += `</tbody></table>`;
+
+            // 통계 요약 추가
+            const totalCost = Object.values(pivotData).reduce((sum, d) => sum + d.cost, 0);
+            const totalRevenue = Object.values(pivotData).reduce((sum, d) => sum + d.revenue, 0);
+            const totalConversions = Object.values(pivotData).reduce((sum, d) => sum + d.conversions, 0);
+            const totalImpressions = Object.values(pivotData).reduce((sum, d) => sum + d.impressions, 0);
+            const totalClicks = Object.values(pivotData).reduce((sum, d) => sum + d.clicks, 0);
+
+            const avgRoas = totalCost > 0 ? (totalRevenue / totalCost * 100) : 0;
+            const avgCpm = totalImpressions > 0 ? (totalCost / totalImpressions * 1000) : 0;
+            const avgCpc = totalClicks > 0 ? (totalCost / totalClicks) : 0;
+            const avgCpa = totalConversions > 0 ? (totalCost / totalConversions) : 0;
+
+            const statsHTML = `
+                <div style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%); border-radius: 8px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;">
+                    <div style="text-align: center; padding: 12px; background: white; border-radius: 6px;">
+                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">전체 비용</div>
+                        <div style="font-size: 16px; font-weight: 700; color: var(--grey-900);">${formatCurrency(totalCost)}</div>
+                    </div>
+                    <div style="text-align: center; padding: 12px; background: white; border-radius: 6px;">
+                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">평균 CPM</div>
+                        <div style="font-size: 16px; font-weight: 700; color: var(--grey-900);">${formatCurrency(avgCpm)}</div>
+                    </div>
+                    <div style="text-align: center; padding: 12px; background: white; border-radius: 6px;">
+                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">평균 CPC</div>
+                        <div style="font-size: 16px; font-weight: 700; color: var(--grey-900);">${formatCurrency(avgCpc)}</div>
+                    </div>
+                    <div style="text-align: center; padding: 12px; background: white; border-radius: 6px;">
+                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">평균 CPA</div>
+                        <div style="font-size: 16px; font-weight: 700; color: var(--grey-900);">${formatCurrency(avgCpa)}</div>
+                    </div>
+                    <div style="text-align: center; padding: 12px; background: white; border-radius: 6px;">
+                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">전체 ROAS</div>
+                        <div style="font-size: 16px; font-weight: 700; color: var(--primary-main);">${avgRoas.toFixed(1)}%</div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = tableHTML + statsHTML;
+        }
+
         // 성과 테이블 탭 전환
         function setupPerfTableTabs() {
             document.querySelectorAll('.perf-table-tab-btn').forEach(btn => {
@@ -10445,7 +10683,8 @@
                         'age': 'perfTableAgeTab',
                         'platform': 'perfTablePlatformTab',
                         'devicePlatform': 'perfTableDevicePlatformTab',
-                        'deviceType': 'perfTableDeviceTypeTab'
+                        'deviceType': 'perfTableDeviceTypeTab',
+                        'genderAge': 'perfTableGenderAgeTab'
                     };
 
                     const targetElement = document.getElementById(tabMap[targetTab]);
@@ -10459,6 +10698,7 @@
                         else if (targetTab === 'platform') renderPerfTablePlatform();
                         else if (targetTab === 'devicePlatform') renderPerfTableDevicePlatform();
                         else if (targetTab === 'deviceType') renderPerfTableDeviceType();
+                        else if (targetTab === 'genderAge') renderPerfTableGenderAge();
                     }
                 });
             });
@@ -10540,6 +10780,7 @@
             else if (tabName === 'platform') renderPerfTablePlatform();
             else if (tabName === 'devicePlatform') renderPerfTableDevicePlatform();
             else if (tabName === 'deviceType') renderPerfTableDeviceType();
+            else if (tabName === 'genderAge') renderPerfTableGenderAge();
         }
 
         // 날짜 이벤트 설정
@@ -10562,6 +10803,7 @@
                     else if (tabName === 'platform') renderPerfTablePlatform();
                     else if (tabName === 'devicePlatform') renderPerfTableDevicePlatform();
                     else if (tabName === 'deviceType') renderPerfTableDeviceType();
+                    else if (tabName === 'genderAge') renderPerfTableGenderAge();
                 });
             });
         }
@@ -10588,6 +10830,7 @@
                     else if (tabName === 'platform') renderPerfTablePlatform();
                     else if (tabName === 'devicePlatform') renderPerfTableDevicePlatform();
                     else if (tabName === 'deviceType') renderPerfTableDeviceType();
+                    else if (tabName === 'genderAge') renderPerfTableGenderAge();
                 }
             });
         }
@@ -10603,7 +10846,7 @@
             const maxDate = dates[dates.length - 1];
 
             // 모든 탭의 날짜 입력 초기화
-            ['Adset', 'Gender', 'Age', 'Platform', 'DevicePlatform', 'DeviceType'].forEach(tab => {
+            ['Adset', 'Gender', 'Age', 'Platform', 'DevicePlatform', 'DeviceType', 'GenderAge'].forEach(tab => {
                 const startInput = document.getElementById(`perfTable${tab}StartDate`);
                 const endInput = document.getElementById(`perfTable${tab}EndDate`);
                 if (startInput) startInput.value = minDate;
@@ -11918,7 +12161,6 @@
                     else if (targetTab === 'platform') selectedTab = document.getElementById('platformTab');
                     else if (targetTab === 'device-platform') selectedTab = document.getElementById('devicePlatformTab');
                     else if (targetTab === 'device-type') selectedTab = document.getElementById('deviceTypeTab');
-                    else if (targetTab === 'age-gender-pivot') selectedTab = document.getElementById('ageGenderPivotTab');
 
                     if (selectedTab) {
                         selectedTab.style.display = 'block';
@@ -12207,23 +12449,6 @@
                 });
             }
 
-            // PIVOT 기간 선택 이벤트
-            const pivotStartDateInput = document.getElementById('pivotStartDate');
-            const pivotEndDateInput = document.getElementById('pivotEndDate');
-
-            if (pivotStartDateInput) {
-                pivotStartDateInput.addEventListener('change', function(e) {
-                    pivotStartDate = e.target.value;
-                    renderAgeGenderPivotTable();
-                });
-            }
-
-            if (pivotEndDateInput) {
-                pivotEndDateInput.addEventListener('change', function(e) {
-                    pivotEndDate = e.target.value;
-                    renderAgeGenderPivotTable();
-                });
-            }
         }
 
         // 초기화 필터 함수
@@ -13377,179 +13602,6 @@
             });
 
             document.getElementById('filteredPlatformCount').textContent = platformsToShow.size;
-        }
-
-        // PIVOT 드롭다운 초기화
-        function initPivotDropdowns() {
-            if (!pivotDimensionData) return;
-
-            const filterMap = {
-                'channel': { column: '유형구분', listId: 'pivotFilterChannelList', label: '채널' },
-                'product': { column: '상품명', listId: 'pivotFilterProductList', label: '제품' },
-                'brand': { column: '브랜드명', listId: 'pivotFilterBrandList', label: '브랜드' },
-                'promotion': { column: '프로모션', listId: 'pivotFilterPromotionList', label: '프로모션' },
-                'adset': { column: '광고세트', listId: 'pivotFilterAdsetList', label: '광고세트' }
-            };
-
-            // 각 필터에 대한 체크박스 리스트 생성
-            Object.keys(filterMap).forEach(filterKey => {
-                const { column, listId } = filterMap[filterKey];
-                const list = document.getElementById(listId);
-                if (!list) return;
-
-                const items = [...new Set(pivotDimensionData.map(row => row[column]).filter(v => v && v !== '' && v !== '-'))];
-                items.sort();
-
-                list.innerHTML = items.map(item => `
-                    <label style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; font-size: 12px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='var(--grey-100)'" onmouseout="this.style.background='transparent'">
-                        <input type="checkbox" class="pivot-filter-item-checkbox" data-filter="${filterKey}" value="${item}" style="margin-right: 10px; width: 16px; height: 16px; cursor: pointer;">
-                        ${item}
-                    </label>
-                `).join('');
-
-                // 개별 체크박스 이벤트
-                list.querySelectorAll('.pivot-filter-item-checkbox').forEach(checkbox => {
-                    checkbox.addEventListener('change', function() {
-                        // 전체 선택 체크박스 상태 업데이트
-                        const selectAllCheckbox = document.querySelector(`.pivot-filter-select-all[data-filter="${filterKey}"]`);
-                        if (selectAllCheckbox) {
-                            const allCheckboxes = list.querySelectorAll('.pivot-filter-item-checkbox');
-                            const checkedCheckboxes = list.querySelectorAll('.pivot-filter-item-checkbox:checked');
-                            selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length && allCheckboxes.length > 0;
-                        }
-
-                        updatePivotFilters();
-                        updatePivotFilterButtonText(filterKey);
-                    });
-                });
-            });
-
-            // 이벤트 리스너는 한 번만 등록
-            if (!pivotDropdownsInitialized) {
-                // 드롭다운 버튼 클릭 이벤트
-                document.querySelectorAll('.pivot-filter-dropdown-btn').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const filterType = this.dataset.filter;
-                        const dropdown = document.querySelector(`.pivot-filter-dropdown-list[data-filter="${filterType}"]`);
-
-                        // 다른 드롭다운 닫기
-                        document.querySelectorAll('.pivot-filter-dropdown-list').forEach(dd => {
-                            if (dd !== dropdown) dd.style.display = 'none';
-                        });
-
-                        // 현재 드롭다운 토글
-                        if (dropdown) {
-                            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-                        }
-                    });
-                });
-
-                // 전체 선택 체크박스 이벤트
-                document.querySelectorAll('.pivot-filter-select-all').forEach(checkbox => {
-                    checkbox.addEventListener('change', function() {
-                        const filterType = this.dataset.filter;
-                        const list = document.getElementById(`pivotFilter${filterType.charAt(0).toUpperCase() + filterType.slice(1)}List`);
-                        if (!list) return;
-
-                        const itemCheckboxes = list.querySelectorAll('.pivot-filter-item-checkbox');
-                        itemCheckboxes.forEach(cb => {
-                            cb.checked = this.checked;
-                        });
-
-                        updatePivotFilters();
-                        updatePivotFilterButtonText(filterType);
-                    });
-                });
-
-                pivotDropdownsInitialized = true;
-            }
-
-            // 기간 선택 초기값 설정 (전체 데이터의 최소/최대 날짜)
-            const dates = dimensionData
-                .map(row => row['일'])
-                .filter(date => date && date !== '' && date !== '-')
-                .map(date => new Date(date))
-                .filter(date => !isNaN(date));
-
-            if (dates.length > 0) {
-                const minDate = new Date(Math.min(...dates));
-                const maxDate = new Date(Math.max(...dates));
-
-                const formatDateForInput = (date) => {
-                    const year = date.getFullYear();
-                    const month = String(date.getMonth() + 1).padStart(2, '0');
-                    const day = String(date.getDate()).padStart(2, '0');
-                    return `${year}-${month}-${day}`;
-                };
-
-                const startInput = document.getElementById('pivotStartDate');
-                const endInput = document.getElementById('pivotEndDate');
-
-                if (startInput && endInput) {
-                    startInput.value = formatDateForInput(minDate);
-                    endInput.value = formatDateForInput(maxDate);
-                    pivotStartDate = formatDateForInput(minDate);
-                    pivotEndDate = formatDateForInput(maxDate);
-                }
-            }
-
-            // 초기 테이블 렌더링 (필터 미선택 상태 메시지 표시)
-            renderAgeGenderPivotTable();
-        }
-
-        function updatePivotFilterButtonText(filterKey) {
-            const filterMap = {
-                'channel': '채널',
-                'product': '제품',
-                'brand': '브랜드',
-                'promotion': '프로모션',
-                'adset': '광고세트'
-            };
-
-            const btn = document.querySelector(`.pivot-filter-dropdown-btn[data-filter="${filterKey}"]`);
-            const list = document.getElementById(`pivotFilter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}List`);
-
-            if (!btn || !list) return;
-
-            const checkedBoxes = list.querySelectorAll('.pivot-filter-item-checkbox:checked');
-            const totalBoxes = list.querySelectorAll('.pivot-filter-item-checkbox');
-            const btnText = btn.querySelector('span:first-child');
-            const countText = btn.querySelector('.pivot-selected-count');
-
-            if (checkedBoxes.length === 0) {
-                btnText.textContent = `${filterMap[filterKey]}_전체`;
-                if (countText) countText.textContent = '0개';
-            } else if (checkedBoxes.length === totalBoxes.length) {
-                btnText.textContent = `${filterMap[filterKey]}_전체`;
-                if (countText) countText.textContent = `${checkedBoxes.length}개`;
-            } else if (checkedBoxes.length === 1) {
-                btnText.textContent = checkedBoxes[0].value;
-                if (countText) countText.textContent = '1개';
-            } else {
-                btnText.textContent = `${checkedBoxes[0].value} 외 ${checkedBoxes.length - 1}개`;
-                if (countText) countText.textContent = `${checkedBoxes.length}개`;
-            }
-        }
-
-        function updatePivotFilters() {
-            const filterMap = {
-                'channel': 'pivotFilterChannelList',
-                'product': 'pivotFilterProductList',
-                'brand': 'pivotFilterBrandList',
-                'promotion': 'pivotFilterPromotionList',
-                'adset': 'pivotFilterAdsetList'
-            };
-
-            Object.keys(filterMap).forEach(filterKey => {
-                const list = document.getElementById(filterMap[filterKey]);
-                if (!list) return;
-
-                const checkedBoxes = list.querySelectorAll('.pivot-filter-item-checkbox:checked');
-                currentPivotFilters[filterKey] = Array.from(checkedBoxes).map(cb => cb.value);
-            });
-
-            renderAgeGenderPivotTable();
         }
 
         // 차트 렌더링 함수들
@@ -16257,282 +16309,6 @@
             if (normalizedGender === '남성' || normalizedGender === 'Male') return '남성';
             if (normalizedGender === '여성' || normalizedGender === 'Female') return '여성';
             return null;
-        }
-
-        // 성별 연령 PIVOT 테이블 렌더링
-        function renderAgeGenderPivotTable() {
-            const container = document.getElementById('ageGenderPivotTableContainer');
-            if (!container || !pivotDimensionData) return;
-
-            const filterMap = {
-                'channel': '유형구분',
-                'product': '상품명',
-                'brand': '브랜드명',
-                'promotion': '프로모션',
-                'adset': '광고세트'
-            };
-
-            // 필터 조건을 만족하는 행만 필터링하는 헬퍼 함수
-            const rowMatchesFilters = (row) => {
-                // 모든 필터가 비어있는지 확인
-                const allFiltersEmpty = Object.values(currentPivotFilters).every(arr => !arr || arr.length === 0);
-
-                // 모든 필터가 비어있으면 false 반환 (데이터 표시 안 함)
-                if (allFiltersEmpty) {
-                    return false;
-                }
-
-                // 모든 필터를 AND 조건으로 확인
-                for (const filterKey of Object.keys(filterMap)) {
-                    const column = filterMap[filterKey];
-                    const selectedValues = currentPivotFilters[filterKey];
-
-                    if (selectedValues && selectedValues.length > 0) {
-                        const rowValue = row[column];
-                        if (!selectedValues.includes(rowValue)) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            };
-
-            // 성별과 연령대별 데이터 집계
-            const pivotData = {};
-
-            pivotDimensionData.forEach(row => {
-                if (!rowMatchesFilters(row)) return;
-
-                // 성별_통합, 연령_통합 컬럼 우선 사용
-                const rawGender = row['성별_통합'] || row['성별'];
-                const normalizedGender = normalizeGender(rawGender);
-                const age = row['연령_통합'] || row['연령'];
-
-                if (!normalizedGender || !age || age === '' || age === '-') return;
-
-                // 기간 필터링
-                const date = row['일'];
-                if (pivotStartDate || pivotEndDate) {
-                    const rowDate = new Date(date);
-                    if (isNaN(rowDate)) return;
-                    if (pivotStartDate && rowDate < new Date(pivotStartDate)) return;
-                    if (pivotEndDate && rowDate > new Date(pivotEndDate)) return;
-                }
-
-                const key = `${normalizedGender}_${age}`;
-                if (!pivotData[key]) {
-                    pivotData[key] = {
-                        gender: normalizedGender,
-                        age: age,
-                        cost: 0,
-                        revenue: 0,
-                        conversions: 0,
-                        impressions: 0,
-                        clicks: 0
-                    };
-                }
-
-                const cost = parseFloat(row['비용']?.replace(/,/g, '') || row['비용']) || 0;
-                const revenue = parseFloat(row['전환값']?.replace(/,/g, '') || row['전환값']) || 0;
-                const conversions = parseFloat(row['전환수']?.replace(/,/g, '') || row['전환수']) || 0;
-                const impressions = parseFloat(row['노출']?.replace(/,/g, '') || row['노출']) || 0;
-                const clicks = parseFloat(row['클릭']?.replace(/,/g, '') || row['클릭']) || 0;
-
-                pivotData[key].cost += cost;
-                pivotData[key].revenue += revenue;
-                pivotData[key].conversions += conversions;
-                pivotData[key].impressions += impressions;
-                pivotData[key].clicks += clicks;
-            });
-
-            // 지표 계산
-            Object.keys(pivotData).forEach(key => {
-                const data = pivotData[key];
-                data.roas = data.cost > 0 ? (data.revenue / data.cost * 100) : 0;
-                data.cpm = data.impressions > 0 ? (data.cost / data.impressions * 1000) : 0;
-                data.cpc = data.clicks > 0 ? (data.cost / data.clicks) : 0;
-                data.cpa = data.conversions > 0 ? (data.cost / data.conversions) : 0;
-            });
-
-            // 고유한 성별과 연령 추출 및 정렬
-            let genders = [...new Set(Object.values(pivotData).map(d => d.gender))].sort();
-            const ages = [...new Set(Object.values(pivotData).map(d => d.age))].filter(a => isValidAge(a)).sort();
-
-            // Unknown 제외하고 남성, 여성만 사용 (normalizeGender가 반환하는 값)
-            genders = genders.filter(g => g === '남성' || g === '여성');
-
-            // 모든 필터가 비어있는지 확인
-            const allFiltersEmpty = Object.values(currentPivotFilters).every(arr => !arr || arr.length === 0);
-
-            // 데이터가 없으면 안내 메시지 표시
-            if (allFiltersEmpty || Object.keys(pivotData).length === 0 || genders.length === 0 || ages.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 60px 20px; color: var(--grey-500);">
-                        <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
-                        <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">${allFiltersEmpty ? '필터를 선택해주세요' : '데이터를 표시할 수 없습니다'}</div>
-                        <div style="font-size: 13px; color: var(--grey-400);">
-                            ${allFiltersEmpty ? '위의 분류 기준에서 하나 이상의 항목을 선택해주세요.' : '필터 조건에 맞는 데이터가 없습니다.'}
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
-            // 테이블 HTML 생성 - 새로운 형식: 연령별 행, 지표별 남자/여자 컬럼
-            const metrics = [
-                { key: 'cost', label: '비용', format: (v) => formatCurrency(v) },
-                { key: 'cpm', label: 'CPM', format: (v) => formatCurrency(v) },
-                { key: 'cpc', label: 'CPC', format: (v) => formatCurrency(v) },
-                { key: 'cpa', label: 'CPA', format: (v) => formatCurrency(v) },
-                { key: 'roas', label: 'ROAS', format: (v) => v.toFixed(1) + '%' }
-            ];
-
-            // 지표별 최소/최대값 계산 (색상 스케일용)
-            const metricRanges = {};
-            metrics.forEach(metric => {
-                let min = Infinity;
-                let max = -Infinity;
-                Object.values(pivotData).forEach(data => {
-                    const value = data[metric.key];
-                    if (value < min) min = value;
-                    if (value > max) max = value;
-                });
-                metricRanges[metric.key] = { min, max };
-            });
-
-            // 색상 계산 함수 (지표별)
-            function getColorScaleForMetric(value, metricKey) {
-                const range = metricRanges[metricKey];
-                if (range.max === range.min) return 'rgba(103, 58, 183, 0.1)';
-
-                const ratio = (value - range.min) / (range.max - range.min);
-                // 흰색(낮음)에서 파란색(높음)으로 그라데이션
-                const r = Math.round(255 - (152 * ratio)); // 255 -> 103
-                const g = Math.round(255 - (197 * ratio)); // 255 -> 58
-                const b = Math.round(255 - (72 * ratio));  // 255 -> 183
-                const alpha = 0.1 + (ratio * 0.3); // 0.1 -> 0.4
-
-                return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-            }
-
-            let tableHTML = `
-                <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
-                    <thead>
-                        <tr style="background: var(--grey-100);">
-                            <th rowspan="2" style="padding: 10px 8px; text-align: center; font-weight: 700; border: 1px solid var(--grey-300); background: var(--grey-200); width: 70px;">
-                                연령
-                            </th>
-            `;
-
-            // 헤더: 지표별로 남자/여자 컬럼
-            metrics.forEach(metric => {
-                tableHTML += `
-                    <th colspan="2" style="padding: 8px 6px; text-align: center; font-weight: 700; border: 1px solid var(--grey-300); background: var(--primary-light); color: var(--primary-dark); font-size: 11px;">
-                        ${metric.label}
-                    </th>
-                `;
-            });
-
-            tableHTML += `
-                        </tr>
-                        <tr style="background: var(--grey-50);">
-            `;
-
-            // 두 번째 헤더 행: 남자/여자 반복
-            metrics.forEach(metric => {
-                genders.forEach(gender => {
-                    tableHTML += `
-                        <th style="padding: 6px 4px; text-align: center; font-weight: 600; border: 1px solid var(--grey-300); font-size: 10px;">
-                            ${getGenderDisplayName(gender)}
-                        </th>
-                    `;
-                });
-            });
-
-            tableHTML += `</tr></thead><tbody>`;
-
-            // 데이터 행: 연령별
-            ages.forEach((age, ageIndex) => {
-                const rowBg = ageIndex % 2 === 0 ? 'var(--paper)' : 'var(--grey-50)';
-                tableHTML += `
-                    <tr style="background: ${rowBg};">
-                        <td style="padding: 8px 6px; font-weight: 600; text-align: center; border: 1px solid var(--grey-300); background: var(--grey-100); font-size: 11px;">
-                            ${age}
-                        </td>
-                `;
-
-                // 각 지표별로 남자/여자 데이터 출력
-                metrics.forEach(metric => {
-                    genders.forEach(gender => {
-                        const key = `${gender}_${age}`;
-                        const data = pivotData[key];
-
-                        if (data) {
-                            const value = data[metric.key];
-                            const bgColor = getColorScaleForMetric(value, metric.key);
-                            const formattedValue = metric.format(value);
-
-                            tableHTML += `
-                                <td style="padding: 6px 4px; text-align: right; background: ${bgColor}; border: 1px solid var(--grey-300); cursor: pointer; transition: all 0.2s; font-weight: 500; font-size: 10px; white-space: nowrap;"
-                                    onmouseover="this.style.background='var(--primary-light)'; this.style.transform='scale(1.02)';"
-                                    onmouseout="this.style.background='${bgColor}'; this.style.transform='scale(1)';"
-                                    title="${getGenderDisplayName(gender)} / ${age}&#10;${metric.label}: ${formattedValue}&#10;&#10;비용: ${formatCurrency(data.cost)}&#10;CPM: ${formatCurrency(data.cpm)}&#10;CPC: ${formatCurrency(data.cpc)}&#10;CPA: ${formatCurrency(data.cpa)}&#10;ROAS: ${data.roas.toFixed(1)}%&#10;전환수: ${data.conversions.toFixed(0)}">
-                                    ${formattedValue}
-                                </td>
-                            `;
-                        } else {
-                            tableHTML += `
-                                <td style="padding: 6px 4px; text-align: center; background: var(--grey-50); border: 1px solid var(--grey-300); color: var(--grey-400); font-size: 10px;">
-                                    -
-                                </td>
-                            `;
-                        }
-                    });
-                });
-
-                tableHTML += `</tr>`;
-            });
-
-            tableHTML += `</tbody></table>`;
-
-            // 통계 요약 추가
-            const totalCost = Object.values(pivotData).reduce((sum, d) => sum + d.cost, 0);
-            const totalRevenue = Object.values(pivotData).reduce((sum, d) => sum + d.revenue, 0);
-            const totalConversions = Object.values(pivotData).reduce((sum, d) => sum + d.conversions, 0);
-            const totalImpressions = Object.values(pivotData).reduce((sum, d) => sum + d.impressions, 0);
-            const totalClicks = Object.values(pivotData).reduce((sum, d) => sum + d.clicks, 0);
-
-            const avgRoas = totalCost > 0 ? (totalRevenue / totalCost * 100) : 0;
-            const avgCpm = totalImpressions > 0 ? (totalCost / totalImpressions * 1000) : 0;
-            const avgCpc = totalClicks > 0 ? (totalCost / totalClicks) : 0;
-            const avgCpa = totalConversions > 0 ? (totalCost / totalConversions) : 0;
-
-            const statsHTML = `
-                <div style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%); border-radius: 8px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;">
-                    <div style="text-align: center; padding: 12px; background: white; border-radius: 6px;">
-                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">전체 비용</div>
-                        <div style="font-size: 16px; font-weight: 700; color: var(--grey-900);">${formatCurrency(totalCost)}</div>
-                    </div>
-                    <div style="text-align: center; padding: 12px; background: white; border-radius: 6px;">
-                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">평균 CPM</div>
-                        <div style="font-size: 16px; font-weight: 700; color: var(--grey-900);">${formatCurrency(avgCpm)}</div>
-                    </div>
-                    <div style="text-align: center; padding: 12px; background: white; border-radius: 6px;">
-                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">평균 CPC</div>
-                        <div style="font-size: 16px; font-weight: 700; color: var(--grey-900);">${formatCurrency(avgCpc)}</div>
-                    </div>
-                    <div style="text-align: center; padding: 12px; background: white; border-radius: 6px;">
-                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">평균 CPA</div>
-                        <div style="font-size: 16px; font-weight: 700; color: var(--grey-900);">${formatCurrency(avgCpa)}</div>
-                    </div>
-                    <div style="text-align: center; padding: 12px; background: white; border-radius: 6px;">
-                        <div style="font-size: 11px; color: var(--grey-600); margin-bottom: 4px;">전체 ROAS</div>
-                        <div style="font-size: 16px; font-weight: 700; color: var(--primary-main);">${avgRoas.toFixed(1)}%</div>
-                    </div>
-                </div>
-            `;
-
-            container.innerHTML = tableHTML + statsHTML;
         }
 
         // ========== 성과 비교 분석 섹션 함수들 ==========
