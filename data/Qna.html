@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ & 문의하기</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Berry Theme Colors */
+            --primary-main: #673ab7;
+            --primary-light: #ede7f6;
+            --primary-dark: #5e35b1;
+            --secondary-main: #2196f3;
+            --secondary-light: #e3f2fd;
+            --success-main: #00c853;
+            --success-light: #b9f6ca;
+            --warning-main: #ffab00;
+            --warning-light: #fff8e1;
+            --error-main: #ff1744;
+            --error-light: #ffeaea;
+            --grey-50: #fafafa;
+            --grey-100: #f5f5f5;
+            --grey-200: #eeeeee;
+            --grey-300: #e0e0e0;
+            --grey-500: #9e9e9e;
+            --grey-600: #757575;
+            --grey-700: #616161;
+            --grey-900: #212121;
+            --paper: #ffffff;
+            --background: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--grey-900);
+            line-height: 1.5;
+        }
+
+        /* 레이아웃 구조 */
+        .app-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--grey-200);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-main) 0%, var(--primary-dark) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .sidebar-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .sidebar-logo-subtitle {
+            font-size: 11px;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Simplebar 스타일 래퍼 */
+        .simplebar-content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-thumb {
+            background: var(--grey-300);
+            border-radius: 3px;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-thumb:hover {
+            background: var(--grey-500);
+        }
+
+        .sidebar-content {
+            padding: 16px 12px;
+        }
+
+        /* 네비게이션 그룹 */
+        .nav-group {
+            margin-bottom: 16px;
+        }
+
+        .nav-group-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 16px;
+            margin-bottom: 4px;
+        }
+
+        /* 네비게이션 아이템 */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: var(--grey-700);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: var(--grey-100);
+            color: var(--primary-main);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .nav-item-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .nav-item-text {
+            flex: 1;
+        }
+
+        /* 메인 컨텐츠 영역 */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 헤더 */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin: 0;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--grey-500);
+            margin-top: 4px;
+        }
+
+        /* 카드 공통 스타일 */
+        .card {
+            background: var(--paper);
+            border-radius: 12px;
+            box-shadow: 0 2px 14px 0 rgba(32, 40, 45, 0.08);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 20px 0 rgba(32, 40, 45, 0.12);
+        }
+
+        /* 섹션 헤더 */
+        .section-header {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--primary-main);
+            border-radius: 2px;
+        }
+
+        /* FAQ 섹션 */
+        .faq-section {
+            margin-bottom: 32px;
+        }
+
+        .faq-category {
+            margin-bottom: 24px;
+        }
+
+        .faq-category-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-main);
+            margin-bottom: 16px;
+            padding-left: 12px;
+            border-left: 3px solid var(--primary-main);
+        }
+
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .faq-item {
+            background: var(--paper);
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            overflow: hidden;
+            transition: box-shadow 0.2s ease;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .faq-question {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--grey-900);
+            text-align: left;
+            font-family: inherit;
+            transition: background 0.2s ease;
+        }
+
+        .faq-question:hover {
+            background: var(--grey-50);
+        }
+
+        .faq-icon {
+            font-size: 12px;
+            color: var(--grey-500);
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer-content {
+            padding: 0 20px 20px 20px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--grey-700);
+        }
+
+        .faq-answer-content strong {
+            color: var(--grey-900);
+        }
+
+        /* 문의하기 섹션 */
+        .contact-section {
+            padding: 32px;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-700);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-label .required {
+            color: var(--error-main);
+            font-size: 12px;
+        }
+
+        .form-input {
+            padding: 14px 16px;
+            border: 1px solid var(--grey-300);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            background: var(--paper);
+            color: var(--grey-900);
+            transition: all 0.2s ease;
+        }
+
+        .form-input:hover {
+            border-color: var(--primary-main);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-main);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-input::placeholder {
+            color: var(--grey-500);
+        }
+
+        .form-textarea {
+            min-height: 180px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, var(--primary-main) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(103, 58, 183, 0.4);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(103, 58, 183, 0.5);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* 도움말 박스 */
+        .help-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--primary-light);
+            border-radius: 10px;
+            margin-top: 24px;
+        }
+
+        .help-box-icon {
+            font-size: 24px;
+        }
+
+        .help-box-content {
+            flex: 1;
+        }
+
+        .help-box-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 4px;
+        }
+
+        .help-box-text {
+            font-size: 13px;
+            color: var(--grey-700);
+            line-height: 1.6;
+        }
+
+        .help-box-text a {
+            color: var(--primary-main);
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .help-box-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* 성공 메시지 */
+        .success-message {
+            display: none;
+            padding: 20px;
+            background: var(--success-light);
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-message-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .success-message-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--success-main);
+            margin-bottom: 8px;
+        }
+
+        .success-message-text {
+            font-size: 14px;
+            color: var(--grey-700);
+        }
+
+        /* 2열 레이아웃 */
+        .two-column-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1200px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .two-column-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 16px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-section {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+        }
+
+        /* 탭 네비게이션 */
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            border: none;
+            background: var(--paper);
+            color: var(--grey-700);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .tab-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .tab-btn.active {
+            background: var(--primary-main);
+            color: white;
+            box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 검색 필터 */
+        .search-box {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            border: 1px solid var(--grey-300);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            background: var(--paper);
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-main);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--grey-500);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="sidebar-logo-text">Analytics</div>
+                        <div class="sidebar-logo-subtitle">Dashboard</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="simplebar-content-wrapper">
+                <div class="sidebar-content">
+                    <!-- 대시보드 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">대시보드</div>
+                        <a href="marketing_dashboard_v3.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">광고 성과 대시보드</span>
+                        </a>
+                        <a href="creative_analysis.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">소재별 대시보드</span>
+                        </a>
+                    </div>
+
+                    <!-- 분석 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">분석</div>
+                        <a href="timeseries_analysis.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">시계열 데이터 분석</span>
+                        </a>
+                        <a href="#" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2.03 0v8.99H22c-.47-4.74-4.24-8.52-8.97-8.99zm0 11.01V22c4.74-.47 8.5-4.25 8.97-8.99h-8.97z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">채널별 비교</span>
+                        </a>
+                        <a href="funnel_dashboard.html" class="nav-item">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M4.25 5.61C6.27 8.2 10 13 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-6s3.73-4.8 5.75-7.39C20.26 4.95 19.79 4 18.95 4H5.04c-.83 0-1.31.95-.79 1.61z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">퍼널 대시보드</span>
+                        </a>
+                    </div>
+
+                    <!-- 지원 그룹 -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">지원</div>
+                        <a href="Qna.html" class="nav-item active">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">FAQ & 문의하기</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <div class="container">
+                <!-- 헤더 -->
+                <div class="header">
+                    <div>
+                        <h1>FAQ & 문의하기</h1>
+                        <div class="header-subtitle">자주 묻는 질문과 직접 문의하기</div>
+                    </div>
+                </div>
+
+                <!-- 탭 네비게이션 -->
+                <div class="tab-nav">
+                    <button class="tab-btn active" data-tab="faq">자주 묻는 질문 (FAQ)</button>
+                    <button class="tab-btn" data-tab="contact">문의하기</button>
+                </div>
+
+                <!-- FAQ 탭 -->
+                <div class="tab-content active" id="tab-faq">
+                    <!-- 검색 -->
+                    <div class="search-box">
+                        <span class="search-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                            </svg>
+                        </span>
+                        <input type="text" class="search-input" id="faqSearch" placeholder="질문 검색하기...">
+                    </div>
+
+                    <div class="faq-section">
+                        <!-- 마케팅 대시보드 FAQ -->
+                        <div class="faq-category">
+                            <div class="faq-category-title">마케팅 성과 대시보드</div>
+                            <div class="faq-list">
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>탭을 전환하면 차트와 테이블도 바뀌나요?</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            네, 맞습니다. <strong>전체/일별/주별/월별</strong> 탭을 전환하면
+                                            KPI 카드, 차트, 테이블이 모두 해당 집계 단위로 변경됩니다.<br><br>
+                                            예를 들어, "월별" 탭을 선택하면:<br>
+                                            • KPI 카드: 월별 집계 데이터의 마지막 월 vs 직전 월 비교<br>
+                                            • 차트: 월별 추이 그래프<br>
+                                            • 테이블: 월별 상세 데이터
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>증감율이 "-"로 표시되는 이유는 무엇인가요?</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            증감율이 "-"로 표시되는 경우는 다음과 같습니다:<br><br>
+                                            • <strong>직전 기간 데이터가 없는 경우</strong>: 비교할 기준이 없음<br>
+                                            • <strong>직전 기간 값이 0인 경우</strong>: 0으로 나눌 수 없음<br>
+                                            • <strong>데이터가 1개 기간만 있는 경우</strong>: 비교 대상 없음<br><br>
+                                            이 경우 필터 기간을 더 넓게 설정하면 해결될 수 있습니다.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>ROAS 퍼센트 포인트(%p)는 무엇인가요?</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            퍼센트 포인트(%p)는 <strong>비율의 절대적 차이</strong>를 나타냅니다.<br><br>
+                                            예시:<br>
+                                            • 지난달 ROAS: 200%<br>
+                                            • 이번달 ROAS: 215%<br>
+                                            • 변화: <strong>+15%p</strong> (215 - 200 = 15)<br><br>
+                                            일반 증감율(%)과 다르게, ROAS는 이미 비율(%)이므로
+                                            단순 뺄셈으로 변화량을 계산하여 %p로 표시합니다.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>CPA/CPC 증가가 왜 빨간색인가요?</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            <strong>CPA(전환당 비용)</strong>와 <strong>CPC(클릭당 비용)</strong>는
+                                            <strong>낮을수록 효율적</strong>인 지표입니다.<br><br>
+                                            따라서:<br>
+                                            • CPA/CPC <strong>감소</strong> → 효율 개선 → <span style="color: #00c853; font-weight: 600;">녹색</span><br>
+                                            • CPA/CPC <strong>증가</strong> → 효율 악화 → <span style="color: #ff1744; font-weight: 600;">빨간색</span><br><br>
+                                            이는 ROAS(높을수록 좋음)와 반대되는 개념입니다.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>차트에서 여러 지표를 동시에 볼 수 있나요?</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            네, <strong>체크박스를 여러 개 선택</strong>하면 됩니다.<br><br>
+                                            • <strong>비용</strong>: 왼쪽 Y축 (Bar 차트)<br>
+                                            • <strong>CPM/CPC/CPA/ROAS</strong>: 오른쪽 Y축 (Line 차트)<br><br>
+                                            듀얼 Y축을 사용하므로 단위가 다른 지표도 함께 비교할 수 있습니다.
+                                            예: 비용(원) + ROAS(%)를 한 차트에서 확인 가능
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>필터를 초기화하려면 어떻게 하나요?</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            필터를 초기화하려면:<br>
+                                            1. 각 필터 드롭다운에서 <strong>"전체"</strong> 옵션을 선택<br>
+                                            2. 또는 <strong>페이지를 새로고침</strong> (F5)<br><br>
+                                            새로고침 시 데이터가 다시 로드되며 모든 필터가 초기 상태로 돌아갑니다.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>테이블 데이터를 엑셀로 내보낼 수 있나요?</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            현재 버전에서는 직접 내보내기 기능이 제공되지 않습니다.<br><br>
+                                            임시 방법:<br>
+                                            1. 테이블 영역을 <strong>마우스로 드래그</strong>하여 선택<br>
+                                            2. <strong>Ctrl+C</strong>로 복사<br>
+                                            3. Excel이나 Google Sheets에 <strong>Ctrl+V</strong>로 붙여넣기<br><br>
+                                            추후 업데이트에서 CSV/Excel 내보내기 기능이 추가될 예정입니다.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 광고 소재별 분석 FAQ -->
+                        <div class="faq-category">
+                            <div class="faq-category-title">광고 소재별 분석</div>
+                            <div class="faq-list">
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>소재 이미지가 표시되지 않아요</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            소재 이미지는 광고 플랫폼(Facebook, Google 등)의 CDN에서 가져옵니다.
+                                            다음 경우에 이미지가 표시되지 않을 수 있습니다:<br><br>
+                                            • <strong>광고가 삭제/비활성화</strong>된 경우<br>
+                                            • <strong>이미지 URL이 만료</strong>된 경우<br>
+                                            • <strong>네트워크 문제</strong>로 로드 실패<br><br>
+                                            이 경우 "이미지 로드 실패" 플레이스홀더가 표시됩니다.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>KPI 필터를 여러 개 설정하면 어떻게 적용되나요?</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            KPI 필터는 최대 3개 조건을 설정할 수 있으며,
+                                            <strong>"또는 (OR)"</strong>과 <strong>"그리고 (AND)"</strong> 연산자로 조합됩니다.<br><br>
+                                            예시: ROAS ≥ 200% <strong>그리고</strong> CPA ≤ 15,000<br>
+                                            → 두 조건을 <strong>모두 만족</strong>하는 소재만 표시<br><br>
+                                            예시: ROAS ≥ 300% <strong>또는</strong> 전환수 ≥ 50<br>
+                                            → 두 조건 중 <strong>하나라도 만족</strong>하는 소재 표시
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>ROAS가 0%로 표시되는 소재는 무엇인가요?</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            ROAS가 0%인 소재는 <strong>전환값(매출)이 0원</strong>인 경우입니다.<br><br>
+                                            가능한 원인:<br>
+                                            • 전환 추적이 제대로 설정되지 않음<br>
+                                            • 아직 전환이 발생하지 않음 (러닝 초기)<br>
+                                            • 전환값이 GA4/광고 플랫폼에 기록되지 않음<br><br>
+                                            전환 추적 설정을 점검하거나, 충분한 러닝 기간이 지난 후 다시 확인하세요.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>소재 A/B 테스트 결과를 비교하고 싶어요</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            A/B 테스트 비교를 위한 추천 워크플로우:<br><br>
+                                            1. <strong>캠페인 또는 광고세트 필터</strong>로 테스트 그룹 선택<br>
+                                            2. <strong>ROAS 내림차순</strong>으로 정렬<br>
+                                            3. 상위 소재들의 KPI 비교<br>
+                                            4. 각 소재 클릭하여 <strong>일별 추이</strong> 확인<br><br>
+                                            특정 기간의 테스트라면 <strong>날짜 필터</strong>를 함께 설정하세요.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 채널별 분석 FAQ -->
+                        <div class="faq-category">
+                            <div class="faq-category-title">채널별 분석 & 일반</div>
+                            <div class="faq-list">
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>데이터는 얼마나 자주 업데이트되나요?</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            대시보드 데이터는 <strong>매일 자동으로 업데이트</strong>됩니다.
+                                            각 광고 플랫폼(Meta, Google, Naver, Kakao 등)의 API를 통해 전일 데이터를 수집하며,
+                                            보통 오전 중으로 전날까지의 성과가 반영됩니다.
+                                            실시간 데이터가 아닌 점 참고해 주세요.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>ROAS가 100% 미만이면 문제가 있는 건가요?</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            ROAS 100% 미만은 광고비보다 매출이 적다는 의미입니다.
+                                            단, 이것이 항상 나쁜 것은 아닙니다. <strong>브랜드 인지도 캠페인</strong>이나
+                                            <strong>신규 고객 확보</strong> 목적의 광고는 단기 ROAS보다
+                                            LTV(고객 생애 가치)를 고려해야 합니다.
+                                            지속적으로 ROAS가 낮다면 타겟팅, 크리에이티브, 랜딩페이지 등을 점검해 보세요.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>AI 예측은 얼마나 정확한가요?</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            AI 예측은 과거 데이터 패턴을 학습하여 미래를 예측합니다.
+                                            일반적으로 데이터가 많을수록, 패턴이 일정할수록 정확도가 높습니다.
+                                            다만, 예상치 못한 외부 요인(시즌, 경쟁사 활동, 시장 변화 등)에 따라
+                                            실제 결과는 달라질 수 있습니다.
+                                            <strong>예측은 의사결정의 참고 자료</strong>로 활용하시고,
+                                            정기적으로 실제 성과와 비교하여 검증하세요.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>모바일에서도 대시보드를 볼 수 있나요?</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            네, 대시보드는 <strong>반응형 디자인</strong>으로 제작되어 모바일 기기에서도 확인할 수 있습니다.
+                                            다만, 복잡한 차트와 테이블은 데스크톱 환경에서 보시는 것을 권장드립니다.
+                                            주요 KPI와 AI 인사이트 확인은 모바일에서도 편하게 하실 수 있습니다.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>경고 알림이 떴는데 어떻게 대응해야 하나요?</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            각 경고 알림에는 <strong>Financial Impact</strong>와 <strong>Action 가이드</strong>가 함께 제공됩니다.
+                                            Action 가이드에 따라 1차 조치를 취하시고, 추가 분석이나 전략 수정이 필요하시면 담당 Growth Manager와 상의하세요.
+                                            경고는 "문제"가 아닌 "개선 기회"로 보시면 됩니다!
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="faq-item">
+                                    <button class="faq-question" onclick="toggleFaq(this)">
+                                        <span>데이터를 다운로드할 수 있나요?</span>
+                                        <span class="faq-icon">▼</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer-content">
+                                            현재 대시보드 내 직접 다운로드 기능은 제공되지 않습니다.
+                                            데이터 다운로드가 필요하시면 담당 Growth Manager에게 요청해 주세요.
+                                            CSV 또는 Excel 형식으로 원하시는 기간과 지표의 데이터를 제공해 드립니다.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 문의하기 탭 -->
+                <div class="tab-content" id="tab-contact">
+                    <div class="card contact-section">
+                        <div class="section-header">직접 문의하기</div>
+                        <p style="color: var(--grey-600); margin-bottom: 24px; font-size: 14px;">
+                            FAQ에서 답을 찾지 못하셨나요? 아래 양식을 작성해 주시면 담당자가 빠르게 답변 드리겠습니다.
+                        </p>
+
+                        <form class="contact-form" id="contactForm" onsubmit="submitForm(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        회사명
+                                        <span class="required">*</span>
+                                    </label>
+                                    <input type="text" class="form-input" id="companyName" placeholder="회사명을 입력해 주세요" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        담당자명
+                                    </label>
+                                    <input type="text" class="form-input" id="contactName" placeholder="담당자명 (선택사항)">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        이메일
+                                    </label>
+                                    <input type="email" class="form-input" id="contactEmail" placeholder="회신받으실 이메일 (선택사항)">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        문의 유형
+                                    </label>
+                                    <select class="form-input" id="inquiryType">
+                                        <option value="일반 문의">일반 문의</option>
+                                        <option value="기능 관련">기능 관련</option>
+                                        <option value="데이터 관련">데이터 관련</option>
+                                        <option value="오류 신고">오류 신고</option>
+                                        <option value="기능 요청">기능 요청</option>
+                                        <option value="기타">기타</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    문의 내용
+                                    <span class="required">*</span>
+                                </label>
+                                <textarea class="form-input form-textarea" id="inquiryContent" placeholder="문의하실 내용을 상세히 작성해 주세요." required></textarea>
+                            </div>
+
+                            <button type="submit" class="submit-btn">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                </svg>
+                                문의 저장하기
+                            </button>
+                        </form>
+
+                        <div class="success-message" id="successMessage">
+                            <div class="success-message-icon">✅</div>
+                            <div class="success-message-title">메일 앱이 열렸습니다!</div>
+                            <div class="success-message-text">
+                                Gmail 또는 기본 메일 앱에서 메일 전송을 완료해 주세요.<br>
+                                빠른 시일 내에 답변 드리겠습니다.
+                            </div>
+                        </div>
+
+                        <div class="help-box">
+                            <div class="help-box-icon">💡</div>
+                            <div class="help-box-content">
+                                <div class="help-box-title">빠른 답변을 원하시나요?</div>
+                                <div class="help-box-text">
+                                    긴급한 문의는 <a href="mailto:support@growthmaker.kr">support@growthmaker.kr</a>로 직접 메일을 보내주시거나,
+                                    담당 Growth Manager에게 연락해 주세요.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // FAQ 토글
+        function toggleFaq(button) {
+            const faqItem = button.closest('.faq-item');
+            const isOpen = faqItem.classList.contains('open');
+
+            // 모든 FAQ 닫기 (선택사항 - 아코디언 스타일)
+            // document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('open'));
+
+            // 현재 항목 토글
+            if (isOpen) {
+                faqItem.classList.remove('open');
+            } else {
+                faqItem.classList.add('open');
+            }
+        }
+
+        // 탭 전환
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 모든 탭 버튼 비활성화
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                // 모든 탭 콘텐츠 숨기기
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                // 클릭한 탭 활성화
+                btn.classList.add('active');
+                const tabId = btn.dataset.tab;
+                document.getElementById('tab-' + tabId).classList.add('active');
+            });
+        });
+
+        // FAQ 검색
+        document.getElementById('faqSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const faqItems = document.querySelectorAll('.faq-item');
+
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question span').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer-content').textContent.toLowerCase();
+
+                if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                    item.style.display = 'block';
+                    // 검색 중일 때 해당 항목 열기
+                    if (searchTerm.length > 0) {
+                        item.classList.add('open');
+                    }
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // 검색어가 비어있으면 모두 표시하고 닫기
+            if (searchTerm.length === 0) {
+                faqItems.forEach(item => {
+                    item.style.display = 'block';
+                    item.classList.remove('open');
+                });
+            }
+        });
+
+        // 문의 폼 제출 - Gmail mailto 사용
+        function submitForm(event) {
+            event.preventDefault();
+
+            const companyName = document.getElementById('companyName').value;
+            const contactName = document.getElementById('contactName').value;
+            const contactEmail = document.getElementById('contactEmail').value;
+            const inquiryType = document.getElementById('inquiryType').value;
+            const inquiryContent = document.getElementById('inquiryContent').value;
+
+            // 메일 본문 구성
+            const subject = encodeURIComponent(`[${inquiryType}] ${companyName} 문의`);
+            const body = encodeURIComponent(
+`안녕하세요, 대시보드 관련 문의드립니다.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+📌 문의 정보
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+회사명: ${companyName}
+담당자: ${contactName || '미입력'}
+이메일: ${contactEmail || '미입력'}
+문의 유형: ${inquiryType}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+📝 문의 내용
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${inquiryContent}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+`
+            );
+
+            // Gmail mailto 링크 생성
+            const mailtoLink = `mailto:support@growthmaker.kr?subject=${subject}&body=${body}`;
+
+            // 메일 앱 열기
+            window.location.href = mailtoLink;
+
+            // 성공 메시지 표시
+            document.getElementById('successMessage').classList.add('show');
+
+            // 폼 초기화
+            document.getElementById('contactForm').reset();
+
+            // 3초 후 성공 메시지 숨기기
+            setTimeout(() => {
+                document.getElementById('successMessage').classList.remove('show');
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
