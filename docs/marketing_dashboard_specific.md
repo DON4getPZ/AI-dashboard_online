@@ -58,7 +58,7 @@
   - [7. 반응형 디자인](#7-반응형-디자인-responsive-breakpoints)
   - [8. 스크롤바 스타일](#8-스크롤바-스타일)
   - [9. 추가 CSS 클래스](#9-추가-css-클래스)
-- [차트 체크박스 기본 상태](#차트-체크박스-기본-상태)
+- [차트 토글 버튼 기본 상태](#차트-토글-버튼-기본-상태)
 
 ### 데이터
 - [데이터 흐름 (Data Flow)](#데이터-흐름-data-flow)
@@ -144,11 +144,11 @@
 ### 3. 차트 섹션
 | 항목 | 내용 |
 |------|------|
-| **섹션 헤드** | 성과 추이 차트 |
-| **위치** | Line 1486-1530 |
+| **섹션 헤드** | 성과 지표 추이 |
+| **위치** | Line 1582-1626 |
 | **JS 함수** | `updateChart()`, `renderChart()` |
-| **참조 데이터** | `currentChartData` |
-| **기능** | - 체크박스로 지표 선택 (비용, CPM, CPC, CPA, ROAS)<br>- 듀얼 Y축 (Bar + Line 콤보) |
+| **참조 데이터** | `currentChartData`, `showDataLabels` |
+| **기능** | - 토글 버튼으로 지표 선택 (비용, CPM, CPC, CPA, ROAS)<br>- 데이터 라벨 표시/숨김 토글<br>- 듀얼 Y축 (Bar + Line 콤보) |
 
 ### 4. 데이터 테이블 섹션
 | 항목 | 내용 |
@@ -170,6 +170,7 @@
 | `filters` | Object | - | 필터 조건 저장 (type, brand, product, promotion, startDate, endDate, campaign, setName) |
 | `trendChart` | Chart | - | Chart.js 인스턴스 |
 | `currentChartData` | Array | - | 현재 차트에 표시되는 집계 데이터 |
+| `showDataLabels` | Boolean | - | 차트 데이터 라벨 표시 여부 (기본값: false) |
 | `TABLE_ROW_LIMIT` | Number | - | 테이블 행 제한 (기본값: 10) |
 | `isTableExpanded` | Boolean | - | 테이블 확장 상태 |
 
@@ -304,7 +305,8 @@ ROAS = (전환값 / 비용) * 100   // 광고 수익률 (%)
 | 세트이름 변경 | `#filterSetName` | change | 대시보드 갱신 |
 | KPI 탭 전환 | `.kpi-tab` | click | 전체/일별/주별/월별 탭 전환. currentView 변경 |
 | KPI 뷰 토글 | `.kpi-view-btn` | click | 주요 성과/세부 성과 토글 |
-| 차트 체크박스 | `#chart*` | change | 차트 재렌더링 |
+| 차트 토글 버튼 | `.chart-toggle-group .data-label-toggle` | click | 토글 상태 변경 및 차트 재렌더링 |
+| 데이터 라벨 토글 | `#dataLabelToggle` | click | 차트 데이터 라벨 표시/숨김 |
 | 더보기 버튼 | `#showMoreBtn` | click | expandTableRows 호출 |
 | 접기 버튼 | `#collapseBtn` | click | collapseTableRows 호출 |
 
@@ -340,14 +342,16 @@ ROAS = (전환값 / 비용) * 100   // 광고 수익률 (%)
 | 증감율 요소 | `#trend*`, `#trend*PP`, `#trend*Detail` | updateKPIs |
 
 ### 차트 섹션
-| 컴포넌트 | ID | 관련 함수 |
-|----------|-------|-----------|
+| 컴포넌트 | ID/선택자 | 관련 함수 |
+|----------|-----------|-----------|
 | 차트 캔버스 | `#trendChart` | renderChart |
-| 비용 체크박스 | `#chartCost` | renderChart |
-| CPM 체크박스 | `#chartCPM` | renderChart |
-| CPC 체크박스 | `#chartCPC` | renderChart |
-| CPA 체크박스 | `#chartCPA` | renderChart |
-| ROAS 체크박스 | `#chartROAS` | renderChart |
+| 데이터 라벨 토글 | `#dataLabelToggle` | renderChart |
+| 지표 토글 버튼 | `.chart-toggle-group .data-label-toggle` | renderChart |
+| 비용 체크박스 | `#chartCost` (숨겨진 요소) | renderChart |
+| CPM 체크박스 | `#chartCPM` (숨겨진 요소) | renderChart |
+| CPC 체크박스 | `#chartCPC` (숨겨진 요소) | renderChart |
+| CPA 체크박스 | `#chartCPA` (숨겨진 요소) | renderChart |
+| ROAS 체크박스 | `#chartROAS` (숨겨진 요소) | renderChart |
 
 ### 테이블 섹션
 | 컴포넌트 | ID | 관련 함수 |
@@ -1361,6 +1365,17 @@ filterCollapsibleHeader.addEventListener('click', () => {
     padding: 24px;
 }
 
+.chart-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.chart-section-header .chart-header {
+    margin-bottom: 0;
+}
+
 .chart-header {
     font-size: 16px;
     font-weight: 600;
@@ -1385,7 +1400,7 @@ filterCollapsibleHeader.addEventListener('click', () => {
 }
 ```
 
-#### 5.2 차트 컨트롤 `.chart-controls`
+#### 5.2 차트 컨트롤 `.chart-controls` 및 토글 버튼
 
 ```css
 .chart-controls {
@@ -1396,66 +1411,86 @@ filterCollapsibleHeader.addEventListener('click', () => {
     flex-wrap: wrap;
 }
 
-.chart-checkbox-group {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.chart-checkbox {
+/* 차트 지표 토글 버튼 */
+.data-label-toggle {
     display: flex;
     align-items: center;
     gap: 6px;
+    padding: 8px 16px;
+    border: none;
+    background: var(--paper);
+    color: var(--grey-700);
+    border-radius: 8px;
     cursor: pointer;
     font-size: 13px;
     font-weight: 500;
-    color: var(--grey-700);
-    padding: 6px 12px;
-    border-radius: 20px;
-    transition: all 0.2s ease;
-    background: var(--grey-100);
+    font-family: inherit;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
-.chart-checkbox:hover {
-    background: var(--grey-200);
+.data-label-toggle:hover {
+    background: var(--primary-light);
+    color: var(--primary-main);
 }
 
-.chart-checkbox input {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--primary-main);
-    cursor: pointer;
+.data-label-toggle.active {
+    background: var(--primary-main);
+    color: white;
+    box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
 }
 
-/* 차트 지표별 색상 */
-.chart-checkbox.cost { border-left: 3px solid #673ab7; }
-.chart-checkbox.cpm { border-left: 3px solid #ffab00; }
-.chart-checkbox.cpc { border-left: 3px solid #2196f3; }
-.chart-checkbox.cpa { border-left: 3px solid #ff9800; }
-.chart-checkbox.roas { border-left: 3px solid #00c853; }
+.data-label-toggle .toggle-checkbox {
+    font-size: 14px;
+}
 ```
 
 **HTML 구조**:
 ```html
-<section class="chart-section card">
-    <div class="chart-header">성과 추이 차트</div>
+<div class="chart-section card">
+    <div class="chart-section-header">
+        <div class="chart-header">성과 지표 추이</div>
+        <button class="data-label-toggle" id="dataLabelToggle">
+            <span class="toggle-checkbox">☐</span>
+            <span>데이터 라벨</span>
+        </button>
+    </div>
     <div class="chart-controls">
-        <div class="chart-checkbox-group">
-            <label class="chart-checkbox cost">
-                <input type="checkbox" id="chartCost" checked>
+        <div class="chart-toggle-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="data-label-toggle active" data-chart-toggle="chartCost">
+                <span class="toggle-checkbox">✓</span>
                 <span>비용</span>
-            </label>
-            <label class="chart-checkbox cpm">
-                <input type="checkbox" id="chartCPM" checked>
+            </button>
+            <button type="button" class="data-label-toggle" data-chart-toggle="chartCPM">
+                <span class="toggle-checkbox">☐</span>
                 <span>CPM</span>
-            </label>
-            <!-- ... 기타 체크박스 -->
+            </button>
+            <button type="button" class="data-label-toggle" data-chart-toggle="chartCPC">
+                <span class="toggle-checkbox">☐</span>
+                <span>CPC</span>
+            </button>
+            <button type="button" class="data-label-toggle" data-chart-toggle="chartCPA">
+                <span class="toggle-checkbox">☐</span>
+                <span>CPA</span>
+            </button>
+            <button type="button" class="data-label-toggle active" data-chart-toggle="chartROAS">
+                <span class="toggle-checkbox">✓</span>
+                <span>ROAS</span>
+            </button>
+        </div>
+        <!-- 숨겨진 체크박스 (기존 기능 유지용) -->
+        <div style="display: none;">
+            <input type="checkbox" id="chartCost" checked>
+            <input type="checkbox" id="chartCPM">
+            <input type="checkbox" id="chartCPC">
+            <input type="checkbox" id="chartCPA">
+            <input type="checkbox" id="chartROAS" checked>
         </div>
     </div>
     <div class="chart-container">
         <canvas id="trendChart"></canvas>
     </div>
-</section>
+</div>
 ```
 
 ---
@@ -1979,15 +2014,22 @@ h1 {
 
 ---
 
-## 차트 체크박스 기본 상태
+## 차트 토글 버튼 기본 상태
 
-| 체크박스 ID | 기본 상태 | 비고 |
-|------------|----------|------|
-| `#chartCost` | `checked` | 비용 - 기본 선택 |
-| `#chartCPM` | 미선택 | CPM |
-| `#chartCPC` | 미선택 | CPC |
-| `#chartCPA` | 미선택 | CPA |
-| `#chartROAS` | `checked` | ROAS - 기본 선택 |
+> 차트 지표 선택은 `.data-label-toggle` 버튼으로 구현되며, 숨겨진 체크박스와 동기화됩니다.
+
+| 토글 버튼 | 체크박스 ID | 기본 상태 | 비고 |
+|----------|------------|----------|------|
+| 비용 | `#chartCost` | `.active` / `checked` | 기본 선택 |
+| CPM | `#chartCPM` | 미선택 | - |
+| CPC | `#chartCPC` | 미선택 | - |
+| CPA | `#chartCPA` | 미선택 | - |
+| ROAS | `#chartROAS` | `.active` / `checked` | 기본 선택 |
+
+### 데이터 라벨 토글 버튼
+| 버튼 ID | 기능 | 기본 상태 |
+|---------|------|----------|
+| `#dataLabelToggle` | 차트에 데이터 값 라벨 표시/숨김 | 미선택 (☐) |
 
 ---
 
@@ -2740,13 +2782,48 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 차트 체크박스 이벤트
-    ['chartCost', 'chartCPM', 'chartCPC', 'chartCPA', 'chartROAS'].forEach(id => {
-        document.getElementById(id).addEventListener('change', () => renderChart());
+    // 차트 토글 버튼 이벤트 (data-label-toggle 스타일)
+    document.querySelectorAll('.chart-toggle-group .data-label-toggle').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const checkboxId = this.dataset.chartToggle;
+            const checkbox = document.getElementById(checkboxId);
+            const toggleCheckbox = this.querySelector('.toggle-checkbox');
+
+            // 토글 상태 전환
+            checkbox.checked = !checkbox.checked;
+
+            if (checkbox.checked) {
+                this.classList.add('active');
+                toggleCheckbox.textContent = '✓';
+            } else {
+                this.classList.remove('active');
+                toggleCheckbox.textContent = '☐';
+            }
+
+            renderChart();
+        });
     });
 
-    // 더 보기/접기 버튼 이벤트
+    // 데이터 라벨 토글 버튼 이벤트
+    document.getElementById('dataLabelToggle').addEventListener('click', function() {
+        showDataLabels = !showDataLabels;
+        const toggleCheckbox = this.querySelector('.toggle-checkbox');
+
+        if (showDataLabels) {
+            this.classList.add('active');
+            toggleCheckbox.textContent = '☑';
+        } else {
+            this.classList.remove('active');
+            toggleCheckbox.textContent = '☐';
+        }
+
+        renderChart();
+    });
+
+    // 더 보기 버튼 이벤트
     document.getElementById('showMoreBtn').addEventListener('click', expandTableRows);
+
+    // 접기 버튼 이벤트
     document.getElementById('collapseBtn').addEventListener('click', collapseTableRows);
 });
 ```
@@ -2814,11 +2891,22 @@ document.addEventListener('DOMContentLoaded', () => {
 | ID | 용도 |
 |----|------|
 | `#trendChart` | 차트 캔버스 |
-| `#chartCost` | 비용 체크박스 |
-| `#chartCPM` | CPM 체크박스 |
-| `#chartCPC` | CPC 체크박스 |
-| `#chartCPA` | CPA 체크박스 |
-| `#chartROAS` | ROAS 체크박스 |
+| `#dataLabelToggle` | 데이터 라벨 표시/숨김 토글 버튼 |
+| `#chartCost` | 비용 체크박스 (숨겨진 요소) |
+| `#chartCPM` | CPM 체크박스 (숨겨진 요소) |
+| `#chartCPC` | CPC 체크박스 (숨겨진 요소) |
+| `#chartCPA` | CPA 체크박스 (숨겨진 요소) |
+| `#chartROAS` | ROAS 체크박스 (숨겨진 요소) |
+
+### 차트 토글 버튼 선택자
+| 선택자 | 용도 |
+|--------|------|
+| `.chart-toggle-group .data-label-toggle` | 차트 지표 토글 버튼 |
+| `.data-label-toggle[data-chart-toggle="chartCost"]` | 비용 토글 버튼 |
+| `.data-label-toggle[data-chart-toggle="chartCPM"]` | CPM 토글 버튼 |
+| `.data-label-toggle[data-chart-toggle="chartCPC"]` | CPC 토글 버튼 |
+| `.data-label-toggle[data-chart-toggle="chartCPA"]` | CPA 토글 버튼 |
+| `.data-label-toggle[data-chart-toggle="chartROAS"]` | ROAS 토글 버튼 |
 
 ### 테이블 섹션 ID
 | ID | 용도 |
@@ -2904,19 +2992,19 @@ let html = data.map((row, index) => `
                     </div>
                     <span class="nav-item-text">광고 성과 대시보드</span>
                 </a>
-            </div>
-
-            <!-- 분석 그룹 -->
-            <div class="nav-group">
-                <div class="nav-group-title">분석</div>
                 <a href="creative_analysis.html" class="nav-item">
                     <div class="nav-item-icon">
                         <svg viewBox="0 0 24 24">
                             <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
                         </svg>
                     </div>
-                    <span class="nav-item-text">광고 소재별 분석</span>
+                    <span class="nav-item-text">소재별 대시보드</span>
                 </a>
+            </div>
+
+            <!-- 분석 그룹 -->
+            <div class="nav-group">
+                <div class="nav-group-title">분석</div>
                 <a href="timeseries_analysis.html" class="nav-item">
                     <div class="nav-item-icon">
                         <svg viewBox="0 0 24 24">
@@ -2933,26 +3021,26 @@ let html = data.map((row, index) => `
                     </div>
                     <span class="nav-item-text">채널별 비교</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="funnel_dashboard.html" class="nav-item">
                     <div class="nav-item-icon">
                         <svg viewBox="0 0 24 24">
-                            <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                            <path d="M4.25 5.61C6.27 8.2 10 13 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-6s3.73-4.8 5.75-7.39C20.26 4.95 19.79 4 18.95 4H5.04c-.83 0-1.31.95-.79 1.61z"/>
                         </svg>
                     </div>
-                    <span class="nav-item-text">기간별 리포트</span>
+                    <span class="nav-item-text">퍼널 대시보드</span>
                 </a>
             </div>
 
-            <!-- 설정 그룹 -->
+            <!-- 지원 그룹 -->
             <div class="nav-group">
-                <div class="nav-group-title">설정</div>
+                <div class="nav-group-title">지원</div>
                 <a href="#" class="nav-item">
                     <div class="nav-item-icon">
                         <svg viewBox="0 0 24 24">
-                            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
                         </svg>
                     </div>
-                    <span class="nav-item-text">데이터 설정</span>
+                    <span class="nav-item-text">문의하기</span>
                 </a>
             </div>
         </div>
@@ -2961,14 +3049,14 @@ let html = data.map((row, index) => `
 ```
 
 ### 네비게이션 링크 구조
-| 그룹 | 메뉴 | href | 활성 상태 |
-|------|------|------|----------|
-| 대시보드 | 광고 성과 대시보드 | `#` | `.active` |
-| 분석 | 광고 소재별 분석 | `creative_analysis.html` | - |
-| 분석 | 시계열 데이터 분석 | `timeseries_analysis.html` | - |
-| 분석 | 채널별 비교 | `#` | - |
-| 분석 | 기간별 리포트 | `#` | - |
-| 설정 | 데이터 설정 | `#` | - |
+| 그룹 | 메뉴 | href | 아이콘 | 활성 상태 |
+|------|------|------|--------|----------|
+| 대시보드 | 광고 성과 대시보드 | `#` | 막대 차트 | `.active` |
+| 대시보드 | 소재별 대시보드 | `creative_analysis.html` | 이미지 | - |
+| 분석 | 시계열 데이터 분석 | `timeseries_analysis.html` | 라인 차트 | - |
+| 분석 | 채널별 비교 | `#` | 파이 차트 | - |
+| 분석 | 퍼널 대시보드 | `funnel_dashboard.html` | 퍼널 | - |
+| 지원 | 문의하기 | `#` | 말풍선 | - |
 
 ---
 
@@ -3012,6 +3100,7 @@ let filters = {
 };
 let trendChart = null;
 let currentChartData = [];
+let showDataLabels = false;  // 차트 데이터 라벨 표시 여부
 const TABLE_ROW_LIMIT = 10;
 let isTableExpanded = false;
 
@@ -3026,6 +3115,12 @@ const csvFiles = [
 
 | 날짜 | 변경 내용 |
 |------|----------|
+| 2024-12-24 | 사이드바 네비게이션 구조 변경 - '광고 소재별 분석' → '소재별 대시보드' (대시보드 그룹으로 이동) |
+| 2024-12-24 | 사이드바 네비게이션 구조 변경 - '기간별 리포트' → '퍼널 대시보드' (아이콘: 캘린더→퍼널) |
+| 2024-12-24 | 사이드바 네비게이션 구조 변경 - '설정' 그룹 → '지원' 그룹, '데이터 설정' → '문의하기' (아이콘: 톱니바퀴→말풍선) |
+| 2024-12-24 | 차트 컨트롤 UI 변경 - `.chart-checkbox` → `.data-label-toggle` 버튼 방식으로 변경 |
+| 2024-12-24 | 차트 섹션 헤더 구조 변경 - `.chart-section-header` 추가, 데이터 라벨 토글 버튼 추가 |
+| 2024-12-24 | 전역 변수 추가 - `showDataLabels` (차트 데이터 라벨 표시 여부) |
 | 2024-12-08 | Dead Code 삭제 및 변수명 정규화 완료 |
 | 2024-12-08 | HTML/CSS 디자인 구조 문서 추가 |
 | 2024-12-08 | JavaScript 핵심 함수 구현 코드 추가 |

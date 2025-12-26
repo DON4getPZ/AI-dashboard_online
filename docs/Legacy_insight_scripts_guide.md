@@ -780,6 +780,36 @@ FRIENDLY_TITLES = {
 }
 ```
 
+##### insight_generator.py Alert Trigger 조건
+
+> 섹션 2.5~2.7에서 상세 설명된 내용의 요약
+
+| Alert Type | Trigger 조건 | Severity | Financial Impact |
+|------------|-------------|----------|------------------|
+| `conversion_decline` | 전환수 변화 < -10% | medium (< -20%: high) | 예상 손실 전환: N건 |
+| `revenue_decline` | 전환값 변화 < -10% | medium (< -20%: high) | 예상 손실액: N만 원 |
+| `roas_decline` | ROAS 변화 < -10%p | medium (< -20%p: high) | ROAS 변화 표시 |
+
+##### insight_generator.py Opportunity Trigger 조건
+
+| Opportunity Type | Trigger 조건 | Priority | 메시지 |
+|-----------------|--------------|----------|--------|
+| `scale_up` | ROAS > 300% | 1 | "🚀 수익성 최고조! 예산 20% 증액 권장" |
+| `hidden_gem` | ROAS > 200% AND 비용 < 100만원 | 2 | "💎 숨은 보석 발견! 테스트 예산 2배 확대" |
+| `growth_momentum` | 전환수 증가 > 10% AND ROAS > 150% | 3 | "📈 성장 가속 중! 예산 10% 증액" |
+
+##### THRESHOLDS 참조 (insight_generator.py)
+```python
+THRESHOLDS = {
+    'high_roas': 300.0,           # scale_up 트리거
+    'opportunity_roas': 200.0,    # hidden_gem 트리거
+    'low_roas': 150.0,            # growth_momentum 하한
+    'growth_star': 10.0,          # 성장 모멘텀 기준 (%)
+    'decline_alert_pct': 10,      # 하락 경고 기준 (%)
+    'critical_decline_pct': 20    # 고위험 기준 (%)
+}
+```
+
 #### generate_funnel_data.py - 퍼널 이탈 메시지
 
 ```python
@@ -835,6 +865,46 @@ BCG_MATRIX = {
     }
 }
 ```
+
+##### generate_funnel_data.py Alert Trigger 조건
+
+| Alert Type | Trigger 조건 | Severity | 채널 특성 |
+|------------|-------------|----------|----------|
+| `activation_low` (Paid 채널) | 유입→활동 전환율 < 50% | high | 광고 문구/랜딩페이지 불일치 의심 |
+| `activation_low` (Organic 채널) | 유입→활동 전환율 < 50% | medium | 페이지 로딩 속도 문제 의심 |
+| `cart_abandonment` | 관심→구매 전환율 < 20% AND 관심 > 50명 | high | 결제 과정 이탈 |
+
+##### generate_funnel_data.py BCG Matrix Trigger 조건
+
+| Matrix Type | Trigger 조건 | 아이콘 |
+|-------------|-------------|--------|
+| `cash_cow` | 트래픽 ≥ 평균 AND CVR ≥ 평균 | 👑 효자 채널 |
+| `hidden_gem` | 트래픽 < 평균 AND CVR ≥ 평균 | 💎 숨은 보석 |
+| `money_pit` | 트래픽 ≥ 평균 AND CVR < 평균 | 💸 밑 빠진 독 |
+| `dog` | 트래픽 < 평균 AND CVR < 평균 | 🤔 아픈 손가락 |
+
+##### generate_funnel_data.py 이탈/개선 예측 Trigger 조건
+
+| Prediction Type | Trigger 조건 | Risk Level | 기간 |
+|-----------------|-------------|------------|------|
+| `churn_7d` | 7일 변화율 < -20% | medium (< -30%: high) | 7일 |
+| `churn_30d` | 30일 변화율 < -20% | medium (< -30%: high) | 30일 |
+| `improvement_7d` | 7일 변화율 > +20% | medium (> +30%: high) | 7일 |
+| `improvement_30d` | 30일 변화율 > +20% | medium (> +30%: high) | 30일 |
+
+##### CATEGORY_THRESHOLDS 참조 (generate_funnel_data.py)
+
+| 임계값 | default | fashion | food | electronics |
+|--------|---------|---------|------|-------------|
+| `activation_rate_warning` | 50% | 40% | 60% | 45% |
+| `cart_conversion_warning` | 20% | 15% | 30% | 10% |
+| `churn_alert_threshold` | -20% | -25% | -15% | -20% |
+| `improvement_threshold` | +20% | +25% | +15% | +20% |
+| `high_risk_threshold` | -30% | -35% | -25% | -30% |
+| `high_improvement_threshold` | +30% | +35% | +25% | +30% |
+| `ab_significance` | 0.05 | 0.05 | 0.05 | 0.05 |
+
+> **Note**: 카테고리별로 임계값이 다릅니다. 패션(fashion)은 충동구매가 많아 전환율이 낮고, 식품(food)은 재구매가 많아 전환율이 높습니다.
 
 ### 5.3 페르소나 기반 액션 가이드
 
@@ -1140,3 +1210,4 @@ def format_korean_currency(value: float) -> str:
 | 2024-12-08 | v2.0 | 자연어 인사이트 생성 체계 섹션 추가 (MCP 통합 가이드 포함) |
 | 2024-12-18 | v2.1 | 유형구분_통합 기반 KPI 분기 상세 기재 (트래픽: CPC, 전환: ROAS) |
 | 2024-12-18 | v2.2 | 다중 기간 스크립트 섹션 추가, insight_generator.py Alert/Opportunity Trigger 조건 상세화 |
+| 2025-12-26 | v2.3 | 섹션 5.2에 insight_generator.py 및 generate_funnel_data.py의 Alert/Opportunity/BCG Matrix/이탈예측 Trigger 조건 추가 |

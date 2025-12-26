@@ -139,7 +139,19 @@
 | 라이브러리 | 용도 |
 |-----------|------|
 | Chart.js | 차트 시각화 |
+| chartjs-plugin-datalabels@2 | 차트 데이터 라벨 표시 |
 | Google Fonts (Roboto, Inter) | 폰트 |
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+```
+
+#### 플러그인 등록
+```javascript
+// Chart.js Datalabels 플러그인 등록 (전역 스크립트 상단)
+Chart.register(ChartDataLabels);
+```
 
 ---
 
@@ -254,16 +266,32 @@
 | 항목 | 내용 |
 |------|------|
 | **JS 함수** | `updateModalChart()` |
-| **기능** | - 체크박스로 지표 선택 (비용, CPM, CPC, CPA, ROAS)<br>- 듀얼 Y축 지원 (왼쪽/오른쪽 축 자동 할당)<br>- Chart.js 라인 차트 |
+| **기능** | - 토글 버튼으로 지표 선택 (비용, CPM, CPC, CPA, ROAS)<br>- 듀얼 Y축 지원 (왼쪽/오른쪽 축 자동 할당)<br>- Chart.js 라인 차트<br>- chartjs-plugin-datalabels로 데이터 라벨 표시 |
 
-##### 차트 체크박스 기본 상태
-| ID | 지표 | 기본 체크 상태 |
-|----|------|---------------|
-| `modalChartCost` | 비용 | checked |
-| `modalChartCPM` | CPM | unchecked |
-| `modalChartCPC` | CPC | checked |
-| `modalChartCPA` | CPA | unchecked |
-| `modalChartROAS` | ROAS | unchecked |
+##### 차트 토글 버튼 구조
+```html
+<div class="modal-chart-toggle-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
+    <button type="button" class="data-label-toggle active" data-chart-toggle="modalChartCost">
+        <span class="toggle-checkbox">✓</span>
+        <span>비용</span>
+    </button>
+    <!-- ... 다른 지표들 ... -->
+</div>
+<!-- 숨겨진 체크박스 (기존 기능 유지용) -->
+<div style="display: none;">
+    <input type="checkbox" id="modalChartCost" checked>
+    <!-- ... -->
+</div>
+```
+
+##### 차트 토글 버튼 기본 상태
+| ID | 지표 | 기본 상태 | 버튼 클래스 |
+|----|------|-----------|-------------|
+| `modalChartCost` | 비용 | active (checked) | `.data-label-toggle.active` |
+| `modalChartCPM` | CPM | inactive (unchecked) | `.data-label-toggle` |
+| `modalChartCPC` | CPC | inactive (unchecked) | `.data-label-toggle` |
+| `modalChartCPA` | CPA | inactive (unchecked) | `.data-label-toggle` |
+| `modalChartROAS` | ROAS | active (checked) | `.data-label-toggle.active` |
 
 #### 5.4 상세 데이터 테이블
 | 항목 | 내용 |
@@ -383,6 +411,7 @@
 |----|------|
 | `creativeModal` | 모달 오버레이 |
 | `modalTitle` | 모달 제목 (소재 이름) |
+| `modalKpiGrid` | 모달 KPI 카드 그리드 컨테이너 |
 | `modalKpiRowTop` | 모달 KPI 상단 행 (비용, CPC, CPA, ROAS) |
 | `modalKpiRowBottom` | 모달 KPI 하단 행 (노출, 클릭, 전환수, 전환값) |
 | `modalChartCost` | 차트 비용 체크박스 |
@@ -390,6 +419,7 @@
 | `modalChartCPC` | 차트 CPC 체크박스 |
 | `modalChartCPA` | 차트 CPA 체크박스 |
 | `modalChartROAS` | 차트 ROAS 체크박스 |
+| `modalDataLabelToggle` | 차트 데이터 라벨 토글 버튼 |
 | `modalChart` | 차트 캔버스 |
 | `modalTableBody` | 테이블 tbody |
 | `modalSortIcon` | 테이블 기간 컬럼 정렬 아이콘 (▼/▲) |
@@ -401,9 +431,12 @@
 | 클래스 | data 속성 | 기능 |
 |--------|----------|------|
 | `modal-view-btn` | `data-view="daily\|weekly\|monthly"` | 뷰 타입 선택 |
-| `modal-chart-checkbox` | - | 차트 지표 토글 |
+| `data-label-toggle` | `data-chart-toggle="modalChart*"` | 차트 지표 토글 (버튼 스타일) |
+| `modal-data-label-toggle` | - | 데이터 라벨 표시 토글 |
 | `modal-show-more-btn` | - | 더보기/접기 |
 | `modal-close` | - | 모달 닫기 |
+
+> **Note**: `.modal-chart-checkbox` 클래스는 더 이상 사용되지 않으며, `.data-label-toggle` 버튼 스타일로 대체됨. 숨겨진 체크박스는 기존 기능 유지를 위해 보존됨.
 
 ---
 
@@ -457,6 +490,7 @@ let currentModalData = [];
 let currentModalViewType = 'daily';
 let isModalTableExpanded = false;
 let modalTableSortOrder = 'desc'; // 'desc': 내림차순(최신순), 'asc': 오름차순(과거순)
+let showModalDataLabels = false; // 모달 차트 데이터 라벨 표시 여부
 ```
 
 ### 데이터 변수
@@ -510,6 +544,7 @@ let modalTableSortOrder = 'desc'; // 'desc': 내림차순(최신순), 'asc': 오
 | `currentModalViewType` | 현재 뷰 타입 | 'daily' |
 | `isModalTableExpanded` | 테이블 확장 상태 | false |
 | `modalTableSortOrder` | 테이블 기간 정렬 순서 | 'desc' (내림차순/최신순) |
+| `showModalDataLabels` | 차트 데이터 라벨 표시 여부 | false |
 
 ---
 
@@ -727,6 +762,38 @@ function updateDashboard() {
 }
 ```
 
+### 필터 초기화 함수
+
+#### resetBasicFilters()
+```javascript
+function resetBasicFilters() {
+    setDateRange();
+    filters.type = '';
+    filters.brand = '';
+    filters.product = '';
+    filters.promotion = '';
+    document.getElementById('filterType').value = '';
+    document.getElementById('filterBrand').value = '';
+    document.getElementById('filterProduct').value = '';
+    document.getElementById('filterPromotion').value = '';
+    updateBrandFilter();
+    updateDashboard();
+}
+```
+
+#### resetDetailFilters()
+```javascript
+function resetDetailFilters() {
+    filters.campaign = '';
+    filters.adSet = '';
+    filters.searchText = '';
+    document.getElementById('filterCampaign').value = '';
+    document.getElementById('filterAdSet').value = '';
+    document.getElementById('searchText').value = '';
+    updateDashboard();
+}
+```
+
 ### 유틸리티 함수
 
 | 함수명 | 기능 |
@@ -738,6 +805,8 @@ function updateDashboard() {
 | `formatNumberInput(value)` | 입력 숫자 포맷 (#,###) |
 | `parseFormattedNumber(value)` | 포맷된 숫자에서 실제 값 추출 |
 | `formatPeriodLabel(period, viewType)` | 기간 레이블 포맷 |
+| `resetBasicFilters()` | 기간 및 기본 필터 초기화 |
+| `resetDetailFilters()` | 세부 필터 초기화 (캠페인, 광고세트, 검색어) |
 
 #### formatCTR(num)
 ```javascript
@@ -847,6 +916,37 @@ function updateModalSortIcon() {
 |------|--------|------|
 | `sortMetric` | change | 정렬 기준 변경 |
 | `sortOrder` radios | change | 정렬 순서 변경 |
+
+### 모달 이벤트
+| 대상 | 이벤트 | 콜백 |
+|------|--------|------|
+| `.modal-view-btn` | click | 뷰 타입 변경 (daily/weekly/monthly) |
+| `.modal-chart-toggle-group .data-label-toggle` | click | 차트 지표 토글 (숨겨진 체크박스 상태 변경 + 버튼 active 클래스 토글) |
+| `modalDataLabelToggle` | click | 데이터 라벨 표시 토글 (showModalDataLabels 변경, 차트 업데이트) |
+
+#### 차트 토글 버튼 이벤트 핸들러
+```javascript
+document.querySelectorAll('.modal-chart-toggle-group .data-label-toggle').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const checkboxId = this.dataset.chartToggle;
+        const checkbox = document.getElementById(checkboxId);
+        const toggleCheckbox = this.querySelector('.toggle-checkbox');
+
+        // 토글 상태 전환
+        checkbox.checked = !checkbox.checked;
+
+        if (checkbox.checked) {
+            this.classList.add('active');
+            toggleCheckbox.textContent = '✓';
+        } else {
+            this.classList.remove('active');
+            toggleCheckbox.textContent = '☐';
+        }
+
+        updateModalChart();
+    });
+});
+```
 
 ---
 
@@ -1223,6 +1323,47 @@ filterCollapsibleHeader.addEventListener('click', () => {
     gap: 12px;
     margin-bottom: 12px;
 }
+.modal-kpi-row:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .modal-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .modal-kpi-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 모달 뷰 타입 버튼 */
+.modal-view-type-section {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+.modal-view-btn {
+    padding: 8px 20px;
+    border: 1px solid var(--grey-300);
+    background: var(--paper);
+    color: var(--grey-700);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+.modal-view-btn:hover {
+    border-color: var(--primary-main);
+    color: var(--primary-main);
+}
+.modal-view-btn.active {
+    background: var(--primary-main);
+    color: white;
+    border-color: var(--primary-main);
+}
+
 .modal-kpi-card {
     background: var(--grey-50);
     padding: 16px;
@@ -1257,6 +1398,8 @@ filterCollapsibleHeader.addEventListener('click', () => {
 }
 .modal-chart-controls {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     gap: 12px;
     margin-bottom: 16px;
     flex-wrap: wrap;
@@ -1269,34 +1412,68 @@ filterCollapsibleHeader.addEventListener('click', () => {
     padding: 16px;
 }
 
-/* 차트 체크박스 */
-.modal-chart-checkbox {
+/* [DEPRECATED] 차트 체크박스 - .data-label-toggle 버튼으로 대체됨 */
+/* 숨겨진 체크박스만 사용되며, UI는 .data-label-toggle 버튼으로 표시됨 */
+
+/* 데이터 라벨 토글 버튼 */
+.modal-data-label-toggle {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 12px;
-    border-radius: 16px;
-    background: var(--grey-100);
-    font-size: 12px;
+    padding: 8px 16px;
+    border: none;
+    background: var(--paper);
+    color: var(--grey-700);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
     font-weight: 500;
+    font-family: inherit;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.modal-data-label-toggle:hover {
+    background: var(--primary-light);
+    color: var(--primary-main);
+}
+.modal-data-label-toggle.active {
+    background: var(--primary-main);
+    color: white;
+    box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+}
+.modal-data-label-toggle .toggle-checkbox {
+    font-size: 14px;
+}
+
+/* 차트 지표 토글 버튼 그룹 */
+.modal-chart-toggle-group .data-label-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: none;
+    background: var(--paper);
+    color: var(--grey-700);
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
-.modal-chart-checkbox:hover {
-    background: var(--grey-200);
+.modal-chart-toggle-group .data-label-toggle:hover {
+    background: var(--primary-light);
+    color: var(--primary-main);
 }
-.modal-chart-checkbox input {
-    width: 14px;
-    height: 14px;
-    accent-color: var(--primary-main);
-    cursor: pointer;
+.modal-chart-toggle-group .data-label-toggle.active {
+    background: var(--primary-main);
+    color: white;
+    box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
 }
-/* 지표별 색상 코드 (좌측 border) */
-.modal-chart-checkbox.cost { border-left: 3px solid #673ab7; }  /* 비용 - 보라 */
-.modal-chart-checkbox.cpm  { border-left: 3px solid #9c27b0; }  /* CPM - 자주 */
-.modal-chart-checkbox.cpc  { border-left: 3px solid #2196f3; }  /* CPC - 파랑 */
-.modal-chart-checkbox.cpa  { border-left: 3px solid #ff9800; }  /* CPA - 주황 */
-.modal-chart-checkbox.roas { border-left: 3px solid #00c853; }  /* ROAS - 녹색 */
+.modal-chart-toggle-group .data-label-toggle .toggle-checkbox {
+    font-size: 14px;
+}
 ```
 
 #### 3.4 모달 테이블
@@ -1486,14 +1663,24 @@ filterCollapsibleHeader.addEventListener('click', () => {
 
 ### 5. Chart.js 설정 (모달 차트)
 
-#### 5.1 지표별 색상 코드
-| 지표 | 색상 코드 | 설명 |
-|------|----------|------|
-| 비용 | `#673ab7` | 보라색 (primary-main) |
-| CPM | `#9c27b0` | 자주색 |
-| CPC | `#2196f3` | 파란색 (secondary-main) |
-| CPA | `#ff9800` | 주황색 |
-| ROAS | `#00c853` | 녹색 (success-main) |
+#### 5.1 지표별 데이터셋 설정
+| 지표 | 색상 코드 | fill | tension | 설명 |
+|------|----------|------|---------|------|
+| 비용 | `#673ab7` | `true` | 0.3 | 보라색 (primary-main), 영역 채우기 |
+| CPM | `#9c27b0` | `false` | 0.3 | 자주색 |
+| CPC | `#2196f3` | `false` | 0.3 | 파란색 (secondary-main) |
+| CPA | `#ff9800` | `false` | 0.3 | 주황색 |
+| ROAS | `#00c853` | `false` | 0.3 | 녹색 (success-main) |
+
+> **Note**: 비용 지표만 `fill: true`로 영역을 채우고, 나머지 지표는 선만 표시됨.
+
+#### 5.1.1 차트 데이터 정렬
+```javascript
+// 차트용 데이터는 항상 오름차순 정렬 (과거 → 최신)
+const sortedData = [...aggregatedData].sort((a, b) => a.period.localeCompare(b.period));
+```
+
+> **Note**: 테이블은 `modalTableSortOrder`에 따라 정렬되지만, 차트는 항상 시간 순서대로 오름차순 표시됨.
 
 #### 5.2 듀얼 Y축 로직
 ```javascript
@@ -1535,6 +1722,26 @@ if (showROAS) { yAxisID: (hasCostMetric || hasCpmMetric || hasCpcMetric || hasCp
                         }
                         return context.dataset.label + ': ' + formatNumber(context.parsed.y) + '원';
                     }
+                }
+            },
+            datalabels: {
+                display: showModalDataLabels,  // 전역 변수로 제어
+                anchor: 'end',
+                align: 'top',
+                offset: 4,
+                font: {
+                    family: "'Inter', sans-serif",
+                    size: 11,
+                    weight: '600'
+                },
+                color: function(context) {
+                    return context.dataset.borderColor || context.dataset.backgroundColor;
+                },
+                formatter: function(value, context) {
+                    if (context.dataset.label === 'ROAS') {
+                        return Math.round(value) + '%';
+                    }
+                    return formatNumber(Math.round(value));
                 }
             }
         },
@@ -1810,3 +2017,18 @@ body {
 | 2025-12-12 | `convertGoogleDriveUrl()` 함수 추가: `/file/d/{ID}/view` → `/thumbnail?id={ID}&sz=w1000` 변환 |
 | 2025-12-12 | 이미지 URL 처리 로직 섹션 재구성: 6.2 Google Drive URL 변환 추가, 섹션 번호 재정렬 |
 | 2025-12-12 | `originalUrlMap` 독립 저장 로직 추가: `imageUrlMap` 우선순위와 독립적으로 유효한 원본 URL 저장 (6.3 섹션) |
+| 2025-12-24 | 외부 라이브러리 추가: `chartjs-plugin-datalabels@2` (차트 데이터 라벨 표시) |
+| 2025-12-24 | 전역 변수 추가: `showModalDataLabels` (모달 차트 데이터 라벨 표시 여부) |
+| 2025-12-24 | 필터 초기화 함수 추가: `resetBasicFilters()`, `resetDetailFilters()` |
+| 2025-12-24 | HTML ID 추가: `modalDataLabelToggle` (차트 데이터 라벨 토글 버튼) |
+| 2025-12-24 | 이벤트 리스너 추가: 모달 이벤트 섹션 추가 (뷰 타입 변경, 차트 지표 토글, 데이터 라벨 토글) |
+| 2025-12-24 | CSS 추가: `.modal-data-label-toggle` 및 관련 상태 클래스 (hover, active) |
+| 2025-12-24 | Chart.js 설정 보완: datalabels 플러그인 설정 추가 (display, anchor, align, font, color, formatter) |
+| 2025-12-24 | 사이드바 구조 동기화: marketing_dashboard_v3.html과 동일한 구조로 변경 |
+| 2025-12-24 | 사이드바 변경: 대시보드(광고 성과, 소재별), 분석(시계열, 채널별, 퍼널), 지원(FAQ & 문의하기) |
+| 2025-12-24 | 모달 차트 토글 UI 변경: `.modal-chart-checkbox` → `.data-label-toggle` 버튼 스타일로 변경 |
+| 2025-12-24 | 차트 토글 기본 상태 수정: 비용+ROAS 활성화 (기존: 비용+CPC) |
+| 2025-12-24 | CSS 추가: `.modal-chart-toggle-group .data-label-toggle` 및 상태 클래스 |
+| 2025-12-24 | Chart.js 플러그인 등록: `Chart.register(ChartDataLabels)` 추가 |
+| 2025-12-24 | 이벤트 핸들러 업데이트: 차트 토글 버튼 이벤트 핸들러 코드 추가 |
+| 2025-12-24 | 문서 구조 개선: 차트 토글 버튼 HTML 구조 및 숨겨진 체크박스 설명 추가 |
