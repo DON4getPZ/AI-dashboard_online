@@ -198,6 +198,76 @@ BCG_MATRIX = {
     }
 }
 
+# ============================================================================
+# 카테고리별 맞춤 처방 (Category Advice Map) - Upgrade Guide 반영
+# ============================================================================
+CATEGORY_ADVICE_MAP = {
+    'SA': {  # 검색 광고 (Search Ads)
+        'activation': "검색 키워드의 '의도(Intent)'와 랜딩페이지 내용이 일치하지 않습니다. T&D(Title & Description)를 점검하세요.",
+        'conversion': "가격 비교 중인 고관여 유저입니다. 상단에 '경쟁사 대비 강점 비교표'를 배치하세요."
+    },
+    'DA': {  # 디스플레이 광고 (Display Ads)
+        'activation': "Fat Finger(오클릭) 비율이 높거나 게재 지면 품질이 낮습니다. 앱/게임 등 저효율 지면을 제외하세요.",
+        'conversion': "이미 구매한 상품이 노출되고 있습니다. 리타겟팅 모수에 Burn Pixel(구매자 제외)을 적용하세요."
+    },
+    'SNS': {  # 소셜 미디어 (Social Network)
+        'activation': "광고 소재(Hook)와 랜딩페이지(Body)의 톤앤매너가 다릅니다. 낚시성 소재 여부를 점검하세요.",
+        'conversion': "충동 구매 성향이 강합니다. '마감 임박', '한정 수량' 등 긴급성(Urgency) 트리거를 활용하세요."
+    },
+    'CRM': {  # 고객 관계 관리 (Customer Relationship Management)
+        'activation': "메시지 제목(Title)의 약속이 본문에서 지켜지지 않았습니다. 혜택을 첫 화면에 즉시 노출하세요.",
+        'conversion': "기존 고객입니다. 신규 가입 혜택보다는 '등급별 혜택'이나 '재구매 할인'을 제안하세요."
+    },
+    'PR': {  # 홍보/언론 (Public Relations)
+        'activation': "기사/콘텐츠 내용을 기대하고 왔으나 정보가 부족합니다. 해당 이슈 전용 랜딩페이지를 연결하세요.",
+        'conversion': "신뢰 기반 유입입니다. 언론 보도 내용이나 공식 인증 마크(Trustmark)를 강조하세요."
+    },
+    'Organic': {  # 자연 유입 (Organic Traffic)
+        'activation': "페이지 로딩 속도가 느리거나 모바일 가독성이 떨어집니다. Core Web Vitals를 점검하세요.",
+        'conversion': "회원가입 절차가 복잡합니다. 간편 로그인(소셜) 버튼을 상단으로 배치하세요."
+    },
+    'etc': {  # 기타 (Unknown/Other)
+        'activation': "유입 경로를 정확히 파악하기 어렵습니다. UTM 파라미터 설정을 점검하세요.",
+        'conversion': "상세 로그 분석을 통해 이탈 원인을 파악하고 UX를 개선하세요."
+    }
+}
+
+# 마이크로 세그먼트 정의 (Micro-Segmentation)
+MICRO_SEGMENT_DEFINITIONS = {
+    'vip_segment': {
+        'type': 'Hidden VIP (숨은 큰손)',
+        'icon': '👑',
+        'severity': 'opportunity',
+        'description': '전환은 드물지만, 한 번 구매 시 객단가가 매우 높은 채널',
+        'condition': '유입→활동 높음 + 전환율 낮음 + RPV 상위 25%',
+        'action_hint': '타겟팅 정밀화로 고가치 고객 집중 공략'
+    },
+    'traffic_leak': {
+        'type': 'Traffic Waste (밑 빠진 독)',
+        'icon': '💸',
+        'severity': 'high',
+        'description': '사람만 많이 오고 실속이 없음. 예산 누수의 주범',
+        'condition': '유입 상위 25% + 유입→활동 하위 25% + 전환율 하위 25%',
+        'action_hint': '타겟팅/크리에이티브 점검 또는 예산 재배분'
+    },
+    'checkout_friction': {
+        'type': 'Checkout Friction (결제 장벽)',
+        'icon': '🚧',
+        'severity': 'critical',
+        'description': '구매 의사는 있으나 결제 과정에서 이탈 (기술적 오류 가능성)',
+        'condition': '관심→구매 전환율 하위 25% + 관심 단계 유입 충분',
+        'action_hint': '결제 UX 점검, 이탈 원인 분석 필요'
+    },
+    'growth_engine': {
+        'type': 'Rising Star (성장 엔진)',
+        'icon': '🚀',
+        'severity': 'opportunity',
+        'description': '규모는 작지만 반응률이 압도적. 예산 증액 시 고성장 예상',
+        'condition': '유입→활동 상위 25% + 전환율 상위 25% + 유입 하위 50%',
+        'action_hint': '예산 증액으로 스케일업 추진'
+    }
+}
+
 # 데이터 부족 시 메시지
 INSUFFICIENT_DATA_MESSAGES = {
     'default': "아직 데이터가 모자라요! 조금만 더 기다려주세요 🥚",
@@ -300,6 +370,236 @@ def check_data_sufficiency(df, thresholds):
         })
 
     return issues
+
+
+# ============================================================================
+# 2-1. RPV 및 동적 임계값 함수 (Upgrade Guide 반영)
+# ============================================================================
+
+def calculate_rpv_metrics(channel_funnel_pivot):
+    """
+    [지표 계산] RPV, Log Score, Traffic Rank 등 파생 변수 생성
+
+    Args:
+        channel_funnel_pivot: 채널별 퍼널 피벗 DataFrame
+
+    Returns:
+        DataFrame with RPV metrics added
+    """
+    df = channel_funnel_pivot.copy()
+
+    # RPV (Revenue Per Visitor) 계산 (ZeroDivision 방지)
+    df['rpv'] = df.apply(
+        lambda x: x['Revenue'] / x['유입'] if x.get('유입', 0) > 0 else 0,
+        axis=1
+    )
+
+    # Log RPV 계산 (왜도 보정, 내부 판단용)
+    df['rpv_log'] = np.log1p(df['rpv'])
+
+    # Traffic Rank (백분위) 계산
+    if '유입' in df.columns and len(df) > 0:
+        df['traffic_rank_pct'] = df['유입'].rank(pct=True)
+    else:
+        df['traffic_rank_pct'] = 0
+
+    return df
+
+
+def get_dynamic_thresholds(channel_funnel_pivot):
+    """
+    [동적 임계값] 현재 데이터셋의 분포(Quantile)를 기준으로 기준선 설정
+
+    Args:
+        channel_funnel_pivot: 채널별 퍼널 피벗 DataFrame (RPV 계산 완료)
+
+    Returns:
+        dict: 동적 임계값 딕셔너리
+    """
+    df = channel_funnel_pivot
+
+    # 기본값 (데이터 부족 시)
+    defaults = {
+        'traffic_high': 100,
+        'traffic_low': 50,
+        'rpv_high': 10000,
+        'rpv_low': 3000
+    }
+
+    if df.empty or len(df) < 3:
+        return defaults
+
+    try:
+        return {
+            'traffic_high': df['유입'].quantile(0.8) if '유입' in df.columns else defaults['traffic_high'],
+            'traffic_low': df['유입'].quantile(0.5) if '유입' in df.columns else defaults['traffic_low'],
+            'rpv_high': df['rpv'].quantile(0.8) if 'rpv' in df.columns else defaults['rpv_high'],
+            'rpv_low': df['rpv'].quantile(0.4) if 'rpv' in df.columns else defaults['rpv_low']
+        }
+    except Exception:
+        return defaults
+
+
+def get_category_advice(category, issue_type):
+    """
+    [전문가 진단] Category별 맞춤 액션 가이드 반환 (O(1) Lookup)
+
+    Args:
+        category: 채널 카테고리 (SA, DA, SNS, CRM, PR, Organic, etc)
+        issue_type: 이슈 유형 ('activation' 또는 'conversion')
+
+    Returns:
+        str: 카테고리별 맞춤 처방 메시지
+    """
+    default_msg = "상세 로그 분석을 통해 이탈 원인을 파악하고 UX를 개선하세요."
+
+    # 카테고리 정규화 (대소문자, 공백 처리)
+    if category is None:
+        category = 'etc'
+    category = str(category).strip()
+
+    # CATEGORY_ADVICE_MAP에서 조회
+    return CATEGORY_ADVICE_MAP.get(category, CATEGORY_ADVICE_MAP.get('etc', {})).get(issue_type, default_msg)
+
+
+def generate_micro_segment_alerts(channel_funnel_pivot, df_raw, thresholds):
+    """
+    [마이크로 세그먼트] 데이터 분석 및 마이크로 세그먼트 Alert 생성
+
+    Args:
+        channel_funnel_pivot: 채널별 퍼널 피벗 DataFrame (RPV 계산 완료)
+        df_raw: 원본 GA4 데이터 (category 컬럼 포함)
+        thresholds: 카테고리별 임계값
+
+    Returns:
+        tuple: (alerts list, channel_metrics_enhanced dict, dynamic_thresholds dict)
+    """
+    # RPV 지표 계산
+    df = calculate_rpv_metrics(channel_funnel_pivot)
+
+    # 동적 임계값 계산
+    dynamic_th = get_dynamic_thresholds(df)
+
+    alerts = []
+    channel_metrics = {}
+
+    # 채널별 category 매핑 (원본 데이터에서 추출)
+    channel_category_map = {}
+    if 'channel' in df_raw.columns and 'category' in df_raw.columns:
+        channel_category_map = df_raw.groupby('channel')['category'].first().to_dict()
+
+    for _, row in df.iterrows():
+        channel = row['channel']
+        category = channel_category_map.get(channel, 'etc')
+
+        # 지표 추출
+        acq = row.get('유입', 0)
+        activation = row.get('활동', 0)
+        consideration = row.get('관심', 0)
+        purchase = row.get('구매완료', 0)
+        revenue = row.get('Revenue', 0)
+        rpv = row.get('rpv', 0)
+
+        # 전환율 계산
+        act_rate = (activation / acq * 100) if acq > 0 else 0
+        cvr = (purchase / acq * 100) if acq > 0 else 0
+        cart_rate = (purchase / consideration * 100) if consideration > 0 else 0
+
+        # 예상 손실 유저 (Impact 산출용)
+        avg_act_rate = df['활동'].sum() / df['유입'].sum() * 100 if df['유입'].sum() > 0 else 0
+        loss_users = int(acq * (avg_act_rate - act_rate) / 100) if act_rate < avg_act_rate else 0
+
+        # 세그먼트 분류
+        segment_type = None
+
+        # ----------------------------------------------------------------
+        # [Logic A] Hidden VIP (저전환/고가치) -> Opportunity
+        # ----------------------------------------------------------------
+        if (cvr < 1.0) and (rpv >= dynamic_th['rpv_high']) and rpv > 0:
+            segment_type = 'vip_segment'
+            seg_def = MICRO_SEGMENT_DEFINITIONS[segment_type]
+            alerts.append({
+                'type': 'opportunity',
+                'sub_type': segment_type,
+                'severity': seg_def['severity'],
+                'title': f"{seg_def['icon']} {channel}: VIP 채널 발견 ({category})",
+                'message': f"전환율은 낮지만, 객단가가 높아 방문당 {int(rpv):,}원의 가치를 창출합니다.",
+                'action': "전환율보다는 ROAS 유지에 집중하세요. 섣불리 예산을 줄이지 마세요.",
+                'category': category,
+                'metrics': {'유입→활동': round(act_rate, 1), '전환율': round(cvr, 2), 'RPV': int(rpv)}
+            })
+
+        # ----------------------------------------------------------------
+        # [Logic B] Traffic Waste (고유입/저효율) -> High Alert
+        # ----------------------------------------------------------------
+        elif (acq >= dynamic_th['traffic_high']) and (act_rate < 40) and (rpv < dynamic_th['rpv_low']):
+            segment_type = 'traffic_leak'
+            seg_def = MICRO_SEGMENT_DEFINITIONS[segment_type]
+            advice = get_category_advice(category, 'activation')
+
+            alerts.append({
+                'type': 'problem',
+                'sub_type': segment_type,
+                'severity': seg_def['severity'],
+                'title': f"{seg_def['icon']} {channel}: 예산 누수 경고",
+                'message': f"[{category}] 유입은 많지만(Top 20%) 실속이 없습니다. 예상 손실 유저: {loss_users:,}명",
+                'diagnosis': f"[{category}] 채널 특성에 맞지 않는 랜딩페이지 전략입니다.",
+                'action': advice,
+                'category': category,
+                'metrics': {'유입→활동': round(act_rate, 1), '전환율': round(cvr, 2), '유입': int(acq)}
+            })
+
+        # ----------------------------------------------------------------
+        # [Logic C] Checkout Friction (결제 이탈) -> Critical Alert
+        # ----------------------------------------------------------------
+        if (consideration > 50) and (cart_rate < 10):
+            segment_type = 'checkout_friction'
+            seg_def = MICRO_SEGMENT_DEFINITIONS[segment_type]
+            advice = get_category_advice(category, 'conversion')
+
+            alerts.append({
+                'type': 'problem',
+                'sub_type': segment_type,
+                'severity': seg_def['severity'],
+                'title': f"{seg_def['icon']} {channel}: 결제 장벽 감지",
+                'message': f"관심→구매 전환율이 {cart_rate:.1f}%로 매우 낮습니다. (기준 10% 대비 -{(10-cart_rate):.1f}%p)",
+                'diagnosis': f"[{category}] 유저의 구매 결정을 막는 요소가 있습니다.",
+                'action': advice,
+                'category': category,
+                'metrics': {'유입→활동': round(act_rate, 1), '전환율': round(cvr, 2), '관심→구매': round(cart_rate, 1)}
+            })
+
+        # ----------------------------------------------------------------
+        # [Logic D] Rising Star (성장 기회) -> Opportunity
+        # ----------------------------------------------------------------
+        elif (acq < dynamic_th['traffic_low']) and (act_rate > 70) and acq > 0:
+            segment_type = 'growth_engine'
+            seg_def = MICRO_SEGMENT_DEFINITIONS[segment_type]
+
+            alerts.append({
+                'type': 'opportunity',
+                'sub_type': segment_type,
+                'severity': seg_def['severity'],
+                'title': f"{seg_def['icon']} {channel}: 성장 엔진 점화",
+                'message': f"방문자의 {act_rate:.1f}%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+                'action': "트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
+                'category': category,
+                'metrics': {'유입→활동': round(act_rate, 1), '전환율': round(cvr, 2), '유입': int(acq)}
+            })
+
+        # 채널별 확장 메트릭스 저장
+        channel_metrics[channel] = {
+            'category': category,
+            'rpv': round(rpv, 2),
+            'rpv_log': round(row.get('rpv_log', 0), 4),
+            'traffic_rank_pct': round(row.get('traffic_rank_pct', 0), 2),
+            'segment_type': segment_type,
+            'activation_rate': round(act_rate, 1),
+            'cvr': round(cvr, 2),
+            'cart_conversion_rate': round(cart_rate, 1)
+        }
+
+    return alerts, channel_metrics, dynamic_th
 
 
 # ============================================================================
@@ -1119,6 +1419,11 @@ def generate_funnel_insights(category='default', ga4_file=None):
     print("   - 이탈/개선 예측...")
     churn_analysis = analyze_churn_and_improvement(daily_funnel_pivot, thresholds, filter_days)
 
+    print("   - 마이크로 세그먼트 분석 (Upgrade Guide)...")
+    micro_alerts, channel_metrics_enhanced, dynamic_thresholds = generate_micro_segment_alerts(
+        channel_funnel_pivot, df, thresholds
+    )
+
     # 기본 퍼널 경고 (원본 유지)
     basic_alerts = []
     funnel_totals = df.groupby('funnel')['Total users'].sum()
@@ -1238,6 +1543,22 @@ def generate_funnel_insights(category='default', ga4_file=None):
         # CRM 액션 추이 분석 (시점 간 비교: d_day vs d_day-N)
         'crm_actions_by_trend': churn_analysis.get('crm_actions_by_trend', {}),
 
+        # ========== 신규 추가 (Upgrade Guide 반영) ==========
+        # 마이크로 세그먼트 알림 (Hidden VIP, Traffic Waste, Checkout Friction, Rising Star)
+        'micro_segment_alerts': micro_alerts,
+
+        # 채널별 확장 메트릭스 (RPV, Log RPV, Traffic Rank, Segment Type)
+        'channel_metrics_enhanced': channel_metrics_enhanced,
+
+        # 동적 임계값 (현재 데이터 기준 Quantile)
+        'dynamic_thresholds': dynamic_thresholds,
+
+        # 카테고리별 처방 가이드 (참조용)
+        'category_advice_guide': CATEGORY_ADVICE_MAP,
+
+        # 마이크로 세그먼트 정의 (참조용)
+        'micro_segment_definitions': MICRO_SEGMENT_DEFINITIONS,
+
         # 데이터 이슈
         'data_issues': data_issues,
 
@@ -1251,7 +1572,11 @@ def generate_funnel_insights(category='default', ga4_file=None):
             'churn_risk_stages_7d': len(churn_analysis.get('churn_7d', [])),
             'churn_risk_stages_30d': len(churn_analysis.get('churn_30d', [])),
             'improvement_stages_7d': len(churn_analysis.get('improvement_7d', [])),
-            'improvement_stages_30d': len(churn_analysis.get('improvement_30d', []))
+            'improvement_stages_30d': len(churn_analysis.get('improvement_30d', [])),
+            # 신규 통계
+            'micro_segment_alerts_count': len(micro_alerts),
+            'micro_segment_opportunities': len([a for a in micro_alerts if a.get('type') == 'opportunity']),
+            'micro_segment_problems': len([a for a in micro_alerts if a.get('type') == 'problem'])
         }
     }
 
@@ -1275,6 +1600,11 @@ def generate_funnel_insights(category='default', ga4_file=None):
     print(f"   - 이탈 위험 (7일): {len(churn_analysis.get('churn_7d', []))}개")
     print(f"   - 성과 개선 (7일): {len(churn_analysis.get('improvement_7d', []))}개")
     print(f"   - 긴급 알림: {len(contextual_alerts)}개")
+    print(f"\n🎯 마이크로 세그먼트 (Upgrade Guide):")
+    print(f"   - 마이크로 알림: {len(micro_alerts)}개")
+    print(f"   - 기회 발견: {len([a for a in micro_alerts if a.get('type') == 'opportunity'])}개")
+    print(f"   - 문제 감지: {len([a for a in micro_alerts if a.get('type') == 'problem'])}개")
+    print(f"   - 동적 임계값: 트래픽 상위 {dynamic_thresholds.get('traffic_high', 0):.0f}명 / RPV 상위 {dynamic_thresholds.get('rpv_high', 0):,.0f}원")
     print(f"\n📁 생성된 파일:")
     print(f"   - {FUNNEL_DIR / 'insights.json'}")
     print(f"   - {FUNNEL_DIR / 'daily_funnel.csv'}")

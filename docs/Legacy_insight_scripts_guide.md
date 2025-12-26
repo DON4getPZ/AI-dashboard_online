@@ -26,6 +26,7 @@
 - [3. 다중 기간 인사이트 생성 스크립트](#3-다중-기간-인사이트-생성-스크립트)
   - [3.1 generate_insights_multiperiod.py](#31-generate_insights_multiperiodpy)
   - [3.2 generate_type_insights_multiperiod.py](#32-generate_type_insights_multiperiodpy)
+  - [3.3 generate_funnel_data_multiperiod.py](#33-generate_funnel_data_multiperiodpy)
 - [4. generate_funnel_data.py](#4-generate_funnel_datapy)
   - [4.1 파일 위치 및 실행](#41-파일-위치-및-실행)
   - [4.2 입력 데이터](#42-입력-데이터)
@@ -396,6 +397,81 @@ python scripts/generate_type_insights_multiperiod.py
 
 #### 출력 파일
 - `data/type/insights.json`
+
+### 3.3 generate_funnel_data_multiperiod.py
+
+> generate_funnel_data.py를 여러 기간에 대해 실행하여 통합 JSON 생성 (마이크로 세그먼트 포함)
+
+#### 파일 위치 및 실행
+```bash
+python scripts/generate_funnel_data_multiperiod.py
+python scripts/generate_funnel_data_multiperiod.py --category fashion
+```
+
+#### 분석 기간
+| 기간 Key | 설명 | 사용 데이터 |
+|---------|------|-----------|
+| `full` | 전체 기간 | 모든 데이터 |
+| `180d` | 최근 180일 | 최근 6개월 |
+| `90d` | 최근 90일 | 최근 3개월 |
+| `30d` | 최근 30일 | 최근 1개월 |
+
+#### 출력 JSON 구조
+```json
+{
+  "by_period": {
+    "full": {
+      "summary": { ... },
+      "channel_strategy": { ... },
+      "micro_segment_alerts": [ ... ],
+      "channel_metrics_enhanced": { ... },
+      "dynamic_thresholds": { ... },
+      "period_info": { "key": "full", "days": 0, "label": "전체 기간" }
+    },
+    "180d": { /* 180일 기준 결과 */ },
+    "90d": { /* 90일 기준 결과 */ },
+    "30d": { /* 30일 기준 결과 */ }
+  },
+  "churn_analysis": {
+    "churn_predictions_7d": [ ... ],
+    "churn_predictions_30d": [ ... ],
+    "improvement_predictions_7d": [ ... ],
+    "improvement_predictions_30d": [ ... ]
+  },
+  "crm_actions_by_period": {
+    "full": { "period_label": "전체 기간", "crm_actions": [ ... ] },
+    "180d": { "period_label": "최근 180일", "crm_actions": [ ... ] },
+    "90d": { "period_label": "최근 90일", "crm_actions": [ ... ] },
+    "30d": { "period_label": "최근 30일", "crm_actions": [ ... ] }
+  },
+  "generated_at": "2025-12-26T...",
+  "available_periods": [
+    {"key": "full", "label": "전체 기간"},
+    {"key": "180d", "label": "최근 180일"},
+    {"key": "90d", "label": "최근 90일"},
+    {"key": "30d", "label": "최근 30일"}
+  ]
+}
+```
+
+#### 기간별 포함 분석
+| 분석 항목 | full | 180d | 90d | 30d |
+|----------|------|------|-----|-----|
+| BCG Matrix | ✅ | ✅ | ✅ | ✅ |
+| K-Means 클러스터링 | ✅ | ✅ | ✅ | ✅ |
+| A/B 테스트 | ✅ | ✅ | ✅ | ✅ |
+| 마이크로 세그먼트 | ✅ | ✅ | ✅ | ✅ |
+| 이탈/개선 예측 | ✅ (전체만) | ❌ | ❌ | ❌ |
+| CRM 추이 분석 | ✅ | ✅ | ✅ | ✅ |
+
+#### CRM 추이 분석 방식
+- **분석 방식**: `d_day (최근 7일 평균) vs d_day-N (N일 전 7일 평균)`
+- **180d**: 180일 전 시점 대비 현재 변화율
+- **90d**: 90일 전 시점 대비 현재 변화율
+- **30d**: 30일 전 시점 대비 현재 변화율
+
+#### 출력 파일
+- `data/funnel/insights.json`
 
 ---
 
@@ -906,6 +982,86 @@ BCG_MATRIX = {
 
 > **Note**: 카테고리별로 임계값이 다릅니다. 패션(fashion)은 충동구매가 많아 전환율이 낮고, 식품(food)은 재구매가 많아 전환율이 높습니다.
 
+##### 마이크로 세그먼트 분석 (Upgrade Guide v2.4)
+
+> **핵심 개선**: 정적 임계값 대신 **동적 상대 평가(Quantile)**와 **채널 카테고리(Context)**를 결합한 전문적인 마케팅 진단
+
+###### 파생 지표 (Internal Metrics)
+
+| 지표 | 계산식 | 목적 |
+|------|--------|------|
+| **RPV (Revenue Per Visitor)** | `Revenue / Acquisition` | 전환율은 낮지만 객단가가 높은 'VIP 채널' 오판 방지 |
+| **Log RPV Score** | `np.log1p(RPV)` | 매출 데이터의 극단적 편차(Skewness) 보정 |
+| **Traffic Rank** | `df['유입'].rank(pct=True)` | 해당 채널의 트래픽이 전체 중 상위 몇 %인지 판단 |
+
+###### 동적 임계값 (Dynamic Thresholds)
+
+| 임계값 | Quantile | 설명 |
+|--------|----------|------|
+| `traffic_high` | 0.8 (상위 20%) | 고유입 채널 기준선 |
+| `traffic_low` | 0.5 (하위 50%) | 저유입 채널 기준선 |
+| `rpv_high` | 0.8 (상위 20%) | 고가치 채널 기준선 |
+| `rpv_low` | 0.4 (하위 40%) | 저효율 채널 기준선 |
+
+###### 마이크로 세그먼트 Trigger 조건
+
+| Segment | Trigger 조건 | Severity | Icon |
+|---------|-------------|----------|------|
+| **Hidden VIP** | CVR < 1% AND RPV ≥ 상위 20% | opportunity | 👑 |
+| **Traffic Waste** | 트래픽 ≥ 상위 20% AND 활동전환율 < 40% AND RPV < 하위 40% | high | 💸 |
+| **Checkout Friction** | 장바구니 > 50명 AND 장바구니→구매 < 10% | critical | 🚧 |
+| **Rising Star** | 트래픽 < 하위 50% AND 활동전환율 > 70% | opportunity | 🚀 |
+
+###### 카테고리별 맞춤 처방 (CATEGORY_ADVICE_MAP)
+
+| Category | Activation Issue | Conversion Issue |
+|----------|-----------------|------------------|
+| **SA** (검색) | 키워드 의도(Intent)와 랜딩페이지 불일치 | 경쟁사 비교 우위표 배치 |
+| **DA** (배너) | Fat Finger(오클릭) 또는 저품질 지면 | Burn Pixel(구매자 제외) 적용 |
+| **SNS** (소셜) | 광고 소재와 랜딩페이지 톤앤매너 불일치 | 긴급성 트리거(한정수량, 마감임박) |
+| **CRM** (고객) | 메시지 제목과 본문 혜택 불일치 | 재구매/등급별 혜택 제안 |
+| **PR** (홍보) | 전용 랜딩페이지 부재 | 언론 보도/Trustmark 강조 |
+| **Organic** | 페이지 로딩 속도/모바일 UX 문제 | 회원가입 절차 간소화 |
+| **etc** | UTM 파라미터 설정 점검 | 상세 로그 분석으로 UX 개선 |
+
+###### 신규 JSON 출력 필드
+
+```json
+{
+  // 마이크로 세그먼트 알림
+  "micro_segment_alerts": [
+    {
+      "type": "opportunity|problem",
+      "sub_type": "vip_segment|traffic_leak|checkout_friction|growth_engine",
+      "severity": "opportunity|high|critical",
+      "title": "👑 채널명: VIP 채널 발견 (DA)",
+      "message": "전환율은 낮지만, 객단가가 높아 방문당 15,000원의 가치를 창출합니다.",
+      "diagnosis": "[DA] 채널 특성에 맞지 않는 랜딩페이지 전략입니다.",
+      "action": "카테고리별 맞춤 처방",
+      "category": "DA",
+      "metrics": { "rpv": 15000, "cvr": 0.8 }
+    }
+  ],
+  // 채널별 확장 메트릭스
+  "channel_metrics_enhanced": {
+    "채널명": {
+      "category": "DA",
+      "rpv": 15000,
+      "rpv_log": 9.62,
+      "traffic_rank_pct": 0.85,
+      "segment_type": "vip_segment"
+    }
+  },
+  // 동적 임계값 (현재 데이터 기준)
+  "dynamic_thresholds": {
+    "traffic_high": 500,
+    "traffic_low": 100,
+    "rpv_high": 12000,
+    "rpv_low": 3000
+  }
+}
+```
+
 ### 5.3 페르소나 기반 액션 가이드
 
 #### 연령+성별 조합별 추천 액션
@@ -1211,3 +1367,5 @@ def format_korean_currency(value: float) -> str:
 | 2024-12-18 | v2.1 | 유형구분_통합 기반 KPI 분기 상세 기재 (트래픽: CPC, 전환: ROAS) |
 | 2024-12-18 | v2.2 | 다중 기간 스크립트 섹션 추가, insight_generator.py Alert/Opportunity Trigger 조건 상세화 |
 | 2025-12-26 | v2.3 | 섹션 5.2에 insight_generator.py 및 generate_funnel_data.py의 Alert/Opportunity/BCG Matrix/이탈예측 Trigger 조건 추가 |
+| 2025-12-26 | v2.4 | **[Upgrade Guide 반영]** 마이크로 세그먼트 분석 추가 (RPV, 동적 임계값, 카테고리별 처방) |
+| 2025-12-26 | v2.5 | 섹션 3.3 추가: generate_funnel_data_multiperiod.py (다중 기간 퍼널 분석) |

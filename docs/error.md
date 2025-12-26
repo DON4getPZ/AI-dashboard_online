@@ -1,12 +1,8 @@
-[7/11] Installing Node.js packages...
+문제 발견: 이벤트 리스너가 매번 중첩 등록되고 있습니다!
 
-The system cannot find the path specified.
-npm error code ENOENT
-npm error syscall open
-npm error path C:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\package.json
-npm error errno -4058
-npm error enoent Could not read package.json: Error: ENOENT: no such file or directory, open 'C:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\package.json'
-npm error enoent This is related to npm not being able to find a file.
-npm error enoent
-npm error A complete log of this run can be found in: C:\Users\growthmaker\AppData\Local\npm-cache\_logs\2025-12-11T02_04_48_221Z-debug-0.log
-[OK] Node.js packages installed
+  updateMicroSegmentAlerts() 함수 내에서:
+  1. 서브탭 이벤트 리스너를 매번 등록
+  2. 카테고리 필터 이벤트 리스너를 매번 등록
+  3. updateChannelMetricsEnhanced()도 중복 호출
+
+  → 클릭할 때마다 리스너가 누적되어 n번 클릭 시 n개의 함수가 동시 실행됩니다.

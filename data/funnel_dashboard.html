@@ -1139,6 +1139,60 @@
             visibility: visible !important;
         }
 
+        /* 마이크로 세그먼트 카드 처방 툴팁 (퍼널 툴팁 스타일 참고) */
+        .micro-card-tooltip {
+            position: fixed;
+            background: white;
+            border: 2px solid var(--primary-main);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 8px 24px rgba(103, 58, 183, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1);
+            pointer-events: none;
+            z-index: 9999;
+            max-width: 350px;
+            min-width: 280px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .micro-card-tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .micro-card-tooltip-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary-main);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .micro-card-tooltip-title::before {
+            content: '💡';
+            font-size: 16px;
+        }
+
+        .micro-card-tooltip-content {
+            padding: 12px;
+            background: linear-gradient(135deg, var(--warning-light) 0%, #fff9e6 100%);
+            border-radius: 8px;
+            border-left: 4px solid var(--warning-main);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--grey-900);
+            line-height: 1.6;
+        }
+
+        .micro-card-tooltip-content::before {
+            content: '🎯 추천: ';
+            font-weight: 700;
+            color: var(--warning-main);
+        }
+
         /* 테이블 셀 색상 스케일 */
         .cell-value {
             position: relative;
@@ -1419,7 +1473,7 @@
                         </div>
 
                         <!-- 통합 탭 버튼 -->
-                        <div class="view-type-section" style="margin-bottom: 20px;">
+                        <div class="view-type-section" style="margin-bottom: 20px; flex-wrap: wrap;">
                             <button class="view-btn insight-strategy-tab-btn active" data-tab="churn_alert">⚠️ 이탈 위험 경고</button>
                             <button class="view-btn insight-strategy-tab-btn" data-tab="improvement">✨ 성과 개선 분석</button>
                         </div>
@@ -1615,10 +1669,92 @@
                         </div>
                         </div>
 
+
                     </div>
                 </div>
 
-                <!-- 5. 채널별 분석 (접기 가능) -->
+                <!-- 5. 유형별 조치 가이드 (독립 섹션) -->
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <div class="collapsible-title">
+                            <span class="collapsible-icon">🎯</span>
+                            <span>유형별 조치 가이드 (SA, DA, PR, CRM, etc)</span>
+                        </div>
+                        <button class="collapsible-toggle">
+                            <span>펼치기</span>
+                            <span class="collapsible-toggle-icon collapsed">▼</span>
+                        </button>
+                    </div>
+                    <div class="collapsible-content">
+                        <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px;">
+                            채널 카테고리(SA, DA, SNS 등)별로 <strong>맞춤 처방</strong>과 <strong>조치 가이드</strong>를 제공합니다. 카테고리를 선택하면 해당 유형의 문제점과 개선 방안을 확인할 수 있습니다.
+                        </div>
+
+                        <!-- 기간 필터 -->
+                        <div style="margin-bottom: 12px; padding: 12px 16px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 10px; border: 1px solid #dee2e6;">
+                            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                <span style="font-size: 12px; font-weight: 600; color: #495057;">📅 분석 기간:</span>
+                                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                    <button class="micro-segment-period-btn active" data-period="full" onclick="switchMicroSegmentPeriod('full')"
+                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #673ab7; color: white;">
+                                        전체 기간
+                                    </button>
+                                    <button class="micro-segment-period-btn" data-period="180d" onclick="switchMicroSegmentPeriod('180d')"
+                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                                        최근 180일
+                                    </button>
+                                    <button class="micro-segment-period-btn" data-period="90d" onclick="switchMicroSegmentPeriod('90d')"
+                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                                        최근 90일
+                                    </button>
+                                    <button class="micro-segment-period-btn" data-period="30d" onclick="switchMicroSegmentPeriod('30d')"
+                                            style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">
+                                        최근 30일
+                                    </button>
+                                </div>
+                                <span id="microSegmentPeriodDateRange" style="font-size: 11px; color: #6c757d; margin-left: auto;"></span>
+                            </div>
+                        </div>
+
+                        <!-- 카테고리 필터 -->
+                        <div style="display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;">
+                            <span style="font-size: 12px; font-weight: 600; color: var(--grey-600);">카테고리:</span>
+                            <button class="view-btn micro-category-filter active" data-category="all" style="font-size: 11px; padding: 5px 10px;">전체</button>
+                            <button class="view-btn micro-category-filter" data-category="SA" style="font-size: 11px; padding: 5px 10px;">SA</button>
+                            <button class="view-btn micro-category-filter" data-category="DA" style="font-size: 11px; padding: 5px 10px;">DA</button>
+                            <button class="view-btn micro-category-filter" data-category="SNS" style="font-size: 11px; padding: 5px 10px;">SNS</button>
+                            <button class="view-btn micro-category-filter" data-category="CRM" style="font-size: 11px; padding: 5px 10px;">CRM</button>
+                            <button class="view-btn micro-category-filter" data-category="PR" style="font-size: 11px; padding: 5px 10px;">PR</button>
+                            <button class="view-btn micro-category-filter" data-category="Organic" style="font-size: 11px; padding: 5px 10px;">Organic</button>
+                            <button class="view-btn micro-category-filter" data-category="etc" style="font-size: 11px; padding: 5px 10px;">기타</button>
+                        </div>
+
+                        <!-- 세그먼트 알림 서브탭 -->
+                        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                            <button class="view-btn micro-segment-tab-btn active" data-type="problem" style="font-size: 13px;">🚧 문제점 <span id="microProblemCount" style="font-size: 11px; opacity: 0.8;"></span></button>
+                            <button class="view-btn micro-segment-tab-btn" data-type="opportunity" style="font-size: 13px;">🚀 기회 <span id="microOpportunityCount" style="font-size: 11px; opacity: 0.8;"></span></button>
+                        </div>
+
+                        <!-- 문제점 알림 -->
+                        <div id="microProblemTab" class="micro-segment-tab-content" style="display: block;">
+                            <div id="microProblemCards" style="display: grid; gap: 12px;"></div>
+                            <div id="microProblemToggleContainer" style="text-align: center; margin-top: 12px; display: none;">
+                                <button id="microProblemToggleBtn" class="view-btn" style="font-size: 13px; padding: 8px 20px;">더 보기</button>
+                            </div>
+                        </div>
+
+                        <!-- 기회 알림 -->
+                        <div id="microOpportunityTab" class="micro-segment-tab-content" style="display: none;">
+                            <div id="microOpportunityCards" style="display: grid; gap: 12px;"></div>
+                            <div id="microOpportunityToggleContainer" style="text-align: center; margin-top: 12px; display: none;">
+                                <button id="microOpportunityToggleBtn" class="view-btn" style="font-size: 13px; padding: 8px 20px;">더 보기</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 6. 채널별 분석 (접기 가능) -->
                 <div class="collapsible-section">
                     <div class="collapsible-header">
                         <div class="collapsible-title">
@@ -2553,6 +2689,8 @@
     <div id="compareChartTooltip" class="chart-insight-tooltip"></div>
     <div id="customerTrendTooltip" class="chart-insight-tooltip"></div>
     <div id="churnChartTooltip" class="chart-insight-tooltip"></div>
+    <!-- 마이크로 세그먼트 카드 처방 툴팁 -->
+    <div id="microCardTooltip" class="micro-card-tooltip"></div>
 
     <script>
         // 전역 변수
@@ -2565,6 +2703,7 @@
         let insightsData = null;
         let currentPeriod = 'full';  // 데이터 기반 의사결정 도구 기간 필터
         let insightPeriod = 'full'; // 인사이트 & 채널 전략 기간 필터 (독립)
+        let microSegmentPeriod = 'full'; // 유형별 조치 가이드 기간 필터 (독립)
 
         // 현재 선택된 기간의 데이터 반환 (데이터 기반 의사결정 도구용)
         function getPeriodData() {
@@ -2580,6 +2719,14 @@
                 return insightsData;  // 이전 구조 호환
             }
             return insightsData.by_period[insightPeriod] || insightsData.by_period['full'];
+        }
+
+        // 유형별 조치 가이드 섹션용 기간 데이터 반환
+        function getMicroSegmentPeriodData() {
+            if (!insightsData || !insightsData.by_period) {
+                return insightsData;  // 이전 구조 호환
+            }
+            return insightsData.by_period[microSegmentPeriod] || insightsData.by_period['full'];
         }
 
         // 이탈 분석 데이터 (전체 기간만 사용)
@@ -2812,6 +2959,7 @@
             updateFunnelChart();
             updateInsights();
             updateUrgentAlerts();
+            updateMicroSegmentAlerts();
             setupInsightStrategyTabs();
             updateInsightChurnPredictions('7d');
             updateInsightImprovementPredictions('7d');
@@ -2827,6 +2975,7 @@
             updateChannelTable();
             updatePeriodDateRange();
             updateInsightPeriodDateRange();
+            updateMicroSegmentPeriodDateRange();
         }
 
         // 기간 전환 함수
@@ -2890,6 +3039,48 @@
             if (periodData && periodData.overall && periodData.overall.current_period) {
                 const { start_date, end_date } = periodData.overall.current_period;
                 const dateRangeEl = document.getElementById('insightPeriodDateRange');
+                if (dateRangeEl) {
+                    const start = new Date(start_date);
+                    const end = new Date(end_date);
+                    const diffTime = Math.abs(end - start);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    dateRangeEl.textContent = `${start_date} ~ ${end_date} (${diffDays}일)`;
+                }
+            }
+        }
+
+        // 유형별 조치 가이드 섹션 전용 기간 전환 함수
+        function switchMicroSegmentPeriod(period) {
+            microSegmentPeriod = period;
+
+            // 버튼 스타일 업데이트
+            document.querySelectorAll('.micro-segment-period-btn').forEach(btn => {
+                if (btn.dataset.period === period) {
+                    btn.style.background = '#673ab7';
+                    btn.style.color = 'white';
+                    btn.style.borderColor = '#673ab7';
+                    btn.classList.add('active');
+                } else {
+                    btn.style.background = 'white';
+                    btn.style.color = '#495057';
+                    btn.style.borderColor = '#dee2e6';
+                    btn.classList.remove('active');
+                }
+            });
+
+            // 날짜 범위 표시 업데이트
+            updateMicroSegmentPeriodDateRange();
+
+            // 유형별 조치 가이드 섹션만 다시 렌더링
+            updateMicroSegmentAlerts();
+        }
+
+        // 유형별 조치 가이드 섹션 날짜 범위 표시
+        function updateMicroSegmentPeriodDateRange() {
+            const periodData = getMicroSegmentPeriodData();
+            if (periodData && periodData.overall && periodData.overall.current_period) {
+                const { start_date, end_date } = periodData.overall.current_period;
+                const dateRangeEl = document.getElementById('microSegmentPeriodDateRange');
                 if (dateRangeEl) {
                     const start = new Date(start_date);
                     const end = new Date(end_date);
@@ -3045,6 +3236,268 @@
             } else {
                 toggleContainer.style.display = 'none';
             }
+        }
+
+        // ========================================
+        // 마이크로 세그먼트 분석 섹션
+        // ========================================
+
+        // 마이크로 세그먼트 상태 관리
+        let microSegmentData = { problem: [], opportunity: [] };
+        let microSegmentExpanded = { problem: false, opportunity: false };
+        let currentMicroCategoryFilter = 'all';
+
+        // 마이크로 세그먼트 이벤트 초기화 플래그
+        let microSegmentEventsInitialized = false;
+
+        // 마이크로 세그먼트 업데이트
+        function updateMicroSegmentAlerts() {
+            const periodData = getMicroSegmentPeriodData();
+            const alerts = periodData?.micro_segment_alerts || [];
+            const definitions = periodData?.micro_segment_definitions || {};
+            const thresholds = periodData?.dynamic_thresholds || {};
+
+            // 카테고리 필터 적용
+            const filteredAlerts = currentMicroCategoryFilter === 'all'
+                ? alerts
+                : alerts.filter(a => a.category === currentMicroCategoryFilter || (a.category === '기타' && currentMicroCategoryFilter === 'etc'));
+
+            // 유형별로 그룹화
+            microSegmentData.problem = filteredAlerts.filter(a => a.type === 'problem');
+            microSegmentData.opportunity = filteredAlerts.filter(a => a.type === 'opportunity');
+
+            // 총 카운트 업데이트
+            const totalCount = alerts.length;
+            const microCountEl = document.getElementById('microSegmentCount');
+            if (microCountEl) {
+                microCountEl.textContent = totalCount > 0 ? `(${totalCount}건)` : '';
+            }
+
+            // 서브탭 카운트 업데이트
+            const problemCountEl = document.getElementById('microProblemCount');
+            const opportunityCountEl = document.getElementById('microOpportunityCount');
+            if (problemCountEl) problemCountEl.textContent = `(${microSegmentData.problem.length}건)`;
+            if (opportunityCountEl) opportunityCountEl.textContent = `(${microSegmentData.opportunity.length}건)`;
+
+            // 카드 렌더링
+            renderMicroSegmentCards('problem');
+            renderMicroSegmentCards('opportunity');
+
+            // 이벤트 리스너는 최초 1회만 등록
+            if (!microSegmentEventsInitialized) {
+                // 서브탭 이벤트 등록
+                document.querySelectorAll('.micro-segment-tab-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const targetType = this.dataset.type;
+                        document.querySelectorAll('.micro-segment-tab-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        document.querySelectorAll('.micro-segment-tab-content').forEach(content => {
+                            content.style.display = 'none';
+                        });
+                        document.getElementById('micro' + targetType.charAt(0).toUpperCase() + targetType.slice(1) + 'Tab').style.display = 'block';
+                    });
+                });
+
+                // 카테고리 필터 이벤트 등록
+                document.querySelectorAll('.micro-category-filter').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        document.querySelectorAll('.micro-category-filter').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        currentMicroCategoryFilter = this.dataset.category;
+
+                        // 데이터 먼저 업데이트
+                        const periodData = getMicroSegmentPeriodData();
+                        const alerts = periodData?.micro_segment_alerts || [];
+                        const filtered = currentMicroCategoryFilter === 'all'
+                            ? alerts
+                            : alerts.filter(a => a.category === currentMicroCategoryFilter || (a.category === '기타' && currentMicroCategoryFilter === 'etc'));
+                        microSegmentData.problem = filtered.filter(a => a.type === 'problem');
+                        microSegmentData.opportunity = filtered.filter(a => a.type === 'opportunity');
+
+                        // 카운트 업데이트
+                        document.getElementById('microProblemCount').textContent = `(${microSegmentData.problem.length}건)`;
+                        document.getElementById('microOpportunityCount').textContent = `(${microSegmentData.opportunity.length}건)`;
+
+                        // 카드 렌더링 (데이터 업데이트 후)
+                        renderMicroSegmentCards('problem');
+                        renderMicroSegmentCards('opportunity');
+                    });
+                });
+
+                microSegmentEventsInitialized = true;
+            }
+        }
+
+        // 마이크로 세그먼트 카드 렌더링
+        function renderMicroSegmentCards(type) {
+            const alerts = microSegmentData[type];
+            const cardsContainer = document.getElementById('micro' + type.charAt(0).toUpperCase() + type.slice(1) + 'Cards');
+            const toggleContainer = document.getElementById('micro' + type.charAt(0).toUpperCase() + type.slice(1) + 'ToggleContainer');
+            const toggleBtn = document.getElementById('micro' + type.charAt(0).toUpperCase() + type.slice(1) + 'ToggleBtn');
+            const isExpanded = microSegmentExpanded[type];
+            const displayCount = isExpanded ? alerts.length : 5;
+
+            const severityStyles = {
+                critical: { bgColor: '#ffebee', borderColor: '#f44336', icon: '🚨' },
+                high: { bgColor: '#fff3e0', borderColor: '#ff9800', icon: '⚠️' },
+                medium: { bgColor: '#fff8e1', borderColor: '#ffc107', icon: '📌' },
+                opportunity: { bgColor: '#e8f5e9', borderColor: '#4caf50', icon: '🚀' }
+            };
+
+            const categoryColors = {
+                'SA': '#1976d2',
+                'DA': '#7b1fa2',
+                'SNS': '#e91e63',
+                'CRM': '#00897b',
+                'PR': '#ff5722',
+                'Organic': '#43a047',
+                'etc': '#757575',
+                '기타': '#757575'
+            };
+
+            if (alerts.length === 0) {
+                cardsContainer.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: var(--grey-500);">
+                        ${type === 'problem' ? '현재 문제점이 없습니다.' : '현재 기회 항목이 없습니다.'}
+                    </div>
+                `;
+                toggleContainer.style.display = 'none';
+                return;
+            }
+
+            cardsContainer.innerHTML = alerts.slice(0, displayCount).map(alert => {
+                const style = severityStyles[alert.severity] || severityStyles.medium;
+                const categoryColor = categoryColors[alert.category] || '#757575';
+                return `
+                    <div class="micro-segment-card" style="padding: 16px; background: ${style.bgColor}; border-radius: 8px; border-left: 4px solid ${style.borderColor}; cursor: pointer; transition: all 0.2s ease;" data-prescription="${alert.action.replace(/"/g, '&quot;')}" data-title="${alert.title.replace(/"/g, '&quot;')}" data-subtype="${alert.sub_type || ''}">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 15px; font-weight: 600; color: var(--grey-900);">${alert.title}</span>
+                            <span style="font-size: 11px; padding: 2px 8px; background: ${categoryColor}; color: white; border-radius: 12px;">${alert.category}</span>
+                        </div>
+                        <div style="font-size: 13px; color: var(--grey-700); margin-bottom: 8px;">
+                            ${alert.message}
+                        </div>
+                        ${alert.diagnosis ? `
+                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 8px;">
+                                <strong>진단:</strong> ${alert.diagnosis}
+                            </div>
+                        ` : ''}
+                        ${alert.metrics ? `
+                            <div style="display: flex; gap: 12px; font-size: 12px; color: var(--grey-600);">
+                                ${Object.entries(alert.metrics).map(([k, v]) => `<span><strong>${k}:</strong> ${typeof v === 'number' ? v.toFixed(1) : v}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            // 접기/펼치기 버튼 처리
+            if (alerts.length > 5) {
+                toggleContainer.style.display = 'block';
+                const hiddenCount = alerts.length - 5;
+                toggleBtn.textContent = isExpanded ? '접기' : `더 보기 (${hiddenCount}건)`;
+
+                const newBtn = toggleBtn.cloneNode(true);
+                toggleBtn.parentNode.replaceChild(newBtn, toggleBtn);
+                newBtn.addEventListener('click', function() {
+                    microSegmentExpanded[type] = !microSegmentExpanded[type];
+                    renderMicroSegmentCards(type);
+                });
+            } else {
+                toggleContainer.style.display = 'none';
+            }
+        }
+
+        // 마이크로 세그먼트 카드 처방 툴팁 이벤트 핸들러 (이벤트 위임 사용)
+        function setupMicroCardTooltip() {
+            const tooltip = document.getElementById('microCardTooltip');
+            if (!tooltip) return;
+
+            // 문제점/기회 카드 컨테이너에 이벤트 위임
+            ['microProblemCards', 'microOpportunityCards'].forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                container.addEventListener('mouseenter', function(event) {
+                    const card = event.target.closest('.micro-segment-card');
+                    if (!card) return;
+
+                    const prescription = card.dataset.prescription;
+                    const title = card.dataset.title;
+                    const subType = card.dataset.subtype;
+
+                    // 카드 호버 효과
+                    card.style.transform = 'translateY(-2px)';
+                    card.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+
+                    // 세그먼트 정의 가져오기
+                    let definitionHtml = '';
+                    if (subType && insightsData && insightsData.micro_segment_definitions) {
+                        const def = insightsData.micro_segment_definitions[subType];
+                        if (def) {
+                            definitionHtml = `
+                                <div style="margin-bottom: 12px; padding: 10px; background: var(--grey-50); border-radius: 6px; border-left: 3px solid var(--primary-main);">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--primary-main); margin-bottom: 6px;">
+                                        ${def.icon} ${def.type}
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 4px;">
+                                        ${def.description}
+                                    </div>
+                                    ${def.condition ? `
+                                        <div style="font-size: 11px; color: var(--grey-500);">
+                                            📊 ${def.condition}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }
+                    }
+
+                    tooltip.innerHTML = `
+                        <div class="micro-card-tooltip-title">${title}</div>
+                        ${definitionHtml}
+                        <div class="micro-card-tooltip-content">${prescription}</div>
+                    `;
+
+                    tooltip.classList.add('visible');
+                }, true);
+
+                container.addEventListener('mousemove', function(event) {
+                    const card = event.target.closest('.micro-segment-card');
+                    if (!card || !tooltip.classList.contains('visible')) return;
+
+                    const padding = 15;
+                    let left = event.clientX + padding;
+                    let top = event.clientY + padding;
+
+                    // 툴팁 크기 가져오기
+                    const tooltipRect = tooltip.getBoundingClientRect();
+
+                    // 오른쪽 경계를 넘으면 왼쪽에 배치
+                    if (left + tooltipRect.width + padding > window.innerWidth) {
+                        left = event.clientX - tooltipRect.width - padding;
+                    }
+
+                    // 하단 경계를 넘으면 위로 조정
+                    if (top + tooltipRect.height + padding > window.innerHeight) {
+                        top = event.clientY - tooltipRect.height - padding;
+                    }
+
+                    tooltip.style.left = left + 'px';
+                    tooltip.style.top = top + 'px';
+                }, true);
+
+                container.addEventListener('mouseleave', function(event) {
+                    const card = event.target.closest('.micro-segment-card');
+                    if (!card) return;
+
+                    // 카드 호버 효과 제거
+                    card.style.transform = '';
+                    card.style.boxShadow = '';
+
+                    tooltip.classList.remove('visible');
+                }, true);
+            });
         }
 
         // BCG Matrix 채널 전략 업데이트 (데이터 기반 의사결정 도구 기간 필터 사용)
@@ -7617,6 +8070,9 @@
 
             // 탭 전환 기능 초기화
             initTabSwitching();
+
+            // 마이크로 세그먼트 카드 처방 툴팁 초기화
+            setupMicroCardTooltip();
 
             // 페이지 로드 후 2초 뒤 버튼 상태 확인
             setTimeout(() => {
