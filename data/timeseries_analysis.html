@@ -1913,9 +1913,70 @@
         @media (max-width: 768px) {
             .sim-result-cards { grid-template-columns: 1fr; }
         }
+
+        /* Matrix 카드 툴팁 (마우스 커서 따라가는 스타일) */
+        .matrix-tooltip-global {
+            position: fixed;
+            background: white;
+            border: 2px solid #673ab7;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 8px 24px rgba(103, 58, 183, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1);
+            pointer-events: none;
+            z-index: 9999;
+            max-width: 320px;
+            min-width: 260px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .matrix-tooltip-global.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .matrix-tooltip-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .matrix-tooltip-icon {
+            font-size: 24px;
+        }
+
+        .matrix-tooltip-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #673ab7;
+        }
+
+        .matrix-tooltip-subtitle {
+            font-size: 11px;
+            color: #9e9e9e;
+            margin-top: 2px;
+        }
+
+        .matrix-tooltip-content {
+            padding: 12px;
+            background: linear-gradient(135deg, #ede7f6 0%, #f3e5f5 100%);
+            border-radius: 8px;
+            border-left: 4px solid #673ab7;
+            font-size: 12px;
+            font-weight: 500;
+            color: #333;
+            line-height: 1.6;
+        }
     </style>
 </head>
 <body>
+    <!-- Matrix 카드 전역 툴팁 -->
+    <div id="matrixCardTooltip" class="matrix-tooltip-global"></div>
+
     <div class="app-wrapper">
         <!-- 사이드바 -->
         <aside class="sidebar">
@@ -2060,9 +2121,9 @@
                                 </div>
                             </div>
                             <!-- AI 요약 기간 필터 -->
-                            <div style="margin-bottom: 12px; padding: 12px 16px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 10px; border: 1px solid #dee2e6;">
+                            <div style="margin-bottom: 16px; padding: 12px 16px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 10px; border: 1px solid #dee2e6;">
                                 <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                                    <span style="font-size: 12px; font-weight: 600; color: #495057;">📅 AI 요약 기간:</span>
+                                    <span style="font-size: 12px; font-weight: 600; color: #495057;">📅 분석 기간:</span>
                                     <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                                         <button class="ai-period-btn active" data-ai-period="full" onclick="switchAiSummaryPeriod('full')" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #673ab7; color: white;">전체</button>
                                         <button class="ai-period-btn" data-ai-period="180d" onclick="switchAiSummaryPeriod('180d')" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">180일</button>
@@ -2071,48 +2132,32 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- AI 컨텐츠 영역 -->
-                            <div id="aiSummaryContent">
-                                <!-- JS로 동적 생성 -->
-                            </div>
-                        </div>
 
-                        <!-- 분석 기간 필터 -->
-                        <div style="margin-bottom: 12px; padding: 12px 16px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 10px; border: 1px solid #dee2e6;">
-                            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                                <span style="font-size: 12px; font-weight: 600; color: #495057;">📅 분석 기간:</span>
-                                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                                    <button class="view-btn period-btn active" data-period="full" onclick="switchPeriod('full')" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #673ab7; color: white;">전체</button>
-                                    <button class="view-btn period-btn" data-period="180d" onclick="switchPeriod('180d')" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">180일</button>
-                                    <button class="view-btn period-btn" data-period="90d" onclick="switchPeriod('90d')" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">90일</button>
-                                    <button class="view-btn period-btn" data-period="30d" onclick="switchPeriod('30d')" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">30일</button>
+                            <!-- 하위 탭 버튼 (데이터 기반 의사결정 도구 스타일) -->
+                            <div class="view-type-section" style="margin-bottom: 20px; flex-wrap: wrap; gap: 8px;">
+                                <button class="view-btn insights-tab-btn active" data-insights-tab="summary" style="padding: 10px 18px; font-size: 13px; font-weight: 600;">
+                                    📊 핵심 요약
+                                </button>
+                                <button class="view-btn insights-tab-btn" data-insights-tab="alerts" style="padding: 10px 18px; font-size: 13px; font-weight: 600;">
+                                    ⚠️ 경고 및 추천 <span id="alertsBadge" style="display: none; padding: 2px 8px; background: #ef5350; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
+                                </button>
+                                <button class="view-btn insights-tab-btn" data-insights-tab="opportunities" style="padding: 10px 18px; font-size: 13px; font-weight: 600;">
+                                    🎯 기회 요소 <span id="opportunitiesBadge" style="display: none; padding: 2px 8px; background: #4caf50; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
+                                </button>
+                                <button class="view-btn insights-tab-btn" data-insights-tab="matrix" style="padding: 10px 18px; font-size: 13px; font-weight: 600;">
+                                    📈 Forecast Matrix <span id="matrixBadge" style="display: none; padding: 2px 8px; background: #673ab7; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
+                                </button>
+                            </div>
+
+                            <!-- 탭 0: 핵심 요약 -->
+                            <div id="summaryTab" class="insights-tab-content" style="display: block; background: none; border: none; box-shadow: none; border-radius: 0; overflow: visible;">
+                                <div id="aiSummaryContent" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding-top: 4px;">
+                                    <!-- JS로 동적 생성 -->
                                 </div>
-                                <span id="actualPeriodIndicator" style="font-size: 11px; color: #6c757d; margin-left: auto;"></span>
                             </div>
-                        </div>
 
-                        <!-- 탭 버튼 (데이터 기반 의사결정 도구 스타일) -->
-                        <div class="view-type-section" style="margin-bottom: 16px; flex-wrap: wrap; gap: 6px; align-items: center;">
-                            <button class="view-btn insights-tab-btn period-filter-enabled active" data-insights-tab="alerts" style="padding: 8px 14px; font-size: 12px;" title="선택한 기간 필터가 적용됩니다">
-                                ⚠️ 경고 및 추천 <span id="alertsBadge" style="display: none; padding: 2px 8px; background: #ef5350; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
-                            </button>
-                            <button class="view-btn insights-tab-btn period-filter-enabled" data-insights-tab="opportunities" style="padding: 8px 14px; font-size: 12px;" title="선택한 기간 필터가 적용됩니다">
-                                🎯 기회 요소 <span id="opportunitiesBadge" style="display: none; padding: 2px 8px; background: #4caf50; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
-                            </button>
-                            <button class="view-btn insights-tab-btn" data-insights-tab="matrix" style="padding: 8px 14px; font-size: 12px;" title="Forecast Matrix 4분면 분석">
-                                📊 Forecast Matrix <span id="matrixBadge" style="display: none; padding: 2px 8px; background: #673ab7; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
-                            </button>
-                            <!-- 범례 -->
-                            <div style="margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 10px; color: #6c757d;">
-                                <span style="display: flex; align-items: center; gap: 4px;">
-                                    <span style="width: 8px; height: 8px; background: #673ab7; border-radius: 2px;"></span>
-                                    기간 필터 적용
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- 탭 1: 경고 및 추천 -->
-                        <div id="alertsTab" class="insights-tab-content" style="display: block;">
+                            <!-- 탭 1: 경고 및 추천 -->
+                            <div id="alertsTab" class="insights-tab-content" style="display: none;">
                             <!-- 탭 헤더 배너 -->
                             <div style="padding: 16px 24px; background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-bottom: 1px solid #ffcc80;">
                                 <div style="display: flex; align-items: center; gap: 12px;">
@@ -2162,10 +2207,10 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                            </div>
 
-                        <!-- 탭 2: 기회 요소 (opportunities) -->
-                        <div id="opportunitiesTab" class="insights-tab-content" style="display: none;">
+                            <!-- 탭 2: 기회 요소 (opportunities) -->
+                            <div id="opportunitiesTab" class="insights-tab-content" style="display: none;">
                             <!-- 탭 헤더 배너 -->
                             <div style="padding: 16px 24px; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-bottom: 1px solid #a5d6a7;">
                                 <div style="display: flex; align-items: center; gap: 12px;">
@@ -2212,66 +2257,44 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- 4분면 범례 -->
-                            <div style="padding: 16px 24px; background: #fafafa; border-bottom: 1px solid var(--grey-200);">
-                                <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;">
-                                    <div style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #e8f5e9; border-radius: 20px; border: 1px solid #a5d6a7;">
-                                        <span>🚀</span><span style="font-size: 11px; font-weight: 600; color: #2e7d32;">Super Star</span><span style="font-size: 10px; color: #43a047;">고효율+고성장</span>
-                                    </div>
-                                    <div style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #fff3e0; border-radius: 20px; border: 1px solid #ffcc80;">
-                                        <span>🛡️</span><span style="font-size: 11px; font-weight: 600; color: #e65100;">Fading Hero</span><span style="font-size: 10px; color: #f57c00;">고효율+역성장</span>
-                                    </div>
-                                    <div style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #e3f2fd; border-radius: 20px; border: 1px solid #90caf9;">
-                                        <span>🌱</span><span style="font-size: 11px; font-weight: 600; color: #1565c0;">Rising Potential</span><span style="font-size: 10px; color: #1976d2;">저효율+고성장</span>
-                                    </div>
-                                    <div style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #ffebee; border-radius: 20px; border: 1px solid #ef9a9a;">
-                                        <span>🗑️</span><span style="font-size: 11px; font-weight: 600; color: #c62828;">Problem Child</span><span style="font-size: 10px; color: #e53935;">저효율+역성장</span>
-                                    </div>
-                                </div>
+                            <!-- 하위탭 버튼 -->
+                            <div style="display: flex; gap: 0; background: #f5f5f5; border-bottom: 1px solid var(--grey-200);">
+                                <button class="matrix-sub-tab active" data-matrix-tab="brand" style="flex: 1; padding: 12px 16px; border: none; background: #673ab7; color: white; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+                                    <span>🏷️</span> 브랜드 <span id="matrixBrandCount" style="font-size: 10px; opacity: 0.8;"></span>
+                                </button>
+                                <button class="matrix-sub-tab" data-matrix-tab="channel" style="flex: 1; padding: 12px 16px; border: none; background: transparent; color: #666; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+                                    <span>📢</span> 채널 <span id="matrixChannelCount" style="font-size: 10px; opacity: 0.8;"></span>
+                                </button>
+                                <button class="matrix-sub-tab" data-matrix-tab="product" style="flex: 1; padding: 12px 16px; border: none; background: transparent; color: #666; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+                                    <span>📦</span> 상품 <span id="matrixProductCount" style="font-size: 10px; opacity: 0.8;"></span>
+                                </button>
+                                <button class="matrix-sub-tab" data-matrix-tab="promotion" style="flex: 1; padding: 12px 16px; border: none; background: transparent; color: #666; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+                                    <span>🎁</span> 프로모션 <span id="matrixPromotionCount" style="font-size: 10px; opacity: 0.8;"></span>
+                                </button>
                             </div>
-                            <!-- 4분면 그리드 컨텐츠 -->
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--grey-200);">
-                                <!-- 브랜드 -->
-                                <div style="padding: 20px; background: #fafafa;">
-                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #673ab7;">
-                                        <span style="font-size: 16px;">🏷️</span>
-                                        <span style="font-size: 13px; font-weight: 700; color: var(--grey-900);">브랜드</span>
-                                        <span id="matrixBrandCount" style="font-size: 11px; color: var(--grey-500);"></span>
-                                    </div>
-                                    <div id="matrixBrandContent" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+                            <!-- 하위탭 컨텐츠 영역 -->
+                            <div style="padding: 20px 24px; background: #fafafa; min-height: 350px;">
+                                <!-- 브랜드 탭 -->
+                                <div id="matrixBrandTab" class="matrix-sub-content" style="display: block;">
+                                    <div id="matrixBrandContent" style="display: flex; flex-direction: column; gap: 12px;">
                                         <div class="insight-card neutral"><div class="insight-message">데이터 로딩 중...</div></div>
                                     </div>
                                 </div>
-                                <!-- 상품 -->
-                                <div style="padding: 20px; background: #fafafa;">
-                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #673ab7;">
-                                        <span style="font-size: 16px;">📦</span>
-                                        <span style="font-size: 13px; font-weight: 700; color: var(--grey-900);">상품</span>
-                                        <span id="matrixProductCount" style="font-size: 11px; color: var(--grey-500);"></span>
-                                    </div>
-                                    <div id="matrixProductContent" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+                                <!-- 채널 탭 -->
+                                <div id="matrixChannelTab" class="matrix-sub-content" style="display: none;">
+                                    <div id="matrixChannelContent" style="display: flex; flex-direction: column; gap: 12px;">
                                         <div class="insight-card neutral"><div class="insight-message">데이터 로딩 중...</div></div>
                                     </div>
                                 </div>
-                                <!-- 채널 -->
-                                <div style="padding: 20px; background: #fafafa;">
-                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #673ab7;">
-                                        <span style="font-size: 16px;">📢</span>
-                                        <span style="font-size: 13px; font-weight: 700; color: var(--grey-900);">채널</span>
-                                        <span id="matrixChannelCount" style="font-size: 11px; color: var(--grey-500);"></span>
-                                    </div>
-                                    <div id="matrixChannelContent" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+                                <!-- 상품 탭 -->
+                                <div id="matrixProductTab" class="matrix-sub-content" style="display: none;">
+                                    <div id="matrixProductContent" style="display: flex; flex-direction: column; gap: 12px;">
                                         <div class="insight-card neutral"><div class="insight-message">데이터 로딩 중...</div></div>
                                     </div>
                                 </div>
-                                <!-- 프로모션 -->
-                                <div style="padding: 20px; background: #fafafa;">
-                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #673ab7;">
-                                        <span style="font-size: 16px;">🎁</span>
-                                        <span style="font-size: 13px; font-weight: 700; color: var(--grey-900);">프로모션</span>
-                                        <span id="matrixPromotionCount" style="font-size: 11px; color: var(--grey-500);"></span>
-                                    </div>
-                                    <div id="matrixPromotionContent" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+                                <!-- 프로모션 탭 -->
+                                <div id="matrixPromotionTab" class="matrix-sub-content" style="display: none;">
+                                    <div id="matrixPromotionContent" style="display: flex; flex-direction: column; gap: 12px;">
                                         <div class="insight-card neutral"><div class="insight-message">데이터 로딩 중...</div></div>
                                     </div>
                                 </div>
@@ -2279,6 +2302,7 @@
                         </div>
 
                     </div>
+                </div>
                 </div>
 
                 <!-- 최근 변화 인사이트 (접기/펼치기) -->
@@ -3031,11 +3055,14 @@
         }
 
         /**
-         * AI 요약 기간 전환 함수
-         * @param {string} period - 기간 (full, 180d, 90d)
+         * AI 요약 기간 전환 함수 (통합: AI 요약 + 경고/추천/기회/Matrix 탭)
+         * @param {string} period - 기간 (full, 180d, 90d, 30d)
          */
         function switchAiSummaryPeriod(period) {
             aiSummaryPeriod = period;
+            currentPeriod = period;  // 분석 기간도 함께 동기화
+            alertsExpanded = false;  // 펼침 상태 초기화
+            recommendationsExpanded = false;
 
             // 버튼 활성화 상태 변경 (pill 스타일)
             document.querySelectorAll('.ai-period-btn').forEach(btn => {
@@ -3052,10 +3079,13 @@
                 }
             });
 
-            // AI 요약만 업데이트
+            // AI 요약 + 모든 인사이트 탭 업데이트
             updateAiSummary();
+            if (insightsData) {
+                updateAllInsights();
+            }
 
-            console.log(`AI 요약 기간 전환: ${period}`);
+            console.log(`AI 요약 기간 전환 (통합): ${period}`);
         }
 
         /**
@@ -3981,6 +4011,11 @@
                 return text;
             };
 
+            // 핵심 3개 카드만 추출 (중복 제거)
+            // 우선순위: 1. 성과 현황 (📊) 2. 주요 경고/트렌드 (🚨/📉) 3. 추천 액션 (💡)
+            const coreCards = [];
+            const seenTypes = new Set();
+
             // 연속된 줄들을 그룹화 (들여쓰기로 시작하면 이전 항목에 추가)
             const groupedLines = [];
             lines.forEach(line => {
@@ -3991,51 +4026,114 @@
                 }
             });
 
-            // 최대 6개까지만 표시 (3x2 그리드)
-            const displayItems = groupedLines.slice(0, 6);
-
-            let html = '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">';
-
-            displayItems.forEach(group => {
+            // 핵심 카드 선별 (각 타입별 1개씩, 키워드 기반 보강)
+            for (const group of groupedLines) {
                 const cat = getCategory(group.main);
+                const text = group.main;
+
+                // 성과 현황 (1개) - 📊 또는 '전체 성과' 키워드
+                if ((cat.label === '성과 현황' || /전체 성과|ROAS.*전환수/.test(text)) && !seenTypes.has('performance')) {
+                    seenTypes.add('performance');
+                    coreCards.push({ ...group, cat, priority: 1 });
+                }
+                // 주요 경고/트렌드 (1개) - 🚨📉 또는 '하락/주의' 키워드
+                else if ((cat.label === '주의 필요' || cat.label === '하락 트렌드' || /하락 예상|하락할 것으로/.test(text)) && !seenTypes.has('warning')) {
+                    seenTypes.add('warning');
+                    coreCards.push({ ...group, cat, priority: 2 });
+                }
+                // 추천 액션 (1개) - 💡 또는 '권장/추천' 키워드
+                else if ((cat.label === '추천 액션' || /^💡|권장:|추천:/.test(text)) && !seenTypes.has('recommend')) {
+                    seenTypes.add('recommend');
+                    coreCards.push({ ...group, cat: categories.recommend, priority: 3 });
+                }
+
+                if (coreCards.length >= 3) break;
+            }
+
+            // 3개 미만이면 검토 대상 추가
+            if (coreCards.length < 3) {
+                for (const group of groupedLines) {
+                    const cat = getCategory(group.main);
+                    if ((cat.label === '검토 대상' || /검토 대상|🔍/.test(group.main)) && !seenTypes.has('review')) {
+                        seenTypes.add('review');
+                        coreCards.push({ ...group, cat: categories.review, priority: 4 });
+                    }
+                    if (coreCards.length >= 3) break;
+                }
+            }
+
+            // 여전히 3개 미만이면 나머지 항목에서 보충
+            if (coreCards.length < 3) {
+                for (const group of groupedLines) {
+                    const cat = getCategory(group.main);
+                    const alreadyAdded = coreCards.some(c => c.main === group.main);
+                    if (!alreadyAdded) {
+                        coreCards.push({ ...group, cat, priority: 5 });
+                    }
+                    if (coreCards.length >= 3) break;
+                }
+            }
+
+            // 우선순위 정렬
+            coreCards.sort((a, b) => a.priority - b.priority);
+
+            // 추천 데이터 가져오기
+            const recommendations = periodData.segments?.recommendations || [];
+
+            let html = '';  // wrapper 제거 - #aiSummaryContent가 이미 그리드 컨테이너
+
+            coreCards.forEach((group, cardIndex) => {
+                const cat = group.cat;
                 const cleanText = highlightChanges(removeEmoji(group.main));
+                // 추천 액션 카드가 아닌 경우에만 recommendations에서 매칭
+                const matchedRec = cat.label !== '추천 액션' && recommendations.length > 0
+                    ? recommendations[cardIndex % recommendations.length]
+                    : null;
+                const hasAction = matchedRec || group.subLines.length > 0;
 
                 html += `
-                    <div style="padding: 18px 20px; background: ${cat.bg}; border-radius: 12px; border-left: 4px solid ${cat.border}; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: all 0.2s ease;">
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                    <div style="
+                        background: ${cat.bg};
+                        border: 2px solid ${cat.border};
+                        border-radius: 10px;
+                        padding: 14px;
+                        transition: transform 0.2s;
+                        display: flex;
+                        flex-direction: column;
+                    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <!-- 헤더 -->
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
                             <div style="width: 32px; height: 32px; background: ${cat.border}20; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
                                 <span style="font-size: 16px;">${cat.icon}</span>
                             </div>
-                            <span style="font-size: 11px; font-weight: 700; color: ${cat.color}; text-transform: uppercase; letter-spacing: 0.8px;">${cat.label}</span>
+                            <span style="font-size: 11px; font-weight: 700; color: ${cat.color}; text-transform: uppercase; letter-spacing: 0.5px;">${cat.label}</span>
                         </div>
-                        <div style="font-size: 14px; font-weight: 500; color: var(--grey-900); line-height: 1.7;">${cleanText}</div>
+                        <!-- 메시지 -->
+                        <div style="font-size: 13px; font-weight: 500; color: var(--grey-900); line-height: 1.6; flex: 1; margin-bottom: ${hasAction ? '10px' : '0'};">${cleanText}</div>
+                        <!-- 서브라인 (들여쓰기 항목) -->
                         ${group.subLines.length > 0 ? `
-                            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed ${cat.border}50;">
-                                ${group.subLines.map(sub => `<div style="font-size: 13px; font-weight: 500; color: var(--grey-700); line-height: 1.6; margin-bottom: 4px;">→ ${highlightChanges(sub)}</div>`).join('')}
+                            <div style="background: rgba(255,255,255,0.7); border-radius: 6px; padding: 10px; border-left: 3px solid ${cat.border}; margin-bottom: ${matchedRec ? '10px' : '0'};">
+                                <div style="font-size: 10px; font-weight: 600; color: ${cat.color}; margin-bottom: 4px;">📌 상세 정보</div>
+                                ${group.subLines.map(sub => `<div style="font-size: 11px; color: #333; line-height: 1.5;">→ ${highlightChanges(sub)}</div>`).join('')}
+                            </div>
+                        ` : ''}
+                        <!-- 추천 액션 (경고 및 추천 스타일) -->
+                        ${matchedRec ? `
+                            <div style="background: rgba(255,255,255,0.7); border-radius: 6px; padding: 10px; border-left: 3px solid #ab47bc;">
+                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                                    <div style="font-size: 10px; font-weight: 600; color: #7b1fa2;">💡 추천 액션</div>
+                                    ${matchedRec.action_type ? `<span style="font-size: 9px; padding: 2px 6px; background: ${matchedRec.action_type === 'scale_up' ? '#e8f5e9' : matchedRec.action_type === 'defend' ? '#fff3e0' : matchedRec.action_type === 'optimize' ? '#e3f2fd' : '#ffebee'}; color: ${matchedRec.action_type === 'scale_up' ? '#2e7d32' : matchedRec.action_type === 'defend' ? '#e65100' : matchedRec.action_type === 'optimize' ? '#1565c0' : '#c62828'}; border-radius: 4px; font-weight: 600;">${matchedRec.action_type === 'scale_up' ? '증액' : matchedRec.action_type === 'defend' ? '방어' : matchedRec.action_type === 'optimize' ? '최적화' : '감액'}</span>` : ''}
+                                </div>
+                                <div style="font-size: 11px; color: #333; line-height: 1.4;">${matchedRec.action}</div>
+                                ${matchedRec.context_advice ? `<div style="font-size: 10px; color: #5e35b1; margin-top: 6px; padding-top: 6px; border-top: 1px dashed #d1c4e9; line-height: 1.4;">💬 ${matchedRec.context_advice}</div>` : ''}
+                                ${matchedRec.expected_impact ? `<div style="font-size: 10px; color: #2e7d32; margin-top: 4px;">📈 ${matchedRec.expected_impact}</div>` : ''}
                             </div>
                         ` : ''}
                     </div>
                 `;
             });
 
-            html += '</div>';
-
-            // 6개 초과 시 나머지 항목 표시
-            if (groupedLines.length > 6) {
-                html += '<div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--grey-200);">';
-                groupedLines.slice(6).forEach(group => {
-                    const cat = getCategory(group.main);
-                    const cleanText = highlightChanges(removeEmoji(group.main));
-                    html += `
-                        <div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px 0; font-size: 13px; color: var(--grey-700);">
-                            <span>${cat.icon}</span>
-                            <span>${cleanText}</span>
-                        </div>
-                    `;
-                });
-                html += '</div>';
-            }
-
+            // wrapper 닫는 태그 제거 - #aiSummaryContent가 이미 그리드 컨테이너
             contentContainer.innerHTML = html;
         }
 
@@ -4065,19 +4163,64 @@
                 badge.style.display = 'inline';
             }
 
-            const html = opportunities.map((opp, idx) => `
-                <div class="insight-card positive" style="margin-bottom: 12px;">
-                    <div style="display: flex; align-items: flex-start; gap: 12px;">
-                        <span style="font-size: 20px;">🚀</span>
-                        <div style="flex: 1;">
-                            <div style="font-size: 13px; font-weight: 600; color: var(--grey-900); margin-bottom: 4px;">${opp.title || '기회 요소 ' + (idx + 1)}</div>
-                            <div style="font-size: 12px; color: var(--grey-700); line-height: 1.5;">${opp.message || ''}</div>
-                            ${opp.action ? `<div style="margin-top: 8px; padding: 8px 12px; background: rgba(76,175,80,0.1); border-radius: 6px; font-size: 11px; color: #2e7d32;"><strong>💡 추천 액션:</strong> ${opp.action}</div>` : ''}
-                            ${opp.expected_impact ? `<div style="margin-top: 6px; font-size: 11px; color: #2e7d32;"><strong>📈 기대 효과:</strong> ${opp.expected_impact}</div>` : ''}
+            // 기회 유형별 스타일
+            const oppStyles = {
+                'scale_up': { icon: '🚀', bg: '#e8f5e9', border: '#4caf50', titleColor: '#2e7d32', label: '예산 증액' },
+                'hidden_gem': { icon: '💎', bg: '#e3f2fd', border: '#2196f3', titleColor: '#1565c0', label: '숨은 보석' },
+                'growth_momentum': { icon: '📈', bg: '#fff3e0', border: '#ff9800', titleColor: '#e65100', label: '성장 모멘텀' },
+                'default': { icon: '🎯', bg: '#e8f5e9', border: '#4caf50', titleColor: '#2e7d32', label: '기회' }
+            };
+
+            const html = opportunities.map((opp, idx) => {
+                const style = oppStyles[opp.type] || oppStyles['default'];
+                const hasAction = opp.action && opp.action.trim();
+                const hasFinancial = opp.financial_impact && opp.financial_impact.trim();
+
+                return `
+                    <div style="
+                        background: ${style.bg};
+                        border: 2px solid ${style.border};
+                        border-radius: 10px;
+                        padding: 14px;
+                        transition: transform 0.2s;
+                        cursor: pointer;
+                    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <!-- 헤더 -->
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 18px;">${style.icon}</span>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 700; color: ${style.titleColor};">${opp.title || '기회 요소 ' + (idx + 1)}</div>
+                                ${opp.segment_value ? `<div style="font-size: 10px; color: ${style.titleColor}; opacity: 0.8;">${opp.segment_type || ''} > ${opp.segment_value}</div>` : ''}
+                            </div>
+                            <span style="background: ${style.border}; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">${style.label}</span>
                         </div>
+                        <!-- 메트릭스 배지 -->
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                            ${opp.roas ? `<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #2e7d32; border: 1px solid #a5d6a7;">ROAS ${opp.roas.toFixed(0)}%</span>` : ''}
+                            ${opp.priority ? `<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #5e35b1; border: 1px solid #b39ddb;">우선순위 ${opp.priority}</span>` : ''}
+                            ${opp.potential_uplift ? `<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #1565c0; border: 1px solid #90caf9;">+${(opp.potential_uplift/10000).toFixed(1)}만원</span>` : ''}
+                        </div>
+                        <!-- 메시지 -->
+                        <div style="font-size: 11px; color: #555; line-height: 1.5; margin-bottom: 10px;">
+                            ${opp.message || ''}
+                        </div>
+                        <!-- 추천 액션 -->
+                        ${hasAction ? `
+                        <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid ${style.border}; margin-bottom: ${hasFinancial ? '8px' : '0'};">
+                            <div style="font-size: 10px; font-weight: 600; color: ${style.titleColor}; margin-bottom: 4px;">💡 추천 액션</div>
+                            <div style="font-size: 11px; color: #333; line-height: 1.4;">${opp.action}</div>
+                        </div>
+                        ` : ''}
+                        <!-- 재무 영향 -->
+                        ${hasFinancial ? `
+                        <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid #673ab7;">
+                            <div style="font-size: 10px; font-weight: 600; color: #5e35b1; margin-bottom: 4px;">💰 기대 효과</div>
+                            <div style="font-size: 11px; color: #333; line-height: 1.4;">${opp.financial_impact}</div>
+                        </div>
+                        ` : ''}
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
             container.innerHTML = html;
         }
@@ -4230,15 +4373,54 @@
                 return `${segmentTypeKr[alert.segment_type] || alert.segment_type} "${alert.segment_value}"의 ${alert.metric}이(가) ${Math.abs(alert.change_pct).toFixed(1)}% ${alert.change_pct < 0 ? '하락' : '상승'}할 것으로 예측됩니다.`;
             };
 
-            const renderAlertCard = (alert) => `
-                <div class="insight-card ${alert.severity === 'high' ? 'negative' : 'neutral'}">
-                    <div class="insight-title">
-                        ${getAlertIcon(alert.type)}
-                        ${getAlertTitle(alert)}
+            const renderAlertCard = (alert) => {
+                const severityColors = {
+                    'high': { bg: '#ffebee', border: '#ef5350', titleColor: '#c62828' },
+                    'medium': { bg: '#fff3e0', border: '#ff9800', titleColor: '#e65100' },
+                    'low': { bg: '#e3f2fd', border: '#2196f3', titleColor: '#1565c0' }
+                };
+                const style = severityColors[alert.severity] || severityColors['medium'];
+                const hasAction = alert.action && alert.action.trim();
+
+                return `
+                    <div style="
+                        background: ${style.bg};
+                        border: 2px solid ${style.border};
+                        border-radius: 10px;
+                        padding: 14px;
+                        transition: transform 0.2s;
+                    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <!-- 헤더 -->
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 16px;">${alert.severity === 'high' ? '🚨' : '⚠️'}</span>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 700; color: ${style.titleColor};">${getAlertTitle(alert)}</div>
+                                ${alert.segment_value ? `<div style="font-size: 10px; color: ${style.titleColor}; opacity: 0.8;">${alert.segment_type || ''} > ${alert.segment_value}</div>` : ''}
+                            </div>
+                            ${alert.severity === 'high' ? '<span style="background: #c62828; color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 600;">긴급</span>' : ''}
+                        </div>
+                        <!-- 메트릭스 배지 -->
+                        ${alert.actual_roas !== undefined ? `
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                            <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #333; border: 1px solid ${style.border};">현재 ROAS ${alert.actual_roas?.toFixed(0) || 0}%</span>
+                            <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #c62828; border: 1px solid #ef9a9a;">예측 ROAS ${alert.forecast_roas?.toFixed(0) || 0}%</span>
+                            ${alert.change_pct ? `<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #c62828; border: 1px solid #ef9a9a;">변화 ${alert.change_pct > 0 ? '+' : ''}${alert.change_pct.toFixed(1)}%</span>` : ''}
+                        </div>
+                        ` : ''}
+                        <!-- 메시지 -->
+                        <div style="font-size: 11px; color: #555; line-height: 1.5; margin-bottom: ${hasAction ? '10px' : '0'};">
+                            ${getAlertText(alert)}
+                        </div>
+                        <!-- 추천 액션 -->
+                        ${hasAction ? `
+                        <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid ${style.border};">
+                            <div style="font-size: 10px; font-weight: 600; color: ${style.titleColor}; margin-bottom: 4px;">💡 추천 액션</div>
+                            <div style="font-size: 11px; color: #333; line-height: 1.4;">${alert.action}</div>
+                        </div>
+                        ` : ''}
                     </div>
-                    <div class="insight-text">${getAlertText(alert)}</div>
-                </div>
-            `;
+                `;
+            };
 
             // 표시할 알림 결정
             const displayAlerts = alertsExpanded ? allAlerts : allAlerts.slice(0, INITIAL_ALERTS_COUNT);
@@ -4309,22 +4491,51 @@
                 return types[type] || type;
             };
 
-            const renderRecommendationCard = (rec) => `
-                <div class="recommendation-card" onclick="toggleRecommendationCard(this)">
-                    <div class="recommendation-priority">우선순위 ${rec.priority}</div>
-                    <div class="recommendation-action">${rec.action}</div>
-                    <div class="recommendation-target">
-                        대상: ${getTargetTypeKr(rec.target.type)} > <strong>${rec.target.value}</strong>
+            const renderRecommendationCard = (rec) => {
+                const priorityColors = {
+                    1: { bg: '#e8f5e9', border: '#4caf50', titleColor: '#2e7d32', icon: '🥇' },
+                    2: { bg: '#e3f2fd', border: '#2196f3', titleColor: '#1565c0', icon: '🥈' },
+                    3: { bg: '#fff3e0', border: '#ff9800', titleColor: '#e65100', icon: '🥉' }
+                };
+                const style = priorityColors[rec.priority] || priorityColors[3];
+                const metrics = rec.metrics || {};
+
+                return `
+                    <div style="
+                        background: ${style.bg};
+                        border: 2px solid ${style.border};
+                        border-radius: 10px;
+                        padding: 14px;
+                        transition: transform 0.2s;
+                        cursor: pointer;
+                    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <!-- 헤더 -->
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 18px;">${style.icon}</span>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 700; color: ${style.titleColor};">${rec.action}</div>
+                                <div style="font-size: 10px; color: ${style.titleColor}; opacity: 0.8;">${getTargetTypeKr(rec.target.type)} > ${rec.target.value}</div>
+                            </div>
+                            <span style="background: ${style.border}; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">우선순위 ${rec.priority}</span>
+                        </div>
+                        <!-- 메트릭스 배지 -->
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                            ${metrics.roas ? `<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #2e7d32; border: 1px solid #a5d6a7;">ROAS ${metrics.roas.toFixed(0)}%</span>` : ''}
+                            ${metrics.cvr ? `<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #1565c0; border: 1px solid #90caf9;">CVR ${metrics.cvr.toFixed(2)}%</span>` : ''}
+                            ${metrics.cpa ? `<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #5e35b1; border: 1px solid #b39ddb;">CPA ${(metrics.cpa/1000).toFixed(1)}천원</span>` : ''}
+                        </div>
+                        <!-- 이유 목록 -->
+                        <div style="font-size: 11px; color: #555; line-height: 1.6; margin-bottom: 10px;">
+                            ${rec.reasons.map(reason => `<div style="display: flex; align-items: flex-start; gap: 6px;"><span style="color: ${style.border};">✓</span><span>${reason}</span></div>`).join('')}
+                        </div>
+                        <!-- 예상 효과 -->
+                        <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid ${style.border};">
+                            <div style="font-size: 10px; font-weight: 600; color: ${style.titleColor}; margin-bottom: 4px;">📈 예상 효과</div>
+                            <div style="font-size: 11px; color: #333; line-height: 1.4;">${rec.expected_impact}</div>
+                        </div>
                     </div>
-                    <ul class="recommendation-reasons">
-                        ${rec.reasons.map(reason => `<li>${reason}</li>`).join('')}
-                    </ul>
-                    <div class="recommendation-impact">
-                        📈 예상 효과: ${rec.expected_impact}
-                    </div>
-                    <div class="recommendation-expand-hint">클릭하여 자세히 보기</div>
-                </div>
-            `;
+                `;
+            };
 
             // 표시할 추천 결정
             const displayRecommendations = recommendationsExpanded
@@ -4386,35 +4597,39 @@
 
             const matrixInsights = periodData.matrix_insights;
 
-            // 4분면별 스타일 설정
+            // 4분면별 스타일 설정 (툴팁 설명 포함)
             const matrixStyles = {
                 'super_star': {
                     icon: '🚀',
                     bg: '#e8f5e9',
                     border: '#4caf50',
                     titleColor: '#2e7d32',
-                    label: 'Super Star'
+                    label: 'Super Star',
+                    tooltip: '고효율 + 고성장: 현재 ROAS가 높고 성장세도 좋습니다. 예산을 적극 증액하세요!'
                 },
                 'fading_hero': {
                     icon: '🛡️',
                     bg: '#fff3e0',
                     border: '#ff9800',
                     titleColor: '#e65100',
-                    label: 'Fading Hero'
+                    label: 'Fading Hero',
+                    tooltip: '고효율 + 역성장: 효율은 좋지만 성장세가 둔화되고 있습니다. 현재 수익을 방어하세요.'
                 },
                 'rising_potential': {
                     icon: '🌱',
                     bg: '#e3f2fd',
                     border: '#2196f3',
                     titleColor: '#1565c0',
-                    label: 'Rising Potential'
+                    label: 'Rising Potential',
+                    tooltip: '저효율 + 고성장: 효율은 낮지만 성장 잠재력이 있습니다. 최적화로 효율을 끌어올리세요.'
                 },
                 'problem_child': {
                     icon: '🗑️',
                     bg: '#ffebee',
                     border: '#ef5350',
                     titleColor: '#c62828',
-                    label: 'Problem Child'
+                    label: 'Problem Child',
+                    tooltip: '저효율 + 역성장: 효율도 낮고 성장세도 없습니다. 예산을 축소하거나 전략을 재검토하세요.'
                 }
             };
 
@@ -4444,15 +4659,19 @@
                     : '';
 
                 return `
-                    <div style="
-                        background: ${style.bg};
-                        border: ${sevStyle.borderWidth} solid ${style.border};
-                        border-radius: 10px;
-                        padding: 14px;
-                        box-shadow: ${sevStyle.boxShadow};
-                        transition: transform 0.2s;
-                        cursor: pointer;
-                    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div class="matrix-card"
+                        data-tooltip-icon="${style.icon}"
+                        data-tooltip-label="${style.label}"
+                        data-tooltip-desc="${style.tooltip}"
+                        style="
+                            background: ${style.bg};
+                            border: ${sevStyle.borderWidth} solid ${style.border};
+                            border-radius: 10px;
+                            padding: 14px;
+                            box-shadow: ${sevStyle.boxShadow};
+                            transition: transform 0.2s, box-shadow 0.2s;
+                            cursor: pointer;
+                        ">
                         <!-- 헤더 -->
                         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
                             <span style="font-size: 18px;">${style.icon}</span>
@@ -4517,6 +4736,91 @@
                 );
 
                 container.innerHTML = sortedInsights.map(renderMatrixCard).join('');
+            });
+
+            // 툴팁 이벤트 설정
+            setupMatrixCardTooltip();
+        }
+
+        // Matrix 카드 툴팁 이벤트 핸들러 (마우스 커서 따라가기)
+        function setupMatrixCardTooltip() {
+            const tooltip = document.getElementById('matrixCardTooltip');
+            if (!tooltip) return;
+
+            // 각 세그먼트 컨테이너에 이벤트 위임
+            ['matrixBrandContent', 'matrixChannelContent', 'matrixProductContent', 'matrixPromotionContent'].forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                // 기존 이벤트 리스너 제거를 위해 클론
+                const newContainer = container.cloneNode(true);
+                container.parentNode.replaceChild(newContainer, container);
+
+                // mouseenter 이벤트
+                newContainer.addEventListener('mouseenter', function(event) {
+                    const card = event.target.closest('.matrix-card');
+                    if (!card) return;
+
+                    const icon = card.dataset.tooltipIcon || '📊';
+                    const label = card.dataset.tooltipLabel || 'Matrix';
+                    const desc = card.dataset.tooltipDesc || '';
+
+                    // 카드 스타일 변경
+                    card.style.transform = 'translateY(-3px)';
+                    card.style.boxShadow = '0 6px 20px rgba(0,0,0,0.15)';
+
+                    // 툴팁 내용 설정
+                    tooltip.innerHTML = `
+                        <div class="matrix-tooltip-header">
+                            <span class="matrix-tooltip-icon">${icon}</span>
+                            <div>
+                                <div class="matrix-tooltip-title">${label}</div>
+                                <div class="matrix-tooltip-subtitle">4분면 분류</div>
+                            </div>
+                        </div>
+                        <div class="matrix-tooltip-content">${desc}</div>
+                    `;
+
+                    tooltip.classList.add('visible');
+                }, true);
+
+                // mousemove 이벤트 (커서 따라가기)
+                newContainer.addEventListener('mousemove', function(event) {
+                    const card = event.target.closest('.matrix-card');
+                    if (!card || !tooltip.classList.contains('visible')) return;
+
+                    const padding = 15;
+                    let left = event.clientX + padding;
+                    let top = event.clientY + padding;
+
+                    // 툴팁 크기 가져오기
+                    const tooltipRect = tooltip.getBoundingClientRect();
+
+                    // 오른쪽 경계를 넘으면 왼쪽에 배치
+                    if (left + tooltipRect.width + padding > window.innerWidth) {
+                        left = event.clientX - tooltipRect.width - padding;
+                    }
+
+                    // 하단 경계를 넘으면 위로 조정
+                    if (top + tooltipRect.height + padding > window.innerHeight) {
+                        top = event.clientY - tooltipRect.height - padding;
+                    }
+
+                    tooltip.style.left = left + 'px';
+                    tooltip.style.top = top + 'px';
+                }, true);
+
+                // mouseleave 이벤트
+                newContainer.addEventListener('mouseleave', function(event) {
+                    const card = event.target.closest('.matrix-card');
+                    if (!card) return;
+
+                    // 카드 스타일 복원
+                    card.style.transform = '';
+                    card.style.boxShadow = '';
+
+                    tooltip.classList.remove('visible');
+                }, true);
             });
         }
 
@@ -5392,7 +5696,9 @@
                     });
 
                     // 선택된 탭 표시
-                    if (targetTab === 'alerts') {
+                    if (targetTab === 'summary') {
+                        document.getElementById('summaryTab').style.display = 'block';
+                    } else if (targetTab === 'alerts') {
                         document.getElementById('alertsTab').style.display = 'block';
                     } else if (targetTab === 'opportunities') {
                         document.getElementById('opportunitiesTab').style.display = 'block';
@@ -5402,6 +5708,39 @@
                         if (typeof renderMatrixInsights === 'function') {
                             renderMatrixInsights();
                         }
+                    }
+                });
+            });
+
+            // Matrix 하위탭 전환 이벤트
+            document.querySelectorAll('.matrix-sub-tab').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 버튼 활성화 상태 전환
+                    document.querySelectorAll('.matrix-sub-tab').forEach(b => {
+                        b.classList.remove('active');
+                        b.style.background = 'transparent';
+                        b.style.color = '#666';
+                    });
+                    this.classList.add('active');
+                    this.style.background = '#673ab7';
+                    this.style.color = 'white';
+
+                    // 탭 컨텐츠 표시/숨김
+                    const targetTab = this.dataset.matrixTab;
+                    document.querySelectorAll('.matrix-sub-content').forEach(content => {
+                        content.style.display = 'none';
+                    });
+
+                    // 선택된 탭 표시
+                    const tabMap = {
+                        'brand': 'matrixBrandTab',
+                        'channel': 'matrixChannelTab',
+                        'product': 'matrixProductTab',
+                        'promotion': 'matrixPromotionTab'
+                    };
+                    const targetElement = document.getElementById(tabMap[targetTab]);
+                    if (targetElement) {
+                        targetElement.style.display = 'block';
                     }
                 });
             });

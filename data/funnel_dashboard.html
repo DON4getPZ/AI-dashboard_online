@@ -449,25 +449,194 @@
         }
 
         .insight-card {
-            padding: 16px;
+            padding: 18px 20px;
             background: var(--grey-50);
-            border-radius: 8px;
+            border-radius: 12px;
             border-left: 4px solid var(--primary-main);
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
         .insight-card.positive {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
             border-left-color: var(--success-main);
-            background: var(--success-light);
         }
 
         .insight-card.negative {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
             border-left-color: var(--error-main);
-            background: var(--error-light);
         }
 
         .insight-card.neutral {
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
             border-left-color: var(--warning-main);
-            background: var(--warning-light);
+        }
+
+        .insight-card.opportunity {
+            background: linear-gradient(135deg, #e3f2fd 0%, #e1f5fe 100%);
+            border-left-color: var(--secondary-main);
+        }
+
+        /* 인사이트 카드 헤더 */
+        .insight-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .insight-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .insight-card.positive .insight-icon-box {
+            background: rgba(0, 200, 83, 0.15);
+        }
+
+        .insight-card.negative .insight-icon-box {
+            background: rgba(255, 23, 68, 0.15);
+        }
+
+        .insight-card.neutral .insight-icon-box {
+            background: rgba(255, 171, 0, 0.15);
+        }
+
+        .insight-card.opportunity .insight-icon-box {
+            background: rgba(33, 150, 243, 0.15);
+        }
+
+        .insight-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .insight-card.positive .insight-label { color: #2e7d32; }
+        .insight-card.negative .insight-label { color: #c62828; }
+        .insight-card.neutral .insight-label { color: #e65100; }
+        .insight-card.opportunity .insight-label { color: #1565c0; }
+
+        .insight-urgency {
+            margin-left: auto;
+            font-size: 10px;
+            padding: 3px 8px;
+            color: white;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* 인사이트 카드 본문 */
+        .insight-message {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--grey-900);
+            line-height: 1.6;
+            margin-bottom: 12px;
+            flex: 1;
+        }
+
+        /* 인사이트 카드 상세정보 */
+        .insight-detail-box {
+            background: rgba(255,255,255,0.7);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .insight-detail-title {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .insight-detail-item {
+            font-size: 12px;
+            color: #333;
+            line-height: 1.6;
+            padding-left: 12px;
+            position: relative;
+        }
+
+        .insight-detail-item::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--grey-500);
+        }
+
+        /* 인사이트 카드 액션 */
+        .insight-action-box {
+            background: rgba(255,255,255,0.7);
+            border-radius: 8px;
+            padding: 12px;
+            border-left: 3px solid #ab47bc;
+        }
+
+        .insight-action-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .insight-action-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #7b1fa2;
+        }
+
+        .insight-action-badge {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .insight-action-badge.scale_up,
+        .insight-action-badge.opportunity {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .insight-action-badge.primary {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .insight-action-badge.maintain {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .insight-action-text {
+            font-size: 12px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .insight-action-secondary {
+            font-size: 11px;
+            color: #5e35b1;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #d1c4e9;
+            line-height: 1.4;
         }
 
         .insight-title {
@@ -3372,10 +3541,10 @@
             const displayCount = isExpanded ? alerts.length : 5;
 
             const severityStyles = {
-                critical: { bgColor: '#ffebee', borderColor: '#f44336', icon: '🚨' },
-                high: { bgColor: '#fff3e0', borderColor: '#ff9800', icon: '⚠️' },
-                medium: { bgColor: '#fff8e1', borderColor: '#ffc107', icon: '📌' },
-                opportunity: { bgColor: '#e8f5e9', borderColor: '#4caf50', icon: '🚀' }
+                critical: { bgColor: '#ffebee', borderColor: '#f44336', textColor: '#c62828', icon: '🚨' },
+                high: { bgColor: '#fff3e0', borderColor: '#ff9800', textColor: '#e65100', icon: '⚠️' },
+                medium: { bgColor: '#fff8e1', borderColor: '#ffc107', textColor: '#f57f17', icon: '📌' },
+                opportunity: { bgColor: '#e8f5e9', borderColor: '#4caf50', textColor: '#2e7d32', icon: '🚀' }
             };
 
             const categoryColors = {
@@ -3402,28 +3571,81 @@
             cardsContainer.innerHTML = alerts.slice(0, displayCount).map(alert => {
                 const style = severityStyles[alert.severity] || severityStyles.medium;
                 const categoryColor = categoryColors[alert.category] || '#757575';
+
+                // 세그먼트 타입별 아이콘
+                const subTypeIcons = {
+                    'traffic_leak': '🚿',
+                    'hidden_vip': '💎',
+                    'checkout_friction': '🛒',
+                    'growth_engine': '🚀',
+                    'activation_drop': '🚪',
+                    'engagement_gap': '📉',
+                    'silent_majority': '😶'
+                };
+                const icon = subTypeIcons[alert.sub_type] || (alert.type === 'opportunity' ? '✨' : '⚠️');
+
+                // 긴급도 점수 표시
+                const urgencyScore = alert.urgency_score || 0;
+                const urgencyLabel = urgencyScore >= 70 ? '긴급' : urgencyScore >= 40 ? '주의' : '참고';
+
+                // 메트릭스 배지 생성 함수
+                const renderMetricsBadges = (metrics) => {
+                    if (!metrics) return '';
+                    const colorMap = {
+                        '유입→활동': { color: '#1565c0', border: '#90caf9' },
+                        '활동→관심': { color: '#1565c0', border: '#90caf9' },
+                        '관심→구매': { color: '#1565c0', border: '#90caf9' },
+                        '전환율': { color: '#2e7d32', border: '#a5d6a7' },
+                        'CVR': { color: '#2e7d32', border: '#a5d6a7' },
+                        '유입': { color: '#5e35b1', border: '#b39ddb' },
+                        '활동': { color: '#5e35b1', border: '#b39ddb' },
+                        '관심': { color: '#5e35b1', border: '#b39ddb' },
+                        'RPV': { color: '#e65100', border: '#ffcc80' }
+                    };
+                    const percentKeys1 = ['유입→활동', '활동→관심', '관심→구매'];
+                    const percentKeys2 = ['전환율', 'CVR'];
+                    return Object.entries(metrics).map(([k, v]) => {
+                        let formatted;
+                        if (percentKeys2.includes(k)) {
+                            formatted = (typeof v === 'number' ? v.toFixed(2) : v) + '%';
+                        } else if (percentKeys1.includes(k)) {
+                            formatted = (typeof v === 'number' ? v.toFixed(1) : v) + '%';
+                        } else {
+                            formatted = typeof v === 'number' ? v.toLocaleString() : v;
+                        }
+                        const s = colorMap[k] || { color: '#616161', border: '#bdbdbd' };
+                        return '<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: ' + s.color + '; border: 1px solid ' + s.border + '; font-weight: 500;">' + k + ' ' + formatted + '</span>';
+                    }).join('');
+                };
+
                 return `
-                    <div class="micro-segment-card" style="padding: 16px; background: ${style.bgColor}; border-radius: 8px; border-left: 4px solid ${style.borderColor}; cursor: pointer; transition: all 0.2s ease;" data-prescription="${alert.action.replace(/"/g, '&quot;')}" data-title="${alert.title.replace(/"/g, '&quot;')}" data-subtype="${alert.sub_type || ''}">
+                    <div class="micro-segment-card" style="background: ${style.bgColor}; border: 2px solid ${style.borderColor}; border-radius: 10px; padding: 14px; cursor: pointer; transition: transform 0.2s;" data-prescription="${alert.action.replace(/"/g, '&quot;')}" data-title="${alert.title.replace(/"/g, '&quot;')}" data-subtype="${alert.sub_type || ''}" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <!-- 헤더 -->
                         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                            <span style="font-size: 15px; font-weight: 600; color: var(--grey-900);">${alert.title}</span>
-                            <span style="font-size: 11px; padding: 2px 8px; background: ${categoryColor}; color: white; border-radius: 12px;">${alert.category}</span>
+                            <span style="font-size: 18px;">${icon}</span>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 700; color: ${style.textColor};">${alert.title}</div>
+                                <div style="font-size: 10px; color: ${style.textColor}; opacity: 0.8;">${alert.category} > ${alert.sub_type || '일반'}</div>
+                            </div>
+                            ${urgencyScore > 0 ? '<span style="background: ' + style.borderColor + '; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">' + urgencyLabel + ' ' + urgencyScore + '</span>' : ''}
                         </div>
-                        <div style="font-size: 13px; color: var(--grey-700); margin-bottom: 8px;">
-                            ${alert.message}
-                        </div>
+                        <!-- 메트릭스 배지 -->
+                        ${alert.metrics ? '<div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">' + renderMetricsBadges(alert.metrics) + '</div>' : ''}
+                        <!-- 진단 (이유 목록 스타일) -->
                         ${alert.diagnosis ? `
-                            <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 8px;">
-                                <strong>진단:</strong> ${alert.diagnosis}
+                            <div style="font-size: 11px; color: #555; line-height: 1.6; margin-bottom: 10px;">
+                                <div style="display: flex; align-items: flex-start; gap: 6px;">
+                                    <span style="color: ${style.borderColor};">✓</span>
+                                    <span>${alert.diagnosis}</span>
+                                </div>
                             </div>
                         ` : ''}
-                        ${alert.metrics ? `
-                            <div style="display: flex; gap: 12px; font-size: 12px; color: var(--grey-600); margin-bottom: 8px;">
-                                ${Object.entries(alert.metrics).map(([k, v]) => `<span><strong>${k}:</strong> ${typeof v === 'number' ? v.toFixed(1) : v}</span>`).join('')}
-                            </div>
-                        ` : ''}
+                        <!-- 추천 액션 -->
                         ${alert.action ? `
-                            <div style="padding: 10px; background: white; border-radius: 6px; font-size: 13px; color: var(--grey-900); margin-top: 8px;">
-                                💡 <strong>추천 액션:</strong> ${alert.action}
+                            <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid ${style.borderColor};">
+                                <div style="font-size: 10px; font-weight: 600; color: ${style.textColor}; margin-bottom: 4px;">💡 추천 액션</div>
+                                <div style="font-size: 11px; color: #333; line-height: 1.4;">${alert.action}</div>
+                                ${alert.impact && alert.impact.potential_revenue ? '<div style="font-size: 10px; color: #2e7d32; margin-top: 6px;">📈 예상 효과: ' + (alert.impact.potential_revenue > 0 ? alert.impact.potential_revenue.toLocaleString() + '원 매출 기회' : '이탈 방지') + '</div>' : ''}
                             </div>
                         ` : ''}
                     </div>
@@ -3685,6 +3907,55 @@
             const periodData = getPeriodData();
             if (!periodData) return;
 
+            // key_insights가 있으면 새로운 3카드 레이아웃 사용
+            const keyInsights = periodData.key_insights;
+            if (keyInsights && keyInsights.length > 0) {
+                let html = '';  // wrapper 제거 - .insight-content가 이미 3열 그리드
+
+                keyInsights.forEach(card => {
+                    const hasAction = card.action && card.action.text;
+                    const hasSubItems = card.sub_items && card.sub_items.length > 0 && card.sub_items[0];
+
+                    html += `
+                        <div style="background: ${card.bg_color}; border: 2px solid ${card.border_color}; border-radius: 10px; padding: 14px; transition: transform 0.2s; display: flex; flex-direction: column;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <!-- 헤더 -->
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                                <div style="width: 32px; height: 32px; background: ${card.border_color}20; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                    <span style="font-size: 16px;">${card.icon}</span>
+                                </div>
+                                <span style="font-size: 11px; font-weight: 700; color: ${card.text_color}; text-transform: uppercase; letter-spacing: 0.5px;">${card.label}</span>
+                                ${card.urgency_score ? `<span style="margin-left: auto; font-size: 10px; padding: 2px 6px; background: ${card.border_color}; color: white; border-radius: 8px;">긴급도 ${card.urgency_score}</span>` : ''}
+                            </div>
+                            <!-- 메시지 -->
+                            <div style="font-size: 13px; font-weight: 500; color: var(--grey-900); line-height: 1.6; flex: 1; margin-bottom: ${hasAction || hasSubItems ? '10px' : '0'};">${card.message}</div>
+                            <!-- 서브 아이템 -->
+                            ${hasSubItems ? `
+                                <div style="background: rgba(255,255,255,0.7); border-radius: 6px; padding: 10px; border-left: 3px solid ${card.border_color}; margin-bottom: ${hasAction ? '10px' : '0'};">
+                                    <div style="font-size: 10px; font-weight: 600; color: ${card.text_color}; margin-bottom: 4px;">📌 상세 정보</div>
+                                    ${card.sub_items.filter(item => item).map(item => `<div style="font-size: 11px; color: #333; line-height: 1.5;">→ ${item}</div>`).join('')}
+                                </div>
+                            ` : ''}
+                            <!-- 추천 액션 -->
+                            ${hasAction ? `
+                                <div style="background: rgba(255,255,255,0.7); border-radius: 6px; padding: 10px; border-left: 3px solid #ab47bc;">
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                                        <div style="font-size: 10px; font-weight: 600; color: #7b1fa2;">💡 추천 액션</div>
+                                        ${card.action.type ? `<span style="font-size: 9px; padding: 2px 6px; background: ${card.action.type === 'scale_up' || card.action.type === 'opportunity' ? '#e8f5e9' : card.action.type === 'primary' ? '#fff3e0' : '#e3f2fd'}; color: ${card.action.type === 'scale_up' || card.action.type === 'opportunity' ? '#2e7d32' : card.action.type === 'primary' ? '#e65100' : '#1565c0'}; border-radius: 4px; font-weight: 600;">${card.action.type === 'scale_up' ? '증액' : card.action.type === 'opportunity' ? '기회' : card.action.type === 'primary' ? '개선' : '유지'}</span>` : ''}
+                                    </div>
+                                    <div style="font-size: 11px; color: #333; line-height: 1.4;">${card.action.text}</div>
+                                    ${card.action.secondary ? `<div style="font-size: 10px; color: #5e35b1; margin-top: 6px; padding-top: 6px; border-top: 1px dashed #d1c4e9; line-height: 1.4;">➕ ${card.action.secondary}</div>` : ''}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+
+                // wrapper 닫는 태그 제거 - .insight-content가 이미 3열 그리드
+                document.getElementById('insightContent').innerHTML = html;
+                return;
+            }
+
+            // Fallback: 기존 로직 (key_insights가 없는 경우)
             const insights = [];
 
             // 전체 CVR

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-12-26T19:32:18.496123",
+  "generated_at": "2025-12-27T01:42:12.433009",
   "category": "default",
   "thresholds_used": {
     "activation_rate_warning": 50.0,
@@ -20,7 +20,7 @@
     "is_filtered": false
   },
   "meta": {
-    "generated_at": "2025-12-26 19:32",
+    "generated_at": "2025-12-27 01:42",
     "analysis_period": "2025-02-12 ~ 2025-12-26",
     "category": "default"
   },
@@ -32,6 +32,66 @@
     "purchasers_text": "297",
     "status_message": "분발해야 합니다! 이탈률 방어가 시급해요 🚨"
   },
+  "key_insights": [
+    {
+      "category": "performance",
+      "icon": "📊",
+      "label": "성과 현황",
+      "bg_color": "#e3f2fd",
+      "border_color": "#1976d2",
+      "text_color": "#1565c0",
+      "message": "전체 CVR 0.7%, 총 매출 0원",
+      "sub_items": [
+        "방문자 43,810명 → 구매자 297명",
+        "활성화율 31% | 장바구니→구매 6%"
+      ],
+      "action": {
+        "type": "optimize",
+        "text": "전환율 개선 여지가 있습니다. 랜딩페이지 최적화를 검토하세요."
+      }
+    },
+    {
+      "category": "warning",
+      "icon": "⚠️",
+      "label": "주요 문제",
+      "bg_color": "#fff3e0",
+      "border_color": "#fb8c00",
+      "text_color": "#e65100",
+      "message": "관심→구매 전환율이 8.5%로 매우 낮습니다. (기준 10% 대비 -1.5%p)",
+      "sub_items": [
+        "[DA] 유저의 구매 결정을 막는 요소가 있습니다."
+      ],
+      "action": {
+        "type": "primary",
+        "text": "이미 구매한 상품이 노출되거나 관심 없는 상품 추천 중.",
+        "secondary": "리타겟팅 모수에 Burn Pixel(구매자 제외) 적용"
+      },
+      "urgency_score": 81,
+      "channel": ""
+    },
+    {
+      "category": "recommend",
+      "icon": "🚀",
+      "label": "성장 기회",
+      "bg_color": "#f3e5f5",
+      "border_color": "#ab47bc",
+      "text_color": "#7b1fa2",
+      "message": "'채널톡' 채널은 방문자의 82.9%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+      "sub_items": [
+        "활성화율 82.9% (채널 평균 대비 우수)",
+        "전환율 1.32%"
+      ],
+      "action": {
+        "type": "opportunity",
+        "text": "'채널톡' 채널의 트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
+        "impact": {
+          "lost_users": 0,
+          "potential_revenue": 0
+        }
+      },
+      "channel": "채널톡"
+    }
+  ],
   "summary": {
     "total_acquisition": 43810,
     "total_activation": 13745,
@@ -1580,10 +1640,11 @@
       "type": "opportunity",
       "sub_type": "growth_engine",
       "severity": "opportunity",
+      "channel": "채널톡",
       "title": "🚀 채널톡: 성장 엔진 점화",
-      "message": "방문자의 82.9%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+      "message": "'채널톡' 채널은 방문자의 82.9%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
       "diagnosis": "[CRM] 작지만 강한 채널입니다. 스케일업 기회!",
-      "action": "트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
+      "action": "'채널톡' 채널의 트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
       "action_detail": {
         "primary": "기존 고객입니다. 신규 가입 혜택보다는 '등급별 혜택'이나 '재구매 할인'을 제안하세요.",
         "secondary": "상세 데이터 분석을 통해 이탈 원인을 파악하세요.",
@@ -1611,10 +1672,11 @@
       "type": "opportunity",
       "sub_type": "growth_engine",
       "severity": "opportunity",
+      "channel": "프레이머",
       "title": "🚀 프레이머: 성장 엔진 점화",
-      "message": "방문자의 75.4%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+      "message": "'프레이머' 채널은 방문자의 75.4%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
       "diagnosis": "[Organic] 작지만 강한 채널입니다. 스케일업 기회!",
-      "action": "트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
+      "action": "'프레이머' 채널의 트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
       "action_detail": {
         "primary": "회원가입 절차가 복잡합니다. 간편 로그인(소셜) 버튼을 상단으로 배치하세요.",
         "secondary": "상세 데이터 분석을 통해 이탈 원인을 파악하세요.",

@@ -436,33 +436,73 @@ if conv_change < -self.thresholds['decline_alert_pct']:  # -10%
 | `hidden_gem` | ROAS > 200% AND 비용 < 100만원 | 2 | "💎 숨은 보석 발견! 테스트 예산 2배 확대" |
 | `growth_momentum` | 전환수 증가 > 10% AND ROAS > 150% | 3 | "📈 성장 가속 중! 예산 10% 증액" |
 
+##### OPPORTUNITY_ACTIONS 템플릿 (라인 142-161)
+
+> **v2.9 업데이트**: 세그먼트 유형별 맞춤 액션 템플릿 추가. 기존 하드코딩된 액션 문구 대신 동적 생성.
+
 ```python
-# find_opportunities() 로직 (라인 940-1028)
+OPPORTUNITY_ACTIONS = {
+    'scale_up': {
+        'channel': "'{value}' 채널 예산을 20% 증액하고, 일예산 상한(Cap)을 해제하세요.",
+        'product': "'{value}' 상품군 광고를 메인 배너에 노출하고, 리마케팅 오디언스를 확대하세요.",
+        'brand': "'{value}' 브랜드 전용 캠페인을 신설하고, 시즈널 프로모션을 기획하세요.",
+        'default': "이 영역에 예산을 20% 증액하여 성장 모멘텀을 극대화하세요."
+    },
+    'hidden_gem': {
+        'channel': "'{value}' 채널 테스트 예산을 2배로 늘리고, 성과 추이를 주간 단위로 모니터링하세요.",
+        'product': "'{value}' 상품군 전용 소재를 제작하고, 타겟 오디언스를 세분화하세요.",
+        'brand': "'{value}' 브랜드 인지도 캠페인을 소규모로 시작해보세요.",
+        'default': "테스트 예산을 2배로 늘려 잠재력을 검증하세요."
+    },
+    'growth_momentum': {
+        'channel': "'{value}' 채널의 현재 입찰 전략을 유지하면서 예산을 10% 증액하세요.",
+        'product': "'{value}' 상품군 재고를 확보하고, 크로스셀 상품을 함께 노출하세요.",
+        'brand': "'{value}' 브랜드 베스트셀러 상품을 전면에 배치하세요.",
+        'default': "현재 전략을 유지하며 예산을 10% 증액하여 성장을 가속화하세요."
+    }
+}
+```
+
+```python
+# find_opportunities() 로직 (라인 1256-1331)
 # Opportunity 1: High ROAS (Star/Cash Cow)
 if roas > THRESHOLDS['high_roas']:  # > 300%
+    # 세그먼트별 맞춤 액션
+    action_template = OPPORTUNITY_ACTIONS['scale_up'].get(segment_name, OPPORTUNITY_ACTIONS['scale_up']['default'])
+    action_text = action_template.format(value=segment_value)
+
     opportunities.append({
         'type': 'scale_up',
         'tag': "🚀 강력 추천: 예산 증액",
-        'action': "물 들어올 때 노 저으세요! 성과가 좋은 이 영역에 예산을 20% 증액",
+        'action': action_text,  # 동적 액션
         'financial_impact': f"예산 20% 증액 시, 약 {format_currency(potential_uplift)} 추가 매출 기대",
         'priority': 1
     })
 
 # Opportunity 2: Hidden Gem (저예산 고효율)
 elif roas > THRESHOLDS['opportunity_roas'] and total_cost < 1000000:  # > 200%, < 100만원
+    action_template = OPPORTUNITY_ACTIONS['hidden_gem'].get(segment_name, OPPORTUNITY_ACTIONS['hidden_gem']['default'])
+    action_text = action_template.format(value=segment_value)
+    potential_uplift = total_revenue  # 동적 계산
+
     opportunities.append({
         'type': 'hidden_gem',
         'tag': "💎 숨은 보석 발견",
-        'action': "아직 예산은 적지만 효율이 터지고 있습니다. 테스트 예산을 2배로 늘려보세요.",
+        'action': action_text,  # 동적 액션
+        'financial_impact': f"예산 2배 증액 시, 약 {format_currency(potential_uplift)} 추가 매출 기대 (ROAS 유지 가정)",
         'priority': 2
     })
 
 # Opportunity 3: Growth Momentum
 elif changes.get('전환수', 0) > THRESHOLDS['growth_star'] and roas > THRESHOLDS['low_roas']:  # > 10%, > 150%
+    action_template = OPPORTUNITY_ACTIONS['growth_momentum'].get(segment_name, OPPORTUNITY_ACTIONS['growth_momentum']['default'])
+    action_text = action_template.format(value=segment_value)
+
     opportunities.append({
         'type': 'growth_momentum',
         'tag': "📈 성장 모멘텀",
-        'action': "현재 전략을 유지하고, 예산을 10% 증액하여 성장을 가속화하세요.",
+        'action': action_text,  # 동적 액션
+        'financial_impact': f"예산 10% 증액 시, 주당 약 {additional_conversions:,}건 추가 전환 기대",
         'priority': 3
     })
 ```
@@ -1738,3 +1778,4 @@ def format_korean_currency(value: float) -> str:
 | 2025-12-26 | v2.6 | **[urgent_alerts 통합]** micro_segment_alerts로 긴급 개선 탭 데이터 소스 통합. 신규 세그먼트 3개 추가 (activation_drop, engagement_gap, silent_majority). CATEGORY_SEGMENT_ACTIONS 매트릭스, urgency_score 계산 로직, impact/benchmark/action_detail 필드 추가 |
 | 2025-12-26 | v2.7 | **[4분면 매트릭스]** generate_type_insights.py에 Efficiency-Scale Matrix(4분면) 도입. TypeMicroAnalyzer 클래스, DIMENSION_ADVICE_MAP, MATRIX_THRESHOLDS 추가. 성별/연령/기기별 상대 평가 기반 인사이트 생성. type_dashboard.html에 4분면 시각화 및 추천 액션 표시 |
 | 2025-12-26 | v2.8 | **[Forecast Matrix]** insight_generator.py에 Forecast Matrix(4분면) 도입. InsightMicroAnalyzer 클래스, ADVICE_CONTEXT_MAP, FORECAST_MATRIX_THRESHOLDS 추가. 현재 효율 × 예측 성장률 기반 세그먼트 분류 (Super Star, Fading Hero, Rising Potential, Problem Child). matrix_insights JSON 필드 추가 |
+| 2025-12-27 | v2.9 | **[Opportunities 동적 액션]** OPPORTUNITY_ACTIONS 템플릿 추가 (라인 142-161). find_opportunities()에서 세그먼트 유형(channel/product/brand)별 맞춤 액션 동적 생성. hidden_gem financial_impact 동적 계산 |

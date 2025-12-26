@@ -830,10 +830,11 @@ def generate_micro_segment_alerts(channel_funnel_pivot, df_raw, thresholds):
                 'type': 'opportunity',
                 'sub_type': segment_type,
                 'severity': seg_def['severity'],
+                'channel': channel,  # 채널명 추가
                 'title': f"{seg_def['icon']} {channel}: 성장 엔진 점화",
-                'message': f"방문자의 {act_rate:.1f}%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+                'message': f"'{channel}' 채널은 방문자의 {act_rate:.1f}%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
                 'diagnosis': f"[{category}] 작지만 강한 채널입니다. 스케일업 기회!",
-                'action': "트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
+                'action': f"'{channel}' 채널의 트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
                 'action_detail': action_detail,
                 'category': category,
                 'metrics': {'유입→활동': round(act_rate, 1), '전환율': round(cvr, 2), '유입': int(acq)},
@@ -1807,6 +1808,174 @@ def generate_funnel_insights(category='default', ga4_file=None):
             })
 
     # ========================================
+    # 핵심 요약 카드 생성 (3개)
+    # ========================================
+    key_insights = []
+
+    # 1. 성과 현황 카드 (Performance)
+    # 성과에 맞는 액션 결정
+    if overall_cvr >= 1.0:
+        perf_action_text = "현재 전환율이 양호합니다. 트래픽 확대로 매출 규모를 키워보세요."
+        perf_action_type = "scale_up"
+    elif overall_cvr >= 0.5:
+        perf_action_text = "전환율 개선 여지가 있습니다. 랜딩페이지 최적화를 검토하세요."
+        perf_action_type = "optimize"
+    else:
+        perf_action_text = "전환율이 낮습니다. 퍼널 단계별 이탈 원인을 분석하세요."
+        perf_action_type = "analyze"
+
+    performance_card = {
+        'category': 'performance',
+        'icon': '📊',
+        'label': '성과 현황',
+        'bg_color': '#e3f2fd',
+        'border_color': '#1976d2',
+        'text_color': '#1565c0',
+        'message': f"전체 CVR {overall_cvr:.1f}%, 총 매출 {format_korean_currency(total_revenue)}",
+        'sub_items': [
+            f"방문자 {format_number(total_acquisition)}명 → 구매자 {format_number(total_purchase)}명",
+            f"활성화율 {(total_activation/total_acquisition*100):.0f}% | 장바구니→구매 {(total_purchase/max(total_consideration,1)*100):.0f}%" if total_acquisition > 0 else ""
+        ],
+        'action': {
+            'type': perf_action_type,
+            'text': perf_action_text
+        }
+    }
+    key_insights.append(performance_card)
+
+    # 2. 주요 문제/경고 카드 (Problem) - micro_segment_alerts에서 가장 긴급한 것
+    problem_alerts = [a for a in micro_alerts if a.get('type') == 'problem']
+    problem_alerts_sorted = sorted(problem_alerts, key=lambda x: x.get('urgency_score', 0), reverse=True)
+
+    if problem_alerts_sorted:
+        top_problem = problem_alerts_sorted[0]
+        problem_card = {
+            'category': 'warning',
+            'icon': '⚠️',
+            'label': '주요 문제',
+            'bg_color': '#fff3e0',
+            'border_color': '#fb8c00',
+            'text_color': '#e65100',
+            'message': top_problem.get('message', ''),
+            'sub_items': [
+                top_problem.get('diagnosis', '')[:80] if top_problem.get('diagnosis') else ''
+            ],
+            'action': {
+                'type': 'primary',
+                'text': top_problem.get('action_detail', {}).get('primary', '') or top_problem.get('action', ''),
+                'secondary': top_problem.get('action_detail', {}).get('secondary', '')
+            },
+            'urgency_score': top_problem.get('urgency_score', 0),
+            'channel': top_problem.get('channel', '')
+        }
+    else:
+        # 문제가 없으면 긍정적 메시지
+        problem_card = {
+            'category': 'positive',
+            'icon': '✅',
+            'label': '상태 양호',
+            'bg_color': '#e8f5e9',
+            'border_color': '#43a047',
+            'text_color': '#2e7d32',
+            'message': '현재 심각한 이슈가 감지되지 않았습니다.',
+            'sub_items': ['모든 채널이 정상 범위 내에서 운영 중입니다.'],
+            'action': {
+                'type': 'maintain',
+                'text': '현재 성과를 유지하면서 신규 채널 테스트를 검토해보세요.'
+            }
+        }
+    key_insights.append(problem_card)
+
+    # 3. 성장 기회 카드 (Opportunity) - 가장 중요한 BCG Matrix 또는 micro_segment 기회
+    opportunity_alerts = [a for a in micro_alerts if a.get('type') == 'opportunity']
+
+    if opportunity_alerts:
+        # 기회 알림에서 가장 중요한 것
+        top_opp = opportunity_alerts[0]
+        # 메트릭 정보로 sub_items 구성
+        metrics = top_opp.get('metrics', {})
+        sub_items = []
+        if metrics.get('유입→활동'):
+            sub_items.append(f"활성화율 {metrics['유입→활동']}% (채널 평균 대비 우수)")
+        if metrics.get('전환율'):
+            sub_items.append(f"전환율 {metrics['전환율']}%")
+        if not sub_items:
+            sub_items.append(top_opp.get('diagnosis', '')[:60] if top_opp.get('diagnosis') else '성장 잠재력이 높은 채널입니다.')
+
+        action_card = {
+            'category': 'recommend',
+            'icon': '🚀',
+            'label': '성장 기회',  # '추천 액션' → '성장 기회'로 변경
+            'bg_color': '#f3e5f5',
+            'border_color': '#ab47bc',
+            'text_color': '#7b1fa2',
+            'message': top_opp.get('message', ''),
+            'sub_items': sub_items,  # 동적으로 생성된 상세 정보
+            'action': {
+                'type': 'opportunity',
+                'text': top_opp.get('action', ''),
+                'impact': top_opp.get('impact', {})
+            },
+            'channel': top_opp.get('channel', '')
+        }
+    elif bcg_analysis and 'hidden_gem' in bcg_analysis and bcg_analysis['hidden_gem']:
+        # Hidden Gem 채널이 있으면 투자 권장
+        gems = bcg_analysis['hidden_gem']
+        gem = gems[0] if isinstance(gems, list) else {'name': '고효율 채널'}
+        action_card = {
+            'category': 'recommend',
+            'icon': '💎',
+            'label': '투자 기회',
+            'bg_color': '#e8f5e9',
+            'border_color': '#4caf50',
+            'text_color': '#2e7d32',
+            'message': f"'{gem.get('name', '')}' 채널이 숨은 보석입니다!",
+            'sub_items': ['아직 트래픽은 적지만 전환율이 매우 높습니다.'],
+            'action': {
+                'type': 'scale_up',
+                'text': '이 채널의 광고 예산을 20% 증액하여 성과를 확인해보세요.',
+                'impact': gem.get('metrics', {})
+            }
+        }
+    elif bcg_analysis and 'cash_cow' in bcg_analysis and bcg_analysis['cash_cow']:
+        # Cash Cow가 있으면 유지 권장
+        cows = bcg_analysis['cash_cow']
+        cow = cows[0] if isinstance(cows, list) else {'name': '효자 채널'}
+        action_card = {
+            'category': 'recommend',
+            'icon': '👑',
+            'label': '핵심 채널 유지',
+            'bg_color': '#e3f2fd',
+            'border_color': '#1976d2',
+            'text_color': '#1565c0',
+            'message': f"'{cow.get('name', '')}' 채널이 매출의 핵심입니다.",
+            'sub_items': ['현재 전략을 유지하면서 고객 세그먼트 확대를 검토하세요.'],
+            'action': {
+                'type': 'maintain',
+                'text': '객단가 향상을 위해 세트 상품이나 업셀링을 시도해보세요.',
+                'impact': cow.get('metrics', {})
+            }
+        }
+    else:
+        # 기본 액션 카드
+        action_card = {
+            'category': 'recommend',
+            'icon': '🔍',
+            'label': '분석 필요',
+            'bg_color': '#e8eaf6',
+            'border_color': '#5c6bc0',
+            'text_color': '#3949ab',
+            'message': '더 많은 데이터가 쌓이면 맞춤 추천을 제공합니다.',
+            'sub_items': ['현재 데이터로는 명확한 기회를 식별하기 어렵습니다.'],
+            'action': {
+                'type': 'analyze',
+                'text': '각 채널별 전환율을 모니터링하면서 트렌드를 파악하세요.',
+                'impact': {}
+            }
+        }
+    key_insights.append(action_card)
+
+    # ========================================
     # 최종 JSON 구조 조립
     # ========================================
     insights = {
@@ -1837,6 +2006,9 @@ def generate_funnel_insights(category='default', ga4_file=None):
             'purchasers_text': format_number(total_purchase),
             'status_message': status_message
         },
+
+        # 핵심 요약 카드 3개 (성과, 문제, 액션)
+        'key_insights': key_insights,
 
         # 요약 (원본 호환)
         'summary': {

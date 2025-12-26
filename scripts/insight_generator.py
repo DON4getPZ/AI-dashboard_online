@@ -137,6 +137,30 @@ ACTION_GUIDES = {
 }
 
 # ============================================================================
+# 기회 요소 액션 템플릿 (세그먼트별 맞춤형)
+# ============================================================================
+OPPORTUNITY_ACTIONS = {
+    'scale_up': {
+        'channel': "'{value}' 채널 예산을 20% 증액하고, 일예산 상한(Cap)을 해제하세요.",
+        'product': "'{value}' 상품군 광고를 메인 배너에 노출하고, 리마케팅 오디언스를 확대하세요.",
+        'brand': "'{value}' 브랜드 전용 캠페인을 신설하고, 시즈널 프로모션을 기획하세요.",
+        'default': "이 영역에 예산을 20% 증액하여 성장 모멘텀을 극대화하세요."
+    },
+    'hidden_gem': {
+        'channel': "'{value}' 채널 테스트 예산을 2배로 늘리고, 성과 추이를 주간 단위로 모니터링하세요.",
+        'product': "'{value}' 상품군 전용 소재를 제작하고, 타겟 오디언스를 세분화하세요.",
+        'brand': "'{value}' 브랜드 인지도 캠페인을 소규모로 시작해보세요.",
+        'default': "테스트 예산을 2배로 늘려 잠재력을 검증하세요."
+    },
+    'growth_momentum': {
+        'channel': "'{value}' 채널의 현재 입찰 전략을 유지하면서 예산을 10% 증액하세요.",
+        'product': "'{value}' 상품군 재고를 확보하고, 크로스셀 상품을 함께 노출하세요.",
+        'brand': "'{value}' 브랜드 베스트셀러 상품을 전면에 배치하세요.",
+        'default': "현재 전략을 유지하며 예산을 10% 증액하여 성장을 가속화하세요."
+    }
+}
+
+# ============================================================================
 # 친화적 메시지 템플릿
 # ============================================================================
 FRIENDLY_TITLES = {
@@ -1236,6 +1260,10 @@ class InsightGenerator:
                     # 예상 추가 매출 (예산 20% 증액 시)
                     potential_uplift = total_revenue * 0.2  # 선형 가정
 
+                    # 세그먼트별 맞춤 액션
+                    action_template = OPPORTUNITY_ACTIONS['scale_up'].get(segment_name, OPPORTUNITY_ACTIONS['scale_up']['default'])
+                    action_text = action_template.format(value=segment_value)
+
                     opportunities.append({
                         'type': 'scale_up',
                         'tag': FRIENDLY_TITLES['scale_up'],
@@ -1243,7 +1271,7 @@ class InsightGenerator:
                         'segment_value': segment_value,
                         'title': f"🚀 {segment_value}: 수익성 최고조!",
                         'message': f"예상 ROAS가 {roas:.0f}%로 매우 높습니다. 물 들어올 때 노 저으세요!",
-                        'action': ACTION_GUIDES['opportunity'],
+                        'action': action_text,
                         'financial_impact': f"예산 20% 증액 시, 약 {format_currency(potential_uplift)} 추가 매출 기대",
                         'potential_uplift': safe_float(potential_uplift),
                         'roas': roas,
@@ -1254,6 +1282,13 @@ class InsightGenerator:
                 # Opportunity 2: Hidden Gem (저예산 고효율) - 숨은 보석
                 # ================================================================
                 elif roas > THRESHOLDS['opportunity_roas'] and total_cost < 1000000:  # 100만원 미만
+                    # 세그먼트별 맞춤 액션
+                    action_template = OPPORTUNITY_ACTIONS['hidden_gem'].get(segment_name, OPPORTUNITY_ACTIONS['hidden_gem']['default'])
+                    action_text = action_template.format(value=segment_value)
+
+                    # 예상 추가 매출 (2배 증액 시)
+                    potential_uplift = total_revenue  # 현재 매출만큼 추가 기대
+
                     opportunities.append({
                         'type': 'hidden_gem',
                         'tag': FRIENDLY_TITLES['hidden_gem'],
@@ -1261,9 +1296,9 @@ class InsightGenerator:
                         'segment_value': segment_value,
                         'title': f"💎 숨은 보석 발견: {segment_value}",
                         'message': f"아직 예산은 {format_currency(total_cost)}이지만 ROAS {roas:.0f}%로 효율이 터지고 있어요!",
-                        'action': ACTION_GUIDES['hidden_gem'],
-                        'financial_impact': "예산 2배 증액 시, 매출 2배 성장 가능 (ROAS 유지 가정)",
-                        'potential_uplift': safe_float(total_revenue),  # 2배 기대
+                        'action': action_text,
+                        'financial_impact': f"예산 2배 증액 시, 약 {format_currency(potential_uplift)} 추가 매출 기대 (ROAS 유지 가정)",
+                        'potential_uplift': safe_float(potential_uplift),
                         'roas': roas,
                         'priority': 2
                     })
@@ -1273,6 +1308,15 @@ class InsightGenerator:
                 # ================================================================
                 elif changes.get('전환수', 0) > THRESHOLDS['growth_star'] and roas > THRESHOLDS['low_roas']:
                     growth_pct = changes.get('전환수', 0)
+
+                    # 세그먼트별 맞춤 액션
+                    action_template = OPPORTUNITY_ACTIONS['growth_momentum'].get(segment_name, OPPORTUNITY_ACTIONS['growth_momentum']['default'])
+                    action_text = action_template.format(value=segment_value)
+
+                    # 예상 추가 전환 계산
+                    weekly_conversions = forecast_avg.get('전환수', 0) * 7
+                    additional_conversions = int(weekly_conversions * 0.1)
+
                     opportunities.append({
                         'type': 'growth_momentum',
                         'tag': "📈 성장 모멘텀",
@@ -1280,8 +1324,8 @@ class InsightGenerator:
                         'segment_value': segment_value,
                         'title': f"📈 {segment_value}: 성장 가속 중!",
                         'message': f"전환수가 {growth_pct:.1f}% 증가하면서 ROAS {roas:.0f}%를 유지하고 있어요.",
-                        'action': "현재 전략을 유지하고, 예산을 10% 증액하여 성장을 가속화하세요.",
-                        'financial_impact': f"예상 추가 전환: {int(forecast_avg.get('전환수', 0) * 7 * 0.1):,}건/주",
+                        'action': action_text,
+                        'financial_impact': f"예산 10% 증액 시, 주당 약 {additional_conversions:,}건 추가 전환 기대",
                         'roas': roas,
                         'priority': 3
                     })
@@ -1334,10 +1378,65 @@ class InsightGenerator:
         print(f"   Total matrix insights: {total_insights}")
 
     def generate_recommendations(self) -> None:
-        """투자 권장 세그먼트 도출 (Action-First)"""
+        """투자 권장 세그먼트 도출 (Action-First + 4분면 연동) - v2.3 개선"""
         print("\n[5/6] Generating recommendations...")
 
         recommendations = []
+
+        # 세그먼트 유형별 맞춤 액션 템플릿 (ADVICE_CONTEXT_MAP 확장)
+        ACTION_TEMPLATES = {
+            'channel': {
+                'scale_up': "'{value}' 채널 예산을 {pct}% 증액하고, 일예산 상한(Cap)을 해제하세요.",
+                'optimize': "'{value}' 채널의 타겟팅을 세분화하고, A/B 테스트로 소재를 최적화하세요.",
+                'defend': "'{value}' 채널의 CPC 상승을 모니터링하고, 제외 키워드를 정리하세요.",
+                'reduce': "'{value}' 채널 예산을 {pct}% 감액하고, 효율 높은 채널로 재배치하세요."
+            },
+            'product': {
+                'scale_up': "'{value}' 상품을 메인 배너에 배치하고, 재고(OOS) 대비하세요.",
+                'optimize': "'{value}' 상세페이지 CRO(전환율 최적화)를 진행하세요.",
+                'defend': "'{value}' 상품의 번들 구성으로 객단가를 높여 수익을 방어하세요.",
+                'reduce': "'{value}' 상품 광고를 축소하고, 클리어런스 세일을 검토하세요."
+            },
+            'brand': {
+                'scale_up': "'{value}' 브랜드 키워드 점유율을 높이고, 경쟁사 키워드도 공략하세요.",
+                'optimize': "'{value}' 브랜드 전용 랜딩페이지를 만들어 전환율을 높이세요.",
+                'defend': "'{value}' 브랜드 리브랜딩 또는 콜라보 캠페인으로 신선함을 주세요.",
+                'reduce': "'{value}' 브랜드 스토리텔링을 재점검하고, 타겟을 재설정하세요."
+            },
+            'promotion': {
+                'scale_up': "'{value}' 프로모션 기간을 연장하거나, 앵콜 기획전을 준비하세요.",
+                'optimize': "'{value}' 프로모션에 SNS 광고를 집중하여 바이럴을 유도하세요.",
+                'defend': "'{value}' 프로모션의 혜택 구조를 변경하거나, 신상품을 투입하세요.",
+                'reduce': "'{value}' 프로모션에 사은품/한정판 요소를 추가하세요."
+            }
+        }
+
+        # 4분면 기반 액션 유형 결정 함수
+        def determine_action_type(roas, growth_rate, th_eff_high, th_growth_high):
+            """ROAS와 성장률 기반으로 액션 유형 결정"""
+            if roas >= th_eff_high and growth_rate >= th_growth_high:
+                return 'scale_up', 30  # Super Star: 공격적 증액
+            elif roas >= th_eff_high and growth_rate < 0:
+                return 'defend', 0     # Fading Hero: 방어
+            elif roas < th_eff_high and growth_rate >= th_growth_high:
+                return 'optimize', 20  # Rising Potential: 최적화 + 소폭 증액
+            else:
+                return 'reduce', -20   # Problem Child: 감액
+
+        # 동적 임계값 계산
+        all_roas = []
+        for segment_name in ['channel', 'product', 'brand', 'promotion']:
+            if segment_name in self.segment_stats:
+                for v in self.segment_stats[segment_name].values():
+                    if v.get('roas', 0) > 0:
+                        all_roas.append(v['roas'])
+
+        if len(all_roas) >= 3:
+            th_eff_high = float(np.quantile(all_roas, 0.7))
+        else:
+            th_eff_high = THRESHOLDS['high_roas']
+
+        th_growth_high = 0.05  # 5% 성장률
 
         # 각 세그먼트 타입별로 권장 대상 도출
         for segment_name in ['channel', 'product', 'brand', 'promotion']:
@@ -1364,48 +1463,105 @@ class InsightGenerator:
             # 예측 데이터에서 트렌드 확인
             forecast_data = self.forecasts.get(segment_name, {}).get(segment_value, {})
             changes = forecast_data.get('changes', {})
+            forecast_avg = forecast_data.get('forecast_avg', {})
 
-            # 권장 이유 생성
+            # 성장률 계산 (전환값 변화율)
+            growth_rate = changes.get('전환값', 0) / 100  # % to ratio
+
+            # 4분면 기반 액션 유형 결정
+            action_type, budget_pct = determine_action_type(
+                segment_stats_data['roas'], growth_rate, th_eff_high, th_growth_high
+            )
+
+            # 맞춤 액션 생성
+            templates = ACTION_TEMPLATES.get(segment_name, ACTION_TEMPLATES['channel'])
+            action = templates[action_type].format(
+                value=segment_value,
+                pct=abs(budget_pct)
+            )
+
+            # 실제 수치 기반 expected_impact 계산
+            current_revenue = segment_stats_data.get('total_revenue', 0)
+            current_conversions = segment_stats_data.get('total_conversions', 0)
+            forecast_conv = forecast_avg.get('전환수', 0) * 7  # 7일 기준
+
+            if action_type == 'scale_up':
+                expected_revenue_uplift = current_revenue * (budget_pct / 100)
+                expected_conv_uplift = int(current_conversions * (budget_pct / 100))
+                if expected_revenue_uplift > 0:
+                    expected_impact = f"예상 추가 매출 {format_currency(expected_revenue_uplift)}, 전환 +{expected_conv_uplift}건"
+                else:
+                    expected_impact = f"전환수 {int(budget_pct * 0.8)}~{budget_pct}% 증가 예상"
+            elif action_type == 'optimize':
+                expected_impact = f"전환율 10~20% 개선 시, 전환 +{max(1, int(forecast_conv * 0.15))}건/주 예상"
+            elif action_type == 'defend':
+                expected_impact = f"현재 ROAS {int(segment_stats_data['roas'])}% 유지, 마진 방어"
+            else:  # reduce
+                saved_cost = segment_stats_data.get('total_cost', 0) * (abs(budget_pct) / 100)
+                expected_impact = f"예산 {format_currency(saved_cost)} 절감, 효율 채널로 재배치"
+
+            # 권장 이유 생성 (더 상세하게)
             reasons = []
-            if segment_stats_data['roas'] > 100:
-                reasons.append(f"ROAS {segment_stats_data['roas']}%로 높은 효율")
-            if segment_stats_data['cvr'] > 0:
-                reasons.append(f"CVR {segment_stats_data['cvr']}%")
-            if changes.get('전환수', 0) > 0:
-                reasons.append(f"전환수 {changes['전환수']}% 증가 예상")
-
-            # 권장 액션 결정
-            if changes.get('전환수', 0) >= 0 and segment_stats_data['roas'] > 100:
-                action = '예산 20% 증액'
-                expected_impact = '전환수 15-20% 증가 예상'
-            elif segment_stats_data['roas'] > 200:
-                action = '예산 30% 증액'
-                expected_impact = '전환값 25-30% 증가 예상'
+            if segment_stats_data['roas'] > th_eff_high:
+                reasons.append(f"ROAS {segment_stats_data['roas']:.0f}%로 상위 30% 효율")
+            elif segment_stats_data['roas'] > 100:
+                reasons.append(f"ROAS {segment_stats_data['roas']:.0f}%로 양호한 효율")
             else:
-                action = '예산 유지 및 모니터링'
-                expected_impact = '현 성과 유지'
+                reasons.append(f"ROAS {segment_stats_data['roas']:.0f}%로 개선 필요")
+
+            if segment_stats_data['cvr'] > 0:
+                reasons.append(f"CVR {segment_stats_data['cvr']:.2f}%")
+
+            if growth_rate > 0.05:
+                reasons.append(f"전환값 {growth_rate*100:.1f}% 성장 예측")
+            elif growth_rate < -0.05:
+                reasons.append(f"전환값 {abs(growth_rate)*100:.1f}% 하락 예측")
+
+            # ADVICE_CONTEXT_MAP에서 맞춤 조언 추가
+            matrix_type_map = {
+                'scale_up': 'super_star',
+                'optimize': 'rising_potential',
+                'defend': 'fading_hero',
+                'reduce': 'problem_child'
+            }
+            matrix_type = matrix_type_map.get(action_type, 'super_star')
+            context_advice = ADVICE_CONTEXT_MAP.get(segment_name, {}).get(matrix_type, '')
 
             recommendations.append({
                 'priority': len(recommendations) + 1,
                 'action': action,
+                'action_type': action_type,  # scale_up/optimize/defend/reduce
                 'target': {
                     'type': segment_name,
                     'value': segment_value
                 },
                 'reasons': reasons,
                 'expected_impact': expected_impact,
+                'context_advice': context_advice,  # 4분면 기반 맞춤 조언
                 'metrics': {
                     'roas': segment_stats_data['roas'],
                     'cvr': segment_stats_data['cvr'],
-                    'cpa': segment_stats_data['cpa']
+                    'cpa': segment_stats_data['cpa'],
+                    'growth_rate': round(growth_rate * 100, 1)
                 }
             })
+
+        # 기대 ROI 기반 정렬 (scale_up > optimize > defend > reduce)
+        action_priority = {'scale_up': 0, 'optimize': 1, 'defend': 2, 'reduce': 3}
+        recommendations = sorted(
+            recommendations,
+            key=lambda x: (action_priority.get(x.get('action_type', 'reduce'), 4), -x['metrics']['roas'])
+        )
+
+        # 우선순위 재할당
+        for i, rec in enumerate(recommendations):
+            rec['priority'] = i + 1
 
         self.insights['segments']['recommendations'] = recommendations
         print(f"   Generated {len(recommendations)} segment recommendations")
 
         for rec in recommendations:
-            print(f"      - {rec['target']['type']}/{rec['target']['value']}: {rec['action']}")
+            print(f"      - {rec['target']['type']}/{rec['target']['value']}: [{rec.get('action_type', 'N/A')}] {rec['action'][:40]}...")
 
     def generate_summary(self) -> None:
         """자연어 요약 생성 (AI 컨설턴트 톤)"""

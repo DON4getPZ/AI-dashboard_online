@@ -79,6 +79,30 @@
 | **참조 데이터** | `insights.json` → `by_period[period].opportunities` |
 | **기능** | - 성장 가능성 높은 영역 표시<br>- 추천 액션 및 기대 효과 |
 
+#### 3.4 Forecast Matrix 탭 (4분면 분석)
+| 항목 | 내용 |
+|------|------|
+| **HTML ID** | `matrixTab`, `matrixBrandTab`, `matrixChannelTab`, `matrixProductTab`, `matrixPromotionTab` |
+| **JS 함수** | `renderMatrixInsights()`, `setupMatrixCardTooltip()` |
+| **참조 데이터** | `insights.json` → `by_period[period].matrix_insights` |
+| **기능** | - 4개 하위탭: 브랜드, 채널, 상품, 프로모션<br>- 4분면 분류: Super Star, Fading Hero, Rising Potential, Problem Child<br>- 마우스 커서 따라가는 툴팁 (4분면 설명)<br>- 세그먼트별 ROAS, 예측 성장률, 매출 비중 표시<br>- 추천 액션 카드 |
+
+##### 3.4.1 Matrix 하위탭 버튼
+| 클래스 | data 속성 | 기능 |
+|--------|----------|------|
+| `matrix-sub-tab` | `data-matrix-tab="brand"` | 브랜드 세그먼트 |
+| `matrix-sub-tab` | `data-matrix-tab="channel"` | 채널 세그먼트 |
+| `matrix-sub-tab` | `data-matrix-tab="product"` | 상품 세그먼트 |
+| `matrix-sub-tab` | `data-matrix-tab="promotion"` | 프로모션 세그먼트 |
+
+##### 3.4.2 Matrix 카드 툴팁
+| 항목 | 내용 |
+|------|------|
+| **HTML ID** | `matrixCardTooltip` |
+| **CSS 클래스** | `matrix-tooltip-global` |
+| **JS 함수** | `setupMatrixCardTooltip()` |
+| **기능** | - 카드 호버 시 마우스 커서 따라가는 툴팁 표시<br>- 4분면 유형별 설명 (고효율+고성장, 고효율+역성장, 저효율+고성장, 저효율+역성장)<br>- 화면 경계 감지하여 위치 자동 조정 |
+
 ---
 
 ### 4. 최근 변화 인사이트 (collapsible-section #2)
@@ -330,6 +354,8 @@
 | `updateDeclineTrends()` | 하락 트렌드 |
 | `updateTrendPeriodIndicator()` | 트렌드 기간 표시 |
 | `updateChart()` | 예측 차트 |
+| `renderMatrixInsights()` | Forecast Matrix 4분면 렌더링 |
+| `setupMatrixCardTooltip()` | Matrix 카드 툴팁 이벤트 설정 |
 
 ### 세그먼트 함수
 | 함수명 | 기능 |
@@ -445,3 +471,6 @@
 | 2025-12-09 | KPI 토글 기능 문서화: `kpi-view-toggle`, `kpi-view-btn`, `kpi-grid-primary`, `kpi-grid-secondary`, `kpi-section.show-all` |
 | 2025-12-09 | 섹션 2 업데이트: 핵심 KPI 요약에 주요/세부 성과 토글 기능 추가 |
 | 2025-12-09 | 버튼 UI 컴포넌트 추가: 1.1 KPI 토글 버튼 섹션 |
+| 2025-12-27 | **[Forecast Matrix 하위탭]** matrixTab에 4개 하위탭 구현 (브랜드/채널/상품/프로모션). `matrix-sub-tab` 버튼 클래스, `matrix-sub-content` 컨텐츠 클래스 추가 |
+| 2025-12-27 | **[Matrix 툴팁]** 4분면 범례 삭제, 카드 호버 시 마우스 커서 따라가는 툴팁 구현. `matrix-tooltip-global` CSS 클래스, `matrixCardTooltip` 전역 엘리먼트, `setupMatrixCardTooltip()` 함수 추가 |
+| 2025-12-27 | 섹션 3.4 추가: Forecast Matrix 탭 (4분면 분석) - 하위탭, 툴팁 기능 문서화 |
