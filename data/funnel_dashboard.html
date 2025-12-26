@@ -3137,20 +3137,25 @@
             banner.style.display = 'block';
         }
 
-        // urgent_alerts 섹션 업데이트
+        // urgent_alerts 섹션 업데이트 (micro_segment_alerts 통합 버전)
         let urgentAlertsData = { high: [], medium: [] };
         let urgentAlertsExpanded = { high: false, medium: false };
 
         function updateUrgentAlerts() {
             const periodData = getPeriodData();
-            const alerts = periodData?.urgent_alerts || [];
 
-            // 심각도별로 그룹화
-            urgentAlertsData.high = alerts.filter(a => a.severity === 'high');
-            urgentAlertsData.medium = alerts.filter(a => a.severity === 'medium');
+            // micro_segment_alerts에서 problem 유형만 필터링 (urgent_alerts 대체)
+            const microAlerts = periodData?.micro_segment_alerts || [];
+            const problemAlerts = microAlerts
+                .filter(a => a.type === 'problem')
+                .sort((a, b) => (b.urgency_score || 0) - (a.urgency_score || 0));  // 긴급도 순 정렬
+
+            // 심각도별로 그룹화 (critical/high -> high, medium -> medium)
+            urgentAlertsData.high = problemAlerts.filter(a => ['critical', 'high'].includes(a.severity));
+            urgentAlertsData.medium = problemAlerts.filter(a => a.severity === 'medium');
 
             // 탭 카운트 업데이트
-            const totalCount = alerts.length;
+            const totalCount = problemAlerts.length;
             const urgentTotalEl = document.getElementById('urgentTotalCount');
             if (urgentTotalEl) {
                 urgentTotalEl.textContent = totalCount > 0 ? `(${totalCount}건)` : '';
@@ -3204,24 +3209,50 @@
                 return;
             }
 
-            cardsContainer.innerHTML = alerts.slice(0, displayCount).map(alert => `
+            cardsContainer.innerHTML = alerts.slice(0, displayCount).map(alert => {
+                // micro_segment_alerts 필드 매핑 (diagnosis 또는 reason)
+                const diagnosis = alert.diagnosis || alert.reason || '';
+                const impact = alert.impact || {};
+                const actionDetail = alert.action_detail || {};
+                const urgencyScore = alert.urgency_score || 0;
+
+                return `
                 <div style="padding: 16px; background: ${bgColor}; border-radius: 8px; border-left: 4px solid ${borderColor};">
-                    <div style="font-size: 15px; font-weight: 600; color: var(--grey-900); margin-bottom: 8px;">
-                        ${alert.title}
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <div style="font-size: 15px; font-weight: 600; color: var(--grey-900);">
+                            ${alert.title}
+                        </div>
+                        ${urgencyScore > 0 ? `
+                            <div style="font-size: 11px; padding: 2px 8px; background: ${type === 'high' ? 'var(--error-main)' : 'var(--warning-main)'}; color: white; border-radius: 10px; font-weight: 600;">
+                                긴급도 ${urgencyScore}
+                            </div>
+                        ` : ''}
                     </div>
                     <div style="font-size: 13px; color: var(--grey-700); margin-bottom: 8px;">
                         ${alert.message}
                     </div>
-                    ${alert.reason ? `
+                    ${diagnosis ? `
                         <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 8px;">
-                            <strong>원인:</strong> ${alert.reason}
+                            <strong>진단:</strong> ${diagnosis}
+                        </div>
+                    ` : ''}
+                    ${(impact.lost_users || impact.potential_revenue) ? `
+                        <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 8px; padding: 8px; background: rgba(0,0,0,0.03); border-radius: 4px;">
+                            <strong>📊 영향 추정:</strong>
+                            ${impact.lost_users ? ` 이탈 ${impact.lost_users}명` : ''}
+                            ${impact.potential_revenue ? ` · 잠재 손실 ₩${impact.potential_revenue.toLocaleString()}` : ''}
                         </div>
                     ` : ''}
                     <div style="padding: 10px; background: white; border-radius: 6px; font-size: 13px; color: var(--grey-900);">
-                        💡 <strong>추천 액션:</strong> ${alert.action}
+                        💡 <strong>추천 액션:</strong> ${actionDetail.primary || alert.action || '데이터 분석 후 대응 방안을 수립하세요.'}
                     </div>
+                    ${actionDetail.secondary ? `
+                        <div style="padding: 8px 10px; background: rgba(255,255,255,0.5); border-radius: 4px; font-size: 12px; color: var(--grey-700); margin-top: 6px;">
+                            ➕ <strong>추가 조치:</strong> ${actionDetail.secondary}
+                        </div>
+                    ` : ''}
                 </div>
-            `).join('');
+            `}).join('');
 
             // 접기/펼치기 버튼 처리
             if (alerts.length > 3) {

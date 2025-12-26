@@ -1623,4 +1623,12 @@ let channelEngagementChart = null;
 | 2025-12-26 | `MICRO_SEGMENT_DEFINITIONS`에 `condition`, `action_hint` 필드 추가 |
 | 2025-12-26 | '핵심 요약' 탭 `insight-card` 디자인 일관성 수정: padding 20px→16px, border-radius 12px→8px, background gradient→solid color, font-size 14px→15px/13px |
 | 2025-12-26 | '유형별 조치 가이드' 카드에 '추천 액션' 섹션 추가 (긴급 개선 카드와 동일 디자인) |
+| 2025-12-26 | **urgent_alerts → micro_segment_alerts 통합**: '긴급 개선' 탭의 데이터 소스를 `micro_segment_alerts`로 변경 |
+| 2025-12-26 | `MICRO_SEGMENT_DEFINITIONS`에 신규 세그먼트 3개 추가: `activation_drop`, `engagement_gap`, `silent_majority` |
+| 2025-12-26 | `CATEGORY_SEGMENT_ACTIONS` 매트릭스 추가: 카테고리(SA/DA/SNS/CRM/Organic 등) × 세그먼트 조합별 3단계 액션 제공 |
+| 2025-12-26 | `get_segment_action_detail()` 함수 추가: 카테고리×세그먼트 조합에 따른 primary/secondary/ab_test 액션 반환 |
+| 2025-12-26 | `calculate_urgency_score()` 함수 추가: 심각도+트래픽+Gap+잠재손실 기반 0-100점 긴급도 점수 산출 |
+| 2025-12-26 | `generate_micro_segment_alerts()` 확장: impact(lost_users, potential_revenue), benchmark, action_detail, urgency_score, priority_rank 필드 추가 |
+| 2025-12-26 | 프론트엔드 `updateUrgentAlerts()` 수정: `micro_segment_alerts`에서 problem 유형만 필터링하여 사용 |
+| 2025-12-26 | 프론트엔드 `renderUrgentAlertCards()` 확장: 긴급도 배지, 영향 추정, 추가 조치 표시 추가 |
 

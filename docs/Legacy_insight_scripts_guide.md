@@ -89,7 +89,13 @@ python scripts/generate_type_insights.py
   "time_analysis": { ... },     // 시계열 분석 (월별/주별)
   "prophet_forecast": { ... },  // Prophet 예측 인사이트
   "alerts": [...],              // 경고 알림
-  "recommendations": [...]      // 추천 액션
+  "recommendations": [...],     // 추천 액션
+
+  // ===== v2.7 신규: 4분면 매트릭스 인사이트 =====
+  "gender_matrix_insights": [...],         // 성별 4분면 분석
+  "age_gender_matrix_insights": [...],     // 연령x성별 4분면 분석
+  "device_matrix_insights": [...],         // 기기유형 4분면 분석
+  "deviceplatform_matrix_insights": [...]  // 기기플랫폼 4분면 분석
 }
 ```
 
@@ -144,6 +150,146 @@ elif performance_ratio < -20:  # 예측 대비 20% 미달
     prophet_alerts.append({...})
 ```
 
+#### E. 4분면 매트릭스 분석 (Efficiency-Scale Matrix) - v2.7
+
+> **핵심 개선**: 절대 평가(ROAS > 500%)를 **상대 평가(그룹 내 상위 N%)**로 전환하여 차원별(성별/연령/기기) 최적화 전략 제시
+
+##### E.1 매트릭스 정의
+
+| 구분 | **고효율 (High Efficiency)** | **저효율 (Low Efficiency)** |
+| :--- | :--- | :--- |
+| **고지출** | **👑 Core Driver (핵심 동력)**<br>예산도 많고 성과도 좋음<br>→ 현재 상태 유지, 예산 우선 배정 | **💸 Budget Bleeder (예산 누수)**<br>예산은 많은데 성과는 나쁨<br>→ 즉시 감액, 소재/타겟 수정 |
+| **저지출** | **💎 Efficiency Star (효율 스타)**<br>예산은 적은데 성과는 좋음<br>→ 예산 증액하여 Scale-up | **💤 Underperformer (성과 미달)**<br>예산도 적고 성과도 나쁨<br>→ 소재 테스트 후 OFF 처리 |
+
+##### E.2 상수 정의 (라인 107-139)
+
+```python
+# 동적 임계값 (Quantile 기준)
+MATRIX_THRESHOLDS = {
+    'th_spend_high': 0.6,  # 지출 상위 40% (Quantile 0.6)
+    'th_eff_high': 0.7,    # 효율 상위 30% (Quantile 0.7)
+    'th_eff_low': 0.3      # 효율 하위 30% (Quantile 0.3)
+}
+
+# 차원별 맞춤 처방
+DIMENSION_ADVICE_MAP = {
+    'demographic': {  # 성별/연령
+        'core_driver': "유사 타겟(Lookalike) 소스로 활용하여 모수를 확장하세요.",
+        'efficiency_star': "예산을 20%씩 증액하여 Scale-up 테스트하세요.",
+        'budget_bleeder': "해당 타겟 전용 소재로 교체하거나 입찰가를 낮추세요.",
+        'underperformer': "연령/성별 제외 설정을 통해 예산 낭비를 막으세요."
+    },
+    'device': {  # 기기/플랫폼
+        'core_driver': "결제 UX에 문제가 없는지 주기적으로 점검하세요.",
+        'efficiency_star': "특정 OS/기기 전용 입찰 전략을 테스트해보세요.",
+        'budget_bleeder': "랜딩페이지 최적화(LPO)가 시급합니다.",
+        'underperformer': "해당 기기 노출을 제외하세요."
+    },
+    'time': {  # 시간대/요일
+        'core_driver': "골든타임 예산 조기 소진 방지를 위해 스케줄 확보하세요.",
+        'efficiency_star': "틈새 시간대 입찰가를 높여 점유율을 확보하세요.",
+        'budget_bleeder': "Dayparting으로 해당 시간대 비중을 줄이세요.",
+        'underperformer': "광고 운영 시간에서 제외를 고려하세요."
+    }
+}
+```
+
+##### E.3 TypeMicroAnalyzer 클래스 (라인 218-384)
+
+```python
+class TypeMicroAnalyzer:
+    """4분면 매트릭스 기반 차원별 인사이트 생성"""
+
+    def _calculate_metrics(self, df, objective_type='conversion'):
+        """통합 효율 점수 및 랭킹 산출"""
+        if objective_type == 'traffic':
+            df['norm_efficiency'] = 1 / df['cpc'].replace(0, 0.01)
+        else:
+            df['norm_efficiency'] = df['roas'].fillna(0)
+
+        df['spend_rank'] = df['cost'].rank(pct=True)  # 0.0~1.0
+        df['eff_rank'] = df['norm_efficiency'].rank(pct=True)
+        return df
+
+    def _classify_quadrant(self, spend_rank, eff_rank):
+        """4분면 분류"""
+        th = MATRIX_THRESHOLDS
+        if spend_rank >= th['th_spend_high'] and eff_rank >= th['th_eff_high']:
+            return 'core_driver', 'positive'
+        elif spend_rank < th['th_spend_high'] and eff_rank >= th['th_eff_high']:
+            return 'efficiency_star', 'opportunity'
+        elif spend_rank >= th['th_spend_high'] and eff_rank <= th['th_eff_low']:
+            return 'budget_bleeder', 'high'
+        elif spend_rank < th['th_spend_high'] and eff_rank <= th['th_eff_low']:
+            return 'underperformer', 'warning'
+        return None, None
+
+    def generate_dimension_insights(self, df, dimension_name, objective_type='conversion'):
+        """차원별 4분면 인사이트 생성"""
+        # ... 분류 및 인사이트 생성 로직
+```
+
+##### E.4 4분면 Trigger 조건
+
+| Matrix Type | Trigger 조건 | Severity | Icon |
+|-------------|-------------|----------|------|
+| `core_driver` | spend_rank ≥ 0.6 AND eff_rank ≥ 0.7 | positive | 👑 |
+| `efficiency_star` | spend_rank < 0.6 AND eff_rank ≥ 0.7 | opportunity | 💎 |
+| `budget_bleeder` | spend_rank ≥ 0.6 AND eff_rank ≤ 0.3 | high | 💸 |
+| `underperformer` | spend_rank < 0.6 AND eff_rank ≤ 0.3 | warning | 💤 |
+
+##### E.5 JSON 출력 예시
+
+```json
+{
+  "gender_matrix_insights": [
+    {
+      "type": "dimension_insight",
+      "sub_type": "core_driver",
+      "dimension": "gender",
+      "target": "여성",
+      "severity": "positive",
+      "title": "👑 여성: 핵심 동력 (Core Driver)",
+      "message": "예산 비중이 높고 효율도 최상위권입니다. (상위 5%)",
+      "action": "유사 타겟(Lookalike) 소스로 활용하여 모수를 확장하세요.",
+      "metrics": {
+        "efficiency_value": 850,
+        "spend_rank_pct": 0.95,
+        "eff_rank_pct": 0.95
+      }
+    }
+  ]
+}
+```
+
+##### E.6 대시보드 연동 (type_dashboard.html)
+
+| 섹션 | 위치 | 표시 내용 |
+|------|------|----------|
+| 성별 비교 | 타겟팅 탭 | 4분면 배지 + 색상 표시 |
+| 효율-규모 매트릭스 | 타겟팅 탭 | 4분면 그리드 + 추천 액션 |
+
+```javascript
+// severityConfig에 positive 추가
+const severityConfig = {
+    'positive': { border: '#2e7d32', bg: '#e8f5e9', icon: '👑' },
+    'opportunity': { border: '#1976d2', bg: '#e3f2fd', icon: '💎' },
+    'high': { border: '#ef5350', bg: '#ffebee', icon: '💸' },
+    'warning': { border: '#ff9800', bg: '#fff3e0', icon: '💤' }
+};
+
+// 4분면 배지 렌더링
+function renderMatrixBadge(matrixType) {
+    const badges = {
+        'core_driver': { label: '핵심 동력', bg: '#2e7d32', icon: '👑' },
+        'efficiency_star': { label: '효율 스타', bg: '#1976d2', icon: '💎' },
+        'budget_bleeder': { label: '예산 누수', bg: '#d32f2f', icon: '💸' },
+        'underperformer': { label: '성과 부진', bg: '#ff9800', icon: '💤' }
+    };
+    // ...
+}
+```
+
 ---
 
 ## 2. insight_generator.py
@@ -182,6 +328,13 @@ python scripts/insight_generator.py
     "improvements_30d": [...],   // 30일 개선
     "declines_7d": [...],        // 7일 하락
     "declines_30d": [...]        // 30일 하락
+  },
+  // ===== v2.8 신규: Forecast Matrix 4분면 인사이트 =====
+  "matrix_insights": {
+    "brand": [...],              // 브랜드별 4분면 분류
+    "product": [...],            // 상품별 4분면 분류
+    "channel": [...],            // 채널별 4분면 분류
+    "promotion": [...]           // 프로모션별 4분면 분류
   },
   "summary": "...",              // 자연어 요약
   "details": { ... }             // 메타데이터
@@ -313,6 +466,97 @@ elif changes.get('전환수', 0) > THRESHOLDS['growth_star'] and roas > THRESHOL
         'priority': 3
     })
 ```
+
+#### H. Forecast Matrix 4분면 분석 (v2.8)
+
+> **핵심 개선**: 절대 평가(ROAS > 300%) 대신 **현재 효율(X축) × 예측 성장률(Y축)** 매트릭스로 세그먼트 분류
+
+##### Forecast Matrix 정의
+
+| 구분 | **고성장 (High Growth)** | **역성장 (Negative Growth)** |
+|------|-------------------------|------------------------------|
+| **고효율** (High Eff) | 🚀 **Super Star** (슈퍼스타)<br>돈도 벌고 미래도 밝음<br>**Action:** 예산 증액 + Lookalike 확장 | 🛡️ **Fading Hero** (지는 해)<br>지금은 좋지만 미래가 어두움<br>**Action:** 조기 방어, 신규 소재 준비 |
+| **저효율** (Low Eff) | 🌱 **Rising Potential** (씨앗)<br>지금은 별로지만 미래가 밝음<br>**Action:** 지켜보면서 Scale-up 준비 | 🗑️ **Problem Child** (문제아)<br>지금도 미래도 안 좋음<br>**Action:** 예산 감액 또는 OFF |
+
+##### FORECAST_MATRIX_THRESHOLDS (라인 77-83)
+
+```python
+FORECAST_MATRIX_THRESHOLDS = {
+    'th_eff_high': 0.7,      # 효율 상위 30% (Quantile 0.7)
+    'th_eff_low': 0.3,       # 효율 하위 30% (Quantile 0.3)
+    'th_growth_high': 0.05,  # 성장률 +5% 이상
+    'th_growth_low': -0.05,  # 역성장 -5% 이하
+    'th_impact_core': 0.10   # 매출 비중 10% 이상 = Core Risk
+}
+```
+
+##### ADVICE_CONTEXT_MAP (라인 88-117)
+
+| Segment Context | super_star | fading_hero | rising_potential | problem_child |
+|-----------------|------------|-------------|------------------|---------------|
+| **brand** | 경쟁사 키워드 점유율 확대 | 리브랜딩/콜라보로 신선함 | 니치마켓 전용 랜딩페이지 | 브랜드 스토리텔링 점검 |
+| **product** | 품절 방지, 재고 확보 | 상품 단종 or 묶음 판매 | 메인 배너 노출 테스트 | 가격/구성 재검토 |
+| **channel** | 예산 우선 배정 | 채널 특성 맞는 신규 소재 | 테스트 예산 증액 | 소재/타겟 전면 교체 |
+| **promotion** | 프로모션 기간 연장 | 신규 프로모션 기획 | 프로모션 범위 확대 | 프로모션 중단 검토 |
+
+##### InsightMicroAnalyzer 클래스 (라인 194-404)
+
+```python
+class InsightMicroAnalyzer:
+    def __init__(self):
+        self.advice_map = ADVICE_CONTEXT_MAP
+        self.thresholds = FORECAST_MATRIX_THRESHOLDS
+
+    def _calculate_metrics(self, segment_stats, forecast_data) -> dict:
+        """효율 점수, 예측 성장률, 총 매출 계산"""
+
+    def _get_dynamic_thresholds(self, all_metrics) -> dict:
+        """Quantile 기반 동적 임계값 반환"""
+
+    def generate_matrix_insights(self, segment_stats, forecasts, segment_context) -> list:
+        """4분면 매트릭스 인사이트 생성"""
+```
+
+##### Matrix Insight JSON 출력 예시
+
+```json
+{
+  "matrix_insights": {
+    "brand": [
+      {
+        "type": "matrix_insight",
+        "sub_type": "fading_hero",
+        "segment_type": "brand",
+        "segment_value": "브랜드A",
+        "severity": "warning",
+        "title": "🛡️ 브랜드A: 지는 해 방어 필요",
+        "message": "현재 효율(ROAS 691%)은 좋지만, 매출이 62.9% 감소할 것으로 예측됩니다.",
+        "action": "브랜드 노후화가 우려됩니다. 리브랜딩 캠페인이나 콜라보레이션으로 신선함을 주세요.",
+        "metrics": {
+          "roas": 691,
+          "forecast_growth_rate": -0.629,
+          "total_revenue": 5230000,
+          "revenue_impact_share": 0.08,
+          "eff_rank_pct": 0.85
+        }
+      }
+    ],
+    "product": [...],
+    "channel": [...],
+    "promotion": [...]
+  }
+}
+```
+
+##### Severity 기준
+
+| Matrix Type | Severity | 조건 |
+|-------------|----------|------|
+| `super_star` | opportunity | 고효율 + 고성장 |
+| `fading_hero` | warning | 고효율 + 역성장 |
+| `rising_potential` | opportunity | 저효율 + 고성장 |
+| `problem_child` | high | 저효율 + 역성장 |
+| `problem_child` (Core Risk) | critical | 저효율 + 역성장 + 매출비중 ≥ 10% |
 
 ---
 
@@ -1011,6 +1255,11 @@ BCG_MATRIX = {
 | **Traffic Waste** | 트래픽 ≥ 상위 20% AND 활동전환율 < 40% AND RPV < 하위 40% | high | 💸 |
 | **Checkout Friction** | 장바구니 > 50명 AND 장바구니→구매 < 10% | critical | 🚧 |
 | **Rising Star** | 트래픽 < 하위 50% AND 활동전환율 > 70% | opportunity | 🚀 |
+| **Activation Drop** | 유입→활동 전환율 < 50% AND 트래픽 ≥ 중간 | high | 🚪 |
+| **Engagement Gap** | 활동 > 50명 AND 유입→활동 ≥ 50% AND 활동→관심 < 평균×60% | medium | 🔍 |
+| **Silent Majority** | 트래픽 ≥ 최소기준 AND 모든 전환율이 평균 대비 -20% 이상 낮음 | medium | 😶 |
+
+> **v2.6 신규**: Activation Drop, Engagement Gap, Silent Majority 세그먼트가 추가되어 기존 `urgent_alerts`의 역할을 통합
 
 ###### 카테고리별 맞춤 처방 (CATEGORY_ADVICE_MAP)
 
@@ -1024,22 +1273,113 @@ BCG_MATRIX = {
 | **Organic** | 페이지 로딩 속도/모바일 UX 문제 | 회원가입 절차 간소화 |
 | **etc** | UTM 파라미터 설정 점검 | 상세 로그 분석으로 UX 개선 |
 
-###### 신규 JSON 출력 필드
+###### 카테고리 × 세그먼트 액션 매트릭스 (CATEGORY_SEGMENT_ACTIONS) - v2.6
+
+> **핵심 개선**: 카테고리와 세그먼트 조합별 3단계 액션(primary, secondary, ab_test)을 제공하여 정밀한 마케팅 처방 가능
+
+```python
+CATEGORY_SEGMENT_ACTIONS = {
+    ('SA', 'activation_drop'): {
+        'primary': "검색어 의도(Intent)와 랜딩페이지 불일치. T&D(Title & Description) 점검 필요.",
+        'secondary': "품질점수(QS) 개선을 위해 키워드-광고문구-랜딩 일관성 확보",
+        'ab_test': "헤드라인 A/B 테스트: 혜택 강조 vs 문제 해결형"
+    },
+    ('DA', 'checkout_friction'): {
+        'primary': "이미 구매한 상품이 노출되거나 관심 없는 상품 추천 중.",
+        'secondary': "리타겟팅 모수에 Burn Pixel(구매자 제외) 적용",
+        'ab_test': "크리에이티브 A/B 테스트: 상품 이미지 vs 라이프스타일 이미지"
+    },
+    ('SNS', 'engagement_gap'): {
+        'primary': "피드 스크롤 중 유입된 저관여 유저. 관심 유도 콘텐츠 부족.",
+        'secondary': "인터랙티브 요소(퀴즈, 스와이프) 또는 숏폼 영상 추가",
+        'ab_test': "콘텐츠 A/B 테스트: 정적 이미지 vs 동적 캐러셀"
+    },
+    # ... 총 18개 카테고리×세그먼트 조합 정의
+}
+```
+
+| Category | activation_drop | checkout_friction | engagement_gap |
+|----------|-----------------|-------------------|----------------|
+| **SA** | T&D 점검, 품질점수 개선 | 경쟁사 비교표 배치 | 카테고리 구조 점검 |
+| **DA** | 오클릭 방지, 지면 품질 점검 | Burn Pixel 적용 | CTA 추가, 딥링크 연결 |
+| **SNS** | 톤앤매너 일치 점검 | FOMO 요소 추가 | 인터랙티브 콘텐츠 |
+| **CRM** | 제목-본문 일치 점검 | 재구매 혜택 제안 | 개인화 추천 강화 |
+| **Organic** | 로딩 속도/모바일 UX | 간편 로그인 도입 | 콘텐츠 하단 CTA 추가 |
+
+###### 긴급도 점수 계산 (Urgency Score) - v2.6
+
+> 알림의 우선순위를 0-100점으로 정량화하여 '긴급 개선' 탭에서 중요도 순으로 정렬
+
+```python
+def calculate_urgency_score(alert, channel_metrics, avg_metrics):
+    """[긴급도 점수] 알림의 우선순위 점수 계산 (0-100)"""
+    score = 0
+
+    # 1. Severity 기본 점수 (40점 만점)
+    severity_scores = {'critical': 40, 'high': 30, 'medium': 20, 'opportunity': 10}
+    score += severity_scores.get(alert.get('severity', 'medium'), 20)
+
+    # 2. Traffic Volume 가중치 (30점 만점)
+    traffic = channel_metrics.get('acquisition', 0)
+    traffic_ratio = traffic / avg_metrics.get('avg_traffic', 1)
+    score += min(30, int(traffic_ratio * 15))
+
+    # 3. Gap 심각도 (20점 만점)
+    gap = alert.get('benchmark', {}).get('gap', 0)
+    score += min(20, int(abs(gap) * 2))
+
+    # 4. 잠재 손실 규모 (10점 만점)
+    impact = alert.get('impact', {})
+    if impact.get('potential_revenue', 0) > 1000000:
+        score += 10
+    elif impact.get('lost_users', 0) > 100:
+        score += 7
+
+    return min(round(score), 100)
+```
+
+| 점수 구성 | 배점 | 산정 기준 |
+|----------|------|----------|
+| Severity 기본점수 | 40점 | critical=40, high=30, medium=20, opportunity=10 |
+| Traffic Volume | 30점 | 평균 대비 트래픽 비율 × 15 (최대 30) |
+| Gap 심각도 | 20점 | 벤치마크 대비 Gap × 2 (최대 20) |
+| 잠재 손실 규모 | 10점 | 잠재손실 > 100만원: 10점, 이탈 > 100명: 7점 |
+
+###### 신규 JSON 출력 필드 (v2.6 확장)
 
 ```json
 {
-  // 마이크로 세그먼트 알림
+  // 마이크로 세그먼트 알림 (v2.6 확장)
   "micro_segment_alerts": [
     {
       "type": "opportunity|problem",
-      "sub_type": "vip_segment|traffic_leak|checkout_friction|growth_engine",
-      "severity": "opportunity|high|critical",
-      "title": "👑 채널명: VIP 채널 발견 (DA)",
-      "message": "전환율은 낮지만, 객단가가 높아 방문당 15,000원의 가치를 창출합니다.",
-      "diagnosis": "[DA] 채널 특성에 맞지 않는 랜딩페이지 전략입니다.",
-      "action": "카테고리별 맞춤 처방",
+      "sub_type": "vip_segment|traffic_leak|checkout_friction|growth_engine|activation_drop|engagement_gap|silent_majority",
+      "segment_type": "checkout_friction",
+      "severity": "opportunity|high|critical|medium",
+      "title": "🚧 메타 광고: 결제 장벽 감지",
+      "message": "장바구니에 담았지만 결제하지 않는 고객이 많습니다.",
+      "diagnosis": "[DA] 유저의 구매 결정을 막는 요소가 있습니다.",
+      "action": "결제 과정 UX 점검 필요",
       "category": "DA",
-      "metrics": { "rpv": 15000, "cvr": 0.8 }
+      "metrics": { "rpv": 15000, "cvr": 0.8 },
+
+      // ===== v2.6 신규 필드 =====
+      "urgency_score": 81,           // 긴급도 점수 (0-100)
+      "priority_rank": 1,            // 우선순위 순위 (1부터 시작)
+      "impact": {                    // 영향 추정
+        "lost_users": 150,           // 이탈 추정 인원
+        "potential_revenue": 1500000 // 잠재 손실 금액 (원)
+      },
+      "benchmark": {                 // 벤치마크 비교
+        "channel_avg": 5.8,          // 채널 평균값
+        "your_value": 8.5,           // 해당 채널 값
+        "gap": 2.8                   // Gap (양수: 초과, 음수: 미달)
+      },
+      "action_detail": {             // 3단계 상세 액션
+        "primary": "이미 구매한 상품이 노출되거나 관심 없는 상품 추천 중.",
+        "secondary": "리타겟팅 모수에 Burn Pixel(구매자 제외) 적용",
+        "ab_test": "크리에이티브 A/B 테스트: 상품 이미지 vs 라이프스타일 이미지"
+      }
     }
   ],
   // 채널별 확장 메트릭스
@@ -1061,6 +1401,32 @@ BCG_MATRIX = {
   }
 }
 ```
+
+###### 프론트엔드 통합 (긴급 개선 탭)
+
+> **v2.6 변경**: '긴급 개선' 탭이 `urgent_alerts` 대신 `micro_segment_alerts`의 problem 유형을 사용
+
+```javascript
+// updateUrgentAlerts() - funnel_dashboard.html
+function updateUrgentAlerts() {
+    const periodData = getPeriodData();
+
+    // micro_segment_alerts에서 problem 유형만 필터링
+    const microAlerts = periodData?.micro_segment_alerts || [];
+    const problemAlerts = microAlerts
+        .filter(a => a.type === 'problem')
+        .sort((a, b) => (b.urgency_score || 0) - (a.urgency_score || 0));  // 긴급도 순 정렬
+
+    // 심각도별로 그룹화
+    urgentAlertsData.high = problemAlerts.filter(a => ['critical', 'high'].includes(a.severity));
+    urgentAlertsData.medium = problemAlerts.filter(a => a.severity === 'medium');
+}
+```
+
+| 탭 | 데이터 소스 | 필터 조건 |
+|---|------------|----------|
+| **즉시 조치** (high) | micro_segment_alerts | type='problem' AND severity IN ('critical', 'high') |
+| **개선 권장** (medium) | micro_segment_alerts | type='problem' AND severity='medium' |
 
 ### 5.3 페르소나 기반 액션 가이드
 
@@ -1369,3 +1735,6 @@ def format_korean_currency(value: float) -> str:
 | 2025-12-26 | v2.3 | 섹션 5.2에 insight_generator.py 및 generate_funnel_data.py의 Alert/Opportunity/BCG Matrix/이탈예측 Trigger 조건 추가 |
 | 2025-12-26 | v2.4 | **[Upgrade Guide 반영]** 마이크로 세그먼트 분석 추가 (RPV, 동적 임계값, 카테고리별 처방) |
 | 2025-12-26 | v2.5 | 섹션 3.3 추가: generate_funnel_data_multiperiod.py (다중 기간 퍼널 분석) |
+| 2025-12-26 | v2.6 | **[urgent_alerts 통합]** micro_segment_alerts로 긴급 개선 탭 데이터 소스 통합. 신규 세그먼트 3개 추가 (activation_drop, engagement_gap, silent_majority). CATEGORY_SEGMENT_ACTIONS 매트릭스, urgency_score 계산 로직, impact/benchmark/action_detail 필드 추가 |
+| 2025-12-26 | v2.7 | **[4분면 매트릭스]** generate_type_insights.py에 Efficiency-Scale Matrix(4분면) 도입. TypeMicroAnalyzer 클래스, DIMENSION_ADVICE_MAP, MATRIX_THRESHOLDS 추가. 성별/연령/기기별 상대 평가 기반 인사이트 생성. type_dashboard.html에 4분면 시각화 및 추천 액션 표시 |
+| 2025-12-26 | v2.8 | **[Forecast Matrix]** insight_generator.py에 Forecast Matrix(4분면) 도입. InsightMicroAnalyzer 클래스, ADVICE_CONTEXT_MAP, FORECAST_MATRIX_THRESHOLDS 추가. 현재 효율 × 예측 성장률 기반 세그먼트 분류 (Super Star, Fading Hero, Rising Potential, Problem Child). matrix_insights JSON 필드 추가 |

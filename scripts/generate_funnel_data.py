@@ -265,6 +265,131 @@ MICRO_SEGMENT_DEFINITIONS = {
         'description': '규모는 작지만 반응률이 압도적. 예산 증액 시 고성장 예상',
         'condition': '유입→활동 상위 25% + 전환율 상위 25% + 유입 하위 50%',
         'action_hint': '예산 증액으로 스케일업 추진'
+    },
+    # ========== 신규 추가 (urgent_alerts 통합) ==========
+    'activation_drop': {
+        'type': 'Activation Drop (첫 이탈)',
+        'icon': '🚪',
+        'severity': 'high',
+        'description': '유입 후 첫 활동 전환에서 대량 이탈. 랜딩페이지 문제 가능성',
+        'condition': '유입→활동 전환율 < 기준(50%) + 트래픽 중간 이상',
+        'action_hint': '랜딩페이지 최적화 또는 광고-콘텐츠 일치성 점검'
+    },
+    'engagement_gap': {
+        'type': 'Engagement Gap (관심 단절)',
+        'icon': '🔍',
+        'severity': 'medium',
+        'description': '활동은 하지만 관심(장바구니)까지 이어지지 않음',
+        'condition': '유입→활동 양호 + 활동→관심 하위 25%',
+        'action_hint': '상품 추천 알고리즘 또는 CTA 배치 개선'
+    },
+    'silent_majority': {
+        'type': 'Silent Majority (침묵하는 다수)',
+        'icon': '😶',
+        'severity': 'medium',
+        'description': '유입은 있으나 모든 단계에서 평균 이하 성과',
+        'condition': '모든 전환율이 평균 대비 -20% 이상 낮음',
+        'action_hint': '채널-타겟 미스매치 점검, 예산 재배분 검토'
+    }
+}
+
+# 카테고리 × 세그먼트 상세 액션 매트릭스
+CATEGORY_SEGMENT_ACTIONS = {
+    # SA (검색 광고)
+    ('SA', 'activation_drop'): {
+        'primary': "검색어 의도(Intent)와 랜딩페이지 불일치. T&D(Title & Description) 점검 필요.",
+        'secondary': "품질점수(QS) 개선을 위해 키워드-광고문구-랜딩 일관성 확보",
+        'ab_test': "헤드라인 A/B 테스트: 혜택 강조 vs 문제 해결형"
+    },
+    ('SA', 'checkout_friction'): {
+        'primary': "가격 비교 중인 고관여 유저. 경쟁사 대비 강점이 부각되지 않음.",
+        'secondary': "상단에 '경쟁사 대비 강점 비교표' 또는 '최저가 보장' 배지 배치",
+        'ab_test': "가격 표시 A/B 테스트: 할인율 강조 vs 절대 금액 강조"
+    },
+    ('SA', 'engagement_gap'): {
+        'primary': "검색 의도는 맞으나 상품 탐색이 어려움. 카테고리 구조 점검 필요.",
+        'secondary': "검색 키워드별 맞춤 랜딩페이지 또는 필터 프리셋 적용",
+        'ab_test': "상품 정렬 A/B 테스트: 인기순 vs 관련도순"
+    },
+    # DA (디스플레이 광고)
+    ('DA', 'activation_drop'): {
+        'primary': "Fat Finger(오클릭) 또는 저품질 지면 노출 의심.",
+        'secondary': "앱/게임 지면 제외 및 Viewability 필터 적용",
+        'ab_test': "배너 크기 A/B 테스트: 300x250 vs 네이티브"
+    },
+    ('DA', 'checkout_friction'): {
+        'primary': "이미 구매한 상품이 노출되거나 관심 없는 상품 추천 중.",
+        'secondary': "리타겟팅 모수에 Burn Pixel(구매자 제외) 적용",
+        'ab_test': "크리에이티브 A/B 테스트: 상품 이미지 vs 라이프스타일 이미지"
+    },
+    ('DA', 'engagement_gap'): {
+        'primary': "배너 클릭 후 상품 탐색으로 이어지지 않음. CTA 부재.",
+        'secondary': "배너에서 직접 상품 상세로 딥링크 연결",
+        'ab_test': "랜딩 A/B 테스트: 카테고리 페이지 vs 상품 상세 페이지"
+    },
+    # SNS (소셜 미디어)
+    ('SNS', 'activation_drop'): {
+        'primary': "광고 소재(Hook)와 랜딩페이지(Body)의 톤앤매너 불일치.",
+        'secondary': "낚시성 소재 여부 점검. 소재-랜딩 간 스토리 연결성 강화",
+        'ab_test': "소재 A/B 테스트: UGC 스타일 vs 브랜드 스타일"
+    },
+    ('SNS', 'checkout_friction'): {
+        'primary': "충동 구매 성향 유저의 결제 이탈. 긴급성 트리거 부재.",
+        'secondary': "'마감 임박', '한정 수량' 등 FOMO 요소 추가",
+        'ab_test': "긴급성 A/B 테스트: 카운트다운 타이머 vs 재고 수량 표시"
+    },
+    ('SNS', 'engagement_gap'): {
+        'primary': "피드 스크롤 중 유입된 저관여 유저. 관심 유도 콘텐츠 부족.",
+        'secondary': "인터랙티브 요소(퀴즈, 스와이프) 또는 숏폼 영상 추가",
+        'ab_test': "콘텐츠 A/B 테스트: 정적 이미지 vs 동적 캐러셀"
+    },
+    # CRM (고객 관계 관리)
+    ('CRM', 'activation_drop'): {
+        'primary': "메시지 제목의 약속이 본문에서 지켜지지 않음.",
+        'secondary': "혜택을 첫 화면에 즉시 노출. 스크롤 없이 확인 가능하게",
+        'ab_test': "제목 A/B 테스트: 혜택 직접 언급 vs 호기심 유발형"
+    },
+    ('CRM', 'checkout_friction'): {
+        'primary': "기존 고객에게 신규 가입 혜택 노출 중. 메시지 불일치.",
+        'secondary': "'등급별 혜택'이나 '재구매 할인' 등 기존 고객 전용 오퍼 제안",
+        'ab_test': "오퍼 A/B 테스트: 할인 쿠폰 vs 적립금 vs 무료 배송"
+    },
+    ('CRM', 'engagement_gap'): {
+        'primary': "메일/푸시 오픈 후 상품 탐색으로 이어지지 않음.",
+        'secondary': "개인화 추천 상품 또는 최근 본 상품 리마인드 추가",
+        'ab_test': "추천 A/B 테스트: 협업 필터링 vs 콘텐츠 기반 추천"
+    },
+    # Organic (자연 유입)
+    ('Organic', 'activation_drop'): {
+        'primary': "페이지 로딩 속도 느림 또는 모바일 가독성 저하.",
+        'secondary': "Core Web Vitals 점검. LCP, FID, CLS 개선",
+        'ab_test': "레이아웃 A/B 테스트: 이미지 중심 vs 텍스트 중심"
+    },
+    ('Organic', 'checkout_friction'): {
+        'primary': "회원가입 절차 복잡 또는 결제 수단 제한.",
+        'secondary': "간편 로그인(소셜) 버튼 상단 배치, 비회원 구매 허용",
+        'ab_test': "결제 A/B 테스트: 원클릭 결제 vs 일반 결제"
+    },
+    ('Organic', 'engagement_gap'): {
+        'primary': "콘텐츠 소비 후 상품으로 연결되지 않음. CTA 부재.",
+        'secondary': "블로그/콘텐츠 하단에 관련 상품 추천 섹션 추가",
+        'ab_test': "CTA A/B 테스트: 텍스트 링크 vs 버튼 vs 상품 카드"
+    },
+    # etc (기타)
+    ('etc', 'activation_drop'): {
+        'primary': "유입 경로 파악 불가. UTM 파라미터 설정 점검 필요.",
+        'secondary': "모든 외부 링크에 UTM 태깅 적용, GA4 설정 검증",
+        'ab_test': "트래킹 개선 후 재분석 필요"
+    },
+    ('etc', 'checkout_friction'): {
+        'primary': "결제 이탈 원인 불명. 상세 로그 분석 필요.",
+        'secondary': "Hotjar/FullStory 등 세션 리플레이 도구로 이탈 지점 확인",
+        'ab_test': "결제 플로우 간소화 A/B 테스트"
+    },
+    ('etc', 'engagement_gap'): {
+        'primary': "유입 경로별 행동 패턴 분석 필요.",
+        'secondary': "GA4 탐색 분석에서 경로 분석 실행",
+        'ab_test': "세그먼트별 맞춤 랜딩페이지 테스트"
     }
 }
 
@@ -462,9 +587,81 @@ def get_category_advice(category, issue_type):
     return CATEGORY_ADVICE_MAP.get(category, CATEGORY_ADVICE_MAP.get('etc', {})).get(issue_type, default_msg)
 
 
+def get_segment_action_detail(category, segment_type):
+    """
+    [상세 액션] 카테고리 × 세그먼트 조합에 따른 3단계 액션 반환
+
+    Args:
+        category: 채널 카테고리 (SA, DA, SNS, CRM, PR, Organic, etc)
+        segment_type: 세그먼트 유형 (activation_drop, checkout_friction, engagement_gap 등)
+
+    Returns:
+        dict: {'primary': ..., 'secondary': ..., 'ab_test': ...}
+    """
+    if category is None:
+        category = 'etc'
+    category = str(category).strip()
+
+    # CATEGORY_SEGMENT_ACTIONS에서 조회
+    key = (category, segment_type)
+    default_actions = {
+        'primary': get_category_advice(category, 'activation' if 'activation' in segment_type or 'engagement' in segment_type else 'conversion'),
+        'secondary': "상세 데이터 분석을 통해 이탈 원인을 파악하세요.",
+        'ab_test': "가설 수립 후 A/B 테스트를 진행하세요."
+    }
+
+    return CATEGORY_SEGMENT_ACTIONS.get(key, default_actions)
+
+
+def calculate_urgency_score(alert, channel_metrics, avg_metrics):
+    """
+    [긴급도 점수] 알림의 우선순위 점수 계산 (0-100)
+
+    Args:
+        alert: 알림 딕셔너리
+        channel_metrics: 해당 채널의 메트릭스
+        avg_metrics: 전체 평균 메트릭스
+
+    Returns:
+        int: 긴급도 점수 (0-100)
+    """
+    score = 0
+
+    # 1. Severity 기본 점수 (40점)
+    severity_scores = {'critical': 40, 'high': 30, 'medium': 20, 'opportunity': 10}
+    score += severity_scores.get(alert.get('severity', 'medium'), 20)
+
+    # 2. Traffic Volume 가중치 (30점) - 트래픽 많을수록 중요
+    traffic = channel_metrics.get('유입', 0)
+    avg_traffic = avg_metrics.get('avg_traffic', 1)
+    if avg_traffic > 0:
+        traffic_ratio = min(traffic / avg_traffic, 3)  # 최대 3배까지
+        score += int(traffic_ratio * 10)  # 최대 30점
+
+    # 3. Gap 심각도 (20점) - 평균 대비 격차
+    metrics = alert.get('metrics', {})
+    if '유입→활동' in metrics:
+        avg_act_rate = avg_metrics.get('avg_act_rate', 50)
+        gap = avg_act_rate - metrics['유입→활동']
+        if gap > 0:
+            score += min(int(gap), 20)  # 최대 20점
+
+    # 4. 잠재 손실 규모 (10점)
+    impact = alert.get('impact', {})
+    lost_users = impact.get('lost_users', 0)
+    if lost_users > 500:
+        score += 10
+    elif lost_users > 200:
+        score += 7
+    elif lost_users > 50:
+        score += 4
+
+    return min(round(score), 100)
+
+
 def generate_micro_segment_alerts(channel_funnel_pivot, df_raw, thresholds):
     """
-    [마이크로 세그먼트] 데이터 분석 및 마이크로 세그먼트 Alert 생성
+    [마이크로 세그먼트] 데이터 분석 및 마이크로 세그먼트 Alert 생성 (보강 버전)
 
     Args:
         channel_funnel_pivot: 채널별 퍼널 피벗 DataFrame (RPV 계산 완료)
@@ -488,6 +685,20 @@ def generate_micro_segment_alerts(channel_funnel_pivot, df_raw, thresholds):
     if 'channel' in df_raw.columns and 'category' in df_raw.columns:
         channel_category_map = df_raw.groupby('channel')['category'].first().to_dict()
 
+    # ========== 평균 메트릭스 계산 (벤치마크용) ==========
+    total_acq = df['유입'].sum() if '유입' in df.columns else 0
+    total_act = df['활동'].sum() if '활동' in df.columns else 0
+    total_con = df['관심'].sum() if '관심' in df.columns else 0
+    total_pur = df['구매완료'].sum() if '구매완료' in df.columns else 0
+
+    avg_metrics = {
+        'avg_traffic': total_acq / len(df) if len(df) > 0 else 0,
+        'avg_act_rate': (total_act / total_acq * 100) if total_acq > 0 else 0,
+        'avg_engagement_rate': (total_con / total_act * 100) if total_act > 0 else 0,
+        'avg_cart_rate': (total_pur / total_con * 100) if total_con > 0 else 0,
+        'avg_cvr': (total_pur / total_acq * 100) if total_acq > 0 else 0
+    }
+
     for _, row in df.iterrows():
         channel = row['channel']
         category = channel_category_map.get(channel, 'etc')
@@ -502,15 +713,28 @@ def generate_micro_segment_alerts(channel_funnel_pivot, df_raw, thresholds):
 
         # 전환율 계산
         act_rate = (activation / acq * 100) if acq > 0 else 0
+        engagement_rate = (consideration / activation * 100) if activation > 0 else 0
         cvr = (purchase / acq * 100) if acq > 0 else 0
         cart_rate = (purchase / consideration * 100) if consideration > 0 else 0
 
         # 예상 손실 유저 (Impact 산출용)
-        avg_act_rate = df['활동'].sum() / df['유입'].sum() * 100 if df['유입'].sum() > 0 else 0
-        loss_users = int(acq * (avg_act_rate - act_rate) / 100) if act_rate < avg_act_rate else 0
+        loss_users = int(acq * (avg_metrics['avg_act_rate'] - act_rate) / 100) if act_rate < avg_metrics['avg_act_rate'] else 0
 
-        # 세그먼트 분류
-        segment_type = None
+        # 잠재 매출 손실 계산
+        avg_revenue_per_purchase = revenue / purchase if purchase > 0 else 50000  # 기본값 5만원
+        potential_lost_revenue = int(loss_users * avg_metrics['avg_cvr'] / 100 * avg_revenue_per_purchase)
+
+        # 채널 메트릭스 (urgency_score 계산용)
+        ch_metrics = {
+            '유입': acq,
+            'act_rate': act_rate,
+            'engagement_rate': engagement_rate,
+            'cvr': cvr,
+            'cart_rate': cart_rate
+        }
+
+        # 세그먼트 분류 플래그
+        detected_segments = []
 
         # ----------------------------------------------------------------
         # [Logic A] Hidden VIP (저전환/고가치) -> Opportunity
@@ -518,36 +742,51 @@ def generate_micro_segment_alerts(channel_funnel_pivot, df_raw, thresholds):
         if (cvr < 1.0) and (rpv >= dynamic_th['rpv_high']) and rpv > 0:
             segment_type = 'vip_segment'
             seg_def = MICRO_SEGMENT_DEFINITIONS[segment_type]
-            alerts.append({
+            action_detail = get_segment_action_detail(category, segment_type)
+
+            alert = {
                 'type': 'opportunity',
                 'sub_type': segment_type,
                 'severity': seg_def['severity'],
-                'title': f"{seg_def['icon']} {channel}: VIP 채널 발견 ({category})",
+                'title': f"{seg_def['icon']} {channel}: VIP 채널 발견",
                 'message': f"전환율은 낮지만, 객단가가 높아 방문당 {int(rpv):,}원의 가치를 창출합니다.",
+                'diagnosis': f"[{category}] 고객 단가가 높은 프리미엄 채널입니다.",
                 'action': "전환율보다는 ROAS 유지에 집중하세요. 섣불리 예산을 줄이지 마세요.",
+                'action_detail': action_detail,
                 'category': category,
-                'metrics': {'유입→활동': round(act_rate, 1), '전환율': round(cvr, 2), 'RPV': int(rpv)}
-            })
+                'metrics': {'유입→활동': round(act_rate, 1), '전환율': round(cvr, 2), 'RPV': int(rpv)},
+                'impact': {'lost_users': 0, 'potential_revenue': int(rpv * acq)},
+                'benchmark': {'channel_avg': round(avg_metrics['avg_cvr'], 2), 'your_value': round(cvr, 2), 'gap': round(cvr - avg_metrics['avg_cvr'], 2)}
+            }
+            alert['urgency_score'] = calculate_urgency_score(alert, ch_metrics, avg_metrics)
+            alerts.append(alert)
+            detected_segments.append(segment_type)
 
         # ----------------------------------------------------------------
         # [Logic B] Traffic Waste (고유입/저효율) -> High Alert
         # ----------------------------------------------------------------
-        elif (acq >= dynamic_th['traffic_high']) and (act_rate < 40) and (rpv < dynamic_th['rpv_low']):
+        if (acq >= dynamic_th['traffic_high']) and (act_rate < 40) and (rpv < dynamic_th['rpv_low']):
             segment_type = 'traffic_leak'
             seg_def = MICRO_SEGMENT_DEFINITIONS[segment_type]
-            advice = get_category_advice(category, 'activation')
+            action_detail = get_segment_action_detail(category, segment_type)
 
-            alerts.append({
+            alert = {
                 'type': 'problem',
                 'sub_type': segment_type,
                 'severity': seg_def['severity'],
                 'title': f"{seg_def['icon']} {channel}: 예산 누수 경고",
                 'message': f"[{category}] 유입은 많지만(Top 20%) 실속이 없습니다. 예상 손실 유저: {loss_users:,}명",
                 'diagnosis': f"[{category}] 채널 특성에 맞지 않는 랜딩페이지 전략입니다.",
-                'action': advice,
+                'action': action_detail.get('primary', get_category_advice(category, 'activation')),
+                'action_detail': action_detail,
                 'category': category,
-                'metrics': {'유입→활동': round(act_rate, 1), '전환율': round(cvr, 2), '유입': int(acq)}
-            })
+                'metrics': {'유입→활동': round(act_rate, 1), '전환율': round(cvr, 2), '유입': int(acq)},
+                'impact': {'lost_users': loss_users, 'potential_revenue': potential_lost_revenue},
+                'benchmark': {'channel_avg': round(avg_metrics['avg_act_rate'], 1), 'your_value': round(act_rate, 1), 'gap': round(act_rate - avg_metrics['avg_act_rate'], 1)}
+            }
+            alert['urgency_score'] = calculate_urgency_score(alert, ch_metrics, avg_metrics)
+            alerts.append(alert)
+            detected_segments.append(segment_type)
 
         # ----------------------------------------------------------------
         # [Logic C] Checkout Friction (결제 이탈) -> Critical Alert
@@ -555,37 +794,144 @@ def generate_micro_segment_alerts(channel_funnel_pivot, df_raw, thresholds):
         if (consideration > 50) and (cart_rate < 10):
             segment_type = 'checkout_friction'
             seg_def = MICRO_SEGMENT_DEFINITIONS[segment_type]
-            advice = get_category_advice(category, 'conversion')
+            action_detail = get_segment_action_detail(category, segment_type)
 
-            alerts.append({
+            # 결제 이탈로 인한 잠재 손실
+            lost_purchases = int(consideration * (avg_metrics['avg_cart_rate'] - cart_rate) / 100) if cart_rate < avg_metrics['avg_cart_rate'] else 0
+            checkout_lost_revenue = int(lost_purchases * avg_revenue_per_purchase)
+
+            alert = {
                 'type': 'problem',
                 'sub_type': segment_type,
                 'severity': seg_def['severity'],
                 'title': f"{seg_def['icon']} {channel}: 결제 장벽 감지",
                 'message': f"관심→구매 전환율이 {cart_rate:.1f}%로 매우 낮습니다. (기준 10% 대비 -{(10-cart_rate):.1f}%p)",
                 'diagnosis': f"[{category}] 유저의 구매 결정을 막는 요소가 있습니다.",
-                'action': advice,
+                'action': action_detail.get('primary', get_category_advice(category, 'conversion')),
+                'action_detail': action_detail,
                 'category': category,
-                'metrics': {'유입→활동': round(act_rate, 1), '전환율': round(cvr, 2), '관심→구매': round(cart_rate, 1)}
-            })
+                'metrics': {'유입→활동': round(act_rate, 1), '관심→구매': round(cart_rate, 1), '관심': int(consideration)},
+                'impact': {'lost_users': lost_purchases, 'potential_revenue': checkout_lost_revenue},
+                'benchmark': {'channel_avg': round(avg_metrics['avg_cart_rate'], 1), 'your_value': round(cart_rate, 1), 'gap': round(cart_rate - avg_metrics['avg_cart_rate'], 1)}
+            }
+            alert['urgency_score'] = calculate_urgency_score(alert, ch_metrics, avg_metrics)
+            alerts.append(alert)
+            detected_segments.append(segment_type)
 
         # ----------------------------------------------------------------
         # [Logic D] Rising Star (성장 기회) -> Opportunity
         # ----------------------------------------------------------------
-        elif (acq < dynamic_th['traffic_low']) and (act_rate > 70) and acq > 0:
+        if (acq < dynamic_th['traffic_low']) and (act_rate > 70) and acq > 0 and 'growth_engine' not in detected_segments:
             segment_type = 'growth_engine'
             seg_def = MICRO_SEGMENT_DEFINITIONS[segment_type]
+            action_detail = get_segment_action_detail(category, segment_type)
 
-            alerts.append({
+            alert = {
                 'type': 'opportunity',
                 'sub_type': segment_type,
                 'severity': seg_def['severity'],
                 'title': f"{seg_def['icon']} {channel}: 성장 엔진 점화",
                 'message': f"방문자의 {act_rate:.1f}%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+                'diagnosis': f"[{category}] 작지만 강한 채널입니다. 스케일업 기회!",
                 'action': "트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
+                'action_detail': action_detail,
                 'category': category,
-                'metrics': {'유입→활동': round(act_rate, 1), '전환율': round(cvr, 2), '유입': int(acq)}
-            })
+                'metrics': {'유입→활동': round(act_rate, 1), '전환율': round(cvr, 2), '유입': int(acq)},
+                'impact': {'lost_users': 0, 'potential_revenue': int(acq * 3 * cvr / 100 * avg_revenue_per_purchase)},  # 3배 증액 시 예상
+                'benchmark': {'channel_avg': round(avg_metrics['avg_act_rate'], 1), 'your_value': round(act_rate, 1), 'gap': round(act_rate - avg_metrics['avg_act_rate'], 1)}
+            }
+            alert['urgency_score'] = calculate_urgency_score(alert, ch_metrics, avg_metrics)
+            alerts.append(alert)
+            detected_segments.append(segment_type)
+
+        # ----------------------------------------------------------------
+        # [Logic E] Activation Drop (첫 이탈) -> High Alert (신규)
+        # urgent_alerts의 activation_low 통합
+        # ----------------------------------------------------------------
+        if (acq >= thresholds['min_users_for_analysis']) and (act_rate < thresholds['activation_rate_warning']) and 'traffic_leak' not in detected_segments:
+            segment_type = 'activation_drop'
+            seg_def = MICRO_SEGMENT_DEFINITIONS[segment_type]
+            action_detail = get_segment_action_detail(category, segment_type)
+
+            alert = {
+                'type': 'problem',
+                'sub_type': segment_type,
+                'severity': seg_def['severity'],
+                'title': f"{seg_def['icon']} {channel}: 첫 이탈 경고",
+                'message': f"유입→활동 전환율이 {act_rate:.1f}%로 기준({thresholds['activation_rate_warning']}%) 미달입니다.",
+                'diagnosis': f"[{category}] 랜딩페이지에서 대량 이탈이 발생하고 있습니다.",
+                'action': action_detail.get('primary', get_category_advice(category, 'activation')),
+                'action_detail': action_detail,
+                'category': category,
+                'metrics': {'유입→활동': round(act_rate, 1), '전환율': round(cvr, 2), '유입': int(acq)},
+                'impact': {'lost_users': loss_users, 'potential_revenue': potential_lost_revenue},
+                'benchmark': {'channel_avg': round(avg_metrics['avg_act_rate'], 1), 'your_value': round(act_rate, 1), 'gap': round(act_rate - avg_metrics['avg_act_rate'], 1)}
+            }
+            alert['urgency_score'] = calculate_urgency_score(alert, ch_metrics, avg_metrics)
+            alerts.append(alert)
+            detected_segments.append(segment_type)
+
+        # ----------------------------------------------------------------
+        # [Logic F] Engagement Gap (관심 단절) -> Medium Alert (신규)
+        # ----------------------------------------------------------------
+        if (activation > 50) and (act_rate >= 50) and (engagement_rate < avg_metrics['avg_engagement_rate'] * 0.6):
+            segment_type = 'engagement_gap'
+            seg_def = MICRO_SEGMENT_DEFINITIONS[segment_type]
+            action_detail = get_segment_action_detail(category, segment_type)
+
+            # 관심 단절로 인한 잠재 손실
+            expected_consideration = int(activation * avg_metrics['avg_engagement_rate'] / 100)
+            lost_consideration = max(0, expected_consideration - consideration)
+
+            alert = {
+                'type': 'problem',
+                'sub_type': segment_type,
+                'severity': seg_def['severity'],
+                'title': f"{seg_def['icon']} {channel}: 관심 단절 감지",
+                'message': f"활동→관심 전환율이 {engagement_rate:.1f}%로 평균({avg_metrics['avg_engagement_rate']:.1f}%)의 60% 미만입니다.",
+                'diagnosis': f"[{category}] 상품 탐색에서 장바구니로 연결되지 않습니다.",
+                'action': action_detail.get('primary', "상품 추천 알고리즘 또는 CTA 배치를 개선하세요."),
+                'action_detail': action_detail,
+                'category': category,
+                'metrics': {'유입→활동': round(act_rate, 1), '활동→관심': round(engagement_rate, 1), '활동': int(activation)},
+                'impact': {'lost_users': lost_consideration, 'potential_revenue': int(lost_consideration * avg_metrics['avg_cart_rate'] / 100 * avg_revenue_per_purchase)},
+                'benchmark': {'channel_avg': round(avg_metrics['avg_engagement_rate'], 1), 'your_value': round(engagement_rate, 1), 'gap': round(engagement_rate - avg_metrics['avg_engagement_rate'], 1)}
+            }
+            alert['urgency_score'] = calculate_urgency_score(alert, ch_metrics, avg_metrics)
+            alerts.append(alert)
+            detected_segments.append(segment_type)
+
+        # ----------------------------------------------------------------
+        # [Logic G] Silent Majority (침묵하는 다수) -> Medium Alert (신규)
+        # ----------------------------------------------------------------
+        if (acq >= thresholds['min_users_for_analysis']) and len(detected_segments) == 0:
+            # 모든 지표가 평균 대비 20% 이상 낮은 경우
+            is_silent = (
+                act_rate < avg_metrics['avg_act_rate'] * 0.8 and
+                cvr < avg_metrics['avg_cvr'] * 0.8
+            )
+            if is_silent:
+                segment_type = 'silent_majority'
+                seg_def = MICRO_SEGMENT_DEFINITIONS[segment_type]
+                action_detail = get_segment_action_detail(category, segment_type)
+
+                alert = {
+                    'type': 'problem',
+                    'sub_type': segment_type,
+                    'severity': seg_def['severity'],
+                    'title': f"{seg_def['icon']} {channel}: 전반적 저조",
+                    'message': f"모든 전환 지표가 평균 대비 20% 이상 낮습니다. 채널-타겟 미스매치 의심.",
+                    'diagnosis': f"[{category}] 채널 특성과 타겟 고객이 맞지 않을 수 있습니다.",
+                    'action': action_detail.get('primary', "채널별 타겟 오디언스 재검토 및 예산 재배분을 검토하세요."),
+                    'action_detail': action_detail,
+                    'category': category,
+                    'metrics': {'유입→활동': round(act_rate, 1), '전환율': round(cvr, 2), '유입': int(acq)},
+                    'impact': {'lost_users': loss_users, 'potential_revenue': potential_lost_revenue},
+                    'benchmark': {'channel_avg': round(avg_metrics['avg_cvr'], 2), 'your_value': round(cvr, 2), 'gap': round(cvr - avg_metrics['avg_cvr'], 2)}
+                }
+                alert['urgency_score'] = calculate_urgency_score(alert, ch_metrics, avg_metrics)
+                alerts.append(alert)
+                detected_segments.append(segment_type)
 
         # 채널별 확장 메트릭스 저장
         channel_metrics[channel] = {
@@ -593,11 +939,23 @@ def generate_micro_segment_alerts(channel_funnel_pivot, df_raw, thresholds):
             'rpv': round(rpv, 2),
             'rpv_log': round(row.get('rpv_log', 0), 4),
             'traffic_rank_pct': round(row.get('traffic_rank_pct', 0), 2),
-            'segment_type': segment_type,
+            'segment_types': detected_segments,  # 복수 세그먼트 지원
             'activation_rate': round(act_rate, 1),
+            'engagement_rate': round(engagement_rate, 1),
             'cvr': round(cvr, 2),
-            'cart_conversion_rate': round(cart_rate, 1)
+            'cart_conversion_rate': round(cart_rate, 1),
+            '유입': int(acq),
+            '활동': int(activation),
+            '관심': int(consideration),
+            '구매완료': int(purchase)
         }
+
+    # ========== 우선순위 정렬 ==========
+    alerts.sort(key=lambda x: x.get('urgency_score', 0), reverse=True)
+
+    # priority_rank 부여
+    for i, alert in enumerate(alerts):
+        alert['priority_rank'] = i + 1
 
     return alerts, channel_metrics, dynamic_th
 

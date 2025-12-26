@@ -6639,9 +6639,10 @@
             // 추천 카드 렌더링 헬퍼 함수
             function renderRecommendationCard(rec, idx) {
                 const severityConfig = {
+                    'positive': { border: '#2e7d32', bg: '#e8f5e9', icon: '👑' },  // 4분면: Core Driver
                     'high': { border: '#ef5350', bg: '#ffebee', icon: '🚨' },
                     'warning': { border: '#ff9800', bg: '#fff3e0', icon: '⚠️' },
-                    'opportunity': { border: '#4caf50', bg: '#e8f5e9', icon: '🚀' },
+                    'opportunity': { border: '#1976d2', bg: '#e3f2fd', icon: '💎' },  // 4분면: Efficiency Star
                     'info': { border: '#2196f3', bg: '#e3f2fd', icon: '💡' }
                 };
                 const config = severityConfig[rec.severity] || severityConfig['info'];
@@ -7284,8 +7285,10 @@
                 // 헬퍼 함수: 경고 카드 렌더링
                 function renderAlertCard(alert) {
                     const severityConfig = {
+                        'positive': { border: '#2e7d32', bg: '#e8f5e9', badge: '핵심', badgeBg: '#2e7d32' },  // 4분면: Core Driver
                         'high': { border: '#d32f2f', bg: '#ffebee', badge: '긴급', badgeBg: '#d32f2f' },
-                        'warning': { border: '#f57c00', bg: '#fff3e0', badge: '주의', badgeBg: '#f57c00' }
+                        'warning': { border: '#f57c00', bg: '#fff3e0', badge: '주의', badgeBg: '#f57c00' },
+                        'opportunity': { border: '#1976d2', bg: '#e3f2fd', badge: '기회', badgeBg: '#1976d2' }  // 4분면: Efficiency Star
                     };
                     const config = severityConfig[alert.severity] || severityConfig['warning'];
 
@@ -7554,16 +7557,40 @@
             });
         }
 
+        // 4분면 매트릭스 배지 렌더링 헬퍼 함수
+        function renderMatrixBadge(matrixType) {
+            const badges = {
+                'core_driver': { label: '핵심 동력', bg: '#2e7d32', icon: '👑' },
+                'efficiency_star': { label: '효율 스타', bg: '#1976d2', icon: '💎' },
+                'budget_bleeder': { label: '예산 누수', bg: '#d32f2f', icon: '💸' },
+                'underperformer': { label: '성과 부진', bg: '#ff9800', icon: '💤' }
+            };
+            const badge = badges[matrixType];
+            if (!badge) return '';
+            return `<span style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px;
+                    background: ${badge.bg}; color: white; border-radius: 12px; font-size: 10px; font-weight: 600;">
+                    ${badge.icon} ${badge.label}</span>`;
+        }
+
+        // 4분면 인사이트를 기존 성과 데이터와 매칭
+        function getMatrixInsightForTarget(matrixInsights, targetValue) {
+            if (!matrixInsights || !Array.isArray(matrixInsights)) return null;
+            return matrixInsights.find(m => m.target === targetValue);
+        }
+
         // 탭 3: 타겟 분석 - 사용자 친화적 버전
         function renderTargetingTab() {
             const periodData = getPeriodData();
             const genderData = (periodData.gender_performance || []).filter(g => isValidGender(g.gender));
+            const genderMatrixInsights = periodData.gender_matrix_insights || [];  // 4분면 인사이트
             const deviceData = (periodData.device_performance || []).filter(d =>
                 d.device && d.device.toLowerCase() !== 'uncategorized' && d.device.toLowerCase() !== 'unknown'
             );
+            const deviceMatrixInsights = periodData.device_matrix_insights || [];  // 4분면 인사이트
             const devicePlatformData = (periodData.deviceplatform_performance || []).filter(d =>
                 d.deviceplatform && d.deviceplatform.toLowerCase() !== 'uncategorized' && d.deviceplatform.toLowerCase() !== 'unknown'
             );
+            const deviceplatformMatrixInsights = periodData.deviceplatform_matrix_insights || [];  // 4분면 인사이트
             const ageGenderData = (periodData.age_gender_combinations || []).filter(item =>
                 isValidGender(item.gender) && isValidAge(item.age)
             );
@@ -7650,7 +7677,7 @@
 
             html += `</div></div>`;
 
-            // 2. 성별 비교 (시각적) - 호버 툴팁 적용
+            // 2. 성별 비교 (시각적) - 4분면 매트릭스 적용
             if (genderData.length > 0) {
                 html += `
                     <div class="hoverable-card"
@@ -7660,29 +7687,135 @@
                          data-tooltip-recommendation="효율이 높은 성별에 예산을 집중하면 성과가 개선됩니다."
                          style="margin-bottom: 12px; padding: 14px; background: white; border-radius: 10px; border: 1px solid var(--grey-200);">
                         <div style="font-size: 12px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px;">
-                            👥 성별 비교
+                            👥 성별 비교 <span style="font-size: 10px; color: var(--grey-500); font-weight: 400;">(4분면 분석)</span>
                         </div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px;">
                 `;
 
                 const sortedGender = [...genderData].sort((a, b) => b.roas - a.roas);
                 sortedGender.forEach((g, idx) => {
                     const normalizedGender = normalizeGender(g.gender) || g.gender;
                     const cpa = g.conversions > 0 ? g.cost / g.conversions : 0;
-                    const isTop = idx === 0;
+
+                    // 4분면 인사이트 매칭
+                    const matrixInsight = getMatrixInsightForTarget(genderMatrixInsights, normalizedGender);
+                    const matrixType = matrixInsight ? matrixInsight.sub_type : null;
+                    const matrixAction = matrixInsight ? matrixInsight.action : null;
+
+                    // 배경색 결정 (4분면 기반)
+                    let bgColor = '#f5f5f5';
+                    let borderStyle = '';
+                    if (matrixType === 'core_driver') {
+                        bgColor = '#e8f5e9'; borderStyle = 'border: 2px solid #2e7d32;';
+                    } else if (matrixType === 'efficiency_star') {
+                        bgColor = '#e3f2fd'; borderStyle = 'border: 2px solid #1976d2;';
+                    } else if (matrixType === 'budget_bleeder') {
+                        bgColor = '#ffebee'; borderStyle = 'border: 2px solid #d32f2f;';
+                    } else if (matrixType === 'underperformer') {
+                        bgColor = '#fff3e0'; borderStyle = 'border: 2px solid #ff9800;';
+                    }
+
                     html += `
-                        <div style="padding: 12px; background: ${isTop ? '#e8f5e9' : '#f5f5f5'}; border-radius: 8px; ${isTop ? 'border: 2px solid #4caf50;' : ''}">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="padding: 12px; background: ${bgColor}; border-radius: 8px; ${borderStyle}">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 4px;">
                                 <span style="font-size: 13px; font-weight: 700; color: var(--grey-800);">${normalizedGender}</span>
-                                ${isTop ? '<span style="font-size: 10px; padding: 2px 6px; background: #4caf50; color: white; border-radius: 8px;">추천</span>' : ''}
+                                ${matrixType ? renderMatrixBadge(matrixType) : ''}
                             </div>
-                            <div style="font-size: 18px; font-weight: 800; color: ${isTop ? '#2e7d32' : 'var(--grey-700)'}; margin-bottom: 4px;">${formatPercent(g.roas)}</div>
-                            <div style="font-size: 10px; color: var(--grey-500);">전환당 ${formatCurrency(cpa)}</div>
+                            <div style="font-size: 18px; font-weight: 800; color: var(--grey-700); margin-bottom: 4px;">${formatPercent(g.roas)}</div>
+                            <div style="font-size: 10px; color: var(--grey-500); margin-bottom: 8px;">전환당 ${formatCurrency(cpa)}</div>
+                            ${matrixAction ? `
+                                <div style="margin-top: 8px; padding: 8px; background: rgba(255,255,255,0.8); border-radius: 6px; font-size: 10px; color: var(--grey-700); line-height: 1.4;">
+                                    💡 ${matrixAction}
+                                </div>
+                            ` : ''}
                         </div>
                     `;
                 });
 
                 html += `</div></div>`;
+            }
+
+            // 2.5 4분면 매트릭스 시각화 (전체 타겟 요약)
+            const allMatrixInsights = [
+                ...(genderMatrixInsights || []),
+                ...(deviceMatrixInsights || []),
+                ...(deviceplatformMatrixInsights || [])
+            ];
+
+            if (allMatrixInsights.length > 0) {
+                // 4분면별로 그룹핑
+                const quadrants = {
+                    'core_driver': allMatrixInsights.filter(i => i.sub_type === 'core_driver'),
+                    'efficiency_star': allMatrixInsights.filter(i => i.sub_type === 'efficiency_star'),
+                    'budget_bleeder': allMatrixInsights.filter(i => i.sub_type === 'budget_bleeder'),
+                    'underperformer': allMatrixInsights.filter(i => i.sub_type === 'underperformer')
+                };
+
+                html += `
+                    <div style="margin-bottom: 16px; padding: 16px; background: white; border-radius: 12px; border: 1px solid var(--grey-200);">
+                        <div style="font-size: 13px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px;">
+                            📊 효율-규모 매트릭스 (4분면)
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <!-- 고지출 + 고효율: Core Driver -->
+                            <div style="padding: 12px; background: #e8f5e9; border-radius: 8px; border: 1px solid #4caf50;">
+                                <div style="font-size: 11px; font-weight: 700; color: #2e7d32; margin-bottom: 6px;">👑 핵심 동력</div>
+                                <div style="font-size: 10px; color: var(--grey-600);">고지출 + 고효율</div>
+                                <div style="margin-top: 8px; font-size: 11px; color: var(--grey-800);">
+                                    ${quadrants.core_driver.map(i => i.target).join(', ') || '-'}
+                                </div>
+                                ${quadrants.core_driver.length > 0 && quadrants.core_driver[0].action ? `
+                                <div style="margin-top: 10px; padding: 10px; background: #ffffff; border-radius: 6px; border-left: 3px solid #2e7d32;">
+                                    <div style="font-size: 10px; font-weight: 700; color: #1b5e20; margin-bottom: 4px;">💡 추천 액션</div>
+                                    <div style="font-size: 11px; font-weight: 500; color: #1b5e20; line-height: 1.5;">${quadrants.core_driver[0].action}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                            <!-- 저지출 + 고효율: Efficiency Star -->
+                            <div style="padding: 12px; background: #e3f2fd; border-radius: 8px; border: 1px solid #2196f3;">
+                                <div style="font-size: 11px; font-weight: 700; color: #1565c0; margin-bottom: 6px;">💎 효율 스타</div>
+                                <div style="font-size: 10px; color: var(--grey-600);">저지출 + 고효율</div>
+                                <div style="margin-top: 8px; font-size: 11px; color: var(--grey-800);">
+                                    ${quadrants.efficiency_star.map(i => i.target).join(', ') || '-'}
+                                </div>
+                                ${quadrants.efficiency_star.length > 0 && quadrants.efficiency_star[0].action ? `
+                                <div style="margin-top: 10px; padding: 10px; background: #ffffff; border-radius: 6px; border-left: 3px solid #1565c0;">
+                                    <div style="font-size: 10px; font-weight: 700; color: #0d47a1; margin-bottom: 4px;">💡 추천 액션</div>
+                                    <div style="font-size: 11px; font-weight: 500; color: #0d47a1; line-height: 1.5;">${quadrants.efficiency_star[0].action}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                            <!-- 고지출 + 저효율: Budget Bleeder -->
+                            <div style="padding: 12px; background: #ffebee; border-radius: 8px; border: 1px solid #ef5350;">
+                                <div style="font-size: 11px; font-weight: 700; color: #c62828; margin-bottom: 6px;">💸 예산 누수</div>
+                                <div style="font-size: 10px; color: var(--grey-600);">고지출 + 저효율</div>
+                                <div style="margin-top: 8px; font-size: 11px; color: var(--grey-800);">
+                                    ${quadrants.budget_bleeder.map(i => i.target).join(', ') || '-'}
+                                </div>
+                                ${quadrants.budget_bleeder.length > 0 && quadrants.budget_bleeder[0].action ? `
+                                <div style="margin-top: 10px; padding: 10px; background: #ffffff; border-radius: 6px; border-left: 3px solid #c62828;">
+                                    <div style="font-size: 10px; font-weight: 700; color: #b71c1c; margin-bottom: 4px;">🚨 추천 액션</div>
+                                    <div style="font-size: 11px; font-weight: 500; color: #b71c1c; line-height: 1.5;">${quadrants.budget_bleeder[0].action}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                            <!-- 저지출 + 저효율: Underperformer -->
+                            <div style="padding: 12px; background: #fff3e0; border-radius: 8px; border: 1px solid #ff9800;">
+                                <div style="font-size: 11px; font-weight: 700; color: #e65100; margin-bottom: 6px;">💤 성과 부진</div>
+                                <div style="font-size: 10px; color: var(--grey-600);">저지출 + 저효율</div>
+                                <div style="margin-top: 8px; font-size: 11px; color: var(--grey-800);">
+                                    ${quadrants.underperformer.map(i => i.target).join(', ') || '-'}
+                                </div>
+                                ${quadrants.underperformer.length > 0 && quadrants.underperformer[0].action ? `
+                                <div style="margin-top: 10px; padding: 10px; background: #ffffff; border-radius: 6px; border-left: 3px solid #e65100;">
+                                    <div style="font-size: 10px; font-weight: 700; color: #bf360c; margin-bottom: 4px;">⚠️ 추천 액션</div>
+                                    <div style="font-size: 11px; font-weight: 500; color: #bf360c; line-height: 1.5;">${quadrants.underperformer[0].action}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
 
             // 3. 기기플랫폼별 성과 (웹/앱/모바일)

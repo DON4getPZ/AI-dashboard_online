@@ -105,6 +105,40 @@ PERSONA_ACTIONS = {
 }
 
 # ============================================================================
+# 4분면 매트릭스 차원별 맞춤 처방 (Dimension Advice Map)
+# ============================================================================
+DIMENSION_ADVICE_MAP = {
+    # 1. 성별/연령 (Demographic)
+    'demographic': {
+        'core_driver': "가장 반응이 좋은 핵심 타겟입니다. 유사 타겟(Lookalike) 소스로 활용하여 모수를 확장하세요.",
+        'efficiency_star': "효율은 검증되었습니다. 예산을 20%씩 증액하여 반응이 유지되는지 테스트하세요 (Scale-up).",
+        'budget_bleeder': "광고 피로도가 높거나 핏이 안 맞습니다. 해당 타겟 전용 소재로 교체하거나 입찰가를 낮추세요.",
+        'underperformer': "성과가 저조합니다. 연령/성별 제외 설정을 통해 예산 낭비를 막으세요."
+    },
+    # 2. 기기/플랫폼 (Device/Platform)
+    'device': {
+        'core_driver': "주력 매출 발생 기기입니다. 결제 UX에 문제가 없는지 주기적으로 점검하세요.",
+        'efficiency_star': "잠재력이 높은 기기입니다. 특정 OS/기기 전용 입찰 전략을 테스트해보세요.",
+        'budget_bleeder': "오클릭이 많거나(모바일), 결제가 불편할 수 있습니다. 랜딩페이지 최적화(LPO)가 시급합니다.",
+        'underperformer': "효율이 나쁩니다. 디스플레이 광고라면 해당 기기 노출을 제외하세요."
+    },
+    # 3. 시간대/요일 (Time) - 향후 확장용
+    'time': {
+        'core_driver': "구매가 집중되는 골든타임입니다. 예산이 조기 소진되지 않도록 '광고 게재 스케줄'을 확보하세요.",
+        'efficiency_star': "경쟁이 덜한 틈새 시간대일 수 있습니다. 입찰가를 조금 더 높여 점유율을 가져오세요.",
+        'budget_bleeder': "전환 없이 클릭만 발생하는 시간대입니다. 시간대별 입찰 조정(Dayparting)으로 비중을 줄이세요.",
+        'underperformer': "성과가 없는 시간대입니다. 광고 운영 시간에서 제외하는 것을 고려하세요."
+    }
+}
+
+# 4분면 분류 임계값 (동적 임계값)
+MATRIX_THRESHOLDS = {
+    'th_spend_high': 0.6,   # 지출 상위 40% 이상 = 고지출
+    'th_eff_high': 0.7,     # 효율 상위 30% 이상 = 고효율
+    'th_eff_low': 0.3       # 효율 하위 30% 이하 = 저효율
+}
+
+# ============================================================================
 # 친화적 메시지 템플릿
 # ============================================================================
 FRIENDLY_MESSAGES = {
@@ -180,6 +214,174 @@ FRIENDLY_MESSAGES = {
         'action': "광고 소재와 카피를 개선해보세요."
     }
 }
+
+# ============================================================================
+# TypeMicroAnalyzer: 4분면 매트릭스 기반 차원별 인사이트 생성
+# ============================================================================
+class TypeMicroAnalyzer:
+    """
+    Efficiency-Scale Matrix (4분면) 기반 분석기
+    - Core Driver (고지출+고효율): severity=positive
+    - Efficiency Star (저지출+고효율): severity=opportunity
+    - Budget Bleeder (고지출+저효율): severity=high
+    - Underperformer (저지출+저효율): severity=warning
+    """
+
+    def __init__(self):
+        self.advice_map = DIMENSION_ADVICE_MAP
+        self.thresholds = MATRIX_THRESHOLDS
+
+    def _calculate_metrics(self, df, cost_col='비용', objective_type='conversion'):
+        """
+        지표 계산: 통합 효율 점수 및 상대 랭킹 산출
+        """
+        df = df.copy()
+
+        # 1. 통합 효율 점수 계산
+        if objective_type == 'traffic':
+            # CPC 기반: 낮을수록 좋으므로 역수
+            cpc_col = 'CPC' if 'CPC' in df.columns else 'cpc'
+            if cpc_col in df.columns:
+                df['norm_efficiency'] = 1 / df[cpc_col].replace(0, 0.01)
+            else:
+                df['norm_efficiency'] = 0
+        else:
+            # ROAS 기반
+            roas_col = 'ROAS' if 'ROAS' in df.columns else 'roas'
+            if roas_col in df.columns:
+                df['norm_efficiency'] = df[roas_col].fillna(0)
+            else:
+                df['norm_efficiency'] = 0
+
+        # 2. 상대적 랭킹 (Quantile Rank: 0.0~1.0)
+        if len(df) > 1:
+            df['spend_rank'] = df[cost_col].rank(pct=True, method='average')
+            df['eff_rank'] = df['norm_efficiency'].rank(pct=True, method='average')
+        else:
+            # 단일 항목일 경우 기본값
+            df['spend_rank'] = 0.5
+            df['eff_rank'] = 0.5
+
+        return df
+
+    def _get_advice(self, dim_type, matrix_type):
+        """차원 x 매트릭스 타입 맞춤 조언 반환"""
+        category = dim_type if dim_type in self.advice_map else 'demographic'
+        return self.advice_map.get(category, {}).get(matrix_type, "성과를 모니터링하세요.")
+
+    def _classify_quadrant(self, spend_rank, eff_rank):
+        """4분면 분류"""
+        th = self.thresholds
+
+        if spend_rank >= th['th_spend_high'] and eff_rank >= th['th_eff_high']:
+            return 'core_driver', 'positive'
+        elif spend_rank < th['th_spend_high'] and eff_rank >= th['th_eff_high']:
+            return 'efficiency_star', 'opportunity'
+        elif spend_rank >= th['th_spend_high'] and eff_rank <= th['th_eff_low']:
+            return 'budget_bleeder', 'high'
+        elif spend_rank < th['th_spend_high'] and eff_rank <= th['th_eff_low']:
+            return 'underperformer', 'warning'
+        else:
+            return None, None  # 중간 영역은 분류 안 함
+
+    def generate_dimension_insights(self, df, dimension_name, label_col,
+                                     cost_col='비용', objective_type='conversion'):
+        """
+        Dimension별 매트릭스 인사이트 생성
+
+        Parameters:
+        - df: 집계된 DataFrame
+        - dimension_name: 'gender', 'age_gender', 'device', 'deviceplatform'
+        - label_col: 타겟 라벨 컬럼명 (예: '성별_정규화', 'device')
+        - cost_col: 비용 컬럼명
+        - objective_type: 'conversion' 또는 'traffic'
+
+        Returns:
+        - list of insight dicts
+        """
+        if df.empty or len(df) < 2:
+            return []
+
+        # 지표 계산
+        df = self._calculate_metrics(df, cost_col, objective_type)
+
+        insights = []
+
+        # 아이콘 매핑
+        icons = {
+            'core_driver': '👑',
+            'efficiency_star': '💎',
+            'budget_bleeder': '💸',
+            'underperformer': '💤'
+        }
+
+        titles = {
+            'core_driver': '핵심 동력 (Core Driver)',
+            'efficiency_star': '효율 스타 (Scale-up 기회)',
+            'budget_bleeder': '예산 누수 경고',
+            'underperformer': '성과 부진'
+        }
+
+        # 차원 카테고리 결정
+        if 'device' in dimension_name.lower() or 'platform' in dimension_name.lower():
+            dim_category = 'device'
+        elif 'time' in dimension_name.lower() or 'hour' in dimension_name.lower():
+            dim_category = 'time'
+        else:
+            dim_category = 'demographic'
+
+        for _, row in df.iterrows():
+            label = str(row[label_col])
+            spend_r = row['spend_rank']
+            eff_r = row['eff_rank']
+
+            matrix_type, severity = self._classify_quadrant(spend_r, eff_r)
+
+            if matrix_type is None:
+                continue  # 중간 영역은 스킵
+
+            # 효율 지표값 (표시용)
+            if objective_type == 'traffic':
+                efficiency_value = row.get('CPC', row.get('cpc', 0))
+            else:
+                efficiency_value = row.get('ROAS', row.get('roas', 0))
+
+            icon = icons[matrix_type]
+            title = f"{icon} {label}: {titles[matrix_type]}"
+
+            # 메시지 생성
+            if matrix_type == 'core_driver':
+                message = f"예산 비중이 높고 효율도 최상위권입니다. (상위 {int((1-eff_r)*100)}%)"
+            elif matrix_type == 'efficiency_star':
+                message = f"적은 예산으로 높은 효율을 내고 있습니다. 예산 증액 시 성장이 기대됩니다."
+            elif matrix_type == 'budget_bleeder':
+                message = f"예산은 많이 쓰는데 효율은 하위권입니다. (하위 {int(eff_r*100)}%)"
+            else:  # underperformer
+                message = f"효율이 낮아 예산 투입 매력이 떨어집니다."
+
+            advice = self._get_advice(dim_category, matrix_type)
+
+            insights.append({
+                'type': 'dimension_insight',
+                'sub_type': matrix_type,
+                'dimension': dimension_name,
+                'target': label,
+                'severity': severity,
+                'title': title,
+                'message': message,
+                'action': advice,
+                'metrics': {
+                    'efficiency_value': float(efficiency_value) if pd.notna(efficiency_value) else 0,
+                    'spend_rank_pct': round(float(spend_r), 2),
+                    'eff_rank_pct': round(float(eff_r), 2),
+                    'cost': float(row[cost_col]) if pd.notna(row[cost_col]) else 0
+                }
+            })
+
+        return insights
+
+# 전역 분석기 인스턴스 생성
+type_analyzer = TypeMicroAnalyzer()
 
 # ============================================================================
 # 성별/연령 데이터 정규화 및 필터링 함수
@@ -729,6 +931,21 @@ if 'type4' in dimensions:
                     "performance_level": performance
                 })
 
+    # [4분면 매트릭스] 성별 인사이트 생성
+    if len(gender_conversion) >= 2:
+        gender_matrix_insights = type_analyzer.generate_dimension_insights(
+            df=gender_conversion,
+            dimension_name='gender',
+            label_col='성별_정규화',
+            cost_col='비용',
+            objective_type='conversion'
+        )
+        print(f"  - 성별 4분면 인사이트: {len(gender_matrix_insights)}개")
+    else:
+        gender_matrix_insights = []
+else:
+    gender_matrix_insights = []
+
 # ============================================================================
 # 최고 성과 광고세트 (Type1)
 # ============================================================================
@@ -872,6 +1089,33 @@ if 'type2' in dimensions:
                     "recommendation": f"{row['연령_정규화']} {row['성별_정규화']} 타겟에서 CPC가 효율적입니다"
                 })
 
+    # [4분면 매트릭스] 연령x성별 인사이트 생성
+    # 연령+성별 조합별 집계 (광고세트 무시하고 전체 집계)
+    combo_agg = type2_df.groupby(['연령_정규화', '성별_정규화']).agg({
+        '비용': 'sum', '전환수': 'sum', '전환값': 'sum'
+    }).reset_index()
+    combo_agg['ROAS'] = np.where(
+        combo_agg['비용'] > 0,
+        (combo_agg['전환값'] / combo_agg['비용']) * 100,
+        0
+    )
+    combo_agg = combo_agg[combo_agg['전환수'] > 0].copy()
+    combo_agg['조합_라벨'] = combo_agg['연령_정규화'] + ' ' + combo_agg['성별_정규화']
+
+    if len(combo_agg) >= 2:
+        age_gender_matrix_insights = type_analyzer.generate_dimension_insights(
+            df=combo_agg,
+            dimension_name='age_gender',
+            label_col='조합_라벨',
+            cost_col='비용',
+            objective_type='conversion'
+        )
+        print(f"  - 연령x성별 4분면 인사이트: {len(age_gender_matrix_insights)}개")
+    else:
+        age_gender_matrix_insights = []
+else:
+    age_gender_matrix_insights = []
+
 # ============================================================================
 # 기기유형 분석 (Type5)
 # ============================================================================
@@ -963,6 +1207,21 @@ if 'type5' in dimensions:
                     "performance_level": performance
                 })
 
+    # [4분면 매트릭스] 기기유형 인사이트 생성
+    if len(device_conversion) >= 2:
+        device_matrix_insights = type_analyzer.generate_dimension_insights(
+            df=device_conversion,
+            dimension_name='device',
+            label_col=device_col,
+            cost_col='비용',
+            objective_type='conversion'
+        )
+        print(f"  - 기기유형 4분면 인사이트: {len(device_matrix_insights)}개")
+    else:
+        device_matrix_insights = []
+else:
+    device_matrix_insights = []
+
 # ============================================================================
 # 기기플랫폼 분석 (Type7)
 # ============================================================================
@@ -1053,6 +1312,21 @@ if 'type7' in dimensions:
                     "ctr": float(row['CTR']),
                     "performance_level": performance
                 })
+
+    # [4분면 매트릭스] 기기플랫폼 인사이트 생성
+    if len(deviceplatform_conversion) >= 2:
+        deviceplatform_matrix_insights = type_analyzer.generate_dimension_insights(
+            df=deviceplatform_conversion,
+            dimension_name='deviceplatform',
+            label_col=deviceplatform_col,
+            cost_col='비용',
+            objective_type='conversion'
+        )
+        print(f"  - 기기플랫폼 4분면 인사이트: {len(deviceplatform_matrix_insights)}개")
+    else:
+        deviceplatform_matrix_insights = []
+else:
+    deviceplatform_matrix_insights = []
 
 # ============================================================================
 # 브랜드명별 분석
@@ -3086,13 +3360,17 @@ insights = {
     "top_traffic_categories": top_traffic_list,        # 트래픽 캠페인 (CPC 기준)
     "gender_performance": gender_insights,
     "gender_traffic_performance": gender_traffic_insights,  # v1.7 추가: 트래픽용 성별 (CPC 기준)
+    "gender_matrix_insights": gender_matrix_insights,  # v2.0 추가: 4분면 매트릭스 기반 성별 인사이트
     "top_adsets": top_adsets[:10] if len(top_adsets) > 0 else [],
     "age_gender_combinations": age_gender_insights,
     "age_gender_traffic_combinations": age_gender_traffic_insights,  # v1.7 추가: 트래픽용 연령x성별 (CPC 기준)
+    "age_gender_matrix_insights": age_gender_matrix_insights,  # v2.0 추가: 4분면 매트릭스 기반 연령x성별 인사이트
     "device_performance": device_insights,
     "device_traffic_performance": device_traffic_insights,  # v1.7 추가: 트래픽용 기기 (CPC 기준)
+    "device_matrix_insights": device_matrix_insights,  # v2.0 추가: 4분면 매트릭스 기반 기기유형 인사이트
     "deviceplatform_performance": deviceplatform_insights,
     "deviceplatform_traffic_performance": deviceplatform_traffic_insights,  # v1.7 추가: 트래픽용 플랫폼 (CPC 기준)
+    "deviceplatform_matrix_insights": deviceplatform_matrix_insights,  # v2.0 추가: 4분면 매트릭스 기반 기기플랫폼 인사이트
     "brand_performance": brand_insights[:10] if len(brand_insights) > 0 else [],
     "product_performance": product_insights[:10] if len(product_insights) > 0 else [],
     "promotion_performance": promotion_insights[:10] if len(promotion_insights) > 0 else [],

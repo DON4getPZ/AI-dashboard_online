@@ -2099,6 +2099,9 @@
                             <button class="view-btn insights-tab-btn period-filter-enabled" data-insights-tab="opportunities" style="padding: 8px 14px; font-size: 12px;" title="선택한 기간 필터가 적용됩니다">
                                 🎯 기회 요소 <span id="opportunitiesBadge" style="display: none; padding: 2px 8px; background: #4caf50; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
                             </button>
+                            <button class="view-btn insights-tab-btn" data-insights-tab="matrix" style="padding: 8px 14px; font-size: 12px;" title="Forecast Matrix 4분면 분석">
+                                📊 Forecast Matrix <span id="matrixBadge" style="display: none; padding: 2px 8px; background: #673ab7; color: white; border-radius: 10px; font-size: 11px; margin-left: 4px;"></span>
+                            </button>
                             <!-- 범례 -->
                             <div style="margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 10px; color: #6c757d;">
                                 <span style="display: flex; align-items: center; gap: 4px;">
@@ -2190,6 +2193,86 @@
                                         <div class="insight-type">분석 중</div>
                                         <div class="insight-message">현재 발견된 기회 요소가 없습니다.</div>
                                         <div class="insight-value">데이터가 축적되면 성장 기회가 표시됩니다.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 탭 3: Forecast Matrix 4분면 분석 -->
+                        <div id="matrixTab" class="insights-tab-content" style="display: none;">
+                            <!-- 탭 헤더 배너 -->
+                            <div style="padding: 16px 24px; background: linear-gradient(135deg, #ede7f6 0%, #d1c4e9 100%); border-bottom: 1px solid #b39ddb;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="width: 40px; height: 40px; background: rgba(103, 58, 183, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                        <span style="font-size: 20px;">📊</span>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 15px; font-weight: 700; color: #5e35b1;">Forecast Matrix (4분면 분석)</div>
+                                        <div style="font-size: 12px; color: #7e57c2; margin-top: 2px;">현재 효율 × 예측 성장률 기반 세그먼트 진단</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 4분면 범례 -->
+                            <div style="padding: 16px 24px; background: #fafafa; border-bottom: 1px solid var(--grey-200);">
+                                <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;">
+                                    <div style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #e8f5e9; border-radius: 20px; border: 1px solid #a5d6a7;">
+                                        <span>🚀</span><span style="font-size: 11px; font-weight: 600; color: #2e7d32;">Super Star</span><span style="font-size: 10px; color: #43a047;">고효율+고성장</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #fff3e0; border-radius: 20px; border: 1px solid #ffcc80;">
+                                        <span>🛡️</span><span style="font-size: 11px; font-weight: 600; color: #e65100;">Fading Hero</span><span style="font-size: 10px; color: #f57c00;">고효율+역성장</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #e3f2fd; border-radius: 20px; border: 1px solid #90caf9;">
+                                        <span>🌱</span><span style="font-size: 11px; font-weight: 600; color: #1565c0;">Rising Potential</span><span style="font-size: 10px; color: #1976d2;">저효율+고성장</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #ffebee; border-radius: 20px; border: 1px solid #ef9a9a;">
+                                        <span>🗑️</span><span style="font-size: 11px; font-weight: 600; color: #c62828;">Problem Child</span><span style="font-size: 10px; color: #e53935;">저효율+역성장</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 4분면 그리드 컨텐츠 -->
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--grey-200);">
+                                <!-- 브랜드 -->
+                                <div style="padding: 20px; background: #fafafa;">
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #673ab7;">
+                                        <span style="font-size: 16px;">🏷️</span>
+                                        <span style="font-size: 13px; font-weight: 700; color: var(--grey-900);">브랜드</span>
+                                        <span id="matrixBrandCount" style="font-size: 11px; color: var(--grey-500);"></span>
+                                    </div>
+                                    <div id="matrixBrandContent" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+                                        <div class="insight-card neutral"><div class="insight-message">데이터 로딩 중...</div></div>
+                                    </div>
+                                </div>
+                                <!-- 상품 -->
+                                <div style="padding: 20px; background: #fafafa;">
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #673ab7;">
+                                        <span style="font-size: 16px;">📦</span>
+                                        <span style="font-size: 13px; font-weight: 700; color: var(--grey-900);">상품</span>
+                                        <span id="matrixProductCount" style="font-size: 11px; color: var(--grey-500);"></span>
+                                    </div>
+                                    <div id="matrixProductContent" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+                                        <div class="insight-card neutral"><div class="insight-message">데이터 로딩 중...</div></div>
+                                    </div>
+                                </div>
+                                <!-- 채널 -->
+                                <div style="padding: 20px; background: #fafafa;">
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #673ab7;">
+                                        <span style="font-size: 16px;">📢</span>
+                                        <span style="font-size: 13px; font-weight: 700; color: var(--grey-900);">채널</span>
+                                        <span id="matrixChannelCount" style="font-size: 11px; color: var(--grey-500);"></span>
+                                    </div>
+                                    <div id="matrixChannelContent" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+                                        <div class="insight-card neutral"><div class="insight-message">데이터 로딩 중...</div></div>
+                                    </div>
+                                </div>
+                                <!-- 프로모션 -->
+                                <div style="padding: 20px; background: #fafafa;">
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #673ab7;">
+                                        <span style="font-size: 16px;">🎁</span>
+                                        <span style="font-size: 13px; font-weight: 700; color: var(--grey-900);">프로모션</span>
+                                        <span id="matrixPromotionCount" style="font-size: 11px; color: var(--grey-500);"></span>
+                                    </div>
+                                    <div id="matrixPromotionContent" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+                                        <div class="insight-card neutral"><div class="insight-message">데이터 로딩 중...</div></div>
                                     </div>
                                 </div>
                             </div>
@@ -4051,6 +4134,28 @@
             if (recommendationsCountBadge) {
                 recommendationsCountBadge.textContent = totalRecs > 0 ? `(${totalRecs}건)` : '';
             }
+
+            // Matrix 배지 업데이트
+            const matrixBadge = document.getElementById('matrixBadge');
+            if (matrixBadge && periodData.matrix_insights) {
+                const matrixInsights = periodData.matrix_insights;
+                let totalMatrix = 0;
+                let hasCritical = false;
+                ['brand', 'product', 'channel', 'promotion'].forEach(segment => {
+                    const insights = matrixInsights[segment] || [];
+                    totalMatrix += insights.length;
+                    insights.forEach(i => {
+                        if (i.severity === 'critical' || i.severity === 'high') hasCritical = true;
+                    });
+                });
+                if (totalMatrix > 0) {
+                    matrixBadge.textContent = totalMatrix;
+                    matrixBadge.style.display = 'inline';
+                    matrixBadge.style.background = hasCritical ? '#ef5350' : '#673ab7';
+                } else {
+                    matrixBadge.style.display = 'none';
+                }
+            }
         }
 
         // insights.json 데이터로 인사이트 업데이트
@@ -4254,6 +4359,165 @@
         // 추천 카드 토글 함수
         function toggleRecommendationCard(card) {
             card.classList.toggle('expanded');
+        }
+
+        // ============================================================
+        // Forecast Matrix 4분면 인사이트 렌더링 (v2.8)
+        // ============================================================
+        function renderMatrixInsights() {
+            const periodData = getPeriodData();
+            if (!periodData || !periodData.matrix_insights) {
+                const noDataHtml = `
+                    <div class="insight-card neutral">
+                        <div class="insight-message" style="text-align: center; padding: 16px;">
+                            <span style="font-size: 24px; display: block; margin-bottom: 8px;">📊</span>
+                            <span style="color: var(--grey-600);">Matrix 인사이트가 없습니다.</span>
+                        </div>
+                    </div>
+                `;
+                ['Brand', 'Product', 'Channel', 'Promotion'].forEach(seg => {
+                    const container = document.getElementById('matrix' + seg + 'Content');
+                    const countBadge = document.getElementById('matrix' + seg + 'Count');
+                    if (container) container.innerHTML = noDataHtml;
+                    if (countBadge) countBadge.textContent = '';
+                });
+                return;
+            }
+
+            const matrixInsights = periodData.matrix_insights;
+
+            // 4분면별 스타일 설정
+            const matrixStyles = {
+                'super_star': {
+                    icon: '🚀',
+                    bg: '#e8f5e9',
+                    border: '#4caf50',
+                    titleColor: '#2e7d32',
+                    label: 'Super Star'
+                },
+                'fading_hero': {
+                    icon: '🛡️',
+                    bg: '#fff3e0',
+                    border: '#ff9800',
+                    titleColor: '#e65100',
+                    label: 'Fading Hero'
+                },
+                'rising_potential': {
+                    icon: '🌱',
+                    bg: '#e3f2fd',
+                    border: '#2196f3',
+                    titleColor: '#1565c0',
+                    label: 'Rising Potential'
+                },
+                'problem_child': {
+                    icon: '🗑️',
+                    bg: '#ffebee',
+                    border: '#ef5350',
+                    titleColor: '#c62828',
+                    label: 'Problem Child'
+                }
+            };
+
+            // severity별 추가 스타일
+            const severityStyles = {
+                'critical': { borderWidth: '3px', boxShadow: '0 0 8px rgba(239, 83, 80, 0.4)' },
+                'high': { borderWidth: '2px', boxShadow: '0 0 4px rgba(239, 83, 80, 0.2)' },
+                'warning': { borderWidth: '2px', boxShadow: 'none' },
+                'opportunity': { borderWidth: '2px', boxShadow: '0 0 4px rgba(76, 175, 80, 0.2)' }
+            };
+
+            const renderMatrixCard = (insight) => {
+                const style = matrixStyles[insight.sub_type] || matrixStyles['problem_child'];
+                const sevStyle = severityStyles[insight.severity] || severityStyles['warning'];
+                const metrics = insight.metrics || {};
+
+                // ROAS 및 성장률 포맷팅 (필드명: current_roas, forecast_growth_pct, revenue_share_pct)
+                const roas = metrics.current_roas || metrics.roas;
+                const roasText = roas ? `ROAS ${roas.toLocaleString()}%` : '';
+                const growthPct = metrics.forecast_growth_pct ?? metrics.forecast_growth_rate;
+                const growthText = growthPct !== undefined && growthPct !== null
+                    ? `예측 ${growthPct >= 0 ? '+' : ''}${growthPct.toFixed(1)}%`
+                    : '';
+                const revenueShare = metrics.revenue_share_pct ?? metrics.revenue_impact_share;
+                const shareText = revenueShare !== undefined && revenueShare !== null
+                    ? `매출비중 ${revenueShare.toFixed(1)}%`
+                    : '';
+
+                return `
+                    <div style="
+                        background: ${style.bg};
+                        border: ${sevStyle.borderWidth} solid ${style.border};
+                        border-radius: 10px;
+                        padding: 14px;
+                        box-shadow: ${sevStyle.boxShadow};
+                        transition: transform 0.2s;
+                        cursor: pointer;
+                    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <!-- 헤더 -->
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                            <span style="font-size: 18px;">${style.icon}</span>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 700; color: ${style.titleColor};">${insight.segment_value}</div>
+                                <div style="font-size: 10px; color: ${style.titleColor}; opacity: 0.8;">${style.label}</div>
+                            </div>
+                            ${insight.severity === 'critical' ? '<span style="background: #c62828; color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 600;">CORE RISK</span>' : ''}
+                        </div>
+                        <!-- 메트릭스 -->
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">
+                            ${roasText ? `<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #333; border: 1px solid ${style.border};">${roasText}</span>` : ''}
+                            ${growthText ? `<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: ${growthPct >= 0 ? '#2e7d32' : '#c62828'}; border: 1px solid ${growthPct >= 0 ? '#a5d6a7' : '#ef9a9a'};">${growthText}</span>` : ''}
+                            ${shareText ? `<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #5e35b1; border: 1px solid #b39ddb;">${shareText}</span>` : ''}
+                        </div>
+                        <!-- 메시지 -->
+                        <div style="font-size: 11px; color: #555; line-height: 1.5; margin-bottom: 10px;">
+                            ${insight.message}
+                        </div>
+                        <!-- 액션 -->
+                        <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid ${style.border};">
+                            <div style="font-size: 10px; font-weight: 600; color: ${style.titleColor}; margin-bottom: 4px;">💡 추천 액션</div>
+                            <div style="font-size: 11px; color: #333; line-height: 1.4;">${insight.action}</div>
+                        </div>
+                    </div>
+                `;
+            };
+
+            // 각 세그먼트별 렌더링
+            const segmentMap = {
+                'brand': 'Brand',
+                'product': 'Product',
+                'channel': 'Channel',
+                'promotion': 'Promotion'
+            };
+
+            Object.entries(segmentMap).forEach(([key, displayName]) => {
+                const insights = matrixInsights[key] || [];
+                const container = document.getElementById('matrix' + displayName + 'Content');
+                const countBadge = document.getElementById('matrix' + displayName + 'Count');
+
+                if (countBadge) {
+                    countBadge.textContent = insights.length > 0 ? `(${insights.length}건)` : '';
+                }
+
+                if (!container) return;
+
+                if (insights.length === 0) {
+                    container.innerHTML = `
+                        <div class="insight-card neutral" style="background: #f5f5f5; border: 1px dashed #ccc; text-align: center; padding: 20px;">
+                            <div style="font-size: 24px; margin-bottom: 8px;">✨</div>
+                            <div style="font-size: 12px; color: #666;">해당 세그먼트의 Matrix 인사이트가 없습니다.</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // severity 우선순위로 정렬 (critical > high > warning > opportunity)
+                const severityOrder = { 'critical': 0, 'high': 1, 'warning': 2, 'opportunity': 3 };
+                const sortedInsights = [...insights].sort((a, b) =>
+                    (severityOrder[a.severity] || 4) - (severityOrder[b.severity] || 4)
+                );
+
+                container.innerHTML = sortedInsights.map(renderMatrixCard).join('');
+            });
         }
 
         // 성과 트렌드 분석 업데이트 (7일/30일) - 항상 'full' 기간 데이터 사용
@@ -5132,6 +5396,12 @@
                         document.getElementById('alertsTab').style.display = 'block';
                     } else if (targetTab === 'opportunities') {
                         document.getElementById('opportunitiesTab').style.display = 'block';
+                    } else if (targetTab === 'matrix') {
+                        document.getElementById('matrixTab').style.display = 'block';
+                        // Matrix 탭 렌더링
+                        if (typeof renderMatrixInsights === 'function') {
+                            renderMatrixInsights();
+                        }
                     }
                 });
             });

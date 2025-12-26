@@ -1,5 +1,5 @@
 """
-마케팅 인사이트 생성 모듈 v2.1 (AI Consultant Edition + Multi-Period)
+마케팅 인사이트 생성 모듈 v2.2 (Forecast Matrix Edition)
 
 기능:
 1. 세그먼트별 예측 데이터 분석
@@ -7,7 +7,14 @@
 3. 최적 투자 대상 추천 (효율성/성장성/안정성 기반)
 4. 숨은 기회 발굴 (Opportunities)
 5. AI 비서 톤의 자연어 인사이트 생성
-6. data/forecast/insights.json 저장
+6. Forecast Matrix 4분면 분석 (v2.2)
+7. data/forecast/insights.json 저장
+
+v2.2 업데이트:
+- Forecast Matrix (4분면): Super Star, Fading Hero, Rising Potential, Problem Child
+- 동적 임계값 (Quantile 기반): 상대 평가
+- 세그먼트 유형별 맞춤 처방: ADVICE_CONTEXT_MAP (brand/product/channel/promotion)
+- Core Risk 감지: 매출 비중 10% 이상 + 저효율 + 역성장 = Critical
 
 v2.1 업데이트:
 - Multi-Period 지원: --days 파라미터로 기간 필터링 (full, 180, 90, 30)
@@ -69,6 +76,51 @@ THRESHOLDS = {
     'risk_warning': -10.0,    # 주의 필요 기준 (%)
     'budget_alert': 90.0,     # 예산 소진 경고 (%)
     'opportunity_roas': 200.0 # 기회 발굴 기준 (%)
+}
+
+# ============================================================================
+# Forecast Matrix 임계값 (4분면 분석용) - v2.2
+# ============================================================================
+FORECAST_MATRIX_THRESHOLDS = {
+    'th_eff_high': 0.7,      # 효율 상위 30% (Quantile 0.7)
+    'th_eff_low': 0.3,       # 효율 하위 30% (Quantile 0.3)
+    'th_growth_high': 0.05,  # 성장률 +5% 이상
+    'th_growth_low': -0.05,  # 역성장 -5% 이하
+    'th_impact_core': 0.10   # 매출 비중 10% 이상 = Core Risk
+}
+
+# ============================================================================
+# 세그먼트 유형별 맞춤 처방 (Advice Context Map) - v2.2
+# ============================================================================
+ADVICE_CONTEXT_MAP = {
+    # 1. 브랜드 (Brand) 관점
+    'brand': {
+        'super_star': "브랜드 인지도가 상승세입니다. 경쟁사 키워드 점유율을 높여 시장을 장악하세요.",
+        'fading_hero': "브랜드 노후화가 우려됩니다. 리브랜딩 캠페인이나 콜라보레이션으로 신선함을 주세요.",
+        'rising_potential': "니치(Niche) 마켓에서 반응이 오고 있습니다. 해당 타겟을 위한 전용 랜딩페이지를 만드세요.",
+        'problem_child': "브랜드 매력도가 떨어졌습니다. 할인보다는 브랜드 스토리텔링을 다시 점검해야 합니다."
+    },
+    # 2. 상품 (Product) 관점
+    'product': {
+        'super_star': "메인 배너와 추천 영역 1순위에 배치하세요. 재고 부족(OOS)을 미리 대비해야 합니다.",
+        'fading_hero': "제품 수명 주기(PLC)가 쇠퇴기입니다. 번들(Bundle) 구성으로 객단가를 높여 수익을 방어하세요.",
+        'rising_potential': "상세페이지 개선(CRO)이 시급합니다. 유입은 늘고 있으니 구매 전환만 잡으면 터집니다.",
+        'problem_child': "악성 재고가 될 위험이 큽니다. 클리어런스 세일로 재고를 털어내세요."
+    },
+    # 3. 채널 (Channel) 관점
+    'channel': {
+        'super_star': "가장 확실한 수익원입니다. 예산 한도(Cap)를 풀고 ROAS가 꺾일 때까지 증액하세요.",
+        'fading_hero': "채널 내 경쟁 강도가 높아졌습니다(CPC 상승). 소재 차별화로 CTR을 높여 비용을 낮추세요.",
+        'rising_potential': "아직 최적화 단계입니다. 자동 입찰(Target ROAS) 머신러닝이 완료될 때까지 기다리세요.",
+        'problem_child': "타겟팅이 너무 넓거나 좁습니다. 타겟 모수를 전면 재검토하거나 채널을 OFF 하세요."
+    },
+    # 4. 프로모션 (Promotion) 관점
+    'promotion': {
+        'super_star': "대성공 프로모션입니다. 기간을 연장하거나 앵콜 기획전을 준비하세요.",
+        'fading_hero': "이벤트 피로도가 쌓였습니다. 혜택 구조를 바꾸거나 새로운 메인 상품을 내세우세요.",
+        'rising_potential': "입소문을 타기 시작했습니다. SNS 광고를 집중하여 트래픽을 부으세요.",
+        'problem_child': "혜택이 매력적이지 않습니다. 할인율 조정보다는 '사은품'이나 '한정판' 요소를 더하세요."
+    }
 }
 
 # ============================================================================
@@ -143,6 +195,222 @@ class NpEncoder(json.JSONEncoder):
         return super(NpEncoder, self).default(obj)
 
 
+# ============================================================================
+# Forecast Matrix 기반 마이크로 인사이트 분석 클래스 - v2.2
+# ============================================================================
+class InsightMicroAnalyzer:
+    """Forecast Matrix (4분면) 기반 세그먼트 인사이트 생성
+
+    X축: 현재 효율 (efficiency_score = ROAS)
+    Y축: 예측 성장률 (forecast_growth_rate)
+
+    4분면:
+    - Super Star: 고효율 + 고성장
+    - Fading Hero: 고효율 + 역성장
+    - Rising Potential: 저효율 + 고성장
+    - Problem Child: 저효율 + 역성장
+    """
+
+    def __init__(self):
+        self.advice_map = ADVICE_CONTEXT_MAP
+        self.thresholds = FORECAST_MATRIX_THRESHOLDS
+
+    def _calculate_metrics(self, segment_stats: dict, forecast_data: dict) -> dict:
+        """효율성, 예측 성장률, 매출 비중 계산
+
+        Args:
+            segment_stats: 세그먼트 통계 (roas, total_revenue 등)
+            forecast_data: 예측 데이터 (changes, forecast_avg 등)
+
+        Returns:
+            dict: efficiency_score, forecast_growth_rate, revenue_impact_share
+        """
+        # 1. 효율성 점수 (ROAS 기준)
+        efficiency_score = segment_stats.get('roas', 0)
+
+        # 2. 예측 성장률 (전환값 변화율 기준)
+        changes = forecast_data.get('changes', {})
+        forecast_growth_rate = changes.get('전환값', 0) / 100  # % to ratio
+
+        # 3. 매출 비중 (total_revenue 기준, 나중에 전체 대비 계산)
+        total_revenue = segment_stats.get('total_revenue', 0)
+
+        return {
+            'efficiency_score': efficiency_score,
+            'forecast_growth_rate': forecast_growth_rate,
+            'total_revenue': total_revenue
+        }
+
+    def _get_dynamic_thresholds(self, all_metrics: list) -> dict:
+        """동적 임계값 계산 (Quantile 기반)
+
+        Args:
+            all_metrics: 모든 세그먼트의 메트릭 리스트
+
+        Returns:
+            dict: 동적 임계값
+        """
+        if not all_metrics:
+            return self.thresholds
+
+        efficiency_scores = [m['efficiency_score'] for m in all_metrics if m['efficiency_score'] > 0]
+
+        if len(efficiency_scores) < 3:
+            # 데이터가 적으면 기본 임계값 사용
+            return {
+                'th_eff_high': THRESHOLDS['high_roas'],
+                'th_eff_low': THRESHOLDS['low_roas'],
+                'th_growth_high': self.thresholds['th_growth_high'],
+                'th_growth_low': self.thresholds['th_growth_low'],
+                'th_impact_core': self.thresholds['th_impact_core']
+            }
+
+        # Quantile 기반 동적 임계값
+        eff_array = np.array(efficiency_scores)
+        return {
+            'th_eff_high': float(np.quantile(eff_array, self.thresholds['th_eff_high'])),
+            'th_eff_low': float(np.quantile(eff_array, self.thresholds['th_eff_low'])),
+            'th_growth_high': self.thresholds['th_growth_high'],
+            'th_growth_low': self.thresholds['th_growth_low'],
+            'th_impact_core': self.thresholds['th_impact_core']
+        }
+
+    def _get_advice(self, segment_context: str, matrix_type: str) -> str:
+        """세그먼트 유형별 맞춤 조언 반환
+
+        Args:
+            segment_context: 세그먼트 유형 (brand, product, channel, promotion)
+            matrix_type: 4분면 유형 (super_star, fading_hero, rising_potential, problem_child)
+
+        Returns:
+            str: 맞춤 조언
+        """
+        return self.advice_map.get(segment_context, {}).get(
+            matrix_type,
+            "상세 리포트를 확인하고 전략을 수립하세요."
+        )
+
+    def generate_matrix_insights(self, segment_stats: dict, forecasts: dict,
+                                  segment_context: str) -> list:
+        """Forecast Matrix 기반 마이크로 인사이트 생성
+
+        Args:
+            segment_stats: 세그먼트별 통계 딕셔너리
+            forecasts: 세그먼트별 예측 데이터 딕셔너리
+            segment_context: 세그먼트 유형 (brand, product, channel, promotion)
+
+        Returns:
+            list: 4분면 인사이트 리스트
+        """
+        if not segment_stats:
+            return []
+
+        # 1. 모든 세그먼트의 메트릭 계산
+        all_metrics = []
+        for segment_value, stats in segment_stats.items():
+            forecast_data = forecasts.get(segment_value, {})
+            metrics = self._calculate_metrics(stats, forecast_data)
+            metrics['segment_value'] = segment_value
+            all_metrics.append(metrics)
+
+        if not all_metrics:
+            return []
+
+        # 2. 동적 임계값 계산
+        th = self._get_dynamic_thresholds(all_metrics)
+
+        # 3. 전체 매출 대비 비중 계산
+        total_all_revenue = sum(m['total_revenue'] for m in all_metrics)
+        for m in all_metrics:
+            m['revenue_impact_share'] = (
+                m['total_revenue'] / total_all_revenue
+                if total_all_revenue > 0 else 0
+            )
+
+        # 4. 4분면 분류 및 인사이트 생성
+        insights = []
+
+        for metrics in all_metrics:
+            segment_value = metrics['segment_value']
+            eff = metrics['efficiency_score']
+            growth = metrics['forecast_growth_rate']
+            impact = metrics['revenue_impact_share']
+
+            matrix_type = None
+            severity = 'medium'
+
+            # ---------------------------------------------------------
+            # Quadrant 1: Super Star (고효율 + 고성장)
+            # ---------------------------------------------------------
+            if eff >= th['th_eff_high'] and growth >= th['th_growth_high']:
+                matrix_type = 'super_star'
+                severity = 'opportunity'
+                title = f"🚀 {segment_value}: 초격차 슈퍼스타"
+                message = f"효율(ROAS {int(eff)}%)도 좋고, 향후 {growth*100:.1f}% 성장이 예측됩니다."
+
+            # ---------------------------------------------------------
+            # Quadrant 2: Fading Hero (고효율 + 역성장)
+            # ---------------------------------------------------------
+            elif eff >= th['th_eff_high'] and growth <= th['th_growth_low']:
+                matrix_type = 'fading_hero'
+                severity = 'warning'
+                title = f"🛡️ {segment_value}: 지는 해 방어 필요"
+                message = f"현재 효율(ROAS {int(eff)}%)은 좋지만, 매출이 {abs(growth)*100:.1f}% 감소할 것으로 예측됩니다."
+
+            # ---------------------------------------------------------
+            # Quadrant 3: Rising Potential (저효율 + 고성장)
+            # ---------------------------------------------------------
+            elif eff <= th['th_eff_low'] and growth >= th['th_growth_high']:
+                matrix_type = 'rising_potential'
+                severity = 'opportunity'
+                title = f"🌱 {segment_value}: 잠재력 폭발 직전"
+                message = f"효율(ROAS {int(eff)}%)은 아직 낮지만, 트렌드가 상승세({growth*100:.1f}%)를 탔습니다."
+
+            # ---------------------------------------------------------
+            # Quadrant 4: Problem Child (저효율 + 역성장)
+            # ---------------------------------------------------------
+            elif eff <= th['th_eff_low'] and growth <= th['th_growth_low']:
+                matrix_type = 'problem_child'
+
+                # Core Risk 체크: 매출 비중이 큰데 성과가 나쁨
+                if impact >= th['th_impact_core']:
+                    severity = 'critical'
+                    title = f"🚨 {segment_value}: 구조조정 시급 (Core Risk)"
+                    message = f"매출 비중이 큰데({impact*100:.1f}%), 효율과 전망이 모두 나쁩니다."
+                else:
+                    severity = 'high'
+                    title = f"🗑️ {segment_value}: 성과 부진 지속"
+                    message = f"효율(ROAS {int(eff)}%)도 낮고 전망({growth*100:.1f}%)도 어둡습니다."
+
+            # ---------------------------------------------------------
+            # 인사이트 생성
+            # ---------------------------------------------------------
+            if matrix_type:
+                advice = self._get_advice(segment_context, matrix_type)
+
+                insights.append({
+                    'type': 'matrix_insight',
+                    'sub_type': matrix_type,
+                    'segment_type': segment_context,
+                    'segment_value': segment_value,
+                    'severity': severity,
+                    'title': title,
+                    'message': message,
+                    'action': advice,
+                    'metrics': {
+                        'current_roas': int(eff),
+                        'forecast_growth_pct': round(growth * 100, 1),
+                        'revenue_share_pct': round(impact * 100, 1)
+                    }
+                })
+
+        # severity 순 정렬 (critical > high > warning > opportunity)
+        severity_order = {'critical': 0, 'high': 1, 'warning': 2, 'opportunity': 3, 'medium': 4}
+        insights = sorted(insights, key=lambda x: severity_order.get(x['severity'], 5))
+
+        return insights
+
+
 class InsightGenerator:
     """마케팅 인사이트 생성 클래스 (AI Consultant Edition + Multi-Period)"""
 
@@ -168,6 +436,7 @@ class InsightGenerator:
                 'recommendations': []
             },
             'opportunities': [],  # 숨은 기회 발굴 (공격 전략)
+            'matrix_insights': {},  # v2.2: Forecast Matrix 4분면 인사이트
             'summary': '',
             'details': {},
             'performance_trends': {}  # 7d/30d 트렌드
@@ -1027,6 +1296,43 @@ class InsightGenerator:
         for opp in opportunities[:3]:
             print(f"      - {opp.get('title', opp['segment_value'])}: ROAS {opp['roas']:.0f}%")
 
+    def analyze_forecast_matrix(self) -> None:
+        """Forecast Matrix 기반 4분면 분석 (v2.2)
+
+        각 세그먼트(brand, product, channel, promotion)별로
+        InsightMicroAnalyzer를 사용하여 4분면 인사이트를 생성합니다.
+        """
+        print("\n[4.5/6] Analyzing Forecast Matrix (4-Quadrant)...")
+
+        analyzer = InsightMicroAnalyzer()
+        matrix_insights = {}
+        total_insights = 0
+
+        for segment_name in ['brand', 'product', 'channel', 'promotion']:
+            if segment_name not in self.segment_stats:
+                continue
+
+            stats = self.segment_stats[segment_name]
+            forecasts = self.forecasts.get(segment_name, {})
+
+            # 4분면 인사이트 생성
+            insights = analyzer.generate_matrix_insights(stats, forecasts, segment_name)
+
+            if insights:
+                matrix_insights[segment_name] = insights
+                total_insights += len(insights)
+
+                # 로그 출력
+                super_stars = len([i for i in insights if i['sub_type'] == 'super_star'])
+                fading_heroes = len([i for i in insights if i['sub_type'] == 'fading_hero'])
+                rising_potentials = len([i for i in insights if i['sub_type'] == 'rising_potential'])
+                problem_children = len([i for i in insights if i['sub_type'] == 'problem_child'])
+
+                print(f"   {segment_name}: 🚀{super_stars} 🛡️{fading_heroes} 🌱{rising_potentials} 🗑️{problem_children}")
+
+        self.insights['matrix_insights'] = matrix_insights
+        print(f"   Total matrix insights: {total_insights}")
+
     def generate_recommendations(self) -> None:
         """투자 권장 세그먼트 도출 (Action-First)"""
         print("\n[5/6] Generating recommendations...")
@@ -1240,6 +1546,9 @@ class InsightGenerator:
         # 기회 발굴 (Growth Hacking)
         self.find_opportunities()
 
+        # Forecast Matrix 4분면 분석 (v2.2)
+        self.analyze_forecast_matrix()
+
         # 권장 생성
         self.generate_recommendations()
 
@@ -1252,18 +1561,18 @@ class InsightGenerator:
 
         period_display = "전체" if self.days is None else f"최근 {self.days}일"
         print("\n" + "="*60)
-        print(f"🎯 AI Marketing Insight Generator v2.1 완료! ({period_display})")
+        print(f"🎯 AI Marketing Insight Generator v2.2 완료! ({period_display})")
         print("="*60)
-        print("\n[v2.1 신규 기능]")
-        print("   ✓ Multi-Period 지원: --days 파라미터로 기간 필터링")
-        print("   ✓ AI Consultant Persona: 친화적이고 직관적인 메시지")
-        print("   ✓ Action-First Architecture: 즉시 실행 가능한 액션")
-        print("   ✓ Financial Impact: 예상 손실액/기대 수익 계산")
-        print("   ✓ Risk & Opportunity Matrix: 방어/공격 전략 동시 수립")
+        print("\n[v2.2 신규 기능]")
+        print("   ✓ Forecast Matrix (4분면): Super Star, Fading Hero, Rising Potential, Problem Child")
+        print("   ✓ 동적 임계값 (Quantile 기반): 상대 평가")
+        print("   ✓ 세그먼트 유형별 맞춤 처방: brand/product/channel/promotion")
+        print("   ✓ Core Risk 감지: 매출 비중 10% 이상 + 저효율 + 역성장")
         print(f"\n📁 Generated file: data/forecast/insights.json")
         print("\n📊 Insight structure:")
         print("   - period: 분석 기간")
         print("   - summary_card: AI 비서 스타일 요약 카드")
+        print("   - matrix_insights: 4분면 인사이트 (v2.2)")
         print("   - overall: 전체 성과 분석")
         print("   - segments: 세그먼트별 경고 및 추천")
         print("   - opportunities: 숨은 기회 발굴")
