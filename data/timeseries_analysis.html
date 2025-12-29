@@ -2301,7 +2301,7 @@
                                 <div class="insight-header">
                                     <span>✨ 좋은 소식: 어떤 부분이 좋아졌나요?</span>
                                 </div>
-                                <div class="insight-content" id="improvementTrendContent" style="display: block; max-height: 400px; overflow-y: auto;">
+                                <div class="insight-content" id="improvementTrendContent" style="display: block; max-height: 400px; overflow-y: auto; padding-top: 4px;">
                                     <div class="insight-card neutral">
                                         <div class="insight-text">데이터를 불러오는 중...</div>
                                     </div>
@@ -2313,7 +2313,7 @@
                                 <div class="insight-header">
                                     <span>⚠️ 주의 필요: 성과 하락 감지</span>
                                 </div>
-                                <div class="insight-content" id="declineTrendContent" style="display: block; max-height: 400px; overflow-y: auto;">
+                                <div class="insight-content" id="declineTrendContent" style="display: block; max-height: 400px; overflow-y: auto; padding-top: 4px;">
                                     <div class="insight-card neutral">
                                         <div class="insight-text">데이터를 불러오는 중...</div>
                                     </div>
@@ -4967,26 +4967,25 @@
             container.innerHTML = `
                 <div style="display: grid; gap: 12px;">
                     ${improvements.map(item => `
-                        <div class="insight-card positive" style="border-left: 4px solid var(--success-main);">
-                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                                <div>
-                                    <div class="insight-title" style="font-size: 15px; font-weight: 600; color: var(--grey-900); margin-bottom: 4px;">
-                                        ${item.metric}
-                                    </div>
-                                    <div style="font-size: 13px; color: var(--grey-700);">
-                                        ${periodText}: <strong style="color: var(--success-main);">+${item.change_pct}%</strong> 증가
-                                    </div>
+                        <div style="background: #e8f5e9; border: 2px solid #4caf50; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <!-- 헤더 -->
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 18px;">📈</span>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 13px; font-weight: 700; color: #2e7d32;">${item.metric}</div>
+                                    <div style="font-size: 10px; color: #2e7d32; opacity: 0.8;">${periodText}</div>
                                 </div>
-                                <span style="font-size: 12px; padding: 4px 12px; background: var(--success-main); color: white; border-radius: 12px; font-weight: 600;">
-                                    ${item.improvement_level === 'high' ? '높음' : '중간'}
-                                </span>
+                                <span style="background: #4caf50; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">+${item.change_pct}% ${item.improvement_level === 'high' ? '높음' : '중간'}</span>
                             </div>
-                            <div style="display: flex; gap: 16px; font-size: 13px; color: var(--grey-700); margin-bottom: 12px;">
-                                <span>최근 평균: <strong>${formatNumber(item.recent_avg)}</strong></span>
-                                <span>이전 평균: <strong>${formatNumber(item.previous_avg)}</strong></span>
+                            <!-- 메트릭스 배지 -->
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                                <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #1565c0; border: 1px solid #90caf9; font-weight: 500;">최근 ${formatNumber(item.recent_avg)}</span>
+                                <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #5e35b1; border: 1px solid #b39ddb; font-weight: 500;">이전 ${formatNumber(item.previous_avg)}</span>
                             </div>
-                            <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: var(--success-light); border-radius: 6px;">
-                                💡 ${transformRecommendationText(item.recommendation, item.metric)}
+                            <!-- 추천 액션 -->
+                            <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid #4caf50;">
+                                <div style="font-size: 10px; font-weight: 600; color: #2e7d32; margin-bottom: 4px;">💡 추천 액션</div>
+                                <div style="font-size: 11px; color: #333; line-height: 1.4;">${transformRecommendationText(item.recommendation, item.metric)}</div>
                             </div>
                         </div>
                     `).join('')}
@@ -5022,30 +5021,35 @@
 
             container.innerHTML = `
                 <div style="display: grid; gap: 12px;">
-                    ${declines.map(item => `
-                        <div class="insight-card negative" style="border-left: 4px solid var(--error-main);">
-                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                                <div>
-                                    <div class="insight-title" style="font-size: 15px; font-weight: 600; color: var(--grey-900); margin-bottom: 4px;">
-                                        ${item.metric}
-                                    </div>
-                                    <div style="font-size: 13px; color: var(--grey-700);">
-                                        ${periodText}: <strong style="color: var(--error-main);">${item.change_pct}%</strong> 감소
-                                    </div>
+                    ${declines.map(item => {
+                        const isHigh = item.risk_level === 'high';
+                        const bgColor = isHigh ? '#ffebee' : '#fff3e0';
+                        const borderColor = isHigh ? '#f44336' : '#ff9800';
+                        const textColor = isHigh ? '#c62828' : '#e65100';
+                        const badgeColor = isHigh ? '#f44336' : '#ff9800';
+                        return `
+                        <div style="background: ${bgColor}; border: 2px solid ${borderColor}; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <!-- 헤더 -->
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 18px;">📉</span>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 13px; font-weight: 700; color: ${textColor};">${item.metric}</div>
+                                    <div style="font-size: 10px; color: ${textColor}; opacity: 0.8;">${periodText}</div>
                                 </div>
-                                <span style="font-size: 12px; padding: 4px 12px; background: ${item.risk_level === 'high' ? 'var(--error-main)' : 'var(--warning-main)'}; color: white; border-radius: 12px; font-weight: 600;">
-                                    ${item.risk_level === 'high' ? '높음' : '중간'}
-                                </span>
+                                <span style="background: ${badgeColor}; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">${item.change_pct}% ${isHigh ? '높음' : '중간'}</span>
                             </div>
-                            <div style="display: flex; gap: 16px; font-size: 13px; color: var(--grey-700); margin-bottom: 12px;">
-                                <span>최근 평균: <strong>${formatNumber(item.recent_avg)}</strong></span>
-                                <span>이전 평균: <strong>${formatNumber(item.previous_avg)}</strong></span>
+                            <!-- 메트릭스 배지 -->
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                                <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #1565c0; border: 1px solid #90caf9; font-weight: 500;">최근 ${formatNumber(item.recent_avg)}</span>
+                                <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #5e35b1; border: 1px solid #b39ddb; font-weight: 500;">이전 ${formatNumber(item.previous_avg)}</span>
                             </div>
-                            <div style="font-size: 13px; color: var(--grey-900); padding: 12px; background: var(--error-light); border-radius: 6px;">
-                                ⚠️ ${transformRecommendationText(item.recommendation, item.metric)}
+                            <!-- 추천 액션 -->
+                            <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid ${borderColor};">
+                                <div style="font-size: 10px; font-weight: 600; color: ${textColor}; margin-bottom: 4px;">⚠️ 주의 필요</div>
+                                <div style="font-size: 11px; color: #333; line-height: 1.4;">${transformRecommendationText(item.recommendation, item.metric)}</div>
                             </div>
                         </div>
-                    `).join('')}
+                    `;}).join('')}
                 </div>
             `;
         }

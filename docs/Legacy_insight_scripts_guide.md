@@ -150,6 +150,44 @@ elif performance_ratio < -20:  # 예측 대비 20% 미달
     prophet_alerts.append({...})
 ```
 
+#### D-1. 데이터 필터링 조건 (v3.0 변경사항)
+
+> **v3.0 변경**: 기존 `전환수 > 0` 조건을 `(노출 > 0) | (전환수 > 0)` 조건으로 변경하여, 노출은 있지만 전환이 없는 항목도 분석에 포함
+
+##### 변경된 필터링 위치
+
+| 대상 | 변경 전 | 변경 후 | 라인 |
+|------|--------|---------|-----|
+| `gender_conversion` | `전환수 > 0` | `(노출 > 0) \| (전환수 > 0)` | 860 |
+| `adset_filtered` | `전환수 > 0` | `(노출 > 0) \| (전환수 > 0)` | 981 |
+| `combo_agg` (연령x성별) | `전환수 > 0` | `(노출 > 0) \| (전환수 > 0)` | 1103 |
+| `device_conversion` | `전환수 > 0` | `(노출 > 0) \| (전환수 > 0)` | 1151 |
+| `deviceplatform_conversion` | `비용 > 0` | `(노출 > 0) \| (전환수 > 0)` | 1257 |
+| `brand_summary` | `전환수 > 0` | `(노출 > 0) \| (전환수 > 0)` | 1349 |
+| `product_summary` | `전환수 > 0` | `(노출 > 0) \| (전환수 > 0)` | 1379 |
+| `promotion_summary` | `전환수 > 0` | `(노출 > 0) \| (전환수 > 0)` | 1409 |
+
+##### 변경 이유
+- **문제**: 노출/비용은 발생했지만 전환이 0인 항목(예: 웹, 모바일웹)이 분석에서 제외됨
+- **해결**: 노출이 있거나 전환이 있는 모든 항목을 포함하여 완전한 분석 제공
+
+##### 집계 컬럼 추가
+
+필터 조건 변경에 따라 아래 집계에 `'노출': 'sum'` 컬럼 추가:
+- `gender_summary` (Line 838)
+- `adset_agg` (Line 959-964)
+- `combo_agg` (Line 1095-1097)
+- `brand_summary` (Line 1342-1346)
+- `product_summary` (Line 1372-1376)
+- `promotion_summary` (Line 1402-1406)
+
+##### 영향 없는 스크립트
+
+| 스크립트 | 필터링 방식 | 변경 필요 |
+|---------|-----------|----------|
+| `generate_funnel_data.py` | 퍼널 단계명 필터 (유입/활동/관심/결제진행/구매완료) | ❌ |
+| `insight_generator.py` | 데이터 타입 필터 (actual/forecast), 0 나누기 방지 조건 | ❌ |
+
 #### E. 4분면 매트릭스 분석 (Efficiency-Scale Matrix) - v2.7
 
 > **핵심 개선**: 절대 평가(ROAS > 500%)를 **상대 평가(그룹 내 상위 N%)**로 전환하여 차원별(성별/연령/기기) 최적화 전략 제시
@@ -1779,3 +1817,4 @@ def format_korean_currency(value: float) -> str:
 | 2025-12-26 | v2.7 | **[4분면 매트릭스]** generate_type_insights.py에 Efficiency-Scale Matrix(4분면) 도입. TypeMicroAnalyzer 클래스, DIMENSION_ADVICE_MAP, MATRIX_THRESHOLDS 추가. 성별/연령/기기별 상대 평가 기반 인사이트 생성. type_dashboard.html에 4분면 시각화 및 추천 액션 표시 |
 | 2025-12-26 | v2.8 | **[Forecast Matrix]** insight_generator.py에 Forecast Matrix(4분면) 도입. InsightMicroAnalyzer 클래스, ADVICE_CONTEXT_MAP, FORECAST_MATRIX_THRESHOLDS 추가. 현재 효율 × 예측 성장률 기반 세그먼트 분류 (Super Star, Fading Hero, Rising Potential, Problem Child). matrix_insights JSON 필드 추가 |
 | 2025-12-27 | v2.9 | **[Opportunities 동적 액션]** OPPORTUNITY_ACTIONS 템플릿 추가 (라인 142-161). find_opportunities()에서 세그먼트 유형(channel/product/brand)별 맞춤 액션 동적 생성. hidden_gem financial_impact 동적 계산 |
+| 2025-12-29 | v3.0 | **[필터링 조건 개선]** generate_type_insights.py의 데이터 필터링 조건을 `전환수 > 0`에서 `(노출 > 0) \| (전환수 > 0)`으로 변경. 노출은 있지만 전환이 없는 항목(웹, 모바일웹 등)도 분석에 포함. 8개 필터 위치 수정, 6개 집계에 '노출' 컬럼 추가. generate_funnel_data.py, insight_generator.py는 변경 불필요 확인 |

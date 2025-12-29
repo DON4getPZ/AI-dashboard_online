@@ -1627,84 +1627,7 @@
                     </div>
                 </div>
 
-                <!-- 3. 통합 인사이트 & 전략 섹션 (접기/펼치기) -->
-                <div class="collapsible-section">
-                    <div class="collapsible-header">
-                        <div class="collapsible-title">
-                            <span class="collapsible-icon">💡</span>
-                            <span>인사이트 & 채널 전략 (이탈 위험, 성과 개선)</span>
-                        </div>
-                        <button class="collapsible-toggle">
-                            <span>펼치기</span>
-                            <span class="collapsible-toggle-icon collapsed">▼</span>
-                        </button>
-                    </div>
-                    <div class="collapsible-content">
-                        <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 16px;">
-                            퍼널 분석 결과를 바탕으로 <strong>고객 이탈 위험</strong>과 <strong>성과 개선 현황</strong>을 확인하세요. 전체 기간 데이터를 기준으로 분석합니다.
-                        </div>
-
-                        <!-- 통합 탭 버튼 -->
-                        <div class="view-type-section" style="margin-bottom: 20px; flex-wrap: wrap;">
-                            <button class="view-btn insight-strategy-tab-btn active" data-tab="churn_alert">⚠️ 이탈 위험 경고</button>
-                            <button class="view-btn insight-strategy-tab-btn" data-tab="improvement">✨ 성과 개선 분석</button>
-                        </div>
-
-                        <!-- 탭 1: 이탈 위험 경고 -->
-                        <div class="insight-strategy-tab-content active" id="insightChurnAlertTab">
-                        <div class="chart-section card" style="margin-bottom: 16px;">
-                            <div class="chart-header">
-                                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
-                                    <span>⚠️ 주의 필요: 고객 이탈 증가 감지</span>
-                                    <div style="display: flex; gap: 8px;">
-                                        <button class="view-btn insight-churn-period-btn active" data-period="7d">최근 7일</button>
-                                        <button class="view-btn insight-churn-period-btn" data-period="30d">최근 30일</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="font-size: 13px; color: var(--grey-600); padding: 0 20px 12px 20px;">
-                                이전 기간 대비 고객 이탈이 늘어난 단계를 알려드립니다. 빠르게 대응하면 매출 손실을 막을 수 있습니다.
-                            </div>
-                            <div id="insightChurnPredictions" style="padding: 20px;">
-                                <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
-                            </div>
-                        </div>
-                        </div>
-
-                        <!-- 탭 2: 성과 개선 분석 -->
-                        <div class="insight-strategy-tab-content" id="insightImprovementTab" style="display: none;">
-                        <div class="chart-section card">
-                            <div class="chart-header">
-                                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
-                                    <span>✨ 좋은 소식: 어떤 부분이 좋아졌나요?</span>
-                                    <div style="display: flex; gap: 8px;">
-                                        <button class="view-btn insight-improvement-period-btn active" data-period="7d">최근 7일</button>
-                                        <button class="view-btn insight-improvement-period-btn" data-period="30d">최근 30일</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 설명 섹션 -->
-                            <div style="font-size: 13px; color: var(--grey-700); padding: 16px 24px; background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%); line-height: 1.7; border-radius: 8px; margin: 16px 20px 12px 20px;">
-                                <strong style="color: var(--primary-main);">📖 이 섹션은 무엇을 보여주나요?</strong><br>
-                                이전 기간과 비교하여 성과가 <strong>좋아진 단계</strong>를 자동으로 찾아드립니다.<br>
-                                <span style="color: var(--grey-600);">예시: 최근 7일간 "구매완료"가 이전 7일보다 15% 증가했다면 여기에 표시됩니다.</span><br><br>
-                                <strong style="color: var(--primary-main);">💡 왜 중요한가요?</strong><br>
-                                • 좋아진 이유를 알아야 <strong>그 성과를 계속 유지</strong>할 수 있습니다<br>
-                                • 성공 요인을 찾아 <strong>다른 채널이나 상품에도 적용</strong>할 수 있습니다<br>
-                                • 각 개선 사항마다 <strong>바로 실행할 수 있는 구체적인 액션</strong>을 제공합니다
-                            </div>
-
-                            <div id="insightImprovementPredictions" style="padding: 20px;">
-                                <p style="color: var(--grey-500);">데이터를 불러오는 중...</p>
-                            </div>
-                        </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- 4. 고급 분석 결과 (A/B Testing, Clustering, Churn Prediction) -->
+                <!-- 3. 고급 분석 결과 (A/B Testing, Clustering, Churn Prediction) -->
                 <div class="collapsible-section">
                     <div class="collapsible-header">
                         <div class="collapsible-title">
@@ -1842,6 +1765,67 @@
                         </div>
 
 
+                    </div>
+                </div>
+
+                <!-- 4. 최근 변화 인사이트 (접기/펼치기) -->
+                <div class="collapsible-section" style="margin-bottom: 24px;">
+                    <div class="collapsible-header">
+                        <div class="collapsible-title">
+                            <span class="collapsible-icon">📈</span>
+                            <span>최근 변화 인사이트</span>
+                        </div>
+                        <button class="collapsible-toggle">
+                            <span>펼치기</span>
+                            <span class="collapsible-toggle-icon collapsed">▼</span>
+                        </button>
+                    </div>
+                    <div class="collapsible-content">
+                        <!-- 기간 비교 선택 -->
+                        <div id="trendPeriodIndicator" style="margin-bottom: 16px; padding: 14px 18px; background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border-radius: 10px; border: 1px solid #bbdefb;">
+                            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                <span style="font-size: 16px;">📊</span>
+                                <span style="font-size: 13px; font-weight: 600; color: #1565c0;">비교 기간:</span>
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="trend-period-btn" data-trend-period="30d" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">30일</button>
+                                    <button class="trend-period-btn" data-trend-period="14d" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: white; color: #495057;">14일</button>
+                                    <button class="trend-period-btn active" data-trend-period="7d" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border: 1px solid #673ab7; border-radius: 20px; cursor: pointer; transition: all 0.2s; background: #673ab7; color: white;">7일</button>
+                                </div>
+                                <span id="trendPeriodText" style="font-size: 12px; color: #37474f; margin-left: auto;"></span>
+                            </div>
+                        </div>
+                        <!-- 2열 그리드 -->
+                        <div class="compact-grid-2" style="margin-bottom: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0; background: white; border: 1px solid var(--grey-200); border-radius: 12px; overflow: hidden;">
+                            <!-- 성과 개선 분석 -->
+                            <div style="padding: 24px; border-right: 1px solid var(--grey-200); background: #fafafa;">
+                                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #4caf50;">
+                                    <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                        <span style="font-size: 14px; filter: brightness(10);">✨</span>
+                                    </div>
+                                    <span style="font-size: 14px; font-weight: 700; color: #2e7d32;">좋은 소식: 어떤 부분이 좋아졌나요?</span>
+                                </div>
+                                <div class="insight-content" id="improvementTrendContent" style="display: block; max-height: 400px; overflow-y: auto; padding-top: 4px;">
+                                    <div class="insight-card neutral">
+                                        <div class="insight-text">데이터를 불러오는 중...</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 성과 하락 경고 -->
+                            <div style="padding: 24px; background: #fafafa;">
+                                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #ef5350;">
+                                    <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #ef5350 0%, #f44336 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                        <span style="font-size: 14px; filter: brightness(10);">⚠️</span>
+                                    </div>
+                                    <span style="font-size: 14px; font-weight: 700; color: #c62828;">주의 필요: 성과 하락 감지</span>
+                                </div>
+                                <div class="insight-content" id="declineTrendContent" style="display: block; max-height: 400px; overflow-y: auto; padding-top: 4px;">
+                                    <div class="insight-card neutral">
+                                        <div class="insight-text">데이터를 불러오는 중...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -3132,9 +3116,9 @@
             updateInsights();
             updateUrgentAlerts();
             updateMicroSegmentAlerts();
-            setupInsightStrategyTabs();
-            updateInsightChurnPredictions('7d');
-            updateInsightImprovementPredictions('7d');
+            setupTrendPeriodButtons();
+            updateTrendPeriodIndicator('7d');
+            renderPerformanceTrends('7d');
             updateAdvancedAnalysis();
             updateKpiChart('cvr');
             updateChurnChart();
@@ -3867,50 +3851,232 @@
             content.innerHTML = html || '<div style="padding: 20px; text-align: center; color: var(--grey-500);">분류된 채널이 없습니다.</div>';
         }
 
-        // 인사이트 & 채널 전략 탭 설정 (이탈 위험/성과 개선)
-        function setupInsightStrategyTabs() {
-            const tabBtns = document.querySelectorAll('.insight-strategy-tab-btn');
-            const tabContents = document.querySelectorAll('.insight-strategy-tab-content');
+        // 최근 변화 인사이트 - 기간 선택 변수
+        let trendPeriod = '7d';
 
-            tabBtns.forEach(btn => {
+        // 최근 변화 인사이트 - 기간 버튼 설정
+        function setupTrendPeriodButtons() {
+            document.querySelectorAll('.trend-period-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const targetTab = this.dataset.tab;
+                    const period = this.dataset.trendPeriod;
+                    trendPeriod = period;
 
-                    // 버튼 활성화 상태 변경
-                    tabBtns.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-
-                    // 탭 컨텐츠 표시/숨김
-                    tabContents.forEach(content => {
-                        content.style.display = 'none';
+                    // 버튼 스타일 업데이트
+                    document.querySelectorAll('.trend-period-btn').forEach(b => {
+                        b.style.background = 'white';
+                        b.style.color = '#495057';
+                        b.style.border = '1px solid #dee2e6';
+                        b.classList.remove('active');
                     });
-
-                    // 해당 탭 표시
-                    if (targetTab === 'churn_alert') {
-                        document.getElementById('insightChurnAlertTab').style.display = 'block';
-                    } else if (targetTab === 'improvement') {
-                        document.getElementById('insightImprovementTab').style.display = 'block';
-                    }
-                });
-            });
-
-            // 인사이트 섹션 이탈 위험 7일/30일 토글
-            document.querySelectorAll('.insight-churn-period-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.insight-churn-period-btn').forEach(b => b.classList.remove('active'));
+                    this.style.background = '#673ab7';
+                    this.style.color = 'white';
+                    this.style.border = '1px solid #673ab7';
                     this.classList.add('active');
-                    updateInsightChurnPredictions(this.dataset.period);
-                });
-            });
 
-            // 인사이트 섹션 성과 개선 7일/30일 토글
-            document.querySelectorAll('.insight-improvement-period-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.insight-improvement-period-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    updateInsightImprovementPredictions(this.dataset.period);
+                    // 기간 표시 업데이트
+                    updateTrendPeriodIndicator(period);
+
+                    // 데이터 업데이트
+                    renderPerformanceTrends(period);
                 });
             });
+        }
+
+        // 기간 비교 표시 업데이트 (구체적인 날짜 범위 표시)
+        function updateTrendPeriodIndicator(period) {
+            const indicator = document.getElementById('trendPeriodText');
+            if (!indicator) return;
+
+            // 마지막 날짜 가져오기 (insightsData에서)
+            let lastDate = new Date();
+            if (insightsData && insightsData.overall && insightsData.overall.current_period) {
+                const endDateStr = insightsData.overall.current_period.end_date;
+                if (endDateStr) {
+                    lastDate = new Date(endDateStr);
+                }
+            }
+
+            const formatDate = (date) => {
+                const m = date.getMonth() + 1;
+                const d = date.getDate();
+                return `${m}/${d}`;
+            };
+
+            let recentStart, recentEnd, previousStart, previousEnd;
+            let days = 7;
+
+            if (period === '7d') {
+                days = 7;
+            } else if (period === '14d') {
+                days = 14;
+            } else if (period === '30d') {
+                days = 30;
+            }
+
+            // 최근 N일: lastDate - (N-1)일 ~ lastDate
+            recentEnd = new Date(lastDate);
+            recentStart = new Date(lastDate);
+            recentStart.setDate(recentStart.getDate() - (days - 1));
+
+            // 이전 N일: lastDate - (2N-1)일 ~ lastDate - N일
+            previousEnd = new Date(lastDate);
+            previousEnd.setDate(previousEnd.getDate() - days);
+            previousStart = new Date(lastDate);
+            previousStart.setDate(previousStart.getDate() - (days * 2 - 1));
+
+            indicator.innerHTML = `
+                <strong style="color: #1565c0;">최근 ${days}일</strong> (${formatDate(recentStart)}~${formatDate(recentEnd)}) vs
+                <strong style="color: #7b1fa2;">이전 ${days}일</strong> (${formatDate(previousStart)}~${formatDate(previousEnd)})
+            `;
+        }
+
+        // 성과 트렌드 렌더링 (개선 + 하락)
+        function renderPerformanceTrends(period) {
+            const fullData = insightsData;
+            if (!fullData || !fullData.performance_trends) {
+                renderNoTrendData();
+                return;
+            }
+
+            const trends = fullData.performance_trends;
+            updateImprovementTrends(period, trends);
+            updateDeclineTrends(period, trends);
+        }
+
+        // 트렌드 데이터 없음 표시
+        function renderNoTrendData() {
+            const noDataHtml = `
+                <div class="insight-card neutral">
+                    <div class="insight-text" style="text-align: center; padding: 20px;">
+                        <svg viewBox="0 0 24 24" fill="currentColor" style="width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.5; color: var(--grey-500);">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v2h-2v-2zm0-12h2v10h-2V5z"/>
+                        </svg>
+                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--grey-700);">데이터 없음</p>
+                        <p style="font-size: 14px; color: var(--grey-600);">성과 트렌드 데이터가 아직 생성되지 않았습니다.</p>
+                    </div>
+                </div>
+            `;
+            const improvementContainer = document.getElementById('improvementTrendContent');
+            const declineContainer = document.getElementById('declineTrendContent');
+            if (improvementContainer) improvementContainer.innerHTML = noDataHtml;
+            if (declineContainer) declineContainer.innerHTML = noDataHtml;
+        }
+
+        // 개선 항목 렌더링
+        function updateImprovementTrends(period, trends) {
+            const container = document.getElementById('improvementTrendContent');
+            if (!container) return;
+
+            const dataKeyMap = { '7d': 'improvements_7d', '14d': 'improvements_14d', '30d': 'improvements_30d' };
+            const periodTextMap = { '7d': '최근 7일 vs 이전 7일', '14d': '최근 14일 vs 이전 14일', '30d': '최근 30일 vs 이전 30일' };
+            const dataKey = dataKeyMap[period] || 'improvements_7d';
+            const improvements = trends[dataKey] || [];
+            const periodText = periodTextMap[period] || '최근 7일 vs 이전 7일';
+
+            if (improvements.length === 0) {
+                container.innerHTML = `
+                    <div class="insight-card neutral">
+                        <div class="insight-text" style="text-align: center; padding: 20px;">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.5; color: var(--grey-500);">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v2h-2v-2zm0-12h2v10h-2V5z"/>
+                            </svg>
+                            <p style="font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--grey-700);">개선 사항 없음</p>
+                            <p style="font-size: 14px; color: var(--grey-600);">현재 기간에 유의미한 성과 개선이 감지되지 않았습니다.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div style="display: grid; gap: 12px;">
+                    ${improvements.map(item => `
+                        <div style="background: #e8f5e9; border: 2px solid #4caf50; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <!-- 헤더 -->
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 18px;">📈</span>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 13px; font-weight: 700; color: #2e7d32;">${item.metric}</div>
+                                    <div style="font-size: 10px; color: #2e7d32; opacity: 0.8;">${periodText}</div>
+                                </div>
+                                <span style="background: #4caf50; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">+${item.change_pct}% ${item.improvement_level === 'high' ? '높음' : '중간'}</span>
+                            </div>
+                            <!-- 메트릭스 배지 -->
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                                <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #1565c0; border: 1px solid #90caf9; font-weight: 500;">최근 ${formatNumber(item.recent_avg)}</span>
+                                <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #5e35b1; border: 1px solid #b39ddb; font-weight: 500;">이전 ${formatNumber(item.previous_avg)}</span>
+                            </div>
+                            <!-- 추천 액션 -->
+                            <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid #4caf50;">
+                                <div style="font-size: 10px; font-weight: 600; color: #2e7d32; margin-bottom: 4px;">💡 추천 액션</div>
+                                <div style="font-size: 11px; color: #333; line-height: 1.4;">${item.recommendation}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // 하락 항목 렌더링
+        function updateDeclineTrends(period, trends) {
+            const container = document.getElementById('declineTrendContent');
+            if (!container) return;
+
+            const dataKeyMap = { '7d': 'declines_7d', '14d': 'declines_14d', '30d': 'declines_30d' };
+            const periodTextMap = { '7d': '최근 7일 vs 이전 7일', '14d': '최근 14일 vs 이전 14일', '30d': '최근 30일 vs 이전 30일' };
+            const dataKey = dataKeyMap[period] || 'declines_7d';
+            const declines = trends[dataKey] || [];
+            const periodText = periodTextMap[period] || '최근 7일 vs 이전 7일';
+
+            if (declines.length === 0) {
+                container.innerHTML = `
+                    <div class="insight-card neutral">
+                        <div class="insight-text" style="text-align: center; padding: 20px;">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="width: 48px; height: 48px; margin-bottom: 12px; color: var(--success-main);">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            <p style="font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--success-main);">하락 없음</p>
+                            <p style="font-size: 14px; color: var(--grey-600);">모든 지표가 안정적이거나 개선되고 있습니다.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div style="display: grid; gap: 12px;">
+                    ${declines.map(item => {
+                        const isHigh = item.risk_level === 'high';
+                        const bgColor = isHigh ? '#ffebee' : '#fff3e0';
+                        const borderColor = isHigh ? '#f44336' : '#ff9800';
+                        const textColor = isHigh ? '#c62828' : '#e65100';
+                        const badgeColor = isHigh ? '#f44336' : '#ff9800';
+                        return `
+                        <div style="background: ${bgColor}; border: 2px solid ${borderColor}; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <!-- 헤더 -->
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 18px;">📉</span>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 13px; font-weight: 700; color: ${textColor};">${item.metric}</div>
+                                    <div style="font-size: 10px; color: ${textColor}; opacity: 0.8;">${periodText}</div>
+                                </div>
+                                <span style="background: ${badgeColor}; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">${item.change_pct}% ${isHigh ? '높음' : '중간'}</span>
+                            </div>
+                            <!-- 메트릭스 배지 -->
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                                <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #1565c0; border: 1px solid #90caf9; font-weight: 500;">최근 ${formatNumber(item.recent_avg)}</span>
+                                <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #5e35b1; border: 1px solid #b39ddb; font-weight: 500;">이전 ${formatNumber(item.previous_avg)}</span>
+                            </div>
+                            <!-- 추천 액션 -->
+                            <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid ${borderColor};">
+                                <div style="font-size: 10px; font-weight: 600; color: ${textColor}; margin-bottom: 4px;">⚠️ 주의 필요</div>
+                                <div style="font-size: 11px; color: #333; line-height: 1.4;">${item.recommendation}</div>
+                            </div>
+                        </div>
+                    `;
+                    }).join('')}
+                </div>
+            `;
         }
 
         // KPI 요약 업데이트 (일별 데이터 사용)

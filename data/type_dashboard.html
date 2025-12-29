@@ -6529,20 +6529,44 @@
             // 액션 1: 확대할 채널
             if (topChannel && topChannel.roas >= 200) {
                 html += `
-                    <div style="padding: 14px; background: #e8f5e9; border-radius: 10px; border-left: 3px solid #4caf50;">
-                        <div style="font-size: 11px; color: #2e7d32; font-weight: 600; margin-bottom: 6px;">🔥 예산 늘리기</div>
-                        <div style="font-size: 12px; color: var(--grey-800); line-height: 1.5;">
-                            <strong>${topChannel.name}</strong> 채널에 예산을 <strong>10-20%</strong> 더 투자하세요
+                    <div style="background: #e8f5e9; border: 2px solid #4caf50; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <!-- 헤더 -->
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 18px;">🔥</span>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 700; color: #2e7d32;">예산 늘리기</div>
+                                <div style="font-size: 10px; color: #2e7d32; opacity: 0.8;">고효율 채널</div>
+                            </div>
+                            <span style="background: #4caf50; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">SCALE-UP</span>
                         </div>
-                        <div style="font-size: 10px; color: var(--grey-500); margin-top: 6px;">ROAS ${formatPercent(topChannel.roas)}</div>
+                        <!-- 메트릭스 배지 -->
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                            <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #2e7d32; border: 1px solid #81c784; font-weight: 500;">${topChannel.name}</span>
+                            <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #1565c0; border: 1px solid #90caf9; font-weight: 500;">ROAS ${formatPercent(topChannel.roas)}</span>
+                        </div>
+                        <!-- 추천 액션 -->
+                        <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid #4caf50;">
+                            <div style="font-size: 10px; font-weight: 600; color: #2e7d32; margin-bottom: 4px;">💡 추천 액션</div>
+                            <div style="font-size: 11px; color: #333; line-height: 1.4;">예산을 <strong>10-20%</strong> 더 투자하세요</div>
+                        </div>
                     </div>
                 `;
             } else {
                 html += `
-                    <div style="padding: 14px; background: #e3f2fd; border-radius: 10px; border-left: 3px solid #2196f3;">
-                        <div style="font-size: 11px; color: #1565c0; font-weight: 600; margin-bottom: 6px;">📊 성과 분석</div>
-                        <div style="font-size: 12px; color: var(--grey-800); line-height: 1.5;">
-                            채널별 성과를 비교하여 <strong>가장 효율적인 채널</strong>을 찾아보세요
+                    <div style="background: #e3f2fd; border: 2px solid #2196f3; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <!-- 헤더 -->
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 18px;">📊</span>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 700; color: #1565c0;">성과 분석</div>
+                                <div style="font-size: 10px; color: #1565c0; opacity: 0.8;">채널 비교</div>
+                            </div>
+                            <span style="background: #2196f3; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">ANALYZE</span>
+                        </div>
+                        <!-- 추천 액션 -->
+                        <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid #2196f3;">
+                            <div style="font-size: 10px; font-weight: 600; color: #1565c0; margin-bottom: 4px;">💡 추천 액션</div>
+                            <div style="font-size: 11px; color: #333; line-height: 1.4;">채널별 성과를 비교하여 <strong>가장 효율적인 채널</strong>을 찾아보세요</div>
                         </div>
                     </div>
                 `;
@@ -6551,12 +6575,26 @@
             // 액션 2: CPA 최적화
             if (lowCpaChannel) {
                 html += `
-                    <div style="padding: 14px; background: #e3f2fd; border-radius: 10px; border-left: 3px solid #1976d2;">
-                        <div style="font-size: 11px; color: #1565c0; font-weight: 600; margin-bottom: 6px;">💰 비용 효율화</div>
-                        <div style="font-size: 12px; color: var(--grey-800); line-height: 1.5;">
-                            <strong>${lowCpaChannel.name}</strong>이 전환당 비용이 가장 낮습니다
+                    <div style="background: #e3f2fd; border: 2px solid #2196f3; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <!-- 헤더 -->
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 18px;">💰</span>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 700; color: #1565c0;">비용 효율화</div>
+                                <div style="font-size: 10px; color: #1565c0; opacity: 0.8;">CPA 최적화</div>
+                            </div>
+                            <span style="background: #2196f3; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">EFFICIENT</span>
                         </div>
-                        <div style="font-size: 10px; color: var(--grey-500); margin-top: 6px;">CPA ${formatCurrency(lowCpaChannel.cpa)}</div>
+                        <!-- 메트릭스 배지 -->
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                            <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #1565c0; border: 1px solid #90caf9; font-weight: 500;">${lowCpaChannel.name}</span>
+                            <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #5e35b1; border: 1px solid #b39ddb; font-weight: 500;">CPA ${formatCurrency(lowCpaChannel.cpa)}</span>
+                        </div>
+                        <!-- 추천 액션 -->
+                        <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid #2196f3;">
+                            <div style="font-size: 10px; font-weight: 600; color: #1565c0; margin-bottom: 4px;">💡 추천 액션</div>
+                            <div style="font-size: 11px; color: #333; line-height: 1.4;">전환당 비용이 가장 낮은 채널에 집중하세요</div>
+                        </div>
                     </div>
                 `;
             }
@@ -6565,20 +6603,44 @@
             const poorChannel = sortedByRoas.length > 0 ? sortedByRoas[sortedByRoas.length - 1] : null;
             if (poorChannel && poorChannel.roas < 100) {
                 html += `
-                    <div style="padding: 14px; background: #fff3e0; border-radius: 10px; border-left: 3px solid #f57c00;">
-                        <div style="font-size: 11px; color: #e65100; font-weight: 600; margin-bottom: 6px;">⚠️ 점검 필요</div>
-                        <div style="font-size: 12px; color: var(--grey-800); line-height: 1.5;">
-                            <strong>${poorChannel.name}</strong> 채널의 광고 소재를 교체해보세요
+                    <div style="background: #fff3e0; border: 2px solid #ff9800; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <!-- 헤더 -->
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 18px;">⚠️</span>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 700; color: #e65100;">점검 필요</div>
+                                <div style="font-size: 10px; color: #e65100; opacity: 0.8;">저효율 채널</div>
+                            </div>
+                            <span style="background: #ff9800; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">REVIEW</span>
                         </div>
-                        <div style="font-size: 10px; color: var(--grey-500); margin-top: 6px;">ROAS ${formatPercent(poorChannel.roas)}</div>
+                        <!-- 메트릭스 배지 -->
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                            <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #e65100; border: 1px solid #ffcc80; font-weight: 500;">${poorChannel.name}</span>
+                            <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #c62828; border: 1px solid #ef9a9a; font-weight: 500;">ROAS ${formatPercent(poorChannel.roas)}</span>
+                        </div>
+                        <!-- 추천 액션 -->
+                        <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid #ff9800;">
+                            <div style="font-size: 10px; font-weight: 600; color: #e65100; margin-bottom: 4px;">⚠️ 추천 액션</div>
+                            <div style="font-size: 11px; color: #333; line-height: 1.4;">광고 소재를 교체해보세요</div>
+                        </div>
                     </div>
                 `;
             } else {
                 html += `
-                    <div style="padding: 14px; background: #f3e5f5; border-radius: 10px; border-left: 3px solid #9c27b0;">
-                        <div style="font-size: 11px; color: #7b1fa2; font-weight: 600; margin-bottom: 6px;">🎯 타겟 최적화</div>
-                        <div style="font-size: 12px; color: var(--grey-800); line-height: 1.5;">
-                            '타겟 분석' 탭에서 가장 효과적인 <strong>고객층</strong>을 확인하세요
+                    <div style="background: #f3e5f5; border: 2px solid #9c27b0; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <!-- 헤더 -->
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 18px;">🎯</span>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 700; color: #7b1fa2;">타겟 최적화</div>
+                                <div style="font-size: 10px; color: #7b1fa2; opacity: 0.8;">고객층 분석</div>
+                            </div>
+                            <span style="background: #9c27b0; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">OPTIMIZE</span>
+                        </div>
+                        <!-- 추천 액션 -->
+                        <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid #9c27b0;">
+                            <div style="font-size: 10px; font-weight: 600; color: #7b1fa2; margin-bottom: 4px;">💡 추천 액션</div>
+                            <div style="font-size: 11px; color: #333; line-height: 1.4;">'타겟 분석' 탭에서 가장 효과적인 <strong>고객층</strong>을 확인하세요</div>
                         </div>
                     </div>
                 `;
@@ -6639,28 +6701,34 @@
             // 추천 카드 렌더링 헬퍼 함수
             function renderRecommendationCard(rec, idx) {
                 const severityConfig = {
-                    'positive': { border: '#2e7d32', bg: '#e8f5e9', icon: '👑' },  // 4분면: Core Driver
-                    'high': { border: '#ef5350', bg: '#ffebee', icon: '🚨' },
-                    'warning': { border: '#ff9800', bg: '#fff3e0', icon: '⚠️' },
-                    'opportunity': { border: '#1976d2', bg: '#e3f2fd', icon: '💎' },  // 4분면: Efficiency Star
-                    'info': { border: '#2196f3', bg: '#e3f2fd', icon: '💡' }
+                    'positive': { border: '#4caf50', bg: '#e8f5e9', text: '#2e7d32', icon: '👑', badge: 'SCALE-UP' },
+                    'high': { border: '#f44336', bg: '#ffebee', text: '#c62828', icon: '🚨', badge: 'URGENT' },
+                    'warning': { border: '#ff9800', bg: '#fff3e0', text: '#e65100', icon: '⚠️', badge: 'REVIEW' },
+                    'opportunity': { border: '#2196f3', bg: '#e3f2fd', text: '#1565c0', icon: '💎', badge: 'GROW' },
+                    'info': { border: '#2196f3', bg: '#e3f2fd', text: '#1565c0', icon: '💡', badge: 'INFO' }
                 };
                 const config = severityConfig[rec.severity] || severityConfig['info'];
-                const priorityBadge = rec.priority === 'high' ? '<span style="padding: 2px 8px; background: #ff5722; color: white; border-radius: 10px; font-size: 9px; font-weight: 700; margin-left: 8px;">긴급</span>' : '';
+                const priorityBadge = rec.priority === 'high' ? '<span style="background: #ff5722; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">긴급</span>' : '<span style="background: ' + config.border + '; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">' + config.badge + '</span>';
 
                 return `
-                    <div style="padding: 14px 16px; background: ${config.bg}; border-radius: 12px; border-left: 4px solid ${config.border};">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
-                            <div style="font-size: 13px; font-weight: 700; color: var(--grey-900);">
-                                ${rec.title || config.icon + ' 추천 ' + (idx + 1)}${priorityBadge}
+                    <div style="background: ${config.bg}; border: 2px solid ${config.border}; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <!-- 헤더 -->
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 18px;">${config.icon}</span>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 700; color: ${config.text};">${rec.title || '추천 ' + (idx + 1)}</div>
+                                <div style="font-size: 10px; color: ${config.text}; opacity: 0.8;">${rec.category || 'AI 분석'}</div>
                             </div>
-                            ${rec.category ? '<span style="padding: 2px 8px; background: rgba(0,0,0,0.08); border-radius: 10px; font-size: 10px; color: var(--grey-600);">' + rec.category + '</span>' : ''}
+                            ${priorityBadge}
                         </div>
-                        <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6; margin-bottom: 8px;">
+                        <!-- 메시지 -->
+                        <div style="font-size: 11px; color: #333; line-height: 1.5; margin-bottom: 10px; padding: 8px; background: rgba(255,255,255,0.6); border-radius: 6px;">
                             ${rec.message || ''}
                         </div>
-                        ${rec.action ? '<div style="padding: 10px 12px; background: rgba(255,255,255,0.7); border-radius: 8px; border: 1px dashed ' + config.border + ';"><div style="font-size: 10px; color: ' + config.border + '; font-weight: 600; margin-bottom: 4px;">💡 실행 가이드</div><div style="font-size: 11px; color: var(--grey-800); line-height: 1.5;">' + rec.action + '</div></div>' : ''}
-                        ${rec.expected_impact ? '<div style="margin-top: 8px; font-size: 10px; color: #2e7d32; font-weight: 600;">📈 기대 효과: ' + rec.expected_impact + '</div>' : ''}
+                        <!-- 추천 액션 -->
+                        ${rec.action ? '<div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid ' + config.border + ';"><div style="font-size: 10px; font-weight: 600; color: ' + config.text + '; margin-bottom: 4px;">💡 실행 가이드</div><div style="font-size: 11px; color: #333; line-height: 1.4;">' + rec.action + '</div></div>' : ''}
+                        <!-- 기대 효과 -->
+                        ${rec.expected_impact ? '<div style="margin-top: 8px; display: flex; gap: 6px;"><span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #2e7d32; border: 1px solid #81c784; font-weight: 500;">📈 ' + rec.expected_impact + '</span></div>' : ''}
                     </div>
                 `;
             }
@@ -7285,53 +7353,47 @@
                 // 헬퍼 함수: 경고 카드 렌더링
                 function renderAlertCard(alert) {
                     const severityConfig = {
-                        'positive': { border: '#2e7d32', bg: '#e8f5e9', badge: '핵심', badgeBg: '#2e7d32' },  // 4분면: Core Driver
-                        'high': { border: '#d32f2f', bg: '#ffebee', badge: '긴급', badgeBg: '#d32f2f' },
-                        'warning': { border: '#f57c00', bg: '#fff3e0', badge: '주의', badgeBg: '#f57c00' },
-                        'opportunity': { border: '#1976d2', bg: '#e3f2fd', badge: '기회', badgeBg: '#1976d2' }  // 4분면: Efficiency Star
+                        'positive': { border: '#4caf50', bg: '#e8f5e9', text: '#2e7d32', badge: '핵심', icon: '👑' },
+                        'high': { border: '#f44336', bg: '#ffebee', text: '#c62828', badge: '긴급', icon: '🚨' },
+                        'warning': { border: '#ff9800', bg: '#fff3e0', text: '#e65100', badge: '주의', icon: '⚠️' },
+                        'opportunity': { border: '#2196f3', bg: '#e3f2fd', text: '#1565c0', badge: '기회', icon: '💎' }
                     };
                     const config = severityConfig[alert.severity] || severityConfig['warning'];
 
                     // 타입별 한국어 제목 매핑
                     const typeTitleMap = {
-                        'forecast_underperformance': '⚠️ 예측 대비 실적 미달',
-                        'low_roas': '📉 낮은 ROAS 경고',
-                        'high_cpa': '💰 높은 CPA 경고',
-                        'budget_waste': '💸 예산 낭비 가능성',
-                        'performance_drop': '📊 성과 하락 감지'
+                        'forecast_underperformance': '예측 대비 실적 미달',
+                        'low_roas': '낮은 ROAS 경고',
+                        'high_cpa': '높은 CPA 경고',
+                        'budget_waste': '예산 낭비 가능성',
+                        'performance_drop': '성과 하락 감지'
                     };
-                    const alertTitle = alert.title || typeTitleMap[alert.type] || '⚠️ 경고';
+                    const alertTitle = alert.title || typeTitleMap[alert.type] || '경고';
 
                     let cardHtml = `
-                        <div style="padding: 14px 16px; background: ${config.bg}; border-radius: 12px; border-left: 4px solid ${config.border};">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                <div style="font-size: 13px; font-weight: 700; color: var(--grey-900);">
-                                    ${alertTitle}
+                        <div style="background: ${config.bg}; border: 2px solid ${config.border}; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <!-- 헤더 -->
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 18px;">${config.icon}</span>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 13px; font-weight: 700; color: ${config.text};">${alertTitle}</div>
+                                    <div style="font-size: 10px; color: ${config.text}; opacity: 0.8;">AI 분석</div>
                                 </div>
-                                <span style="padding: 2px 8px; background: ${config.badgeBg}; color: white; border-radius: 10px; font-size: 10px; font-weight: 600;">${config.badge}</span>
+                                <span style="background: ${config.border}; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">${config.badge}</span>
                             </div>
-                            <div style="font-size: 12px; color: var(--grey-700); line-height: 1.6; margin-bottom: 10px;">
+                            <!-- 메시지 -->
+                            <div style="font-size: 11px; color: #333; line-height: 1.5; margin-bottom: 10px; padding: 8px; background: rgba(255,255,255,0.6); border-radius: 6px;">
                                 ${alert.message || ''}
                             </div>
                     `;
 
-                    // Financial Impact 표시
+                    // Financial Impact 표시 (메트릭스 배지 스타일)
                     if (alert.financial_impact) {
                         const fi = alert.financial_impact;
                         cardHtml += `
-                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                                ${fi.loss_amount ? `
-                                    <div style="flex: 1; padding: 8px 10px; background: rgba(211, 47, 47, 0.1); border-radius: 8px; text-align: center;">
-                                        <div style="font-size: 10px; color: #d32f2f; font-weight: 600;">예상 손실</div>
-                                        <div style="font-size: 14px; font-weight: 800; color: #d32f2f;">${fi.loss_amount}</div>
-                                    </div>
-                                ` : ''}
-                                ${fi.potential_uplift ? `
-                                    <div style="flex: 1; padding: 8px 10px; background: rgba(46, 125, 50, 0.1); border-radius: 8px; text-align: center;">
-                                        <div style="font-size: 10px; color: #2e7d32; font-weight: 600;">개선시 기대 수익</div>
-                                        <div style="font-size: 14px; font-weight: 800; color: #2e7d32;">${fi.potential_uplift}</div>
-                                    </div>
-                                ` : ''}
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                                ${fi.loss_amount ? '<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #c62828; border: 1px solid #ef9a9a; font-weight: 500;">예상 손실 ' + fi.loss_amount + '</span>' : ''}
+                                ${fi.potential_uplift ? '<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #2e7d32; border: 1px solid #81c784; font-weight: 500;">기대 수익 ' + fi.potential_uplift + '</span>' : ''}
                             </div>
                         `;
                     }
@@ -7339,9 +7401,9 @@
                     // Action 가이드 표시
                     if (alert.action) {
                         cardHtml += `
-                            <div style="padding: 10px 12px; background: rgba(255,255,255,0.8); border-radius: 8px; border: 1px dashed ${config.border};">
-                                <div style="font-size: 10px; color: ${config.border}; font-weight: 600; margin-bottom: 4px;">💡 실행 가이드</div>
-                                <div style="font-size: 11px; color: var(--grey-800); line-height: 1.5;">${alert.action}</div>
+                            <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid ${config.border};">
+                                <div style="font-size: 10px; font-weight: 600; color: ${config.text}; margin-bottom: 4px;">💡 실행 가이드</div>
+                                <div style="font-size: 11px; color: #333; line-height: 1.4;">${alert.action}</div>
                             </div>
                         `;
                     }
@@ -7407,13 +7469,20 @@
                 function renderCpaCard(cat) {
                     const cpaRatio = ((cat.cpa / avgCpa - 1) * 100).toFixed(0);
                     return `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f5f5f5;">
-                            <div>
-                                <div style="font-size: 12px; font-weight: 600; color: var(--grey-800);">${cat.name}</div>
-                                <div style="font-size: 10px; color: #e65100;">전환 1건당 ${formatCurrency(cat.cpa)}</div>
+                        <div style="background: #fff3e0; border: 2px solid #ff9800; border-radius: 10px; padding: 14px; margin-bottom: 10px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <!-- 헤더 -->
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 18px;">💰</span>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 13px; font-weight: 700; color: #e65100;">${cat.name}</div>
+                                    <div style="font-size: 10px; color: #e65100; opacity: 0.8;">CPA 초과</div>
+                                </div>
+                                <span style="background: #ff9800; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">+${cpaRatio}%</span>
                             </div>
-                            <div style="padding: 4px 10px; background: #fff3e0; border-radius: 12px; font-size: 10px; color: #e65100; font-weight: 600;">
-                                평균보다 +${cpaRatio}% 비쌈
+                            <!-- 메트릭스 배지 -->
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #e65100; border: 1px solid #ffcc80; font-weight: 500;">CPA ${formatCurrency(cat.cpa)}</span>
+                                <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #5e35b1; border: 1px solid #b39ddb; font-weight: 500;">평균 ${formatCurrency(avgCpa)}</span>
                             </div>
                         </div>
                     `;
@@ -7463,41 +7532,35 @@
             // 비효율 상품 컨텐츠
             if (hasLowRoasProducts) {
                 html += `<div id="warningTabProducts" class="warning-tab-content" style="display: ${firstActiveTab === 'products' ? 'block' : 'none'};">`;
-                html += `
-                    <div class="hoverable-card"
-                         data-tooltip-title="비효율 상품"
-                         data-tooltip-icon="🟣"
-                         data-tooltip-insight="ROAS가 100% 미만인 상품들입니다. 광고비보다 매출이 적습니다."
-                         data-tooltip-recommendation="이 상품들은 광고보다 프로모션/할인이 더 효과적일 수 있어요."
-                         style="margin-bottom: 12px; padding: 14px; background: white; border-radius: 10px; border: 1px solid #e1bee7;">
-                        <div style="font-size: 12px; font-weight: 700; color: #7b1fa2; margin-bottom: 12px;">
-                            🟣 효율이 낮은 상품 (${lowRoasProducts.length}개)
-                        </div>
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
-                `;
+                html += `<div style="display: flex; flex-direction: column; gap: 10px;">`;
 
                 lowRoasProducts.forEach(prod => {
                     html += `
-                            <div style="padding: 8px 14px; background: #f3e5f5; border-radius: 20px; font-size: 11px; display: flex; align-items: center; gap: 8px; border: 1px solid #ce93d8;">
-                                <span style="color: var(--grey-800); font-weight: 500;">${prod.product}</span>
-                                <span style="color: #7b1fa2; font-weight: 700;">${formatPercent(prod.roas)}</span>
+                        <div style="background: #f3e5f5; border: 2px solid #9c27b0; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <!-- 헤더 -->
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 18px;">📦</span>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 13px; font-weight: 700; color: #7b1fa2;">${prod.product}</div>
+                                    <div style="font-size: 10px; color: #7b1fa2; opacity: 0.8;">비효율 상품</div>
+                                </div>
+                                <span style="background: #9c27b0; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">REVIEW</span>
                             </div>
+                            <!-- 메트릭스 배지 -->
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                                <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #7b1fa2; border: 1px solid #ce93d8; font-weight: 500;">ROAS ${formatPercent(prod.roas)}</span>
+                                ${prod.cost ? '<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #5e35b1; border: 1px solid #b39ddb; font-weight: 500;">비용 ' + formatCurrency(prod.cost) + '</span>' : ''}
+                            </div>
+                            <!-- 추천 액션 -->
+                            <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid #9c27b0;">
+                                <div style="font-size: 10px; font-weight: 600; color: #7b1fa2; margin-bottom: 4px;">💡 추천 액션</div>
+                                <div style="font-size: 11px; color: #333; line-height: 1.4;">광고보다 프로모션/할인이 더 효과적일 수 있어요</div>
+                            </div>
+                        </div>
                     `;
                 });
 
-                html += `
-                        </div>
-                        <div style="padding: 10px; background: #fce4ec; border-radius: 8px;">
-                            <div style="font-size: 11px; font-weight: 600; color: #7b1fa2; margin-bottom: 4px;">💡 이렇게 해보세요</div>
-                            <div style="font-size: 10px; color: var(--grey-700); line-height: 1.6;">
-                                • 이 상품들은 광고보다 프로모션/할인이 더 효과적일 수 있어요<br>
-                                • 광고 소재나 타겟을 변경해보세요<br>
-                                • 광고 예산을 효율 좋은 상품으로 이동하세요
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                `;
+                html += `</div></div>`;
             }
 
             document.getElementById('warningContent').innerHTML = html;
@@ -7687,7 +7750,7 @@
                          data-tooltip-recommendation="효율이 높은 성별에 예산을 집중하면 성과가 개선됩니다."
                          style="margin-bottom: 12px; padding: 14px; background: white; border-radius: 10px; border: 1px solid var(--grey-200);">
                         <div style="font-size: 12px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px;">
-                            👥 성별 비교 <span style="font-size: 10px; color: var(--grey-500); font-weight: 400;">(4분면 분석)</span>
+                            👥 성별 비교 <span style="font-size: 10px; color: var(--grey-500); font-weight: 400;"></span>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px;">
                 `;
@@ -7702,31 +7765,45 @@
                     const matrixType = matrixInsight ? matrixInsight.sub_type : null;
                     const matrixAction = matrixInsight ? matrixInsight.action : null;
 
-                    // 배경색 결정 (4분면 기반)
+                    // 색상 결정 (4분면 기반)
                     let bgColor = '#f5f5f5';
-                    let borderStyle = '';
+                    let borderColor = '#e0e0e0';
+                    let textColor = '#616161';
+                    let badgeColor = '#9e9e9e';
+                    let badgeText = '';
+                    let icon = '👤';
                     if (matrixType === 'core_driver') {
-                        bgColor = '#e8f5e9'; borderStyle = 'border: 2px solid #2e7d32;';
+                        bgColor = '#e8f5e9'; borderColor = '#4caf50'; textColor = '#2e7d32'; badgeColor = '#4caf50'; badgeText = 'SCALE-UP'; icon = '👑';
                     } else if (matrixType === 'efficiency_star') {
-                        bgColor = '#e3f2fd'; borderStyle = 'border: 2px solid #1976d2;';
+                        bgColor = '#e3f2fd'; borderColor = '#2196f3'; textColor = '#1565c0'; badgeColor = '#2196f3'; badgeText = 'GROW'; icon = '💎';
                     } else if (matrixType === 'budget_bleeder') {
-                        bgColor = '#ffebee'; borderStyle = 'border: 2px solid #d32f2f;';
+                        bgColor = '#ffebee'; borderColor = '#f44336'; textColor = '#c62828'; badgeColor = '#f44336'; badgeText = 'OPTIMIZE'; icon = '💸';
                     } else if (matrixType === 'underperformer') {
-                        bgColor = '#fff3e0'; borderStyle = 'border: 2px solid #ff9800;';
+                        bgColor = '#fff3e0'; borderColor = '#ff9800'; textColor = '#e65100'; badgeColor = '#ff9800'; badgeText = 'REVIEW'; icon = '💤';
                     }
 
                     html += `
-                        <div style="padding: 12px; background: ${bgColor}; border-radius: 8px; ${borderStyle}">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 4px;">
-                                <span style="font-size: 13px; font-weight: 700; color: var(--grey-800);">${normalizedGender}</span>
-                                ${matrixType ? renderMatrixBadge(matrixType) : ''}
-                            </div>
-                            <div style="font-size: 18px; font-weight: 800; color: var(--grey-700); margin-bottom: 4px;">${formatPercent(g.roas)}</div>
-                            <div style="font-size: 10px; color: var(--grey-500); margin-bottom: 8px;">전환당 ${formatCurrency(cpa)}</div>
-                            ${matrixAction ? `
-                                <div style="margin-top: 8px; padding: 8px; background: rgba(255,255,255,0.8); border-radius: 6px; font-size: 10px; color: var(--grey-700); line-height: 1.4;">
-                                    💡 ${matrixAction}
+                        <div style="background: ${bgColor}; border: 2px solid ${borderColor}; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <!-- 헤더 -->
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 18px;">${icon}</span>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 13px; font-weight: 700; color: ${textColor};">${normalizedGender}</div>
+                                    <div style="font-size: 10px; color: ${textColor}; opacity: 0.8;">성별 타겟</div>
                                 </div>
+                                ${badgeText ? '<span style="background: ' + badgeColor + '; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">' + badgeText + '</span>' : ''}
+                            </div>
+                            <!-- 메트릭스 배지 -->
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                                <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #1565c0; border: 1px solid #90caf9; font-weight: 500;">ROAS ${formatPercent(g.roas)}</span>
+                                <span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #5e35b1; border: 1px solid #b39ddb; font-weight: 500;">CPA ${formatCurrency(cpa)}</span>
+                            </div>
+                            <!-- 추천 액션 -->
+                            ${matrixAction ? `
+                            <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid ${borderColor};">
+                                <div style="font-size: 10px; font-weight: 600; color: ${textColor}; margin-bottom: 4px;">💡 추천 액션</div>
+                                <div style="font-size: 11px; color: #333; line-height: 1.4;">${matrixAction}</div>
+                            </div>
                             ` : ''}
                         </div>
                     `;
@@ -7756,60 +7833,96 @@
                         <div style="font-size: 13px; font-weight: 700; color: var(--grey-900); margin-bottom: 12px;">
                             📊 효율-규모 매트릭스 (4분면)
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                             <!-- 고지출 + 고효율: Core Driver -->
-                            <div style="padding: 12px; background: #e8f5e9; border-radius: 8px; border: 1px solid #4caf50;">
-                                <div style="font-size: 11px; font-weight: 700; color: #2e7d32; margin-bottom: 6px;">👑 핵심 동력</div>
-                                <div style="font-size: 10px; color: var(--grey-600);">고지출 + 고효율</div>
-                                <div style="margin-top: 8px; font-size: 11px; color: var(--grey-800);">
-                                    ${quadrants.core_driver.map(i => i.target).join(', ') || '-'}
+                            <div style="background: #e8f5e9; border: 2px solid #4caf50; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <!-- 헤더 -->
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                    <span style="font-size: 18px;">👑</span>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 13px; font-weight: 700; color: #2e7d32;">핵심 동력</div>
+                                        <div style="font-size: 10px; color: #2e7d32; opacity: 0.8;">고지출 + 고효율</div>
+                                    </div>
+                                    <span style="background: #4caf50; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">SCALE-UP</span>
                                 </div>
+                                <!-- 타겟 배지 -->
+                                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                                    ${quadrants.core_driver.length > 0 ? quadrants.core_driver.map(i => '<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #2e7d32; border: 1px solid #81c784; font-weight: 500;">' + i.target + '</span>').join('') : '<span style="font-size: 11px; color: var(--grey-500);">-</span>'}
+                                </div>
+                                <!-- 추천 액션 -->
                                 ${quadrants.core_driver.length > 0 && quadrants.core_driver[0].action ? `
-                                <div style="margin-top: 10px; padding: 10px; background: #ffffff; border-radius: 6px; border-left: 3px solid #2e7d32;">
-                                    <div style="font-size: 10px; font-weight: 700; color: #1b5e20; margin-bottom: 4px;">💡 추천 액션</div>
-                                    <div style="font-size: 11px; font-weight: 500; color: #1b5e20; line-height: 1.5;">${quadrants.core_driver[0].action}</div>
+                                <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid #4caf50;">
+                                    <div style="font-size: 10px; font-weight: 600; color: #2e7d32; margin-bottom: 4px;">💡 추천 액션</div>
+                                    <div style="font-size: 11px; color: #333; line-height: 1.4;">${quadrants.core_driver[0].action}</div>
                                 </div>
                                 ` : ''}
                             </div>
                             <!-- 저지출 + 고효율: Efficiency Star -->
-                            <div style="padding: 12px; background: #e3f2fd; border-radius: 8px; border: 1px solid #2196f3;">
-                                <div style="font-size: 11px; font-weight: 700; color: #1565c0; margin-bottom: 6px;">💎 효율 스타</div>
-                                <div style="font-size: 10px; color: var(--grey-600);">저지출 + 고효율</div>
-                                <div style="margin-top: 8px; font-size: 11px; color: var(--grey-800);">
-                                    ${quadrants.efficiency_star.map(i => i.target).join(', ') || '-'}
+                            <div style="background: #e3f2fd; border: 2px solid #2196f3; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <!-- 헤더 -->
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                    <span style="font-size: 18px;">💎</span>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 13px; font-weight: 700; color: #1565c0;">효율 스타</div>
+                                        <div style="font-size: 10px; color: #1565c0; opacity: 0.8;">저지출 + 고효율</div>
+                                    </div>
+                                    <span style="background: #2196f3; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">GROW</span>
                                 </div>
+                                <!-- 타겟 배지 -->
+                                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                                    ${quadrants.efficiency_star.length > 0 ? quadrants.efficiency_star.map(i => '<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #1565c0; border: 1px solid #90caf9; font-weight: 500;">' + i.target + '</span>').join('') : '<span style="font-size: 11px; color: var(--grey-500);">-</span>'}
+                                </div>
+                                <!-- 추천 액션 -->
                                 ${quadrants.efficiency_star.length > 0 && quadrants.efficiency_star[0].action ? `
-                                <div style="margin-top: 10px; padding: 10px; background: #ffffff; border-radius: 6px; border-left: 3px solid #1565c0;">
-                                    <div style="font-size: 10px; font-weight: 700; color: #0d47a1; margin-bottom: 4px;">💡 추천 액션</div>
-                                    <div style="font-size: 11px; font-weight: 500; color: #0d47a1; line-height: 1.5;">${quadrants.efficiency_star[0].action}</div>
+                                <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid #2196f3;">
+                                    <div style="font-size: 10px; font-weight: 600; color: #1565c0; margin-bottom: 4px;">💡 추천 액션</div>
+                                    <div style="font-size: 11px; color: #333; line-height: 1.4;">${quadrants.efficiency_star[0].action}</div>
                                 </div>
                                 ` : ''}
                             </div>
                             <!-- 고지출 + 저효율: Budget Bleeder -->
-                            <div style="padding: 12px; background: #ffebee; border-radius: 8px; border: 1px solid #ef5350;">
-                                <div style="font-size: 11px; font-weight: 700; color: #c62828; margin-bottom: 6px;">💸 예산 누수</div>
-                                <div style="font-size: 10px; color: var(--grey-600);">고지출 + 저효율</div>
-                                <div style="margin-top: 8px; font-size: 11px; color: var(--grey-800);">
-                                    ${quadrants.budget_bleeder.map(i => i.target).join(', ') || '-'}
+                            <div style="background: #ffebee; border: 2px solid #f44336; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <!-- 헤더 -->
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                    <span style="font-size: 18px;">💸</span>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 13px; font-weight: 700; color: #c62828;">예산 누수</div>
+                                        <div style="font-size: 10px; color: #c62828; opacity: 0.8;">고지출 + 저효율</div>
+                                    </div>
+                                    <span style="background: #f44336; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">OPTIMIZE</span>
                                 </div>
+                                <!-- 타겟 배지 -->
+                                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                                    ${quadrants.budget_bleeder.length > 0 ? quadrants.budget_bleeder.map(i => '<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #c62828; border: 1px solid #ef9a9a; font-weight: 500;">' + i.target + '</span>').join('') : '<span style="font-size: 11px; color: var(--grey-500);">-</span>'}
+                                </div>
+                                <!-- 추천 액션 -->
                                 ${quadrants.budget_bleeder.length > 0 && quadrants.budget_bleeder[0].action ? `
-                                <div style="margin-top: 10px; padding: 10px; background: #ffffff; border-radius: 6px; border-left: 3px solid #c62828;">
-                                    <div style="font-size: 10px; font-weight: 700; color: #b71c1c; margin-bottom: 4px;">🚨 추천 액션</div>
-                                    <div style="font-size: 11px; font-weight: 500; color: #b71c1c; line-height: 1.5;">${quadrants.budget_bleeder[0].action}</div>
+                                <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid #f44336;">
+                                    <div style="font-size: 10px; font-weight: 600; color: #c62828; margin-bottom: 4px;">🚨 추천 액션</div>
+                                    <div style="font-size: 11px; color: #333; line-height: 1.4;">${quadrants.budget_bleeder[0].action}</div>
                                 </div>
                                 ` : ''}
                             </div>
                             <!-- 저지출 + 저효율: Underperformer -->
-                            <div style="padding: 12px; background: #fff3e0; border-radius: 8px; border: 1px solid #ff9800;">
-                                <div style="font-size: 11px; font-weight: 700; color: #e65100; margin-bottom: 6px;">💤 성과 부진</div>
-                                <div style="font-size: 10px; color: var(--grey-600);">저지출 + 저효율</div>
-                                <div style="margin-top: 8px; font-size: 11px; color: var(--grey-800);">
-                                    ${quadrants.underperformer.map(i => i.target).join(', ') || '-'}
+                            <div style="background: #fff3e0; border: 2px solid #ff9800; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <!-- 헤더 -->
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                    <span style="font-size: 18px;">💤</span>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 13px; font-weight: 700; color: #e65100;">성과 부진</div>
+                                        <div style="font-size: 10px; color: #e65100; opacity: 0.8;">저지출 + 저효율</div>
+                                    </div>
+                                    <span style="background: #ff9800; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">REVIEW</span>
                                 </div>
+                                <!-- 타겟 배지 -->
+                                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                                    ${quadrants.underperformer.length > 0 ? quadrants.underperformer.map(i => '<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #e65100; border: 1px solid #ffcc80; font-weight: 500;">' + i.target + '</span>').join('') : '<span style="font-size: 11px; color: var(--grey-500);">-</span>'}
+                                </div>
+                                <!-- 추천 액션 -->
                                 ${quadrants.underperformer.length > 0 && quadrants.underperformer[0].action ? `
-                                <div style="margin-top: 10px; padding: 10px; background: #ffffff; border-radius: 6px; border-left: 3px solid #e65100;">
-                                    <div style="font-size: 10px; font-weight: 700; color: #bf360c; margin-bottom: 4px;">⚠️ 추천 액션</div>
-                                    <div style="font-size: 11px; font-weight: 500; color: #bf360c; line-height: 1.5;">${quadrants.underperformer[0].action}</div>
+                                <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid #ff9800;">
+                                    <div style="font-size: 10px; font-weight: 600; color: #e65100; margin-bottom: 4px;">⚠️ 추천 액션</div>
+                                    <div style="font-size: 11px; color: #333; line-height: 1.4;">${quadrants.underperformer[0].action}</div>
                                 </div>
                                 ` : ''}
                             </div>
@@ -7818,7 +7931,7 @@
                 `;
             }
 
-            // 3. 기기플랫폼별 성과 (웹/앱/모바일)
+            // 3. 기기플랫폼별 성과 (웹/앱/모바일) - 순위 스타일
             if (devicePlatformData.length > 0) {
                 const maxDevicePlatformRoas = Math.max(...devicePlatformData.map(d => d.roas || 0));
                 html += `
@@ -7832,17 +7945,11 @@
                             <div style="font-size: 10px; color: var(--grey-600); margin-bottom: 10px; padding: 8px; background: #e3f2fd; border-radius: 6px;">
                                 💡 웹, 앱, 모바일에서의 광고 반응 차이를 파악하세요
                             </div>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
                 `;
 
                 const sortedDevicePlatforms = [...devicePlatformData].sort((a, b) => (b.roas || 0) - (a.roas || 0));
-                sortedDevicePlatforms.forEach((d, idx) => {
-                    const cpa = d.conversions > 0 ? d.cost / d.conversions : 0;
-                    const isTop = idx === 0;
+                sortedDevicePlatforms.slice(0, 5).forEach((d, idx) => {
                     const platformName = d.deviceplatform || '';
-                    const platformIcon = platformName.toLowerCase().includes('앱') ? '📲' :
-                                        platformName.toLowerCase().includes('웹') ? '🌐' :
-                                        platformName.toLowerCase().includes('모바일') ? '📱' : '🖥️';
                     // ROAS 색상 스케일
                     const roas = d.roas || 0;
                     let roasColor = '#c62828';
@@ -7850,23 +7957,19 @@
                     else if (roas >= 300) roasColor = '#558b2f';
                     else if (roas >= 200) roasColor = '#f57f17';
                     else if (roas >= 100) roasColor = '#e65100';
+                    // 배경 스케일 바
+                    const barWidth = Math.min((roas / maxDevicePlatformRoas) * 100, 100);
 
                     html += `
-                        <div style="padding: 12px; background: ${isTop ? '#e8f5e9' : '#f5f5f5'}; border-radius: 8px; ${isTop ? 'border: 2px solid #4caf50;' : ''}">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <span style="font-size: 13px; font-weight: 700; color: var(--grey-800);">${platformIcon} ${platformName}</span>
-                                ${isTop ? '<span style="font-size: 10px; padding: 2px 6px; background: #4caf50; color: white; border-radius: 8px;">추천</span>' : ''}
-                            </div>
-                            <div style="font-size: 18px; font-weight: 800; color: ${roasColor}; margin-bottom: 4px;">${formatPercent(d.roas || 0)}</div>
-                            <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--grey-500);">
-                                <span>전환당 ${formatCurrency(cpa)}</span>
-                                <span>비용 ${formatCurrency(d.cost || 0)}</span>
-                            </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; margin-bottom: 6px; background: #fafafa; border-radius: 8px; position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; height: 100%; width: ${barWidth}%; background: linear-gradient(90deg, ${roasColor}22, ${roasColor}11); border-radius: 8px;"></div>
+                            <div style="position: relative; z-index: 1; font-size: 12px; font-weight: 600; color: var(--grey-800);">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`} ${platformName}</div>
+                            <div style="position: relative; z-index: 1; font-size: 13px; font-weight: 700; color: ${roasColor};">${formatPercent(d.roas)}</div>
                         </div>
                     `;
                 });
 
-                html += `</div></div></div>`;
+                html += `</div></div>`;
             }
 
             // 4. 기기별 성과 (안드로이드/애플/웹)
@@ -8103,33 +8206,40 @@
 
                 let opportunityItemsHtml = '';
                 if (opportunityData.length > 0) {
+                    opportunityItemsHtml = '<div style="display: flex; flex-direction: column; gap: 10px; padding: 12px;">';
                     opportunityData.forEach(function(item, idx) {
-                        const borderStyle = idx === opportunityData.length - 1 ? 'border-bottom: none;' : '';
-                        const metricHtml = item.metric ? '<div style="margin-top: 6px; font-size: 10px; font-weight: 600; color: #2e7d32; background: #e8f5e9; padding: 4px 8px; border-radius: 4px; display: inline-block;">' + item.metric + '</div>' : '';
-                        opportunityItemsHtml += '<div style="padding: 12px 16px; border-bottom: 1px solid #fce4ec; ' + borderStyle + '">' +
-                            '<div style="display: flex; align-items: flex-start; gap: 10px;">' +
-                                '<span style="font-size: 16px; flex-shrink: 0;">' + item.icon + '</span>' +
-                                '<div style="flex: 1;">' +
-                                    '<div style="font-size: 11px; font-weight: 600; color: #880e4f; margin-bottom: 4px;">' + item.title + '</div>' +
-                                    '<div style="font-size: 10px; color: #666; line-height: 1.5;">' + item.description + '</div>' +
-                                    metricHtml +
+                        const metricBadge = item.metric ? '<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #2e7d32; border: 1px solid #81c784; font-weight: 500;">' + item.metric + '</span>' : '';
+                        opportunityItemsHtml +=
+                            '<div style="background: #e8f5e9; border: 2px solid #4caf50; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'translateY(0)\'">' +
+                                '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">' +
+                                    '<span style="font-size: 18px;">' + item.icon + '</span>' +
+                                    '<div style="flex: 1;">' +
+                                        '<div style="font-size: 13px; font-weight: 700; color: #2e7d32;">' + item.title + '</div>' +
+                                        '<div style="font-size: 10px; color: #2e7d32; opacity: 0.8;">성장 기회</div>' +
+                                    '</div>' +
+                                    '<span style="background: #4caf50; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">GROW</span>' +
                                 '</div>' +
-                            '</div>' +
-                        '</div>';
+                                (metricBadge ? '<div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">' + metricBadge + '</div>' : '') +
+                                '<div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid #4caf50;">' +
+                                    '<div style="font-size: 10px; font-weight: 600; color: #2e7d32; margin-bottom: 4px;">💡 인사이트</div>' +
+                                    '<div style="font-size: 11px; color: #333; line-height: 1.4;">' + item.description + '</div>' +
+                                '</div>' +
+                            '</div>';
                     });
+                    opportunityItemsHtml += '</div>';
                 } else {
                     opportunityItemsHtml = '<div style="padding: 16px; text-align: center; color: #666; font-size: 11px;">데이터를 분석 중입니다...</div>';
                 }
 
-                html += '<div class="forecast-accordion" style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid #f8bbd0;">' +
-                    '<div class="forecast-accordion-header" data-target="forecastOpportunityContent" style="background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">' +
+                html += '<div class="forecast-accordion" style="margin-bottom: 10px; border-radius: 10px; overflow: hidden;">' +
+                    '<div class="forecast-accordion-header" data-target="forecastOpportunityContent" style="background: #e8f5e9; padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">' +
                         '<div style="display: flex; align-items: center; gap: 8px;">' +
-                            '<span style="font-size: 14px;">🚀</span>' +
-                            '<span style="font-size: 12px; font-weight: 700; color: #880e4f;">AI가 발견한 기회 (' + opportunityCount + '건)</span>' +
+                            '<span style="font-size: 18px;">🚀</span>' +
+                            '<span style="font-size: 13px; font-weight: 700; color: #2e7d32;">AI가 발견한 기회 (' + opportunityCount + '건)</span>' +
                         '</div>' +
-                        '<span class="forecast-accordion-icon" style="font-size: 12px; color: #880e4f; transition: transform 0.3s;">▼</span>' +
+                        '<span class="forecast-accordion-icon" style="font-size: 12px; color: #2e7d32; transition: transform 0.3s;">▼</span>' +
                     '</div>' +
-                    '<div id="forecastOpportunityContent" class="forecast-accordion-content" style="display: none; background: #fff5f7; padding: 0;">' +
+                    '<div id="forecastOpportunityContent" class="forecast-accordion-content" style="display: none; background: #f1f8e9; padding: 0;">' +
                         opportunityItemsHtml +
                     '</div>' +
                 '</div>';
@@ -8140,39 +8250,49 @@
 
                 let actionItemsHtml = '';
                 if (actionData.length > 0) {
+                    actionItemsHtml = '<div style="display: flex; flex-direction: column; gap: 10px; padding: 12px;">';
                     actionData.forEach(function(item, idx) {
-                        const borderStyle = idx === actionData.length - 1 ? 'border-bottom: none;' : '';
-                        let priorityBadge = '';
+                        let bgColor = '#e3f2fd';
+                        let borderColor = '#2196f3';
+                        let textColor = '#1565c0';
+                        let badgeText = 'ACTION';
                         if (item.priority === 'high') {
-                            priorityBadge = '<span style="background: #ffebee; color: #c62828; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 6px;">긴급</span>';
+                            bgColor = '#ffebee'; borderColor = '#f44336'; textColor = '#c62828'; badgeText = '긴급';
                         } else if (item.priority === 'medium') {
-                            priorityBadge = '<span style="background: #fff3e0; color: #e65100; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 6px;">중요</span>';
+                            bgColor = '#fff3e0'; borderColor = '#ff9800'; textColor = '#e65100'; badgeText = '중요';
                         }
-                        const effectHtml = item.expectedEffect ? '<div style="margin-top: 6px; font-size: 10px; font-weight: 600; color: #1565c0; background: #e3f2fd; padding: 4px 8px; border-radius: 4px; display: inline-block;">예상 효과: ' + item.expectedEffect + '</div>' : '';
-                        actionItemsHtml += '<div style="padding: 12px 16px; border-bottom: 1px solid #fff9c4; ' + borderStyle + '">' +
-                            '<div style="display: flex; align-items: flex-start; gap: 10px;">' +
-                                '<span style="font-size: 16px; flex-shrink: 0;">' + item.icon + '</span>' +
-                                '<div style="flex: 1;">' +
-                                    '<div style="font-size: 11px; font-weight: 600; color: #f57f17; margin-bottom: 4px;">' + item.title + priorityBadge + '</div>' +
-                                    '<div style="font-size: 10px; color: #666; line-height: 1.5;">' + item.description + '</div>' +
-                                    effectHtml +
+                        const effectBadge = item.expectedEffect ? '<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #1565c0; border: 1px solid #90caf9; font-weight: 500;">예상 효과: ' + item.expectedEffect + '</span>' : '';
+                        actionItemsHtml +=
+                            '<div style="background: ' + bgColor + '; border: 2px solid ' + borderColor + '; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'translateY(0)\'">' +
+                                '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">' +
+                                    '<span style="font-size: 18px;">' + item.icon + '</span>' +
+                                    '<div style="flex: 1;">' +
+                                        '<div style="font-size: 13px; font-weight: 700; color: ' + textColor + ';">' + item.title + '</div>' +
+                                        '<div style="font-size: 10px; color: ' + textColor + '; opacity: 0.8;">AI 추천</div>' +
+                                    '</div>' +
+                                    '<span style="background: ' + borderColor + '; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">' + badgeText + '</span>' +
                                 '</div>' +
-                            '</div>' +
-                        '</div>';
+                                (effectBadge ? '<div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">' + effectBadge + '</div>' : '') +
+                                '<div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid ' + borderColor + ';">' +
+                                    '<div style="font-size: 10px; font-weight: 600; color: ' + textColor + '; margin-bottom: 4px;">💡 실행 가이드</div>' +
+                                    '<div style="font-size: 11px; color: #333; line-height: 1.4;">' + item.description + '</div>' +
+                                '</div>' +
+                            '</div>';
                     });
+                    actionItemsHtml += '</div>';
                 } else {
                     actionItemsHtml = '<div style="padding: 16px; text-align: center; color: #666; font-size: 11px;">데이터를 분석 중입니다...</div>';
                 }
 
-                html += '<div class="forecast-accordion" style="margin-bottom: 12px; border-radius: 10px; overflow: hidden; border: 1px solid #fff176;">' +
-                    '<div class="forecast-accordion-header" data-target="forecastActionContent" style="background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%); padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">' +
+                html += '<div class="forecast-accordion" style="margin-bottom: 12px; border-radius: 10px; overflow: hidden;">' +
+                    '<div class="forecast-accordion-header" data-target="forecastActionContent" style="background: #e3f2fd; padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">' +
                         '<div style="display: flex; align-items: center; gap: 8px;">' +
-                            '<span style="font-size: 14px;">💡</span>' +
-                            '<span style="font-size: 12px; font-weight: 700; color: #f57f17;">AI 추천 액션 (' + actionCount + '건)</span>' +
+                            '<span style="font-size: 18px;">💡</span>' +
+                            '<span style="font-size: 13px; font-weight: 700; color: #1565c0;">AI 추천 액션 (' + actionCount + '건)</span>' +
                         '</div>' +
-                        '<span class="forecast-accordion-icon" style="font-size: 12px; color: #f57f17; transition: transform 0.3s;">▼</span>' +
+                        '<span class="forecast-accordion-icon" style="font-size: 12px; color: #1565c0; transition: transform 0.3s;">▼</span>' +
                     '</div>' +
-                    '<div id="forecastActionContent" class="forecast-accordion-content" style="display: none; background: #fffef5; padding: 0;">' +
+                    '<div id="forecastActionContent" class="forecast-accordion-content" style="display: none; background: #e8f4fd; padding: 0;">' +
                         actionItemsHtml +
                     '</div>' +
                 '</div>';
@@ -8317,33 +8437,40 @@
 
             let opportunityItemsHtml = '';
             if (opportunityData.length > 0) {
+                opportunityItemsHtml = '<div style="display: flex; flex-direction: column; gap: 10px; padding: 12px;">';
                 opportunityData.forEach(function(item, idx) {
-                    const borderStyle = idx === opportunityData.length - 1 ? 'border-bottom: none;' : '';
-                    const metricHtml = item.metric ? '<div style="margin-top: 6px; font-size: 10px; font-weight: 600; color: #2e7d32; background: #e8f5e9; padding: 4px 8px; border-radius: 4px; display: inline-block;">' + item.metric + '</div>' : '';
-                    opportunityItemsHtml += '<div style="padding: 12px 16px; border-bottom: 1px solid #fce4ec; ' + borderStyle + '">' +
-                        '<div style="display: flex; align-items: flex-start; gap: 10px;">' +
-                            '<span style="font-size: 16px; flex-shrink: 0;">' + item.icon + '</span>' +
-                            '<div style="flex: 1;">' +
-                                '<div style="font-size: 11px; font-weight: 600; color: #880e4f; margin-bottom: 4px;">' + item.title + '</div>' +
-                                '<div style="font-size: 10px; color: #666; line-height: 1.5;">' + item.description + '</div>' +
-                                metricHtml +
+                    const metricBadge = item.metric ? '<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #2e7d32; border: 1px solid #81c784; font-weight: 500;">' + item.metric + '</span>' : '';
+                    opportunityItemsHtml +=
+                        '<div style="background: #e8f5e9; border: 2px solid #4caf50; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'translateY(0)\'">' +
+                            '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">' +
+                                '<span style="font-size: 18px;">' + item.icon + '</span>' +
+                                '<div style="flex: 1;">' +
+                                    '<div style="font-size: 13px; font-weight: 700; color: #2e7d32;">' + item.title + '</div>' +
+                                    '<div style="font-size: 10px; color: #2e7d32; opacity: 0.8;">성장 기회</div>' +
+                                '</div>' +
+                                '<span style="background: #4caf50; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">GROW</span>' +
                             '</div>' +
-                        '</div>' +
-                    '</div>';
+                            (metricBadge ? '<div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">' + metricBadge + '</div>' : '') +
+                            '<div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid #4caf50;">' +
+                                '<div style="font-size: 10px; font-weight: 600; color: #2e7d32; margin-bottom: 4px;">💡 인사이트</div>' +
+                                '<div style="font-size: 11px; color: #333; line-height: 1.4;">' + item.description + '</div>' +
+                            '</div>' +
+                        '</div>';
                 });
+                opportunityItemsHtml += '</div>';
             } else {
                 opportunityItemsHtml = '<div style="padding: 16px; text-align: center; color: #666; font-size: 11px;">데이터를 분석 중입니다...</div>';
             }
 
-            html += '<div class="forecast-accordion" style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid #f8bbd0;">' +
-                '<div class="forecast-accordion-header" data-target="forecastOpportunityContent" style="background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">' +
+            html += '<div class="forecast-accordion" style="margin-bottom: 10px; border-radius: 10px; overflow: hidden;">' +
+                '<div class="forecast-accordion-header" data-target="forecastOpportunityContent" style="background: #e8f5e9; padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">' +
                     '<div style="display: flex; align-items: center; gap: 8px;">' +
-                        '<span style="font-size: 14px;">🚀</span>' +
-                        '<span style="font-size: 12px; font-weight: 700; color: #880e4f;">AI가 발견한 기회 (' + opportunityCount + '건)</span>' +
+                        '<span style="font-size: 18px;">🚀</span>' +
+                        '<span style="font-size: 13px; font-weight: 700; color: #2e7d32;">AI가 발견한 기회 (' + opportunityCount + '건)</span>' +
                     '</div>' +
-                    '<span class="forecast-accordion-icon" style="font-size: 12px; color: #880e4f; transition: transform 0.3s;">▼</span>' +
+                    '<span class="forecast-accordion-icon" style="font-size: 12px; color: #2e7d32; transition: transform 0.3s;">▼</span>' +
                 '</div>' +
-                '<div id="forecastOpportunityContent" class="forecast-accordion-content" style="display: none; background: #fff5f7; padding: 0;">' +
+                '<div id="forecastOpportunityContent" class="forecast-accordion-content" style="display: none; background: #f1f8e9; padding: 0;">' +
                     opportunityItemsHtml +
                 '</div>' +
             '</div>';
@@ -8354,39 +8481,49 @@
 
             let actionItemsHtml = '';
             if (actionData.length > 0) {
+                actionItemsHtml = '<div style="display: flex; flex-direction: column; gap: 10px; padding: 12px;">';
                 actionData.forEach(function(item, idx) {
-                    const borderStyle = idx === actionData.length - 1 ? 'border-bottom: none;' : '';
-                    let priorityBadge = '';
+                    let bgColor = '#e3f2fd';
+                    let borderColor = '#2196f3';
+                    let textColor = '#1565c0';
+                    let badgeText = 'ACTION';
                     if (item.priority === 'high') {
-                        priorityBadge = '<span style="background: #ffebee; color: #c62828; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 6px;">긴급</span>';
+                        bgColor = '#ffebee'; borderColor = '#f44336'; textColor = '#c62828'; badgeText = '긴급';
                     } else if (item.priority === 'medium') {
-                        priorityBadge = '<span style="background: #fff3e0; color: #e65100; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 6px;">중요</span>';
+                        bgColor = '#fff3e0'; borderColor = '#ff9800'; textColor = '#e65100'; badgeText = '중요';
                     }
-                    const effectHtml = item.expectedEffect ? '<div style="margin-top: 6px; font-size: 10px; font-weight: 600; color: #1565c0; background: #e3f2fd; padding: 4px 8px; border-radius: 4px; display: inline-block;">예상 효과: ' + item.expectedEffect + '</div>' : '';
-                    actionItemsHtml += '<div style="padding: 12px 16px; border-bottom: 1px solid #fff9c4; ' + borderStyle + '">' +
-                        '<div style="display: flex; align-items: flex-start; gap: 10px;">' +
-                            '<span style="font-size: 16px; flex-shrink: 0;">' + item.icon + '</span>' +
-                            '<div style="flex: 1;">' +
-                                '<div style="font-size: 11px; font-weight: 600; color: #f57f17; margin-bottom: 4px;">' + item.title + priorityBadge + '</div>' +
-                                '<div style="font-size: 10px; color: #666; line-height: 1.5;">' + item.description + '</div>' +
-                                effectHtml +
+                    const effectBadge = item.expectedEffect ? '<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: #1565c0; border: 1px solid #90caf9; font-weight: 500;">예상 효과: ' + item.expectedEffect + '</span>' : '';
+                    actionItemsHtml +=
+                        '<div style="background: ' + bgColor + '; border: 2px solid ' + borderColor + '; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'translateY(0)\'">' +
+                            '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">' +
+                                '<span style="font-size: 18px;">' + item.icon + '</span>' +
+                                '<div style="flex: 1;">' +
+                                    '<div style="font-size: 13px; font-weight: 700; color: ' + textColor + ';">' + item.title + '</div>' +
+                                    '<div style="font-size: 10px; color: ' + textColor + '; opacity: 0.8;">AI 추천</div>' +
+                                '</div>' +
+                                '<span style="background: ' + borderColor + '; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">' + badgeText + '</span>' +
                             '</div>' +
-                        '</div>' +
-                    '</div>';
+                            (effectBadge ? '<div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">' + effectBadge + '</div>' : '') +
+                            '<div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid ' + borderColor + ';">' +
+                                '<div style="font-size: 10px; font-weight: 600; color: ' + textColor + '; margin-bottom: 4px;">💡 실행 가이드</div>' +
+                                '<div style="font-size: 11px; color: #333; line-height: 1.4;">' + item.description + '</div>' +
+                            '</div>' +
+                        '</div>';
                 });
+                actionItemsHtml += '</div>';
             } else {
                 actionItemsHtml = '<div style="padding: 16px; text-align: center; color: #666; font-size: 11px;">데이터를 분석 중입니다...</div>';
             }
 
-            html += '<div class="forecast-accordion" style="margin-bottom: 12px; border-radius: 10px; overflow: hidden; border: 1px solid #fff176;">' +
-                '<div class="forecast-accordion-header" data-target="forecastActionContent" style="background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%); padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">' +
+            html += '<div class="forecast-accordion" style="margin-bottom: 12px; border-radius: 10px; overflow: hidden;">' +
+                '<div class="forecast-accordion-header" data-target="forecastActionContent" style="background: #e3f2fd; padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">' +
                     '<div style="display: flex; align-items: center; gap: 8px;">' +
-                        '<span style="font-size: 14px;">💡</span>' +
-                        '<span style="font-size: 12px; font-weight: 700; color: #f57f17;">AI 추천 액션 (' + actionCount + '건)</span>' +
+                        '<span style="font-size: 18px;">💡</span>' +
+                        '<span style="font-size: 13px; font-weight: 700; color: #1565c0;">AI 추천 액션 (' + actionCount + '건)</span>' +
                     '</div>' +
-                    '<span class="forecast-accordion-icon" style="font-size: 12px; color: #f57f17; transition: transform 0.3s;">▼</span>' +
+                    '<span class="forecast-accordion-icon" style="font-size: 12px; color: #1565c0; transition: transform 0.3s;">▼</span>' +
                 '</div>' +
-                '<div id="forecastActionContent" class="forecast-accordion-content" style="display: none; background: #fffef5; padding: 0;">' +
+                '<div id="forecastActionContent" class="forecast-accordion-content" style="display: none; background: #e8f4fd; padding: 0;">' +
                     actionItemsHtml +
                 '</div>' +
             '</div>';

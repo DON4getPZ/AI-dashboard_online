@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-12-27T01:42:12.433009",
+  "generated_at": "2025-12-29T10:24:35.511643",
   "category": "default",
   "thresholds_used": {
     "activation_rate_warning": 50.0,
@@ -20,7 +20,7 @@
     "is_filtered": false
   },
   "meta": {
-    "generated_at": "2025-12-27 01:42",
+    "generated_at": "2025-12-29 10:24",
     "analysis_period": "2025-02-12 ~ 2025-12-26",
     "category": "default"
   },
@@ -932,6 +932,72 @@
   "improvement_predictions_7d": [],
   "improvement_predictions_30d": [],
   "churn_predictions": [],
+  "performance_trends": {
+    "improvements_7d": [
+      {
+        "metric": "전환율 (CVR)",
+        "period": "7d",
+        "improvement_level": "high",
+        "change_pct": 334.02,
+        "recent_avg": 2.8,
+        "previous_avg": 0.64,
+        "recommendation": "전환율이 334.0% 개선되었습니다. 현재 전략이 효과적입니다. A/B 테스트로 추가 개선 여지를 확인하세요."
+      },
+      {
+        "metric": "구매 성공",
+        "period": "7d",
+        "improvement_level": "high",
+        "change_pct": 75.0,
+        "recent_avg": 1.0,
+        "previous_avg": 0.57,
+        "recommendation": "구매가 75.0% 증가했습니다! 성공 요인을 분석하고, 유사 캠페인을 다른 세그먼트에도 적용하세요."
+      }
+    ],
+    "improvements_14d": [],
+    "improvements_30d": [
+      {
+        "metric": "전환율 (CVR)",
+        "period": "30d",
+        "improvement_level": "high",
+        "change_pct": 59.28,
+        "recent_avg": 1.53,
+        "previous_avg": 0.96,
+        "recommendation": "전환율이 59.3% 개선되었습니다. 현재 전략이 효과적입니다. A/B 테스트로 추가 개선 여지를 확인하세요."
+      }
+    ],
+    "declines_7d": [],
+    "declines_14d": [
+      {
+        "metric": "구매 성공",
+        "period": "14d",
+        "risk_level": "high",
+        "change_pct": -54.17,
+        "recent_avg": 0.79,
+        "previous_avg": 1.71,
+        "recommendation": "구매가 54.2% 감소했습니다. 결제 프로세스 오류나 품절 상품이 없는지 긴급 점검하세요."
+      },
+      {
+        "metric": "장바구니 (관심)",
+        "period": "14d",
+        "risk_level": "medium",
+        "change_pct": -28.05,
+        "recent_avg": 18.14,
+        "previous_avg": 25.21,
+        "recommendation": "장바구니 추가가 28.0% 감소했습니다. 상품 가격 경쟁력이나 재고 상황을 확인하세요."
+      }
+    ],
+    "declines_30d": [
+      {
+        "metric": "결제창 진입",
+        "period": "30d",
+        "risk_level": "medium",
+        "change_pct": -25.95,
+        "recent_avg": 3.23,
+        "previous_avg": 4.37,
+        "recommendation": "결제 진입이 26.0% 하락했습니다. 배송비나 결제 옵션에 문제가 없는지 점검하세요."
+      }
+    ]
+  },
   "crm_actions": [
     {
       "stage": "매장 방문 (유입)",
@@ -2114,6 +2180,10 @@
     "improvement_stages_30d": 0,
     "micro_segment_alerts_count": 19,
     "micro_segment_opportunities": 2,
-    "micro_segment_problems": 17
+    "micro_segment_problems": 17,
+    "performance_trends_improvements_7d": 2,
+    "performance_trends_improvements_14d": 0,
+    "performance_trends_declines_7d": 0,
+    "performance_trends_declines_14d": 2
   }
 }

@@ -222,6 +222,15 @@
       "conversions": 1.0,
       "revenue": 118300.0,
       "roas": 13.206765704385026
+    },
+    {
+      "campaign": "Instagram Post",
+      "adset": "Instagram Post",
+      "category": "메타_트래픽",
+      "cost": 21831.0,
+      "conversions": 0.0,
+      "revenue": 0.0,
+      "roas": 0.0
     }
   ],
   "age_gender_combinations": [
@@ -280,17 +289,33 @@
   "age_gender_matrix_insights": [
     {
       "type": "dimension_insight",
+      "sub_type": "efficiency_star",
+      "dimension": "age_gender",
+      "target": "25세 ~ 34세 남성",
+      "severity": "opportunity",
+      "title": "💎 25세 ~ 34세 남성: 효율 스타 (Scale-up 기회)",
+      "message": "적은 예산으로 높은 효율을 내고 있습니다. 예산 증액 시 성장이 기대됩니다.",
+      "action": "효율은 검증되었습니다. 예산을 20%씩 증액하여 반응이 유지되는지 테스트하세요 (Scale-up).",
+      "metrics": {
+        "efficiency_value": 672.0137050303691,
+        "spend_rank_pct": 0.5,
+        "eff_rank_pct": 0.75,
+        "cost": 77052.0
+      }
+    },
+    {
+      "type": "dimension_insight",
       "sub_type": "core_driver",
       "dimension": "age_gender",
       "target": "25세 ~ 34세 여성",
       "severity": "positive",
       "title": "👑 25세 ~ 34세 여성: 핵심 동력 (Core Driver)",
-      "message": "예산 비중이 높고 효율도 최상위권입니다. (상위 11%)",
+      "message": "예산 비중이 높고 효율도 최상위권입니다. (상위 8%)",
       "action": "가장 반응이 좋은 핵심 타겟입니다. 유사 타겟(Lookalike) 소스로 활용하여 모수를 확장하세요.",
       "metrics": {
         "efficiency_value": 854.7473962089553,
-        "spend_rank_pct": 0.89,
-        "eff_rank_pct": 0.89,
+        "spend_rank_pct": 0.92,
+        "eff_rank_pct": 0.92,
         "cost": 2502793.0
       }
     },
@@ -305,8 +330,8 @@
       "action": "효율은 검증되었습니다. 예산을 20%씩 증액하여 반응이 유지되는지 테스트하세요 (Scale-up).",
       "metrics": {
         "efficiency_value": 791.5196934005444,
-        "spend_rank_pct": 0.44,
-        "eff_rank_pct": 0.78,
+        "spend_rank_pct": 0.58,
+        "eff_rank_pct": 0.83,
         "cost": 81931.0
       }
     },
@@ -330,36 +355,62 @@
       "type": "dimension_insight",
       "sub_type": "underperformer",
       "dimension": "age_gender",
-      "target": "45세 ~ 54세 남성",
+      "target": "55세 ~ 64세 남성",
       "severity": "warning",
-      "title": "💤 45세 ~ 54세 남성: 성과 부진",
+      "title": "💤 55세 ~ 64세 남성: 성과 부진",
       "message": "효율이 낮아 예산 투입 매력이 떨어집니다.",
       "action": "성과가 저조합니다. 연령/성별 제외 설정을 통해 예산 낭비를 막으세요.",
       "metrics": {
-        "efficiency_value": 252.8406953119121,
-        "spend_rank_pct": 0.22,
-        "eff_rank_pct": 0.22,
-        "cost": 53156.0
+        "efficiency_value": 0.0,
+        "spend_rank_pct": 0.17,
+        "eff_rank_pct": 0.17,
+        "cost": 9348.0
       }
     },
     {
       "type": "dimension_insight",
       "sub_type": "underperformer",
       "dimension": "age_gender",
-      "target": "55세 ~ 64세 여성",
+      "target": "65세 이상 남성",
       "severity": "warning",
-      "title": "💤 55세 ~ 64세 여성: 성과 부진",
+      "title": "💤 65세 이상 남성: 성과 부진",
       "message": "효율이 낮아 예산 투입 매력이 떨어집니다.",
       "action": "성과가 저조합니다. 연령/성별 제외 설정을 통해 예산 낭비를 막으세요.",
       "metrics": {
-        "efficiency_value": 176.02455941925282,
-        "spend_rank_pct": 0.56,
-        "eff_rank_pct": 0.11,
-        "cost": 173294.0
+        "efficiency_value": 0.0,
+        "spend_rank_pct": 0.08,
+        "eff_rank_pct": 0.17,
+        "cost": 3960.0
+      }
+    },
+    {
+      "type": "dimension_insight",
+      "sub_type": "underperformer",
+      "dimension": "age_gender",
+      "target": "65세 이상 여성",
+      "severity": "warning",
+      "title": "💤 65세 이상 여성: 성과 부진",
+      "message": "효율이 낮아 예산 투입 매력이 떨어집니다.",
+      "action": "성과가 저조합니다. 연령/성별 제외 설정을 통해 예산 낭비를 막으세요.",
+      "metrics": {
+        "efficiency_value": 0.0,
+        "spend_rank_pct": 0.33,
+        "eff_rank_pct": 0.17,
+        "cost": 24518.0
       }
     }
   ],
   "device_performance": [
+    {
+      "device": "Other",
+      "campaign_type": "전환",
+      "cost": 110.0,
+      "conversions": 0.0,
+      "revenue": 0.0,
+      "roas": 0.0,
+      "clicks": 0.0,
+      "cpc": 0.0
+    },
     {
       "device": "안드로이드",
       "campaign_type": "전환",
@@ -379,10 +430,36 @@
       "roas": 871.7092137233989,
       "clicks": 22763.0,
       "cpc": 256.32284848218603
+    },
+    {
+      "device": "웹",
+      "campaign_type": "전환",
+      "cost": 5789.0,
+      "conversions": 0.0,
+      "revenue": 0.0,
+      "roas": 0.0,
+      "clicks": 32.0,
+      "cpc": 180.90625
     }
   ],
   "device_traffic_performance": [],
   "device_matrix_insights": [
+    {
+      "type": "dimension_insight",
+      "sub_type": "core_driver",
+      "dimension": "device",
+      "target": "안드로이드",
+      "severity": "positive",
+      "title": "👑 안드로이드: 핵심 동력 (Core Driver)",
+      "message": "예산 비중이 높고 효율도 최상위권입니다. (상위 25%)",
+      "action": "주력 매출 발생 기기입니다. 결제 UX에 문제가 없는지 주기적으로 점검하세요.",
+      "metrics": {
+        "efficiency_value": 751.4634785001434,
+        "spend_rank_pct": 0.75,
+        "eff_rank_pct": 0.75,
+        "cost": 2703832.0
+      }
+    },
     {
       "type": "dimension_insight",
       "sub_type": "core_driver",
@@ -402,6 +479,16 @@
   ],
   "deviceplatform_performance": [
     {
+      "deviceplatform": "모바일웹",
+      "campaign_type": "전환",
+      "cost": 2716.0,
+      "conversions": 0.0,
+      "revenue": 0.0,
+      "roas": 0.0,
+      "clicks": 17.0,
+      "cpc": 159.76470588235293
+    },
+    {
       "deviceplatform": "앱",
       "campaign_type": "전환",
       "cost": 8534398.0,
@@ -410,10 +497,37 @@
       "roas": 834.0333670869345,
       "clicks": 35686.0,
       "cpc": 239.1525528218349
+    },
+    {
+      "deviceplatform": "웹",
+      "campaign_type": "전환",
+      "cost": 5786.0,
+      "conversions": 0.0,
+      "revenue": 0.0,
+      "roas": 0.0,
+      "clicks": 32.0,
+      "cpc": 180.8125
     }
   ],
   "deviceplatform_traffic_performance": [],
-  "deviceplatform_matrix_insights": [],
+  "deviceplatform_matrix_insights": [
+    {
+      "type": "dimension_insight",
+      "sub_type": "core_driver",
+      "dimension": "deviceplatform",
+      "target": "앱",
+      "severity": "positive",
+      "title": "👑 앱: 핵심 동력 (Core Driver)",
+      "message": "예산 비중이 높고 효율도 최상위권입니다. (상위 0%)",
+      "action": "주력 매출 발생 기기입니다. 결제 UX에 문제가 없는지 주기적으로 점검하세요.",
+      "metrics": {
+        "efficiency_value": 834.0333670869345,
+        "spend_rank_pct": 1.0,
+        "eff_rank_pct": 1.0,
+        "cost": 8534398.0
+      }
+    }
+  ],
   "brand_performance": [
     {
       "brand": "앳드맹",
@@ -3233,7 +3347,7 @@
       "based_on": "prophet_forecast"
     }
   ],
-  "generated_at": "2025-12-26T20:09:32.482504",
+  "generated_at": "2025-12-29T10:59:44.004819",
   "filter_info": {
     "days": 0,
     "label": "전체 기간",

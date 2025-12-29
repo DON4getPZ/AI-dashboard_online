@@ -834,8 +834,8 @@ if 'type4' in dimensions:
     # v1.7: 유형구분_통합별 분기 처리
     has_campaign_type = '유형구분_통합' in type4_df.columns
 
-    # 성별별 집계 (클릭 추가)
-    agg_cols = {'비용': 'sum', '전환수': 'sum', '전환값': 'sum'}
+    # 성별별 집계 (클릭, 노출 추가)
+    agg_cols = {'비용': 'sum', '노출': 'sum', '전환수': 'sum', '전환값': 'sum'}
     if '클릭' in type4_df.columns:
         agg_cols['클릭'] = 'sum'
 
@@ -856,8 +856,8 @@ if 'type4' in dimensions:
     else:
         gender_summary['CPC'] = 0
 
-    # 성별별 성과가 있는 것만 (전환 캠페인용)
-    gender_conversion = gender_summary[gender_summary['전환수'] > 0]
+    # 성별별 성과가 있는 것만 (전환 캠페인용) - 노출 또는 전환이 있는 경우 포함
+    gender_conversion = gender_summary[(gender_summary['노출'] > 0) | (gender_summary['전환수'] > 0)]
 
     for _, row in gender_conversion.iterrows():
         gender_name = row['성별_정규화']
@@ -958,6 +958,7 @@ if 'type1' in dimensions:
     # 광고세트별로 전체 기간 데이터 집계 (일별 데이터를 합산)
     adset_agg = type1_df.groupby(['캠페인이름', '광고세트', '유형구분']).agg({
         '비용': 'sum',
+        '노출': 'sum',
         '전환수': 'sum',
         '전환값': 'sum'
     }).reset_index()
@@ -976,8 +977,8 @@ if 'type1' in dimensions:
         0
     )
 
-    # 전환수 > 0인 것만 필터링하고 ROAS 기준 상위 10개
-    adset_filtered = adset_agg[adset_agg['전환수'] > 0].copy()
+    # 노출 또는 전환이 있는 것만 필터링하고 ROAS 기준 상위 10개
+    adset_filtered = adset_agg[(adset_agg['노출'] > 0) | (adset_agg['전환수'] > 0)].copy()
     top_10_adsets = adset_filtered.nlargest(10, 'ROAS')
 
     for _, row in top_10_adsets.iterrows():
@@ -1041,8 +1042,8 @@ if 'type2' in dimensions:
             0
         )
 
-    # 전환수 > 0인 것만 필터링하고 ROAS 기준 상위 5개 (전환 캠페인용)
-    age_gender_filtered = age_gender_agg[age_gender_agg['전환수'] > 0].copy()
+    # 노출 또는 전환이 있는 것만 필터링하고 ROAS 기준 상위 5개 (전환 캠페인용)
+    age_gender_filtered = age_gender_agg[(age_gender_agg['노출'] > 0) | (age_gender_agg['전환수'] > 0)].copy()
     top_combinations = age_gender_filtered.nlargest(5, 'ROAS')
 
     for _, row in top_combinations.iterrows():
@@ -1092,14 +1093,14 @@ if 'type2' in dimensions:
     # [4분면 매트릭스] 연령x성별 인사이트 생성
     # 연령+성별 조합별 집계 (광고세트 무시하고 전체 집계)
     combo_agg = type2_df.groupby(['연령_정규화', '성별_정규화']).agg({
-        '비용': 'sum', '전환수': 'sum', '전환값': 'sum'
+        '비용': 'sum', '노출': 'sum', '전환수': 'sum', '전환값': 'sum'
     }).reset_index()
     combo_agg['ROAS'] = np.where(
         combo_agg['비용'] > 0,
         (combo_agg['전환값'] / combo_agg['비용']) * 100,
         0
     )
-    combo_agg = combo_agg[combo_agg['전환수'] > 0].copy()
+    combo_agg = combo_agg[(combo_agg['노출'] > 0) | (combo_agg['전환수'] > 0)].copy()
     combo_agg['조합_라벨'] = combo_agg['연령_정규화'] + ' ' + combo_agg['성별_정규화']
 
     if len(combo_agg) >= 2:
@@ -1147,8 +1148,8 @@ if 'type5' in dimensions:
             0
         )
 
-    # 전환 캠페인용 (ROAS 기준)
-    device_conversion = device_summary[device_summary['전환수'] > 0]
+    # 전환 캠페인용 (ROAS 기준) - 노출 또는 전환이 있는 모든 기기 포함
+    device_conversion = device_summary[(device_summary['노출'] > 0) | (device_summary['전환수'] > 0)]
 
     for _, row in device_conversion.iterrows():
         insight = {
@@ -1253,8 +1254,8 @@ if 'type7' in dimensions:
             0
         )
 
-    # 전환 캠페인용 (ROAS 기준)
-    deviceplatform_conversion = deviceplatform_summary[deviceplatform_summary['전환수'] > 0]
+    # 전환 캠페인용 (ROAS 기준) - 노출 또는 전환이 있는 모든 기기플랫폼 포함
+    deviceplatform_conversion = deviceplatform_summary[(deviceplatform_summary['노출'] > 0) | (deviceplatform_summary['전환수'] > 0)]
 
     for _, row in deviceplatform_conversion.iterrows():
         insight = {
@@ -1340,12 +1341,13 @@ if 'type1' in dimensions:
     if '브랜드명' in type1_df.columns:
         brand_summary = type1_df.groupby('브랜드명').agg({
             '비용': 'sum',
+            '노출': 'sum',
             '전환수': 'sum',
             '전환값': 'sum'
         }).reset_index()
 
         brand_summary['ROAS'] = (brand_summary['전환값'] / brand_summary['비용'] * 100).replace([np.inf, -np.inf], 0)
-        brand_summary = brand_summary[brand_summary['전환수'] > 0]
+        brand_summary = brand_summary[(brand_summary['노출'] > 0) | (brand_summary['전환수'] > 0)]
         brand_summary = brand_summary.nlargest(10, 'ROAS')
 
         for _, row in brand_summary.iterrows():
@@ -1369,12 +1371,13 @@ if 'type1' in dimensions:
     if '상품명' in type1_df.columns:
         product_summary = type1_df.groupby('상품명').agg({
             '비용': 'sum',
+            '노출': 'sum',
             '전환수': 'sum',
             '전환값': 'sum'
         }).reset_index()
 
         product_summary['ROAS'] = (product_summary['전환값'] / product_summary['비용'] * 100).replace([np.inf, -np.inf], 0)
-        product_summary = product_summary[product_summary['전환수'] > 0]
+        product_summary = product_summary[(product_summary['노출'] > 0) | (product_summary['전환수'] > 0)]
         product_summary = product_summary.nlargest(10, 'ROAS')
 
         for _, row in product_summary.iterrows():
@@ -1398,12 +1401,13 @@ if 'type1' in dimensions:
     if '프로모션' in type1_df.columns:
         promotion_summary = type1_df.groupby('프로모션').agg({
             '비용': 'sum',
+            '노출': 'sum',
             '전환수': 'sum',
             '전환값': 'sum'
         }).reset_index()
 
         promotion_summary['ROAS'] = (promotion_summary['전환값'] / promotion_summary['비용'] * 100).replace([np.inf, -np.inf], 0)
-        promotion_summary = promotion_summary[promotion_summary['전환수'] > 0]
+        promotion_summary = promotion_summary[(promotion_summary['노출'] > 0) | (promotion_summary['전환수'] > 0)]
         promotion_summary = promotion_summary.nlargest(10, 'ROAS')
 
         for _, row in promotion_summary.iterrows():

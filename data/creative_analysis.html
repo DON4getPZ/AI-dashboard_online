@@ -1004,6 +1004,63 @@
             display: inline-block;
         }
 
+        /* KPI 프리셋 선택 */
+        .kpi-preset-section {
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .kpi-preset-select {
+            padding: 10px 14px;
+            border: 1px solid var(--grey-300);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--paper);
+            color: var(--grey-900);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 280px;
+        }
+
+        .kpi-preset-select:hover {
+            border-color: var(--primary-main);
+        }
+
+        .kpi-preset-select:focus {
+            outline: none;
+            border-color: var(--primary-main);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .kpi-preset-select optgroup {
+            font-weight: 600;
+            color: var(--grey-700);
+        }
+
+        .kpi-preset-select option {
+            padding: 8px;
+            font-weight: 400;
+        }
+
+        .kpi-preset-description {
+            font-size: 12px;
+            color: var(--primary-main);
+            background: var(--primary-light);
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .kpi-preset-description::before {
+            content: '✓';
+            font-weight: bold;
+        }
+
         /* 조합 조건 라디오 버튼 */
         .compound-radio-group {
             display: flex;
@@ -1524,7 +1581,32 @@
                                     <span class="toggle-status">OFF</span>
                                 </button>
                             </div>
-                            <div class="unified-filter-content" style="margin-bottom: 0;">
+                            <!-- 프리셋 선택 영역 -->
+                            <div class="kpi-preset-section" style="margin-bottom: 12px;">
+                                <div class="filter-group" style="flex: 0 0 auto; min-width: 200px;">
+                                    <label>빠른 필터</label>
+                                    <select id="kpiPresetSelect" class="kpi-preset-select">
+                                        <option value="">직접 입력</option>
+                                        <optgroup label="효율 기준">
+                                            <option value="high_roas">🏆 고효율 소재 (ROAS > 500%)</option>
+                                            <option value="low_cpa">🎯 저CPA 소재 (CPA < 1만원)</option>
+                                            <option value="low_efficiency">⚠️ 저효율 소재 (ROAS < 100%)</option>
+                                        </optgroup>
+                                        <optgroup label="성과 기준">
+                                            <option value="high_revenue">💰 고매출 소재 (전환값 > 100만원)</option>
+                                            <option value="high_conversion">📈 고전환 소재 (전환수 > 10건)</option>
+                                            <option value="high_spend">🔥 고지출 소재 (비용 > 50만원)</option>
+                                        </optgroup>
+                                        <optgroup label="복합 조건">
+                                            <option value="hidden_gem">💎 숨은 보석 (ROAS > 300% AND 비용 < 10만)</option>
+                                            <option value="scale_up">🚀 스케일업 후보 (ROAS > 200% AND 전환 > 5)</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                                <div id="kpiPresetDescription" class="kpi-preset-description" style="display: none;"></div>
+                            </div>
+                            <!-- 직접 입력 영역 -->
+                            <div id="kpiManualInputSection" class="unified-filter-content" style="margin-bottom: 0;">
                                 <div class="filter-group" style="flex: 0 0 100px;">
                                     <label>KPI 기준</label>
                                     <select id="kpiFilterMetric">
@@ -1871,6 +1953,70 @@
             tertiaryValue: ''
         };
 
+        // KPI 필터 프리셋
+        const KPI_PRESETS = {
+            'high_roas': {
+                name: '🏆 고효율 소재',
+                description: 'ROAS > 500%',
+                conditions: [
+                    { metric: 'ROAS', operator: '>', value: 500 }
+                ]
+            },
+            'high_revenue': {
+                name: '💰 고매출 소재',
+                description: '전환값 > 100만원',
+                conditions: [
+                    { metric: '전환값', operator: '>', value: 1000000 }
+                ]
+            },
+            'low_cpa': {
+                name: '🎯 저CPA 소재',
+                description: 'CPA < 1만원',
+                conditions: [
+                    { metric: 'CPA', operator: '<', value: 10000 }
+                ]
+            },
+            'high_conversion': {
+                name: '📈 고전환 소재',
+                description: '전환수 > 10건',
+                conditions: [
+                    { metric: '전환수', operator: '>', value: 10 }
+                ]
+            },
+            'high_spend': {
+                name: '🔥 고지출 소재',
+                description: '비용 > 50만원',
+                conditions: [
+                    { metric: '비용', operator: '>', value: 500000 }
+                ]
+            },
+            'low_efficiency': {
+                name: '⚠️ 저효율 소재',
+                description: 'ROAS < 100%',
+                conditions: [
+                    { metric: 'ROAS', operator: '<', value: 100 }
+                ]
+            },
+            'hidden_gem': {
+                name: '💎 숨은 보석',
+                description: 'ROAS > 300% AND 비용 < 10만원',
+                conditions: [
+                    { metric: 'ROAS', operator: '>', value: 300 },
+                    { compoundLogic: 'and' },
+                    { metric: '비용', operator: '<', value: 100000 }
+                ]
+            },
+            'scale_up': {
+                name: '🚀 스케일업 후보',
+                description: 'ROAS > 200% AND 전환수 > 5건',
+                conditions: [
+                    { metric: 'ROAS', operator: '>', value: 200 },
+                    { compoundLogic: 'and' },
+                    { metric: '전환수', operator: '>', value: 5 }
+                ]
+            }
+        };
+
         // 정렬 설정
         let sortConfig = {
             metric: '비용',
@@ -1892,6 +2038,132 @@
         // 포맷된 숫자에서 실제 값 추출
         function parseFormattedNumber(value) {
             return value.replace(/,/g, '');
+        }
+
+        // KPI 필터 초기화
+        function resetKpiFilter() {
+            kpiFilter.metric = '비용';
+            kpiFilter.operator = '>';
+            kpiFilter.value = '';
+            kpiFilter.compoundLogic = 'none';
+            kpiFilter.secondaryMetric = '비용';
+            kpiFilter.secondaryOperator = '>';
+            kpiFilter.secondaryValue = '';
+            kpiFilter.secondaryCompoundLogic = 'none';
+            kpiFilter.tertiaryMetric = '비용';
+            kpiFilter.tertiaryOperator = '>';
+            kpiFilter.tertiaryValue = '';
+
+            // UI 초기화
+            document.getElementById('kpiFilterMetric').value = '비용';
+            document.getElementById('kpiFilterOperator').value = '>';
+            document.getElementById('kpiFilterValue').value = '';
+            document.getElementById('kpiFilterMetricSecondary').value = '비용';
+            document.getElementById('kpiFilterOperatorSecondary').value = '>';
+            document.getElementById('kpiFilterValueSecondary').value = '';
+            document.getElementById('kpiFilterMetricTertiary').value = '비용';
+            document.getElementById('kpiFilterOperatorTertiary').value = '>';
+            document.getElementById('kpiFilterValueTertiary').value = '';
+
+            // 라디오 버튼 초기화
+            document.querySelector('input[name="compoundLogic"][value="none"]').checked = true;
+            document.querySelector('input[name="compoundLogicSecondary"][value="none"]').checked = true;
+
+            // 보조 필터 행 숨기기
+            document.getElementById('secondaryFilterRow').style.display = 'none';
+            document.getElementById('tertiaryFilterRow').style.display = 'none';
+        }
+
+        // KPI 프리셋 적용
+        function applyKpiPreset(presetKey) {
+            const preset = KPI_PRESETS[presetKey];
+            const descriptionEl = document.getElementById('kpiPresetDescription');
+            const manualInputSection = document.getElementById('kpiManualInputSection');
+
+            if (!preset) {
+                // 직접 입력 모드
+                descriptionEl.style.display = 'none';
+                manualInputSection.style.display = 'flex';
+                resetKpiFilter();
+                kpiFilter.enabled = false;
+                updateKpiToggleUI(false);
+                updateDashboard();
+                return;
+            }
+
+            // 프리셋 적용
+            resetKpiFilter();
+
+            const conditions = preset.conditions;
+            let conditionIndex = 0;
+
+            for (let i = 0; i < conditions.length; i++) {
+                const cond = conditions[i];
+
+                if (cond.compoundLogic) {
+                    // 조합 조건 설정
+                    if (conditionIndex === 0) {
+                        kpiFilter.compoundLogic = cond.compoundLogic;
+                        document.querySelector(`input[name="compoundLogic"][value="${cond.compoundLogic}"]`).checked = true;
+                        document.getElementById('secondaryFilterRow').style.display = 'flex';
+                    } else if (conditionIndex === 1) {
+                        kpiFilter.secondaryCompoundLogic = cond.compoundLogic;
+                        document.querySelector(`input[name="compoundLogicSecondary"][value="${cond.compoundLogic}"]`).checked = true;
+                        document.getElementById('tertiaryFilterRow').style.display = 'flex';
+                    }
+                } else {
+                    // 조건 설정
+                    if (conditionIndex === 0) {
+                        kpiFilter.metric = cond.metric;
+                        kpiFilter.operator = cond.operator;
+                        kpiFilter.value = String(cond.value);
+                        document.getElementById('kpiFilterMetric').value = cond.metric;
+                        document.getElementById('kpiFilterOperator').value = cond.operator;
+                        document.getElementById('kpiFilterValue').value = formatNumberInput(String(cond.value));
+                    } else if (conditionIndex === 1) {
+                        kpiFilter.secondaryMetric = cond.metric;
+                        kpiFilter.secondaryOperator = cond.operator;
+                        kpiFilter.secondaryValue = String(cond.value);
+                        document.getElementById('kpiFilterMetricSecondary').value = cond.metric;
+                        document.getElementById('kpiFilterOperatorSecondary').value = cond.operator;
+                        document.getElementById('kpiFilterValueSecondary').value = formatNumberInput(String(cond.value));
+                    } else if (conditionIndex === 2) {
+                        kpiFilter.tertiaryMetric = cond.metric;
+                        kpiFilter.tertiaryOperator = cond.operator;
+                        kpiFilter.tertiaryValue = String(cond.value);
+                        document.getElementById('kpiFilterMetricTertiary').value = cond.metric;
+                        document.getElementById('kpiFilterOperatorTertiary').value = cond.operator;
+                        document.getElementById('kpiFilterValueTertiary').value = formatNumberInput(String(cond.value));
+                    }
+                    conditionIndex++;
+                }
+            }
+
+            // 프리셋 설명 표시
+            descriptionEl.textContent = preset.description;
+            descriptionEl.style.display = 'flex';
+
+            // 직접 입력 영역 숨기기 (프리셋 사용 시)
+            manualInputSection.style.display = 'none';
+
+            // 필터 자동 활성화
+            kpiFilter.enabled = true;
+            updateKpiToggleUI(true);
+
+            updateDashboard();
+        }
+
+        // KPI 토글 UI 업데이트 헬퍼
+        function updateKpiToggleUI(enabled) {
+            const toggle = document.getElementById('kpiFilterToggle');
+            const status = toggle.querySelector('.toggle-status');
+            if (enabled) {
+                toggle.classList.add('active');
+                status.textContent = 'ON';
+            } else {
+                toggle.classList.remove('active');
+                status.textContent = 'OFF';
+            }
         }
 
         // 소재 데이터 파일 (data/creative 폴더)
@@ -3146,9 +3418,16 @@
                 updateDashboard();
             });
 
-            // KPI 필터 이벤트
+            // KPI 프리셋 이벤트
+            document.getElementById('kpiPresetSelect').addEventListener('change', e => {
+                applyKpiPreset(e.target.value);
+            });
+
+            // KPI 필터 이벤트 (수동 변경 시 프리셋 초기화)
             document.getElementById('kpiFilterMetric').addEventListener('change', e => {
                 kpiFilter.metric = e.target.value;
+                document.getElementById('kpiPresetSelect').value = '';
+                document.getElementById('kpiPresetDescription').style.display = 'none';
                 if (kpiFilter.enabled) {
                     updateDashboard();
                 }
@@ -3156,6 +3435,8 @@
 
             document.getElementById('kpiFilterOperator').addEventListener('change', e => {
                 kpiFilter.operator = e.target.value;
+                document.getElementById('kpiPresetSelect').value = '';
+                document.getElementById('kpiPresetDescription').style.display = 'none';
                 if (kpiFilter.enabled) {
                     updateDashboard();
                 }
@@ -3165,6 +3446,8 @@
                 const formatted = formatNumberInput(e.target.value);
                 e.target.value = formatted;
                 kpiFilter.value = parseFormattedNumber(formatted);
+                document.getElementById('kpiPresetSelect').value = '';
+                document.getElementById('kpiPresetDescription').style.display = 'none';
                 if (kpiFilter.enabled) {
                     updateDashboard();
                 }
@@ -3189,6 +3472,8 @@
             document.querySelectorAll('input[name="compoundLogic"]').forEach(radio => {
                 radio.addEventListener('change', e => {
                     kpiFilter.compoundLogic = e.target.value;
+                    document.getElementById('kpiPresetSelect').value = '';
+                    document.getElementById('kpiPresetDescription').style.display = 'none';
                     const secondaryFilterRow = document.getElementById('secondaryFilterRow');
                     const tertiaryFilterRow = document.getElementById('tertiaryFilterRow');
 
@@ -3213,6 +3498,8 @@
             document.querySelectorAll('input[name="compoundLogicSecondary"]').forEach(radio => {
                 radio.addEventListener('change', e => {
                     kpiFilter.secondaryCompoundLogic = e.target.value;
+                    document.getElementById('kpiPresetSelect').value = '';
+                    document.getElementById('kpiPresetDescription').style.display = 'none';
                     const tertiaryFilterRow = document.getElementById('tertiaryFilterRow');
 
                     if (e.target.value === 'none') {
@@ -3227,9 +3514,11 @@
                 });
             });
 
-            // 보조 필터 이벤트
+            // 보조 필터 이벤트 (수동 변경 시 프리셋 초기화)
             document.getElementById('kpiFilterMetricSecondary').addEventListener('change', e => {
                 kpiFilter.secondaryMetric = e.target.value;
+                document.getElementById('kpiPresetSelect').value = '';
+                document.getElementById('kpiPresetDescription').style.display = 'none';
                 if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
                     updateDashboard();
                 }
@@ -3237,6 +3526,8 @@
 
             document.getElementById('kpiFilterOperatorSecondary').addEventListener('change', e => {
                 kpiFilter.secondaryOperator = e.target.value;
+                document.getElementById('kpiPresetSelect').value = '';
+                document.getElementById('kpiPresetDescription').style.display = 'none';
                 if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
                     updateDashboard();
                 }
@@ -3246,14 +3537,18 @@
                 const formatted = formatNumberInput(e.target.value);
                 e.target.value = formatted;
                 kpiFilter.secondaryValue = parseFormattedNumber(formatted);
+                document.getElementById('kpiPresetSelect').value = '';
+                document.getElementById('kpiPresetDescription').style.display = 'none';
                 if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
                     updateDashboard();
                 }
             });
 
-            // 3차 필터 이벤트
+            // 3차 필터 이벤트 (수동 변경 시 프리셋 초기화)
             document.getElementById('kpiFilterMetricTertiary').addEventListener('change', e => {
                 kpiFilter.tertiaryMetric = e.target.value;
+                document.getElementById('kpiPresetSelect').value = '';
+                document.getElementById('kpiPresetDescription').style.display = 'none';
                 if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
                     updateDashboard();
                 }
@@ -3261,6 +3556,8 @@
 
             document.getElementById('kpiFilterOperatorTertiary').addEventListener('change', e => {
                 kpiFilter.tertiaryOperator = e.target.value;
+                document.getElementById('kpiPresetSelect').value = '';
+                document.getElementById('kpiPresetDescription').style.display = 'none';
                 if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
                     updateDashboard();
                 }
@@ -3270,6 +3567,8 @@
                 const formatted = formatNumberInput(e.target.value);
                 e.target.value = formatted;
                 kpiFilter.tertiaryValue = parseFormattedNumber(formatted);
+                document.getElementById('kpiPresetSelect').value = '';
+                document.getElementById('kpiPresetDescription').style.display = 'none';
                 if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none' && kpiFilter.secondaryCompoundLogic !== 'none') {
                     updateDashboard();
                 }

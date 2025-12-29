@@ -1519,6 +1519,156 @@ def analyze_churn_and_improvement(daily_funnel_pivot, thresholds, filter_days=0)
     return results
 
 
+def analyze_performance_trends(daily_funnel_pivot, thresholds):
+    """
+    퍼널 성과 트렌드 분석 (timeseries_analysis와 동일한 구조)
+
+    7일/14일/30일 기간별로 개선 항목과 하락 항목을 분석하여
+    performance_trends 객체를 생성합니다.
+
+    Returns:
+        {
+            'improvements_7d': [...],
+            'improvements_14d': [...],
+            'improvements_30d': [...],
+            'declines_7d': [...],
+            'declines_14d': [...],
+            'declines_30d': [...]
+        }
+    """
+    results = {
+        'improvements_7d': [],
+        'improvements_14d': [],
+        'improvements_30d': [],
+        'declines_7d': [],
+        'declines_14d': [],
+        'declines_30d': []
+    }
+
+    data_len = len(daily_funnel_pivot)
+
+    # 분석 대상 메트릭 (퍼널 단계 + CVR)
+    metrics_to_analyze = []
+    for stage in ['유입', '활동', '관심', '결제진행', '구매완료']:
+        if stage in daily_funnel_pivot.columns:
+            metrics_to_analyze.append({
+                'column': stage,
+                'name': FRIENDLY_NAMES.get(stage, stage),
+                'type': 'count'
+            })
+
+    # CVR도 분석 (있는 경우)
+    if 'CVR' in daily_funnel_pivot.columns:
+        metrics_to_analyze.append({
+            'column': 'CVR',
+            'name': '전환율 (CVR)',
+            'type': 'rate'
+        })
+
+    # 기간별 분석 설정
+    period_configs = [
+        {'key': '7d', 'days': 7, 'min_data': 14},
+        {'key': '14d', 'days': 14, 'min_data': 28},
+        {'key': '30d', 'days': 30, 'min_data': 60}
+    ]
+
+    # 임계값 (개선/하락 판단 기준)
+    improvement_threshold = thresholds.get('improvement_threshold', 20.0)
+    decline_threshold = thresholds.get('churn_alert_threshold', -20.0)
+    high_improvement = thresholds.get('high_improvement_threshold', 30.0)
+    high_risk = thresholds.get('high_risk_threshold', -30.0)
+
+    for metric in metrics_to_analyze:
+        col = metric['column']
+        metric_name = metric['name']
+
+        for period_cfg in period_configs:
+            period_key = period_cfg['key']
+            days = period_cfg['days']
+            min_data = period_cfg['min_data']
+
+            if data_len < min_data:
+                continue
+
+            # 최근 N일 평균
+            recent_avg = daily_funnel_pivot[col].tail(days).mean()
+            # 이전 N일 평균 (N일 전 ~ 2N일 전)
+            previous_avg = daily_funnel_pivot[col].iloc[-(days*2):-days].mean()
+
+            if previous_avg <= 0:
+                continue
+
+            # 변화율 계산
+            change_pct = ((recent_avg - previous_avg) / previous_avg) * 100
+
+            # 개선 항목
+            if change_pct >= improvement_threshold:
+                level = 'high' if change_pct >= high_improvement else 'medium'
+                results[f'improvements_{period_key}'].append({
+                    'metric': metric_name,
+                    'period': period_key,
+                    'improvement_level': level,
+                    'change_pct': round(change_pct, 2),
+                    'recent_avg': round(recent_avg, 2),
+                    'previous_avg': round(previous_avg, 2),
+                    'recommendation': _generate_improvement_recommendation(metric_name, change_pct, period_key)
+                })
+
+            # 하락 항목
+            elif change_pct <= decline_threshold:
+                level = 'high' if change_pct <= high_risk else 'medium'
+                results[f'declines_{period_key}'].append({
+                    'metric': metric_name,
+                    'period': period_key,
+                    'risk_level': level,
+                    'change_pct': round(change_pct, 2),
+                    'recent_avg': round(recent_avg, 2),
+                    'previous_avg': round(previous_avg, 2),
+                    'recommendation': _generate_decline_recommendation(metric_name, change_pct, period_key)
+                })
+
+    # 변화율 크기순 정렬
+    for key in results:
+        if 'improvements' in key:
+            results[key] = sorted(results[key], key=lambda x: x['change_pct'], reverse=True)
+        else:
+            results[key] = sorted(results[key], key=lambda x: x['change_pct'])
+
+    return results
+
+
+def _generate_improvement_recommendation(metric_name, change_pct, period):
+    """개선 항목에 대한 추천 메시지 생성"""
+    period_text = {'7d': '최근 7일', '14d': '최근 14일', '30d': '최근 30일'}.get(period, period)
+
+    recommendations = {
+        '매장 방문 (유입)': f"유입이 {change_pct:.1f}% 증가했습니다! 현재 마케팅 채널의 효과를 분석하고, 예산을 증액하여 모멘텀을 유지하세요.",
+        '상품 구경 (활동)': f"활동 참여가 {change_pct:.1f}% 개선되었습니다. 현재 콘텐츠/UI가 효과적입니다. 이 경험을 다른 페이지에도 확대 적용하세요.",
+        '장바구니 (관심)': f"장바구니 추가가 {change_pct:.1f}% 증가했습니다. 구매 전환을 높이기 위해 장바구니 리마인더나 할인 쿠폰을 제공해보세요.",
+        '결제창 진입': f"결제 진입이 {change_pct:.1f}% 개선되었습니다. 결제 완료율을 높이기 위해 간편결제 옵션이나 무료배송 조건을 강조하세요.",
+        '구매 성공': f"구매가 {change_pct:.1f}% 증가했습니다! 성공 요인을 분석하고, 유사 캠페인을 다른 세그먼트에도 적용하세요.",
+        '전환율 (CVR)': f"전환율이 {change_pct:.1f}% 개선되었습니다. 현재 전략이 효과적입니다. A/B 테스트로 추가 개선 여지를 확인하세요."
+    }
+
+    return recommendations.get(metric_name, f"{metric_name}이(가) {period_text} 동안 {change_pct:.1f}% 개선되었습니다. 현재 전략을 유지하고 확대하세요.")
+
+
+def _generate_decline_recommendation(metric_name, change_pct, period):
+    """하락 항목에 대한 추천 메시지 생성"""
+    period_text = {'7d': '최근 7일', '14d': '최근 14일', '30d': '최근 30일'}.get(period, period)
+
+    recommendations = {
+        '매장 방문 (유입)': f"유입이 {abs(change_pct):.1f}% 감소했습니다. 광고 노출이 줄었거나 시즌 영향일 수 있습니다. 채널별 유입 추이를 점검하세요.",
+        '상품 구경 (활동)': f"활동 참여가 {abs(change_pct):.1f}% 하락했습니다. 랜딩페이지 로딩 속도나 콘텐츠 품질을 점검하세요.",
+        '장바구니 (관심)': f"장바구니 추가가 {abs(change_pct):.1f}% 감소했습니다. 상품 가격 경쟁력이나 재고 상황을 확인하세요.",
+        '결제창 진입': f"결제 진입이 {abs(change_pct):.1f}% 하락했습니다. 배송비나 결제 옵션에 문제가 없는지 점검하세요.",
+        '구매 성공': f"구매가 {abs(change_pct):.1f}% 감소했습니다. 결제 프로세스 오류나 품절 상품이 없는지 긴급 점검하세요.",
+        '전환율 (CVR)': f"전환율이 {abs(change_pct):.1f}% 하락했습니다. 퍼널 전체를 점검하여 이탈 구간을 파악하세요."
+    }
+
+    return recommendations.get(metric_name, f"{metric_name}이(가) {period_text} 동안 {abs(change_pct):.1f}% 하락했습니다. 원인 분석이 필요합니다.")
+
+
 # ============================================================================
 # 5. 메인 실행 함수 (Main Executor)
 # ============================================================================
@@ -1777,6 +1927,9 @@ def generate_funnel_insights(category='default', ga4_file=None):
 
     print("   - 이탈/개선 예측...")
     churn_analysis = analyze_churn_and_improvement(daily_funnel_pivot, thresholds, filter_days)
+
+    print("   - 성과 트렌드 분석 (7d/14d/30d)...")
+    performance_trends = analyze_performance_trends(daily_funnel_pivot, thresholds)
 
     print("   - 마이크로 세그먼트 분석 (Upgrade Guide)...")
     micro_alerts, channel_metrics_enhanced, dynamic_thresholds = generate_micro_segment_alerts(
@@ -2067,6 +2220,9 @@ def generate_funnel_insights(category='default', ga4_file=None):
         'improvement_predictions_30d': churn_analysis.get('improvement_30d', []),
         'churn_predictions': churn_analysis.get('churn_7d', []),  # 하위 호환
 
+        # 성과 트렌드 분석 (timeseries_analysis와 동일 구조)
+        'performance_trends': performance_trends,
+
         # CRM 액션 (새로운 기능)
         'crm_actions': churn_analysis.get('crm_actions', []),
 
@@ -2106,7 +2262,12 @@ def generate_funnel_insights(category='default', ga4_file=None):
             # 신규 통계
             'micro_segment_alerts_count': len(micro_alerts),
             'micro_segment_opportunities': len([a for a in micro_alerts if a.get('type') == 'opportunity']),
-            'micro_segment_problems': len([a for a in micro_alerts if a.get('type') == 'problem'])
+            'micro_segment_problems': len([a for a in micro_alerts if a.get('type') == 'problem']),
+            # 성과 트렌드 통계
+            'performance_trends_improvements_7d': len(performance_trends.get('improvements_7d', [])),
+            'performance_trends_improvements_14d': len(performance_trends.get('improvements_14d', [])),
+            'performance_trends_declines_7d': len(performance_trends.get('declines_7d', [])),
+            'performance_trends_declines_14d': len(performance_trends.get('declines_14d', []))
         }
     }
 
@@ -2134,6 +2295,11 @@ def generate_funnel_insights(category='default', ga4_file=None):
     print(f"   - 마이크로 알림: {len(micro_alerts)}개")
     print(f"   - 기회 발견: {len([a for a in micro_alerts if a.get('type') == 'opportunity'])}개")
     print(f"   - 문제 감지: {len([a for a in micro_alerts if a.get('type') == 'problem'])}개")
+    print(f"\n📈 성과 트렌드 분석 (최근 변화 인사이트):")
+    print(f"   - 개선 항목 (7일): {len(performance_trends.get('improvements_7d', []))}개")
+    print(f"   - 개선 항목 (14일): {len(performance_trends.get('improvements_14d', []))}개")
+    print(f"   - 하락 항목 (7일): {len(performance_trends.get('declines_7d', []))}개")
+    print(f"   - 하락 항목 (14일): {len(performance_trends.get('declines_14d', []))}개")
     print(f"   - 동적 임계값: 트래픽 상위 {dynamic_thresholds.get('traffic_high', 0):.0f}명 / RPV 상위 {dynamic_thresholds.get('rpv_high', 0):,.0f}원")
     print(f"\n📁 생성된 파일:")
     print(f"   - {FUNNEL_DIR / 'insights.json'}")

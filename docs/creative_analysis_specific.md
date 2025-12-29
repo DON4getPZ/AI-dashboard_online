@@ -209,6 +209,37 @@ Chart.register(ChartDataLabels);
 ##### 조건 연산자
 - `>` (보다 큼), `<` (보다 작음), `>=` (크거나 같음), `<=` (작거나 같음), `=` (같음)
 
+##### KPI 프리셋 (빠른 필터)
+| 항목 | 내용 |
+|------|------|
+| **위치** | KPI 필터 섹션 상단 |
+| **HTML ID** | `kpiPresetSelect`, `kpiPresetDescription` |
+| **JS 상수** | `KPI_PRESETS` (8개 프리셋 정의) |
+| **JS 함수** | `applyKpiPreset()`, `resetKpiFilter()`, `updateKpiToggleUI()` |
+
+**프리셋 목록**:
+| 키 | 이름 | 조건 |
+|-----|------|------|
+| `high_roas` | 🏆 고효율 소재 | ROAS > 500% |
+| `hidden_gem` | 💎 숨은 보석 | ROAS > 300% AND 비용 < 10만원 |
+| `volume_performer` | 📊 볼륨 성과자 | 비용 > 100만원 AND ROAS > 200% |
+| `low_cpa` | 🎯 저렴한 전환 | CPA < 10,000원 AND 전환수 > 10 |
+| `high_exposure` | 👁️ 고노출 소재 | 노출 > 100,000 |
+| `money_pit` | 🚨 비용 과다 | 비용 > 50만원 AND ROAS < 100% |
+| `underperformer` | ⚠️ 성과 부진 | ROAS < 100% AND 비용 > 10만원 |
+| `needs_review` | 📋 점검 필요 | CPC > 5,000원 OR CPA > 50,000원 |
+
+**동작 흐름**:
+1. 프리셋 선택 시 `applyKpiPreset()` 호출
+2. `resetKpiFilter()`로 필터 상태 초기화
+3. 프리셋 조건을 `kpiFilter` 객체에 적용
+4. `updateKpiToggleUI()`로 UI 상태 동기화
+5. `updateDashboard()` 호출
+
+**수동 필터 변경 시 프리셋 초기화**:
+- 모든 KPI 필터 입력/선택 이벤트에서 프리셋 드롭다운을 `''`로 리셋
+- 설명 영역(`kpiPresetDescription`) 숨김 처리
+
 #### 2.2 정렬 설정 (우측)
 | 항목 | 내용 |
 |------|------|
@@ -1173,6 +1204,39 @@ filterCollapsibleHeader.addEventListener('click', () => {
 }
 ```
 
+**KPI 프리셋 스타일** (`.kpi-preset-*`):
+```css
+.kpi-preset-section {
+    margin-bottom: 12px;
+}
+
+.kpi-preset-select {
+    padding: 8px 12px;
+    border: 1px solid var(--grey-300);
+    border-radius: 8px;
+    font-size: 14px;
+    min-width: 200px;
+    background: var(--paper);
+    cursor: pointer;
+}
+
+.kpi-preset-select:focus {
+    outline: none;
+    border-color: var(--primary-main);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.kpi-preset-description {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: var(--grey-50);
+    border-left: 3px solid var(--primary-main);
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    color: var(--grey-700);
+}
+```
+
 ---
 
 #### 2.4 날짜 범위 컴포넌트 `.date-range`
@@ -2032,3 +2096,7 @@ body {
 | 2025-12-24 | Chart.js 플러그인 등록: `Chart.register(ChartDataLabels)` 추가 |
 | 2025-12-24 | 이벤트 핸들러 업데이트: 차트 토글 버튼 이벤트 핸들러 코드 추가 |
 | 2025-12-24 | 문서 구조 개선: 차트 토글 버튼 HTML 구조 및 숨겨진 체크박스 설명 추가 |
+| 2025-12-29 | KPI 프리셋 기능 추가: `KPI_PRESETS` 상수 (8개 프리셋), `applyKpiPreset()`, `resetKpiFilter()`, `updateKpiToggleUI()` 함수 |
+| 2025-12-29 | HTML 추가: `kpiPresetSelect` 드롭다운, `kpiPresetDescription` 설명 영역 |
+| 2025-12-29 | CSS 추가: `.kpi-preset-section`, `.kpi-preset-select`, `.kpi-preset-description` 클래스 |
+| 2025-12-29 | 이벤트 리스너 추가: 프리셋 선택 시 자동 적용, 수동 필터 변경 시 프리셋 초기화 |
