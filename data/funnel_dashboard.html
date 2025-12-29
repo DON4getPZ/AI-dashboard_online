@@ -3365,8 +3365,53 @@
             const isExpanded = urgentAlertsExpanded[type];
             const displayCount = isExpanded ? alerts.length : 3;
 
-            const bgColor = type === 'high' ? 'var(--error-light)' : 'var(--warning-light)';
-            const borderColor = type === 'high' ? 'var(--error-main)' : 'var(--warning-main)';
+            // severity별 스타일
+            const severityStyles = {
+                critical: { bgColor: '#ffebee', borderColor: '#f44336', textColor: '#c62828' },
+                high: { bgColor: '#fff3e0', borderColor: '#ff9800', textColor: '#e65100' },
+                medium: { bgColor: '#fff8e1', borderColor: '#ffc107', textColor: '#f57f17' }
+            };
+
+            // 세그먼트 타입별 아이콘
+            const subTypeIcons = {
+                'traffic_leak': '🚿',
+                'hidden_vip': '💎',
+                'checkout_friction': '🛒',
+                'growth_engine': '🚀',
+                'activation_drop': '🚪',
+                'engagement_gap': '📉',
+                'silent_majority': '😶'
+            };
+
+            // 메트릭스 배지 생성 함수
+            const renderMetricsBadges = (metrics) => {
+                if (!metrics) return '';
+                const colorMap = {
+                    '유입→활동': { color: '#1565c0', border: '#90caf9' },
+                    '활동→관심': { color: '#1565c0', border: '#90caf9' },
+                    '관심→구매': { color: '#1565c0', border: '#90caf9' },
+                    '전환율': { color: '#2e7d32', border: '#a5d6a7' },
+                    'CVR': { color: '#2e7d32', border: '#a5d6a7' },
+                    '유입': { color: '#5e35b1', border: '#b39ddb' },
+                    '활동': { color: '#5e35b1', border: '#b39ddb' },
+                    '관심': { color: '#5e35b1', border: '#b39ddb' },
+                    'RPV': { color: '#e65100', border: '#ffcc80' }
+                };
+                const percentKeys1 = ['유입→활동', '활동→관심', '관심→구매'];
+                const percentKeys2 = ['전환율', 'CVR'];
+                return Object.entries(metrics).map(([k, v]) => {
+                    let formatted;
+                    if (percentKeys2.includes(k)) {
+                        formatted = (typeof v === 'number' ? v.toFixed(2) : v) + '%';
+                    } else if (percentKeys1.includes(k)) {
+                        formatted = (typeof v === 'number' ? v.toFixed(1) : v) + '%';
+                    } else {
+                        formatted = typeof v === 'number' ? v.toLocaleString() : v;
+                    }
+                    const s = colorMap[k] || { color: '#616161', border: '#bdbdbd' };
+                    return '<span style="background: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; color: ' + s.color + '; border: 1px solid ' + s.border + '; font-weight: 500;">' + k + ' ' + formatted + '</span>';
+                }).join('');
+            };
 
             if (alerts.length === 0) {
                 cardsContainer.innerHTML = `
@@ -3379,47 +3424,43 @@
             }
 
             cardsContainer.innerHTML = alerts.slice(0, displayCount).map(alert => {
-                // micro_segment_alerts 필드 매핑 (diagnosis 또는 reason)
+                const style = severityStyles[alert.severity] || severityStyles.medium;
+                const icon = subTypeIcons[alert.sub_type] || '⚠️';
                 const diagnosis = alert.diagnosis || alert.reason || '';
                 const impact = alert.impact || {};
                 const actionDetail = alert.action_detail || {};
                 const urgencyScore = alert.urgency_score || 0;
+                const urgencyLabel = urgencyScore >= 70 ? '긴급' : urgencyScore >= 40 ? '주의' : '참고';
 
                 return `
-                <div style="padding: 16px; background: ${bgColor}; border-radius: 8px; border-left: 4px solid ${borderColor};">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                        <div style="font-size: 15px; font-weight: 600; color: var(--grey-900);">
-                            ${alert.title}
+                <div style="background: ${style.bgColor}; border: 2px solid ${style.borderColor}; border-radius: 10px; padding: 14px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <!-- 헤더 -->
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <span style="font-size: 18px;">${icon}</span>
+                        <div style="flex: 1;">
+                            <div style="font-size: 13px; font-weight: 700; color: ${style.textColor};">${alert.title}</div>
+                            <div style="font-size: 10px; color: ${style.textColor}; opacity: 0.8;">${alert.category || '일반'} > ${alert.sub_type || '분석'}</div>
                         </div>
-                        ${urgencyScore > 0 ? `
-                            <div style="font-size: 11px; padding: 2px 8px; background: ${type === 'high' ? 'var(--error-main)' : 'var(--warning-main)'}; color: white; border-radius: 10px; font-weight: 600;">
-                                긴급도 ${urgencyScore}
-                            </div>
-                        ` : ''}
+                        ${urgencyScore > 0 ? '<span style="background: ' + style.borderColor + '; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">' + urgencyLabel + ' ' + urgencyScore + '</span>' : ''}
                     </div>
-                    <div style="font-size: 13px; color: var(--grey-700); margin-bottom: 8px;">
-                        ${alert.message}
-                    </div>
+                    <!-- 메트릭스 배지 -->
+                    ${alert.metrics ? '<div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">' + renderMetricsBadges(alert.metrics) + '</div>' : ''}
+                    <!-- 진단 (체크마크 스타일) -->
                     ${diagnosis ? `
-                        <div style="font-size: 13px; color: var(--grey-600); margin-bottom: 8px;">
-                            <strong>진단:</strong> ${diagnosis}
+                        <div style="font-size: 11px; color: #555; line-height: 1.6; margin-bottom: 10px;">
+                            <div style="display: flex; align-items: flex-start; gap: 6px;">
+                                <span style="color: ${style.borderColor};">✓</span>
+                                <span>${diagnosis}</span>
+                            </div>
                         </div>
                     ` : ''}
-                    ${(impact.lost_users || impact.potential_revenue) ? `
-                        <div style="font-size: 12px; color: var(--grey-600); margin-bottom: 8px; padding: 8px; background: rgba(0,0,0,0.03); border-radius: 4px;">
-                            <strong>📊 영향 추정:</strong>
-                            ${impact.lost_users ? ` 이탈 ${impact.lost_users}명` : ''}
-                            ${impact.potential_revenue ? ` · 잠재 손실 ₩${impact.potential_revenue.toLocaleString()}` : ''}
-                        </div>
-                    ` : ''}
-                    <div style="padding: 10px; background: white; border-radius: 6px; font-size: 13px; color: var(--grey-900);">
-                        💡 <strong>추천 액션:</strong> ${actionDetail.primary || alert.action || '데이터 분석 후 대응 방안을 수립하세요.'}
+                    <!-- 추천 액션 -->
+                    <div style="background: #ffffff; border-radius: 6px; padding: 10px; border-left: 3px solid ${style.borderColor};">
+                        <div style="font-size: 10px; font-weight: 600; color: ${style.textColor}; margin-bottom: 4px;">💡 추천 액션</div>
+                        <div style="font-size: 11px; color: #333; line-height: 1.4;">${actionDetail.primary || alert.action || '데이터 분석 후 대응 방안을 수립하세요.'}</div>
+                        ${actionDetail.secondary ? '<div style="font-size: 10px; color: #5e35b1; margin-top: 6px; padding-top: 6px; border-top: 1px dashed #d1c4e9; line-height: 1.4;">➕ ' + actionDetail.secondary + '</div>' : ''}
+                        ${(impact.lost_users || impact.potential_revenue) ? '<div style="font-size: 10px; color: #c62828; margin-top: 6px;">📉 영향: ' + (impact.lost_users ? '이탈 ' + impact.lost_users + '명' : '') + (impact.potential_revenue ? ' · 잠재 손실 ₩' + impact.potential_revenue.toLocaleString() : '') + '</div>' : ''}
                     </div>
-                    ${actionDetail.secondary ? `
-                        <div style="padding: 8px 10px; background: rgba(255,255,255,0.5); border-radius: 4px; font-size: 12px; color: var(--grey-700); margin-top: 6px;">
-                            ➕ <strong>추가 조치:</strong> ${actionDetail.secondary}
-                        </div>
-                    ` : ''}
                 </div>
             `}).join('');
 
