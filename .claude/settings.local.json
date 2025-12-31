@@ -15,7 +15,8 @@
       "Bash([ $line -le 8600 ])",
       "Bash(then echo \"Line $line\")",
       "Bash(fi)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []
