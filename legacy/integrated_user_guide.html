@@ -5915,6 +5915,47 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>유형별 조치 가이드(마이크로 세그먼트)란 무엇인가요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    마이크로 세그먼트는 채널별 세부 데이터를 분석하여 <strong>4가지 유형</strong>으로 분류하고, 각 유형에 맞는 최적화 전략을 제시합니다:<br><br>
+                                    • <strong>Hidden VIP</strong>: 높은 전환율, 낮은 트래픽 → 예산 확대 권장<br>
+                                    • <strong>Traffic Waste</strong>: 낮은 전환율, 높은 트래픽 → 타겟팅 개선 필요<br>
+                                    • <strong>Checkout Friction</strong>: 장바구니 이탈 높음 → 결제 프로세스 점검<br>
+                                    • <strong>Rising Star</strong>: 성장률 높음 → 적극 투자 권장<br><br>
+                                    유형별 조치 가이드 섹션에서 각 유형의 상세 조건과 추천 액션을 확인할 수 있습니다.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>마이크로 세그먼트 각 유형의 판별 조건은 무엇인가요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    각 유형은 다음 조건으로 판별됩니다:<br><br>
+                                    <strong>Hidden VIP</strong><br>
+                                    • 전환율 ≥ 전체 평균 × 1.5<br>
+                                    • 트래픽 ≤ 전체 평균 × 0.5<br><br>
+                                    <strong>Traffic Waste</strong><br>
+                                    • 전환율 ≤ 전체 평균 × 0.5<br>
+                                    • 트래픽 ≥ 전체 평균 × 1.5<br><br>
+                                    <strong>Checkout Friction</strong><br>
+                                    • 장바구니→결제 전환율 ≤ 30%<br>
+                                    • 또는 결제 이탈률 ≥ 70%<br><br>
+                                    <strong>Rising Star</strong><br>
+                                    • 전주 대비 전환수 성장률 ≥ 50%<br>
+                                    • 전환율 ≥ 전체 평균
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="callout info" style="margin-top: 32px;">
@@ -6426,6 +6467,7 @@
                             <div class="toggle-buttons">
                                 <button class="demo-btn active">경고 및 추천</button>
                                 <button class="demo-btn">기회 요소</button>
+                                <button class="demo-btn">주요 항목별 분석</button>
                             </div>
                         </div>
 
@@ -6491,6 +6533,76 @@
                         </div>
                     </div>
 
+                    <!-- 주요 항목별 분석 (Forecast Matrix) -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📈</div>
+                            <div>
+                                <h3 class="card-title">주요 항목별 분석 (Forecast Matrix)</h3>
+                                <p class="card-subtitle">세그먼트를 4분면으로 분류하여 전략적 우선순위를 파악합니다</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            ROAS(효율)와 예측 성장률을 기준으로 각 세그먼트를 <strong>4분면</strong>으로 분류합니다.
+                            브랜드, 채널, 상품, 프로모션별로 분석 결과를 확인할 수 있습니다.
+                        </p>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">하위 탭</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">브랜드</button>
+                                <button class="demo-btn">채널</button>
+                                <button class="demo-btn">상품</button>
+                                <button class="demo-btn">프로모션</button>
+                            </div>
+                        </div>
+
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                            🎯 4분면 분류 기준
+                        </h4>
+
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 16px 0;">
+                            <div style="padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-radius: 12px;">
+                                <div style="font-size: 20px; margin-bottom: 8px;">⭐</div>
+                                <div style="font-size: 14px; font-weight: 600; color: #2e7d32;">Super Star</div>
+                                <div style="font-size: 12px; color: var(--grey-600);">고효율 + 고성장: 적극 투자 권장</div>
+                            </div>
+                            <div style="padding: 16px; background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border-radius: 12px;">
+                                <div style="font-size: 20px; margin-bottom: 8px;">📉</div>
+                                <div style="font-size: 14px; font-weight: 600; color: #f57f17;">Fading Hero</div>
+                                <div style="font-size: 12px; color: var(--grey-600);">고효율 + 역성장: 원인 분석 필요</div>
+                            </div>
+                            <div style="padding: 16px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 12px;">
+                                <div style="font-size: 20px; margin-bottom: 8px;">🚀</div>
+                                <div style="font-size: 14px; font-weight: 600; color: #1565c0;">Rising Potential</div>
+                                <div style="font-size: 12px; color: var(--grey-600);">저효율 + 고성장: 효율 개선 시 유망</div>
+                            </div>
+                            <div style="padding: 16px; background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); border-radius: 12px;">
+                                <div style="font-size: 20px; margin-bottom: 8px;">⚠️</div>
+                                <div style="font-size: 14px; font-weight: 600; color: #c62828;">Problem Child</div>
+                                <div style="font-size: 12px; color: var(--grey-600);">저효율 + 역성장: 재검토 또는 철수</div>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">Forecast Matrix 스크린샷</div>
+                            <div class="screenshot-hint">4분면 분류 카드 화면</div>
+                        </div>
+
+                        <div class="callout tip">
+                            <div class="callout-icon">💡</div>
+                            <div class="callout-content">
+                                <div class="callout-title">카드 호버 툴팁</div>
+                                <div class="callout-text">
+                                    각 세그먼트 카드에 마우스를 올리면 해당 4분면에 대한
+                                    상세 설명과 권장 액션이 툴팁으로 표시됩니다.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- 최근 변화 인사이트 -->
                     <div class="card">
                         <div class="card-header">
@@ -6549,38 +6661,119 @@
                         <p class="section-desc">Prophet 예측 모델 기반의 상세 성과 분석 기능을 활용하세요.</p>
                     </div>
 
-                    <!-- 전체 성과 예측 -->
+                    <!-- 예산 시뮬레이션 -->
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-icon">📊</div>
+                            <div class="card-icon">💰</div>
                             <div>
-                                <h3 class="card-title">전체 성과 예측</h3>
-                                <p class="card-subtitle">실제 데이터와 예측 데이터를 시계열 차트로 비교합니다</p>
+                                <h3 class="card-title">예산 시뮬레이션</h3>
+                                <p class="card-subtitle">예산 변경 시 예상되는 매출 변화를 시뮬레이션합니다</p>
                             </div>
-                            <span class="badge prophet">Prophet</span>
+                            <span class="badge ai">AI 기반</span>
                         </div>
 
                         <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
-                            일별/주별/월별 집계 단위로 비용, 노출, 클릭, 전환수, 전환값의
-                            <strong>실제 데이터(실선)</strong>와 <strong>예측 데이터(점선)</strong>를 비교할 수 있습니다.
+                            주요 항목별 예산 변경 시 예상되는 <strong>매출 변화</strong>를 시뮬레이션합니다.
+                            ROAS 기반 선형 모델 + 로그 체감 수익 함수를 적용하여 현실적인 예측을 제공합니다.
                         </p>
 
                         <div class="toggle-demo">
                             <div class="toggle-demo-label">성과 분석 탭</div>
                             <div class="toggle-buttons">
-                                <button class="demo-btn active">전체 성과 예측</button>
-                                <button class="demo-btn">세그먼트 비교</button>
-                                <button class="demo-btn">세그먼트 트렌드</button>
-                                <button class="demo-btn">비즈니스 인사이트</button>
+                                <button class="demo-btn active">예산 시뮬레이션</button>
+                                <button class="demo-btn">주요 항목 트렌드</button>
                             </div>
                         </div>
 
                         <div class="toggle-demo" style="margin-top: 12px;">
+                            <div class="toggle-demo-label">세그먼트 유형</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">전체</button>
+                                <button class="demo-btn">채널별</button>
+                                <button class="demo-btn">제품별</button>
+                                <button class="demo-btn">브랜드별</button>
+                                <button class="demo-btn">프로모션별</button>
+                            </div>
+                        </div>
+
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
+                            📊 시뮬레이션 결과 구성
+                        </h4>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 16px 0;">
+                            <div style="padding: 16px; background: var(--grey-50); border-radius: 12px; text-align: center;">
+                                <div style="font-size: 20px; margin-bottom: 8px;">🎚️</div>
+                                <div style="font-size: 13px; font-weight: 600; color: var(--grey-800);">예산 슬라이더</div>
+                                <div style="font-size: 12px; color: var(--grey-600);">항목별 예산 조절</div>
+                            </div>
+                            <div style="padding: 16px; background: var(--grey-50); border-radius: 12px; text-align: center;">
+                                <div style="font-size: 20px; margin-bottom: 8px;">📈</div>
+                                <div style="font-size: 13px; font-weight: 600; color: var(--grey-800);">예상 매출 차트</div>
+                                <div style="font-size: 12px; color: var(--grey-600);">변경 전/후 비교</div>
+                            </div>
+                            <div style="padding: 16px; background: var(--grey-50); border-radius: 12px; text-align: center;">
+                                <div style="font-size: 20px; margin-bottom: 8px;">📋</div>
+                                <div style="font-size: 13px; font-weight: 600; color: var(--grey-800);">상세 결과 테이블</div>
+                                <div style="font-size: 12px; color: var(--grey-600);">항목별 예상 수치</div>
+                            </div>
+                            <div style="padding: 16px; background: var(--grey-50); border-radius: 12px; text-align: center;">
+                                <div style="font-size: 20px; margin-bottom: 8px;">💡</div>
+                                <div style="font-size: 13px; font-weight: 600; color: var(--grey-800);">AI 인사이트</div>
+                                <div style="font-size: 12px; color: var(--grey-600);">최적화 제안</div>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <div class="screenshot-icon">🖼️</div>
+                            <div class="screenshot-label">예산 시뮬레이션 스크린샷</div>
+                            <div class="screenshot-hint">슬라이더와 예상 매출 차트 화면</div>
+                        </div>
+
+                        <div class="callout tip">
+                            <div class="callout-icon">💡</div>
+                            <div class="callout-content">
+                                <div class="callout-title">시뮬레이션 활용 팁</div>
+                                <div class="callout-text">
+                                    예산을 조절하면 실시간으로 예상 매출이 업데이트됩니다.
+                                    <strong>초기화 버튼</strong>으로 원래 상태로 되돌릴 수 있습니다.
+                                    ROAS가 높은 항목에 우선 투자하는 것이 효율적입니다.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 주요 항목 트렌드 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📊</div>
+                            <div>
+                                <h3 class="card-title">주요 항목 트렌드</h3>
+                                <p class="card-subtitle">세그먼트별 시계열 추이를 분석합니다</p>
+                            </div>
+                            <span class="badge prophet">Prophet</span>
+                        </div>
+
+                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
+                            일별/주별/월별 집계 단위로 세그먼트별 ROAS 추이를 확인합니다.
+                            <strong>실제 데이터(실선)</strong>와 <strong>예측 데이터(점선)</strong>를 비교할 수 있습니다.
+                        </p>
+
+                        <div class="toggle-demo">
                             <div class="toggle-demo-label">집계 단위</div>
                             <div class="toggle-buttons">
                                 <button class="demo-btn active">일별</button>
                                 <button class="demo-btn">주별</button>
                                 <button class="demo-btn">월별</button>
+                            </div>
+                        </div>
+
+                        <div class="toggle-demo" style="margin-top: 12px;">
+                            <div class="toggle-demo-label">세그먼트 타입</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn active">채널</button>
+                                <button class="demo-btn">제품</button>
+                                <button class="demo-btn">브랜드</button>
+                                <button class="demo-btn">프로모션</button>
                             </div>
                         </div>
 
@@ -6597,229 +6790,19 @@
 
                         <div class="screenshot-placeholder">
                             <div class="screenshot-icon">🖼️</div>
-                            <div class="screenshot-label">전체 성과 예측 차트 스크린샷</div>
-                            <div class="screenshot-hint">실제 vs 예측 시계열 라인 차트</div>
+                            <div class="screenshot-label">주요 항목 트렌드 차트 스크린샷</div>
+                            <div class="screenshot-hint">세그먼트별 ROAS 추이 라인 차트</div>
                         </div>
 
-                        <div class="step-guide">
-                            <div class="step">
-                                <div class="step-number"></div>
-                                <div class="step-content">
-                                    <div class="step-title">집계 단위 선택</div>
-                                    <div class="step-desc">일별, 주별, 월별 중 분석 목적에 맞는 단위 선택</div>
-                                </div>
-                            </div>
-                            <div class="step">
-                                <div class="step-number"></div>
-                                <div class="step-content">
-                                    <div class="step-title">지표 체크박스 선택</div>
-                                    <div class="step-desc">비용, 노출, 클릭, 전환수, 전환값 중 확인할 지표 선택</div>
-                                </div>
-                            </div>
-                            <div class="step">
-                                <div class="step-number"></div>
-                                <div class="step-content">
-                                    <div class="step-title">실제 vs 예측 비교</div>
-                                    <div class="step-desc">실선(실제)과 점선(예측)의 gap을 확인하여 예측 정확도 파악</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 세그먼트 비교 -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-icon">📈</div>
-                            <div>
-                                <h3 class="card-title">세그먼트 비교</h3>
-                                <p class="card-subtitle">채널/제품/브랜드/프로모션별 실제 vs 예측 성과 비교</p>
-                            </div>
-                        </div>
-
-                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
-                            세그먼트 타입과 비교 지표를 선택하여 각 세그먼트별 실제 성과와 예측 성과를
-                            막대 차트로 비교합니다.
-                        </p>
-
-                        <div class="toggle-demo">
-                            <div class="toggle-demo-label">세그먼트 타입</div>
-                            <div class="toggle-buttons">
-                                <button class="demo-btn active">채널</button>
-                                <button class="demo-btn">제품</button>
-                                <button class="demo-btn">브랜드</button>
-                                <button class="demo-btn">프로모션</button>
-                            </div>
-                        </div>
-
-                        <div class="toggle-demo" style="margin-top: 12px;">
-                            <div class="toggle-demo-label">비교 지표</div>
-                            <div class="toggle-buttons">
-                                <button class="demo-btn active">ROAS</button>
-                                <button class="demo-btn">전환수</button>
-                                <button class="demo-btn">매출</button>
-                                <button class="demo-btn">비용</button>
-                                <button class="demo-btn">CVR</button>
-                            </div>
-                        </div>
-
-                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
-                            📋 세그먼트별 상세 카드
-                        </h4>
-
-                        <div class="segment-demo">
-                            <div class="segment-card">
-                                <div class="segment-name">
-                                    <span style="font-size: 18px;">📘</span> Meta
-                                </div>
-                                <div class="segment-metrics">
-                                    <div class="segment-metric">
-                                        <span class="segment-metric-label">실제 ROAS</span>
-                                        <span class="segment-metric-value">185%</span>
-                                    </div>
-                                    <div class="segment-metric">
-                                        <span class="segment-metric-label">예측 ROAS</span>
-                                        <span class="segment-metric-value" style="color: var(--gm-success);">198%</span>
-                                    </div>
-                                    <div class="segment-metric">
-                                        <span class="segment-metric-label">CVR</span>
-                                        <span class="segment-metric-value">3.2%</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="segment-card">
-                                <div class="segment-name">
-                                    <span style="font-size: 18px;">🔴</span> Google
-                                </div>
-                                <div class="segment-metrics">
-                                    <div class="segment-metric">
-                                        <span class="segment-metric-label">실제 ROAS</span>
-                                        <span class="segment-metric-value">285%</span>
-                                    </div>
-                                    <div class="segment-metric">
-                                        <span class="segment-metric-label">예측 ROAS</span>
-                                        <span class="segment-metric-value" style="color: var(--gm-success);">312%</span>
-                                    </div>
-                                    <div class="segment-metric">
-                                        <span class="segment-metric-label">CVR</span>
-                                        <span class="segment-metric-value">4.8%</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="segment-card">
-                                <div class="segment-name">
-                                    <span style="font-size: 18px;">🟢</span> Naver
-                                </div>
-                                <div class="segment-metrics">
-                                    <div class="segment-metric">
-                                        <span class="segment-metric-label">실제 ROAS</span>
-                                        <span class="segment-metric-value">156%</span>
-                                    </div>
-                                    <div class="segment-metric">
-                                        <span class="segment-metric-label">예측 ROAS</span>
-                                        <span class="segment-metric-value" style="color: var(--gm-warning);">148%</span>
-                                    </div>
-                                    <div class="segment-metric">
-                                        <span class="segment-metric-label">CVR</span>
-                                        <span class="segment-metric-value">2.1%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="screenshot-placeholder">
-                            <div class="screenshot-icon">🖼️</div>
-                            <div class="screenshot-label">세그먼트 비교 막대 차트 스크린샷</div>
-                            <div class="screenshot-hint">실제 vs 예측 비교 막대 차트</div>
-                        </div>
-                    </div>
-
-                    <!-- 세그먼트 트렌드 -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-icon">📉</div>
-                            <div>
-                                <h3 class="card-title">세그먼트 트렌드</h3>
-                                <p class="card-subtitle">시간에 따른 세그먼트별 ROAS 추이를 분석합니다</p>
-                            </div>
-                        </div>
-
-                        <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
-                            최대 5개 세그먼트를 선택하여 시간에 따른 ROAS 추이를 비교할 수 있습니다.
-                            실제 데이터와 예측 데이터가 분리되어 표시됩니다.
-                        </p>
-
-                        <div class="toggle-demo">
-                            <div class="toggle-demo-label">세그먼트 선택 (최대 5개)</div>
-                            <div class="toggle-buttons">
-                                <button class="demo-btn active" style="font-size: 12px;">☑️ Meta</button>
-                                <button class="demo-btn active" style="font-size: 12px;">☑️ Google</button>
-                                <button class="demo-btn active" style="font-size: 12px;">☑️ Naver</button>
-                                <button class="demo-btn" style="font-size: 12px;">☐ Kakao</button>
-                                <button class="demo-btn" style="font-size: 12px;">☐ Apple</button>
-                            </div>
-                        </div>
-
-                        <div class="screenshot-placeholder">
-                            <div class="screenshot-icon">🖼️</div>
-                            <div class="screenshot-label">세그먼트 트렌드 차트 스크린샷</div>
-                            <div class="screenshot-hint">다중 세그먼트 ROAS 추이 라인 차트</div>
-                        </div>
-
-                        <div class="callout warning">
-                            <div class="callout-icon">⚠️</div>
+                        <div class="callout info">
+                            <div class="callout-icon">ℹ️</div>
                             <div class="callout-content">
-                                <div class="callout-title">참고사항</div>
+                                <div class="callout-title">항목 선택</div>
                                 <div class="callout-text">
-                                    세그먼트를 5개 초과 선택하면 차트 가독성이 떨어집니다.
-                                    비교하고 싶은 핵심 세그먼트만 선택하여 분석하세요.
+                                    체크박스로 최대 5개 항목을 선택하여 비교할 수 있습니다.
+                                    너무 많은 항목을 선택하면 차트가 복잡해지므로 핵심 항목만 선택하세요.
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- 비즈니스 인사이트 -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-icon">💼</div>
-                            <div>
-                                <h3 class="card-title">비즈니스 인사이트</h3>
-                                <p class="card-subtitle">채널 ROAS, 제품 매출, 예산 소진율을 확인합니다</p>
-                            </div>
-                        </div>
-
-                        <div class="toggle-demo">
-                            <div class="toggle-demo-label">비즈니스 인사이트 서브탭</div>
-                            <div class="toggle-buttons">
-                                <button class="demo-btn active">채널별 ROAS</button>
-                                <button class="demo-btn">제품 매출 & 예산</button>
-                            </div>
-                        </div>
-
-                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
-                            📊 채널별 ROAS
-                        </h4>
-                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
-                            고성과 채널과 개선 필요 채널을 시각적으로 비교합니다.
-                        </p>
-
-                        <div class="screenshot-placeholder">
-                            <div class="screenshot-icon">🖼️</div>
-                            <div class="screenshot-label">채널 ROAS 비교 차트 스크린샷</div>
-                            <div class="screenshot-hint">channel_roas_comparison.png</div>
-                        </div>
-
-                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 16px; color: var(--grey-800);">
-                            💰 제품 매출 & 예산
-                        </h4>
-                        <p style="font-size: 14px; color: var(--grey-600); margin-bottom: 16px;">
-                            제품별 매출 기여도와 월 예산 소진율을 확인합니다.
-                            제품별 등급(A+~D)과 예산 초과 경고를 제공합니다.
-                        </p>
-
-                        <div class="screenshot-placeholder">
-                            <div class="screenshot-icon">🖼️</div>
-                            <div class="screenshot-label">제품 매출 파이차트 & 예산 게이지 스크린샷</div>
-                            <div class="screenshot-hint">product_revenue_pie.png, budget_gauge.png</div>
                         </div>
                     </div>
                 </div>
@@ -7092,6 +7075,64 @@
                                     4. <strong>시나리오 분석</strong>: 예산 10%, 20% 증가 시 예상 결과 시뮬레이션<br>
                                     5. <strong>리스크 관리</strong>: 신뢰 구간 하한선 기준으로 보수적 계획 수립<br><br>
                                     상세한 예산 계획은 담당 Growth Manager와 함께 수립하세요.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>Forecast Matrix 4분면 분류 기준은 무엇인가요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    Forecast Matrix는 <strong>현재 ROAS</strong>와 <strong>예측 성장률</strong>을 기준으로 4분면에 배치합니다:<br><br>
+                                    • <strong>Super Star (★)</strong>: 현재 ROAS 높음 + 성장 예측 → 최우선 투자<br>
+                                    • <strong>Fading Hero</strong>: 현재 ROAS 높음 + 하락 예측 → 대체 채널 준비<br>
+                                    • <strong>Rising Potential</strong>: 현재 ROAS 낮음 + 성장 예측 → 테스트 확대<br>
+                                    • <strong>Problem Child</strong>: 현재 ROAS 낮음 + 하락 예측 → 즉시 점검<br><br>
+                                    기준값: ROAS 평균 대비 비교, 예측 성장률 0% 기준으로 상승/하락 판정
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>예산 시뮬레이션은 어떻게 계산되나요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    예산 시뮬레이션은 <strong>체감 수익 모델</strong>을 적용하여 계산됩니다:<br><br>
+                                    <strong>예산 증가 시:</strong><br>
+                                    조정 ROAS = 현재 ROAS × (1 - 0.15 × ln(1 + 예산 변화율))<br><br>
+                                    <strong>예산 감소 시:</strong><br>
+                                    조정 ROAS = 현재 ROAS × (1 + 0.15 × ln(1 + |예산 변화율|) × 0.5)<br><br>
+                                    예산 증가 시 ROAS가 체감(감소)하고, 예산 감소 시 효율이 소폭 상승하는 현실적 모델을 반영합니다.<br><br>
+                                    <strong>추천 등급:</strong><br>
+                                    • 투자 효율 ≥ 150%: 증액 추천<br>
+                                    • 100% ~ 149%: 유지<br>
+                                    • 50% ~ 99%: 효율 점검<br>
+                                    • 50% 미만: 감액 검토
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFaq(this)">
+                                <span>체감 수익 효과(Diminishing Returns)란 무엇인가요?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    광고 예산을 늘릴수록 추가 전환당 비용이 증가하는 현상입니다.<br><br>
+                                    <strong>왜 발생하나요?</strong><br>
+                                    • 핵심 타겟 소진: 가장 반응 좋은 사용자부터 전환됨<br>
+                                    • 광고 피로도: 동일 사용자에게 반복 노출 시 효과 감소<br>
+                                    • 경쟁 심화: 예산 증가 시 입찰 경쟁으로 CPC 상승<br><br>
+                                    <strong>시뮬레이션 상수:</strong><br>
+                                    DIMINISHING_FACTOR = 0.15 (15% 체감률)<br><br>
+                                    예: 예산 100% 증가 시 → ROAS 약 10.4% 감소 예상
                                 </div>
                             </div>
                         </div>
