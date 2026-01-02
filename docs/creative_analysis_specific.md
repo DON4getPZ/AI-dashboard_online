@@ -227,7 +227,15 @@ Chart.register(ChartDataLabels);
 
 | 가중치 | ROAS | CPA | CPC | CPM |
 |--------|------|-----|-----|-----|
-| 비율 | 40% | 30% | 20% | 10% |
+| 기본 (defaultWeights) | 40% | 30% | 20% | 10% |
+| CPA 중심 (cpaFocusWeights) | 0% | 50% | 30% | 20% |
+
+**전환값 없는 전환 목표 소재 처리** (`isNonValueConversion`):
+- 조건: `전환수 > 0 && 전환값 === 0`
+- 예시: 회원가입, 문의, 앱 설치 등 금액이 없는 전환 목표
+- 가중치: `cpaFocusWeights` 적용 (ROAS 제외, CPA 중심)
+- 상대 성과: CPA 백분위 점수 기반 (`1 + cpaScore`)
+- 이유: ROAS=0%가 되어 불공정하게 저평가되는 것 방지
 
 **EFFICIENCY_CONFIG 설정**:
 | 키 | 기본값 | 설명 |
@@ -2141,3 +2149,8 @@ body {
 | 2026-01-02 | 필터 적용 순서 수정: 칩 필터 → 소재 검색 → 최종 정렬 (기존: 소재 검색 → 칩 필터) |
 | 2026-01-02 | 최종 정렬 단계 추가: 칩 필터 후에도 사용자 `sortConfig` 설정 반영되도록 수정 |
 | 2026-01-02 | 무한 재귀 버그 수정: 내부 함수명 변경 (`filterHighEfficiency`→`_filterHighEfficiency` 등) |
+| 2026-01-02 | CPA 순위 정렬 버그 수정: `calcPercentileRanks()`에서 `lowerIsBetter` 시 내림차순 정렬로 변경 (기존: `1 - pctRank` 사용) |
+| 2026-01-02 | 전환값 없는 전환 목표 소재 지원: `isNonValueConversion` 플래그 추가 (전환수>0 & 전환값=0) |
+| 2026-01-02 | CPA 중심 가중치 추가: `cpaFocusWeights` (ROAS 0%, CPA 50%, CPC 30%, CPM 20%) - 전환값 없는 소재용 |
+| 2026-01-02 | 상대 성과 계산 분기: 전환값 없는 소재는 CPA 백분위 기반, 일반 소재는 기대 ROAS 대비 |
+| 2026-01-02 | standalone 버전 `calcPercentileRanks()` 수정: 0값 필터링 추가 (CPA=0, ROAS=0 제외) |
