@@ -4207,6 +4207,24 @@
                 e.target.value = formatted;
                 kpiFilter.value = parseFormattedNumber(formatted);
                 clearEfficiencyChips();
+
+                // 기준값 입력에 따른 토글 자동 활성화/비활성화
+                const toggle = document.getElementById('kpiFilterToggle');
+                const status = toggle.querySelector('.toggle-status');
+                const hasValue = formatted.trim() !== '';
+
+                if (hasValue && !kpiFilter.enabled) {
+                    // 값이 있고 비활성화 상태면 → 자동 활성화
+                    kpiFilter.enabled = true;
+                    toggle.classList.add('active');
+                    status.textContent = 'ON';
+                } else if (!hasValue && kpiFilter.enabled) {
+                    // 값이 없고 활성화 상태면 → 자동 비활성화
+                    kpiFilter.enabled = false;
+                    toggle.classList.remove('active');
+                    status.textContent = 'OFF';
+                }
+
                 if (kpiFilter.enabled) {
                     updateDashboard();
                 }
