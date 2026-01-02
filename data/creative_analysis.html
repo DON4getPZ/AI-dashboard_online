@@ -1965,6 +1965,7 @@
                                 <div class="filter-group" style="flex: 0 0 100px;">
                                     <label>정렬 기준</label>
                                     <select id="sortMetric">
+                                        <option value="-" disabled>-</option>
                                         <option value="비용">비용</option>
                                         <option value="노출">노출</option>
                                         <option value="클릭">클릭</option>
@@ -2672,6 +2673,12 @@
             order: 'desc'
         };
 
+        // 칩 활성화 전 정렬 설정 저장 (복원용)
+        let savedSortConfig = null;
+
+        // 칩 활성화 상태에서 효율 점수 정렬 사용 여부
+        let useEfficiencyScoreSort = false;
+
         // 숫자 포맷팅 함수 (#,###)
         function formatNumberInput(value) {
             // 숫자와 소수점만 남기기
@@ -2760,6 +2767,16 @@
                 // 필터 자동 활성화
                 kpiFilter.enabled = true;
                 updateKpiToggleUI(true);
+
+                // 정렬 설정 저장 및 효율 점수 정렬 활성화
+                if (!savedSortConfig) {
+                    savedSortConfig = { ...sortConfig };
+                }
+                useEfficiencyScoreSort = true;
+
+                // 정렬 기준 UI를 '-'로 변경
+                const sortMetricEl = document.getElementById('sortMetric');
+                sortMetricEl.value = '-';
 
                 updateDashboard();
                 return;
@@ -3383,12 +3400,22 @@
                 );
             }
 
-            // 최종 정렬 적용 (칩 필터 등으로 재정렬된 데이터를 사용자 설정대로 재정렬)
-            creativeData = creativeData.sort((a, b) => {
-                const aVal = a[sortConfig.metric] || 0;
-                const bVal = b[sortConfig.metric] || 0;
-                return sortConfig.order === 'desc' ? bVal - aVal : aVal - bVal;
-            });
+            // 최종 정렬 적용
+            if (useEfficiencyScoreSort) {
+                // 칩 활성화 시: 효율 점수 순위로 정렬 (내림차순)
+                creativeData = creativeData.sort((a, b) => {
+                    const aScore = a.efficiencyScore || 0;
+                    const bScore = b.efficiencyScore || 0;
+                    return bScore - aScore;
+                });
+            } else {
+                // 일반 정렬: 사용자 설정대로 재정렬
+                creativeData = creativeData.sort((a, b) => {
+                    const aVal = a[sortConfig.metric] || 0;
+                    const bVal = b[sortConfig.metric] || 0;
+                    return sortConfig.order === 'desc' ? bVal - aVal : aVal - bVal;
+                });
+            }
 
             // 요약 업데이트
             updateSummary(creativeData);
@@ -4145,6 +4172,17 @@
                     c.classList.remove('active');
                 });
                 document.getElementById('kpiPresetDescription').style.display = 'none';
+
+                // 효율 점수 정렬 비활성화 및 이전 정렬 설정 복원
+                useEfficiencyScoreSort = false;
+                if (savedSortConfig) {
+                    sortConfig = { ...savedSortConfig };
+                    savedSortConfig = null;
+
+                    // 정렬 UI 복원
+                    document.getElementById('sortMetric').value = sortConfig.metric;
+                    document.querySelector(`input[name="sortOrder"][value="${sortConfig.order}"]`).checked = true;
+                }
             }
 
             // KPI 필터 이벤트 (수동 변경 시 칩 초기화)
@@ -4294,6 +4332,16 @@
             // 정렬 설정 이벤트
             document.getElementById('sortMetric').addEventListener('change', e => {
                 sortConfig.metric = e.target.value;
+
+                // 유저가 정렬 기준을 변경하면 효율 점수 정렬 비활성화
+                if (useEfficiencyScoreSort && e.target.value !== '-') {
+                    useEfficiencyScoreSort = false;
+                    // savedSortConfig 업데이트 (새 설정으로)
+                    if (savedSortConfig) {
+                        savedSortConfig.metric = e.target.value;
+                    }
+                }
+
                 updateDashboard();
             });
 

@@ -2154,3 +2154,7 @@ body {
 | 2026-01-02 | CPA 중심 가중치 추가: `cpaFocusWeights` (ROAS 0%, CPA 50%, CPC 30%, CPM 20%) - 전환값 없는 소재용 |
 | 2026-01-02 | 상대 성과 계산 분기: 전환값 없는 소재는 CPA 백분위 기반, 일반 소재는 기대 ROAS 대비 |
 | 2026-01-02 | standalone 버전 `calcPercentileRanks()` 수정: 0값 필터링 추가 (CPA=0, ROAS=0 제외) |
+| 2026-01-02 | 칩 활성화 시 효율 점수 순위 정렬: `useEfficiencyScoreSort` 플래그 추가, `efficiencyScore` 내림차순 정렬 |
+| 2026-01-02 | 정렬 기준 '-' 옵션 추가: 칩 활성화 시 sortMetric을 '-'로 변경 (disabled 옵션) |
+| 2026-01-02 | 정렬 설정 저장/복원: `savedSortConfig` 변수 추가, 칩 비활성화 시 이전 정렬 설정 복원 |
+| 2026-01-02 | 유저 정렬 기준 오버라이드: 칩 활성화 상태에서 유저가 정렬 기준 변경 시 효율 점수 정렬 비활성화 |
