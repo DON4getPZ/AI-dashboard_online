@@ -1930,7 +1930,7 @@
                                 <div class="tab-icon">📊</div>
                                 <div class="tab-info">
                                     <div class="tab-name">통합 KPI 섹션</div>
-                                    <div class="tab-desc">전체/일별/주별/월별 탭, 주요 성과/세부 성과 토글, 증감율 표시</div>
+                                    <div class="tab-desc">전체/월별/주별/일별 탭, 주요 성과/세부 성과 토글, 증감율 표시</div>
                                 </div>
                                 <span class="badge core">핵심</span>
                             </div>
@@ -2080,7 +2080,7 @@
                             <div class="card-icon">📊</div>
                             <div>
                                 <h3 class="card-title">기간별 탭 전환</h3>
-                                <p class="card-subtitle">전체/일별/주별/월별 집계를 탭으로 전환합니다</p>
+                                <p class="card-subtitle">전체/월별/주별/일별 집계를 탭으로 전환합니다</p>
                             </div>
                             <span class="badge core">핵심 기능</span>
                         </div>
@@ -2094,16 +2094,16 @@
                             <div class="toggle-demo-label">집계 단위 선택</div>
                             <div class="toggle-buttons">
                                 <button class="demo-btn active">전체</button>
-                                <button class="demo-btn">일별</button>
-                                <button class="demo-btn">주별</button>
                                 <button class="demo-btn">월별</button>
+                                <button class="demo-btn">주별</button>
+                                <button class="demo-btn">일별</button>
                             </div>
                         </div>
 
                         <div class="screenshot-placeholder">
                             <div class="screenshot-icon">🖼️</div>
                             <div class="screenshot-label">KPI 탭 영역 스크린샷</div>
-                            <div class="screenshot-hint">전체/일별/주별/월별 탭이 보이는 화면</div>
+                            <div class="screenshot-hint">전체/월별/주별/일별 탭이 보이는 화면</div>
                         </div>
                     </div>
 
@@ -2253,19 +2253,36 @@
                         </div>
 
                         <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
-                            체크박스로 표시할 지표를 선택하세요. <strong>비용</strong>은 Bar 차트로,
+                            토글 버튼으로 표시할 지표를 선택하세요. <strong>비용</strong>은 Bar 차트로,
                             <strong>CPM/CPC/CPA/ROAS</strong>는 Line 차트로 표시됩니다.
                             듀얼 Y축을 사용하여 단위가 다른 지표를 함께 비교할 수 있습니다.
                         </p>
 
                         <div class="toggle-demo">
-                            <div class="toggle-demo-label">차트 지표 선택 (체크박스)</div>
+                            <div class="toggle-demo-label">차트 지표 선택 (토글 버튼)</div>
                             <div class="toggle-buttons">
-                                <button class="demo-btn active">☑️ 비용</button>
+                                <button class="demo-btn active">✓ 비용</button>
                                 <button class="demo-btn">☐ CPM</button>
-                                <button class="demo-btn active">☑️ CPC</button>
+                                <button class="demo-btn">☐ CPC</button>
                                 <button class="demo-btn">☐ CPA</button>
-                                <button class="demo-btn">☐ ROAS</button>
+                                <button class="demo-btn active">✓ ROAS</button>
+                            </div>
+                        </div>
+
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                            🏷️ 데이터 라벨 토글
+                        </h4>
+                        <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 16px;">
+                            차트 우측 상단의 <strong>"데이터 라벨"</strong> 버튼을 클릭하면
+                            차트 위에 각 데이터 포인트의 수치가 표시됩니다.
+                            기본값은 OFF(☐) 상태입니다.
+                        </p>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">데이터 라벨 표시</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn">☐ 데이터 라벨</button>
+                                <button class="demo-btn active">✓ 데이터 라벨</button>
                             </div>
                         </div>
 
@@ -2350,7 +2367,7 @@
                         <div class="screenshot-placeholder">
                             <div class="screenshot-icon">🖼️</div>
                             <div class="screenshot-label">성과 추이 차트 실제 스크린샷</div>
-                            <div class="screenshot-hint">체크박스 + 듀얼 Y축 콤보 차트</div>
+                            <div class="screenshot-hint">토글 버튼 + 듀얼 Y축 콤보 차트</div>
                         </div>
 
                         <div class="callout tip">
@@ -2391,10 +2408,12 @@
                                         <th>기간</th>
                                         <th>비용</th>
                                         <th>노출</th>
+                                        <th>CPM</th>
                                         <th>클릭</th>
                                         <th>CPC</th>
                                         <th>전환수</th>
                                         <th>CPA</th>
+                                        <th>전환값</th>
                                         <th>ROAS</th>
                                     </tr>
                                 </thead>
@@ -2403,40 +2422,48 @@
                                         <td>2025-12-01</td>
                                         <td>₩1,250,000</td>
                                         <td>285,000</td>
+                                        <td>₩4,386</td>
                                         <td>1,560</td>
                                         <td>₩801</td>
                                         <td>120</td>
                                         <td>₩10,417</td>
+                                        <td>₩3,200,000</td>
                                         <td class="positive">256%</td>
                                     </tr>
                                     <tr>
                                         <td>2025-12-02</td>
                                         <td>₩1,420,000</td>
                                         <td>312,000</td>
+                                        <td>₩4,551</td>
                                         <td>1,780</td>
                                         <td>₩798</td>
                                         <td>150</td>
                                         <td>₩9,467</td>
+                                        <td>₩3,848,200</td>
                                         <td class="positive">271%</td>
                                     </tr>
                                     <tr>
                                         <td>2025-12-03</td>
                                         <td>₩980,000</td>
                                         <td>221,000</td>
+                                        <td>₩4,434</td>
                                         <td>1,120</td>
                                         <td>₩875</td>
                                         <td>80</td>
                                         <td>₩12,250</td>
+                                        <td>₩1,950,200</td>
                                         <td class="positive">199%</td>
                                     </tr>
                                     <tr class="total-row">
                                         <td><strong>합계</strong></td>
                                         <td>₩3,650,000</td>
                                         <td>818,000</td>
+                                        <td>₩4,462</td>
                                         <td>4,460</td>
                                         <td>₩818</td>
                                         <td>350</td>
                                         <td>₩10,429</td>
+                                        <td>₩8,998,400</td>
                                         <td class="positive">247%</td>
                                     </tr>
                                 </tbody>
@@ -2498,7 +2525,7 @@
                             </button>
                             <div class="faq-answer">
                                 <div class="faq-answer-content">
-                                    네, 맞습니다. <strong>전체/일별/주별/월별</strong> 탭을 전환하면
+                                    네, 맞습니다. <strong>전체/월별/주별/일별</strong> 탭을 전환하면
                                     KPI 카드, 차트, 테이블이 모두 해당 집계 단위로 변경됩니다.<br><br>
                                     예를 들어, "월별" 탭을 선택하면:<br>
                                     • KPI 카드: 월별 집계 데이터의 마지막 월 vs 직전 월 비교<br>
@@ -2566,7 +2593,7 @@
                             </button>
                             <div class="faq-answer">
                                 <div class="faq-answer-content">
-                                    네, <strong>체크박스를 여러 개 선택</strong>하면 됩니다.<br><br>
+                                    네, <strong>토글 버튼을 여러 개 선택</strong>하면 됩니다.<br><br>
                                     • <strong>비용</strong>: 왼쪽 Y축 (Bar 차트)<br>
                                     • <strong>CPM/CPC/CPA/ROAS</strong>: 오른쪽 Y축 (Line 차트)<br><br>
                                     듀얼 Y축을 사용하므로 단위가 다른 지표도 함께 비교할 수 있습니다.
@@ -2582,11 +2609,10 @@
                             </button>
                             <div class="faq-answer">
                                 <div class="faq-answer-content">
-                                    현재 버전에서는 별도의 "초기화" 버튼이 없습니다.<br><br>
-                                    필터를 초기화하려면:<br>
-                                    1. 각 필터 드롭다운에서 <strong>"전체"</strong> 옵션을 선택<br>
-                                    2. 또는 <strong>페이지를 새로고침</strong> (F5)<br><br>
-                                    새로고침 시 데이터가 다시 로드되며 모든 필터가 초기 상태로 돌아갑니다.
+                                    각 필터 섹션에 <strong>"초기화"</strong> 버튼이 있습니다.<br><br>
+                                    • <strong>기간 및 기본 필터</strong>: 우측 상단의 "초기화" 버튼 클릭<br>
+                                    • <strong>세부 필터</strong>: 우측 상단의 "초기화" 버튼 클릭<br><br>
+                                    초기화 버튼 클릭 시 해당 섹션의 모든 필터가 기본값("전체")으로 되돌아갑니다.
                                 </div>
                             </div>
                         </div>
@@ -2925,6 +2951,70 @@
                             <strong>"ROAS가 200% 이상이면서 CPA가 15,000원 이하인 소재"</strong>처럼
                             복합 조건으로 우수 소재만 필터링할 수 있습니다.
                         </p>
+
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
+                            ⚡ 효율 분류 칩 버튼
+                        </h4>
+                        <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 16px;">
+                            소재를 4가지 효율 분류로 빠르게 필터링할 수 있습니다.
+                            칩 버튼을 클릭하면 해당 조건이 자동으로 적용됩니다.
+                        </p>
+
+                        <div class="toggle-demo" style="margin-bottom: 20px;">
+                            <div class="toggle-buttons" style="flex-wrap: wrap;">
+                                <button class="demo-btn" style="border-radius: 20px;">🏆 고효율 소재</button>
+                                <button class="demo-btn" style="border-radius: 20px;">💎 가능성 있는 소재</button>
+                                <button class="demo-btn" style="border-radius: 20px;">🔍 주의 필요 소재</button>
+                                <button class="demo-btn" style="border-radius: 20px;">⚠️ 저효율 소재</button>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--grey-50); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                            <table style="width: 100%; font-size: 13px; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--grey-200);">
+                                        <th style="text-align: left; padding: 8px 12px; color: var(--grey-700);">분류</th>
+                                        <th style="text-align: left; padding: 8px 12px; color: var(--grey-700);">기준</th>
+                                        <th style="text-align: left; padding: 8px 12px; color: var(--grey-700);">권장 액션</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid var(--grey-100);">
+                                        <td style="padding: 8px 12px;">🏆 고효율 소재</td>
+                                        <td style="padding: 8px 12px;">효율 점수 <strong>상위 20%</strong></td>
+                                        <td style="padding: 8px 12px; color: #00c853;">예산 확대 검토</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid var(--grey-100);">
+                                        <td style="padding: 8px 12px;">💎 가능성 있는 소재</td>
+                                        <td style="padding: 8px 12px;">중간 60% 중 <strong>신뢰도↓ 성과↑</strong><br><span style="font-size: 11px; color: var(--grey-500);">(비용 적지만 기대 ROAS 이상)</span></td>
+                                        <td style="padding: 8px 12px; color: #2196f3;">테스트 확대 추천</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid var(--grey-100);">
+                                        <td style="padding: 8px 12px;">🔍 주의 필요 소재</td>
+                                        <td style="padding: 8px 12px;">중간 60% 중 <strong>판단 유보</strong><br><span style="font-size: 11px; color: var(--grey-500);">(신뢰도↑ 또는 성과↓)</span></td>
+                                        <td style="padding: 8px 12px; color: #ff9800;">추가 관찰 필요</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 12px;">⚠️ 저효율 소재</td>
+                                        <td style="padding: 8px 12px;">효율 점수 <strong>하위 20%</strong></td>
+                                        <td style="padding: 8px 12px; color: #ff1744;">예산 축소 검토</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="callout info" style="margin-bottom: 20px;">
+                            <div class="callout-icon">ℹ️</div>
+                            <div class="callout-content">
+                                <div class="callout-title">효율 점수 계산 방식</div>
+                                <div class="callout-text">
+                                    • <strong>최소 비용 기준</strong>: 5만원 이상 집행된 소재만 분석 대상<br>
+                                    • <strong>효율 점수</strong>: ROAS, CPA, CPC, CPM 순위의 기하평균<br>
+                                    • <strong>신뢰도 가중치</strong>: 비용이 클수록 신뢰도 상승 (300만원 이상 = 완전 신뢰)<br>
+                                    • <strong>상대적 성과</strong>: 비용 대비 기대 ROAS 달성 비율
+                                </div>
+                            </div>
+                        </div>
 
                         <h4 style="font-size: 15px; font-weight: 600; margin: 20px 0 12px; color: var(--grey-800);">
                             📌 지원 KPI 지표
@@ -3271,18 +3361,34 @@
                         </div>
 
                         <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
-                            체크박스로 표시할 지표를 선택하세요.
+                            토글 버튼으로 표시할 지표를 선택하세요.
                             <strong>듀얼 Y축</strong>을 지원하여 단위가 다른 지표도 함께 비교할 수 있습니다.
                         </p>
 
                         <div class="toggle-demo">
-                            <div class="toggle-demo-label">차트 지표 선택</div>
+                            <div class="toggle-demo-label">차트 지표 선택 (토글 버튼)</div>
                             <div class="toggle-buttons">
-                                <button class="demo-btn active">☑️ 비용</button>
+                                <button class="demo-btn active">✓ 비용</button>
                                 <button class="demo-btn">☐ CPM</button>
-                                <button class="demo-btn active">☑️ CPC</button>
+                                <button class="demo-btn">☐ CPC</button>
                                 <button class="demo-btn">☐ CPA</button>
-                                <button class="demo-btn">☐ ROAS</button>
+                                <button class="demo-btn active">✓ ROAS</button>
+                            </div>
+                        </div>
+
+                        <h4 style="font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--grey-800);">
+                            🏷️ 데이터 라벨 토글
+                        </h4>
+                        <p style="font-size: 14px; color: var(--grey-700); margin-bottom: 16px;">
+                            차트 우측의 <strong>"데이터 라벨"</strong> 버튼을 클릭하면
+                            차트 위에 각 데이터 포인트의 수치가 표시됩니다. 기본값은 OFF(☐) 상태입니다.
+                        </p>
+
+                        <div class="toggle-demo">
+                            <div class="toggle-demo-label">데이터 라벨 표시</div>
+                            <div class="toggle-buttons">
+                                <button class="demo-btn">☐ 데이터 라벨</button>
+                                <button class="demo-btn active">✓ 데이터 라벨</button>
                             </div>
                         </div>
 
@@ -3341,7 +3447,7 @@
                         </div>
 
                         <p style="font-size: 15px; color: var(--grey-700); margin-bottom: 20px;">
-                            10개 컬럼으로 구성된 상세 테이블입니다.
+                            11개 컬럼으로 구성된 상세 테이블입니다.
                             "더보기" 버튼으로 전체 데이터를 펼쳐볼 수 있습니다.
                         </p>
 
@@ -3354,6 +3460,7 @@
                                         <th>노출</th>
                                         <th>CPM</th>
                                         <th>클릭</th>
+                                        <th>CTR</th>
                                         <th>CPC</th>
                                         <th>전환수</th>
                                         <th>CPA</th>
@@ -3368,6 +3475,7 @@
                                         <td>28.5K</td>
                                         <td>₩4,386</td>
                                         <td>156</td>
+                                        <td>0.55%</td>
                                         <td>₩801</td>
                                         <td>12</td>
                                         <td>₩10,417</td>
@@ -3380,6 +3488,7 @@
                                         <td>31.2K</td>
                                         <td>₩4,551</td>
                                         <td>178</td>
+                                        <td>0.57%</td>
                                         <td>₩798</td>
                                         <td>15</td>
                                         <td>₩9,467</td>
@@ -3392,6 +3501,7 @@
                                         <td>22.1K</td>
                                         <td>₩4,434</td>
                                         <td>112</td>
+                                        <td>0.51%</td>
                                         <td>₩875</td>
                                         <td>8</td>
                                         <td>₩12,250</td>

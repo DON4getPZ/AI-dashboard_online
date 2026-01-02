@@ -223,9 +223,9 @@
 #### 4.5 유형별 조치 가이드 탭 (마이크로 세그먼트)
 | 항목 | 내용 |
 |------|------|
-| **JS 함수** | `updateMicroSegmentAlerts()`, `renderMicroSegmentCards()`, `setupMicroCardTooltip()` |
+| **JS 함수** | `updateMicroSegmentAlerts()`, `renderMicroSegmentCards()` |
 | **참조 데이터** | `insightsData` → `micro_segment_alerts`, `micro_segment_definitions` (funnel/insights.json) |
-| **기능** | - 문제점/기회 알림 카드 표시<br>- 카드 내 '추천 액션' 섹션 표시 (긴급 개선 카드와 동일 디자인)<br>- 카드 호버 시 처방 가이드 + 구분 정의 툴팁 표시<br>- 카테고리별 필터링 (SA, DA, SNS, CRM 등) |
+| **기능** | - 문제점/기회 알림 카드 표시<br>- 카드 내 '추천 액션' 섹션 표시 (긴급 개선 카드와 동일 디자인)<br>- 카테고리별 필터링 (SA, DA, SNS, CRM 등) |
 
 **마이크로 세그먼트 유형:**
 | 유형 | 설명 | 판별 조건 |
@@ -234,11 +234,6 @@
 | 💸 Traffic Waste (밑 빠진 독) | 트래픽만 많고 전환이 없는 채널 | 유입 상위 25% + 유입→활동/전환율 하위 25% |
 | 🚧 Checkout Friction (결제 장벽) | 구매 의사는 있으나 결제에서 이탈 | 관심→구매 전환율 하위 25% |
 | 🚀 Rising Star (성장 엔진) | 규모는 작지만 반응률이 높은 채널 | 유입→활동/전환율 상위 25% + 유입 하위 50% |
-
-**툴팁 인터랙션:**
-- 카드에 마우스 호버 시 커서 위치에 툴팁 표시
-- 툴팁에 해당 세그먼트 유형의 정의 + 처방 가이드 포함
-- 카드 호버 시 시각적 피드백 (살짝 올라오는 효과)
 
 ---
 
@@ -548,7 +543,6 @@
 | `setupCustomerTrendTooltip()` | 추세 차트 툴팁 설정 |
 | `setupConversionChartTooltip()` | 전환율 차트 툴팁 설정 |
 | `setupEngagementChartTooltip()` | 참여도 차트 툴팁 설정 |
-| `setupMicroCardTooltip()` | 마이크로 세그먼트 카드 호버 툴팁 설정 (처방 가이드 + 구분 정의) |
 | `showChartInsightTooltip()` | 인사이트 툴팁 표시 |
 | `hideChartInsightTooltip()` | 인사이트 툴팁 숨김 |
 
@@ -775,7 +769,6 @@
 | `compareChartTooltip` | 비교 차트 호버 툴팁 |
 | `customerTrendTooltip` | 추세 차트 호버 툴팁 |
 | `churnChartTooltip` | 이탈 차트 호버 툴팁 |
-| `microCardTooltip` | 마이크로 세그먼트 카드 처방 가이드 툴팁 |
 
 ---
 
@@ -1616,10 +1609,6 @@ let channelEngagementChart = null;
 | 2025-12-10 | 퍼널 채널 필터 상태 변수 추가: `funnelFilterActive`, `selectedFunnelChannel` |
 | 2025-12-10 | `updateFunnelChart()`, `updateCompareFunnels()` 채널 필터 연동 |
 | 2025-12-26 | 섹션 4.5 유형별 조치 가이드 (마이크로 세그먼트) 문서화 추가 |
-| 2025-12-26 | 마이크로 세그먼트 카드 호버 시 처방 가이드 + 구분 정의 툴팁 표시 기능 구현 |
-| 2025-12-26 | 툴팁이 마우스 커서 위치를 따라다니도록 변경 |
-| 2025-12-26 | '구분 정의' 독립 섹션 삭제 (툴팁으로 통합) |
-| 2025-12-26 | `setupMicroCardTooltip()` 함수 추가, `microCardTooltip` HTML ID 추가 |
 | 2025-12-26 | `MICRO_SEGMENT_DEFINITIONS`에 `condition`, `action_hint` 필드 추가 |
 | 2025-12-26 | '핵심 요약' 탭 `insight-card` 디자인 일관성 수정: padding 20px→16px, border-radius 12px→8px, background gradient→solid color, font-size 14px→15px/13px |
 | 2025-12-26 | '유형별 조치 가이드' 카드에 '추천 액션' 섹션 추가 (긴급 개선 카드와 동일 디자인) |
@@ -1631,4 +1620,5 @@ let channelEngagementChart = null;
 | 2025-12-26 | `generate_micro_segment_alerts()` 확장: impact(lost_users, potential_revenue), benchmark, action_detail, urgency_score, priority_rank 필드 추가 |
 | 2025-12-26 | 프론트엔드 `updateUrgentAlerts()` 수정: `micro_segment_alerts`에서 problem 유형만 필터링하여 사용 |
 | 2025-12-26 | 프론트엔드 `renderUrgentAlertCards()` 확장: 긴급도 배지, 영향 추정, 추가 조치 표시 추가 |
+| 2026-01-02 | '유형별 조치 가이드' 카드 호버 툴팁 기능 삭제: `setupMicroCardTooltip()` 함수, `microCardTooltip` HTML ID, 관련 CSS 삭제 |
 

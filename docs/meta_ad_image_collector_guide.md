@@ -211,6 +211,61 @@ if "/m1/v/t6/" in decoded:
 - 수집 성공: 462개 (100%)
 - 수집 실패: 0개
 
+#### 7. GAS 스크립트 파트너쉽 광고 수정
+
+**문제**: GAS 스크립트에서 파트너쉽 광고 URL 수집 실패
+
+**원인 1**: `asset_feed_video_thumb` 소스가 `meta_convertToHighRes()` 함수 사용
+- URL 파라미터 수정 시 서명이 깨져 403 오류 발생
+- Python에서는 이미 제거됨
+
+**원인 2**: Instagram VIDEO 타입 처리 미흡
+- `media_url`이 MP4 비디오 파일 반환
+- 이미지가 아닌 비디오 URL 저장됨
+
+**해결**:
+1. `asset_feed_video_thumb` 소스 제거 (Python과 동일)
+2. `meta_convertToHighRes()` 함수 deprecated 처리
+3. Instagram API에서 VIDEO 타입인 경우 `thumbnail_url` 사용
+
+**수정 파일**: `메타_썸네일_연동.gs`
+
+---
+
+## 파트너쉽 광고 수집
+
+파트너쉽 광고(인플루언서 협업 광고)는 일반 광고와 다른 특성을 가집니다:
+
+### 특징
+
+| 필드 | 설명 |
+|------|------|
+| `thumbnail_url` | Creative API에서 1200x1200 고해상도 썸네일 제공 |
+| `effective_instagram_media_id` | 파트너 콘텐츠의 Instagram Media ID |
+| `source_instagram_media_id` | 원본 크리에이터 미디어 ID (권한 없음) |
+| `instagram_permalink_url` | Instagram 게시물 링크 |
+
+### 수집 우선순위
+
+파트너쉽 광고는 주로 다음 소스에서 수집됩니다:
+
+1. **thumbnail_hires** (권장): Creative API의 `thumbnail_url` (1200x1200)
+2. **instagram_media**: `effective_instagram_media_id`로 Instagram Graph API 조회
+
+### 주의사항
+
+- `source_instagram_media_id`는 원본 크리에이터의 콘텐츠로, 권한이 없어 직접 조회 불가
+- 파트너쉽 광고는 대부분 `thumbnail_url`로 수집 가능
+- VIDEO 타입인 경우 Instagram API에서 `thumbnail_url` 제공
+
+### 테스트 결과 (act_730256617844203)
+
+```
+총 광고: 44개
+수집 성공: 44개 (100%)
+파트너쉽 광고: 20개 (thumbnail_hires)
+```
+
 ---
 
 ## 수집 불가 케이스

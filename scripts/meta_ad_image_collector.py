@@ -573,7 +573,7 @@ class MetaAdImageCollector:
         """Instagram Media ID로 이미지 URL 가져오기"""
         url = (
             f"{self.base_url}/{ig_media_id}"
-            f"?fields=media_url,thumbnail_url"
+            f"?fields=media_type,media_url,thumbnail_url"
             f"&access_token={self.settings.access_token}"
         )
 
@@ -582,7 +582,10 @@ class MetaAdImageCollector:
             data = response.json()
 
             if "error" not in data:
-                # media_url 우선, 없으면 thumbnail_url
+                # VIDEO 타입인 경우 thumbnail_url 사용 (media_url은 MP4 비디오)
+                # IMAGE/CAROUSEL_ALBUM 타입인 경우 media_url 우선
+                if data.get("media_type") == "VIDEO":
+                    return data.get("thumbnail_url")
                 return data.get("media_url") or data.get("thumbnail_url")
         except:
             pass

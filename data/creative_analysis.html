@@ -1061,6 +1061,83 @@
             font-weight: bold;
         }
 
+        /* 빠른 필터 칩 버튼 섹션 */
+        .quick-filter-section {
+            margin-top: 16px;
+        }
+
+        .quick-filter-section .card {
+            padding: 16px 20px;
+        }
+
+        .quick-filter-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey-800);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quick-filter-title::before {
+            content: '⚡';
+        }
+
+        .chip-group {
+            margin-bottom: 12px;
+        }
+
+        .chip-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .chip-group-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .chip-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .preset-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--grey-700);
+            background: var(--grey-100);
+            border: 1px solid var(--grey-300);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .preset-chip:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-main);
+            color: var(--primary-main);
+        }
+
+        .preset-chip.active {
+            background: var(--primary-main);
+            border-color: var(--primary-main);
+            color: white;
+        }
+
+        .preset-chip .chip-icon {
+            margin-right: 6px;
+        }
+
         /* 조합 조건 라디오 버튼 */
         .compound-radio-group {
             display: flex;
@@ -1383,6 +1460,134 @@
                 width: 100%;
             }
         }
+
+        /* 칩 호버 툴팁 */
+        .chip-hover-tooltip {
+            position: fixed;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+            z-index: 10001;
+            min-width: 280px;
+            max-width: 320px;
+            display: none;
+            overflow: hidden;
+            pointer-events: none;
+            border: 2px solid var(--primary-main);
+        }
+
+        .chip-hover-tooltip.show {
+            display: block;
+        }
+
+        /* 타입별 테두리 색상 */
+        .chip-hover-tooltip.high-efficiency {
+            border-color: #4caf50;
+        }
+
+        .chip-hover-tooltip.potential {
+            border-color: #2196f3;
+        }
+
+        .chip-hover-tooltip.needs-attention {
+            border-color: #ff9800;
+        }
+
+        .chip-hover-tooltip.low-efficiency {
+            border-color: #f44336;
+        }
+
+        .chip-tooltip-header {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .chip-tooltip-header.high-efficiency {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+        }
+
+        .chip-tooltip-header.potential {
+            background: linear-gradient(135deg, #e3f2fd 0%, #e8f4fd 100%);
+        }
+
+        .chip-tooltip-header.needs-attention {
+            background: linear-gradient(135deg, #fff8e1 0%, #fffbf0 100%);
+        }
+
+        .chip-tooltip-header.low-efficiency {
+            background: linear-gradient(135deg, #ffebee 0%, #fff5f5 100%);
+        }
+
+        .chip-tooltip-header-icon {
+            font-size: 20px;
+        }
+
+        .chip-tooltip-header-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .chip-tooltip-criteria {
+            padding: 12px 16px;
+            background: var(--grey-50);
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .chip-tooltip-criteria-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--primary-main);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .chip-tooltip-criteria-text {
+            font-size: 12px;
+            color: var(--grey-800);
+            line-height: 1.6;
+        }
+
+        .chip-tooltip-action {
+            padding: 12px 16px;
+            background: white;
+        }
+
+        .chip-tooltip-action-label {
+            font-size: 10px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .chip-tooltip-action-label.positive {
+            color: #00c853;
+        }
+
+        .chip-tooltip-action-label.info {
+            color: #2196f3;
+        }
+
+        .chip-tooltip-action-label.warning {
+            color: #ff9800;
+        }
+
+        .chip-tooltip-action-label.negative {
+            color: #ff1744;
+        }
+
+        .chip-tooltip-action-text {
+            font-size: 12px;
+            color: var(--grey-700);
+            line-height: 1.6;
+        }
     </style>
 </head>
 <body>
@@ -1581,29 +1786,51 @@
                                     <span class="toggle-status">OFF</span>
                                 </button>
                             </div>
-                            <!-- 프리셋 선택 영역 -->
-                            <div class="kpi-preset-section" style="margin-bottom: 12px;">
-                                <div class="filter-group" style="flex: 0 0 auto; min-width: 200px;">
-                                    <label>빠른 필터</label>
-                                    <select id="kpiPresetSelect" class="kpi-preset-select">
-                                        <option value="">직접 입력</option>
-                                        <optgroup label="효율 기준">
-                                            <option value="high_roas">🏆 고효율 소재 (ROAS > 500%)</option>
-                                            <option value="low_cpa">🎯 저CPA 소재 (CPA < 1만원)</option>
-                                            <option value="low_efficiency">⚠️ 저효율 소재 (ROAS < 100%)</option>
-                                        </optgroup>
-                                        <optgroup label="성과 기준">
-                                            <option value="high_revenue">💰 고매출 소재 (전환값 > 100만원)</option>
-                                            <option value="high_conversion">📈 고전환 소재 (전환수 > 10건)</option>
-                                            <option value="high_spend">🔥 고지출 소재 (비용 > 50만원)</option>
-                                        </optgroup>
-                                        <optgroup label="복합 조건">
-                                            <option value="hidden_gem">💎 숨은 보석 (ROAS > 300% AND 비용 < 10만)</option>
-                                            <option value="scale_up">🚀 스케일업 후보 (ROAS > 200% AND 전환 > 5)</option>
-                                        </optgroup>
-                                    </select>
+                            <!-- 4분류 효율 필터 칩 -->
+                            <div class="efficiency-chip-section" style="margin-bottom: 16px;">
+                                <div class="chip-container">
+                                    <button type="button" class="preset-chip" data-filter="high_efficiency"
+                                            data-tooltip-title="고효율 소재"
+                                            data-tooltip-icon="🏆"
+                                            data-tooltip-type="high-efficiency"
+                                            data-tooltip-criteria="효율 점수 상위 20%에 해당하는 소재입니다.&lt;br&gt;• ROAS, CPA, CPC, CPM 순위 종합&lt;br&gt;• 비용 대비 신뢰도 가중 적용"
+                                            data-tooltip-action="예산 확대 검토"
+                                            data-tooltip-action-type="positive"
+                                            data-tooltip-action-detail="검증된 고성과 소재입니다. 예산을 증액하면 매출 상승이 기대됩니다.">
+                                        <span class="chip-icon">🏆</span>고효율 소재
+                                    </button>
+                                    <button type="button" class="preset-chip" data-filter="potential"
+                                            data-tooltip-title="가능성 있는 소재"
+                                            data-tooltip-icon="💎"
+                                            data-tooltip-type="potential"
+                                            data-tooltip-criteria="중간 60% 중 신뢰도↓ 성과↑ 소재입니다.&lt;br&gt;• 비용이 적지만 기대 ROAS 이상&lt;br&gt;• 신뢰도 &lt; 50% (약 39만원 미만)"
+                                            data-tooltip-action="테스트 확대 추천"
+                                            data-tooltip-action-type="info"
+                                            data-tooltip-action-detail="데이터가 부족하지만 성과가 좋습니다. 예산을 늘려 검증해보세요.">
+                                        <span class="chip-icon">💎</span>가능성 있는 소재
+                                    </button>
+                                    <button type="button" class="preset-chip" data-filter="needs_attention"
+                                            data-tooltip-title="주의 필요 소재"
+                                            data-tooltip-icon="🔍"
+                                            data-tooltip-type="needs-attention"
+                                            data-tooltip-criteria="중간 60% 중 판단 유보 소재입니다.&lt;br&gt;• 신뢰도↑ 또는 성과↓&lt;br&gt;• 추가 데이터 수집 필요"
+                                            data-tooltip-action="추가 관찰 필요"
+                                            data-tooltip-action-type="warning"
+                                            data-tooltip-action-detail="현재 상태로는 판단이 어렵습니다. 추이를 지켜보며 결정하세요.">
+                                        <span class="chip-icon">🔍</span>주의 필요 소재
+                                    </button>
+                                    <button type="button" class="preset-chip" data-filter="low_efficiency"
+                                            data-tooltip-title="저효율 소재"
+                                            data-tooltip-icon="⚠️"
+                                            data-tooltip-type="low-efficiency"
+                                            data-tooltip-criteria="효율 점수 하위 20%에 해당하는 소재입니다.&lt;br&gt;• ROAS, CPA, CPC, CPM 모두 저조&lt;br&gt;• 개선이 시급한 소재"
+                                            data-tooltip-action="예산 축소 검토"
+                                            data-tooltip-action-type="negative"
+                                            data-tooltip-action-detail="광고비 대비 성과가 낮습니다. 예산을 줄이거나 소재를 교체하세요.">
+                                        <span class="chip-icon">⚠️</span>저효율 소재
+                                    </button>
                                 </div>
-                                <div id="kpiPresetDescription" class="kpi-preset-description" style="display: none;"></div>
+                                <div id="kpiPresetDescription" class="kpi-preset-description" style="display: none; margin-top: 8px;"></div>
                             </div>
                             <!-- 직접 입력 영역 -->
                             <div id="kpiManualInputSection" class="unified-filter-content" style="margin-bottom: 0;">
@@ -1950,13 +2177,14 @@
             secondaryCompoundLogic: 'none',
             tertiaryMetric: '비용',
             tertiaryOperator: '>',
-            tertiaryValue: ''
+            tertiaryValue: '',
+            advancedFilterFunction: null  // 고급 필터 함수 (기하평균 기반 등)
         };
 
         // KPI 필터 프리셋
         const KPI_PRESETS = {
             'high_roas': {
-                name: '🏆 고효율 소재',
+                name: '📊 고ROAS 소재',
                 description: 'ROAS > 500%',
                 conditions: [
                     { metric: 'ROAS', operator: '>', value: 500 }
@@ -2014,8 +2242,429 @@
                     { compoundLogic: 'and' },
                     { metric: '전환수', operator: '>', value: 5 }
                 ]
+            },
+            // ===== 4분류 효율 필터 (기하평균 기반) =====
+            'high_efficiency': {
+                name: '🏆 고효율 소재',
+                description: '효율 점수 상위 20% - 검증된 고성과',
+                isAdvancedFilter: true,
+                filterFunction: 'filterHighEfficiency'
+            },
+            'potential': {
+                name: '💎 가능성 있는 소재',
+                description: '테스트 확대 추천 - 신뢰도↓ 성과↑',
+                isAdvancedFilter: true,
+                filterFunction: 'filterPotential'
+            },
+            'needs_attention': {
+                name: '🔍 주의 필요 소재',
+                description: '추가 관찰 필요 - 판단 유보',
+                isAdvancedFilter: true,
+                filterFunction: 'filterNeedsAttention'
+            },
+            'low_efficiency': {
+                name: '⚠️ 저효율 소재',
+                description: '효율 점수 하위 20% - 예산 축소 검토',
+                isAdvancedFilter: true,
+                filterFunction: 'filterLowEfficiency'
             }
         };
+
+        // ========================================
+        // 고효율 소재 필터 시스템 (데이터 기반 상대평가)
+        // ========================================
+
+        const EFFICIENCY_CONFIG = {
+            MIN_SPEND: 50000,              // 최소 비용 기준 (5만원)
+            FULL_CONFIDENCE_SPEND: 3000000, // 완전 신뢰 비용 (300만원)
+            TOP_PERCENT: 0.20,             // 상위 20% (고효율)
+            BOTTOM_PERCENT: 0.20,          // 하위 20% (저효율)
+            CONFIDENCE_THRESHOLD: 0.5,     // 신뢰도 기준 (약 39만원)
+            RELATIVE_PERF_THRESHOLD: 1.0   // 상대적 성과 기준 (기대 ROAS 대비)
+        };
+
+        // 비용 구간 정의 (로그 스케일)
+        const SPEND_BUCKETS = [
+            { min: 0, max: 100000, label: '~10만' },
+            { min: 100000, max: 300000, label: '10~30만' },
+            { min: 300000, max: 500000, label: '30~50만' },
+            { min: 500000, max: 1000000, label: '50~100만' },
+            { min: 1000000, max: 3000000, label: '100~300만' },
+            { min: 3000000, max: Infinity, label: '300만+' }
+        ];
+
+        /**
+         * 기하평균 계산
+         */
+        function calcGeometricMean(values) {
+            const validValues = values.filter(v => v > 0);
+            if (validValues.length === 0) return 0;
+
+            const logSum = validValues.reduce((sum, v) => sum + Math.log(v), 0);
+            return Math.exp(logSum / validValues.length);
+        }
+
+        /**
+         * 중앙값 계산
+         */
+        function calcMedian(values) {
+            if (values.length === 0) return 0;
+            const sorted = [...values].sort((a, b) => a - b);
+            const mid = Math.floor(sorted.length / 2);
+            return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+        }
+
+        /**
+         * 비용 구간별 ROAS 기하평균 계산 (데이터 기반 기준선)
+         */
+        function calculateDataDrivenBaseline(data) {
+            const validData = data.filter(d => d['비용'] > 0 && d['ROAS'] > 0);
+
+            if (validData.length < 3) {
+                return { method: 'insufficient_data', totalGeoMean: 200 };
+            }
+
+            // 구간별 통계 계산
+            const bucketStats = SPEND_BUCKETS.map(bucket => {
+                const bucketData = validData.filter(d =>
+                    d['비용'] >= bucket.min && d['비용'] < bucket.max
+                );
+
+                if (bucketData.length === 0) {
+                    return { ...bucket, geoMeanROAS: null, median: null, count: 0 };
+                }
+
+                const roasValues = bucketData.map(d => d['ROAS']);
+
+                return {
+                    ...bucket,
+                    geoMeanROAS: calcGeometricMean(roasValues),
+                    median: calcMedian(roasValues),
+                    count: bucketData.length
+                };
+            });
+
+            // 전체 기하평균
+            const allROAS = validData.map(d => d['ROAS']);
+            const totalGeoMean = calcGeometricMean(allROAS);
+
+            return {
+                method: 'data_driven',
+                totalGeoMean: totalGeoMean,
+                bucketStats: bucketStats,
+                dataCount: validData.length
+            };
+        }
+
+        /**
+         * 비용 수준에 맞는 기대 ROAS 반환
+         */
+        function getExpectedROAS(spend, baseline) {
+            if (baseline.method === 'insufficient_data') {
+                return baseline.totalGeoMean;
+            }
+
+            // 해당 구간의 기하평균 찾기
+            const bucket = baseline.bucketStats.find(b =>
+                spend >= b.min && spend < b.max
+            );
+
+            if (bucket && bucket.geoMeanROAS) {
+                return bucket.geoMeanROAS;
+            }
+
+            // 구간 데이터 없으면 인접 구간 또는 전체 평균
+            return baseline.totalGeoMean;
+        }
+
+        /**
+         * 신뢰도 가중치 계산 (로그 스케일)
+         * 5만원: 0.0 → 300만원: 1.0
+         */
+        function calcConfidenceWeight(spend) {
+            if (spend < EFFICIENCY_CONFIG.MIN_SPEND) return 0;
+            if (spend >= EFFICIENCY_CONFIG.FULL_CONFIDENCE_SPEND) return 1;
+
+            const logMin = Math.log(EFFICIENCY_CONFIG.MIN_SPEND);
+            const logMax = Math.log(EFFICIENCY_CONFIG.FULL_CONFIDENCE_SPEND);
+            const logSpend = Math.log(spend);
+
+            return (logSpend - logMin) / (logMax - logMin);
+        }
+
+        /**
+         * 상대 성과 점수 계산 (기대 ROAS 대비)
+         */
+        function calcRelativePerformance(actualROAS, spend, baseline) {
+            const expectedROAS = getExpectedROAS(spend, baseline);
+            if (expectedROAS <= 0) return 0;
+            return actualROAS / expectedROAS;
+        }
+
+        /**
+         * 백분위 순위 계산 (0~1, 높을수록 좋음)
+         * lowerIsBetter=true: 낮은 값일수록 높은 순위 (CPA, CPC, CPM)
+         * lowerIsBetter=false: 높은 값일수록 높은 순위 (ROAS)
+         */
+        function calcPercentileRanks(data, metric, lowerIsBetter = false) {
+            const validData = data.filter(d => d[metric] != null && d[metric] > 0);
+            if (validData.length === 0) return new Map();
+
+            // lowerIsBetter면 내림차순 정렬 (낮은 값이 뒤로 → 높은 순위)
+            const sorted = [...validData].sort((a, b) =>
+                lowerIsBetter ? b[metric] - a[metric] : a[metric] - b[metric]
+            );
+            const ranks = new Map();
+
+            sorted.forEach((item, idx) => {
+                const pctRank = (idx + 1) / sorted.length;
+                ranks.set(item.name, pctRank);
+            });
+
+            return ranks;
+        }
+
+        /**
+         * 고효율 소재 복합 점수 계산 (메인 함수)
+         */
+        function calculateEfficiencyScores(data) {
+            // 최소 비용 필터링
+            const qualified = data.filter(d => (d['비용'] || 0) >= EFFICIENCY_CONFIG.MIN_SPEND);
+
+            if (qualified.length < 3) {
+                console.log('⚠️ 고효율 필터: 데이터 부족 (최소 3개 필요)');
+                return { scored: [], baseline: null };
+            }
+
+            // 데이터 기반 기준선 계산
+            const baseline = calculateDataDrivenBaseline(qualified);
+
+            console.log('📊 데이터 기반 효율 기준:');
+            console.log(`   전체 ROAS 기하평균: ${baseline.totalGeoMean?.toFixed(0)}%`);
+            baseline.bucketStats?.forEach(b => {
+                if (b.geoMeanROAS) {
+                    console.log(`   ${b.label}: ${b.geoMeanROAS.toFixed(0)}% (n=${b.count})`);
+                }
+            });
+
+            // 백분위 순위 계산 (CPA, CPC, CPM은 낮을수록 좋음)
+            const roasRanks = calcPercentileRanks(qualified, 'ROAS', false);
+            const cpaRanks = calcPercentileRanks(qualified, 'CPA', true);
+            const cpcRanks = calcPercentileRanks(qualified, 'CPC', true);
+            const cpmRanks = calcPercentileRanks(qualified, 'CPM', true);
+
+            // 기본 가중치 (ROAS 중심)
+            const defaultWeights = { ROAS: 0.40, CPA: 0.30, CPC: 0.20, CPM: 0.10 };
+            // 전환값 없는 전환 목표용 가중치 (CPA 중심)
+            const cpaFocusWeights = { ROAS: 0.00, CPA: 0.50, CPC: 0.30, CPM: 0.20 };
+
+            const scored = qualified.map(item => {
+                const spend = item['비용'] || 0;
+                const actualROAS = item['ROAS'] || 0;
+                const conversions = item['전환수'] || 0;
+                const conversionValue = item['전환값'] || 0;
+
+                // 전환값=0 & 전환수>0인 경우 CPA 중심 가중치 사용
+                const isNonValueConversion = conversions > 0 && conversionValue === 0;
+                const weights = isNonValueConversion ? cpaFocusWeights : defaultWeights;
+
+                // 백분위 점수
+                const roasScore = roasRanks.get(item.name) || 0;
+                const cpaScore = cpaRanks.get(item.name) || 0;
+                const cpcScore = cpcRanks.get(item.name) || 0;
+                const cpmScore = cpmRanks.get(item.name) || 0;
+
+                // 기하평균 (균형 잡힌 성과)
+                // 전환값 없는 전환 목표의 경우 ROAS 제외
+                const scores = isNonValueConversion
+                    ? [
+                        Math.max(cpaScore, 0.01),
+                        Math.max(cpcScore, 0.01),
+                        Math.max(cpmScore, 0.01)
+                    ]
+                    : [
+                        Math.max(roasScore, 0.01),
+                        Math.max(cpaScore, 0.01),
+                        Math.max(cpcScore, 0.01),
+                        Math.max(cpmScore, 0.01)
+                    ];
+                const weightArr = isNonValueConversion
+                    ? [weights.CPA, weights.CPC, weights.CPM]
+                    : [weights.ROAS, weights.CPA, weights.CPC, weights.CPM];
+
+                let logSum = 0;
+                let weightSum = 0;
+                for (let i = 0; i < scores.length; i++) {
+                    logSum += weightArr[i] * Math.log(scores[i]);
+                    weightSum += weightArr[i];
+                }
+                const geoMean = Math.exp(logSum / weightSum);
+
+                // 신뢰도 가중치
+                const confidence = calcConfidenceWeight(spend);
+
+                // 상대 성과 계산
+                let relativePerf;
+                if (isNonValueConversion) {
+                    // 전환값 없는 전환: CPA 백분위 점수를 상대 성과로 사용
+                    // CPA 점수가 높을수록(=CPA가 낮을수록) 좋은 성과
+                    relativePerf = cpaScore > 0 ? 1 + cpaScore : 0.5;
+                } else {
+                    // 일반 소재: 기대 ROAS 대비 상대 성과
+                    const expectedROAS = getExpectedROAS(spend, baseline);
+                    relativePerf = expectedROAS > 0 ? actualROAS / expectedROAS : 0;
+                }
+
+                // 최종 점수 = 기하평균 × 신뢰도보정 × 상대성과보정
+                const finalScore = geoMean
+                    * (0.5 + 0.5 * confidence)           // 0.5~1.0
+                    * Math.pow(Math.min(relativePerf, 3), 0.3);  // 상대성과 완만 반영
+
+                return {
+                    ...item,
+                    efficiencyScore: finalScore,
+                    confidenceWeight: confidence,
+                    expectedROAS: isNonValueConversion ? null : getExpectedROAS(spend, baseline),
+                    relativePerformance: relativePerf,
+                    isNonValueConversion: isNonValueConversion,
+                    rankScores: { roasScore, cpaScore, cpcScore, cpmScore, geoMean }
+                };
+            });
+
+            return { scored, baseline };
+        }
+
+        /**
+         * 소재 4분류 시스템
+         * - 🏆 고효율: 상위 20%
+         * - 💎 가능성: 중간 60% 중 신뢰도↓ + 상대적 성과↑
+         * - 🔍 주의 필요: 중간 60% 중 그 외
+         * - ⚠️ 저효율: 하위 20%
+         */
+        function classifyCreatives(scoredData) {
+            if (scoredData.length === 0) return [];
+
+            // 효율 점수 기준 정렬 (내림차순)
+            const sorted = [...scoredData].sort((a, b) => b.efficiencyScore - a.efficiencyScore);
+            const total = sorted.length;
+
+            // 컷오프 인덱스 계산
+            const topCutoffIdx = Math.ceil(total * EFFICIENCY_CONFIG.TOP_PERCENT);
+            const bottomCutoffIdx = Math.floor(total * (1 - EFFICIENCY_CONFIG.BOTTOM_PERCENT));
+
+            return sorted.map((item, index) => {
+                let classification;
+
+                if (index < topCutoffIdx) {
+                    // 상위 20%
+                    classification = 'high_efficiency';
+                } else if (index >= bottomCutoffIdx) {
+                    // 하위 20%
+                    classification = 'low_efficiency';
+                } else {
+                    // 중간 60%: 신뢰도와 상대적 성과로 세분화
+                    if (item.confidenceWeight < EFFICIENCY_CONFIG.CONFIDENCE_THRESHOLD &&
+                        item.relativePerformance >= EFFICIENCY_CONFIG.RELATIVE_PERF_THRESHOLD) {
+                        classification = 'potential';
+                    } else {
+                        classification = 'needs_attention';
+                    }
+                }
+
+                return { ...item, classification };
+            });
+        }
+
+        /**
+         * 🏆 고효율 소재 필터 (상위 20%)
+         */
+        function _filterHighEfficiency(data) {
+            const { scored, baseline } = calculateEfficiencyScores(data);
+            if (scored.length === 0) return { filtered: [], baseline: null, stats: null };
+
+            const classified = classifyCreatives(scored);
+            const filtered = classified.filter(d => d.classification === 'high_efficiency');
+
+            console.log(`🏆 고효율 소재: ${filtered.length}/${classified.length}개 (상위 ${(EFFICIENCY_CONFIG.TOP_PERCENT * 100).toFixed(0)}%)`);
+
+            return { filtered, baseline, stats: { totalCount: classified.length, filteredCount: filtered.length } };
+        }
+
+        /**
+         * 💎 가능성 있는 소재 필터 (중간 60% 중 신뢰도↓ + 성과↑)
+         */
+        function _filterPotential(data) {
+            const { scored, baseline } = calculateEfficiencyScores(data);
+            if (scored.length === 0) return { filtered: [], baseline: null, stats: null };
+
+            const classified = classifyCreatives(scored);
+            const filtered = classified.filter(d => d.classification === 'potential');
+
+            console.log(`💎 가능성 있는 소재: ${filtered.length}/${classified.length}개`);
+
+            return { filtered, baseline, stats: { totalCount: classified.length, filteredCount: filtered.length } };
+        }
+
+        /**
+         * 🔍 주의 필요 소재 필터 (중간 60% 중 그 외)
+         */
+        function _filterNeedsAttention(data) {
+            const { scored, baseline } = calculateEfficiencyScores(data);
+            if (scored.length === 0) return { filtered: [], baseline: null, stats: null };
+
+            const classified = classifyCreatives(scored);
+            const filtered = classified.filter(d => d.classification === 'needs_attention');
+
+            console.log(`🔍 주의 필요 소재: ${filtered.length}/${classified.length}개`);
+
+            return { filtered, baseline, stats: { totalCount: classified.length, filteredCount: filtered.length } };
+        }
+
+        /**
+         * ⚠️ 저효율 소재 필터 (하위 20%)
+         */
+        function _filterLowEfficiency(data) {
+            const { scored, baseline } = calculateEfficiencyScores(data);
+            if (scored.length === 0) return { filtered: [], baseline: null, stats: null };
+
+            const classified = classifyCreatives(scored);
+            const filtered = classified.filter(d => d.classification === 'low_efficiency');
+
+            console.log(`⚠️ 저효율 소재: ${filtered.length}/${classified.length}개 (하위 ${(EFFICIENCY_CONFIG.BOTTOM_PERCENT * 100).toFixed(0)}%)`);
+
+            return { filtered, baseline, stats: { totalCount: classified.length, filteredCount: filtered.length } };
+        }
+
+        // 고급 필터 함수를 window 객체에 등록 (updateDashboard에서 동적 호출용)
+        window.filterHighEfficiency = function(data) {
+            console.log('🔍 filterHighEfficiency 호출됨, 입력 데이터:', data.length, '개');
+            const result = _filterHighEfficiency(data);
+            console.log('🔍 filterHighEfficiency 결과:', result.filtered?.length || 0, '개');
+            lastEfficiencyBaseline = result.baseline;
+            return result.filtered;
+        };
+
+        window.filterPotential = function(data) {
+            const result = _filterPotential(data);
+            lastEfficiencyBaseline = result.baseline;
+            return result.filtered;
+        };
+
+        window.filterNeedsAttention = function(data) {
+            const result = _filterNeedsAttention(data);
+            lastEfficiencyBaseline = result.baseline;
+            return result.filtered;
+        };
+
+        window.filterLowEfficiency = function(data) {
+            const result = _filterLowEfficiency(data);
+            lastEfficiencyBaseline = result.baseline;
+            return result.filtered;
+        };
+
+        // 현재 적용된 고급 필터 상태
+        let activeAdvancedFilter = null;
+        let lastEfficiencyBaseline = null;
 
         // 정렬 설정
         let sortConfig = {
@@ -2053,6 +2702,7 @@
             kpiFilter.tertiaryMetric = '비용';
             kpiFilter.tertiaryOperator = '>';
             kpiFilter.tertiaryValue = '';
+            kpiFilter.advancedFilterFunction = null;  // 고급 필터 함수 초기화
 
             // UI 초기화
             document.getElementById('kpiFilterMetric').value = '비용';
@@ -2093,6 +2743,27 @@
 
             // 프리셋 적용
             resetKpiFilter();
+
+            // 고급 필터 (기하평균 기반 등) 처리
+            if (preset.isAdvancedFilter && preset.filterFunction) {
+                // 고급 필터 함수 설정
+                kpiFilter.advancedFilterFunction = preset.filterFunction;
+                console.log('✅ 고급 필터 설정됨:', preset.filterFunction);
+
+                // 프리셋 설명 표시
+                descriptionEl.textContent = preset.description;
+                descriptionEl.style.display = 'flex';
+
+                // 직접 입력 영역 숨기기
+                manualInputSection.style.display = 'none';
+
+                // 필터 자동 활성화
+                kpiFilter.enabled = true;
+                updateKpiToggleUI(true);
+
+                updateDashboard();
+                return;
+            }
 
             const conditions = preset.conditions;
             let conditionIndex = 0;
@@ -2606,16 +3277,21 @@
             const filteredData = filterData();
             let creativeData = aggregateByCreative(filteredData);
 
-            // 소재 검색 필터 적용 (LIKE '%검색어%')
-            if (filters.searchText) {
-                const searchLower = filters.searchText.toLowerCase();
-                creativeData = creativeData.filter(creative =>
-                    creative.name.toLowerCase().includes(searchLower)
-                );
+            // KPI 기준 필터 적용 (소재 검색보다 먼저 적용)
+            // 고급 필터 함수 (기하평균 기반 고효율 소재 등) 처리
+            if (kpiFilter.enabled && kpiFilter.advancedFilterFunction) {
+                const filterFunctionName = kpiFilter.advancedFilterFunction;
+                console.log('🎯 고급 필터 적용:', filterFunctionName, 'enabled:', kpiFilter.enabled);
+                console.log('🎯 필터 전 데이터:', creativeData.length, '개');
+                if (typeof window[filterFunctionName] === 'function') {
+                    creativeData = window[filterFunctionName](creativeData);
+                    console.log('🎯 필터 후 데이터:', creativeData.length, '개');
+                } else {
+                    console.error(`고급 필터 함수를 찾을 수 없습니다: ${filterFunctionName}`);
+                }
             }
-
-            // KPI 기준 필터 적용
-            if (kpiFilter.enabled && kpiFilter.value !== '') {
+            // 일반 조건 기반 필터 처리
+            else if (kpiFilter.enabled && kpiFilter.value !== '') {
                 const targetValue = parseFloat(kpiFilter.value);
                 if (!isNaN(targetValue)) {
                     // 메트릭 값 가져오기 헬퍼 함수
@@ -2698,6 +3374,21 @@
                     });
                 }
             }
+
+            // 소재 검색 필터 적용 (LIKE '%검색어%') - KPI 필터 이후에 적용
+            if (filters.searchText) {
+                const searchLower = filters.searchText.toLowerCase();
+                creativeData = creativeData.filter(creative =>
+                    creative.name.toLowerCase().includes(searchLower)
+                );
+            }
+
+            // 최종 정렬 적용 (칩 필터 등으로 재정렬된 데이터를 사용자 설정대로 재정렬)
+            creativeData = creativeData.sort((a, b) => {
+                const aVal = a[sortConfig.metric] || 0;
+                const bVal = b[sortConfig.metric] || 0;
+                return sortConfig.order === 'desc' ? bVal - aVal : aVal - bVal;
+            });
 
             // 요약 업데이트
             updateSummary(creativeData);
@@ -3418,16 +4109,48 @@
                 updateDashboard();
             });
 
-            // KPI 프리셋 이벤트
-            document.getElementById('kpiPresetSelect').addEventListener('change', e => {
-                applyKpiPreset(e.target.value);
+            // 4분류 효율 필터 칩 이벤트
+            document.querySelectorAll('.efficiency-chip-section .preset-chip').forEach(chip => {
+                chip.addEventListener('click', e => {
+                    const filterKey = chip.dataset.filter;
+                    const isActive = chip.classList.contains('active');
+                    console.log('🔘 칩 클릭:', filterKey, 'isActive:', isActive);
+
+                    // 모든 칩 비활성화
+                    document.querySelectorAll('.efficiency-chip-section .preset-chip').forEach(c => {
+                        c.classList.remove('active');
+                    });
+
+                    if (isActive) {
+                        // 이미 활성화된 칩 클릭 시 필터 해제
+                        resetKpiFilter();
+                        kpiFilter.enabled = false;
+                        updateKpiToggleUI(false);
+                        document.getElementById('kpiPresetDescription').style.display = 'none';
+                        // KPI 필터 수동 입력 영역 다시 표시
+                        document.getElementById('kpiManualInputSection').style.display = 'flex';
+                        updateDashboard();
+                    } else {
+                        // 새 칩 활성화
+                        chip.classList.add('active');
+                        // applyKpiPreset 내부에서 updateDashboard 호출됨
+                        applyKpiPreset(filterKey);
+                    }
+                });
             });
 
-            // KPI 필터 이벤트 (수동 변경 시 프리셋 초기화)
+            // 칩 비활성화 헬퍼 함수
+            function clearEfficiencyChips() {
+                document.querySelectorAll('.efficiency-chip-section .preset-chip').forEach(c => {
+                    c.classList.remove('active');
+                });
+                document.getElementById('kpiPresetDescription').style.display = 'none';
+            }
+
+            // KPI 필터 이벤트 (수동 변경 시 칩 초기화)
             document.getElementById('kpiFilterMetric').addEventListener('change', e => {
                 kpiFilter.metric = e.target.value;
-                document.getElementById('kpiPresetSelect').value = '';
-                document.getElementById('kpiPresetDescription').style.display = 'none';
+                clearEfficiencyChips();
                 if (kpiFilter.enabled) {
                     updateDashboard();
                 }
@@ -3435,8 +4158,7 @@
 
             document.getElementById('kpiFilterOperator').addEventListener('change', e => {
                 kpiFilter.operator = e.target.value;
-                document.getElementById('kpiPresetSelect').value = '';
-                document.getElementById('kpiPresetDescription').style.display = 'none';
+                clearEfficiencyChips();
                 if (kpiFilter.enabled) {
                     updateDashboard();
                 }
@@ -3446,8 +4168,7 @@
                 const formatted = formatNumberInput(e.target.value);
                 e.target.value = formatted;
                 kpiFilter.value = parseFormattedNumber(formatted);
-                document.getElementById('kpiPresetSelect').value = '';
-                document.getElementById('kpiPresetDescription').style.display = 'none';
+                clearEfficiencyChips();
                 if (kpiFilter.enabled) {
                     updateDashboard();
                 }
@@ -3464,6 +4185,10 @@
                 } else {
                     toggle.classList.remove('active');
                     status.textContent = 'OFF';
+                    // 필터 OFF 시 칩 초기화 및 인터페이스 복원
+                    clearEfficiencyChips();
+                    resetKpiFilter();
+                    document.getElementById('kpiManualInputSection').style.display = 'flex';
                 }
                 updateDashboard();
             });
@@ -3472,8 +4197,7 @@
             document.querySelectorAll('input[name="compoundLogic"]').forEach(radio => {
                 radio.addEventListener('change', e => {
                     kpiFilter.compoundLogic = e.target.value;
-                    document.getElementById('kpiPresetSelect').value = '';
-                    document.getElementById('kpiPresetDescription').style.display = 'none';
+                    clearEfficiencyChips();
                     const secondaryFilterRow = document.getElementById('secondaryFilterRow');
                     const tertiaryFilterRow = document.getElementById('tertiaryFilterRow');
 
@@ -3498,8 +4222,7 @@
             document.querySelectorAll('input[name="compoundLogicSecondary"]').forEach(radio => {
                 radio.addEventListener('change', e => {
                     kpiFilter.secondaryCompoundLogic = e.target.value;
-                    document.getElementById('kpiPresetSelect').value = '';
-                    document.getElementById('kpiPresetDescription').style.display = 'none';
+                    clearEfficiencyChips();
                     const tertiaryFilterRow = document.getElementById('tertiaryFilterRow');
 
                     if (e.target.value === 'none') {
@@ -3517,8 +4240,7 @@
             // 보조 필터 이벤트 (수동 변경 시 프리셋 초기화)
             document.getElementById('kpiFilterMetricSecondary').addEventListener('change', e => {
                 kpiFilter.secondaryMetric = e.target.value;
-                document.getElementById('kpiPresetSelect').value = '';
-                document.getElementById('kpiPresetDescription').style.display = 'none';
+                clearEfficiencyChips();
                 if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
                     updateDashboard();
                 }
@@ -3526,8 +4248,7 @@
 
             document.getElementById('kpiFilterOperatorSecondary').addEventListener('change', e => {
                 kpiFilter.secondaryOperator = e.target.value;
-                document.getElementById('kpiPresetSelect').value = '';
-                document.getElementById('kpiPresetDescription').style.display = 'none';
+                clearEfficiencyChips();
                 if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
                     updateDashboard();
                 }
@@ -3537,8 +4258,7 @@
                 const formatted = formatNumberInput(e.target.value);
                 e.target.value = formatted;
                 kpiFilter.secondaryValue = parseFormattedNumber(formatted);
-                document.getElementById('kpiPresetSelect').value = '';
-                document.getElementById('kpiPresetDescription').style.display = 'none';
+                clearEfficiencyChips();
                 if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
                     updateDashboard();
                 }
@@ -3547,8 +4267,7 @@
             // 3차 필터 이벤트 (수동 변경 시 프리셋 초기화)
             document.getElementById('kpiFilterMetricTertiary').addEventListener('change', e => {
                 kpiFilter.tertiaryMetric = e.target.value;
-                document.getElementById('kpiPresetSelect').value = '';
-                document.getElementById('kpiPresetDescription').style.display = 'none';
+                clearEfficiencyChips();
                 if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
                     updateDashboard();
                 }
@@ -3556,8 +4275,7 @@
 
             document.getElementById('kpiFilterOperatorTertiary').addEventListener('change', e => {
                 kpiFilter.tertiaryOperator = e.target.value;
-                document.getElementById('kpiPresetSelect').value = '';
-                document.getElementById('kpiPresetDescription').style.display = 'none';
+                clearEfficiencyChips();
                 if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none') {
                     updateDashboard();
                 }
@@ -3567,8 +4285,7 @@
                 const formatted = formatNumberInput(e.target.value);
                 e.target.value = formatted;
                 kpiFilter.tertiaryValue = parseFormattedNumber(formatted);
-                document.getElementById('kpiPresetSelect').value = '';
-                document.getElementById('kpiPresetDescription').style.display = 'none';
+                clearEfficiencyChips();
                 if (kpiFilter.enabled && kpiFilter.compoundLogic !== 'none' && kpiFilter.secondaryCompoundLogic !== 'none') {
                     updateDashboard();
                 }
@@ -3624,7 +4341,126 @@
 
                 updateModalChart();
             });
+
+            // 칩 호버 툴팁 초기화
+            initChipHoverTooltips();
         });
+
+        // ========================================
+        // 칩 호버 툴팁 기능
+        // ========================================
+
+        function initChipHoverTooltips() {
+            // 글로벌 툴팁 엘리먼트 생성
+            let chipTooltip = document.getElementById('chipHoverTooltip');
+            if (!chipTooltip) {
+                chipTooltip = document.createElement('div');
+                chipTooltip.id = 'chipHoverTooltip';
+                chipTooltip.className = 'chip-hover-tooltip';
+                document.body.appendChild(chipTooltip);
+            }
+
+            // 이벤트 위임 방식으로 호버 처리
+            document.addEventListener('mouseenter', function(e) {
+                if (!e.target || !e.target.closest) return;
+                const chip = e.target.closest('.preset-chip[data-tooltip-title]');
+                if (chip) {
+                    showChipTooltip(chip, chipTooltip);
+                }
+            }, true);
+
+            document.addEventListener('mouseleave', function(e) {
+                if (!e.target || !e.target.closest) return;
+                const chip = e.target.closest('.preset-chip[data-tooltip-title]');
+                if (chip) {
+                    hideChipTooltip(chipTooltip);
+                }
+            }, true);
+
+            document.addEventListener('mousemove', function(e) {
+                if (!e.target || !e.target.closest) return;
+                const chip = e.target.closest('.preset-chip[data-tooltip-title]');
+                if (chip && chipTooltip.classList.contains('show')) {
+                    positionChipTooltip(e, chipTooltip);
+                }
+            }, true);
+        }
+
+        function showChipTooltip(chip, tooltip) {
+            const title = chip.dataset.tooltipTitle || '';
+            const icon = chip.dataset.tooltipIcon || '💡';
+            const type = chip.dataset.tooltipType || '';
+            const criteria = chip.dataset.tooltipCriteria || '';
+            const action = chip.dataset.tooltipAction || '';
+            const actionType = chip.dataset.tooltipActionType || 'info';
+            const actionDetail = chip.dataset.tooltipActionDetail || '';
+
+            // 기존 타입 클래스 제거 후 새 타입 클래스 추가
+            tooltip.classList.remove('high-efficiency', 'potential', 'needs-attention', 'low-efficiency');
+            if (type) {
+                tooltip.classList.add(type);
+            }
+
+            let html = `
+                <div class="chip-tooltip-header ${type}">
+                    <span class="chip-tooltip-header-icon">${icon}</span>
+                    <span class="chip-tooltip-header-title">${title}</span>
+                </div>
+            `;
+
+            if (criteria) {
+                html += `
+                    <div class="chip-tooltip-criteria">
+                        <div class="chip-tooltip-criteria-label">📊 분류 기준</div>
+                        <div class="chip-tooltip-criteria-text">${criteria}</div>
+                    </div>
+                `;
+            }
+
+            if (action || actionDetail) {
+                html += `
+                    <div class="chip-tooltip-action">
+                        <div class="chip-tooltip-action-label ${actionType}">✅ ${action}</div>
+                        <div class="chip-tooltip-action-text">${actionDetail}</div>
+                    </div>
+                `;
+            }
+
+            tooltip.innerHTML = html;
+            tooltip.classList.add('show');
+        }
+
+        function positionChipTooltip(e, tooltip) {
+            const padding = 15;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const tooltipWidth = tooltip.offsetWidth;
+            const tooltipHeight = tooltip.offsetHeight;
+
+            let left = e.clientX + padding;
+            let top = e.clientY + padding;
+
+            // 오른쪽 화면 밖으로 나가면 왼쪽에 표시
+            if (left + tooltipWidth > viewportWidth - padding) {
+                left = e.clientX - tooltipWidth - padding;
+            }
+
+            // 아래 화면 밖으로 나가면 위에 표시
+            if (top + tooltipHeight > viewportHeight - padding) {
+                top = e.clientY - tooltipHeight - padding;
+            }
+
+            // 최소값 보정
+            if (left < padding) left = padding;
+            if (top < padding) top = padding;
+
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+        }
+
+        function hideChipTooltip(tooltip) {
+            tooltip.classList.remove('show');
+        }
     </script>
 </body>
 </html>

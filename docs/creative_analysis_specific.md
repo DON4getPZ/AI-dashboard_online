@@ -209,36 +209,67 @@ Chart.register(ChartDataLabels);
 ##### 조건 연산자
 - `>` (보다 큼), `<` (보다 작음), `>=` (크거나 같음), `<=` (작거나 같음), `=` (같음)
 
-##### KPI 프리셋 (빠른 필터)
+##### 4분류 효율 필터 (칩 UI)
 | 항목 | 내용 |
 |------|------|
 | **위치** | KPI 필터 섹션 상단 |
-| **HTML ID** | `kpiPresetSelect`, `kpiPresetDescription` |
-| **JS 상수** | `KPI_PRESETS` (8개 프리셋 정의) |
-| **JS 함수** | `applyKpiPreset()`, `resetKpiFilter()`, `updateKpiToggleUI()` |
+| **HTML 클래스** | `.efficiency-chip-section`, `.preset-chip` |
+| **HTML ID** | `kpiPresetDescription`, `kpiManualInputSection` |
+| **JS 상수** | `EFFICIENCY_CONFIG`, `KPI_PRESETS` |
+| **JS 함수** | `calculateEfficiencyScores()`, `classifyCreatives()`, `_filterHighEfficiency()`, `_filterPotential()`, `_filterNeedsAttention()`, `_filterLowEfficiency()`, `applyKpiPreset()`, `resetKpiFilter()`, `updateKpiToggleUI()`, `clearEfficiencyChips()` |
 
-**프리셋 목록**:
-| 키 | 이름 | 조건 |
-|-----|------|------|
-| `high_roas` | 🏆 고효율 소재 | ROAS > 500% |
-| `hidden_gem` | 💎 숨은 보석 | ROAS > 300% AND 비용 < 10만원 |
-| `volume_performer` | 📊 볼륨 성과자 | 비용 > 100만원 AND ROAS > 200% |
-| `low_cpa` | 🎯 저렴한 전환 | CPA < 10,000원 AND 전환수 > 10 |
-| `high_exposure` | 👁️ 고노출 소재 | 노출 > 100,000 |
-| `money_pit` | 🚨 비용 과다 | 비용 > 50만원 AND ROAS < 100% |
-| `underperformer` | ⚠️ 성과 부진 | ROAS < 100% AND 비용 > 10만원 |
-| `needs_review` | 📋 점검 필요 | CPC > 5,000원 OR CPA > 50,000원 |
+**효율 점수 산출 방식** (기하평균 기반):
+```
+효율점수 = 기하평균(ROAS순위, CPA순위, CPC순위, CPM순위)
+         × 신뢰도보정(0.5~1.0)
+         × 상대성과보정
+```
+
+| 가중치 | ROAS | CPA | CPC | CPM |
+|--------|------|-----|-----|-----|
+| 비율 | 40% | 30% | 20% | 10% |
+
+**EFFICIENCY_CONFIG 설정**:
+| 키 | 기본값 | 설명 |
+|----|--------|------|
+| `MIN_SPEND` | 50,000 | 최소 광고비 (원) |
+| `FULL_CONFIDENCE_SPEND` | 3,000,000 | 100% 신뢰도 광고비 (원) |
+| `TOP_PERCENT` | 0.20 | 고효율 상위 비율 (20%) |
+| `BOTTOM_PERCENT` | 0.20 | 저효율 하위 비율 (20%) |
+| `CONFIDENCE_THRESHOLD` | 0.5 | 신뢰도 임계값 |
+| `RELATIVE_PERF_THRESHOLD` | 1.0 | 상대 성과 임계값 |
+
+**4분류 체계**:
+| 칩 | 키 | 분류 기준 | 설명 |
+|----|-----|----------|------|
+| 🏆 고효율 소재 | `high_efficiency` | 효율점수 상위 20% | 검증된 고성과 소재 |
+| 💎 가능성 있음 | `potential` | 중간 60% 중 신뢰도↓ + 상대성과↑ | 스케일업 후보 |
+| 🔍 주의 필요 | `needs_attention` | 중간 60% 중 그 외 | 모니터링 대상 |
+| ⚠️ 저효율 소재 | `low_efficiency` | 효율점수 하위 20% | 최적화/중단 검토 |
 
 **동작 흐름**:
-1. 프리셋 선택 시 `applyKpiPreset()` 호출
-2. `resetKpiFilter()`로 필터 상태 초기화
-3. 프리셋 조건을 `kpiFilter` 객체에 적용
-4. `updateKpiToggleUI()`로 UI 상태 동기화
-5. `updateDashboard()` 호출
+1. 칩 클릭 시 해당 분류의 `applyKpiPreset()` 호출
+2. `kpiFilter.advancedFilterFunction`에 필터 함수명 설정
+3. `kpiManualInputSection` 숨김, `kpiPresetDescription` 표시
+4. `updateDashboard()` 호출 → `window[filterFunctionName](creativeData)` 실행
+5. 최종 정렬 적용 (사용자 `sortConfig` 설정 반영)
 
-**수동 필터 변경 시 프리셋 초기화**:
-- 모든 KPI 필터 입력/선택 이벤트에서 프리셋 드롭다운을 `''`로 리셋
-- 설명 영역(`kpiPresetDescription`) 숨김 처리
+**칩 비활성화 시**:
+- 활성화된 칩 재클릭 또는 KPI 필터 토글 OFF
+- `clearEfficiencyChips()` → `resetKpiFilter()` → `kpiManualInputSection` 표시
+
+**필터 적용 순서**:
+```
+1. filterData()        - 기간/기본/세부 필터 (원본 데이터)
+2. aggregateByCreative() - 소재별 집계
+3. 칩 필터 (고효율 등)  - 효율 분류 적용
+4. 소재 검색           - 이름 필터링
+5. 최종 정렬           - sortConfig 기준 재정렬
+```
+
+**수동 필터 변경 시 칩 초기화**:
+- 모든 KPI 필터 입력/선택 이벤트에서 `clearEfficiencyChips()` 호출
+- 설명 영역(`kpiPresetDescription`) 숨김, 수동 입력 영역 표시
 
 #### 2.2 정렬 설정 (우측)
 | 항목 | 내용 |
@@ -2100,3 +2131,13 @@ body {
 | 2025-12-29 | HTML 추가: `kpiPresetSelect` 드롭다운, `kpiPresetDescription` 설명 영역 |
 | 2025-12-29 | CSS 추가: `.kpi-preset-section`, `.kpi-preset-select`, `.kpi-preset-description` 클래스 |
 | 2025-12-29 | 이벤트 리스너 추가: 프리셋 선택 시 자동 적용, 수동 필터 변경 시 프리셋 초기화 |
+| 2026-01-02 | 4분류 효율 필터 구현: 기하평균 기반 효율 점수 산출 (`calculateEfficiencyScores()`, `classifyCreatives()`) |
+| 2026-01-02 | 효율 필터 함수 추가: `_filterHighEfficiency()`, `_filterPotential()`, `_filterNeedsAttention()`, `_filterLowEfficiency()` |
+| 2026-01-02 | 전역 상수 추가: `EFFICIENCY_CONFIG` (MIN_SPEND, TOP_PERCENT, BOTTOM_PERCENT 등) |
+| 2026-01-02 | UI 변경: 기존 드롭다운 프리셋 → 칩(Chip) 버튼 UI (`.efficiency-chip-section`, `.preset-chip`) |
+| 2026-01-02 | 칩 이벤트 핸들러: 클릭 토글, 비활성화 시 수동 입력 영역 복원 |
+| 2026-01-02 | KPI 필터 토글 OFF 시 칩 초기화 및 수동 입력 영역 복원 로직 추가 |
+| 2026-01-02 | 속성명 버그 수정: `classifyCreatives()` 내 `confidence`→`confidenceWeight`, `relativePerf`→`relativePerformance` |
+| 2026-01-02 | 필터 적용 순서 수정: 칩 필터 → 소재 검색 → 최종 정렬 (기존: 소재 검색 → 칩 필터) |
+| 2026-01-02 | 최종 정렬 단계 추가: 칩 필터 후에도 사용자 `sortConfig` 설정 반영되도록 수정 |
+| 2026-01-02 | 무한 재귀 버그 수정: 내부 함수명 변경 (`filterHighEfficiency`→`_filterHighEfficiency` 등) |
