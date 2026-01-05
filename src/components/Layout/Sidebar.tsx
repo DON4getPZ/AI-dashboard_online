@@ -20,9 +20,9 @@ const dashboardItems = [
 
 const analysisItems = [
   {
-    id: 'forecast',
+    id: 'timeseries',
     label: '시계열 데이터 분석',
-    href: '/forecast',
+    href: '/timeseries',
   },
   {
     id: 'type',
@@ -79,7 +79,7 @@ const getIcon = (id: string) => {
       return <ChartIcon />
     case 'creative':
       return <ImageIcon />
-    case 'forecast':
+    case 'timeseries':
       return <TimelineIcon />
     case 'type':
       return <PieChartIcon />
@@ -94,55 +94,67 @@ export default function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="fixed left-0 top-0 z-[1000] h-screen w-[260px] bg-white border-r border-gray-200 flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.05)]">
-      {/* 로고 영역 */}
-      <div className="px-5 py-6 border-b border-gray-200">
-        <Link href="/" className="flex items-center gap-3 no-underline">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary-main to-primary-dark rounded-[10px] flex items-center justify-center">
-            <svg viewBox="0 0 24 24" className="w-6 h-6 fill-white">
+    // sidebar: width 260px, border-right 1px solid grey-200, shadow 0 0 20px rgba(0,0,0,0.05)
+    <aside className="fixed left-0 top-0 z-[1000] h-screen w-[260px] bg-white border-r border-[#eeeeee] flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.05)]">
+      {/* sidebar-header: padding 24px 20px, border-bottom 1px solid grey-200 */}
+      <div className="px-[20px] py-[24px] border-b border-[#eeeeee]">
+        {/* sidebar-logo: gap 12px */}
+        <Link href="/" className="flex items-center gap-[12px] no-underline">
+          {/* sidebar-logo-icon: 40px, border-radius 10px, gradient */}
+          <div className="w-[40px] h-[40px] bg-gradient-to-br from-[#673ab7] to-[#5e35b1] rounded-[10px] flex items-center justify-center">
+            <svg viewBox="0 0 24 24" className="w-[24px] h-[24px] fill-white">
               <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
             </svg>
           </div>
           <div>
-            <div className="text-lg font-bold text-gray-900">Analytics</div>
-            <div className="text-[11px] text-gray-500 uppercase tracking-[0.5px]">Dashboard</div>
+            {/* sidebar-logo-text: font-size 18px, font-weight 700, color grey-900 */}
+            <div className="text-[18px] font-bold text-[#212121]">Analytics</div>
+            {/* sidebar-logo-subtitle: font-size 11px, color grey-500, uppercase, letter-spacing 0.5px */}
+            <div className="text-[11px] text-[#9e9e9e] uppercase tracking-[0.5px]">Dashboard</div>
           </div>
         </Link>
       </div>
 
-      {/* 네비게이션 스크롤 영역 */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin">
-        <div className="px-3 py-4">
-          {/* 대시보드 그룹 */}
-          <div className="mb-4">
-            <div className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.5px] px-4 py-2 mb-1">
+      {/* simplebar-content-wrapper: overflow-y auto */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+        {/* sidebar-content: padding 16px 12px */}
+        <div className="px-[12px] py-[16px]">
+          {/* nav-group: margin-bottom 16px */}
+          <div className="mb-[16px]">
+            {/* nav-group-title: font-size 11px, font-weight 600, color grey-500, uppercase, padding 8px 16px, margin-bottom 4px */}
+            <div className="text-[11px] font-semibold text-[#9e9e9e] uppercase tracking-[0.5px] px-[16px] py-[8px] mb-[4px]">
               대시보드
             </div>
             {dashboardItems.map((item) => {
               const isActive = pathname === item.href
               return (
+                // nav-item: gap 12px, padding 12px 16px, border-radius 10px, font-size 14px, font-weight 500, margin-bottom 4px
                 <Link
                   key={item.id}
                   href={item.href}
                   className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-[10px] mb-1 no-underline text-sm font-medium transition-all duration-200',
+                    'flex items-center gap-[12px] px-[16px] py-[12px] rounded-[10px] mb-[4px] no-underline text-[14px] font-medium transition-all duration-200',
                     isActive
-                      ? 'bg-primary-light text-primary-main'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-primary-main'
+                      // active: bg primary-light, color primary-main
+                      ? 'bg-[#ede7f6] text-[#673ab7]'
+                      // inactive: color grey-700, hover bg grey-100
+                      : 'text-[#616161] hover:bg-[#f5f5f5] hover:text-[#673ab7]'
                   )}
                 >
-                  <div className="w-5 h-5 flex items-center justify-center">
+                  {/* nav-item-icon: 20px */}
+                  <div className="w-[20px] h-[20px] flex items-center justify-center">
                     {getIcon(item.id)}
                   </div>
-                  <span>{item.label}</span>
+                  <span className="flex-1">{item.label}</span>
                 </Link>
               )
             })}
           </div>
 
-          {/* 분석 그룹 */}
-          <div className="mb-4">
-            <div className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.5px] px-4 py-2 mb-1">
+          {/* nav-group: margin-bottom 16px */}
+          <div className="mb-[16px]">
+            {/* nav-group-title */}
+            <div className="text-[11px] font-semibold text-[#9e9e9e] uppercase tracking-[0.5px] px-[16px] py-[8px] mb-[4px]">
               분석
             </div>
             {analysisItems.map((item) => {
@@ -152,16 +164,16 @@ export default function Sidebar() {
                   key={item.id}
                   href={item.href}
                   className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-[10px] mb-1 no-underline text-sm font-medium transition-all duration-200',
+                    'flex items-center gap-[12px] px-[16px] py-[12px] rounded-[10px] mb-[4px] no-underline text-[14px] font-medium transition-all duration-200',
                     isActive
-                      ? 'bg-primary-light text-primary-main'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-primary-main'
+                      ? 'bg-[#ede7f6] text-[#673ab7]'
+                      : 'text-[#616161] hover:bg-[#f5f5f5] hover:text-[#673ab7]'
                   )}
                 >
-                  <div className="w-5 h-5 flex items-center justify-center">
+                  <div className="w-[20px] h-[20px] flex items-center justify-center">
                     {getIcon(item.id)}
                   </div>
-                  <span>{item.label}</span>
+                  <span className="flex-1">{item.label}</span>
                 </Link>
               )
             })}
