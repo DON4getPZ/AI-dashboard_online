@@ -1,8 +1,10 @@
 # Marketing Dashboard 구현 가이드
 
-**버전**: 1.0.0
-**작성일**: 2025-11-28
+**버전**: 1.1.0
+**작성일**: 2025-01-05
 **목적**: 단계별 구현 코드 및 파일 작성 가이드
+
+> **아키텍처 흐름**: [1] .bat 트리거 → Python ETL → [2] Git Commit + Push → [3] GitHub Actions → Next.js 빌드 → [4] Vercel → React 앱 서빙
 
 ---
 
@@ -12,10 +14,10 @@
 2. [2단계: Python 스크립트 수정](#2단계-python-스크립트-수정)
 3. [3단계: Next.js 프로젝트 구축](#3단계-nextjs-프로젝트-구축)
 4. [4단계: React 컴포넌트 개발](#4단계-react-컴포넌트-개발)
-5. [5단계: 배포 스크립트 작성](#5단계-배포-스크립트-작성)
+5. [5단계: 배포 스크립트 작성](#5단계-배포-스크립트-작성) *(Git Commit + Push)*
 6. [6단계: Vercel 및 Cloudflare 설정](#6단계-vercel-및-cloudflare-설정)
 7. [7단계: 테스트 및 검증](#7단계-테스트-및-검증)
-8. [8단계: GitHub Actions 백업 설정](#8단계-github-actions-백업-설정)
+8. [8단계: GitHub Actions CI/CD 설정](#8단계-github-actions-cicd-설정) *(자동 빌드 및 배포)*
 9. [9단계: 데이터 백업 구성](#9단계-데이터-백업-구성)
 
 ---
@@ -2122,32 +2124,40 @@ echo   ✓ 3단계 완료
 echo.
 
 :: ═══════════════════════════════════════════════════════════════════
-:: 4단계: Vercel 배포
+:: 4단계: Git Commit + Push (GitHub Actions 트리거)
 :: ═══════════════════════════════════════════════════════════════════
 echo ┌────────────────────────────────────────────────────────────────┐
-echo │ 4단계: Vercel 배포                                             │
+echo │ 4단계: Git Commit + Push                                       │
 echo └────────────────────────────────────────────────────────────────┘
 
-echo   Vercel 배포 중...
-vercel deploy --prod --yes
+echo   Git 변경사항 커밋 중...
+git add public/data/%CLIENT_ID%/
+git commit -m "data: %CLIENT_ID% 데이터 업데이트 %date%"
 if %errorlevel% neq 0 (
-    echo   [ERROR] Vercel 배포 실패
+    echo   [WARN] 커밋할 변경사항 없음
+)
+
+echo   Git Push 중... (GitHub Actions 자동 배포 트리거)
+git push origin main
+if %errorlevel% neq 0 (
+    echo   [ERROR] Git Push 실패
     exit /b 1
 )
 
 echo.
-echo   ✓ 4단계 완료
+echo   ✓ 4단계 완료 (GitHub Actions에서 Next.js 빌드 및 Vercel 배포 진행)
 echo.
 
 :: ═══════════════════════════════════════════════════════════════════
 :: 완료
 :: ═══════════════════════════════════════════════════════════════════
 echo ╔════════════════════════════════════════════════════════════════╗
-echo ║                        배포 완료!                              ║
+echo ║                        로컬 처리 완료!                          ║
 echo ╠════════════════════════════════════════════════════════════════╣
 echo ║  클라이언트: %CLIENT_ID%
 echo ║  JSON 경로:  public/data/%CLIENT_ID%/
 echo ║  완료 시간:  %time%
+echo ║  다음 단계:  GitHub Actions → Next.js 빌드 → Vercel 배포
 echo ╚════════════════════════════════════════════════════════════════╝
 
 endlocal
@@ -2175,18 +2185,21 @@ if %errorlevel% neq 0 (
     echo [WARN] 일부 클라이언트 처리 실패
 )
 
-:: Vercel 배포 (1회만)
+:: Git Commit + Push (GitHub Actions 트리거)
 echo.
-echo [2/2] Vercel 배포...
-vercel deploy --prod --yes
+echo [2/2] Git Commit + Push...
+git add public/data/
+git commit -m "data: 전체 클라이언트 데이터 업데이트 %date%"
+git push origin main
 if %errorlevel% neq 0 (
-    echo [ERROR] Vercel 배포 실패
+    echo [ERROR] Git Push 실패
     exit /b 1
 )
 
 echo.
 echo ╔════════════════════════════════════════════════════════════════╗
-echo ║                    전체 배포 완료!                              ║
+echo ║                    로컬 처리 완료!                              ║
+echo ║        GitHub Actions에서 Next.js 빌드 및 Vercel 배포 진행      ║
 echo ╚════════════════════════════════════════════════════════════════╝
 ```
 
@@ -2369,7 +2382,9 @@ npm run dev
   □ 네비게이션 동작
 
 □ 배포
-  □ vercel deploy 성공
+  □ git push → GitHub Actions 트리거 성공
+  □ GitHub Actions → Next.js 빌드 성공
+  □ Vercel 자동 배포 성공
   □ 서브도메인 접근 가능
   □ Cloudflare Access 인증 동작
 
@@ -2405,27 +2420,48 @@ public/data/
 
 ---
 
-## 8단계: GitHub Actions 백업 설정
+## 8단계: GitHub Actions CI/CD 설정
 
-로컬 PC 의존성을 완화하기 위한 GitHub Actions 백업 파이프라인입니다.
+> **핵심 역할**: Git Push 시 자동으로 Next.js 빌드 및 Vercel 배포 수행
+
+로컬에서 데이터 분석 후 Git Push하면 자동으로 빌드/배포되는 메인 CI/CD 파이프라인입니다.
 
 ### 8.1 GitHub Actions Workflow 파일
 
 **파일**: `.github/workflows/daily-deploy.yml`
 
 ```yaml
-name: Daily Dashboard Deploy
+name: Dashboard Build & Deploy
 
 on:
+  # 메인 CI/CD: Git Push 시 자동 빌드/배포
+  push:
+    branches: [main]
+    paths:
+      - 'public/data/**'      # 데이터 변경 시
+      - 'src/**'              # 소스 변경 시
+      - 'package.json'        # 의존성 변경 시
+
+  # 백업: 스케줄 실행 (선택적)
   schedule:
     # UTC 00:00 = KST 09:00
     - cron: '0 0 * * *'
+
+  # 수동 실행
   workflow_dispatch:
     inputs:
       client_id:
         description: '특정 클라이언트만 실행 (비우면 전체)'
         required: false
         default: ''
+      run_etl:
+        description: 'Python ETL 실행 여부'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 env:
   PYTHON_VERSION: '3.10'
@@ -2439,27 +2475,31 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Python ETL (스케줄 실행 또는 수동 요청 시에만)
       - name: Setup Python
+        if: ${{ github.event_name == 'schedule' || github.event.inputs.run_etl == 'true' }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: 'pip'
 
-      - name: Install dependencies
+      - name: Install Python dependencies
+        if: ${{ github.event_name == 'schedule' || github.event.inputs.run_etl == 'true' }}
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Setup Google Credentials
+        if: ${{ github.event_name == 'schedule' || github.event.inputs.run_etl == 'true' }}
         run: |
           echo '${{ secrets.GOOGLE_CREDENTIALS }}' > config/google-credentials.json
 
       - name: Run pipeline (all clients)
-        if: ${{ github.event.inputs.client_id == '' }}
+        if: ${{ (github.event_name == 'schedule' || github.event.inputs.run_etl == 'true') && github.event.inputs.client_id == '' }}
         run: python scripts/run_all_clients.py
 
       - name: Run pipeline (specific client)
-        if: ${{ github.event.inputs.client_id != '' }}
+        if: ${{ github.event.inputs.run_etl == 'true' && github.event.inputs.client_id != '' }}
         run: |
           python scripts/fetch_google_sheets.py --client ${{ github.event.inputs.client_id }}
           python scripts/process_marketing_data.py --client ${{ github.event.inputs.client_id }}
@@ -2536,36 +2576,43 @@ GitHub Actions에서 Prophet 설치는 시간이 오래 걸립니다. 캐싱으�
             ${{ runner.os }}-prophet-
 ```
 
-### 8.6 로컬 + GitHub Actions 하이브리드 전략
+### 8.6 메인 CI/CD 흐름
 
 ```
-평일 (월~금)
-├── 로컬 PC: 09:00 자동 실행 (주 실행)
-└── GitHub Actions: 09:30 대기 (백업)
-    └── 로컬 실행 성공 시 Skip (조건부 실행)
+┌─────────────────────────────────────────────────────────────────────┐
+│                        배포 아키텍처                                  │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  [로컬 PC]                          [GitHub]                        │
+│  ┌───────────────┐                  ┌───────────────────────────┐   │
+│  │ .bat 트리거   │                  │ GitHub Actions            │   │
+│  │ ├─ Python ETL │ ──git push──→   │ ├─ Next.js 빌드           │   │
+│  │ └─ Git Commit │                  │ └─ Vercel 배포            │   │
+│  └───────────────┘                  └───────────────────────────┘   │
+│                                               │                     │
+│                                               ▼                     │
+│                                      ┌───────────────┐              │
+│                                      │ Vercel CDN    │              │
+│                                      │ React 앱 서빙  │              │
+│                                      └───────────────┘              │
+└─────────────────────────────────────────────────────────────────────┘
 
-주말 (토~일)
-└── GitHub Actions: 09:00 자동 실행
-    └── 로컬 PC 끄고 퇴근 가능
+실행 시나리오
+├── 일반 (매일): 로컬 .bat → Git Push → GitHub Actions 자동 빌드/배포
+└── 백업 (주말): GitHub Actions Schedule → ETL + 빌드/배포 (run_etl=true)
 ```
 
-**조건부 실행 예시** (meta.json의 lastUpdated 확인):
+**수동 실행 옵션**:
 
-```yaml
-      - name: Check if already deployed today
-        id: check
-        run: |
-          LAST_UPDATE=$(curl -s https://clienta.dashboard.yourdomain.com/data/clientA/meta.json | jq -r '.lastUpdated')
-          TODAY=$(date -u +%Y-%m-%d)
-          if [[ "$LAST_UPDATE" == *"$TODAY"* ]]; then
-            echo "skip=true" >> $GITHUB_OUTPUT
-          else
-            echo "skip=false" >> $GITHUB_OUTPUT
-          fi
+```bash
+# Next.js 빌드/배포만 (ETL 없이)
+gh workflow run daily-deploy.yml
 
-      - name: Run pipeline
-        if: steps.check.outputs.skip != 'true'
-        run: python scripts/run_all_clients.py
+# ETL 포함 전체 실행
+gh workflow run daily-deploy.yml -f run_etl=true
+
+# 특정 클라이언트 ETL + 배포
+gh workflow run daily-deploy.yml -f run_etl=true -f client_id=clientA
 ```
 
 ---
@@ -2774,6 +2821,18 @@ vercel logs
 # Next.js 빌드 상세 로그
 npm run build -- --debug
 ```
+
+---
+
+## 변경 이력
+
+| 날짜 | 버전 | 변경 내용 |
+|------|------|----------|
+| 2025-11-28 | 1.0.0 | 초안 작성 |
+| 2025-01-05 | 1.1.0 | 아키텍처 흐름 정리: .bat → Git Push → GitHub Actions → Vercel |
+|            |       | - 5단계: Vercel 직접 배포 → Git Commit + Push 방식으로 변경 |
+|            |       | - 8단계: 백업 설정 → 메인 CI/CD 설정으로 역할 변경 |
+|            |       | - GitHub Actions: push 트리거 추가, ETL 조건부 실행 |
 
 ---
 

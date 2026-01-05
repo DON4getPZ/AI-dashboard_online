@@ -1,15 +1,47 @@
-# 마케팅 대시보드 v4.2 - Standalone HTML 기반
+# 마케팅 대시보드 v4.3
 
 **Growthmaker - 데이터 기반 그로스 마케팅 대시보드**
 
 ---
 
+## 아키텍처 현황
+
+### 현재 상태: Standalone HTML
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  .bat 트리거 → Python ETL → generate_standalone.py → 30MB HTML │
+│                                                                 │
+│  특징: 서버 없이 브라우저에서 바로 실행, 단일 클라이언트        │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 목표 상태: Next.js + Vercel (JAMstack)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  [1] .bat 트리거    [2] .bat 트리거   [3] GitHub Actions  [4] Vercel  │
+│  ┌───────────┐     ┌───────────┐     ┌───────────┐      ┌───────┐│
+│  │Python ETL │ ──→ │Git Commit │ ──→ │ Next.js   │ ──→  │React  ││
+│  │데이터수집 │     │ + Push    │     │ 빌드      │      │앱서빙 ││
+│  │분석/변환  │     │           │     │           │      │       ││
+│  └───────────┘     └───────────┘     └───────────┘      └───────┘│
+│                                                                   │
+│  특징: 멀티클라이언트, 서브도메인 분리, 연 비용 ~$12             │
+└───────────────────────────────────────────────────────────────────┘
+```
+
+> **배포 설계서**: [Deploy_project.md](docs/Deploy_project.md)
+
+---
+
 ## 주요 특징
 
-- **Standalone HTML**: 서버 없이 브라우저에서 바로 실행
+- **Standalone HTML** (현재): 서버 없이 브라우저에서 바로 실행
+- **Next.js + Vercel** (목표): JAMstack 기반 멀티클라이언트 서비스
 - **Prophet 시계열 예측**: 계절성 패턴 분석 및 90일 예측
 - **다차원 분석**: 캠페인, 광고세트, 연령, 성별, 기기, 플랫폼별 분석
-- **퍼널 분석**: AARRR 프레임워크 기반 D3.js 전환 퍼널 시각화
+- **퍼널 분석**: AARRR 프레임워크 기반 D3.js 전환 퍼널 시각화 (4/5단계 구현)
 - **크리에이티브 분석**: 이미지별 성과 분석 및 KPI 필터링
 - **다중 기간 필터**: 전체/180일/90일/30일 기간별 분석 지원
 
@@ -59,8 +91,9 @@
 | AI 상태 요약 | 현재 상태, 현재/예측 매출 비교 |
 | 통합 인사이트 | AI 스토리 배너, 경고 알림, 투자 추천 |
 | 최근 변화 인사이트 | 성과 개선/하락 분석 (7일/14일/30일 비교) |
-| 성과 분석 대시보드 | 전체 성과 예측, 세그먼트 비교/트렌드, 비즈니스 인사이트 |
-| 데이터 분석 알고리즘 | Prophet 예측, 상관관계 히트맵, 이상치 분석 |
+| 예산 시뮬레이션 | 채널별 예산 조정 시 매출 변화 시뮬레이션, 체감 수익 모델 |
+| 주요 항목 트렌드 | 세그먼트별 비용/ROAS/전환수/매출 추이 분석 |
+| 데이터 분석 알고리즘 | Prophet 예측, Forecast Matrix, 상관관계 히트맵, 이상치 분석 |
 
 ### 5. Creative Analysis (creative_analysis_standalone.html)
 **광고 소재별 분석 대시보드** - [상세 문서](docs/creative_analysis_specific.md)
@@ -324,6 +357,17 @@ marketing-dashboard/
 - **요일별 분석**: 월~일 전환 패턴
 - **채널별 요일**: 채널별 최적 광고 요일 파악
 
+### 예산 시뮬레이션 (체감 수익 모델)
+- **체감 계수**: `DIMINISHING_FACTOR = 0.15`
+- **ROAS 조정 공식**:
+  - 예산 증가 시: `adjusted_roas = current_roas × (1 - 0.15 × ln(1 + budget_change_ratio))`
+  - 예산 감소 시: `adjusted_roas = current_roas × (1 + 0.15 × ln(1 + |budget_change_ratio|) × 0.5)`
+- **투자 추천 등급**:
+  - ≥150%: 증액 추천 (녹색)
+  - ≥100%: 유지 (파랑)
+  - ≥50%: 효율 점검 (주황)
+  - <50%: 감액 검토 (빨강)
+
 ### KPI 계산 공식
 ```javascript
 CPM  = (비용 / 노출) * 1000    // 1,000회 노출당 비용
@@ -393,18 +437,29 @@ pip install prophet
 
 ---
 
-## Standalone HTML 장점
+## 아키텍처 비교
+
+### 현재: Standalone HTML
 
 | 특징 | 설명 |
 |------|------|
 | 서버 불필요 | 브라우저에서 바로 실행 |
 | 오프라인 사용 | 인터넷 없이도 동작 |
 | 쉬운 공유 | 파일 하나로 전체 대시보드 공유 |
-| 빠른 로딩 | 모든 데이터가 HTML에 임베드 |
+| 파일 크기 | ~30MB (모든 데이터 임베드) |
+| 클라이언트 | 단일 클라이언트 |
 
-### 파일 크기
-- type_dashboard_standalone.html: ~30MB
-- 모든 CSV/JSON 데이터 포함
+### 목표: Next.js + Vercel (JAMstack)
+
+| 특징 | 설명 |
+|------|------|
+| CDN 배포 | Vercel Edge Network 전 세계 빠른 응답 |
+| 멀티클라이언트 | 서브도메인 분리 (clienta.dashboard.com) |
+| 자동 배포 | Git Push → GitHub Actions → Vercel |
+| 파일 크기 | ~5MB (85% 감소) |
+| 비용 | 연 ~$12 (도메인만) |
+
+> 상세 설계: [Deploy_project.md](docs/Deploy_project.md)
 
 ---
 
@@ -449,15 +504,15 @@ install_packages.bat
 
 ---
 
-**버전**: 4.2.0
-**최종 업데이트**: 2025-12-11
+**버전**: 4.3.0
+**최종 업데이트**: 2026-01-05
 **라이선스**: MIT
 
 ---
 
 ## 상세 문서
 
-각 대시보드의 상세 기능 명세는 아래 문서를 참조하세요:
+### 대시보드 기능 명세
 
 | 대시보드 | 문서 |
 |----------|------|
@@ -466,4 +521,30 @@ install_packages.bat
 | Funnel Dashboard | [funnel_dashboard_specific.md](docs/funnel_dashboard_specific.md) |
 | Timeseries Analysis | [timeseries_analysis_specific.md](docs/timeseries_analysis_specific.md) |
 | Creative Analysis | [creative_analysis_specific.md](docs/creative_analysis_specific.md) |
-| 다중 기간 필터 구현 | [MULTI_PERIOD_FILTER_IMPLEMENTATION.md](docs/MULTI_PERIOD_FILTER_IMPLEMENTATION.md) |
+
+### 아키텍처 & 배포
+
+| 문서 | 설명 |
+|------|------|
+| [Deploy_project.md](docs/Deploy_project.md) | 배포 설계서 - JAMstack 아키텍처, 풀퍼널 커버리지, 멀티클라이언트 구조 |
+
+### 고급 기능 가이드
+
+| 기능 | 문서 | 설명 |
+|------|------|------|
+| 예산 시뮬레이션 | [PROPHET_BUDGET_SIMULATION.md](docs/PROPHET_BUDGET_SIMULATION.md) | 체감 수익 모델, ROAS 조정 공식, 투자 효율 계산 |
+| Prophet 계절성 | [PROPHET_SEASONALITY_GUIDE.md](docs/PROPHET_SEASONALITY_GUIDE.md) | 음수 예측값 처리, 하이브리드 접근법 |
+| 다중 기간 필터 | [MULTI_PERIOD_FILTER_IMPLEMENTATION.md](docs/MULTI_PERIOD_FILTER_IMPLEMENTATION.md) | 전체/180일/90일/30일 필터 구현 |
+| 유형구분별 KPI | [CAMPAIGN_TYPE_KPI_MAPPING.md](docs/CAMPAIGN_TYPE_KPI_MAPPING.md) | 트래픽(CPC) vs 전환(ROAS/CPA) KPI 분기 |
+| 데이터 매핑 | [data_mapping_guide.md](docs/data_mapping_guide.md) | 성별/연령/기기유형/기기플랫폼 통합 매핑 |
+| Cohort Retention | [COHORT_RETENTION_GUIDE.md](docs/COHORT_RETENTION_GUIDE.md) | GA4 BigQuery 기반 코호트 분석 |
+
+### 개발자 가이드
+
+| 문서 | 설명 |
+|------|------|
+| [requirements.md](docs/requirements.md) | 패키지 요구사항 및 설치 가이드 |
+| [CSV_PARSING_STANDARD.md](docs/CSV_PARSING_STANDARD.md) | CSV 파싱 표준 (RFC 4180) |
+| [insight_generator_guide.md](docs/insight_generator_guide.md) | 인사이트 생성 스크립트 가이드 |
+| [generate_funnel_data_guide.md](docs/generate_funnel_data_guide.md) | 퍼널 데이터 생성 가이드 |
+| [generate_type_insights_guide.md](docs/generate_type_insights_guide.md) | 타입 인사이트 생성 가이드 |

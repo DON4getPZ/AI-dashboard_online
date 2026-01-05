@@ -1,7 +1,7 @@
 {
   "by_period": {
     "full": {
-      "generated_at": "2025-12-29T18:10:42.537298",
+      "generated_at": "2026-01-05T10:37:37.398196",
       "category": "--days",
       "thresholds_used": {
         "activation_rate_warning": 50.0,
@@ -22,16 +22,16 @@
         "is_filtered": false
       },
       "meta": {
-        "generated_at": "2025-12-29 18:10",
-        "analysis_period": "2025-02-12 ~ 2025-12-28",
+        "generated_at": "2026-01-05 10:37",
+        "analysis_period": "2025-02-12 ~ 2026-01-05",
         "category": "--days"
       },
       "summary_card": {
         "title": "이번 달 성과 요약",
         "revenue_text": "0원",
         "cvr_text": "0.7%",
-        "visitors_text": "44,120",
-        "purchasers_text": "300",
+        "visitors_text": "44,847",
+        "purchasers_text": "304",
         "status_message": "분발해야 합니다! 이탈률 방어가 시급해요 🚨"
       },
       "key_insights": [
@@ -44,7 +44,7 @@
           "text_color": "#1565c0",
           "message": "전체 CVR 0.7%, 총 매출 0원",
           "sub_items": [
-            "방문자 44,120명 → 구매자 300명",
+            "방문자 44,847명 → 구매자 304명",
             "활성화율 31% | 장바구니→구매 6%"
           ],
           "action": {
@@ -59,7 +59,7 @@
           "bg_color": "#fff3e0",
           "border_color": "#fb8c00",
           "text_color": "#e65100",
-          "message": "관심→구매 전환율이 8.6%로 매우 낮습니다. (기준 10% 대비 -1.4%p)",
+          "message": "관심→구매 전환율이 8.5%로 매우 낮습니다. (기준 10% 대비 -1.5%p)",
           "sub_items": [
             "[DA] 유저의 구매 결정을 막는 요소가 있습니다."
           ],
@@ -78,10 +78,10 @@
           "bg_color": "#f3e5f5",
           "border_color": "#ab47bc",
           "text_color": "#7b1fa2",
-          "message": "'채널톡' 채널은 방문자의 82.9%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+          "message": "'채널톡' 채널은 방문자의 80.2%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
           "sub_items": [
-            "활성화율 82.9% (채널 평균 대비 우수)",
-            "전환율 1.32%"
+            "활성화율 80.2% (채널 평균 대비 우수)",
+            "전환율 1.23%"
           ],
           "action": {
             "type": "opportunity",
@@ -95,11 +95,11 @@
         }
       ],
       "summary": {
-        "total_acquisition": 44120,
-        "total_activation": 13833,
-        "total_consideration": 5184,
-        "total_conversion": 641,
-        "total_purchase": 300,
+        "total_acquisition": 44847,
+        "total_activation": 14086,
+        "total_consideration": 5319,
+        "total_conversion": 664,
+        "total_purchase": 304,
         "total_revenue": 0.0,
         "total_revenue_formatted": "0원",
         "overall_cvr": 0.68
@@ -107,18 +107,18 @@
       "overall": {
         "current_period": {
           "start_date": "2025-02-12",
-          "end_date": "2025-12-28",
-          "total_acquisition": 44120,
-          "total_activation": 13833,
-          "total_consideration": 5184,
-          "total_conversion": 641,
-          "total_purchase": 300,
+          "end_date": "2026-01-05",
+          "total_acquisition": 44847,
+          "total_activation": 14086,
+          "total_consideration": 5319,
+          "total_conversion": 664,
+          "total_purchase": 304,
           "total_revenue": 0.0,
           "total_revenue_formatted": "0원",
           "overall_cvr": 0.68
         },
         "trend": {
-          "direction": "stable"
+          "direction": "declining"
         }
       },
       "top_channels": [
@@ -194,7 +194,7 @@
         },
         {
           "type": "low_consideration_conversion",
-          "message": "장바구니→구매 전환율이 5.8%로 낮습니다. 결제 프로세스 개선이 필요합니다.",
+          "message": "장바구니→구매 전환율이 5.7%로 낮습니다. 결제 프로세스 개선이 필요합니다.",
           "message_friendly": "🛒 장바구니에 담은 고객의 94%가 구매를 포기했어요!",
           "severity": "medium"
         }
@@ -206,23 +206,23 @@
           "message": "검색해서 들어온 분들은 참을성이 없어서 로딩이 길면 바로 나갑니다.",
           "reason": "페이지 로딩 속도나 첫 화면 콘텐츠 문제일 수 있어요.",
           "action": "상세페이지의 고용량 이미지를 압축해서 로딩 속도를 높여주세요.",
-          "technical": "유입→활동 전환율이 41.1%로 기준(50.0%) 미달"
+          "technical": "유입→활동 전환율이 40.9%로 기준(50.0%) 미달"
         },
         {
           "severity": "high",
           "title": "🛒 [Direct] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 95.1%가 결제 없이 이탈했습니다.",
+          "message": "장바구니까지 온 고객의 95.2%가 결제 없이 이탈했습니다.",
           "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
           "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 4.9%로 기준(20.0%) 미달"
+          "technical": "관심→구매 전환율이 4.8%로 기준(20.0%) 미달"
         },
         {
           "severity": "high",
           "title": "🛒 [구글 Organic] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 96.5%가 결제 없이 이탈했습니다.",
+          "message": "장바구니까지 온 고객의 96.6%가 결제 없이 이탈했습니다.",
           "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
           "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 3.5%로 기준(20.0%) 미달"
+          "technical": "관심→구매 전환율이 3.4%로 기준(20.0%) 미달"
         },
         {
           "severity": "medium",
@@ -246,23 +246,23 @@
           "message": "검색해서 들어온 분들은 참을성이 없어서 로딩이 길면 바로 나갑니다.",
           "reason": "페이지 로딩 속도나 첫 화면 콘텐츠 문제일 수 있어요.",
           "action": "상세페이지의 고용량 이미지를 압축해서 로딩 속도를 높여주세요.",
-          "technical": "유입→활동 전환율이 39.7%로 기준(50.0%) 미달"
+          "technical": "유입→활동 전환율이 40.5%로 기준(50.0%) 미달"
         },
         {
           "severity": "high",
           "title": "🛒 [기타] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 93.8%가 결제 없이 이탈했습니다.",
+          "message": "장바구니까지 온 고객의 93.9%가 결제 없이 이탈했습니다.",
           "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
           "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 6.2%로 기준(20.0%) 미달"
+          "technical": "관심→구매 전환율이 6.1%로 기준(20.0%) 미달"
         },
         {
           "severity": "high",
           "title": "🛒 [네이버 Organic] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 97.5%가 결제 없이 이탈했습니다.",
+          "message": "장바구니까지 온 고객의 97.6%가 결제 없이 이탈했습니다.",
           "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
           "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 2.5%로 기준(20.0%) 미달"
+          "technical": "관심→구매 전환율이 2.4%로 기준(20.0%) 미달"
         },
         {
           "severity": "medium",
@@ -278,23 +278,23 @@
           "message": "검색해서 들어온 분들은 참을성이 없어서 로딩이 길면 바로 나갑니다.",
           "reason": "페이지 로딩 속도나 첫 화면 콘텐츠 문제일 수 있어요.",
           "action": "상세페이지의 고용량 이미지를 압축해서 로딩 속도를 높여주세요.",
-          "technical": "유입→활동 전환율이 19.8%로 기준(50.0%) 미달"
+          "technical": "유입→활동 전환율이 19.9%로 기준(50.0%) 미달"
         },
         {
           "severity": "high",
           "title": "🛒 [메타 광고] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 91.4%가 결제 없이 이탈했습니다.",
+          "message": "장바구니까지 온 고객의 91.5%가 결제 없이 이탈했습니다.",
           "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
           "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 8.6%로 기준(20.0%) 미달"
+          "technical": "관심→구매 전환율이 8.5%로 기준(20.0%) 미달"
         },
         {
           "severity": "high",
           "title": "🛒 [스케일업스쿼드_direct] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 98.2%가 결제 없이 이탈했습니다.",
+          "message": "장바구니까지 온 고객의 98.3%가 결제 없이 이탈했습니다.",
           "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
           "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 1.8%로 기준(20.0%) 미달"
+          "technical": "관심→구매 전환율이 1.7%로 기준(20.0%) 미달"
         },
         {
           "severity": "medium",
@@ -347,14 +347,14 @@
       ],
       "channel_strategy": {
         "status": "success",
-        "avg_traffic": 2451,
+        "avg_traffic": 2491,
         "avg_cvr": 0.68,
         "channels": {
           "Direct": {
             "stats": {
-              "users": 6867,
-              "users_formatted": "6,867",
-              "cvr": 0.74,
+              "users": 6995,
+              "users_formatted": "6,995",
+              "cvr": 0.73,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -368,9 +368,9 @@
           },
           "구글 Organic": {
             "stats": {
-              "users": 3226,
-              "users_formatted": "3,226",
-              "cvr": 0.99,
+              "users": 3308,
+              "users_formatted": "3,308",
+              "cvr": 0.97,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -416,9 +416,9 @@
           },
           "기타": {
             "stats": {
-              "users": 656,
-              "users_formatted": "656",
-              "cvr": 1.22,
+              "users": 665,
+              "users_formatted": "665",
+              "cvr": 1.2,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -432,9 +432,9 @@
           },
           "네이버 Organic": {
             "stats": {
-              "users": 1149,
-              "users_formatted": "1,149",
-              "cvr": 0.87,
+              "users": 1175,
+              "users_formatted": "1,175",
+              "cvr": 0.85,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -480,8 +480,8 @@
           },
           "메타 광고": {
             "stats": {
-              "users": 24259,
-              "users_formatted": "24,259",
+              "users": 24709,
+              "users_formatted": "24,709",
               "cvr": 0.71,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -496,9 +496,9 @@
           },
           "브런치": {
             "stats": {
-              "users": 55,
-              "users_formatted": "55",
-              "cvr": 1.82,
+              "users": 57,
+              "users_formatted": "57",
+              "cvr": 1.75,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -512,9 +512,9 @@
           },
           "스케일업스쿼드_direct": {
             "stats": {
-              "users": 843,
-              "users_formatted": "843",
-              "cvr": 0.47,
+              "users": 862,
+              "users_formatted": "862",
+              "cvr": 0.46,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -592,9 +592,9 @@
           },
           "채널톡": {
             "stats": {
-              "users": 76,
-              "users_formatted": "76",
-              "cvr": 1.32,
+              "users": 81,
+              "users_formatted": "81",
+              "cvr": 1.23,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -608,9 +608,9 @@
           },
           "채용": {
             "stats": {
-              "users": 390,
-              "users_formatted": "390",
-              "cvr": 0.26,
+              "users": 396,
+              "users_formatted": "396",
+              "cvr": 0.25,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -646,43 +646,43 @@
           "group_a": "Direct",
           "group_b": "구글 Organic",
           "metric": "conversion_rate",
-          "chi2_statistic": 1.3803552265402492,
-          "p_value": 0.24004064860849042,
+          "chi2_statistic": 1.3112414967027752,
+          "p_value": 0.2521699986122024,
           "significant": false,
-          "cvr_a": 0.74,
-          "cvr_b": 0.99
+          "cvr_a": 0.73,
+          "cvr_b": 0.97
         },
         {
           "type": "channel_comparison",
           "group_a": "Direct",
           "group_b": "기타",
           "metric": "conversion_rate",
-          "chi2_statistic": 1.1905576734362415,
-          "p_value": 0.27521709581330167,
+          "chi2_statistic": 1.218302155192326,
+          "p_value": 0.2696941122585621,
           "significant": false,
-          "cvr_a": 0.74,
-          "cvr_b": 1.22
+          "cvr_a": 0.73,
+          "cvr_b": 1.2
         },
         {
           "type": "channel_comparison",
           "group_a": "Direct",
           "group_b": "네이버 Organic",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.07696189452286958,
-          "p_value": 0.7814575735404754,
+          "chi2_statistic": 0.07090424315276314,
+          "p_value": 0.7900247248688073,
           "significant": false,
-          "cvr_a": 0.74,
-          "cvr_b": 0.87
+          "cvr_a": 0.73,
+          "cvr_b": 0.85
         },
         {
           "type": "channel_comparison",
           "group_a": "Direct",
           "group_b": "메타 광고",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.044520456695015115,
-          "p_value": 0.832888275982616,
+          "chi2_statistic": 0.0044642035884951475,
+          "p_value": 0.9467292239154561,
           "significant": false,
-          "cvr_a": 0.74,
+          "cvr_a": 0.73,
           "cvr_b": 0.71
         },
         {
@@ -690,10 +690,10 @@
           "group_a": "Direct",
           "group_b": "이메일",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.18597850164883312,
-          "p_value": 0.666284967171922,
+          "chi2_statistic": 0.2235013734771568,
+          "p_value": 0.6363849007594847,
           "significant": false,
-          "cvr_a": 0.74,
+          "cvr_a": 0.73,
           "cvr_b": 0.99
         },
         {
@@ -701,10 +701,10 @@
           "group_a": "Direct",
           "group_b": "이오플래닛",
           "metric": "conversion_rate",
-          "chi2_statistic": 5.8395792090179155,
-          "p_value": 0.015669573653207543,
+          "chi2_statistic": 6.06845895811559,
+          "p_value": 0.013761697737914615,
           "significant": true,
-          "cvr_a": 0.74,
+          "cvr_a": 0.73,
           "cvr_b": 2.3
         },
         {
@@ -712,32 +712,32 @@
           "group_a": "구글 Organic",
           "group_b": "기타",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.09866103675400173,
-          "p_value": 0.7534423974508042,
+          "chi2_statistic": 0.11737310333264253,
+          "p_value": 0.7319012212341646,
           "significant": false,
-          "cvr_a": 0.99,
-          "cvr_b": 1.22
+          "cvr_a": 0.97,
+          "cvr_b": 1.2
         },
         {
           "type": "channel_comparison",
           "group_a": "구글 Organic",
           "group_b": "네이버 Organic",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.034923586035379414,
-          "p_value": 0.8517558709873309,
+          "chi2_statistic": 0.03210209485375301,
+          "p_value": 0.8578037677857517,
           "significant": false,
-          "cvr_a": 0.99,
-          "cvr_b": 0.87
+          "cvr_a": 0.97,
+          "cvr_b": 0.85
         },
         {
           "type": "channel_comparison",
           "group_a": "구글 Organic",
           "group_b": "메타 광고",
           "metric": "conversion_rate",
-          "chi2_statistic": 2.7216369680431307,
-          "p_value": 0.0989964414858463,
+          "chi2_statistic": 2.2411151983951045,
+          "p_value": 0.1343840289283334,
           "significant": false,
-          "cvr_a": 0.99,
+          "cvr_a": 0.97,
           "cvr_b": 0.71
         },
         {
@@ -748,7 +748,7 @@
           "chi2_statistic": 0.0,
           "p_value": 1.0,
           "significant": false,
-          "cvr_a": 0.99,
+          "cvr_a": 0.97,
           "cvr_b": 0.99
         },
         {
@@ -756,10 +756,10 @@
           "group_a": "구글 Organic",
           "group_b": "이오플래닛",
           "metric": "conversion_rate",
-          "chi2_statistic": 2.7098119781556727,
-          "p_value": 0.09973274567278351,
+          "chi2_statistic": 2.9055734240181628,
+          "p_value": 0.08827385447288932,
           "significant": false,
-          "cvr_a": 0.99,
+          "cvr_a": 0.97,
           "cvr_b": 2.3
         },
         {
@@ -767,21 +767,21 @@
           "group_a": "기타",
           "group_b": "네이버 Organic",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.22268830686264687,
-          "p_value": 0.636999153655499,
+          "chi2_statistic": 0.24045821164771697,
+          "p_value": 0.6238753659118036,
           "significant": false,
-          "cvr_a": 1.22,
-          "cvr_b": 0.87
+          "cvr_a": 1.2,
+          "cvr_b": 0.85
         },
         {
           "type": "channel_comparison",
           "group_a": "기타",
           "group_b": "메타 광고",
           "metric": "conversion_rate",
-          "chi2_statistic": 1.6636258176122953,
-          "p_value": 0.19711448348962962,
+          "chi2_statistic": 1.5380878315306237,
+          "p_value": 0.2149026521480688,
           "significant": false,
-          "cvr_a": 1.22,
+          "cvr_a": 1.2,
           "cvr_b": 0.71
         },
         {
@@ -789,10 +789,10 @@
           "group_a": "기타",
           "group_b": "이메일",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.013613695885358013,
-          "p_value": 0.907115427711124,
+          "chi2_statistic": 0.00829823913063998,
+          "p_value": 0.9274173667640332,
           "significant": false,
-          "cvr_a": 1.22,
+          "cvr_a": 1.2,
           "cvr_b": 0.99
         },
         {
@@ -800,10 +800,10 @@
           "group_a": "기타",
           "group_b": "이오플래닛",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.8179491495487998,
-          "p_value": 0.36578046940754505,
+          "chi2_statistic": 0.8652618342950683,
+          "p_value": 0.3522703817018552,
           "significant": false,
-          "cvr_a": 1.22,
+          "cvr_a": 1.2,
           "cvr_b": 2.3
         },
         {
@@ -811,10 +811,10 @@
           "group_a": "네이버 Organic",
           "group_b": "메타 광고",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.2066011113440511,
-          "p_value": 0.6494445623938291,
+          "chi2_statistic": 0.13950097038102405,
+          "p_value": 0.7087776200314272,
           "significant": false,
-          "cvr_a": 0.87,
+          "cvr_a": 0.85,
           "cvr_b": 0.71
         },
         {
@@ -822,10 +822,10 @@
           "group_a": "네이버 Organic",
           "group_b": "이메일",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.0,
-          "p_value": 1.0,
+          "chi2_statistic": 0.0010734790370048764,
+          "p_value": 0.973862794647918,
           "significant": false,
-          "cvr_a": 0.87,
+          "cvr_a": 0.85,
           "cvr_b": 0.99
         },
         {
@@ -833,10 +833,10 @@
           "group_a": "네이버 Organic",
           "group_b": "이오플래닛",
           "metric": "conversion_rate",
-          "chi2_statistic": 2.700220418534773,
-          "p_value": 0.10033437424286444,
+          "chi2_statistic": 2.8550944283127633,
+          "p_value": 0.09108489098766301,
           "significant": false,
-          "cvr_a": 0.87,
+          "cvr_a": 0.85,
           "cvr_b": 2.3
         },
         {
@@ -844,8 +844,8 @@
           "group_a": "메타 광고",
           "group_b": "이메일",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.3256289417937105,
-          "p_value": 0.5682443325209887,
+          "chi2_statistic": 0.3138665586208677,
+          "p_value": 0.5753171460388778,
           "significant": false,
           "cvr_a": 0.71,
           "cvr_b": 0.99
@@ -855,8 +855,8 @@
           "group_a": "메타 광고",
           "group_b": "이오플래닛",
           "metric": "conversion_rate",
-          "chi2_statistic": 6.984816236617743,
-          "p_value": 0.008220409302537411,
+          "chi2_statistic": 6.92598898944206,
+          "p_value": 0.008495200043829695,
           "significant": true,
           "cvr_a": 0.71,
           "cvr_b": 2.3
@@ -916,69 +916,95 @@
         "analysis_method": "퍼널 건강도 (유입→활동→관심→결제 각 단계 전환율 평균)"
       },
       "performance_trends": {
-        "improvements_7d": [
-          {
-            "metric": "전환율 (CVR)",
-            "period": "7d",
-            "improvement_level": "high",
-            "change_pct": 411.28,
-            "recent_avg": 1.32,
-            "previous_avg": 0.26,
-            "recommendation": "전환율이 411.3% 개선되었습니다. 현재 전략이 효과적입니다. A/B 테스트로 추가 개선 여지를 확인하세요."
-          },
-          {
-            "metric": "구매 성공",
-            "period": "7d",
-            "improvement_level": "high",
-            "change_pct": 400.0,
-            "recent_avg": 1.43,
-            "previous_avg": 0.29,
-            "recommendation": "구매가 400.0% 증가했습니다! 성공 요인을 분석하고, 유사 캠페인을 다른 세그먼트에도 적용하세요."
-          }
-        ],
+        "improvements_7d": [],
         "improvements_14d": [],
-        "improvements_30d": [
-          {
-            "metric": "전환율 (CVR)",
-            "period": "30d",
-            "improvement_level": "high",
-            "change_pct": 34.98,
-            "recent_avg": 1.16,
-            "previous_avg": 0.86,
-            "recommendation": "전환율이 35.0% 개선되었습니다. 현재 전략이 효과적입니다. A/B 테스트로 추가 개선 여지를 확인하세요."
-          }
-        ],
-        "declines_7d": [],
-        "declines_14d": [
+        "improvements_30d": [],
+        "declines_7d": [
           {
             "metric": "구매 성공",
-            "period": "14d",
+            "period": "7d",
             "risk_level": "high",
-            "change_pct": -47.83,
-            "recent_avg": 0.86,
-            "previous_avg": 1.64,
-            "recommendation": "구매가 47.8% 감소했습니다. 결제 프로세스 오류나 품절 상품이 없는지 긴급 점검하세요."
+            "change_pct": -66.67,
+            "recent_avg": 0.43,
+            "previous_avg": 1.29,
+            "recommendation": "구매가 66.7% 감소했습니다. 결제 프로세스 오류나 품절 상품이 없는지 긴급 점검하세요."
           },
           {
             "metric": "전환율 (CVR)",
-            "period": "14d",
+            "period": "7d",
             "risk_level": "high",
-            "change_pct": -39.23,
-            "recent_avg": 0.79,
-            "previous_avg": 1.3,
-            "recommendation": "전환율이 39.2% 하락했습니다. 퍼널 전체를 점검하여 이탈 구간을 파악하세요."
+            "change_pct": -60.1,
+            "recent_avg": 0.47,
+            "previous_avg": 1.17,
+            "recommendation": "전환율이 60.1% 하락했습니다. 퍼널 전체를 점검하여 이탈 구간을 파악하세요."
           },
           {
             "metric": "장바구니 (관심)",
-            "period": "14d",
+            "period": "7d",
             "risk_level": "medium",
-            "change_pct": -22.93,
-            "recent_avg": 19.93,
-            "previous_avg": 25.86,
-            "recommendation": "장바구니 추가가 22.9% 감소했습니다. 상품 가격 경쟁력이나 재고 상황을 확인하세요."
+            "change_pct": -24.5,
+            "recent_avg": 16.29,
+            "previous_avg": 21.57,
+            "recommendation": "장바구니 추가가 24.5% 감소했습니다. 상품 가격 경쟁력이나 재고 상황을 확인하세요."
+          },
+          {
+            "metric": "매장 방문 (유입)",
+            "period": "7d",
+            "risk_level": "medium",
+            "change_pct": -22.5,
+            "recent_avg": 88.57,
+            "previous_avg": 114.29,
+            "recommendation": "유입이 22.5% 감소했습니다. 광고 노출이 줄었거나 시즌 영향일 수 있습니다. 채널별 유입 추이를 점검하세요."
+          },
+          {
+            "metric": "상품 구경 (활동)",
+            "period": "7d",
+            "risk_level": "medium",
+            "change_pct": -21.61,
+            "recent_avg": 30.57,
+            "previous_avg": 39.0,
+            "recommendation": "활동 참여가 21.6% 하락했습니다. 랜딩페이지 로딩 속도나 콘텐츠 품질을 점검하세요."
           }
         ],
-        "declines_30d": []
+        "declines_14d": [],
+        "declines_30d": [
+          {
+            "metric": "구매 성공",
+            "period": "30d",
+            "risk_level": "high",
+            "change_pct": -48.98,
+            "recent_avg": 0.83,
+            "previous_avg": 1.63,
+            "recommendation": "구매가 49.0% 감소했습니다. 결제 프로세스 오류나 품절 상품이 없는지 긴급 점검하세요."
+          },
+          {
+            "metric": "전환율 (CVR)",
+            "period": "30d",
+            "risk_level": "high",
+            "change_pct": -39.51,
+            "recent_avg": 0.78,
+            "previous_avg": 1.28,
+            "recommendation": "전환율이 39.5% 하락했습니다. 퍼널 전체를 점검하여 이탈 구간을 파악하세요."
+          },
+          {
+            "metric": "결제창 진입",
+            "period": "30d",
+            "risk_level": "medium",
+            "change_pct": -24.17,
+            "recent_avg": 3.03,
+            "previous_avg": 4.0,
+            "recommendation": "결제 진입이 24.2% 하락했습니다. 배송비나 결제 옵션에 문제가 없는지 점검하세요."
+          },
+          {
+            "metric": "매장 방문 (유입)",
+            "period": "30d",
+            "risk_level": "medium",
+            "change_pct": -23.62,
+            "recent_avg": 109.3,
+            "previous_avg": 143.1,
+            "recommendation": "유입이 23.6% 감소했습니다. 광고 노출이 줄었거나 시즌 영향일 수 있습니다. 채널별 유입 추이를 점검하세요."
+          }
+        ]
       },
       "micro_segment_alerts": [
         {
@@ -986,7 +1012,7 @@
           "sub_type": "checkout_friction",
           "severity": "critical",
           "title": "🚧 메타 광고: 결제 장벽 감지",
-          "message": "관심→구매 전환율이 8.6%로 매우 낮습니다. (기준 10% 대비 -1.4%p)",
+          "message": "관심→구매 전환율이 8.5%로 매우 낮습니다. (기준 10% 대비 -1.5%p)",
           "diagnosis": "[DA] 유저의 구매 결정을 막는 요소가 있습니다.",
           "action": "이미 구매한 상품이 노출되거나 관심 없는 상품 추천 중.",
           "action_detail": {
@@ -996,17 +1022,17 @@
           },
           "category": "DA",
           "metrics": {
-            "유입→활동": 19.8,
-            "관심→구매": 8.6,
-            "관심": 2005
+            "유입→활동": 19.9,
+            "관심→구매": 8.5,
+            "관심": 2066
           },
           "impact": {
             "lost_users": 0,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 5.8,
-            "your_value": 8.6,
+            "channel_avg": 5.7,
+            "your_value": 8.5,
             "gap": 2.8
           },
           "urgency_score": 81,
@@ -1017,7 +1043,7 @@
           "sub_type": "activation_drop",
           "severity": "high",
           "title": "🚪 메타 광고: 첫 이탈 경고",
-          "message": "유입→활동 전환율이 19.8%로 기준(50.0%) 미달입니다.",
+          "message": "유입→활동 전환율이 19.9%로 기준(50.0%) 미달입니다.",
           "diagnosis": "[DA] 랜딩페이지에서 대량 이탈이 발생하고 있습니다.",
           "action": "Fat Finger(오클릭) 또는 저품질 지면 노출 의심.",
           "action_detail": {
@@ -1027,17 +1053,17 @@
           },
           "category": "DA",
           "metrics": {
-            "유입→활동": 19.8,
+            "유입→활동": 19.9,
             "전환율": 0.71,
-            "유입": 24259
+            "유입": 24709
           },
           "impact": {
-            "lost_users": 2793,
+            "lost_users": 2853,
             "potential_revenue": 0
           },
           "benchmark": {
             "channel_avg": 31.4,
-            "your_value": 19.8,
+            "your_value": 19.9,
             "gap": -11.5
           },
           "urgency_score": 81,
@@ -1048,7 +1074,7 @@
           "sub_type": "checkout_friction",
           "severity": "critical",
           "title": "🚧 Direct: 결제 장벽 감지",
-          "message": "관심→구매 전환율이 4.9%로 매우 낮습니다. (기준 10% 대비 -5.1%p)",
+          "message": "관심→구매 전환율이 4.8%로 매우 낮습니다. (기준 10% 대비 -5.2%p)",
           "diagnosis": "[Organic] 유저의 구매 결정을 막는 요소가 있습니다.",
           "action": "회원가입 절차 복잡 또는 결제 수단 제한.",
           "action_detail": {
@@ -1058,17 +1084,17 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 41.1,
-            "관심→구매": 4.9,
-            "관심": 1038
+            "유입→활동": 40.9,
+            "관심→구매": 4.8,
+            "관심": 1052
           },
           "impact": {
             "lost_users": 9,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 5.8,
-            "your_value": 4.9,
+            "channel_avg": 5.7,
+            "your_value": 4.8,
             "gap": -0.9
           },
           "urgency_score": 68,
@@ -1079,7 +1105,7 @@
           "sub_type": "activation_drop",
           "severity": "high",
           "title": "🚪 Direct: 첫 이탈 경고",
-          "message": "유입→활동 전환율이 41.1%로 기준(50.0%) 미달입니다.",
+          "message": "유입→활동 전환율이 40.9%로 기준(50.0%) 미달입니다.",
           "diagnosis": "[Organic] 랜딩페이지에서 대량 이탈이 발생하고 있습니다.",
           "action": "페이지 로딩 속도 느림 또는 모바일 가독성 저하.",
           "action_detail": {
@@ -1089,9 +1115,9 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 41.1,
-            "전환율": 0.74,
-            "유입": 6867
+            "유입→활동": 40.9,
+            "전환율": 0.73,
+            "유입": 6995
           },
           "impact": {
             "lost_users": 0,
@@ -1099,8 +1125,8 @@
           },
           "benchmark": {
             "channel_avg": 31.4,
-            "your_value": 41.1,
-            "gap": 9.7
+            "your_value": 40.9,
+            "gap": 9.5
           },
           "urgency_score": 58,
           "priority_rank": 4
@@ -1129,9 +1155,9 @@
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 5.8,
+            "channel_avg": 5.7,
             "your_value": 1.1,
-            "gap": -4.7
+            "gap": -4.6
           },
           "urgency_score": 58,
           "priority_rank": 5
@@ -1156,13 +1182,13 @@
             "유입": 2330
           },
           "impact": {
-            "lost_users": 210,
+            "lost_users": 211,
             "potential_revenue": 0
           },
           "benchmark": {
             "channel_avg": 31.4,
             "your_value": 22.3,
-            "gap": -9.0
+            "gap": -9.1
           },
           "urgency_score": 55,
           "priority_rank": 6
@@ -1172,7 +1198,7 @@
           "sub_type": "checkout_friction",
           "severity": "critical",
           "title": "🚧 구글 Organic: 결제 장벽 감지",
-          "message": "관심→구매 전환율이 3.5%로 매우 낮습니다. (기준 10% 대비 -6.5%p)",
+          "message": "관심→구매 전환율이 3.4%로 매우 낮습니다. (기준 10% 대비 -6.6%p)",
           "diagnosis": "[Organic] 유저의 구매 결정을 막는 요소가 있습니다.",
           "action": "회원가입 절차 복잡 또는 결제 수단 제한.",
           "action_detail": {
@@ -1182,17 +1208,17 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 68.5,
-            "관심→구매": 3.5,
-            "관심": 914
+            "유입→활동": 68.9,
+            "관심→구매": 3.4,
+            "관심": 945
           },
           "impact": {
-            "lost_users": 20,
+            "lost_users": 22,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 5.8,
-            "your_value": 3.5,
+            "channel_avg": 5.7,
+            "your_value": 3.4,
             "gap": -2.3
           },
           "urgency_score": 53,
@@ -1218,15 +1244,15 @@
             "관심": 87
           },
           "impact": {
-            "lost_users": 1,
+            "lost_users": 0,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 5.8,
+            "channel_avg": 5.7,
             "your_value": 4.6,
-            "gap": -1.2
+            "gap": -1.1
           },
-          "urgency_score": 52,
+          "urgency_score": 51,
           "priority_rank": 8
         },
         {
@@ -1249,7 +1275,7 @@
             "유입": 605
           },
           "impact": {
-            "lost_users": 67,
+            "lost_users": 68,
             "potential_revenue": 0
           },
           "benchmark": {
@@ -1265,7 +1291,7 @@
           "sub_type": "checkout_friction",
           "severity": "critical",
           "title": "🚧 네이버 Organic: 결제 장벽 감지",
-          "message": "관심→구매 전환율이 2.5%로 매우 낮습니다. (기준 10% 대비 -7.5%p)",
+          "message": "관심→구매 전환율이 2.4%로 매우 낮습니다. (기준 10% 대비 -7.6%p)",
           "diagnosis": "[Organic] 유저의 구매 결정을 막는 요소가 있습니다.",
           "action": "회원가입 절차 복잡 또는 결제 수단 제한.",
           "action_detail": {
@@ -1275,17 +1301,17 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 67.6,
-            "관심→구매": 2.5,
-            "관심": 401
+            "유입→활동": 67.7,
+            "관심→구매": 2.4,
+            "관심": 410
           },
           "impact": {
             "lost_users": 13,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 5.8,
-            "your_value": 2.5,
+            "channel_avg": 5.7,
+            "your_value": 2.4,
             "gap": -3.3
           },
           "urgency_score": 44,
@@ -1296,7 +1322,7 @@
           "sub_type": "checkout_friction",
           "severity": "critical",
           "title": "🚧 스케일업스쿼드_direct: 결제 장벽 감지",
-          "message": "관심→구매 전환율이 1.8%로 매우 낮습니다. (기준 10% 대비 -8.2%p)",
+          "message": "관심→구매 전환율이 1.7%로 매우 낮습니다. (기준 10% 대비 -8.3%p)",
           "diagnosis": "[Organic] 유저의 구매 결정을 막는 요소가 있습니다.",
           "action": "회원가입 절차 복잡 또는 결제 수단 제한.",
           "action_detail": {
@@ -1306,17 +1332,17 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 65.1,
-            "관심→구매": 1.8,
-            "관심": 222
+            "유입→활동": 65.5,
+            "관심→구매": 1.7,
+            "관심": 236
           },
           "impact": {
-            "lost_users": 8,
+            "lost_users": 9,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 5.8,
-            "your_value": 1.8,
+            "channel_avg": 5.7,
+            "your_value": 1.7,
             "gap": -4.0
           },
           "urgency_score": 43,
@@ -1327,7 +1353,7 @@
           "sub_type": "checkout_friction",
           "severity": "critical",
           "title": "🚧 기타: 결제 장벽 감지",
-          "message": "관심→구매 전환율이 6.2%로 매우 낮습니다. (기준 10% 대비 -3.8%p)",
+          "message": "관심→구매 전환율이 6.1%로 매우 낮습니다. (기준 10% 대비 -3.9%p)",
           "diagnosis": "[기타] 유저의 구매 결정을 막는 요소가 있습니다.",
           "action": "상세 로그 분석을 통해 이탈 원인을 파악하고 UX를 개선하세요.",
           "action_detail": {
@@ -1337,18 +1363,18 @@
           },
           "category": "기타",
           "metrics": {
-            "유입→활동": 50.5,
-            "관심→구매": 6.2,
-            "관심": 130
+            "유입→활동": 50.4,
+            "관심→구매": 6.1,
+            "관심": 132
           },
           "impact": {
             "lost_users": 0,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 5.8,
-            "your_value": 6.2,
-            "gap": 0.4
+            "channel_avg": 5.7,
+            "your_value": 6.1,
+            "gap": 0.3
           },
           "urgency_score": 42,
           "priority_rank": 12
@@ -1379,9 +1405,9 @@
           "benchmark": {
             "channel_avg": 31.4,
             "your_value": 35.0,
-            "gap": 3.6
+            "gap": 3.5
           },
-          "urgency_score": 42,
+          "urgency_score": 41,
           "priority_rank": 13
         },
         {
@@ -1408,7 +1434,7 @@
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 5.8,
+            "channel_avg": 5.7,
             "your_value": 8.5,
             "gap": 2.7
           },
@@ -1430,16 +1456,16 @@
           },
           "category": "etc",
           "metrics": {
-            "유입→활동": 55.9,
+            "유입→활동": 55.8,
             "관심→구매": 1.1,
-            "관심": 87
+            "관심": 88
           },
           "impact": {
             "lost_users": 4,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 5.8,
+            "channel_avg": 5.7,
             "your_value": 1.1,
             "gap": -4.6
           },
@@ -1451,7 +1477,7 @@
           "sub_type": "activation_drop",
           "severity": "high",
           "title": "🚪 구분 불가 (not set): 첫 이탈 경고",
-          "message": "유입→활동 전환율이 39.7%로 기준(50.0%) 미달입니다.",
+          "message": "유입→활동 전환율이 40.5%로 기준(50.0%) 미달입니다.",
           "diagnosis": "[Organic] 랜딩페이지에서 대량 이탈이 발생하고 있습니다.",
           "action": "페이지 로딩 속도 느림 또는 모바일 가독성 저하.",
           "action_detail": {
@@ -1461,7 +1487,7 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 39.7,
+            "유입→활동": 40.5,
             "전환율": 0.84,
             "유입": 237
           },
@@ -1471,8 +1497,8 @@
           },
           "benchmark": {
             "channel_avg": 31.4,
-            "your_value": 39.7,
-            "gap": 8.3
+            "your_value": 40.5,
+            "gap": 9.1
           },
           "urgency_score": 30,
           "priority_rank": 16
@@ -1503,7 +1529,7 @@
           "benchmark": {
             "channel_avg": 31.4,
             "your_value": 49.5,
-            "gap": 18.2
+            "gap": 18.1
           },
           "urgency_score": 30,
           "priority_rank": 17
@@ -1514,7 +1540,7 @@
           "severity": "opportunity",
           "channel": "채널톡",
           "title": "🚀 채널톡: 성장 엔진 점화",
-          "message": "'채널톡' 채널은 방문자의 82.9%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+          "message": "'채널톡' 채널은 방문자의 80.2%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
           "diagnosis": "[CRM] 작지만 강한 채널입니다. 스케일업 기회!",
           "action": "'채널톡' 채널의 트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
           "action_detail": {
@@ -1524,9 +1550,9 @@
           },
           "category": "CRM",
           "metrics": {
-            "유입→활동": 82.9,
-            "전환율": 1.32,
-            "유입": 76
+            "유입→활동": 80.2,
+            "전환율": 1.23,
+            "유입": 81
           },
           "impact": {
             "lost_users": 0,
@@ -1534,8 +1560,8 @@
           },
           "benchmark": {
             "channel_avg": 31.4,
-            "your_value": 82.9,
-            "gap": 51.5
+            "your_value": 80.2,
+            "gap": 48.8
           },
           "urgency_score": 10,
           "priority_rank": 18
@@ -1567,7 +1593,7 @@
           "benchmark": {
             "channel_avg": 31.4,
             "your_value": 75.4,
-            "gap": 44.1
+            "gap": 44.0
           },
           "urgency_score": 10,
           "priority_rank": 19
@@ -1583,13 +1609,13 @@
             "checkout_friction",
             "activation_drop"
           ],
-          "activation_rate": 41.1,
-          "engagement_rate": 36.8,
-          "cvr": 0.74,
-          "cart_conversion_rate": 4.9,
-          "유입": 6867,
-          "활동": 2819,
-          "관심": 1038,
+          "activation_rate": 40.9,
+          "engagement_rate": 36.7,
+          "cvr": 0.73,
+          "cart_conversion_rate": 4.8,
+          "유입": 6995,
+          "활동": 2863,
+          "관심": 1052,
           "구매완료": 51
         },
         "구글 Organic": {
@@ -1600,13 +1626,13 @@
           "segment_types": [
             "checkout_friction"
           ],
-          "activation_rate": 68.5,
-          "engagement_rate": 41.4,
-          "cvr": 0.99,
-          "cart_conversion_rate": 3.5,
-          "유입": 3226,
-          "활동": 2210,
-          "관심": 914,
+          "activation_rate": 68.9,
+          "engagement_rate": 41.5,
+          "cvr": 0.97,
+          "cart_conversion_rate": 3.4,
+          "유입": 3308,
+          "활동": 2279,
+          "관심": 945,
           "구매완료": 32
         },
         "구글 검색": {
@@ -1635,13 +1661,13 @@
           "segment_types": [
             "activation_drop"
           ],
-          "activation_rate": 39.7,
-          "engagement_rate": 16.0,
+          "activation_rate": 40.5,
+          "engagement_rate": 16.7,
           "cvr": 0.84,
-          "cart_conversion_rate": 13.3,
+          "cart_conversion_rate": 12.5,
           "유입": 237,
-          "활동": 94,
-          "관심": 15,
+          "활동": 96,
+          "관심": 16,
           "구매완료": 2
         },
         "기타": {
@@ -1652,13 +1678,13 @@
           "segment_types": [
             "checkout_friction"
           ],
-          "activation_rate": 50.5,
-          "engagement_rate": 39.3,
-          "cvr": 1.22,
-          "cart_conversion_rate": 6.2,
-          "유입": 656,
-          "활동": 331,
-          "관심": 130,
+          "activation_rate": 50.4,
+          "engagement_rate": 39.4,
+          "cvr": 1.2,
+          "cart_conversion_rate": 6.1,
+          "유입": 665,
+          "활동": 335,
+          "관심": 132,
           "구매완료": 8
         },
         "네이버 Organic": {
@@ -1669,13 +1695,13 @@
           "segment_types": [
             "checkout_friction"
           ],
-          "activation_rate": 67.6,
+          "activation_rate": 67.7,
           "engagement_rate": 51.6,
-          "cvr": 0.87,
-          "cart_conversion_rate": 2.5,
-          "유입": 1149,
-          "활동": 777,
-          "관심": 401,
+          "cvr": 0.85,
+          "cart_conversion_rate": 2.4,
+          "유입": 1175,
+          "활동": 795,
+          "관심": 410,
           "구매완료": 10
         },
         "네이버 플레이스": {
@@ -1719,14 +1745,14 @@
             "checkout_friction",
             "activation_drop"
           ],
-          "activation_rate": 19.8,
-          "engagement_rate": 41.7,
+          "activation_rate": 19.9,
+          "engagement_rate": 42.1,
           "cvr": 0.71,
-          "cart_conversion_rate": 8.6,
-          "유입": 24259,
-          "활동": 4812,
-          "관심": 2005,
-          "구매완료": 172
+          "cart_conversion_rate": 8.5,
+          "유입": 24709,
+          "활동": 4907,
+          "관심": 2066,
+          "구매완료": 176
         },
         "브런치": {
           "category": "SNS",
@@ -1734,13 +1760,13 @@
           "rpv_log": 0.0,
           "traffic_rank_pct": 0.17,
           "segment_types": [],
-          "activation_rate": 41.8,
-          "engagement_rate": 69.6,
-          "cvr": 1.82,
-          "cart_conversion_rate": 6.2,
-          "유입": 55,
+          "activation_rate": 40.4,
+          "engagement_rate": 73.9,
+          "cvr": 1.75,
+          "cart_conversion_rate": 5.9,
+          "유입": 57,
           "활동": 23,
-          "관심": 16,
+          "관심": 17,
           "구매완료": 1
         },
         "스케일업스쿼드_direct": {
@@ -1751,13 +1777,13 @@
           "segment_types": [
             "checkout_friction"
           ],
-          "activation_rate": 65.1,
-          "engagement_rate": 40.4,
-          "cvr": 0.47,
-          "cart_conversion_rate": 1.8,
-          "유입": 843,
-          "활동": 549,
-          "관심": 222,
+          "activation_rate": 65.5,
+          "engagement_rate": 41.8,
+          "cvr": 0.46,
+          "cart_conversion_rate": 1.7,
+          "유입": 862,
+          "활동": 565,
+          "관심": 236,
           "구매완료": 4
         },
         "스타트업위클리": {
@@ -1835,13 +1861,13 @@
           "segment_types": [
             "growth_engine"
           ],
-          "activation_rate": 82.9,
-          "engagement_rate": 30.2,
-          "cvr": 1.32,
-          "cart_conversion_rate": 5.3,
-          "유입": 76,
-          "활동": 63,
-          "관심": 19,
+          "activation_rate": 80.2,
+          "engagement_rate": 30.8,
+          "cvr": 1.23,
+          "cart_conversion_rate": 5.0,
+          "유입": 81,
+          "활동": 65,
+          "관심": 20,
           "구매완료": 1
         },
         "채용": {
@@ -1852,13 +1878,13 @@
           "segment_types": [
             "checkout_friction"
           ],
-          "activation_rate": 55.9,
-          "engagement_rate": 39.9,
-          "cvr": 0.26,
+          "activation_rate": 55.8,
+          "engagement_rate": 39.8,
+          "cvr": 0.25,
           "cart_conversion_rate": 1.1,
-          "유입": 390,
-          "활동": 218,
-          "관심": 87,
+          "유입": 396,
+          "활동": 221,
+          "관심": 88,
           "구매완료": 1
         },
         "프레이머": {
@@ -1881,7 +1907,7 @@
       },
       "dynamic_thresholds": {
         "traffic_high": 2710.400000000001,
-        "traffic_low": 497.5,
+        "traffic_low": 500.5,
         "rpv_high": 0.0,
         "rpv_low": 0.0
       },
@@ -1977,20 +2003,20 @@
       "details": {
         "total_channels": 18,
         "total_campaigns": 20,
-        "analysis_period_days": 320,
+        "analysis_period_days": 328,
         "ab_tests_conducted": 21,
         "significant_ab_tests": 2,
-        "churn_risk_stages_7d": 0,
-        "churn_risk_stages_30d": 0,
+        "churn_risk_stages_7d": 3,
+        "churn_risk_stages_30d": 2,
         "improvement_stages_7d": 0,
         "improvement_stages_30d": 0,
         "micro_segment_alerts_count": 19,
         "micro_segment_opportunities": 2,
         "micro_segment_problems": 17,
-        "performance_trends_improvements_7d": 2,
+        "performance_trends_improvements_7d": 0,
         "performance_trends_improvements_14d": 0,
-        "performance_trends_declines_7d": 0,
-        "performance_trends_declines_14d": 3
+        "performance_trends_declines_7d": 5,
+        "performance_trends_declines_14d": 0
       },
       "period_info": {
         "key": "full",
@@ -1999,7 +2025,7 @@
       }
     },
     "180d": {
-      "generated_at": "2025-12-29T18:10:45.717014",
+      "generated_at": "2026-01-05T10:37:40.310893",
       "category": "--days",
       "thresholds_used": {
         "activation_rate_warning": 50.0,
@@ -2020,16 +2046,16 @@
         "is_filtered": true
       },
       "meta": {
-        "generated_at": "2025-12-29 18:10",
-        "analysis_period": "2025-07-01 ~ 2025-12-28",
+        "generated_at": "2026-01-05 10:37",
+        "analysis_period": "2025-07-09 ~ 2026-01-05",
         "category": "--days"
       },
       "summary_card": {
         "title": "이번 달 성과 요약",
         "revenue_text": "0원",
         "cvr_text": "0.7%",
-        "visitors_text": "26,074",
-        "purchasers_text": "181",
+        "visitors_text": "25,994",
+        "purchasers_text": "178",
         "status_message": "분발해야 합니다! 이탈률 방어가 시급해요 🚨"
       },
       "key_insights": [
@@ -2042,7 +2068,7 @@
           "text_color": "#1565c0",
           "message": "전체 CVR 0.7%, 총 매출 0원",
           "sub_items": [
-            "방문자 26,074명 → 구매자 181명",
+            "방문자 25,994명 → 구매자 178명",
             "활성화율 32% | 장바구니→구매 4%"
           ],
           "action": {
@@ -2057,7 +2083,7 @@
           "bg_color": "#fff3e0",
           "border_color": "#fb8c00",
           "text_color": "#e65100",
-          "message": "관심→구매 전환율이 7.3%로 매우 낮습니다. (기준 10% 대비 -2.7%p)",
+          "message": "관심→구매 전환율이 7.2%로 매우 낮습니다. (기준 10% 대비 -2.8%p)",
           "sub_items": [
             "[DA] 유저의 구매 결정을 막는 요소가 있습니다."
           ],
@@ -2066,7 +2092,7 @@
             "text": "이미 구매한 상품이 노출되거나 관심 없는 상품 추천 중.",
             "secondary": "리타겟팅 모수에 Burn Pixel(구매자 제외) 적용"
           },
-          "urgency_score": 82,
+          "urgency_score": 81,
           "channel": ""
         },
         {
@@ -2076,9 +2102,9 @@
           "bg_color": "#f3e5f5",
           "border_color": "#ab47bc",
           "text_color": "#7b1fa2",
-          "message": "'구글 검색' 채널은 방문자의 80.0%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+          "message": "'구글 검색' 채널은 방문자의 73.1%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
           "sub_items": [
-            "활성화율 80.0% (채널 평균 대비 우수)"
+            "활성화율 73.1% (채널 평균 대비 우수)"
           ],
           "action": {
             "type": "opportunity",
@@ -2092,27 +2118,27 @@
         }
       ],
       "summary": {
-        "total_acquisition": 26074,
-        "total_activation": 8449,
-        "total_consideration": 4060,
-        "total_conversion": 539,
-        "total_purchase": 181,
+        "total_acquisition": 25994,
+        "total_activation": 8356,
+        "total_consideration": 4030,
+        "total_conversion": 554,
+        "total_purchase": 178,
         "total_revenue": 0.0,
         "total_revenue_formatted": "0원",
-        "overall_cvr": 0.69
+        "overall_cvr": 0.68
       },
       "overall": {
         "current_period": {
-          "start_date": "2025-07-01",
-          "end_date": "2025-12-28",
-          "total_acquisition": 26074,
-          "total_activation": 8449,
-          "total_consideration": 4060,
-          "total_conversion": 539,
-          "total_purchase": 181,
+          "start_date": "2025-07-09",
+          "end_date": "2026-01-05",
+          "total_acquisition": 25994,
+          "total_activation": 8356,
+          "total_consideration": 4030,
+          "total_conversion": 554,
+          "total_purchase": 178,
           "total_revenue": 0.0,
           "total_revenue_formatted": "0원",
-          "overall_cvr": 0.69
+          "overall_cvr": 0.68
         },
         "trend": {
           "direction": "stable"
@@ -2121,7 +2147,7 @@
       "top_channels": [
         {
           "name": "Direct",
-          "purchases": 21,
+          "purchases": 19,
           "revenue": 0.0,
           "revenue_formatted": "0원"
         },
@@ -2153,7 +2179,7 @@
       "top_campaigns": [
         {
           "name": "(direct)",
-          "purchases": 21,
+          "purchases": 19,
           "revenue": 0.0,
           "revenue_formatted": "0원"
         },
@@ -2185,13 +2211,13 @@
       "alerts": [
         {
           "type": "low_activation",
-          "message": "유입→활동 전환율이 32.4%로 낮습니다. 랜딩페이지 최적화가 필요합니다.",
+          "message": "유입→활동 전환율이 32.1%로 낮습니다. 랜딩페이지 최적화가 필요합니다.",
           "message_friendly": "😅 방문자의 68%가 구경도 안 하고 나가요!",
           "severity": "high"
         },
         {
           "type": "low_consideration_conversion",
-          "message": "장바구니→구매 전환율이 4.5%로 낮습니다. 결제 프로세스 개선이 필요합니다.",
+          "message": "장바구니→구매 전환율이 4.4%로 낮습니다. 결제 프로세스 개선이 필요합니다.",
           "message_friendly": "🛒 장바구니에 담은 고객의 96%가 구매를 포기했어요!",
           "severity": "medium"
         }
@@ -2203,15 +2229,15 @@
           "message": "검색해서 들어온 분들은 참을성이 없어서 로딩이 길면 바로 나갑니다.",
           "reason": "페이지 로딩 속도나 첫 화면 콘텐츠 문제일 수 있어요.",
           "action": "상세페이지의 고용량 이미지를 압축해서 로딩 속도를 높여주세요.",
-          "technical": "유입→활동 전환율이 42.9%로 기준(50.0%) 미달"
+          "technical": "유입→활동 전환율이 42.6%로 기준(50.0%) 미달"
         },
         {
           "severity": "high",
           "title": "🛒 [Direct] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 97.4%가 결제 없이 이탈했습니다.",
+          "message": "장바구니까지 온 고객의 97.6%가 결제 없이 이탈했습니다.",
           "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
           "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 2.6%로 기준(20.0%) 미달"
+          "technical": "관심→구매 전환율이 2.4%로 기준(20.0%) 미달"
         },
         {
           "severity": "high",
@@ -2227,15 +2253,15 @@
           "message": "검색해서 들어온 분들은 참을성이 없어서 로딩이 길면 바로 나갑니다.",
           "reason": "페이지 로딩 속도나 첫 화면 콘텐츠 문제일 수 있어요.",
           "action": "상세페이지의 고용량 이미지를 압축해서 로딩 속도를 높여주세요.",
-          "technical": "유입→활동 전환율이 13.9%로 기준(50.0%) 미달"
+          "technical": "유입→활동 전환율이 12.1%로 기준(50.0%) 미달"
         },
         {
           "severity": "high",
           "title": "🛒 [기타] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 94.7%가 결제 없이 이탈했습니다.",
+          "message": "장바구니까지 온 고객의 94.3%가 결제 없이 이탈했습니다.",
           "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
           "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 5.3%로 기준(20.0%) 미달"
+          "technical": "관심→구매 전환율이 5.7%로 기준(20.0%) 미달"
         },
         {
           "severity": "high",
@@ -2256,10 +2282,10 @@
         {
           "severity": "high",
           "title": "🛒 [메타 광고] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 92.7%가 결제 없이 이탈했습니다.",
+          "message": "장바구니까지 온 고객의 92.8%가 결제 없이 이탈했습니다.",
           "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
           "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 7.3%로 기준(20.0%) 미달"
+          "technical": "관심→구매 전환율이 7.2%로 기준(20.0%) 미달"
         },
         {
           "severity": "high",
@@ -2280,22 +2306,22 @@
         {
           "severity": "high",
           "title": "🛒 [채용] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 98.8%가 결제 없이 이탈했습니다.",
+          "message": "장바구니까지 온 고객의 98.7%가 결제 없이 이탈했습니다.",
           "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
           "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 1.2%로 기준(20.0%) 미달"
+          "technical": "관심→구매 전환율이 1.3%로 기준(20.0%) 미달"
         }
       ],
       "channel_strategy": {
         "status": "success",
-        "avg_traffic": 1629,
-        "avg_cvr": 0.69,
+        "avg_traffic": 1624,
+        "avg_cvr": 0.68,
         "channels": {
           "Direct": {
             "stats": {
-              "users": 4120,
-              "users_formatted": "4,120",
-              "cvr": 0.51,
+              "users": 4063,
+              "users_formatted": "4,063",
+              "cvr": 0.47,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -2309,8 +2335,8 @@
           },
           "구글 Organic": {
             "stats": {
-              "users": 2147,
-              "users_formatted": "2,147",
+              "users": 2140,
+              "users_formatted": "2,140",
               "cvr": 0.84,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -2325,8 +2351,8 @@
           },
           "구글 검색": {
             "stats": {
-              "users": 40,
-              "users_formatted": "40",
+              "users": 26,
+              "users_formatted": "26",
               "cvr": 0.0,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -2357,9 +2383,9 @@
           },
           "기타": {
             "stats": {
-              "users": 486,
-              "users_formatted": "486",
-              "cvr": 1.23,
+              "users": 466,
+              "users_formatted": "466",
+              "cvr": 1.29,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -2373,8 +2399,8 @@
           },
           "네이버 Organic": {
             "stats": {
-              "users": 936,
-              "users_formatted": "936",
+              "users": 938,
+              "users_formatted": "938",
               "cvr": 0.75,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -2389,8 +2415,8 @@
           },
           "뉴스와이어": {
             "stats": {
-              "users": 35,
-              "users_formatted": "35",
+              "users": 30,
+              "users_formatted": "30",
               "cvr": 0.0,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -2405,8 +2431,8 @@
           },
           "메타 광고": {
             "stats": {
-              "users": 16427,
-              "users_formatted": "16,427",
+              "users": 16522,
+              "users_formatted": "16,522",
               "cvr": 0.71,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -2421,9 +2447,9 @@
           },
           "브런치": {
             "stats": {
-              "users": 45,
-              "users_formatted": "45",
-              "cvr": 2.22,
+              "users": 43,
+              "users_formatted": "43",
+              "cvr": 2.33,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -2437,9 +2463,9 @@
           },
           "스케일업스쿼드_direct": {
             "stats": {
-              "users": 465,
-              "users_formatted": "465",
-              "cvr": 0.86,
+              "users": 446,
+              "users_formatted": "446",
+              "cvr": 0.9,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -2469,8 +2495,8 @@
           },
           "이메일": {
             "stats": {
-              "users": 527,
-              "users_formatted": "527",
+              "users": 521,
+              "users_formatted": "521",
               "cvr": 0.19,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -2485,9 +2511,9 @@
           },
           "이오플래닛": {
             "stats": {
-              "users": 148,
-              "users_formatted": "148",
-              "cvr": 2.03,
+              "users": 108,
+              "users_formatted": "108",
+              "cvr": 1.85,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -2501,9 +2527,9 @@
           },
           "채널톡": {
             "stats": {
-              "users": 76,
-              "users_formatted": "76",
-              "cvr": 1.32,
+              "users": 81,
+              "users_formatted": "81",
+              "cvr": 1.23,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -2517,9 +2543,9 @@
           },
           "채용": {
             "stats": {
-              "users": 343,
-              "users_formatted": "343",
-              "cvr": 0.29,
+              "users": 331,
+              "users_formatted": "331",
+              "cvr": 0.3,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -2555,10 +2581,10 @@
           "group_a": "Direct",
           "group_b": "구글 Organic",
           "metric": "conversion_rate",
-          "chi2_statistic": 1.9626389992056077,
-          "p_value": 0.16123136325848875,
+          "chi2_statistic": 2.6978497929695493,
+          "p_value": 0.10048368145659092,
           "significant": false,
-          "cvr_a": 0.51,
+          "cvr_a": 0.47,
           "cvr_b": 0.84
         },
         {
@@ -2566,21 +2592,21 @@
           "group_a": "Direct",
           "group_b": "기타",
           "metric": "conversion_rate",
-          "chi2_statistic": 2.7743324595442465,
-          "p_value": 0.09578658388666428,
+          "chi2_statistic": 3.7349559700135484,
+          "p_value": 0.05328507109404246,
           "significant": false,
-          "cvr_a": 0.51,
-          "cvr_b": 1.23
+          "cvr_a": 0.47,
+          "cvr_b": 1.29
         },
         {
           "type": "channel_comparison",
           "group_a": "Direct",
           "group_b": "네이버 Organic",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.41257919742522486,
-          "p_value": 0.5206633010899034,
+          "chi2_statistic": 0.6686399954182429,
+          "p_value": 0.41352616867978664,
           "significant": false,
-          "cvr_a": 0.51,
+          "cvr_a": 0.47,
           "cvr_b": 0.75
         },
         {
@@ -2588,10 +2614,10 @@
           "group_a": "Direct",
           "group_b": "메타 광고",
           "metric": "conversion_rate",
-          "chi2_statistic": 1.733114348147015,
-          "p_value": 0.1880136547092517,
+          "chi2_statistic": 2.5194577939971543,
+          "p_value": 0.11244924318252772,
           "significant": false,
-          "cvr_a": 0.51,
+          "cvr_a": 0.47,
           "cvr_b": 0.71
         },
         {
@@ -2599,19 +2625,19 @@
           "group_a": "구글 Organic",
           "group_b": "기타",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.31990798035273454,
-          "p_value": 0.5716629506337627,
+          "chi2_statistic": 0.4181697016621544,
+          "p_value": 0.5178517432498198,
           "significant": false,
           "cvr_a": 0.84,
-          "cvr_b": 1.23
+          "cvr_b": 1.29
         },
         {
           "type": "channel_comparison",
           "group_a": "구글 Organic",
           "group_b": "네이버 Organic",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.0015453046687758597,
-          "p_value": 0.9686429442245383,
+          "chi2_statistic": 0.0026765226300890415,
+          "p_value": 0.9587397530726306,
           "significant": false,
           "cvr_a": 0.84,
           "cvr_b": 0.75
@@ -2621,8 +2647,8 @@
           "group_a": "구글 Organic",
           "group_b": "메타 광고",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.2621376089626267,
-          "p_value": 0.6086553776503592,
+          "chi2_statistic": 0.299695321384406,
+          "p_value": 0.5840734899469061,
           "significant": false,
           "cvr_a": 0.84,
           "cvr_b": 0.71
@@ -2632,10 +2658,10 @@
           "group_a": "기타",
           "group_b": "네이버 Organic",
           "metric": "conversion_rate",
-          "chi2_statistic": 0.3855237113344337,
-          "p_value": 0.5346617643431039,
+          "chi2_statistic": 0.4918294321752342,
+          "p_value": 0.48311236968622884,
           "significant": false,
-          "cvr_a": 1.23,
+          "cvr_a": 1.29,
           "cvr_b": 0.75
         },
         {
@@ -2643,10 +2669,10 @@
           "group_a": "기타",
           "group_b": "메타 광고",
           "metric": "conversion_rate",
-          "chi2_statistic": 1.1336625449285318,
-          "p_value": 0.28699545768075396,
+          "chi2_statistic": 1.3873995507635222,
+          "p_value": 0.23884474455035526,
           "significant": false,
-          "cvr_a": 1.23,
+          "cvr_a": 1.29,
           "cvr_b": 0.71
         },
         {
@@ -2675,6 +2701,7 @@
             "프레이머"
           ],
           "partial": [
+            "기타",
             "브런치",
             "이오플래닛"
           ],
@@ -2682,7 +2709,6 @@
             "Direct",
             "구글 검색",
             "구분 불가 (not set)",
-            "기타",
             "뉴스와이어",
             "메타 광고",
             "이메일",
@@ -2702,69 +2728,95 @@
         "analysis_method": "퍼널 건강도 (유입→활동→관심→결제 각 단계 전환율 평균)"
       },
       "performance_trends": {
-        "improvements_7d": [
-          {
-            "metric": "전환율 (CVR)",
-            "period": "7d",
-            "improvement_level": "high",
-            "change_pct": 411.28,
-            "recent_avg": 1.32,
-            "previous_avg": 0.26,
-            "recommendation": "전환율이 411.3% 개선되었습니다. 현재 전략이 효과적입니다. A/B 테스트로 추가 개선 여지를 확인하세요."
-          },
-          {
-            "metric": "구매 성공",
-            "period": "7d",
-            "improvement_level": "high",
-            "change_pct": 400.0,
-            "recent_avg": 1.43,
-            "previous_avg": 0.29,
-            "recommendation": "구매가 400.0% 증가했습니다! 성공 요인을 분석하고, 유사 캠페인을 다른 세그먼트에도 적용하세요."
-          }
-        ],
+        "improvements_7d": [],
         "improvements_14d": [],
-        "improvements_30d": [
-          {
-            "metric": "전환율 (CVR)",
-            "period": "30d",
-            "improvement_level": "high",
-            "change_pct": 34.98,
-            "recent_avg": 1.16,
-            "previous_avg": 0.86,
-            "recommendation": "전환율이 35.0% 개선되었습니다. 현재 전략이 효과적입니다. A/B 테스트로 추가 개선 여지를 확인하세요."
-          }
-        ],
-        "declines_7d": [],
-        "declines_14d": [
+        "improvements_30d": [],
+        "declines_7d": [
           {
             "metric": "구매 성공",
-            "period": "14d",
+            "period": "7d",
             "risk_level": "high",
-            "change_pct": -47.83,
-            "recent_avg": 0.86,
-            "previous_avg": 1.64,
-            "recommendation": "구매가 47.8% 감소했습니다. 결제 프로세스 오류나 품절 상품이 없는지 긴급 점검하세요."
+            "change_pct": -66.67,
+            "recent_avg": 0.43,
+            "previous_avg": 1.29,
+            "recommendation": "구매가 66.7% 감소했습니다. 결제 프로세스 오류나 품절 상품이 없는지 긴급 점검하세요."
           },
           {
             "metric": "전환율 (CVR)",
-            "period": "14d",
+            "period": "7d",
             "risk_level": "high",
-            "change_pct": -39.23,
-            "recent_avg": 0.79,
-            "previous_avg": 1.3,
-            "recommendation": "전환율이 39.2% 하락했습니다. 퍼널 전체를 점검하여 이탈 구간을 파악하세요."
+            "change_pct": -60.1,
+            "recent_avg": 0.47,
+            "previous_avg": 1.17,
+            "recommendation": "전환율이 60.1% 하락했습니다. 퍼널 전체를 점검하여 이탈 구간을 파악하세요."
           },
           {
             "metric": "장바구니 (관심)",
-            "period": "14d",
+            "period": "7d",
             "risk_level": "medium",
-            "change_pct": -22.93,
-            "recent_avg": 19.93,
-            "previous_avg": 25.86,
-            "recommendation": "장바구니 추가가 22.9% 감소했습니다. 상품 가격 경쟁력이나 재고 상황을 확인하세요."
+            "change_pct": -24.5,
+            "recent_avg": 16.29,
+            "previous_avg": 21.57,
+            "recommendation": "장바구니 추가가 24.5% 감소했습니다. 상품 가격 경쟁력이나 재고 상황을 확인하세요."
+          },
+          {
+            "metric": "매장 방문 (유입)",
+            "period": "7d",
+            "risk_level": "medium",
+            "change_pct": -22.5,
+            "recent_avg": 88.57,
+            "previous_avg": 114.29,
+            "recommendation": "유입이 22.5% 감소했습니다. 광고 노출이 줄었거나 시즌 영향일 수 있습니다. 채널별 유입 추이를 점검하세요."
+          },
+          {
+            "metric": "상품 구경 (활동)",
+            "period": "7d",
+            "risk_level": "medium",
+            "change_pct": -21.61,
+            "recent_avg": 30.57,
+            "previous_avg": 39.0,
+            "recommendation": "활동 참여가 21.6% 하락했습니다. 랜딩페이지 로딩 속도나 콘텐츠 품질을 점검하세요."
           }
         ],
-        "declines_30d": []
+        "declines_14d": [],
+        "declines_30d": [
+          {
+            "metric": "구매 성공",
+            "period": "30d",
+            "risk_level": "high",
+            "change_pct": -48.98,
+            "recent_avg": 0.83,
+            "previous_avg": 1.63,
+            "recommendation": "구매가 49.0% 감소했습니다. 결제 프로세스 오류나 품절 상품이 없는지 긴급 점검하세요."
+          },
+          {
+            "metric": "전환율 (CVR)",
+            "period": "30d",
+            "risk_level": "high",
+            "change_pct": -39.51,
+            "recent_avg": 0.78,
+            "previous_avg": 1.28,
+            "recommendation": "전환율이 39.5% 하락했습니다. 퍼널 전체를 점검하여 이탈 구간을 파악하세요."
+          },
+          {
+            "metric": "결제창 진입",
+            "period": "30d",
+            "risk_level": "medium",
+            "change_pct": -24.17,
+            "recent_avg": 3.03,
+            "previous_avg": 4.0,
+            "recommendation": "결제 진입이 24.2% 하락했습니다. 배송비나 결제 옵션에 문제가 없는지 점검하세요."
+          },
+          {
+            "metric": "매장 방문 (유입)",
+            "period": "30d",
+            "risk_level": "medium",
+            "change_pct": -23.62,
+            "recent_avg": 109.3,
+            "previous_avg": 143.1,
+            "recommendation": "유입이 23.6% 감소했습니다. 광고 노출이 줄었거나 시즌 영향일 수 있습니다. 채널별 유입 추이를 점검하세요."
+          }
+        ]
       },
       "micro_segment_alerts": [
         {
@@ -2772,7 +2824,7 @@
           "sub_type": "checkout_friction",
           "severity": "critical",
           "title": "🚧 메타 광고: 결제 장벽 감지",
-          "message": "관심→구매 전환율이 7.3%로 매우 낮습니다. (기준 10% 대비 -2.7%p)",
+          "message": "관심→구매 전환율이 7.2%로 매우 낮습니다. (기준 10% 대비 -2.8%p)",
           "diagnosis": "[DA] 유저의 구매 결정을 막는 요소가 있습니다.",
           "action": "이미 구매한 상품이 노출되거나 관심 없는 상품 추천 중.",
           "action_detail": {
@@ -2783,19 +2835,19 @@
           "category": "DA",
           "metrics": {
             "유입→활동": 20.3,
-            "관심→구매": 7.3,
-            "관심": 1599
+            "관심→구매": 7.2,
+            "관심": 1624
           },
           "impact": {
             "lost_users": 0,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 4.5,
-            "your_value": 7.3,
-            "gap": 2.9
+            "channel_avg": 4.4,
+            "your_value": 7.2,
+            "gap": 2.8
           },
-          "urgency_score": 82,
+          "urgency_score": 81,
           "priority_rank": 1
         },
         {
@@ -2815,18 +2867,18 @@
           "metrics": {
             "유입→활동": 20.3,
             "전환율": 0.71,
-            "유입": 16427
+            "유입": 16522
           },
           "impact": {
-            "lost_users": 1981,
+            "lost_users": 1961,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 32.4,
+            "channel_avg": 32.1,
             "your_value": 20.3,
-            "gap": -12.1
+            "gap": -11.9
           },
-          "urgency_score": 82,
+          "urgency_score": 81,
           "priority_rank": 2
         },
         {
@@ -2834,7 +2886,7 @@
           "sub_type": "checkout_friction",
           "severity": "critical",
           "title": "🚧 Direct: 결제 장벽 감지",
-          "message": "관심→구매 전환율이 2.6%로 매우 낮습니다. (기준 10% 대비 -7.4%p)",
+          "message": "관심→구매 전환율이 2.4%로 매우 낮습니다. (기준 10% 대비 -7.6%p)",
           "diagnosis": "[Organic] 유저의 구매 결정을 막는 요소가 있습니다.",
           "action": "회원가입 절차 복잡 또는 결제 수단 제한.",
           "action_detail": {
@@ -2844,18 +2896,18 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 42.9,
-            "관심→구매": 2.6,
-            "관심": 821
+            "유입→활동": 42.6,
+            "관심→구매": 2.4,
+            "관심": 796
           },
           "impact": {
-            "lost_users": 15,
+            "lost_users": 16,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 4.5,
-            "your_value": 2.6,
-            "gap": -1.9
+            "channel_avg": 4.4,
+            "your_value": 2.4,
+            "gap": -2.0
           },
           "urgency_score": 65,
           "priority_rank": 3
@@ -2865,7 +2917,7 @@
           "sub_type": "activation_drop",
           "severity": "high",
           "title": "🚪 Direct: 첫 이탈 경고",
-          "message": "유입→활동 전환율이 42.9%로 기준(50.0%) 미달입니다.",
+          "message": "유입→활동 전환율이 42.6%로 기준(50.0%) 미달입니다.",
           "diagnosis": "[Organic] 랜딩페이지에서 대량 이탈이 발생하고 있습니다.",
           "action": "페이지 로딩 속도 느림 또는 모바일 가독성 저하.",
           "action_detail": {
@@ -2875,18 +2927,18 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 42.9,
-            "전환율": 0.51,
-            "유입": 4120
+            "유입→활동": 42.6,
+            "전환율": 0.47,
+            "유입": 4063
           },
           "impact": {
             "lost_users": 0,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 32.4,
-            "your_value": 42.9,
-            "gap": 10.5
+            "channel_avg": 32.1,
+            "your_value": 42.6,
+            "gap": 10.4
           },
           "urgency_score": 55,
           "priority_rank": 4
@@ -2906,16 +2958,16 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 72.8,
+            "유입→활동": 73.1,
             "관심→구매": 2.3,
-            "관심": 777
+            "관심": 774
           },
           "impact": {
             "lost_users": 16,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 4.5,
+            "channel_avg": 4.4,
             "your_value": 2.3,
             "gap": -2.1
           },
@@ -2939,16 +2991,16 @@
           "metrics": {
             "유입→활동": 16.7,
             "전환율": 0.19,
-            "유입": 527
+            "유입": 521
           },
           "impact": {
-            "lost_users": 82,
+            "lost_users": 80,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 32.4,
+            "channel_avg": 32.1,
             "your_value": 16.7,
-            "gap": -15.7
+            "gap": -15.4
           },
           "urgency_score": 52,
           "priority_rank": 6
@@ -2958,7 +3010,7 @@
           "sub_type": "activation_drop",
           "severity": "high",
           "title": "🚪 구분 불가 (not set): 첫 이탈 경고",
-          "message": "유입→활동 전환율이 13.9%로 기준(50.0%) 미달입니다.",
+          "message": "유입→활동 전환율이 12.1%로 기준(50.0%) 미달입니다.",
           "diagnosis": "[Organic] 랜딩페이지에서 대량 이탈이 발생하고 있습니다.",
           "action": "페이지 로딩 속도 느림 또는 모바일 가독성 저하.",
           "action_detail": {
@@ -2968,20 +3020,20 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 13.9,
+            "유입→활동": 12.1,
             "전환율": 0.43,
             "유입": 231
           },
           "impact": {
-            "lost_users": 42,
+            "lost_users": 46,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 32.4,
-            "your_value": 13.9,
-            "gap": -18.6
+            "channel_avg": 32.1,
+            "your_value": 12.1,
+            "gap": -20.0
           },
-          "urgency_score": 49,
+          "urgency_score": 51,
           "priority_rank": 7
         },
         {
@@ -2999,16 +3051,16 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 67.0,
+            "유입→활동": 67.5,
             "관심→구매": 2.1,
-            "관심": 339
+            "관심": 340
           },
           "impact": {
             "lost_users": 8,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 4.5,
+            "channel_avg": 4.4,
             "your_value": 2.1,
             "gap": -2.4
           },
@@ -3020,7 +3072,7 @@
           "sub_type": "checkout_friction",
           "severity": "critical",
           "title": "🚧 기타: 결제 장벽 감지",
-          "message": "관심→구매 전환율이 5.3%로 매우 낮습니다. (기준 10% 대비 -4.7%p)",
+          "message": "관심→구매 전환율이 5.7%로 매우 낮습니다. (기준 10% 대비 -4.3%p)",
           "diagnosis": "[기타] 유저의 구매 결정을 막는 요소가 있습니다.",
           "action": "상세 로그 분석을 통해 이탈 원인을 파악하고 UX를 개선하세요.",
           "action_detail": {
@@ -3030,18 +3082,18 @@
           },
           "category": "기타",
           "metrics": {
-            "유입→활동": 52.3,
-            "관심→구매": 5.3,
-            "관심": 114
+            "유입→활동": 51.7,
+            "관심→구매": 5.7,
+            "관심": 106
           },
           "impact": {
             "lost_users": 0,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 4.5,
-            "your_value": 5.3,
-            "gap": 0.8
+            "channel_avg": 4.4,
+            "your_value": 5.7,
+            "gap": 1.2
           },
           "urgency_score": 42,
           "priority_rank": 9
@@ -3061,7 +3113,7 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 69.0,
+            "유입→활동": 69.5,
             "관심→구매": 2.2,
             "관심": 183
           },
@@ -3070,9 +3122,9 @@
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 4.5,
+            "channel_avg": 4.4,
             "your_value": 2.2,
-            "gap": -2.3
+            "gap": -2.2
           },
           "urgency_score": 42,
           "priority_rank": 10
@@ -3082,7 +3134,7 @@
           "sub_type": "checkout_friction",
           "severity": "critical",
           "title": "🚧 채용: 결제 장벽 감지",
-          "message": "관심→구매 전환율이 1.2%로 매우 낮습니다. (기준 10% 대비 -8.8%p)",
+          "message": "관심→구매 전환율이 1.3%로 매우 낮습니다. (기준 10% 대비 -8.7%p)",
           "diagnosis": "[etc] 유저의 구매 결정을 막는 요소가 있습니다.",
           "action": "결제 이탈 원인 불명. 상세 로그 분석 필요.",
           "action_detail": {
@@ -3092,18 +3144,18 @@
           },
           "category": "etc",
           "metrics": {
-            "유입→활동": 57.1,
-            "관심→구매": 1.2,
-            "관심": 82
+            "유입→활동": 56.8,
+            "관심→구매": 1.3,
+            "관심": 78
           },
           "impact": {
             "lost_users": 2,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 4.5,
-            "your_value": 1.2,
-            "gap": -3.2
+            "channel_avg": 4.4,
+            "your_value": 1.3,
+            "gap": -3.1
           },
           "urgency_score": 42,
           "priority_rank": 11
@@ -3114,7 +3166,7 @@
           "severity": "opportunity",
           "channel": "구글 검색",
           "title": "🚀 구글 검색: 성장 엔진 점화",
-          "message": "'구글 검색' 채널은 방문자의 80.0%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+          "message": "'구글 검색' 채널은 방문자의 73.1%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
           "diagnosis": "[SA] 작지만 강한 채널입니다. 스케일업 기회!",
           "action": "'구글 검색' 채널의 트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
           "action_detail": {
@@ -3124,18 +3176,18 @@
           },
           "category": "SA",
           "metrics": {
-            "유입→활동": 80.0,
+            "유입→활동": 73.1,
             "전환율": 0.0,
-            "유입": 40
+            "유입": 26
           },
           "impact": {
             "lost_users": 0,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 32.4,
-            "your_value": 80.0,
-            "gap": 47.6
+            "channel_avg": 32.1,
+            "your_value": 73.1,
+            "gap": 40.9
           },
           "urgency_score": 10,
           "priority_rank": 12
@@ -3146,7 +3198,7 @@
           "severity": "opportunity",
           "channel": "채널톡",
           "title": "🚀 채널톡: 성장 엔진 점화",
-          "message": "'채널톡' 채널은 방문자의 82.9%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+          "message": "'채널톡' 채널은 방문자의 80.2%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
           "diagnosis": "[CRM] 작지만 강한 채널입니다. 스케일업 기회!",
           "action": "'채널톡' 채널의 트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
           "action_detail": {
@@ -3156,18 +3208,18 @@
           },
           "category": "CRM",
           "metrics": {
-            "유입→활동": 82.9,
-            "전환율": 1.32,
-            "유입": 76
+            "유입→활동": 80.2,
+            "전환율": 1.23,
+            "유입": 81
           },
           "impact": {
             "lost_users": 0,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 32.4,
-            "your_value": 82.9,
-            "gap": 50.5
+            "channel_avg": 32.1,
+            "your_value": 80.2,
+            "gap": 48.1
           },
           "urgency_score": 10,
           "priority_rank": 13
@@ -3197,9 +3249,9 @@
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 32.4,
+            "channel_avg": 32.1,
             "your_value": 81.2,
-            "gap": 48.8
+            "gap": 49.1
           },
           "urgency_score": 10,
           "priority_rank": 14
@@ -3215,14 +3267,14 @@
             "checkout_friction",
             "activation_drop"
           ],
-          "activation_rate": 42.9,
-          "engagement_rate": 46.4,
-          "cvr": 0.51,
-          "cart_conversion_rate": 2.6,
-          "유입": 4120,
-          "활동": 1769,
-          "관심": 821,
-          "구매완료": 21
+          "activation_rate": 42.6,
+          "engagement_rate": 46.0,
+          "cvr": 0.47,
+          "cart_conversion_rate": 2.4,
+          "유입": 4063,
+          "활동": 1730,
+          "관심": 796,
+          "구매완료": 19
         },
         "구글 Organic": {
           "category": "Organic",
@@ -3232,30 +3284,30 @@
           "segment_types": [
             "checkout_friction"
           ],
-          "activation_rate": 72.8,
-          "engagement_rate": 49.7,
+          "activation_rate": 73.1,
+          "engagement_rate": 49.5,
           "cvr": 0.84,
           "cart_conversion_rate": 2.3,
-          "유입": 2147,
-          "활동": 1563,
-          "관심": 777,
+          "유입": 2140,
+          "활동": 1565,
+          "관심": 774,
           "구매완료": 18
         },
         "구글 검색": {
           "category": "SA",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.25,
+          "traffic_rank_pct": 0.12,
           "segment_types": [
             "growth_engine"
           ],
-          "activation_rate": 80.0,
-          "engagement_rate": 21.9,
+          "activation_rate": 73.1,
+          "engagement_rate": 15.8,
           "cvr": 0.0,
           "cart_conversion_rate": 0.0,
-          "유입": 40,
-          "활동": 32,
-          "관심": 7,
+          "유입": 26,
+          "활동": 19,
+          "관심": 3,
           "구매완료": 0
         },
         "구분 불가 (not set)": {
@@ -3266,12 +3318,12 @@
           "segment_types": [
             "activation_drop"
           ],
-          "activation_rate": 13.9,
-          "engagement_rate": 25.0,
+          "activation_rate": 12.1,
+          "engagement_rate": 28.6,
           "cvr": 0.43,
           "cart_conversion_rate": 12.5,
           "유입": 231,
-          "활동": 32,
+          "활동": 28,
           "관심": 8,
           "구매완료": 1
         },
@@ -3283,13 +3335,13 @@
           "segment_types": [
             "checkout_friction"
           ],
-          "activation_rate": 52.3,
-          "engagement_rate": 44.9,
-          "cvr": 1.23,
-          "cart_conversion_rate": 5.3,
-          "유입": 486,
-          "활동": 254,
-          "관심": 114,
+          "activation_rate": 51.7,
+          "engagement_rate": 44.0,
+          "cvr": 1.29,
+          "cart_conversion_rate": 5.7,
+          "유입": 466,
+          "활동": 241,
+          "관심": 106,
           "구매완료": 6
         },
         "네이버 Organic": {
@@ -3300,13 +3352,13 @@
           "segment_types": [
             "checkout_friction"
           ],
-          "activation_rate": 67.0,
-          "engagement_rate": 54.1,
+          "activation_rate": 67.5,
+          "engagement_rate": 53.7,
           "cvr": 0.75,
           "cart_conversion_rate": 2.1,
-          "유입": 936,
-          "활동": 627,
-          "관심": 339,
+          "유입": 938,
+          "활동": 633,
+          "관심": 340,
           "구매완료": 7
         },
         "뉴스와이어": {
@@ -3315,13 +3367,13 @@
           "rpv_log": 0.0,
           "traffic_rank_pct": 0.19,
           "segment_types": [],
-          "activation_rate": 65.7,
-          "engagement_rate": 39.1,
+          "activation_rate": 63.3,
+          "engagement_rate": 42.1,
           "cvr": 0.0,
           "cart_conversion_rate": 0.0,
-          "유입": 35,
-          "활동": 23,
-          "관심": 9,
+          "유입": 30,
+          "활동": 19,
+          "관심": 8,
           "구매완료": 0
         },
         "메타 광고": {
@@ -3334,12 +3386,12 @@
             "activation_drop"
           ],
           "activation_rate": 20.3,
-          "engagement_rate": 47.9,
+          "engagement_rate": 48.5,
           "cvr": 0.71,
-          "cart_conversion_rate": 7.3,
-          "유입": 16427,
-          "활동": 3341,
-          "관심": 1599,
+          "cart_conversion_rate": 7.2,
+          "유입": 16522,
+          "활동": 3350,
+          "관심": 1624,
           "구매완료": 117
         },
         "브런치": {
@@ -3348,12 +3400,12 @@
           "rpv_log": 0.0,
           "traffic_rank_pct": 0.31,
           "segment_types": [],
-          "activation_rate": 44.4,
-          "engagement_rate": 75.0,
-          "cvr": 2.22,
+          "activation_rate": 41.9,
+          "engagement_rate": 83.3,
+          "cvr": 2.33,
           "cart_conversion_rate": 6.7,
-          "유입": 45,
-          "활동": 20,
+          "유입": 43,
+          "활동": 18,
           "관심": 15,
           "구매완료": 1
         },
@@ -3365,12 +3417,12 @@
           "segment_types": [
             "checkout_friction"
           ],
-          "activation_rate": 69.0,
-          "engagement_rate": 57.0,
-          "cvr": 0.86,
+          "activation_rate": 69.5,
+          "engagement_rate": 59.0,
+          "cvr": 0.9,
           "cart_conversion_rate": 2.2,
-          "유입": 465,
-          "활동": 321,
+          "유입": 446,
+          "활동": 310,
           "관심": 183,
           "구매완료": 4
         },
@@ -3398,11 +3450,11 @@
             "activation_drop"
           ],
           "activation_rate": 16.7,
-          "engagement_rate": 34.1,
+          "engagement_rate": 34.5,
           "cvr": 0.19,
           "cart_conversion_rate": 3.3,
-          "유입": 527,
-          "활동": 88,
+          "유입": 521,
+          "활동": 87,
           "관심": 30,
           "구매완료": 1
         },
@@ -3412,14 +3464,14 @@
           "rpv_log": 0.0,
           "traffic_rank_pct": 0.44,
           "segment_types": [],
-          "activation_rate": 56.1,
-          "engagement_rate": 49.4,
-          "cvr": 2.03,
-          "cart_conversion_rate": 7.3,
-          "유입": 148,
-          "활동": 83,
-          "관심": 41,
-          "구매완료": 3
+          "activation_rate": 61.1,
+          "engagement_rate": 43.9,
+          "cvr": 1.85,
+          "cart_conversion_rate": 6.9,
+          "유입": 108,
+          "활동": 66,
+          "관심": 29,
+          "구매완료": 2
         },
         "채널톡": {
           "category": "CRM",
@@ -3429,13 +3481,13 @@
           "segment_types": [
             "growth_engine"
           ],
-          "activation_rate": 82.9,
-          "engagement_rate": 30.2,
-          "cvr": 1.32,
-          "cart_conversion_rate": 5.3,
-          "유입": 76,
-          "활동": 63,
-          "관심": 19,
+          "activation_rate": 80.2,
+          "engagement_rate": 30.8,
+          "cvr": 1.23,
+          "cart_conversion_rate": 5.0,
+          "유입": 81,
+          "활동": 65,
+          "관심": 20,
           "구매완료": 1
         },
         "채용": {
@@ -3446,20 +3498,20 @@
           "segment_types": [
             "checkout_friction"
           ],
-          "activation_rate": 57.1,
-          "engagement_rate": 41.8,
-          "cvr": 0.29,
-          "cart_conversion_rate": 1.2,
-          "유입": 343,
-          "활동": 196,
-          "관심": 82,
+          "activation_rate": 56.8,
+          "engagement_rate": 41.5,
+          "cvr": 0.3,
+          "cart_conversion_rate": 1.3,
+          "유입": 331,
+          "활동": 188,
+          "관심": 78,
           "구매완료": 1
         },
         "프레이머": {
           "category": "Organic",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.12,
+          "traffic_rank_pct": 0.25,
           "segment_types": [
             "growth_engine"
           ],
@@ -3474,8 +3526,8 @@
         }
       },
       "dynamic_thresholds": {
-        "traffic_high": 936.0,
-        "traffic_low": 287.0,
+        "traffic_high": 938.0,
+        "traffic_low": 281.0,
         "rpv_high": 0.0,
         "rpv_low": 0.0
       },
@@ -3581,10 +3633,10 @@
         "micro_segment_alerts_count": 14,
         "micro_segment_opportunities": 3,
         "micro_segment_problems": 11,
-        "performance_trends_improvements_7d": 2,
+        "performance_trends_improvements_7d": 0,
         "performance_trends_improvements_14d": 0,
-        "performance_trends_declines_7d": 0,
-        "performance_trends_declines_14d": 3
+        "performance_trends_declines_7d": 5,
+        "performance_trends_declines_14d": 0
       },
       "period_info": {
         "key": "180d",
@@ -3593,7 +3645,7 @@
       }
     },
     "90d": {
-      "generated_at": "2025-12-29T18:10:48.863064",
+      "generated_at": "2026-01-05T10:37:43.186394",
       "category": "--days",
       "thresholds_used": {
         "activation_rate_warning": 50.0,
@@ -3614,16 +3666,16 @@
         "is_filtered": true
       },
       "meta": {
-        "generated_at": "2025-12-29 18:10",
-        "analysis_period": "2025-09-29 ~ 2025-12-28",
+        "generated_at": "2026-01-05 10:37",
+        "analysis_period": "2025-10-07 ~ 2026-01-05",
         "category": "--days"
       },
       "summary_card": {
         "title": "이번 달 성과 요약",
         "revenue_text": "0원",
         "cvr_text": "0.8%",
-        "visitors_text": "13,195",
-        "purchasers_text": "107",
+        "visitors_text": "13,224",
+        "purchasers_text": "104",
         "status_message": "분발해야 합니다! 이탈률 방어가 시급해요 🚨"
       },
       "key_insights": [
@@ -3636,7 +3688,7 @@
           "text_color": "#1565c0",
           "message": "전체 CVR 0.8%, 총 매출 0원",
           "sub_items": [
-            "방문자 13,195명 → 구매자 107명",
+            "방문자 13,224명 → 구매자 104명",
             "활성화율 33% | 장바구니→구매 5%"
           ],
           "action": {
@@ -3651,7 +3703,7 @@
           "bg_color": "#fff3e0",
           "border_color": "#fb8c00",
           "text_color": "#e65100",
-          "message": "관심→구매 전환율이 7.9%로 매우 낮습니다. (기준 10% 대비 -2.1%p)",
+          "message": "관심→구매 전환율이 7.7%로 매우 낮습니다. (기준 10% 대비 -2.3%p)",
           "sub_items": [
             "[DA] 유저의 구매 결정을 막는 요소가 있습니다."
           ],
@@ -3670,9 +3722,9 @@
           "bg_color": "#f3e5f5",
           "border_color": "#ab47bc",
           "text_color": "#7b1fa2",
-          "message": "'구분 불가 (not set)' 채널은 방문자의 144.4%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+          "message": "'구분 불가 (not set)' 채널은 방문자의 171.4%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
           "sub_items": [
-            "활성화율 144.4% (채널 평균 대비 우수)"
+            "활성화율 171.4% (채널 평균 대비 우수)"
           ],
           "action": {
             "type": "opportunity",
@@ -3686,27 +3738,27 @@
         }
       ],
       "summary": {
-        "total_acquisition": 13195,
-        "total_activation": 4300,
-        "total_consideration": 2173,
-        "total_conversion": 381,
-        "total_purchase": 107,
+        "total_acquisition": 13224,
+        "total_activation": 4303,
+        "total_consideration": 2189,
+        "total_conversion": 382,
+        "total_purchase": 104,
         "total_revenue": 0.0,
         "total_revenue_formatted": "0원",
-        "overall_cvr": 0.81
+        "overall_cvr": 0.79
       },
       "overall": {
         "current_period": {
-          "start_date": "2025-09-29",
-          "end_date": "2025-12-28",
-          "total_acquisition": 13195,
-          "total_activation": 4300,
-          "total_consideration": 2173,
-          "total_conversion": 381,
-          "total_purchase": 107,
+          "start_date": "2025-10-07",
+          "end_date": "2026-01-05",
+          "total_acquisition": 13224,
+          "total_activation": 4303,
+          "total_consideration": 2189,
+          "total_conversion": 382,
+          "total_purchase": 104,
           "total_revenue": 0.0,
           "total_revenue_formatted": "0원",
-          "overall_cvr": 0.81
+          "overall_cvr": 0.79
         },
         "trend": {
           "direction": "stable"
@@ -3733,13 +3785,13 @@
         },
         {
           "name": "네이버 Organic",
-          "purchases": 4,
+          "purchases": 3,
           "revenue": 0.0,
           "revenue_formatted": "0원"
         },
         {
           "name": "메타 광고",
-          "purchases": 75,
+          "purchases": 74,
           "revenue": 0.0,
           "revenue_formatted": "0원"
         }
@@ -3753,13 +3805,13 @@
         },
         {
           "name": "(organic)",
-          "purchases": 15,
+          "purchases": 14,
           "revenue": 0.0,
           "revenue_formatted": "0원"
         },
         {
           "name": "(referral)",
-          "purchases": 7,
+          "purchases": 6,
           "revenue": 0.0,
           "revenue_formatted": "0원"
         },
@@ -3779,13 +3831,13 @@
       "alerts": [
         {
           "type": "low_activation",
-          "message": "유입→활동 전환율이 32.6%로 낮습니다. 랜딩페이지 최적화가 필요합니다.",
+          "message": "유입→활동 전환율이 32.5%로 낮습니다. 랜딩페이지 최적화가 필요합니다.",
           "message_friendly": "😅 방문자의 67%가 구경도 안 하고 나가요!",
           "severity": "high"
         },
         {
           "type": "low_consideration_conversion",
-          "message": "장바구니→구매 전환율이 4.9%로 낮습니다. 결제 프로세스 개선이 필요합니다.",
+          "message": "장바구니→구매 전환율이 4.8%로 낮습니다. 결제 프로세스 개선이 필요합니다.",
           "message_friendly": "🛒 장바구니에 담은 고객의 95%가 구매를 포기했어요!",
           "severity": "medium"
         }
@@ -3797,7 +3849,7 @@
           "message": "검색해서 들어온 분들은 참을성이 없어서 로딩이 길면 바로 나갑니다.",
           "reason": "페이지 로딩 속도나 첫 화면 콘텐츠 문제일 수 있어요.",
           "action": "상세페이지의 고용량 이미지를 압축해서 로딩 속도를 높여주세요.",
-          "technical": "유입→활동 전환율이 41.8%로 기준(50.0%) 미달"
+          "technical": "유입→활동 전환율이 41.5%로 기준(50.0%) 미달"
         },
         {
           "severity": "high",
@@ -3818,18 +3870,18 @@
         {
           "severity": "high",
           "title": "🛒 [기타] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 94.5%가 결제 없이 이탈했습니다.",
+          "message": "장바구니까지 온 고객의 94.3%가 결제 없이 이탈했습니다.",
           "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
           "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 5.5%로 기준(20.0%) 미달"
+          "technical": "관심→구매 전환율이 5.7%로 기준(20.0%) 미달"
         },
         {
           "severity": "high",
           "title": "🛒 [네이버 Organic] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 97.7%가 결제 없이 이탈했습니다.",
+          "message": "장바구니까지 온 고객의 98.3%가 결제 없이 이탈했습니다.",
           "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
           "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 2.3%로 기준(20.0%) 미달"
+          "technical": "관심→구매 전환율이 1.7%로 기준(20.0%) 미달"
         },
         {
           "severity": "medium",
@@ -3842,18 +3894,18 @@
         {
           "severity": "high",
           "title": "🛒 [메타 광고] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 92.1%가 결제 없이 이탈했습니다.",
+          "message": "장바구니까지 온 고객의 92.3%가 결제 없이 이탈했습니다.",
           "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
           "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 7.9%로 기준(20.0%) 미달"
+          "technical": "관심→구매 전환율이 7.7%로 기준(20.0%) 미달"
         },
         {
           "severity": "high",
           "title": "🛒 [스케일업스쿼드_direct] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 97.5%가 결제 없이 이탈했습니다.",
+          "message": "장바구니까지 온 고객의 98.8%가 결제 없이 이탈했습니다.",
           "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
           "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 2.5%로 기준(20.0%) 미달"
+          "technical": "관심→구매 전환율이 1.2%로 기준(20.0%) 미달"
         },
         {
           "severity": "medium",
@@ -3861,18 +3913,18 @@
           "message": "검색해서 들어온 분들은 참을성이 없어서 로딩이 길면 바로 나갑니다.",
           "reason": "페이지 로딩 속도나 첫 화면 콘텐츠 문제일 수 있어요.",
           "action": "상세페이지의 고용량 이미지를 압축해서 로딩 속도를 높여주세요.",
-          "technical": "유입→활동 전환율이 17.4%로 기준(50.0%) 미달"
+          "technical": "유입→활동 전환율이 16.7%로 기준(50.0%) 미달"
         }
       ],
       "channel_strategy": {
         "status": "success",
-        "avg_traffic": 824,
-        "avg_cvr": 0.81,
+        "avg_traffic": 826,
+        "avg_cvr": 0.79,
         "channels": {
           "Direct": {
             "stats": {
-              "users": 1986,
-              "users_formatted": "1,986",
+              "users": 2001,
+              "users_formatted": "2,001",
               "cvr": 0.45,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -3887,9 +3939,9 @@
           },
           "구글 Organic": {
             "stats": {
-              "users": 1233,
-              "users_formatted": "1,233",
-              "cvr": 0.89,
+              "users": 1253,
+              "users_formatted": "1,253",
+              "cvr": 0.88,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -3919,8 +3971,8 @@
           },
           "구분 불가 (not set)": {
             "stats": {
-              "users": 9,
-              "users_formatted": "9",
+              "users": 7,
+              "users_formatted": "7",
               "cvr": 0.0,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -3935,9 +3987,9 @@
           },
           "기타": {
             "stats": {
-              "users": 244,
-              "users_formatted": "244",
-              "cvr": 1.23,
+              "users": 236,
+              "users_formatted": "236",
+              "cvr": 1.27,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -3951,18 +4003,18 @@
           },
           "네이버 Organic": {
             "stats": {
-              "users": 483,
-              "users_formatted": "483",
-              "cvr": 0.83,
+              "users": 473,
+              "users_formatted": "473",
+              "cvr": 0.63,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
             "bcg_matrix": {
-              "quadrant": "hidden_gem",
-              "type": "Hidden Gem (숨은 보석)",
-              "icon": "💎",
-              "message": "아직 소문이 덜 났지만, 들어오면 무조건 사네요!",
-              "action": "👉 확신을 가지세요! 이 채널 예산을 20%만 늘려도 매출이 튈 겁니다."
+              "quadrant": "dog",
+              "type": "Dog (아픈 손가락)",
+              "icon": "🤔",
+              "message": "방문도 적고 반응도 없어요.",
+              "action": "👉 잠시 운영을 멈추거나, 이미지와 문구를 완전히 새롭게 바꿔보세요."
             }
           },
           "뉴스와이어": {
@@ -3983,9 +4035,9 @@
           },
           "메타 광고": {
             "stats": {
-              "users": 8468,
-              "users_formatted": "8,468",
-              "cvr": 0.89,
+              "users": 8530,
+              "users_formatted": "8,530",
+              "cvr": 0.87,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -3999,9 +4051,9 @@
           },
           "브런치": {
             "stats": {
-              "users": 20,
-              "users_formatted": "20",
-              "cvr": 5.0,
+              "users": 21,
+              "users_formatted": "21",
+              "cvr": 4.76,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -4015,18 +4067,18 @@
           },
           "스케일업스쿼드_direct": {
             "stats": {
-              "users": 196,
-              "users_formatted": "196",
-              "cvr": 1.02,
+              "users": 192,
+              "users_formatted": "192",
+              "cvr": 0.52,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
             "bcg_matrix": {
-              "quadrant": "hidden_gem",
-              "type": "Hidden Gem (숨은 보석)",
-              "icon": "💎",
-              "message": "아직 소문이 덜 났지만, 들어오면 무조건 사네요!",
-              "action": "👉 확신을 가지세요! 이 채널 예산을 20%만 늘려도 매출이 튈 겁니다."
+              "quadrant": "dog",
+              "type": "Dog (아픈 손가락)",
+              "icon": "🤔",
+              "message": "방문도 적고 반응도 없어요.",
+              "action": "👉 잠시 운영을 멈추거나, 이미지와 문구를 완전히 새롭게 바꿔보세요."
             }
           },
           "스티비": {
@@ -4047,8 +4099,8 @@
           },
           "이메일": {
             "stats": {
-              "users": 310,
-              "users_formatted": "310",
+              "users": 282,
+              "users_formatted": "282",
               "cvr": 0.0,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -4079,9 +4131,9 @@
           },
           "채널톡": {
             "stats": {
-              "users": 59,
-              "users_formatted": "59",
-              "cvr": 1.69,
+              "users": 56,
+              "users_formatted": "56",
+              "cvr": 1.79,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -4095,8 +4147,8 @@
           },
           "채용": {
             "stats": {
-              "users": 123,
-              "users_formatted": "123",
+              "users": 113,
+              "users_formatted": "113",
               "cvr": 0.0,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -4111,8 +4163,8 @@
           },
           "프레이머": {
             "stats": {
-              "users": 18,
-              "users_formatted": "18",
+              "users": 14,
+              "users_formatted": "14",
               "cvr": 0.0,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -4133,22 +4185,22 @@
           "group_a": "Direct",
           "group_b": "구글 Organic",
           "metric": "conversion_rate",
-          "chi2_statistic": 1.7162450377090468,
-          "p_value": 0.19017710944477026,
+          "chi2_statistic": 1.6641790516142447,
+          "p_value": 0.19704002003462637,
           "significant": false,
           "cvr_a": 0.45,
-          "cvr_b": 0.89
+          "cvr_b": 0.88
         },
         {
           "type": "channel_comparison",
           "group_a": "Direct",
           "group_b": "메타 광고",
           "metric": "conversion_rate",
-          "chi2_statistic": 3.2524710660015916,
-          "p_value": 0.07131586735473518,
+          "chi2_statistic": 3.1028203913646424,
+          "p_value": 0.07815678230699774,
           "significant": false,
           "cvr_a": 0.45,
-          "cvr_b": 0.89
+          "cvr_b": 0.87
         },
         {
           "type": "channel_comparison",
@@ -4158,8 +4210,8 @@
           "chi2_statistic": 0.0,
           "p_value": 1.0,
           "significant": false,
-          "cvr_a": 0.89,
-          "cvr_b": 0.89
+          "cvr_a": 0.88,
+          "cvr_b": 0.87
         }
       ],
       "opportunity_spotlight": [],
@@ -4173,7 +4225,6 @@
             "네이버 Organic",
             "뉴스와이어",
             "스케일업스쿼드_direct",
-            "스티비",
             "채널톡",
             "프레이머"
           ],
@@ -4186,6 +4237,7 @@
             "구글 검색",
             "기타",
             "메타 광고",
+            "스티비",
             "이메일",
             "채용"
           ]
@@ -4203,69 +4255,95 @@
         "analysis_method": "퍼널 건강도 (유입→활동→관심→결제 각 단계 전환율 평균)"
       },
       "performance_trends": {
-        "improvements_7d": [
-          {
-            "metric": "전환율 (CVR)",
-            "period": "7d",
-            "improvement_level": "high",
-            "change_pct": 411.28,
-            "recent_avg": 1.32,
-            "previous_avg": 0.26,
-            "recommendation": "전환율이 411.3% 개선되었습니다. 현재 전략이 효과적입니다. A/B 테스트로 추가 개선 여지를 확인하세요."
-          },
-          {
-            "metric": "구매 성공",
-            "period": "7d",
-            "improvement_level": "high",
-            "change_pct": 400.0,
-            "recent_avg": 1.43,
-            "previous_avg": 0.29,
-            "recommendation": "구매가 400.0% 증가했습니다! 성공 요인을 분석하고, 유사 캠페인을 다른 세그먼트에도 적용하세요."
-          }
-        ],
+        "improvements_7d": [],
         "improvements_14d": [],
-        "improvements_30d": [
-          {
-            "metric": "전환율 (CVR)",
-            "period": "30d",
-            "improvement_level": "high",
-            "change_pct": 34.98,
-            "recent_avg": 1.16,
-            "previous_avg": 0.86,
-            "recommendation": "전환율이 35.0% 개선되었습니다. 현재 전략이 효과적입니다. A/B 테스트로 추가 개선 여지를 확인하세요."
-          }
-        ],
-        "declines_7d": [],
-        "declines_14d": [
+        "improvements_30d": [],
+        "declines_7d": [
           {
             "metric": "구매 성공",
-            "period": "14d",
+            "period": "7d",
             "risk_level": "high",
-            "change_pct": -47.83,
-            "recent_avg": 0.86,
-            "previous_avg": 1.64,
-            "recommendation": "구매가 47.8% 감소했습니다. 결제 프로세스 오류나 품절 상품이 없는지 긴급 점검하세요."
+            "change_pct": -66.67,
+            "recent_avg": 0.43,
+            "previous_avg": 1.29,
+            "recommendation": "구매가 66.7% 감소했습니다. 결제 프로세스 오류나 품절 상품이 없는지 긴급 점검하세요."
           },
           {
             "metric": "전환율 (CVR)",
-            "period": "14d",
+            "period": "7d",
             "risk_level": "high",
-            "change_pct": -39.23,
-            "recent_avg": 0.79,
-            "previous_avg": 1.3,
-            "recommendation": "전환율이 39.2% 하락했습니다. 퍼널 전체를 점검하여 이탈 구간을 파악하세요."
+            "change_pct": -60.1,
+            "recent_avg": 0.47,
+            "previous_avg": 1.17,
+            "recommendation": "전환율이 60.1% 하락했습니다. 퍼널 전체를 점검하여 이탈 구간을 파악하세요."
           },
           {
             "metric": "장바구니 (관심)",
-            "period": "14d",
+            "period": "7d",
             "risk_level": "medium",
-            "change_pct": -22.93,
-            "recent_avg": 19.93,
-            "previous_avg": 25.86,
-            "recommendation": "장바구니 추가가 22.9% 감소했습니다. 상품 가격 경쟁력이나 재고 상황을 확인하세요."
+            "change_pct": -24.5,
+            "recent_avg": 16.29,
+            "previous_avg": 21.57,
+            "recommendation": "장바구니 추가가 24.5% 감소했습니다. 상품 가격 경쟁력이나 재고 상황을 확인하세요."
+          },
+          {
+            "metric": "매장 방문 (유입)",
+            "period": "7d",
+            "risk_level": "medium",
+            "change_pct": -22.5,
+            "recent_avg": 88.57,
+            "previous_avg": 114.29,
+            "recommendation": "유입이 22.5% 감소했습니다. 광고 노출이 줄었거나 시즌 영향일 수 있습니다. 채널별 유입 추이를 점검하세요."
+          },
+          {
+            "metric": "상품 구경 (활동)",
+            "period": "7d",
+            "risk_level": "medium",
+            "change_pct": -21.61,
+            "recent_avg": 30.57,
+            "previous_avg": 39.0,
+            "recommendation": "활동 참여가 21.6% 하락했습니다. 랜딩페이지 로딩 속도나 콘텐츠 품질을 점검하세요."
           }
         ],
-        "declines_30d": []
+        "declines_14d": [],
+        "declines_30d": [
+          {
+            "metric": "구매 성공",
+            "period": "30d",
+            "risk_level": "high",
+            "change_pct": -48.98,
+            "recent_avg": 0.83,
+            "previous_avg": 1.63,
+            "recommendation": "구매가 49.0% 감소했습니다. 결제 프로세스 오류나 품절 상품이 없는지 긴급 점검하세요."
+          },
+          {
+            "metric": "전환율 (CVR)",
+            "period": "30d",
+            "risk_level": "high",
+            "change_pct": -39.51,
+            "recent_avg": 0.78,
+            "previous_avg": 1.28,
+            "recommendation": "전환율이 39.5% 하락했습니다. 퍼널 전체를 점검하여 이탈 구간을 파악하세요."
+          },
+          {
+            "metric": "결제창 진입",
+            "period": "30d",
+            "risk_level": "medium",
+            "change_pct": -24.17,
+            "recent_avg": 3.03,
+            "previous_avg": 4.0,
+            "recommendation": "결제 진입이 24.2% 하락했습니다. 배송비나 결제 옵션에 문제가 없는지 점검하세요."
+          },
+          {
+            "metric": "매장 방문 (유입)",
+            "period": "30d",
+            "risk_level": "medium",
+            "change_pct": -23.62,
+            "recent_avg": 109.3,
+            "previous_avg": 143.1,
+            "recommendation": "유입이 23.6% 감소했습니다. 광고 노출이 줄었거나 시즌 영향일 수 있습니다. 채널별 유입 추이를 점검하세요."
+          }
+        ]
       },
       "micro_segment_alerts": [
         {
@@ -4273,7 +4351,7 @@
           "sub_type": "checkout_friction",
           "severity": "critical",
           "title": "🚧 메타 광고: 결제 장벽 감지",
-          "message": "관심→구매 전환율이 7.9%로 매우 낮습니다. (기준 10% 대비 -2.1%p)",
+          "message": "관심→구매 전환율이 7.7%로 매우 낮습니다. (기준 10% 대비 -2.3%p)",
           "diagnosis": "[DA] 유저의 구매 결정을 막는 요소가 있습니다.",
           "action": "이미 구매한 상품이 노출되거나 관심 없는 상품 추천 중.",
           "action_detail": {
@@ -4284,17 +4362,17 @@
           "category": "DA",
           "metrics": {
             "유입→활동": 20.6,
-            "관심→구매": 7.9,
-            "관심": 944
+            "관심→구매": 7.7,
+            "관심": 964
           },
           "impact": {
             "lost_users": 0,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 4.9,
-            "your_value": 7.9,
-            "gap": 3.0
+            "channel_avg": 4.8,
+            "your_value": 7.7,
+            "gap": 2.9
           },
           "urgency_score": 81,
           "priority_rank": 1
@@ -4315,15 +4393,15 @@
           "category": "DA",
           "metrics": {
             "유입→활동": 20.6,
-            "전환율": 0.89,
-            "유입": 8468
+            "전환율": 0.87,
+            "유입": 8530
           },
           "impact": {
-            "lost_users": 1018,
+            "lost_users": 1022,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 32.6,
+            "channel_avg": 32.5,
             "your_value": 20.6,
             "gap": -12.0
           },
@@ -4345,52 +4423,21 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 41.8,
+            "유입→활동": 41.5,
             "관심→구매": 2.5,
-            "관심": 366
+            "관심": 363
           },
           "impact": {
-            "lost_users": 9,
+            "lost_users": 8,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 4.9,
+            "channel_avg": 4.8,
             "your_value": 2.5,
-            "gap": -2.5
+            "gap": -2.3
           },
           "urgency_score": 64,
           "priority_rank": 3
-        },
-        {
-          "type": "problem",
-          "sub_type": "activation_drop",
-          "severity": "high",
-          "title": "🚪 Direct: 첫 이탈 경고",
-          "message": "유입→활동 전환율이 41.8%로 기준(50.0%) 미달입니다.",
-          "diagnosis": "[Organic] 랜딩페이지에서 대량 이탈이 발생하고 있습니다.",
-          "action": "페이지 로딩 속도 느림 또는 모바일 가독성 저하.",
-          "action_detail": {
-            "primary": "페이지 로딩 속도 느림 또는 모바일 가독성 저하.",
-            "secondary": "Core Web Vitals 점검. LCP, FID, CLS 개선",
-            "ab_test": "레이아웃 A/B 테스트: 이미지 중심 vs 텍스트 중심"
-          },
-          "category": "Organic",
-          "metrics": {
-            "유입→활동": 41.8,
-            "전환율": 0.45,
-            "유입": 1986
-          },
-          "impact": {
-            "lost_users": 0,
-            "potential_revenue": 0
-          },
-          "benchmark": {
-            "channel_avg": 32.6,
-            "your_value": 41.8,
-            "gap": 9.3
-          },
-          "urgency_score": 54,
-          "priority_rank": 4
         },
         {
           "type": "problem",
@@ -4407,18 +4454,49 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 72.8,
+            "유입→활동": 73.1,
             "관심→구매": 2.4,
-            "관심": 452
+            "관심": 458
           },
           "impact": {
-            "lost_users": 11,
+            "lost_users": 10,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 4.9,
+            "channel_avg": 4.8,
             "your_value": 2.4,
-            "gap": -2.5
+            "gap": -2.3
+          },
+          "urgency_score": 55,
+          "priority_rank": 4
+        },
+        {
+          "type": "problem",
+          "sub_type": "activation_drop",
+          "severity": "high",
+          "title": "🚪 Direct: 첫 이탈 경고",
+          "message": "유입→활동 전환율이 41.5%로 기준(50.0%) 미달입니다.",
+          "diagnosis": "[Organic] 랜딩페이지에서 대량 이탈이 발생하고 있습니다.",
+          "action": "페이지 로딩 속도 느림 또는 모바일 가독성 저하.",
+          "action_detail": {
+            "primary": "페이지 로딩 속도 느림 또는 모바일 가독성 저하.",
+            "secondary": "Core Web Vitals 점검. LCP, FID, CLS 개선",
+            "ab_test": "레이아웃 A/B 테스트: 이미지 중심 vs 텍스트 중심"
+          },
+          "category": "Organic",
+          "metrics": {
+            "유입→활동": 41.5,
+            "전환율": 0.45,
+            "유입": 2001
+          },
+          "impact": {
+            "lost_users": 0,
+            "potential_revenue": 0
+          },
+          "benchmark": {
+            "channel_avg": 32.5,
+            "your_value": 41.5,
+            "gap": 9.0
           },
           "urgency_score": 54,
           "priority_rank": 5
@@ -4428,7 +4506,7 @@
           "sub_type": "activation_drop",
           "severity": "high",
           "title": "🚪 이메일: 첫 이탈 경고",
-          "message": "유입→활동 전환율이 17.4%로 기준(50.0%) 미달입니다.",
+          "message": "유입→활동 전환율이 16.7%로 기준(50.0%) 미달입니다.",
           "diagnosis": "[CRM] 랜딩페이지에서 대량 이탈이 발생하고 있습니다.",
           "action": "메시지 제목의 약속이 본문에서 지켜지지 않음.",
           "action_detail": {
@@ -4438,18 +4516,18 @@
           },
           "category": "CRM",
           "metrics": {
-            "유입→활동": 17.4,
+            "유입→활동": 16.7,
             "전환율": 0.0,
-            "유입": 310
+            "유입": 282
           },
           "impact": {
-            "lost_users": 47,
-            "potential_revenue": 19056
+            "lost_users": 44,
+            "potential_revenue": 17301
           },
           "benchmark": {
-            "channel_avg": 32.6,
-            "your_value": 17.4,
-            "gap": -15.2
+            "channel_avg": 32.5,
+            "your_value": 16.7,
+            "gap": -15.9
           },
           "urgency_score": 48,
           "priority_rank": 6
@@ -4459,7 +4537,7 @@
           "sub_type": "checkout_friction",
           "severity": "critical",
           "title": "🚧 네이버 Organic: 결제 장벽 감지",
-          "message": "관심→구매 전환율이 2.3%로 매우 낮습니다. (기준 10% 대비 -7.7%p)",
+          "message": "관심→구매 전환율이 1.7%로 매우 낮습니다. (기준 10% 대비 -8.3%p)",
           "diagnosis": "[Organic] 유저의 구매 결정을 막는 요소가 있습니다.",
           "action": "회원가입 절차 복잡 또는 결제 수단 제한.",
           "action_detail": {
@@ -4469,18 +4547,18 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 66.0,
-            "관심→구매": 2.3,
-            "관심": 177
+            "유입→활동": 67.0,
+            "관심→구매": 1.7,
+            "관심": 174
           },
           "impact": {
-            "lost_users": 4,
+            "lost_users": 5,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 4.9,
-            "your_value": 2.3,
-            "gap": -2.7
+            "channel_avg": 4.8,
+            "your_value": 1.7,
+            "gap": -3.0
           },
           "urgency_score": 45,
           "priority_rank": 7
@@ -4490,7 +4568,7 @@
           "sub_type": "checkout_friction",
           "severity": "critical",
           "title": "🚧 기타: 결제 장벽 감지",
-          "message": "관심→구매 전환율이 5.5%로 매우 낮습니다. (기준 10% 대비 -4.5%p)",
+          "message": "관심→구매 전환율이 5.7%로 매우 낮습니다. (기준 10% 대비 -4.3%p)",
           "diagnosis": "[기타] 유저의 구매 결정을 막는 요소가 있습니다.",
           "action": "상세 로그 분석을 통해 이탈 원인을 파악하고 UX를 개선하세요.",
           "action_detail": {
@@ -4500,18 +4578,18 @@
           },
           "category": "기타",
           "metrics": {
-            "유입→활동": 51.6,
-            "관심→구매": 5.5,
-            "관심": 55
+            "유입→활동": 51.7,
+            "관심→구매": 5.7,
+            "관심": 53
           },
           "impact": {
             "lost_users": 0,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 4.9,
-            "your_value": 5.5,
-            "gap": 0.5
+            "channel_avg": 4.8,
+            "your_value": 5.7,
+            "gap": 0.9
           },
           "urgency_score": 42,
           "priority_rank": 8
@@ -4521,7 +4599,7 @@
           "sub_type": "checkout_friction",
           "severity": "critical",
           "title": "🚧 스케일업스쿼드_direct: 결제 장벽 감지",
-          "message": "관심→구매 전환율이 2.5%로 매우 낮습니다. (기준 10% 대비 -7.5%p)",
+          "message": "관심→구매 전환율이 1.2%로 매우 낮습니다. (기준 10% 대비 -8.8%p)",
           "diagnosis": "[Organic] 유저의 구매 결정을 막는 요소가 있습니다.",
           "action": "회원가입 절차 복잡 또는 결제 수단 제한.",
           "action_detail": {
@@ -4531,18 +4609,18 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 68.4,
-            "관심→구매": 2.5,
-            "관심": 79
+            "유입→활동": 71.4,
+            "관심→구매": 1.2,
+            "관심": 84
           },
           "impact": {
-            "lost_users": 1,
+            "lost_users": 2,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 4.9,
-            "your_value": 2.5,
-            "gap": -2.4
+            "channel_avg": 4.8,
+            "your_value": 1.2,
+            "gap": -3.6
           },
           "urgency_score": 42,
           "priority_rank": 9
@@ -4553,7 +4631,7 @@
           "severity": "opportunity",
           "channel": "구분 불가 (not set)",
           "title": "🚀 구분 불가 (not set): 성장 엔진 점화",
-          "message": "'구분 불가 (not set)' 채널은 방문자의 144.4%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+          "message": "'구분 불가 (not set)' 채널은 방문자의 171.4%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
           "diagnosis": "[Organic] 작지만 강한 채널입니다. 스케일업 기회!",
           "action": "'구분 불가 (not set)' 채널의 트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
           "action_detail": {
@@ -4563,18 +4641,18 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 144.4,
+            "유입→활동": 171.4,
             "전환율": 0.0,
-            "유입": 9
+            "유입": 7
           },
           "impact": {
             "lost_users": 0,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 32.6,
-            "your_value": 144.4,
-            "gap": 111.9
+            "channel_avg": 32.5,
+            "your_value": 171.4,
+            "gap": 138.9
           },
           "urgency_score": 10,
           "priority_rank": 10
@@ -4604,9 +4682,9 @@
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 32.6,
+            "channel_avg": 32.5,
             "your_value": 83.3,
-            "gap": 50.7
+            "gap": 50.8
           },
           "urgency_score": 10,
           "priority_rank": 11
@@ -4636,9 +4714,9 @@
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 32.6,
+            "channel_avg": 32.5,
             "your_value": 71.4,
-            "gap": 38.8
+            "gap": 38.9
           },
           "urgency_score": 10,
           "priority_rank": 12
@@ -4668,9 +4746,9 @@
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 32.6,
+            "channel_avg": 32.5,
             "your_value": 76.2,
-            "gap": 43.6
+            "gap": 43.7
           },
           "urgency_score": 10,
           "priority_rank": 13
@@ -4681,7 +4759,7 @@
           "severity": "opportunity",
           "channel": "채널톡",
           "title": "🚀 채널톡: 성장 엔진 점화",
-          "message": "'채널톡' 채널은 방문자의 84.7%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+          "message": "'채널톡' 채널은 방문자의 82.1%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
           "diagnosis": "[CRM] 작지만 강한 채널입니다. 스케일업 기회!",
           "action": "'채널톡' 채널의 트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
           "action_detail": {
@@ -4691,18 +4769,18 @@
           },
           "category": "CRM",
           "metrics": {
-            "유입→활동": 84.7,
-            "전환율": 1.69,
-            "유입": 59
+            "유입→활동": 82.1,
+            "전환율": 1.79,
+            "유입": 56
           },
           "impact": {
             "lost_users": 0,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 32.6,
-            "your_value": 84.7,
-            "gap": 52.2
+            "channel_avg": 32.5,
+            "your_value": 82.1,
+            "gap": 49.6
           },
           "urgency_score": 10,
           "priority_rank": 14
@@ -4713,7 +4791,7 @@
           "severity": "opportunity",
           "channel": "프레이머",
           "title": "🚀 프레이머: 성장 엔진 점화",
-          "message": "'프레이머' 채널은 방문자의 105.6%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+          "message": "'프레이머' 채널은 방문자의 121.4%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
           "diagnosis": "[Organic] 작지만 강한 채널입니다. 스케일업 기회!",
           "action": "'프레이머' 채널의 트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
           "action_detail": {
@@ -4723,18 +4801,18 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 105.6,
+            "유입→활동": 121.4,
             "전환율": 0.0,
-            "유입": 18
+            "유입": 14
           },
           "impact": {
             "lost_users": 0,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 32.6,
-            "your_value": 105.6,
-            "gap": 73.0
+            "channel_avg": 32.5,
+            "your_value": 121.4,
+            "gap": 88.9
           },
           "urgency_score": 10,
           "priority_rank": 15
@@ -4750,13 +4828,13 @@
             "checkout_friction",
             "activation_drop"
           ],
-          "activation_rate": 41.8,
-          "engagement_rate": 44.0,
+          "activation_rate": 41.5,
+          "engagement_rate": 43.7,
           "cvr": 0.45,
           "cart_conversion_rate": 2.5,
-          "유입": 1986,
+          "유입": 2001,
           "활동": 831,
-          "관심": 366,
+          "관심": 363,
           "구매완료": 9
         },
         "구글 Organic": {
@@ -4767,13 +4845,13 @@
           "segment_types": [
             "checkout_friction"
           ],
-          "activation_rate": 72.8,
-          "engagement_rate": 50.3,
-          "cvr": 0.89,
+          "activation_rate": 73.1,
+          "engagement_rate": 50.0,
+          "cvr": 0.88,
           "cart_conversion_rate": 2.4,
-          "유입": 1233,
-          "활동": 898,
-          "관심": 452,
+          "유입": 1253,
+          "활동": 916,
+          "관심": 458,
           "구매완료": 11
         },
         "구글 검색": {
@@ -4799,12 +4877,12 @@
           "segment_types": [
             "growth_engine"
           ],
-          "activation_rate": 144.4,
-          "engagement_rate": 30.8,
+          "activation_rate": 171.4,
+          "engagement_rate": 33.3,
           "cvr": 0.0,
           "cart_conversion_rate": 0.0,
-          "유입": 9,
-          "활동": 13,
+          "유입": 7,
+          "활동": 12,
           "관심": 4,
           "구매완료": 0
         },
@@ -4816,13 +4894,13 @@
           "segment_types": [
             "checkout_friction"
           ],
-          "activation_rate": 51.6,
-          "engagement_rate": 43.7,
-          "cvr": 1.23,
-          "cart_conversion_rate": 5.5,
-          "유입": 244,
-          "활동": 126,
-          "관심": 55,
+          "activation_rate": 51.7,
+          "engagement_rate": 43.4,
+          "cvr": 1.27,
+          "cart_conversion_rate": 5.7,
+          "유입": 236,
+          "활동": 122,
+          "관심": 53,
           "구매완료": 3
         },
         "네이버 Organic": {
@@ -4833,14 +4911,14 @@
           "segment_types": [
             "checkout_friction"
           ],
-          "activation_rate": 66.0,
-          "engagement_rate": 55.5,
-          "cvr": 0.83,
-          "cart_conversion_rate": 2.3,
-          "유입": 483,
-          "활동": 319,
-          "관심": 177,
-          "구매완료": 4
+          "activation_rate": 67.0,
+          "engagement_rate": 54.9,
+          "cvr": 0.63,
+          "cart_conversion_rate": 1.7,
+          "유입": 473,
+          "활동": 317,
+          "관심": 174,
+          "구매완료": 3
         },
         "뉴스와이어": {
           "category": "PR",
@@ -4869,27 +4947,27 @@
             "activation_drop"
           ],
           "activation_rate": 20.6,
-          "engagement_rate": 54.2,
-          "cvr": 0.89,
-          "cart_conversion_rate": 7.9,
-          "유입": 8468,
-          "활동": 1741,
-          "관심": 944,
-          "구매완료": 75
+          "engagement_rate": 55.0,
+          "cvr": 0.87,
+          "cart_conversion_rate": 7.7,
+          "유입": 8530,
+          "활동": 1753,
+          "관심": 964,
+          "구매완료": 74
         },
         "브런치": {
           "category": "SNS",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.38,
+          "traffic_rank_pct": 0.41,
           "segment_types": [],
-          "activation_rate": 45.0,
-          "engagement_rate": 88.9,
-          "cvr": 5.0,
-          "cart_conversion_rate": 12.5,
-          "유입": 20,
-          "활동": 9,
-          "관심": 8,
+          "activation_rate": 38.1,
+          "engagement_rate": 112.5,
+          "cvr": 4.76,
+          "cart_conversion_rate": 11.1,
+          "유입": 21,
+          "활동": 8,
+          "관심": 9,
           "구매완료": 1
         },
         "스케일업스쿼드_direct": {
@@ -4900,20 +4978,20 @@
           "segment_types": [
             "checkout_friction"
           ],
-          "activation_rate": 68.4,
-          "engagement_rate": 59.0,
-          "cvr": 1.02,
-          "cart_conversion_rate": 2.5,
-          "유입": 196,
-          "활동": 134,
-          "관심": 79,
-          "구매완료": 2
+          "activation_rate": 71.4,
+          "engagement_rate": 61.3,
+          "cvr": 0.52,
+          "cart_conversion_rate": 1.2,
+          "유입": 192,
+          "활동": 137,
+          "관심": 84,
+          "구매완료": 1
         },
         "스티비": {
           "category": "PR",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.25,
+          "traffic_rank_pct": 0.28,
           "segment_types": [
             "growth_engine"
           ],
@@ -4934,20 +5012,20 @@
           "segment_types": [
             "activation_drop"
           ],
-          "activation_rate": 17.4,
-          "engagement_rate": 33.3,
+          "activation_rate": 16.7,
+          "engagement_rate": 31.9,
           "cvr": 0.0,
           "cart_conversion_rate": 0.0,
-          "유입": 310,
-          "활동": 54,
-          "관심": 18,
+          "유입": 282,
+          "활동": 47,
+          "관심": 15,
           "구매완료": 0
         },
         "이오플래닛": {
           "category": "etc",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.44,
+          "traffic_rank_pct": 0.41,
           "segment_types": [
             "growth_engine"
           ],
@@ -4968,12 +5046,12 @@
           "segment_types": [
             "growth_engine"
           ],
-          "activation_rate": 84.7,
-          "engagement_rate": 34.0,
-          "cvr": 1.69,
+          "activation_rate": 82.1,
+          "engagement_rate": 37.0,
+          "cvr": 1.79,
           "cart_conversion_rate": 5.9,
-          "유입": 59,
-          "활동": 50,
+          "유입": 56,
+          "활동": 46,
           "관심": 17,
           "구매완료": 1
         },
@@ -4983,36 +5061,36 @@
           "rpv_log": 0.0,
           "traffic_rank_pct": 0.56,
           "segment_types": [],
-          "activation_rate": 58.5,
-          "engagement_rate": 43.1,
+          "activation_rate": 55.8,
+          "engagement_rate": 42.9,
           "cvr": 0.0,
           "cart_conversion_rate": 0.0,
-          "유입": 123,
-          "활동": 72,
-          "관심": 31,
+          "유입": 113,
+          "활동": 63,
+          "관심": 27,
           "구매완료": 0
         },
         "프레이머": {
           "category": "Organic",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.31,
+          "traffic_rank_pct": 0.28,
           "segment_types": [
             "growth_engine"
           ],
-          "activation_rate": 105.6,
-          "engagement_rate": 42.1,
+          "activation_rate": 121.4,
+          "engagement_rate": 41.2,
           "cvr": 0.0,
           "cart_conversion_rate": 0.0,
-          "유입": 18,
-          "활동": 19,
-          "관심": 8,
+          "유입": 14,
+          "활동": 17,
+          "관심": 7,
           "구매완료": 0
         }
       },
       "dynamic_thresholds": {
-        "traffic_high": 483.0,
-        "traffic_low": 91.0,
+        "traffic_high": 473.0,
+        "traffic_low": 84.5,
         "rpv_high": 0.0,
         "rpv_low": 0.0
       },
@@ -5118,10 +5196,10 @@
         "micro_segment_alerts_count": 15,
         "micro_segment_opportunities": 6,
         "micro_segment_problems": 9,
-        "performance_trends_improvements_7d": 2,
+        "performance_trends_improvements_7d": 0,
         "performance_trends_improvements_14d": 0,
-        "performance_trends_declines_7d": 0,
-        "performance_trends_declines_14d": 3
+        "performance_trends_declines_7d": 5,
+        "performance_trends_declines_14d": 0
       },
       "period_info": {
         "key": "90d",
@@ -5130,7 +5208,7 @@
       }
     },
     "30d": {
-      "generated_at": "2025-12-29T18:10:52.032555",
+      "generated_at": "2026-01-05T10:37:46.200089",
       "category": "--days",
       "thresholds_used": {
         "activation_rate_warning": 50.0,
@@ -5151,17 +5229,17 @@
         "is_filtered": true
       },
       "meta": {
-        "generated_at": "2025-12-29 18:10",
-        "analysis_period": "2025-11-28 ~ 2025-12-28",
+        "generated_at": "2026-01-05 10:37",
+        "analysis_period": "2025-12-06 ~ 2026-01-05",
         "category": "--days"
       },
       "summary_card": {
         "title": "이번 달 성과 요약",
         "revenue_text": "0원",
-        "cvr_text": "1.1%",
-        "visitors_text": "3,712",
-        "purchasers_text": "39",
-        "status_message": "안정적으로 운영되고 있어요. 이대로 유지해주세요 👍"
+        "cvr_text": "0.8%",
+        "visitors_text": "3,340",
+        "purchasers_text": "26",
+        "status_message": "분발해야 합니다! 이탈률 방어가 시급해요 🚨"
       },
       "key_insights": [
         {
@@ -5171,14 +5249,14 @@
           "bg_color": "#e3f2fd",
           "border_color": "#1976d2",
           "text_color": "#1565c0",
-          "message": "전체 CVR 1.1%, 총 매출 0원",
+          "message": "전체 CVR 0.8%, 총 매출 0원",
           "sub_items": [
-            "방문자 3,712명 → 구매자 39명",
-            "활성화율 36% | 장바구니→구매 6%"
+            "방문자 3,340명 → 구매자 26명",
+            "활성화율 35% | 장바구니→구매 4%"
           ],
           "action": {
-            "type": "scale_up",
-            "text": "현재 전환율이 양호합니다. 트래픽 확대로 매출 규모를 키워보세요."
+            "type": "optimize",
+            "text": "전환율 개선 여지가 있습니다. 랜딩페이지 최적화를 검토하세요."
           }
         },
         {
@@ -5188,16 +5266,16 @@
           "bg_color": "#fff3e0",
           "border_color": "#fb8c00",
           "text_color": "#e65100",
-          "message": "유입→활동 전환율이 23.4%로 기준(50.0%) 미달입니다.",
+          "message": "관심→구매 전환율이 8.1%로 매우 낮습니다. (기준 10% 대비 -1.9%p)",
           "sub_items": [
-            "[DA] 랜딩페이지에서 대량 이탈이 발생하고 있습니다."
+            "[DA] 유저의 구매 결정을 막는 요소가 있습니다."
           ],
           "action": {
             "type": "primary",
-            "text": "Fat Finger(오클릭) 또는 저품질 지면 노출 의심.",
-            "secondary": "앱/게임 지면 제외 및 Viewability 필터 적용"
+            "text": "이미 구매한 상품이 노출되거나 관심 없는 상품 추천 중.",
+            "secondary": "리타겟팅 모수에 Burn Pixel(구매자 제외) 적용"
           },
-          "urgency_score": 79,
+          "urgency_score": 82,
           "channel": ""
         },
         {
@@ -5207,9 +5285,9 @@
           "bg_color": "#f3e5f5",
           "border_color": "#ab47bc",
           "text_color": "#7b1fa2",
-          "message": "'구분 불가 (not set)' 채널은 방문자의 180.0%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+          "message": "'구분 불가 (not set)' 채널은 방문자의 400.0%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
           "sub_items": [
-            "활성화율 180.0% (채널 평균 대비 우수)"
+            "활성화율 400.0% (채널 평균 대비 우수)"
           ],
           "action": {
             "type": "opportunity",
@@ -5223,27 +5301,27 @@
         }
       ],
       "summary": {
-        "total_acquisition": 3712,
-        "total_activation": 1328,
-        "total_consideration": 681,
-        "total_conversion": 102,
-        "total_purchase": 39,
+        "total_acquisition": 3340,
+        "total_activation": 1164,
+        "total_consideration": 604,
+        "total_conversion": 93,
+        "total_purchase": 26,
         "total_revenue": 0.0,
         "total_revenue_formatted": "0원",
-        "overall_cvr": 1.05
+        "overall_cvr": 0.78
       },
       "overall": {
         "current_period": {
-          "start_date": "2025-11-28",
-          "end_date": "2025-12-28",
-          "total_acquisition": 3712,
-          "total_activation": 1328,
-          "total_consideration": 681,
-          "total_conversion": 102,
-          "total_purchase": 39,
+          "start_date": "2025-12-06",
+          "end_date": "2026-01-05",
+          "total_acquisition": 3340,
+          "total_activation": 1164,
+          "total_consideration": 604,
+          "total_conversion": 93,
+          "total_purchase": 26,
           "total_revenue": 0.0,
           "total_revenue_formatted": "0원",
-          "overall_cvr": 1.05
+          "overall_cvr": 0.78
         },
         "trend": {
           "direction": "stable"
@@ -5252,7 +5330,7 @@
       "top_channels": [
         {
           "name": "기타",
-          "purchases": 2,
+          "purchases": 1,
           "revenue": 0.0,
           "revenue_formatted": "0원"
         },
@@ -5264,18 +5342,12 @@
         },
         {
           "name": "메타 광고",
-          "purchases": 34,
+          "purchases": 23,
           "revenue": 0.0,
           "revenue_formatted": "0원"
         },
         {
           "name": "브런치",
-          "purchases": 1,
-          "revenue": 0.0,
-          "revenue_formatted": "0원"
-        },
-        {
-          "name": "채널톡",
           "purchases": 1,
           "revenue": 0.0,
           "revenue_formatted": "0원"
@@ -5289,14 +5361,8 @@
           "revenue_formatted": "0원"
         },
         {
-          "name": "(referral)",
-          "purchases": 2,
-          "revenue": 0.0,
-          "revenue_formatted": "0원"
-        },
-        {
           "name": "[GM]250731_ CPL최적화_lead",
-          "purchases": 16,
+          "purchases": 6,
           "revenue": 0.0,
           "revenue_formatted": "0원"
         },
@@ -5311,19 +5377,25 @@
           "purchases": 1,
           "revenue": 0.0,
           "revenue_formatted": "0원"
+        },
+        {
+          "name": "잠재고객-그로스메이커-251127",
+          "purchases": 17,
+          "revenue": 0.0,
+          "revenue_formatted": "0원"
         }
       ],
       "alerts": [
         {
           "type": "low_activation",
-          "message": "유입→활동 전환율이 35.8%로 낮습니다. 랜딩페이지 최적화가 필요합니다.",
-          "message_friendly": "😅 방문자의 64%가 구경도 안 하고 나가요!",
+          "message": "유입→활동 전환율이 34.9%로 낮습니다. 랜딩페이지 최적화가 필요합니다.",
+          "message_friendly": "😅 방문자의 65%가 구경도 안 하고 나가요!",
           "severity": "high"
         },
         {
           "type": "low_consideration_conversion",
-          "message": "장바구니→구매 전환율이 5.7%로 낮습니다. 결제 프로세스 개선이 필요합니다.",
-          "message_friendly": "🛒 장바구니에 담은 고객의 94%가 구매를 포기했어요!",
+          "message": "장바구니→구매 전환율이 4.3%로 낮습니다. 결제 프로세스 개선이 필요합니다.",
+          "message_friendly": "🛒 장바구니에 담은 고객의 96%가 구매를 포기했어요!",
           "severity": "medium"
         }
       ],
@@ -5334,7 +5406,7 @@
           "message": "검색해서 들어온 분들은 참을성이 없어서 로딩이 길면 바로 나갑니다.",
           "reason": "페이지 로딩 속도나 첫 화면 콘텐츠 문제일 수 있어요.",
           "action": "상세페이지의 고용량 이미지를 압축해서 로딩 속도를 높여주세요.",
-          "technical": "유입→활동 전환율이 39.4%로 기준(50.0%) 미달"
+          "technical": "유입→활동 전환율이 37.2%로 기준(50.0%) 미달"
         },
         {
           "severity": "high",
@@ -5353,39 +5425,31 @@
           "technical": "관심→구매 전환율이 0.0%로 기준(20.0%) 미달"
         },
         {
-          "severity": "high",
-          "title": "🛒 [네이버 Organic] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 98.4%가 결제 없이 이탈했습니다.",
-          "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
-          "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 1.6%로 기준(20.0%) 미달"
-        },
-        {
           "severity": "medium",
           "title": "🐢 [메타 광고] 페이지가 너무 느린가요?",
           "message": "검색해서 들어온 분들은 참을성이 없어서 로딩이 길면 바로 나갑니다.",
           "reason": "페이지 로딩 속도나 첫 화면 콘텐츠 문제일 수 있어요.",
           "action": "상세페이지의 고용량 이미지를 압축해서 로딩 속도를 높여주세요.",
-          "technical": "유입→활동 전환율이 23.4%로 기준(50.0%) 미달"
+          "technical": "유입→활동 전환율이 22.7%로 기준(50.0%) 미달"
         },
         {
           "severity": "high",
           "title": "🛒 [메타 광고] 다 골라놓고 망설이고 있어요!",
-          "message": "장바구니까지 온 고객의 88.9%가 결제 없이 이탈했습니다.",
+          "message": "장바구니까지 온 고객의 91.9%가 결제 없이 이탈했습니다.",
           "reason": "배송비가 비싸거나, 회원가입이 귀찮아서 그럴 수 있어요.",
           "action": "이탈 시점에 '첫 구매 무료배송' 팝업을 띄워보세요.",
-          "technical": "관심→구매 전환율이 11.1%로 기준(20.0%) 미달"
+          "technical": "관심→구매 전환율이 8.1%로 기준(20.0%) 미달"
         }
       ],
       "channel_strategy": {
         "status": "success",
-        "avg_traffic": 232,
-        "avg_cvr": 1.05,
+        "avg_traffic": 256,
+        "avg_cvr": 0.78,
         "channels": {
           "Direct": {
             "stats": {
-              "users": 589,
-              "users_formatted": "589",
+              "users": 562,
+              "users_formatted": "562",
               "cvr": 0.0,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -5400,8 +5464,8 @@
           },
           "구글 Organic": {
             "stats": {
-              "users": 403,
-              "users_formatted": "403",
+              "users": 356,
+              "users_formatted": "356",
               "cvr": 0.0,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -5432,8 +5496,8 @@
           },
           "구분 불가 (not set)": {
             "stats": {
-              "users": 5,
-              "users_formatted": "5",
+              "users": 2,
+              "users_formatted": "2",
               "cvr": 0.0,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -5448,9 +5512,9 @@
           },
           "기타": {
             "stats": {
-              "users": 61,
-              "users_formatted": "61",
-              "cvr": 3.28,
+              "users": 42,
+              "users_formatted": "42",
+              "cvr": 2.38,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -5464,25 +5528,9 @@
           },
           "네이버 Organic": {
             "stats": {
-              "users": 187,
-              "users_formatted": "187",
-              "cvr": 0.53,
-              "revenue": 0.0,
-              "revenue_formatted": "0원"
-            },
-            "bcg_matrix": {
-              "quadrant": "dog",
-              "type": "Dog (아픈 손가락)",
-              "icon": "🤔",
-              "message": "방문도 적고 반응도 없어요.",
-              "action": "👉 잠시 운영을 멈추거나, 이미지와 문구를 완전히 새롭게 바꿔보세요."
-            }
-          },
-          "뉴스와이어": {
-            "stats": {
-              "users": 3,
-              "users_formatted": "3",
-              "cvr": 0.0,
+              "users": 150,
+              "users_formatted": "150",
+              "cvr": 0.67,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -5496,9 +5544,9 @@
           },
           "메타 광고": {
             "stats": {
-              "users": 2294,
-              "users_formatted": "2,294",
-              "cvr": 1.48,
+              "users": 2074,
+              "users_formatted": "2,074",
+              "cvr": 1.11,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -5512,9 +5560,9 @@
           },
           "브런치": {
             "stats": {
-              "users": 4,
-              "users_formatted": "4",
-              "cvr": 25.0,
+              "users": 6,
+              "users_formatted": "6",
+              "cvr": 16.67,
               "revenue": 0.0,
               "revenue_formatted": "0원"
             },
@@ -5528,24 +5576,8 @@
           },
           "스케일업스쿼드_direct": {
             "stats": {
-              "users": 57,
-              "users_formatted": "57",
-              "cvr": 0.0,
-              "revenue": 0.0,
-              "revenue_formatted": "0원"
-            },
-            "bcg_matrix": {
-              "quadrant": "dog",
-              "type": "Dog (아픈 손가락)",
-              "icon": "🤔",
-              "message": "방문도 적고 반응도 없어요.",
-              "action": "👉 잠시 운영을 멈추거나, 이미지와 문구를 완전히 새롭게 바꿔보세요."
-            }
-          },
-          "스티비": {
-            "stats": {
-              "users": 2,
-              "users_formatted": "2",
+              "users": 67,
+              "users_formatted": "67",
               "cvr": 0.0,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -5592,24 +5624,8 @@
           },
           "채널톡": {
             "stats": {
-              "users": 15,
-              "users_formatted": "15",
-              "cvr": 6.67,
-              "revenue": 0.0,
-              "revenue_formatted": "0원"
-            },
-            "bcg_matrix": {
-              "quadrant": "hidden_gem",
-              "type": "Hidden Gem (숨은 보석)",
-              "icon": "💎",
-              "message": "아직 소문이 덜 났지만, 들어오면 무조건 사네요!",
-              "action": "👉 확신을 가지세요! 이 채널 예산을 20%만 늘려도 매출이 튈 겁니다."
-            }
-          },
-          "채용": {
-            "stats": {
-              "users": 74,
-              "users_formatted": "74",
+              "users": 13,
+              "users_formatted": "13",
               "cvr": 0.0,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -5622,10 +5638,10 @@
               "action": "👉 잠시 운영을 멈추거나, 이미지와 문구를 완전히 새롭게 바꿔보세요."
             }
           },
-          "프레이머": {
+          "채용": {
             "stats": {
-              "users": 4,
-              "users_formatted": "4",
+              "users": 54,
+              "users_formatted": "54",
               "cvr": 0.0,
               "revenue": 0.0,
               "revenue_formatted": "0원"
@@ -5647,9 +5663,7 @@
         "n_clusters": 3,
         "clusters": {
           "healthy": [
-            "구분 불가 (not set)",
-            "채널톡",
-            "프레이머"
+            "구분 불가 (not set)"
           ],
           "partial": [
             "브런치"
@@ -5660,12 +5674,11 @@
             "구글 검색",
             "기타",
             "네이버 Organic",
-            "뉴스와이어",
             "메타 광고",
             "스케일업스쿼드_direct",
-            "스티비",
             "이메일",
             "이오플래닛",
+            "채널톡",
             "채용"
           ]
         },
@@ -5682,67 +5695,97 @@
         "analysis_method": "퍼널 건강도 (유입→활동→관심→결제 각 단계 전환율 평균)"
       },
       "performance_trends": {
-        "improvements_7d": [
-          {
-            "metric": "전환율 (CVR)",
-            "period": "7d",
-            "improvement_level": "high",
-            "change_pct": 411.28,
-            "recent_avg": 1.32,
-            "previous_avg": 0.26,
-            "recommendation": "전환율이 411.3% 개선되었습니다. 현재 전략이 효과적입니다. A/B 테스트로 추가 개선 여지를 확인하세요."
-          },
-          {
-            "metric": "구매 성공",
-            "period": "7d",
-            "improvement_level": "high",
-            "change_pct": 400.0,
-            "recent_avg": 1.43,
-            "previous_avg": 0.29,
-            "recommendation": "구매가 400.0% 증가했습니다! 성공 요인을 분석하고, 유사 캠페인을 다른 세그먼트에도 적용하세요."
-          }
-        ],
+        "improvements_7d": [],
         "improvements_14d": [],
         "improvements_30d": [],
-        "declines_7d": [],
-        "declines_14d": [
+        "declines_7d": [
           {
             "metric": "구매 성공",
-            "period": "14d",
+            "period": "7d",
             "risk_level": "high",
-            "change_pct": -47.83,
-            "recent_avg": 0.86,
-            "previous_avg": 1.64,
-            "recommendation": "구매가 47.8% 감소했습니다. 결제 프로세스 오류나 품절 상품이 없는지 긴급 점검하세요."
+            "change_pct": -66.67,
+            "recent_avg": 0.43,
+            "previous_avg": 1.29,
+            "recommendation": "구매가 66.7% 감소했습니다. 결제 프로세스 오류나 품절 상품이 없는지 긴급 점검하세요."
           },
           {
             "metric": "전환율 (CVR)",
-            "period": "14d",
+            "period": "7d",
             "risk_level": "high",
-            "change_pct": -39.23,
-            "recent_avg": 0.79,
-            "previous_avg": 1.3,
-            "recommendation": "전환율이 39.2% 하락했습니다. 퍼널 전체를 점검하여 이탈 구간을 파악하세요."
+            "change_pct": -60.1,
+            "recent_avg": 0.47,
+            "previous_avg": 1.17,
+            "recommendation": "전환율이 60.1% 하락했습니다. 퍼널 전체를 점검하여 이탈 구간을 파악하세요."
           },
           {
             "metric": "장바구니 (관심)",
-            "period": "14d",
+            "period": "7d",
             "risk_level": "medium",
-            "change_pct": -22.93,
-            "recent_avg": 19.93,
-            "previous_avg": 25.86,
-            "recommendation": "장바구니 추가가 22.9% 감소했습니다. 상품 가격 경쟁력이나 재고 상황을 확인하세요."
+            "change_pct": -24.5,
+            "recent_avg": 16.29,
+            "previous_avg": 21.57,
+            "recommendation": "장바구니 추가가 24.5% 감소했습니다. 상품 가격 경쟁력이나 재고 상황을 확인하세요."
+          },
+          {
+            "metric": "매장 방문 (유입)",
+            "period": "7d",
+            "risk_level": "medium",
+            "change_pct": -22.5,
+            "recent_avg": 88.57,
+            "previous_avg": 114.29,
+            "recommendation": "유입이 22.5% 감소했습니다. 광고 노출이 줄었거나 시즌 영향일 수 있습니다. 채널별 유입 추이를 점검하세요."
+          },
+          {
+            "metric": "상품 구경 (활동)",
+            "period": "7d",
+            "risk_level": "medium",
+            "change_pct": -21.61,
+            "recent_avg": 30.57,
+            "previous_avg": 39.0,
+            "recommendation": "활동 참여가 21.6% 하락했습니다. 랜딩페이지 로딩 속도나 콘텐츠 품질을 점검하세요."
           }
         ],
+        "declines_14d": [],
         "declines_30d": []
       },
       "micro_segment_alerts": [
         {
           "type": "problem",
+          "sub_type": "checkout_friction",
+          "severity": "critical",
+          "title": "🚧 메타 광고: 결제 장벽 감지",
+          "message": "관심→구매 전환율이 8.1%로 매우 낮습니다. (기준 10% 대비 -1.9%p)",
+          "diagnosis": "[DA] 유저의 구매 결정을 막는 요소가 있습니다.",
+          "action": "이미 구매한 상품이 노출되거나 관심 없는 상품 추천 중.",
+          "action_detail": {
+            "primary": "이미 구매한 상품이 노출되거나 관심 없는 상품 추천 중.",
+            "secondary": "리타겟팅 모수에 Burn Pixel(구매자 제외) 적용",
+            "ab_test": "크리에이티브 A/B 테스트: 상품 이미지 vs 라이프스타일 이미지"
+          },
+          "category": "DA",
+          "metrics": {
+            "유입→활동": 22.7,
+            "관심→구매": 8.1,
+            "관심": 283
+          },
+          "impact": {
+            "lost_users": 0,
+            "potential_revenue": 0
+          },
+          "benchmark": {
+            "channel_avg": 4.3,
+            "your_value": 8.1,
+            "gap": 3.8
+          },
+          "urgency_score": 82,
+          "priority_rank": 1
+        },
+        {
+          "type": "problem",
           "sub_type": "activation_drop",
           "severity": "high",
           "title": "🚪 메타 광고: 첫 이탈 경고",
-          "message": "유입→활동 전환율이 23.4%로 기준(50.0%) 미달입니다.",
+          "message": "유입→활동 전환율이 22.7%로 기준(50.0%) 미달입니다.",
           "diagnosis": "[DA] 랜딩페이지에서 대량 이탈이 발생하고 있습니다.",
           "action": "Fat Finger(오클릭) 또는 저품질 지면 노출 의심.",
           "action_detail": {
@@ -5752,21 +5795,21 @@
           },
           "category": "DA",
           "metrics": {
-            "유입→활동": 23.4,
-            "전환율": 1.48,
-            "유입": 2294
+            "유입→활동": 22.7,
+            "전환율": 1.11,
+            "유입": 2074
           },
           "impact": {
-            "lost_users": 283,
+            "lost_users": 252,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 35.8,
-            "your_value": 23.4,
-            "gap": -12.4
+            "channel_avg": 34.9,
+            "your_value": 22.7,
+            "gap": -12.2
           },
           "urgency_score": 79,
-          "priority_rank": 1
+          "priority_rank": 2
         },
         {
           "type": "problem",
@@ -5783,21 +5826,21 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 39.4,
+            "유입→활동": 37.2,
             "관심→구매": 0.0,
-            "관심": 94
+            "관심": 77
           },
           "impact": {
-            "lost_users": 5,
-            "potential_revenue": 250000
+            "lost_users": 3,
+            "potential_revenue": 150000
           },
           "benchmark": {
-            "channel_avg": 5.7,
+            "channel_avg": 4.3,
             "your_value": 0.0,
-            "gap": -5.7
+            "gap": -4.3
           },
-          "urgency_score": 65,
-          "priority_rank": 2
+          "urgency_score": 61,
+          "priority_rank": 3
         },
         {
           "type": "problem",
@@ -5814,28 +5857,28 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 73.0,
+            "유입→활동": 77.0,
             "관심→구매": 0.0,
-            "관심": 145
+            "관심": 131
           },
           "impact": {
-            "lost_users": 8,
-            "potential_revenue": 400000
+            "lost_users": 5,
+            "potential_revenue": 250000
           },
           "benchmark": {
-            "channel_avg": 5.7,
+            "channel_avg": 4.3,
             "your_value": 0.0,
-            "gap": -5.7
+            "gap": -4.3
           },
-          "urgency_score": 57,
-          "priority_rank": 3
+          "urgency_score": 53,
+          "priority_rank": 4
         },
         {
           "type": "problem",
           "sub_type": "activation_drop",
           "severity": "high",
           "title": "🚪 Direct: 첫 이탈 경고",
-          "message": "유입→활동 전환율이 39.4%로 기준(50.0%) 미달입니다.",
+          "message": "유입→활동 전환율이 37.2%로 기준(50.0%) 미달입니다.",
           "diagnosis": "[Organic] 랜딩페이지에서 대량 이탈이 발생하고 있습니다.",
           "action": "페이지 로딩 속도 느림 또는 모바일 가독성 저하.",
           "action_detail": {
@@ -5845,51 +5888,20 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 39.4,
+            "유입→활동": 37.2,
             "전환율": 0.0,
-            "유입": 589
+            "유입": 562
           },
           "impact": {
             "lost_users": 0,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 35.8,
-            "your_value": 39.4,
-            "gap": 3.6
+            "channel_avg": 34.9,
+            "your_value": 37.2,
+            "gap": 2.3
           },
-          "urgency_score": 55,
-          "priority_rank": 4
-        },
-        {
-          "type": "problem",
-          "sub_type": "checkout_friction",
-          "severity": "critical",
-          "title": "🚧 네이버 Organic: 결제 장벽 감지",
-          "message": "관심→구매 전환율이 1.6%로 매우 낮습니다. (기준 10% 대비 -8.4%p)",
-          "diagnosis": "[Organic] 유저의 구매 결정을 막는 요소가 있습니다.",
-          "action": "회원가입 절차 복잡 또는 결제 수단 제한.",
-          "action_detail": {
-            "primary": "회원가입 절차 복잡 또는 결제 수단 제한.",
-            "secondary": "간편 로그인(소셜) 버튼 상단 배치, 비회원 구매 허용",
-            "ab_test": "결제 A/B 테스트: 원클릭 결제 vs 일반 결제"
-          },
-          "category": "Organic",
-          "metrics": {
-            "유입→활동": 61.5,
-            "관심→구매": 1.6,
-            "관심": 64
-          },
-          "impact": {
-            "lost_users": 2,
-            "potential_revenue": 0
-          },
-          "benchmark": {
-            "channel_avg": 5.7,
-            "your_value": 1.6,
-            "gap": -4.2
-          },
-          "urgency_score": 48,
+          "urgency_score": 51,
           "priority_rank": 5
         },
         {
@@ -5898,7 +5910,7 @@
           "severity": "opportunity",
           "channel": "구분 불가 (not set)",
           "title": "🚀 구분 불가 (not set): 성장 엔진 점화",
-          "message": "'구분 불가 (not set)' 채널은 방문자의 180.0%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
+          "message": "'구분 불가 (not set)' 채널은 방문자의 400.0%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
           "diagnosis": "[Organic] 작지만 강한 채널입니다. 스케일업 기회!",
           "action": "'구분 불가 (not set)' 채널의 트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
           "action_detail": {
@@ -5908,53 +5920,21 @@
           },
           "category": "Organic",
           "metrics": {
-            "유입→활동": 180.0,
+            "유입→활동": 400.0,
             "전환율": 0.0,
-            "유입": 5
+            "유입": 2
           },
           "impact": {
             "lost_users": 0,
             "potential_revenue": 0
           },
           "benchmark": {
-            "channel_avg": 35.8,
-            "your_value": 180.0,
-            "gap": 144.2
+            "channel_avg": 34.9,
+            "your_value": 400.0,
+            "gap": 365.1
           },
           "urgency_score": 10,
           "priority_rank": 6
-        },
-        {
-          "type": "opportunity",
-          "sub_type": "growth_engine",
-          "severity": "opportunity",
-          "channel": "프레이머",
-          "title": "🚀 프레이머: 성장 엔진 점화",
-          "message": "'프레이머' 채널은 방문자의 150.0%가 반응하는 알짜 채널입니다. 예산 증액 시 성장이 확실시됩니다.",
-          "diagnosis": "[Organic] 작지만 강한 채널입니다. 스케일업 기회!",
-          "action": "'프레이머' 채널의 트래픽 볼륨을 확보하여 매출 규모를 키우세요.",
-          "action_detail": {
-            "primary": "회원가입 절차가 복잡합니다. 간편 로그인(소셜) 버튼을 상단으로 배치하세요.",
-            "secondary": "상세 데이터 분석을 통해 이탈 원인을 파악하세요.",
-            "ab_test": "가설 수립 후 A/B 테스트를 진행하세요."
-          },
-          "category": "Organic",
-          "metrics": {
-            "유입→활동": 150.0,
-            "전환율": 0.0,
-            "유입": 4
-          },
-          "impact": {
-            "lost_users": 0,
-            "potential_revenue": 0
-          },
-          "benchmark": {
-            "channel_avg": 35.8,
-            "your_value": 150.0,
-            "gap": 114.2
-          },
-          "urgency_score": 10,
-          "priority_rank": 7
         }
       ],
       "channel_metrics_enhanced": {
@@ -5962,42 +5942,42 @@
           "category": "Organic",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.94,
+          "traffic_rank_pct": 0.92,
           "segment_types": [
             "checkout_friction",
             "activation_drop"
           ],
-          "activation_rate": 39.4,
-          "engagement_rate": 40.5,
+          "activation_rate": 37.2,
+          "engagement_rate": 36.8,
           "cvr": 0.0,
           "cart_conversion_rate": 0.0,
-          "유입": 589,
-          "활동": 232,
-          "관심": 94,
+          "유입": 562,
+          "활동": 209,
+          "관심": 77,
           "구매완료": 0
         },
         "구글 Organic": {
           "category": "Organic",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.88,
+          "traffic_rank_pct": 0.85,
           "segment_types": [
             "checkout_friction"
           ],
-          "activation_rate": 73.0,
-          "engagement_rate": 49.3,
+          "activation_rate": 77.0,
+          "engagement_rate": 47.8,
           "cvr": 0.0,
           "cart_conversion_rate": 0.0,
-          "유입": 403,
-          "활동": 294,
-          "관심": 145,
+          "유입": 356,
+          "활동": 274,
+          "관심": 131,
           "구매완료": 0
         },
         "구글 검색": {
           "category": "SA",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.41,
+          "traffic_rank_pct": 0.23,
           "segment_types": [],
           "activation_rate": 60.0,
           "engagement_rate": 33.3,
@@ -6012,16 +5992,16 @@
           "category": "Organic",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.41,
+          "traffic_rank_pct": 0.08,
           "segment_types": [
             "growth_engine"
           ],
-          "activation_rate": 180.0,
-          "engagement_rate": 22.2,
+          "activation_rate": 400.0,
+          "engagement_rate": 25.0,
           "cvr": 0.0,
           "cart_conversion_rate": 0.0,
-          "유입": 5,
-          "활동": 9,
+          "유입": 2,
+          "활동": 8,
           "관심": 2,
           "구매완료": 0
         },
@@ -6029,48 +6009,31 @@
           "category": "기타",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.69,
+          "traffic_rank_pct": 0.54,
           "segment_types": [],
-          "activation_rate": 63.9,
-          "engagement_rate": 48.7,
-          "cvr": 3.28,
-          "cart_conversion_rate": 10.5,
-          "유입": 61,
-          "활동": 39,
-          "관심": 19,
-          "구매완료": 2
+          "activation_rate": 57.1,
+          "engagement_rate": 33.3,
+          "cvr": 2.38,
+          "cart_conversion_rate": 12.5,
+          "유입": 42,
+          "활동": 24,
+          "관심": 8,
+          "구매완료": 1
         },
         "네이버 Organic": {
           "category": "Organic",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.81,
-          "segment_types": [
-            "checkout_friction"
-          ],
-          "activation_rate": 61.5,
-          "engagement_rate": 55.7,
-          "cvr": 0.53,
-          "cart_conversion_rate": 1.6,
-          "유입": 187,
-          "활동": 115,
-          "관심": 64,
-          "구매완료": 1
-        },
-        "뉴스와이어": {
-          "category": "PR",
-          "rpv": 0.0,
-          "rpv_log": 0.0,
-          "traffic_rank_pct": 0.16,
+          "traffic_rank_pct": 0.77,
           "segment_types": [],
-          "activation_rate": 66.7,
-          "engagement_rate": 100.0,
-          "cvr": 0.0,
-          "cart_conversion_rate": 0.0,
-          "유입": 3,
-          "활동": 2,
-          "관심": 2,
-          "구매완료": 0
+          "activation_rate": 60.0,
+          "engagement_rate": 54.4,
+          "cvr": 0.67,
+          "cart_conversion_rate": 2.0,
+          "유입": 150,
+          "활동": 90,
+          "관심": 49,
+          "구매완료": 1
         },
         "메타 광고": {
           "category": "DA",
@@ -6078,67 +6041,53 @@
           "rpv_log": 0.0,
           "traffic_rank_pct": 1.0,
           "segment_types": [
+            "checkout_friction",
             "activation_drop"
           ],
-          "activation_rate": 23.4,
-          "engagement_rate": 57.0,
-          "cvr": 1.48,
-          "cart_conversion_rate": 11.1,
-          "유입": 2294,
-          "활동": 537,
-          "관심": 306,
-          "구매완료": 34
+          "activation_rate": 22.7,
+          "engagement_rate": 60.2,
+          "cvr": 1.11,
+          "cart_conversion_rate": 8.1,
+          "유입": 2074,
+          "활동": 470,
+          "관심": 283,
+          "구매완료": 23
         },
         "브런치": {
           "category": "SNS",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.28,
+          "traffic_rank_pct": 0.35,
           "segment_types": [],
-          "activation_rate": 25.0,
-          "engagement_rate": 400.0,
-          "cvr": 25.0,
-          "cart_conversion_rate": 25.0,
-          "유입": 4,
+          "activation_rate": 16.7,
+          "engagement_rate": 500.0,
+          "cvr": 16.67,
+          "cart_conversion_rate": 20.0,
+          "유입": 6,
           "활동": 1,
-          "관심": 4,
+          "관심": 5,
           "구매완료": 1
         },
         "스케일업스쿼드_direct": {
           "category": "Organic",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.62,
+          "traffic_rank_pct": 0.69,
           "segment_types": [],
-          "activation_rate": 57.9,
-          "engagement_rate": 48.5,
+          "activation_rate": 65.7,
+          "engagement_rate": 63.6,
           "cvr": 0.0,
           "cart_conversion_rate": 0.0,
-          "유입": 57,
-          "활동": 33,
-          "관심": 16,
-          "구매완료": 0
-        },
-        "스티비": {
-          "category": "PR",
-          "rpv": 0.0,
-          "rpv_log": 0.0,
-          "traffic_rank_pct": 0.06,
-          "segment_types": [],
-          "activation_rate": 50.0,
-          "engagement_rate": 0.0,
-          "cvr": 0.0,
-          "cart_conversion_rate": 0,
-          "유입": 2,
-          "활동": 1,
-          "관심": 0,
+          "유입": 67,
+          "활동": 44,
+          "관심": 28,
           "구매완료": 0
         },
         "이메일": {
           "category": "CRM",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.16,
+          "traffic_rank_pct": 0.15,
           "segment_types": [],
           "activation_rate": 0.0,
           "engagement_rate": 0,
@@ -6153,7 +6102,7 @@
           "category": "etc",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.5,
+          "traffic_rank_pct": 0.35,
           "segment_types": [],
           "activation_rate": 50.0,
           "engagement_rate": 33.3,
@@ -6168,53 +6117,36 @@
           "category": "CRM",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.56,
+          "traffic_rank_pct": 0.46,
           "segment_types": [],
-          "activation_rate": 93.3,
-          "engagement_rate": 57.1,
-          "cvr": 6.67,
-          "cart_conversion_rate": 12.5,
-          "유입": 15,
-          "활동": 14,
-          "관심": 8,
-          "구매완료": 1
+          "activation_rate": 69.2,
+          "engagement_rate": 66.7,
+          "cvr": 0.0,
+          "cart_conversion_rate": 0.0,
+          "유입": 13,
+          "활동": 9,
+          "관심": 6,
+          "구매완료": 0
         },
         "채용": {
           "category": "etc",
           "rpv": 0.0,
           "rpv_log": 0.0,
-          "traffic_rank_pct": 0.75,
+          "traffic_rank_pct": 0.62,
           "segment_types": [],
-          "activation_rate": 52.7,
-          "engagement_rate": 43.6,
+          "activation_rate": 53.7,
+          "engagement_rate": 44.8,
           "cvr": 0.0,
           "cart_conversion_rate": 0.0,
-          "유입": 74,
-          "활동": 39,
-          "관심": 17,
-          "구매완료": 0
-        },
-        "프레이머": {
-          "category": "Organic",
-          "rpv": 0.0,
-          "rpv_log": 0.0,
-          "traffic_rank_pct": 0.28,
-          "segment_types": [
-            "growth_engine"
-          ],
-          "activation_rate": 150.0,
-          "engagement_rate": 33.3,
-          "cvr": 0.0,
-          "cart_conversion_rate": 0.0,
-          "유입": 4,
-          "활동": 6,
-          "관심": 2,
+          "유입": 54,
+          "활동": 29,
+          "관심": 13,
           "구매완료": 0
         }
       },
       "dynamic_thresholds": {
-        "traffic_high": 187.0,
-        "traffic_low": 10.5,
+        "traffic_high": 273.6000000000003,
+        "traffic_low": 42.0,
         "rpv_high": 0.0,
         "rpv_low": 0.0
       },
@@ -6308,8 +6240,8 @@
       },
       "data_issues": [],
       "details": {
-        "total_channels": 16,
-        "total_campaigns": 18,
+        "total_channels": 13,
+        "total_campaigns": 17,
         "analysis_period_days": 31,
         "ab_tests_conducted": 0,
         "significant_ab_tests": 0,
@@ -6317,13 +6249,13 @@
         "churn_risk_stages_30d": 0,
         "improvement_stages_7d": 0,
         "improvement_stages_30d": 0,
-        "micro_segment_alerts_count": 7,
-        "micro_segment_opportunities": 2,
+        "micro_segment_alerts_count": 6,
+        "micro_segment_opportunities": 1,
         "micro_segment_problems": 5,
-        "performance_trends_improvements_7d": 2,
+        "performance_trends_improvements_7d": 0,
         "performance_trends_improvements_14d": 0,
-        "performance_trends_declines_7d": 0,
-        "performance_trends_declines_14d": 3
+        "performance_trends_declines_7d": 5,
+        "performance_trends_declines_14d": 0
       },
       "period_info": {
         "key": "30d",
@@ -6333,8 +6265,75 @@
     }
   },
   "churn_analysis": {
-    "churn_predictions_7d": [],
-    "churn_predictions_30d": [],
+    "churn_predictions_7d": [
+      {
+        "stage": "유입",
+        "stage_friendly": "매장 방문 (유입)",
+        "risk_level": "medium",
+        "change_pct": -22.5,
+        "trend_message": "📉 지난주보다 22.5% 줄었어요.",
+        "diagnosis": "방문자 자체가 줄고 있어요.",
+        "action": "📢 광고 노출이 줄었거나, 시즌 이슈일 수 있어요. 캠페인 예산과 키워드를 점검하세요.",
+        "technical": "마케팅 캠페인 점검이 필요합니다.",
+        "period": "7d",
+        "recent_avg": 88.57,
+        "previous_avg": 114.29
+      },
+      {
+        "stage": "활동",
+        "stage_friendly": "상품 구경 (활동)",
+        "risk_level": "medium",
+        "change_pct": -21.61,
+        "trend_message": "📉 지난주보다 21.6% 줄었어요.",
+        "diagnosis": "고객들이 상품을 잘 안 눌러봅니다.",
+        "action": "👀 '요즘 이게 제일 잘 나가요🔥' 베스트 상품 큐레이션 배너를 메인에 띄워보세요.",
+        "technical": "랜딩페이지 최적화가 필요합니다.",
+        "period": "7d",
+        "recent_avg": 30.57,
+        "previous_avg": 39.0
+      },
+      {
+        "stage": "관심",
+        "stage_friendly": "장바구니 (관심)",
+        "risk_level": "medium",
+        "change_pct": -24.5,
+        "trend_message": "📉 지난주보다 24.5% 줄었어요.",
+        "diagnosis": "장바구니에 담고 잊어버린 분들이 많아요.",
+        "action": "🛒 이탈 1시간 후 '고객님, 담아두신 상품이 곧 품절돼요' 알림톡을 발송하세요.",
+        "technical": "장바구니 리마인더 캠페인을 설정하세요.",
+        "period": "7d",
+        "recent_avg": 16.29,
+        "previous_avg": 21.57
+      }
+    ],
+    "churn_predictions_30d": [
+      {
+        "stage": "유입",
+        "stage_friendly": "매장 방문 (유입)",
+        "risk_level": "medium",
+        "change_pct": -23.62,
+        "trend_message": "📉 지난주보다 23.6% 줄었어요.",
+        "diagnosis": "방문자 자체가 줄고 있어요.",
+        "action": "📢 광고 노출이 줄었거나, 시즌 이슈일 수 있어요. 캠페인 예산과 키워드를 점검하세요.",
+        "technical": "마케팅 캠페인 점검이 필요합니다.",
+        "period": "30d",
+        "recent_avg": 109.3,
+        "previous_avg": 143.1
+      },
+      {
+        "stage": "결제진행",
+        "stage_friendly": "결제창 진입",
+        "risk_level": "medium",
+        "change_pct": -24.17,
+        "trend_message": "📉 지난주보다 24.2% 줄었어요.",
+        "diagnosis": "다 사려다가 결제 직전에 나갔어요.",
+        "action": "💳 결제 오류가 없는지 확인하고, '지금 결제하면 내일 도착 🚚' 문구로 안심시켜주세요.",
+        "technical": "결제 프로세스 UX 점검이 필요합니다.",
+        "period": "30d",
+        "recent_avg": 3.03,
+        "previous_avg": 4.0
+      }
+    ],
     "improvement_predictions_7d": [],
     "improvement_predictions_30d": []
   },
@@ -6345,13 +6344,46 @@
       "crm_actions": [
         {
           "stage": "매장 방문 (유입)",
-          "trend": "📉 30일 전 대비 43.5% 감소",
+          "trend": "📉 30일 전 대비 34.7% 감소",
           "diagnosis": "방문자 자체가 줄고 있어요.",
           "prescription": "📢 광고 노출이 줄었거나, 시즌 이슈일 수 있어요. 캠페인 예산과 키워드를 점검하세요.",
           "priority": "high",
-          "change_pct": -43.5,
-          "d_day_value": 113.4,
-          "d_day_n_value": 162.7,
+          "change_pct": -34.7,
+          "d_day_value": 88.6,
+          "d_day_n_value": 119.3,
+          "period_days": 30
+        },
+        {
+          "stage": "상품 구경 (활동)",
+          "trend": "📉 30일 전 대비 59.3% 감소",
+          "diagnosis": "고객들이 상품을 잘 안 눌러봅니다.",
+          "prescription": "👀 '요즘 이게 제일 잘 나가요🔥' 베스트 상품 큐레이션 배너를 메인에 띄워보세요.",
+          "priority": "high",
+          "change_pct": -59.3,
+          "d_day_value": 30.6,
+          "d_day_n_value": 48.7,
+          "period_days": 30
+        },
+        {
+          "stage": "장바구니 (관심)",
+          "trend": "📉 30일 전 대비 64.9% 감소",
+          "diagnosis": "장바구니에 담고 잊어버린 분들이 많아요.",
+          "prescription": "🛒 이탈 1시간 후 '고객님, 담아두신 상품이 곧 품절돼요' 알림톡을 발송하세요.",
+          "priority": "high",
+          "change_pct": -64.9,
+          "d_day_value": 16.3,
+          "d_day_n_value": 26.9,
+          "period_days": 30
+        },
+        {
+          "stage": "결제창 진입",
+          "trend": "📉 30일 전 대비 22.7% 감소",
+          "diagnosis": "다 사려다가 결제 직전에 나갔어요.",
+          "prescription": "💳 결제 오류가 없는지 확인하고, '지금 결제하면 내일 도착 🚚' 문구로 안심시켜주세요.",
+          "priority": "medium",
+          "change_pct": -22.7,
+          "d_day_value": 3.1,
+          "d_day_n_value": 3.9,
           "period_days": 30
         }
       ]
@@ -6362,13 +6394,24 @@
       "crm_actions": [
         {
           "stage": "상품 구경 (활동)",
-          "trend": "📉 180일 전 대비 24.4% 감소",
+          "trend": "📉 180일 전 대비 43.5% 감소",
           "diagnosis": "고객들이 상품을 잘 안 눌러봅니다.",
           "prescription": "👀 '요즘 이게 제일 잘 나가요🔥' 베스트 상품 큐레이션 배너를 메인에 띄워보세요.",
+          "priority": "high",
+          "change_pct": -43.5,
+          "d_day_value": 30.6,
+          "d_day_n_value": 43.9,
+          "period_days": 180
+        },
+        {
+          "stage": "장바구니 (관심)",
+          "trend": "📉 180일 전 대비 25.4% 감소",
+          "diagnosis": "장바구니에 담고 잊어버린 분들이 많아요.",
+          "prescription": "🛒 이탈 1시간 후 '고객님, 담아두신 상품이 곧 품절돼요' 알림톡을 발송하세요.",
           "priority": "medium",
-          "change_pct": -24.4,
-          "d_day_value": 39.9,
-          "d_day_n_value": 49.6,
+          "change_pct": -25.4,
+          "d_day_value": 16.3,
+          "d_day_n_value": 20.4,
           "period_days": 180
         }
       ]
@@ -6384,19 +6427,52 @@
       "crm_actions": [
         {
           "stage": "매장 방문 (유입)",
-          "trend": "📉 30일 전 대비 43.5% 감소",
+          "trend": "📉 30일 전 대비 34.7% 감소",
           "diagnosis": "방문자 자체가 줄고 있어요.",
           "prescription": "📢 광고 노출이 줄었거나, 시즌 이슈일 수 있어요. 캠페인 예산과 키워드를 점검하세요.",
           "priority": "high",
-          "change_pct": -43.5,
-          "d_day_value": 113.4,
-          "d_day_n_value": 162.7,
+          "change_pct": -34.7,
+          "d_day_value": 88.6,
+          "d_day_n_value": 119.3,
+          "period_days": 30
+        },
+        {
+          "stage": "상품 구경 (활동)",
+          "trend": "📉 30일 전 대비 59.3% 감소",
+          "diagnosis": "고객들이 상품을 잘 안 눌러봅니다.",
+          "prescription": "👀 '요즘 이게 제일 잘 나가요🔥' 베스트 상품 큐레이션 배너를 메인에 띄워보세요.",
+          "priority": "high",
+          "change_pct": -59.3,
+          "d_day_value": 30.6,
+          "d_day_n_value": 48.7,
+          "period_days": 30
+        },
+        {
+          "stage": "장바구니 (관심)",
+          "trend": "📉 30일 전 대비 64.9% 감소",
+          "diagnosis": "장바구니에 담고 잊어버린 분들이 많아요.",
+          "prescription": "🛒 이탈 1시간 후 '고객님, 담아두신 상품이 곧 품절돼요' 알림톡을 발송하세요.",
+          "priority": "high",
+          "change_pct": -64.9,
+          "d_day_value": 16.3,
+          "d_day_n_value": 26.9,
+          "period_days": 30
+        },
+        {
+          "stage": "결제창 진입",
+          "trend": "📉 30일 전 대비 22.7% 감소",
+          "diagnosis": "다 사려다가 결제 직전에 나갔어요.",
+          "prescription": "💳 결제 오류가 없는지 확인하고, '지금 결제하면 내일 도착 🚚' 문구로 안심시켜주세요.",
+          "priority": "medium",
+          "change_pct": -22.7,
+          "d_day_value": 3.1,
+          "d_day_n_value": 3.9,
           "period_days": 30
         }
       ]
     }
   },
-  "generated_at": "2025-12-29T18:10:52.291708",
+  "generated_at": "2026-01-05T10:37:46.423650",
   "available_periods": [
     {
       "key": "full",
