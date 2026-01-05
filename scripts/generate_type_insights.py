@@ -18,6 +18,9 @@ import re
 import argparse
 from datetime import datetime, timedelta
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from scripts.common.paths import ClientPaths, parse_client_arg, PROJECT_ROOT
 
 # ============================================================================
 # 명령줄 인자 파싱
@@ -25,7 +28,12 @@ from pathlib import Path
 parser = argparse.ArgumentParser(description='Type 분석 기반 인사이트 생성')
 parser.add_argument('--days', type=int, default=0,
                     help='최근 N일 데이터만 사용 (0=전체기간, 30/90/180 등)')
+parser.add_argument('--client', type=str, default=None,
+                    help='클라이언트 ID (예: clientA)')
 args = parser.parse_args()
+
+# 클라이언트 ID 설정
+client_id = args.client
 
 def filter_by_days(df, days, date_column='일'):
     """
@@ -515,7 +523,16 @@ class NpEncoder(json.JSONEncoder):
 
 # 경로 설정 (동적 경로)
 BASE_DIR = Path(__file__).parent.parent
-data_dir = BASE_DIR / 'data' / 'type'
+
+# 멀티클라이언트 경로 설정
+if client_id:
+    paths = ClientPaths(client_id).ensure_dirs()
+    data_dir = paths.type
+    print(f"[멀티클라이언트 모드] 클라이언트: {client_id}")
+else:
+    # 레거시 경로 사용
+    data_dir = BASE_DIR / 'data' / 'type'
+    paths = None
 
 print("=" * 100)
 print("Type 분석 인사이트 생성")
@@ -535,22 +552,39 @@ daily_summary = pd.read_csv(data_dir / 'analysis_daily_summary.csv')
 daily_summary['일'] = pd.to_datetime(daily_summary['일'])
 
 # 차원별 분석 파일들
-dimension_files = {
-    'type1': 'dimension_type1_campaign_adset.csv',
-    'type2': 'dimension_type2_adset_age_gender.csv',
-    'type3': 'dimension_type3_adset_age.csv',
-    'type4': 'dimension_type4_adset_gender.csv',
-    'type5': 'dimension_type5_adset_device.csv',
-    'type6': 'dimension_type6_adset_platform.csv',
-    'type7': 'dimension_type7_adset_deviceplatform.csv'
-}
-
-dimensions = {}
-for key, filename in dimension_files.items():
-    file_path = data_dir / filename
-    if file_path.exists():
-        dimensions[key] = pd.read_csv(file_path)
-        print(f"✓ {filename} 로드 완료")
+if paths:
+    # 멀티클라이언트 모드: paths 속성 사용
+    dimension_file_paths = {
+        'type1': paths.dimension_type1,
+        'type2': paths.dimension_type2,
+        'type3': paths.dimension_type3,
+        'type4': paths.dimension_type4,
+        'type5': paths.dimension_type5,
+        'type6': paths.dimension_type6,
+        'type7': paths.dimension_type7
+    }
+    dimensions = {}
+    for key, file_path in dimension_file_paths.items():
+        if file_path.exists():
+            dimensions[key] = pd.read_csv(file_path)
+            print(f"✓ {file_path.name} 로드 완료")
+else:
+    # 레거시 모드
+    dimension_files = {
+        'type1': 'dimension_type1_campaign_adset.csv',
+        'type2': 'dimension_type2_adset_age_gender.csv',
+        'type3': 'dimension_type3_adset_age.csv',
+        'type4': 'dimension_type4_adset_gender.csv',
+        'type5': 'dimension_type5_adset_device.csv',
+        'type6': 'dimension_type6_adset_platform.csv',
+        'type7': 'dimension_type7_adset_deviceplatform.csv'
+    }
+    dimensions = {}
+    for key, filename in dimension_files.items():
+        file_path = data_dir / filename
+        if file_path.exists():
+            dimensions[key] = pd.read_csv(file_path)
+            print(f"✓ {filename} 로드 완료")
 
 # ============================================================================
 # 날짜 필터링 적용 (--days 파라미터)
@@ -3452,7 +3486,10 @@ insights = {
 }
 
 # JSON 파일 저장 (NpEncoder로 NaN/Inf/numpy 타입 안전 처리)
-output_file = data_dir / 'insights.json'
+if paths:
+    output_file = paths.type_insights_json
+else:
+    output_file = data_dir / 'insights.json'
 insights_cleaned = clean_dict_for_json(insights)
 with open(output_file, 'w', encoding='utf-8') as f:
     json.dump(insights_cleaned, f, cls=NpEncoder, ensure_ascii=False, indent=2)

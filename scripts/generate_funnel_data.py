@@ -21,6 +21,10 @@ from sklearn.preprocessing import StandardScaler
 import warnings
 warnings.filterwarnings('ignore')
 
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from scripts.common.paths import ClientPaths, parse_client_arg, PROJECT_ROOT
+
 # ============================================================================
 # 커맨드라인 인자 파싱 (기간 필터링용)
 # ============================================================================
@@ -1673,22 +1677,34 @@ def _generate_decline_recommendation(metric_name, change_pct, period):
 # 5. 메인 실행 함수 (Main Executor)
 # ============================================================================
 
-def generate_funnel_insights(category='default', ga4_file=None):
+def generate_funnel_insights(category='default', ga4_file=None, client_id: str = None):
     """퍼널 인사이트 생성 메인 함수"""
 
     print("🚀 퍼널 분석을 시작합니다...")
     print(f"   카테고리: {category}")
+
+    # 클라이언트별 경로 설정
+    if client_id:
+        paths = ClientPaths(client_id).ensure_dirs()
+        funnel_dir = paths.funnel
+        ga4_dir = paths.ga4
+        print(f"   클라이언트: {client_id}")
+    else:
+        # 레거시 경로 사용
+        funnel_dir = FUNNEL_DIR
+        ga4_dir = GA4_DIR
+        print("   클라이언트: (레거시 모드)")
 
     # 임계값 로드
     thresholds = get_thresholds(category)
     print(f"   임계값 프리셋: {category}")
 
     # 출력 디렉토리 생성
-    FUNNEL_DIR.mkdir(parents=True, exist_ok=True)
+    funnel_dir.mkdir(parents=True, exist_ok=True)
 
     # 데이터 로드
     if ga4_file is None:
-        ga4_file = GA4_DIR / 'GA4_data.csv'
+        ga4_file = ga4_dir / 'GA4_data.csv'
 
     if not os.path.exists(ga4_file):
         print(f"❌ {INSUFFICIENT_DATA_MESSAGES['no_file']}")
@@ -1700,7 +1716,7 @@ def generate_funnel_insights(category='default', ga4_file=None):
             'message': INSUFFICIENT_DATA_MESSAGES['no_file'],
             'generated_at': datetime.now().isoformat()
         }
-        with open(FUNNEL_DIR / 'insights.json', 'w', encoding='utf-8') as f:
+        with open(funnel_dir / 'insights.json', 'w', encoding='utf-8') as f:
             json.dump(empty_insights, f, ensure_ascii=False, indent=2)
         return empty_insights
 
@@ -1758,7 +1774,7 @@ def generate_funnel_insights(category='default', ga4_file=None):
     if '유입' in daily_funnel_pivot.columns and '구매완료' in daily_funnel_pivot.columns:
         daily_funnel_pivot['CVR'] = (daily_funnel_pivot['구매완료'] / daily_funnel_pivot['유입'] * 100).fillna(0)
 
-    daily_funnel_pivot.to_csv(FUNNEL_DIR / 'daily_funnel.csv', index=False, encoding='utf-8-sig')
+    daily_funnel_pivot.to_csv(funnel_dir / 'daily_funnel.csv', index=False, encoding='utf-8-sig')
     print(f"   ✓ 일별 퍼널: {len(daily_funnel_pivot)} rows")
 
     # 1-2. 채널별 일별 퍼널 (channel_daily_funnel.csv)
@@ -1778,7 +1794,7 @@ def generate_funnel_insights(category='default', ga4_file=None):
     if '유입' in channel_daily_pivot.columns and '구매완료' in channel_daily_pivot.columns:
         channel_daily_pivot['CVR'] = (channel_daily_pivot['구매완료'] / channel_daily_pivot['유입'] * 100).fillna(0)
 
-    channel_daily_pivot.to_csv(FUNNEL_DIR / 'channel_daily_funnel.csv', index=False, encoding='utf-8-sig')
+    channel_daily_pivot.to_csv(funnel_dir / 'channel_daily_funnel.csv', index=False, encoding='utf-8-sig')
     print(f"   ✓ 채널별 일별 퍼널: {len(channel_daily_pivot)} rows")
 
     # 2. 주별 퍼널
@@ -1799,7 +1815,7 @@ def generate_funnel_insights(category='default', ga4_file=None):
         if '유입' in weekly_funnel_pivot.columns and '구매완료' in weekly_funnel_pivot.columns:
             weekly_funnel_pivot['CVR'] = (weekly_funnel_pivot['구매완료'] / weekly_funnel_pivot['유입'] * 100).fillna(0)
 
-        weekly_funnel_pivot.to_csv(FUNNEL_DIR / 'weekly_funnel.csv', index=False, encoding='utf-8-sig')
+        weekly_funnel_pivot.to_csv(funnel_dir / 'weekly_funnel.csv', index=False, encoding='utf-8-sig')
         print(f"   ✓ 주별 퍼널: {len(weekly_funnel_pivot)} rows")
 
     # 3. 채널별 퍼널
@@ -1821,7 +1837,7 @@ def generate_funnel_insights(category='default', ga4_file=None):
     if '유입' in channel_funnel_pivot.columns and '구매완료' in channel_funnel_pivot.columns:
         channel_funnel_pivot['CVR'] = (channel_funnel_pivot['구매완료'] / channel_funnel_pivot['유입'] * 100).fillna(0)
 
-    channel_funnel_pivot.to_csv(FUNNEL_DIR / 'channel_funnel.csv', index=False, encoding='utf-8-sig')
+    channel_funnel_pivot.to_csv(funnel_dir / 'channel_funnel.csv', index=False, encoding='utf-8-sig')
     print(f"   ✓ 채널별 퍼널: {len(channel_funnel_pivot)} rows")
 
     # 4. 캠페인별 퍼널
@@ -1846,7 +1862,7 @@ def generate_funnel_insights(category='default', ga4_file=None):
     if '유입' in campaign_funnel_pivot.columns and '구매완료' in campaign_funnel_pivot.columns:
         campaign_funnel_pivot['CVR'] = (campaign_funnel_pivot['구매완료'] / campaign_funnel_pivot['유입'] * 100).fillna(0)
 
-    campaign_funnel_pivot.to_csv(FUNNEL_DIR / 'campaign_funnel.csv', index=False, encoding='utf-8-sig')
+    campaign_funnel_pivot.to_csv(funnel_dir / 'campaign_funnel.csv', index=False, encoding='utf-8-sig')
     print(f"   ✓ 캠페인별 퍼널: {len(campaign_funnel_pivot)} rows")
 
     # 5. 신규 vs 재방문
@@ -1857,7 +1873,7 @@ def generate_funnel_insights(category='default', ga4_file=None):
     new_vs_returning['Returning users'] = new_vs_returning['Total users'] - new_vs_returning['New users']
     new_vs_returning['New user %'] = (new_vs_returning['New users'] / new_vs_returning['Total users'] * 100).fillna(0)
 
-    new_vs_returning.to_csv(FUNNEL_DIR / 'new_vs_returning.csv', index=False, encoding='utf-8-sig')
+    new_vs_returning.to_csv(funnel_dir / 'new_vs_returning.csv', index=False, encoding='utf-8-sig')
     print(f"   ✓ 신규/재방문: {len(new_vs_returning)} rows")
 
     # ========================================
@@ -2273,7 +2289,7 @@ def generate_funnel_insights(category='default', ga4_file=None):
 
     # JSON 저장 (numpy 타입 변환 적용)
     serializable_insights = convert_to_serializable(insights)
-    with open(FUNNEL_DIR / 'insights.json', 'w', encoding='utf-8') as f:
+    with open(funnel_dir / 'insights.json', 'w', encoding='utf-8') as f:
         json.dump(serializable_insights, f, ensure_ascii=False, indent=2)
 
     # 결과 출력
@@ -2302,12 +2318,12 @@ def generate_funnel_insights(category='default', ga4_file=None):
     print(f"   - 하락 항목 (14일): {len(performance_trends.get('declines_14d', []))}개")
     print(f"   - 동적 임계값: 트래픽 상위 {dynamic_thresholds.get('traffic_high', 0):.0f}명 / RPV 상위 {dynamic_thresholds.get('rpv_high', 0):,.0f}원")
     print(f"\n📁 생성된 파일:")
-    print(f"   - {FUNNEL_DIR / 'insights.json'}")
-    print(f"   - {FUNNEL_DIR / 'daily_funnel.csv'}")
-    print(f"   - {FUNNEL_DIR / 'weekly_funnel.csv'}")
-    print(f"   - {FUNNEL_DIR / 'channel_funnel.csv'}")
-    print(f"   - {FUNNEL_DIR / 'campaign_funnel.csv'}")
-    print(f"   - {FUNNEL_DIR / 'new_vs_returning.csv'}")
+    print(f"   - {funnel_dir / 'insights.json'}")
+    print(f"   - {funnel_dir / 'daily_funnel.csv'}")
+    print(f"   - {funnel_dir / 'weekly_funnel.csv'}")
+    print(f"   - {funnel_dir / 'channel_funnel.csv'}")
+    print(f"   - {funnel_dir / 'campaign_funnel.csv'}")
+    print(f"   - {funnel_dir / 'new_vs_returning.csv'}")
 
     return insights
 
@@ -2317,22 +2333,24 @@ def generate_funnel_insights(category='default', ga4_file=None):
 # ============================================================================
 
 if __name__ == '__main__':
-    import sys
+    # 클라이언트 인자 파싱
+    client_id = parse_client_arg(required=False)
 
     # 카테고리 인자 처리 (기본값: default)
-    category = sys.argv[1] if len(sys.argv) > 1 else os.environ.get('BUSINESS_CATEGORY', 'default')
+    # --category 인자가 있으면 사용, 없으면 positional 인자 또는 환경변수 확인
+    category = args.category if args.category else os.environ.get('BUSINESS_CATEGORY', 'default')
 
     # 사용 가능한 카테고리 출력
     if category == '--help' or category == '-h':
-        print("사용법: python generate_funnel_data.py [category]")
+        print("사용법: python generate_funnel_data.py [--client CLIENT_ID] [--category CATEGORY] [--days N]")
         print("\n사용 가능한 카테고리:")
         for cat in CATEGORY_THRESHOLDS.keys():
             print(f"  - {cat}")
         print("\n예시:")
-        print("  python generate_funnel_data.py fashion")
-        print("  python generate_funnel_data.py food")
-        print("  python generate_funnel_data.py electronics")
+        print("  python generate_funnel_data.py --client clientA --category fashion")
+        print("  python generate_funnel_data.py --client clientB --days 30")
+        print("  python generate_funnel_data.py --category electronics")
         sys.exit(0)
 
     # 인사이트 생성
-    generate_funnel_insights(category=category)
+    generate_funnel_insights(category=category, client_id=client_id)

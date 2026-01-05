@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Berry Theme CSS 변수 */
+:root {
+  /* Primary */
+  --primary-main: #673ab7;
+  --primary-light: #ede7f6;
+  --primary-dark: #5e35b1;
+
+  /* Secondary */
+  --secondary-main: #2196f3;
+  --secondary-light: #e3f2fd;
+  --secondary-dark: #1976d2;
+
+  /* 상태 색상 */
+  --success-main: #00c853;
+  --success-light: #b9f6ca;
+  --warning-main: #ffab00;
+  --warning-light: #ffecb3;
+  --error-main: #ff1744;
+  --error-light: #ff8a80;
+  --info-main: #00b0ff;
+  --info-light: #80d8ff;
+
+  /* 배경 */
+  --background: #f8fafc;
+  --paper: #ffffff;
+
+  /* 텍스트 */
+  --text-primary: #212121;
+  --text-secondary: #757575;
+
+  /* 사이드바 */
+  --sidebar-bg: #1e1e2d;
+  --sidebar-hover: #2a2a3d;
+  --sidebar-active: #673ab7;
+}
+
+/* 기본 스타일 */
+body {
+  font-family: 'Inter', 'Roboto', sans-serif;
+  background-color: var(--background);
+  color: var(--text-primary);
+}
+
+/* 스크롤바 스타일 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* 카드 스타일 */
+@layer components {
+  .card {
+    @apply bg-white rounded-lg shadow-card p-6;
+  }
+
+  .card-hover {
+    @apply transition-shadow hover:shadow-card-hover;
+  }
+
+  .kpi-card {
+    @apply bg-white rounded-lg shadow-card p-4 border-l-4;
+  }
+
+  .sidebar-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg transition-colors;
+    @apply hover:bg-sidebar-hover text-gray-300 hover:text-white;
+  }
+
+  .sidebar-item.active {
+    @apply bg-primary-main text-white;
+  }
+}
+
+/* 차트 컨테이너 */
+.chart-container {
+  @apply w-full h-[300px] md:h-[400px];
+}
+
+/* 반응형 테이블 */
+.table-responsive {
+  @apply overflow-x-auto;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}

@@ -10,16 +10,21 @@
 - config_multi.json 파일 필요
 
 출력:
-- data/type/{각 시트별}.csv
-- data/type/merged_data.csv (통합 파일)
+- data/{client}/type/{각 시트별}.csv (클라이언트 모드)
+- data/{client}/type/merged_data.csv (클라이언트 모드)
+- data/type/{각 시트별}.csv (레거시 모드)
+- data/type/merged_data.csv (레거시 모드)
 """
 
-import os
+from pathlib import Path
 import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from scripts.common.paths import ClientPaths, get_client_config, parse_client_arg, PROJECT_ROOT
+
+import os
 import json
 import csv
 from datetime import datetime
-from pathlib import Path
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -197,11 +202,27 @@ def merge_csv_files(all_data_list, output_dir, merged_filename):
     return output_path
 
 
-def main():
-    """메인 실행 함수"""
+def fetch_sheets_multi(client_id: str = None):
+    """메인 실행 함수
+
+    Args:
+        client_id: 클라이언트 ID (None이면 레거시 모드)
+    """
     print("="*80)
     print("📊 여러 개의 Google Sheets 데이터 가져오기 및 통합")
+    if client_id:
+        print(f"   클라이언트: {client_id}")
+    else:
+        print("   (레거시 모드)")
     print("="*80)
+
+    # 경로 설정 (클라이언트 모드 vs 레거시 모드)
+    if client_id:
+        paths = ClientPaths(client_id)
+        paths.ensure_dirs()
+        output_dir = str(paths.type)
+    else:
+        output_dir = None  # config에서 읽어옴
 
     # 1. Config 파일 로드
     print("\n[단계 1/5] Config 파일 로드 중...")
@@ -209,8 +230,11 @@ def main():
 
     credentials_path = config['google']['credentials_path']
     sheets = config['google']['sheets']
-    output_dir = config['google']['output']['directory']
     merged_filename = config['google']['output']['merged_filename']
+
+    # 레거시 모드일 경우 config에서 output_dir 읽기
+    if output_dir is None:
+        output_dir = config['google']['output']['directory']
 
     print(f"   ✅ Config 로드 완료")
     print(f"   ├ 인증 파일: {credentials_path}")
@@ -281,6 +305,12 @@ def main():
     else:
         print("\n❌ 가져온 데이터가 없어 통합할 수 없습니다")
         sys.exit(1)
+
+
+def main():
+    """엔트리포인트 (레거시 호환성 유지)"""
+    client_id = parse_client_arg(required=False)
+    fetch_sheets_multi(client_id)
 
 
 if __name__ == '__main__':

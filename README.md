@@ -33,12 +33,16 @@
 
 > **배포 설계서**: [Deploy_project.md](docs/Deploy_project.md)
 
+**CSS 프레임워크**: Tailwind CSS + shadcn/ui (Berry Theme 통합)
+- Primary: `#673ab7` | Secondary: `#2196f3` | Sidebar: `#1e1e2d`
+
 ---
 
 ## 주요 특징
 
 - **Standalone HTML** (현재): 서버 없이 브라우저에서 바로 실행
 - **Next.js + Vercel** (목표): JAMstack 기반 멀티클라이언트 서비스
+- **CSS Framework**: Tailwind CSS + shadcn/ui (Berry Theme)
 - **Prophet 시계열 예측**: 계절성 패턴 분석 및 90일 예측
 - **다차원 분석**: 캠페인, 광고세트, 연령, 성별, 기기, 플랫폼별 분석
 - **퍼널 분석**: AARRR 프레임워크 기반 D3.js 전환 퍼널 시각화 (4/5단계 구현)

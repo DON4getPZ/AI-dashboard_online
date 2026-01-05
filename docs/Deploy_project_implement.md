@@ -51,6 +51,43 @@ npm install react-plotly.js plotly.js
 # 유틸리티
 npm install date-fns
 npm install clsx tailwind-merge
+
+# shadcn/ui 의존성
+npm install @radix-ui/react-slot
+npm install class-variance-authority
+npm install lucide-react
+npm install tailwindcss-animate
+```
+
+### 1.2.1 shadcn/ui 초기화
+
+```bash
+# shadcn/ui CLI 설정
+npx shadcn@latest init
+
+# 기본 컴포넌트 추가
+npx shadcn@latest add button
+npx shadcn@latest add card
+```
+
+**components.json** (shadcn/ui 설정):
+```json
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "default",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "tailwind.config.js",
+    "css": "src/app/globals.css",
+    "baseColor": "slate",
+    "cssVariables": true
+  },
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils"
+  }
+}
 ```
 
 ### 1.3 package.json 확인
@@ -75,7 +112,11 @@ npm install clsx tailwind-merge
     "recharts": "^2.x",
     "date-fns": "^3.x",
     "clsx": "^2.x",
-    "tailwind-merge": "^2.x"
+    "tailwind-merge": "^2.x",
+    "@radix-ui/react-slot": "^1.x",
+    "class-variance-authority": "^0.7.x",
+    "lucide-react": "^0.x",
+    "tailwindcss-animate": "^1.x"
   },
   "devDependencies": {
     "@types/node": "^20.x",
@@ -83,9 +124,68 @@ npm install clsx tailwind-merge
     "@types/react-dom": "^18.x",
     "typescript": "^5.x",
     "tailwindcss": "^3.x",
+    "postcss": "^8.x",
+    "autoprefixer": "^10.x",
     "eslint": "^8.x",
     "eslint-config-next": "14.x"
   }
+}
+```
+
+### 1.3.1 tailwind.config.js (Berry Theme 통합)
+
+**파일**: `tailwind.config.js`
+
+```javascript
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: ['class'],
+  content: [
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // Berry Theme Primary
+        primary: {
+          DEFAULT: '#673ab7',
+          main: '#673ab7',
+          light: '#ede7f6',
+          dark: '#5e35b1',
+        },
+        // Berry Theme Secondary
+        secondary: {
+          DEFAULT: '#2196f3',
+          main: '#2196f3',
+          light: '#e3f2fd',
+          dark: '#1976d2',
+        },
+        // 상태 색상
+        success: { main: '#00c853', light: '#b9f6ca' },
+        warning: { main: '#ffab00', light: '#ffecb3' },
+        error: { main: '#ff1744', light: '#ff8a80' },
+        info: { main: '#00b0ff', light: '#80d8ff' },
+        // 배경 및 텍스트
+        background: '#f8fafc',
+        paper: '#ffffff',
+        'text-primary': '#212121',
+        'text-secondary': '#757575',
+        // 사이드바
+        sidebar: {
+          bg: '#1e1e2d',
+          hover: '#2a2a3d',
+          active: '#673ab7',
+        },
+      },
+      boxShadow: {
+        'card': '0 2px 14px 0 rgba(32, 40, 45, 0.08)',
+        'card-hover': '0 4px 20px 0 rgba(32, 40, 45, 0.12)',
+      },
+    },
+  },
+  plugins: [require('tailwindcss-animate')],
 }
 ```
 

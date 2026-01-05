@@ -1,7 +1,10 @@
 """
 Google Sheets 데이터 가져오기 스크립트
 
-환경변수:
+사용법:
+    python scripts/fetch_google_sheets.py --client clientA
+
+환경변수 (레거시 호환):
 - GOOGLE_CREDENTIALS: Service Account JSON 전체 내용
 - SHEET_ID: Google Sheets ID
 - WORKSHEET_NAME: 워크시트 이름 (기본값: data_integration)
@@ -11,12 +14,23 @@ import os
 import sys
 import json
 import csv
+from pathlib import Path
+
+# 프로젝트 루트를 sys.path에 추가
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+from scripts.common.paths import ClientPaths, get_client_config, parse_client_arg, PROJECT_ROOT
 
-def fetch_google_sheets_data():
-    """Google Sheets에서 데이터 가져오기"""
+
+def fetch_google_sheets_data(client_id: str = None):
+    """Google Sheets에서 데이터 가져오기
+
+    Args:
+        client_id: 클라이언트 ID (None이면 환경변수 사용)
+    """
     print("="*80)
     print("📊 Google Sheets 데이터 가져오기 시작")
     print("="*80)
@@ -24,10 +38,39 @@ def fetch_google_sheets_data():
     # 현재 작업 디렉토리 출력
     print(f"\n📂 작업 디렉토리: {os.getcwd()}")
 
-    # 환경변수 확인
+    # 클라이언트 설정 로드
+    if client_id:
+        print(f"\n👤 클라이언트 모드: {client_id}")
+        try:
+            client_config = get_client_config(client_id)
+            paths = ClientPaths(client_id).ensure_dirs()
+
+            # clients.json에서 설정 가져오기
+            sheets_config = client_config.get('sheets', {}).get('raw', {})
+            sheet_id = sheets_config.get('sheetId') or os.environ.get('SHEET_ID')
+            worksheet_name = sheets_config.get('worksheet') or os.environ.get('WORKSHEET_NAME', 'data_integration')
+        except (FileNotFoundError, ValueError) as e:
+            print(f"\n⚠️ 클라이언트 설정 로드 실패: {e}")
+            print("   환경변수로 대체합니다.")
+            paths = None
+            sheet_id = os.environ.get('SHEET_ID')
+            worksheet_name = os.environ.get('WORKSHEET_NAME', 'data_integration')
+    else:
+        print("\n📋 레거시 모드 (환경변수 사용)")
+        paths = None
+        sheet_id = os.environ.get('SHEET_ID')
+        worksheet_name = os.environ.get('WORKSHEET_NAME', 'data_integration')
+
+    # 환경변수에서 credentials 가져오기 (항상 환경변수 사용)
     credentials_json = os.environ.get('GOOGLE_CREDENTIALS')
-    sheet_id = os.environ.get('SHEET_ID')
-    worksheet_name = os.environ.get('WORKSHEET_NAME', 'data_integration')
+
+    # 또는 로컬 credentials 파일 사용
+    if not credentials_json:
+        credentials_file = PROJECT_ROOT / 'config' / 'google-credentials.json'
+        if credentials_file.exists():
+            print(f"   📁 로컬 credentials 파일 사용: {credentials_file}")
+            with open(credentials_file, 'r', encoding='utf-8') as f:
+                credentials_json = f.read()
 
     print(f"\n🔍 환경변수 확인...")
     print(f"   ├ GOOGLE_CREDENTIALS: {'설정됨' if credentials_json else '❌ 없음'}")
@@ -127,12 +170,16 @@ def fetch_google_sheets_data():
             print(f"   └ 헤더: {', '.join(data[0][:5])}{'...' if len(data[0]) > 5 else ''}")
 
         # CSV로 저장 (csv 라이브러리 사용)
-        # data/raw 디렉토리 생성
-        output_dir = os.path.join(os.getcwd(), 'data', 'raw')
-        os.makedirs(output_dir, exist_ok=True)
+        # 클라이언트 모드: ClientPaths 사용, 레거시 모드: 기존 경로 사용
+        if paths:
+            output_file = paths.raw_data
+            output_dir = paths.raw
+        else:
+            output_dir = Path(os.getcwd()) / 'data' / 'raw'
+            output_dir.mkdir(parents=True, exist_ok=True)
+            output_file = output_dir / 'raw_data.csv'
 
-        output_file = os.path.join(output_dir, 'raw_data.csv')
-        output_file_abs = os.path.abspath(output_file)
+        output_file_abs = str(output_file.resolve())
 
         print(f"\n💾 CSV 파일 저장 중...")
         print(f"   ├ 저장 위치: {output_file_abs}")
@@ -206,9 +253,14 @@ def fetch_google_sheets_data():
 
 if __name__ == '__main__':
     try:
-        fetch_google_sheets_data()
+        # --client 인자 파싱 (선택적)
+        client_id = parse_client_arg(required=False)
+
+        fetch_google_sheets_data(client_id)
         print("\n" + "="*80)
         print("✅ 데이터 가져오기 완료!")
+        if client_id:
+            print(f"   클라이언트: {client_id}")
         print("="*80)
         sys.exit(0)
     except SystemExit:

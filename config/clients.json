@@ -1,0 +1,46 @@
+{
+  "clients": [
+    {
+      "id": "clientA",
+      "name": "기본 클라이언트",
+      "subdomain": "clienta",
+      "description": "기존 단일 클라이언트 데이터 (마이그레이션 대상)",
+      "sheets": {
+        "raw": {
+          "sheetId": "YOUR_RAW_SHEET_ID",
+          "worksheet": "data_integration"
+        },
+        "multi": {
+          "sheetId": "YOUR_MULTI_SHEET_ID",
+          "worksheets": ["meta_ads", "google_ads", "kakao_moment"]
+        },
+        "creative": {
+          "sheetId": "YOUR_CREATIVE_SHEET_ID",
+          "worksheet": "creative_data"
+        },
+        "creativeUrl": {
+          "sheetId": "YOUR_CREATIVE_URL_SHEET_ID",
+          "worksheet": "creative_url"
+        },
+        "ga4": {
+          "sheetId": "YOUR_GA4_SHEET_ID",
+          "worksheet": "ga4_funnel"
+        }
+      },
+      "accessPolicy": {
+        "allowedDomains": ["example.com"],
+        "allowedEmails": ["admin@example.com"]
+      },
+      "active": true
+    }
+  ],
+  "defaults": {
+    "timezone": "Asia/Seoul",
+    "currency": "KRW",
+    "dateFormat": "YYYY-MM-DD",
+    "forecastDays": 90,
+    "language": "ko"
+  },
+  "version": "1.0.0",
+  "lastUpdated": "2025-01-05"
+}

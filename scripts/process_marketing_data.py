@@ -13,13 +13,16 @@
 - INPUT_CSV_PATH: 입력 CSV 파일 경로 (기본값: raw_data.csv)
 """
 
-import os
+from pathlib import Path
 import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from scripts.common.paths import ClientPaths, get_client_config, parse_client_arg, PROJECT_ROOT
+
+import os
 import json
 import argparse
-from pathlib import Path
 from datetime import datetime, timedelta
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 import warnings
 
 # UTF-8 출력 설정 (Windows 콘솔 호환)
@@ -47,7 +50,7 @@ except ImportError:
 
 warnings.filterwarnings('ignore')
 
-# 디렉토리 설정
+# 디렉토리 설정 (레거시 호환성 유지, 실제 경로는 ClientPaths로 관리)
 BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / 'data'
 RAW_DIR = DATA_DIR / 'raw'
@@ -56,9 +59,7 @@ FORECAST_DIR = DATA_DIR / 'forecast'
 STATS_DIR = DATA_DIR / 'statistics'
 VISUAL_DIR = DATA_DIR / 'visualizations'
 
-# 디렉토리 생성
-for dir_path in [RAW_DIR, META_DIR, FORECAST_DIR, STATS_DIR, VISUAL_DIR]:
-    dir_path.mkdir(parents=True, exist_ok=True)
+# 디렉토리 생성은 main()에서 ClientPaths.ensure_dirs()로 처리
 
 # 한글 폰트 설정 (Windows)
 plt.rcParams['font.family'] = 'Malgun Gothic'
@@ -171,22 +172,22 @@ def calculate_metrics(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def calculate_statistics(df: pd.DataFrame) -> Dict[str, Any]:
+def calculate_statistics(df: pd.DataFrame, paths: Optional[ClientPaths] = None) -> Dict[str, Any]:
     """통계 분석"""
     print("\n📈 통계 분석 중...")
-    
+
     metrics = ['비용', '노출', '클릭', '전환수', '전환값', 'ctr', 'cpc', 'cpa', 'cvr', 'roas']
     statistics = {}
-    
+
     for metric in metrics:
         if metric not in df.columns:
             continue
-        
+
         data = df[metric].replace([np.inf, -np.inf], np.nan).dropna()
-        
+
         if len(data) == 0:
             continue
-        
+
         # 기본 통계
         mean_val = float(data.mean())
         median_val = float(data.median())
@@ -195,19 +196,19 @@ def calculate_statistics(df: pd.DataFrame) -> Dict[str, Any]:
         max_val = float(data.max())
         q25 = float(data.quantile(0.25))
         q75 = float(data.quantile(0.75))
-        
+
         # 왜도, 첨도
         skewness = float(stats.skew(data))
         kurtosis = float(stats.kurtosis(data))
-        
+
         # Z-Score 기반 이상치 탐지
         z_scores = np.abs(stats.zscore(data))
         outliers = df[z_scores > 2.5]['일 구분'].dt.strftime('%Y-%m-%d').tolist()
-        
+
         # 성과 등급 기준
         high_threshold = mean_val + std_val
         low_threshold = mean_val - std_val
-        
+
         statistics[metric] = {
             'mean': round(mean_val, 2),
             'median': round(median_val, 2),
@@ -224,51 +225,53 @@ def calculate_statistics(df: pd.DataFrame) -> Dict[str, Any]:
                 'low': round(low_threshold, 2)
             }
         }
-        
+
         print(f"   ├ {metric}: 평균={mean_val:.1f}, 표준편차={std_val:.1f}")
-    
+
     # 통계 JSON 저장
-    stats_file = STATS_DIR / 'statistics.json'
+    stats_file = paths.statistics_json if paths else STATS_DIR / 'statistics.json'
+    stats_file.parent.mkdir(parents=True, exist_ok=True)
     with open(stats_file, 'w', encoding='utf-8') as f:
         json.dump(statistics, f, ensure_ascii=False, indent=2)
-    
+
     print(f"   ✅ {stats_file.name} 저장 완료")
-    
+
     return statistics
 
 
-def calculate_daily_statistics(df: pd.DataFrame, statistics: Dict) -> None:
+def calculate_daily_statistics(df: pd.DataFrame, statistics: Dict, paths: Optional[ClientPaths] = None) -> None:
     """일별 통계 데이터 생성"""
     print("\n📊 일별 통계 계산 중...")
-    
+
     daily_stats = df.copy()
-    
+
     # 각 지표별 Z-Score 및 등급 계산
     for metric, stat_info in statistics.items():
         if metric not in daily_stats.columns:
             continue
-        
+
         mean_val = stat_info['mean']
         std_val = stat_info['std']
         high_threshold = stat_info['grade_thresholds']['high']
         low_threshold = stat_info['grade_thresholds']['low']
-        
+
         # Z-Score
         daily_stats[f'{metric}_zscore'] = ((daily_stats[metric] - mean_val) / std_val).round(2)
-        
+
         # 등급
         daily_stats[f'{metric}_grade'] = daily_stats[metric].apply(
             lambda x: '상' if x >= high_threshold else ('하' if x <= low_threshold else '중')
         )
-    
+
     # CSV 저장
-    daily_csv = STATS_DIR / 'daily_statistics.csv'
+    daily_csv = paths.daily_statistics if paths else STATS_DIR / 'daily_statistics.csv'
+    daily_csv.parent.mkdir(parents=True, exist_ok=True)
     daily_stats.to_csv(daily_csv, index=False, encoding='utf-8')
-    
+
     print(f"   ✅ {daily_csv.name} 저장 완료 ({len(daily_stats):,}행)")
 
 
-def simple_forecast(df: pd.DataFrame, days: int = OUTPUT_DAYS) -> pd.DataFrame:
+def simple_forecast(df: pd.DataFrame, days: int = OUTPUT_DAYS, paths: Optional[ClientPaths] = None) -> pd.DataFrame:
     """최근 90일 데이터 기반 예측 (주간 패턴 반영)"""
     print(f"\n🔮 시계열 예측 중 ({days}일)...")
 
@@ -357,7 +360,8 @@ def simple_forecast(df: pd.DataFrame, days: int = OUTPUT_DAYS) -> pd.DataFrame:
     forecast_df = pd.concat([actual, pd.DataFrame(predictions)], ignore_index=True)
 
     # CSV 저장 - predictions_daily.csv로 저장
-    forecast_file = FORECAST_DIR / 'predictions_daily.csv'
+    forecast_file = paths.predictions_daily if paths else FORECAST_DIR / 'predictions_daily.csv'
+    forecast_file.parent.mkdir(parents=True, exist_ok=True)
     forecast_df.to_csv(forecast_file, index=False, encoding='utf-8')
 
     print(f"   ✅ {forecast_file.name} 저장 완료")
@@ -367,14 +371,14 @@ def simple_forecast(df: pd.DataFrame, days: int = OUTPUT_DAYS) -> pd.DataFrame:
     return forecast_df
 
 
-def advanced_detailed_forecast(df: pd.DataFrame, days: int = OUTPUT_DAYS) -> Dict[str, pd.DataFrame]:
+def advanced_detailed_forecast(df: pd.DataFrame, days: int = OUTPUT_DAYS, paths: Optional[ClientPaths] = None) -> Dict[str, pd.DataFrame]:
     """상세 시계열 분석 및 예측 (Prophet 사용, 최근 365일 데이터 활용)"""
     print(f"\n🔬 상세 시계열 분석 시작 ({days}일 예측)...")
 
     if not PROPHET_AVAILABLE:
         print("   ⚠️ Prophet이 설치되지 않아 단순 예측을 사용합니다.")
         # 단순 예측으로 대체
-        return simple_forecast_as_detailed(df, days)
+        return simple_forecast_as_detailed(df, days, paths)
 
     # 일별 집계
     daily = df.groupby('일 구분').agg({
@@ -523,7 +527,8 @@ def advanced_detailed_forecast(df: pd.DataFrame, days: int = OUTPUT_DAYS) -> Dic
     detailed_forecast = pd.concat([actual, predictions], ignore_index=True)
 
     # 저장
-    detailed_file = FORECAST_DIR / 'predictions_detailed.csv'
+    detailed_file = paths.forecast / 'predictions_detailed.csv' if paths else FORECAST_DIR / 'predictions_detailed.csv'
+    detailed_file.parent.mkdir(parents=True, exist_ok=True)
     detailed_forecast.to_csv(detailed_file, index=False, encoding='utf-8')
 
     print(f"   ✅ {detailed_file.name} 저장 완료")
@@ -535,7 +540,7 @@ def advanced_detailed_forecast(df: pd.DataFrame, days: int = OUTPUT_DAYS) -> Dic
     }
 
 
-def simple_forecast_as_detailed(df: pd.DataFrame, days: int = OUTPUT_DAYS) -> Dict[str, pd.DataFrame]:
+def simple_forecast_as_detailed(df: pd.DataFrame, days: int = OUTPUT_DAYS, paths: Optional[ClientPaths] = None) -> Dict[str, pd.DataFrame]:
     """Prophet 미설치 시 단순 예측으로 대체"""
     # 일별 집계
     daily = df.groupby('일 구분').agg({
@@ -595,7 +600,8 @@ def simple_forecast_as_detailed(df: pd.DataFrame, days: int = OUTPUT_DAYS) -> Di
 
     detailed_forecast = pd.concat([actual, predictions], ignore_index=True)
 
-    detailed_file = FORECAST_DIR / 'predictions_detailed.csv'
+    detailed_file = paths.forecast / 'predictions_detailed.csv' if paths else FORECAST_DIR / 'predictions_detailed.csv'
+    detailed_file.parent.mkdir(parents=True, exist_ok=True)
     detailed_forecast.to_csv(detailed_file, index=False, encoding='utf-8')
 
     print(f"   ✅ {detailed_file.name} 저장 완료 (단순 예측)")
@@ -607,7 +613,7 @@ def simple_forecast_as_detailed(df: pd.DataFrame, days: int = OUTPUT_DAYS) -> Di
     }
 
 
-def generate_weekly_predictions(daily_forecast: pd.DataFrame) -> pd.DataFrame:
+def generate_weekly_predictions(daily_forecast: pd.DataFrame, paths: Optional[ClientPaths] = None) -> pd.DataFrame:
     """일별 예측을 주별로 집계"""
     print(f"\n📅 주별 예측 생성 중...")
 
@@ -625,7 +631,8 @@ def generate_weekly_predictions(daily_forecast: pd.DataFrame) -> pd.DataFrame:
     }).reset_index()
 
     # 저장
-    weekly_file = FORECAST_DIR / 'predictions_weekly.csv'
+    weekly_file = paths.predictions_weekly if paths else FORECAST_DIR / 'predictions_weekly.csv'
+    weekly_file.parent.mkdir(parents=True, exist_ok=True)
     weekly.to_csv(weekly_file, index=False, encoding='utf-8')
 
     print(f"   ✅ {weekly_file.name} 저장 완료 ({len(weekly)}주)")
@@ -633,7 +640,7 @@ def generate_weekly_predictions(daily_forecast: pd.DataFrame) -> pd.DataFrame:
     return weekly
 
 
-def generate_monthly_predictions(daily_forecast: pd.DataFrame) -> pd.DataFrame:
+def generate_monthly_predictions(daily_forecast: pd.DataFrame, paths: Optional[ClientPaths] = None) -> pd.DataFrame:
     """일별 예측을 월별로 집계"""
     print(f"\n📅 월별 예측 생성 중...")
 
@@ -651,7 +658,8 @@ def generate_monthly_predictions(daily_forecast: pd.DataFrame) -> pd.DataFrame:
     }).reset_index()
 
     # 저장
-    monthly_file = FORECAST_DIR / 'predictions_monthly.csv'
+    monthly_file = paths.predictions_monthly if paths else FORECAST_DIR / 'predictions_monthly.csv'
+    monthly_file.parent.mkdir(parents=True, exist_ok=True)
     monthly.to_csv(monthly_file, index=False, encoding='utf-8')
 
     print(f"   ✅ {monthly_file.name} 저장 완료 ({len(monthly)}개월)")
@@ -659,9 +667,13 @@ def generate_monthly_predictions(daily_forecast: pd.DataFrame) -> pd.DataFrame:
     return monthly
 
 
-def visualize_analysis(df: pd.DataFrame, forecast_data: Dict[str, Any]) -> None:
+def visualize_analysis(df: pd.DataFrame, forecast_data: Dict[str, Any], paths: Optional[ClientPaths] = None) -> None:
     """데이터 분석 시각화 (정규분포, 시계열, 추세 등)"""
     print(f"\n📊 시각화 생성 중...")
+
+    # 시각화 디렉토리 설정
+    visual_dir = paths.visualizations if paths else VISUAL_DIR
+    visual_dir.mkdir(parents=True, exist_ok=True)
 
     daily = forecast_data['daily']
     forecasts = forecast_data['forecasts']
@@ -715,7 +727,7 @@ def visualize_analysis(df: pd.DataFrame, forecast_data: Dict[str, Any]) -> None:
     fig.delaxes(axes[2, 1])
 
     plt.tight_layout()
-    timeseries_file = VISUAL_DIR / 'timeseries_forecast.png'
+    timeseries_file = visual_dir / 'timeseries_forecast.png'
     plt.savefig(timeseries_file, dpi=300, bbox_inches='tight')
     plt.close()
     print(f"      └ {timeseries_file.name} 저장 완료")
@@ -758,7 +770,7 @@ def visualize_analysis(df: pd.DataFrame, forecast_data: Dict[str, Any]) -> None:
     fig.delaxes(axes[2, 1])
 
     plt.tight_layout()
-    distribution_file = VISUAL_DIR / 'distribution_analysis.png'
+    distribution_file = visual_dir / 'distribution_analysis.png'
     plt.savefig(distribution_file, dpi=300, bbox_inches='tight')
     plt.close()
     print(f"      └ {distribution_file.name} 저장 완료")
@@ -794,7 +806,7 @@ def visualize_analysis(df: pd.DataFrame, forecast_data: Dict[str, Any]) -> None:
                 ax.grid(True, alpha=0.3)
 
             plt.tight_layout()
-            seasonal_file = VISUAL_DIR / 'seasonal_decomposition.png'
+            seasonal_file = visual_dir / 'seasonal_decomposition.png'
             plt.savefig(seasonal_file, dpi=300, bbox_inches='tight')
             plt.close()
             print(f"      └ {seasonal_file.name} 저장 완료")
@@ -813,7 +825,7 @@ def visualize_analysis(df: pd.DataFrame, forecast_data: Dict[str, Any]) -> None:
     ax.set_title('마케팅 지표 간 상관관계', fontsize=14, fontweight='bold', pad=20)
 
     plt.tight_layout()
-    corr_file = VISUAL_DIR / 'correlation_heatmap.png'
+    corr_file = visual_dir / 'correlation_heatmap.png'
     plt.savefig(corr_file, dpi=300, bbox_inches='tight')
     plt.close()
     print(f"      └ {corr_file.name} 저장 완료")
@@ -840,7 +852,7 @@ def visualize_analysis(df: pd.DataFrame, forecast_data: Dict[str, Any]) -> None:
         ax.grid(True, alpha=0.3, axis='y')
 
     plt.tight_layout()
-    boxplot_file = VISUAL_DIR / 'boxplot_outliers.png'
+    boxplot_file = visual_dir / 'boxplot_outliers.png'
     plt.savefig(boxplot_file, dpi=300, bbox_inches='tight')
     plt.close()
     print(f"      └ {boxplot_file.name} 저장 완료")
@@ -848,7 +860,7 @@ def visualize_analysis(df: pd.DataFrame, forecast_data: Dict[str, Any]) -> None:
     print(f"   ✅ 모든 시각화 완료!")
 
 
-def generate_html_dashboard(df: pd.DataFrame, forecast_data: Dict[str, Any], statistics: Dict) -> None:
+def generate_html_dashboard(df: pd.DataFrame, forecast_data: Dict[str, Any], statistics: Dict, paths: Optional[ClientPaths] = None) -> None:
     """HTML 대시보드 생성 (인터랙티브 차트 포함)"""
     print(f"\n🌐 HTML 대시보드 생성 중...")
 
@@ -1260,7 +1272,9 @@ def generate_html_dashboard(df: pd.DataFrame, forecast_data: Dict[str, Any], sta
 """
 
     # HTML 파일 저장
-    html_file = DATA_DIR / 'dashboard.html'
+    data_dir = paths.base if paths else DATA_DIR
+    data_dir.mkdir(parents=True, exist_ok=True)
+    html_file = data_dir / 'dashboard.html'
     with open(html_file, 'w', encoding='utf-8') as f:
         f.write(html_content)
 
@@ -1268,7 +1282,7 @@ def generate_html_dashboard(df: pd.DataFrame, forecast_data: Dict[str, Any], sta
     print(f"   📂 위치: {html_file.absolute()}")
 
 
-def generate_metadata(df: pd.DataFrame, month_info: List[Dict] = None) -> Dict[str, Any]:
+def generate_metadata(df: pd.DataFrame, month_info: List[Dict] = None, paths: Optional[ClientPaths] = None) -> Dict[str, Any]:
     """메타데이터 생성"""
     print("\n📋 메타데이터 생성 중...")
 
@@ -1299,12 +1313,13 @@ def generate_metadata(df: pd.DataFrame, month_info: List[Dict] = None) -> Dict[s
         'total_metrics': total_metrics,
         'kpis': kpis
     }
-    
+
     # JSON 저장
-    meta_file = META_DIR / 'latest.json'
+    meta_file = paths.meta_latest_json if paths else META_DIR / 'latest.json'
+    meta_file.parent.mkdir(parents=True, exist_ok=True)
     with open(meta_file, 'w', encoding='utf-8') as f:
         json.dump(metadata, f, ensure_ascii=False, indent=2)
-    
+
     print(f"   ✅ {meta_file.name} 저장 완료")
     print(f"\n📊 전체 성과 요약:")
     print(f"   ├ 총 광고비: ₩{total_metrics['cost']:,.0f}")
@@ -1314,72 +1329,87 @@ def generate_metadata(df: pd.DataFrame, month_info: List[Dict] = None) -> Dict[s
     return metadata
 
 
-def main():
+def main(client_id: Optional[str] = None):
     """메인 실행 함수"""
     print("="*80)
     print("🚀 마케팅 데이터 전처리 시작 v2.0")
     print("="*80)
-    
-    # 입력 파일 경로 (data/raw/raw_data.csv 기본값)
-    input_file = os.environ.get('INPUT_CSV_PATH', 'data/raw/raw_data.csv')
-    
+
+    # 경로 설정
+    paths = None
+    if client_id:
+        paths = ClientPaths(client_id)
+        paths.ensure_dirs()
+        input_file = str(paths.raw_data)
+        print(f"   클라이언트: {client_id}")
+        print(f"   데이터 경로: {paths.base}")
+    else:
+        # 레거시 모드: 환경변수 또는 기본값 사용
+        input_file = os.environ.get('INPUT_CSV_PATH', str(PROJECT_ROOT / 'data' / 'raw' / 'raw_data.csv'))
+        # 레거시 디렉토리 생성
+        for dir_path in [RAW_DIR, META_DIR, FORECAST_DIR, STATS_DIR, VISUAL_DIR]:
+            dir_path.mkdir(parents=True, exist_ok=True)
+
     if not os.path.exists(input_file):
         print(f"\n❌ 오류: 입력 파일을 찾을 수 없습니다: {input_file}")
         sys.exit(1)
-    
+
     try:
         # 1. 데이터 로드
         df = load_and_clean_data(input_file)
-        
+
         # 2. 데이터 정제
         df = clean_and_convert_types(df)
-        
+
         # 3. 지표 계산
         df = calculate_metrics(df)
 
         # 4. 통계 분석
-        statistics = calculate_statistics(df)
+        statistics = calculate_statistics(df, paths)
 
         # 5. 일별 통계
-        calculate_daily_statistics(df, statistics)
+        calculate_daily_statistics(df, statistics, paths)
 
         # 6. 기본 예측 데이터 생성 (단순 버전)
-        simple_forecast(df)
+        simple_forecast(df, paths=paths)
 
         # 7. 상세 예측 데이터 생성 (Prophet - 전체 데이터 활용)
-        forecast_data = advanced_detailed_forecast(df, days=30)
+        forecast_data = advanced_detailed_forecast(df, days=30, paths=paths)
 
         # 8. 주별/월별 예측 생성
-        generate_weekly_predictions(forecast_data['predictions'])
-        generate_monthly_predictions(forecast_data['predictions'])
+        generate_weekly_predictions(forecast_data['predictions'], paths)
+        generate_monthly_predictions(forecast_data['predictions'], paths)
 
         # 9. 시각화 생성
-        visualize_analysis(df, forecast_data)
+        visualize_analysis(df, forecast_data, paths)
 
         # 10. HTML 대시보드 생성
-        generate_html_dashboard(df, forecast_data, statistics)
+        generate_html_dashboard(df, forecast_data, statistics, paths)
 
         # 11. 메타데이터 생성
-        generate_metadata(df)
+        generate_metadata(df, paths=paths)
+
+        # 출력 경로 정보
+        output_base = paths.base if paths else DATA_DIR
 
         print("\n" + "="*80)
         print("✅ 모든 처리 완료!")
         print("="*80)
-        print("\n생성된 파일:")
-        print("   📁 data/forecast/")
+        print(f"\n생성된 파일 ({output_base}):")
+        print("   📁 forecast/")
         print("      ├ predictions_daily.csv (일별 - 단순 예측)")
         print("      ├ predictions_detailed.csv (일별 - Prophet 예측)")
         print("      ├ predictions_weekly.csv (주별 집계)")
         print("      └ predictions_monthly.csv (월별 집계)")
-        print("   📁 data/visualizations/")
+        print("   📁 visualizations/")
         print("      ├ timeseries_forecast.png (시계열 예측 그래프)")
         print("      ├ distribution_analysis.png (정규분포 분석)")
         print("      ├ seasonal_decomposition.png (계절성 분해)")
         print("      ├ correlation_heatmap.png (상관관계)")
         print("      └ boxplot_outliers.png (이상치 분석)")
-        print("   📁 data/")
-        print("      └ dashboard.html (인터랙티브 대시보드) ⭐")
-        
+        print("   📁 /")
+        print("      └ dashboard.html (인터랙티브 대시보드)")
+
     except Exception as e:
         print(f"\n❌ 오류 발생: {e}")
         import traceback
@@ -1388,4 +1418,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    client_id = parse_client_arg(required=False)
+    main(client_id)

@@ -54,3 +54,34 @@ out/
 # data/ folder should be tracked
 !data/
 !data/**/*
+
+# ===== 민감 정보 =====
+# Google Credentials (절대 커밋 금지)
+**/google-credentials.json
+**/credentials*.json
+**/*credentials*.json
+gen-lang-client-*.json
+*.secret
+.env
+.env.local
+.env.*.local
+
+# Config 파일 중 민감 정보
+config/google-credentials.json
+
+# ===== 대용량 파일 =====
+# Standalone HTML (각 18-21MB) - 필요 시 주석 해제
+# data/*_standalone.html
+
+# ===== 백업 =====
+backup/
+*.backup
+*.bak
+
+# ===== 멀티클라이언트 =====
+# 클라이언트별 원본 데이터는 로컬만 유지 (선택적)
+# data/*/raw/
+# data/*/GA4/
+
+# ===== Vercel =====
+.vercel/

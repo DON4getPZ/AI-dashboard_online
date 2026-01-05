@@ -996,9 +996,37 @@ jobs:
 | 프론트엔드 | Next.js | 14+ |
 | | React | 18+ |
 | | TypeScript | 5+ |
+| CSS | Tailwind CSS | 3.4+ |
+| | shadcn/ui | 최신 |
 | 차트 | Recharts 또는 React-Plotly | 최신 |
 | 호스팅 | Vercel | - |
 | 보안 | Cloudflare Access | - |
+
+### B-1. CSS 프레임워크 구성
+
+**선택**: Tailwind CSS + shadcn/ui
+
+| 구성 요소 | 역할 |
+|-----------|------|
+| Tailwind CSS | 유틸리티 기반 스타일링 |
+| shadcn/ui | Radix UI 기반 접근성 보장 컴포넌트 |
+| Berry Theme | 커스텀 색상 팔레트 (Primary: #673ab7) |
+
+**Berry Theme 색상 변수**:
+```css
+--primary-main: #673ab7;
+--primary-light: #ede7f6;
+--primary-dark: #5e35b1;
+--secondary-main: #2196f3;
+--secondary-light: #e3f2fd;
+--sidebar-bg: #1e1e2d;
+```
+
+**주요 파일**:
+- `tailwind.config.js`: Berry Theme 색상 통합
+- `src/app/globals.css`: CSS 변수 및 커스텀 클래스
+- `src/components/ui/`: shadcn/ui 컴포넌트 (Button, Card 등)
+- `components.json`: shadcn/ui 설정
 
 ### C. 참고 문서
 
