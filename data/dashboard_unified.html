@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마케팅 대시보드</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        /* ========================================
+           COMMON STYLES - React: styles/common.css
+           ======================================== */
+        :root {
+            /* Berry Theme Colors */
+            --primary-main: #673ab7;
+            --primary-light: #ede7f6;
+            --primary-dark: #5e35b1;
+            --secondary-main: #2196f3;
+            --secondary-light: #e3f2fd;
+            --success-main: #00c853;
+            --success-light: #b9f6ca;
+            --warning-main: #ffab00;
+            --warning-light: #fff8e1;
+            --error-main: #ff1744;
+            --error-light: #ffeaea;
+            --grey-50: #fafafa;
+            --grey-100: #f5f5f5;
+            --grey-200: #eeeeee;
+            --grey-300: #e0e0e0;
+            --grey-500: #9e9e9e;
+            --grey-600: #757575;
+            --grey-700: #616161;
+            --grey-900: #212121;
+            --paper: #ffffff;
+            --background: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--grey-900);
+            line-height: 1.5;
+        }
+
+        /* ========================================
+           LAYOUT - React: components/Layout.tsx
+           ======================================== */
+        .app-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ========================================
+           SIDEBAR - React: components/Sidebar.tsx
+           ======================================== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--grey-200);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-main) 0%, var(--primary-dark) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .sidebar-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--grey-900);
+        }
+
+        .sidebar-logo-subtitle {
+            font-size: 11px;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .simplebar-content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .simplebar-content-wrapper::-webkit-scrollbar-thumb {
+            background: var(--grey-300);
+            border-radius: 3px;
+        }
+
+        .sidebar-content {
+            padding: 16px 12px;
+        }
+
+        .nav-group {
+            margin-bottom: 16px;
+        }
+
+        .nav-group-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--grey-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 16px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: var(--grey-700);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: var(--grey-100);
+            color: var(--primary-main);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .nav-item-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .nav-item-text {
+            flex: 1;
+        }
+
+        /* ========================================
+           MAIN CONTENT - React: components/MainContent.tsx
+           ======================================== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* ========================================
+           PAGE SECTIONS - React: pages/*.tsx
+           ======================================== */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* ========================================
+           HEADER - React: components/PageHeader.tsx
+           ======================================== */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin: 0;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--grey-500);
+            margin-top: 4px;
+        }
+
+        /* ========================================
+           CARD - React: components/Card.tsx
+           ======================================== */
+        .card {
+            background: var(--paper);
+            border-radius: 12px;
+            box-shadow: 0 2px 14px 0 rgba(32, 40, 45, 0.08);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 20px 0 rgba(32, 40, 45, 0.12);
+        }
+
+        /* ========================================
+           FILTER SECTION - React: components/FilterSection.tsx
+           ======================================== */
+        .filter-section {
+            padding: 20px 24px;
+            margin-bottom: 24px;
+        }
+
+        .filter-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-header::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--primary-main);
+            border-radius: 2px;
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 160px;
+            flex: 1;
+        }
+
+        .filter-group label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--grey-700);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 10px 14px;
+            border: 1px solid var(--grey-300);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--paper);
+            color: var(--grey-900);
+            transition: all 0.2s ease;
+        }
+
+        .filter-group select:hover,
+        .filter-group input:hover {
+            border-color: var(--primary-main);
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary-main);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .date-range input[type="date"] {
+            padding: 10px 14px;
+            border: 1px solid var(--grey-300);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--paper);
+            color: var(--grey-900);
+        }
+
+        /* ========================================
+           COLLAPSIBLE - React: components/Collapsible.tsx
+           ======================================== */
+        .collapsible-section {
+            margin-bottom: 24px;
+        }
+
+        .collapsible-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 16px 20px;
+            background: var(--paper);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .collapsible-header:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .collapsible-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+        }
+
+        .collapsible-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--primary-main);
+            border-radius: 2px;
+        }
+
+        .collapsible-guide {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--grey-500);
+            margin-left: 8px;
+        }
+
+        .collapsible-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--primary-light);
+            color: var(--primary-main);
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .collapsible-toggle:hover {
+            background: var(--primary-main);
+            color: white;
+        }
+
+        .collapsible-toggle-icon {
+            transition: transform 0.2s ease;
+            transform: rotate(180deg);
+        }
+
+        .collapsible-toggle-icon.collapsed {
+            transform: rotate(0deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
+        }
+
+        .collapsible-content.expanded {
+            max-height: 2000px;
+            opacity: 1;
+            padding-top: 16px;
+        }
+
+        /* ========================================
+           KPI CARDS - React: components/KPICard.tsx
+           ======================================== */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: var(--paper);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+
+        .kpi-card.highlight {
+            border-left: 4px solid var(--primary-main);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .kpi-title {
+            font-size: 13px;
+            color: var(--grey-600);
+            font-weight: 600;
+        }
+
+        .kpi-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--grey-100);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .kpi-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--grey-900);
+            margin-bottom: 8px;
+        }
+
+        .kpi-value.highlight-value {
+            color: var(--primary-main);
+        }
+
+        .kpi-trend {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .kpi-trend.up { color: var(--success-main); }
+        .kpi-trend.down { color: var(--error-main); }
+        .kpi-trend.neutral { color: var(--grey-500); }
+
+        /* ========================================
+           CHART SECTION - React: components/ChartSection.tsx
+           ======================================== */
+        .chart-section {
+            margin-bottom: 24px;
+            padding: 24px;
+        }
+
+        .chart-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-header::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--secondary-main);
+            border-radius: 2px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* ========================================
+           TABLE SECTION - React: components/DataTable.tsx
+           ======================================== */
+        .table-section {
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--grey-200);
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table-header::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--success-main);
+            border-radius: 2px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: right;
+            font-size: 14px;
+        }
+
+        th {
+            background: var(--grey-50);
+            font-weight: 600;
+            color: var(--grey-700);
+            border-bottom: 2px solid var(--grey-200);
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+
+        td {
+            border-bottom: 1px solid var(--grey-100);
+            color: var(--grey-900);
+        }
+
+        th:first-child,
+        td:first-child {
+            text-align: left;
+            position: sticky;
+            left: 0;
+            background: var(--paper);
+            font-weight: 500;
+        }
+
+        tbody tr:hover {
+            background: var(--grey-50);
+        }
+
+        .positive { color: var(--success-main); font-weight: 600; }
+        .negative { color: var(--error-main); font-weight: 600; }
+
+        /* ========================================
+           BUTTONS - React: components/Button.tsx
+           ======================================== */
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary-main);
+            color: white;
+            box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 6px 16px rgba(103, 58, 183, 0.5);
+        }
+
+        .btn-secondary {
+            background: var(--paper);
+            color: var(--grey-700);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .btn-secondary.active {
+            background: var(--primary-main);
+            color: white;
+        }
+
+        /* ========================================
+           TAB BUTTONS - React: components/TabButtons.tsx
+           ======================================== */
+        .tab-section {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tab-btn {
+            padding: 10px 24px;
+            border: none;
+            background: var(--paper);
+            color: var(--grey-700);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .tab-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary-main);
+        }
+
+        .tab-btn.active {
+            background: var(--primary-main);
+            color: white;
+            box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+        }
+
+        /* ========================================
+           INSIGHT CARDS - React: components/InsightCard.tsx
+           ======================================== */
+        .insight-section {
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .insight-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--grey-900);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .insight-header::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--warning-main);
+            border-radius: 2px;
+        }
+
+        .insight-content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .insight-card {
+            padding: 18px 20px;
+            background: var(--grey-50);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-main);
+            transition: all 0.2s ease;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .insight-card.positive {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-left-color: var(--success-main);
+        }
+
+        .insight-card.negative {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+            border-left-color: var(--error-main);
+        }
+
+        .insight-card.neutral {
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+            border-left-color: var(--warning-main);
+        }
+
+        /* ========================================
+           LOADING - React: components/Loading.tsx
+           ======================================== */
+        .loading {
+            text-align: center;
+            padding: 60px 40px;
+            color: var(--grey-500);
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--grey-200);
+            border-top-color: var(--primary-main);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========================================
+           MOBILE RESPONSIVE
+           ======================================== */
+        @media (max-width: 1200px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1001;
+            width: 44px;
+            height: 44px;
+            background: var(--paper);
+            border: 1px solid var(--grey-200);
+            border-radius: 10px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .mobile-menu-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--grey-700);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 16px;
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .insight-content {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-row {
+                flex-direction: column;
+            }
+        }
+
+        /* ========================================
+           PAGE TRANSITION ANIMATION
+           ======================================== */
+        .page-section {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- Mobile Menu Button - React: components/MobileMenuButton.tsx -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <svg viewBox="0 0 24 24">
+                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+            </svg>
+        </button>
+
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- ========================================
+             SIDEBAR - React: components/Sidebar.tsx
+             ======================================== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a class="sidebar-logo" data-page="marketing-dashboard">
+                    <div class="sidebar-logo-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="sidebar-logo-text">Analytics</div>
+                        <div class="sidebar-logo-subtitle">Dashboard</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="simplebar-content-wrapper">
+                <div class="sidebar-content">
+                    <!-- Dashboard Group - React: Would be NavGroup component -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">대시보드</div>
+                        <a class="nav-item active" data-page="marketing-dashboard">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">광고 성과 대시보드</span>
+                        </a>
+                        <a class="nav-item" data-page="creative-analysis">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">소재별 대시보드</span>
+                        </a>
+                    </div>
+
+                    <!-- Analysis Group -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">분석</div>
+                        <a class="nav-item" data-page="timeseries-analysis">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">시계열 데이터 분석</span>
+                        </a>
+                        <a class="nav-item" data-page="type-dashboard">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2.03 0v8.99H22c-.47-4.74-4.24-8.52-8.97-8.99zm0 11.01V22c4.74-.47 8.5-4.25 8.97-8.99h-8.97z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">채널별 비교</span>
+                        </a>
+                        <a class="nav-item" data-page="funnel-dashboard">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M4.25 5.61C6.27 8.2 10 13 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-6s3.73-4.8 5.75-7.39C20.26 4.95 19.79 4 18.95 4H5.04c-.83 0-1.31.95-.79 1.61z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">퍼널 대시보드</span>
+                        </a>
+                    </div>
+
+                    <!-- Support Group -->
+                    <div class="nav-group">
+                        <div class="nav-group-title">지원</div>
+                        <a class="nav-item" data-page="qna">
+                            <div class="nav-item-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                                </svg>
+                            </div>
+                            <span class="nav-item-text">FAQ & 문의하기</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ========================================
+             MAIN CONTENT - React: components/MainContent.tsx
+             ======================================== -->
+        <main class="main-content">
+            <div class="container">
+                <!-- ========================================
+                     PAGE: Marketing Dashboard
+                     React: pages/MarketingDashboard.tsx
+                     Source: marketing_dashboard_v3.html
+                     ======================================== -->
+                <section class="page-section active" data-page="marketing-dashboard">
+                    <div class="header">
+                        <div>
+                            <h1>마케팅 성과 대시보드</h1>
+                            <div class="header-subtitle">광고 캠페인 성과 분석 및 KPI 모니터링</div>
+                        </div>
+                    </div>
+
+                    <!-- Content will be loaded dynamically or included inline -->
+                    <div class="loading" id="loading-marketing-dashboard">
+                        <div class="loading-spinner"></div>
+                        <p>광고 성과 대시보드를 불러오는 중...</p>
+                    </div>
+                    <div id="content-marketing-dashboard"></div>
+                </section>
+
+                <!-- ========================================
+                     PAGE: Creative Analysis
+                     React: pages/CreativeAnalysis.tsx
+                     Source: creative_analysis.html
+                     ======================================== -->
+                <section class="page-section" data-page="creative-analysis">
+                    <div class="header">
+                        <div>
+                            <h1>광고 소재별 분석</h1>
+                            <div class="header-subtitle">광고 소재(이미지/영상)별 성과 분석</div>
+                        </div>
+                    </div>
+
+                    <div class="loading" id="loading-creative-analysis">
+                        <div class="loading-spinner"></div>
+                        <p>소재별 대시보드를 불러오는 중...</p>
+                    </div>
+                    <div id="content-creative-analysis"></div>
+                </section>
+
+                <!-- ========================================
+                     PAGE: Timeseries Analysis
+                     React: pages/TimeseriesAnalysis.tsx
+                     Source: timeseries_analysis.html
+                     ======================================== -->
+                <section class="page-section" data-page="timeseries-analysis">
+                    <div class="header">
+                        <div>
+                            <h1>시계열 데이터 분석</h1>
+                            <div class="header-subtitle">일별/주별/월별 트렌드 분석 및 예측</div>
+                        </div>
+                    </div>
+
+                    <div class="loading" id="loading-timeseries-analysis">
+                        <div class="loading-spinner"></div>
+                        <p>시계열 분석을 불러오는 중...</p>
+                    </div>
+                    <div id="content-timeseries-analysis"></div>
+                </section>
+
+                <!-- ========================================
+                     PAGE: Type Dashboard (Channel Comparison)
+                     React: pages/TypeDashboard.tsx
+                     Source: type_dashboard.html
+                     ======================================== -->
+                <section class="page-section" data-page="type-dashboard">
+                    <div class="header">
+                        <div>
+                            <h1>채널별 분석 대시보드</h1>
+                            <div class="header-subtitle">브랜드/상품/프로모션 인사이트</div>
+                        </div>
+                    </div>
+
+                    <div class="loading" id="loading-type-dashboard">
+                        <div class="loading-spinner"></div>
+                        <p>채널별 분석을 불러오는 중...</p>
+                    </div>
+                    <div id="content-type-dashboard"></div>
+                </section>
+
+                <!-- ========================================
+                     PAGE: Funnel Dashboard
+                     React: pages/FunnelDashboard.tsx
+                     Source: funnel_dashboard.html
+                     ======================================== -->
+                <section class="page-section" data-page="funnel-dashboard">
+                    <div class="header">
+                        <div>
+                            <h1>AARRR 퍼널 대시보드</h1>
+                            <div class="header-subtitle">GA4 기반 사용자 여정 분석</div>
+                        </div>
+                    </div>
+
+                    <div class="loading" id="loading-funnel-dashboard">
+                        <div class="loading-spinner"></div>
+                        <p>퍼널 대시보드를 불러오는 중...</p>
+                    </div>
+                    <div id="content-funnel-dashboard"></div>
+                </section>
+
+                <!-- ========================================
+                     PAGE: FAQ & Contact
+                     React: pages/QnA.tsx
+                     Source: Qna.html
+                     ======================================== -->
+                <section class="page-section" data-page="qna">
+                    <div class="header">
+                        <div>
+                            <h1>FAQ & 문의하기</h1>
+                            <div class="header-subtitle">자주 묻는 질문과 문의 안내</div>
+                        </div>
+                    </div>
+
+                    <div class="loading" id="loading-qna">
+                        <div class="loading-spinner"></div>
+                        <p>FAQ를 불러오는 중...</p>
+                    </div>
+                    <div id="content-qna"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- ========================================
+         JAVASCRIPT - React: Would be split into hooks and services
+         ======================================== -->
+    <script>
+        /**
+         * ========================================
+         * APP STATE - React: Context or Redux
+         * ========================================
+         */
+        const AppState = {
+            currentPage: 'marketing-dashboard',
+            loadedPages: new Set(),
+            data: {},
+            filters: {}
+        };
+
+        /**
+         * ========================================
+         * PAGE CONFIG - React: routes.ts
+         * ========================================
+         */
+        const PageConfig = {
+            'marketing-dashboard': {
+                title: '마케팅 성과 대시보드',
+                file: 'marketing_dashboard_v3.html',
+                contentSelector: '.main-content > .container'
+            },
+            'creative-analysis': {
+                title: '광고 소재별 분석',
+                file: 'creative_analysis.html',
+                contentSelector: '.main-content > .container'
+            },
+            'timeseries-analysis': {
+                title: '시계열 데이터 분석',
+                file: 'timeseries_analysis.html',
+                contentSelector: '.main-content > .container'
+            },
+            'type-dashboard': {
+                title: '채널별 분석 대시보드',
+                file: 'type_dashboard.html',
+                contentSelector: '.main-content > .container'
+            },
+            'funnel-dashboard': {
+                title: 'AARRR 퍼널 대시보드',
+                file: 'funnel_dashboard.html',
+                contentSelector: '.main-content > .container'
+            },
+            'qna': {
+                title: 'FAQ & 문의하기',
+                file: 'Qna.html',
+                contentSelector: '.main-content > .container'
+            }
+        };
+
+        /**
+         * ========================================
+         * ROUTER - React: react-router-dom
+         * ========================================
+         */
+        class Router {
+            static navigate(pageName) {
+                // Update state
+                AppState.currentPage = pageName;
+
+                // Update URL hash
+                window.location.hash = pageName;
+
+                // Update active nav item
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    if (item.dataset.page === pageName) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+
+                // Show/hide page sections
+                document.querySelectorAll('.page-section').forEach(section => {
+                    if (section.dataset.page === pageName) {
+                        section.classList.add('active');
+                    } else {
+                        section.classList.remove('active');
+                    }
+                });
+
+                // Load content if not loaded
+                if (!AppState.loadedPages.has(pageName)) {
+                    PageLoader.loadPage(pageName);
+                }
+
+                // Close mobile sidebar
+                MobileSidebar.close();
+
+                // Update document title
+                const config = PageConfig[pageName];
+                if (config) {
+                    document.title = `${config.title} - 마케팅 대시보드`;
+                }
+            }
+
+            static init() {
+                // Handle initial hash
+                const hash = window.location.hash.slice(1);
+                if (hash && PageConfig[hash]) {
+                    Router.navigate(hash);
+                } else {
+                    Router.navigate('marketing-dashboard');
+                }
+
+                // Listen for hash changes
+                window.addEventListener('hashchange', () => {
+                    const hash = window.location.hash.slice(1);
+                    if (hash && PageConfig[hash]) {
+                        Router.navigate(hash);
+                    }
+                });
+            }
+        }
+
+        /**
+         * ========================================
+         * PAGE LOADER - React: Lazy loading with Suspense
+         * ========================================
+         */
+        class PageLoader {
+            static async loadPage(pageName) {
+                const config = PageConfig[pageName];
+                if (!config) return;
+
+                const loadingEl = document.getElementById(`loading-${pageName}`);
+                const contentEl = document.getElementById(`content-${pageName}`);
+
+                try {
+                    // Fetch page content
+                    const response = await fetch(config.file);
+                    if (!response.ok) throw new Error('Page not found');
+
+                    const html = await response.text();
+
+                    // Parse HTML
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    // Extract main content (excluding sidebar)
+                    const mainContent = doc.querySelector('.main-content .container');
+                    if (mainContent) {
+                        // Remove header (we have our own)
+                        const header = mainContent.querySelector('.header');
+                        if (header) header.remove();
+
+                        // Insert content
+                        contentEl.innerHTML = mainContent.innerHTML;
+
+                        // Execute inline scripts
+                        const scripts = doc.querySelectorAll('script');
+                        scripts.forEach(script => {
+                            if (script.src) {
+                                // External script - skip CDN scripts
+                                if (!script.src.includes('cdn.jsdelivr.net') && !script.src.includes('d3js.org')) {
+                                    const newScript = document.createElement('script');
+                                    newScript.src = script.src;
+                                    document.body.appendChild(newScript);
+                                }
+                            } else {
+                                // Inline script - execute
+                                try {
+                                    eval(script.textContent);
+                                } catch (e) {
+                                    console.warn('Script execution error:', e);
+                                }
+                            }
+                        });
+                    }
+
+                    // Mark as loaded
+                    AppState.loadedPages.add(pageName);
+
+                    // Hide loading
+                    if (loadingEl) loadingEl.style.display = 'none';
+
+                } catch (error) {
+                    console.error('Error loading page:', error);
+                    if (loadingEl) {
+                        loadingEl.innerHTML = `
+                            <p style="color: var(--error-main);">
+                                페이지를 불러오는 중 오류가 발생했습니다.<br>
+                                <small>${error.message}</small>
+                            </p>
+                            <button class="btn btn-secondary" onclick="PageLoader.loadPage('${pageName}')" style="margin-top: 16px;">
+                                다시 시도
+                            </button>
+                        `;
+                    }
+                }
+            }
+        }
+
+        /**
+         * ========================================
+         * MOBILE SIDEBAR - React: useMobileSidebar hook
+         * ========================================
+         */
+        class MobileSidebar {
+            static open() {
+                document.getElementById('sidebar').classList.add('open');
+                document.getElementById('sidebarOverlay').classList.add('active');
+            }
+
+            static close() {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('sidebarOverlay').classList.remove('active');
+            }
+
+            static init() {
+                document.getElementById('mobileMenuBtn').addEventListener('click', MobileSidebar.open);
+                document.getElementById('sidebarOverlay').addEventListener('click', MobileSidebar.close);
+
+                // Close on ESC key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') MobileSidebar.close();
+                });
+            }
+        }
+
+        /**
+         * ========================================
+         * NAVIGATION - React: NavLink component
+         * ========================================
+         */
+        class Navigation {
+            static init() {
+                document.querySelectorAll('[data-page]').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const pageName = item.dataset.page;
+                        if (pageName) {
+                            Router.navigate(pageName);
+                        }
+                    });
+                });
+            }
+        }
+
+        /**
+         * ========================================
+         * APP INITIALIZATION
+         * ========================================
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            Navigation.init();
+            MobileSidebar.init();
+            Router.init();
+        });
+
+        /**
+         * ========================================
+         * UTILITY FUNCTIONS - React: utils/*.ts
+         * ========================================
+         */
+        const Utils = {
+            formatNumber: (num) => {
+                if (num === null || num === undefined || isNaN(num)) return '-';
+                return new Intl.NumberFormat('ko-KR').format(Math.round(num));
+            },
+
+            formatCurrency: (num) => {
+                if (num === null || num === undefined || isNaN(num)) return '-';
+                return new Intl.NumberFormat('ko-KR', {
+                    style: 'currency',
+                    currency: 'KRW',
+                    maximumFractionDigits: 0
+                }).format(num);
+            },
+
+            formatPercent: (num) => {
+                if (num === null || num === undefined || isNaN(num)) return '-';
+                return `${num.toFixed(1)}%`;
+            },
+
+            formatROAS: (num) => {
+                if (num === null || num === undefined || isNaN(num)) return '-';
+                return `${Math.round(num)}%`;
+            }
+        };
+
+        // Export for use in loaded pages
+        window.Utils = Utils;
+        window.AppState = AppState;
+    </script>
+</body>
+</html>

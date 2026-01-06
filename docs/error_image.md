@@ -1,33 +1,9 @@
-Server Error
-Error: Cannot find module './251.js'
-Require stack:
-- C:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\.next\server\webpack-runtime.js
-- C:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\.next\server\app\creative\page.js
-- C:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\node_modules\next\dist\server\require.js
-- C:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\node_modules\next\dist\server\load-components.js
-- C:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\node_modules\next\dist\build\utils.js
-- C:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\node_modules\next\dist\server\dev\hot-middleware.js
-- C:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\node_modules\next\dist\server\dev\hot-reloader-webpack.js
-- C:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
-- C:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\node_modules\next\dist\server\lib\router-server.js
-- C:\Users\growthmaker\Desktop\marketing-dashboard_new - 복사본\node_modules\next\dist\server\lib\start-server.js
+src\app\timeseries\ReactView.tsx (424:39) @ map
 
-This error happened while generating the page. Any console logs will be displayed in the terminal window.
-Call Stack
-Next.js
-TracingChannel.traceSync
-node:diagnostics_channel (328:14)
-Next.js
-Array.reduce
-<anonymous>
-Next.js
-Array.map
-<anonymous>
-Next.js
-<unknown>
-file:///C:/Users/growthmaker/Desktop/marketing-dashboard_new%20-%20%EB%B3%B5%EC%82%AC%EB%B3%B8/.next/server/app/page.js (1:31708)
-Object.<anonymous>
-file:///C:/Users/growthmaker/Desktop/marketing-dashboard_new%20-%20%EB%B3%B5%EC%82%AC%EB%B3%B8/.next/server/app/page.js (1:31749)
-TracingChannel.traceSync
-node:diagnostics_channel (328:14)
-Next.js
+  422 |               </div>
+  423 |               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 16 }}>
+> 424 |                 {summaryCard.metrics?.map((m, i) => (
+      |                                       ^
+  425 |                   <div key={i} style={{ padding: 12, background: 'var(--grey-50)', borderRadius: 8 }}>
+  426 |                     <div style={{ fontSize: 11, color: 'var(--grey-500)', marginBottom: 4 }}>{m.label}</div>
+  427 |                     <div style={{ fontSize: 18, fontWeight: 700 }}>{m.value}</div>

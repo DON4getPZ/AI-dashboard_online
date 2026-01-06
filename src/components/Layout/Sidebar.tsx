@@ -36,6 +36,14 @@ const analysisItems = [
   },
 ]
 
+const supportItems = [
+  {
+    id: 'qna',
+    label: 'FAQ & 문의하기',
+    href: '/qna',
+  },
+]
+
 // SVG 아이콘 컴포넌트
 const DashboardIcon = () => (
   <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
@@ -73,6 +81,12 @@ const PieChartIcon = () => (
   </svg>
 )
 
+const QnaIcon = () => (
+  <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
+    <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+  </svg>
+)
+
 const getIcon = (id: string) => {
   switch (id) {
     case 'marketing':
@@ -85,6 +99,8 @@ const getIcon = (id: string) => {
       return <PieChartIcon />
     case 'funnel':
       return <FunnelIcon />
+    case 'qna':
+      return <QnaIcon />
     default:
       return <DashboardIcon />
   }
@@ -158,6 +174,33 @@ export default function Sidebar() {
               분석
             </div>
             {analysisItems.map((item) => {
+              const isActive = pathname === item.href
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className={cn(
+                    'flex items-center gap-[12px] px-[16px] py-[12px] rounded-[10px] mb-[4px] no-underline text-[14px] font-medium transition-all duration-200',
+                    isActive
+                      ? 'bg-[#ede7f6] text-[#673ab7]'
+                      : 'text-[#616161] hover:bg-[#f5f5f5] hover:text-[#673ab7]'
+                  )}
+                >
+                  <div className="w-[20px] h-[20px] flex items-center justify-center">
+                    {getIcon(item.id)}
+                  </div>
+                  <span className="flex-1">{item.label}</span>
+                </Link>
+              )
+            })}
+          </div>
+
+          {/* nav-group: 지원 */}
+          <div className="mb-[16px]">
+            <div className="text-[11px] font-semibold text-[#9e9e9e] uppercase tracking-[0.5px] px-[16px] py-[8px] mb-[4px]">
+              지원
+            </div>
+            {supportItems.map((item) => {
               const isActive = pathname === item.href
               return (
                 <Link

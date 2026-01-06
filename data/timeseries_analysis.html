@@ -8,7 +8,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Embed Mode Detection -->
+    <script>
+        (function() {
+            if (new URLSearchParams(window.location.search).get('embed') === 'true') {
+                document.documentElement.classList.add('embed-mode');
+            }
+        })();
+    </script>
     <style>
+        /* Embed Mode Styles - 사이드바 숨김 */
+        html.embed-mode .sidebar { display: none !important; }
+        html.embed-mode .main-content { margin-left: 0 !important; }
+        html.embed-mode .mobile-menu-btn { display: none !important; }
+        html.embed-mode .sidebar-overlay { display: none !important; }
         :root {
             /* Berry Theme Colors */
             --primary-main: #673ab7;
