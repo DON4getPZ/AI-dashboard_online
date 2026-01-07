@@ -11903,12 +11903,48 @@
                 const worstDay = insights.find(i => i.type === 'worst_day_overall');
                 const weekendInsight = insights.find(i => i.type === 'weekend_better' || i.type === 'weekday_better');
 
-                let insightHtml = '';
-                if (bestDay) insightHtml += bestDay.message + ' ';
-                if (worstDay) insightHtml += worstDay.message + ' ';
-                if (weekendInsight) insightHtml += '<br>' + weekendInsight.message;
+                let insightHtml = '<div style="display: flex; flex-direction: column; gap: 10px;">';
 
-                insightText.innerHTML = insightHtml || '요일별 전환 데이터를 분석 중입니다.';
+                // 최고 성과 요일
+                if (bestDay) {
+                    insightHtml += `
+                        <div style="display: flex; align-items: flex-start; gap: 10px; padding-left: 4px;">
+                            <span style="color: #2e7d32; font-size: 15px; flex-shrink: 0;">📈</span>
+                            <div style="line-height: 1.6;">
+                                <span style="color: #2e7d32; font-weight: 600;">최고 성과</span>
+                                <span style="color: #555; margin-left: 6px;">${bestDay.message}</span>
+                            </div>
+                        </div>`;
+                }
+
+                // 최저 성과 요일
+                if (worstDay) {
+                    insightHtml += `
+                        <div style="display: flex; align-items: flex-start; gap: 10px; padding-left: 4px;">
+                            <span style="color: #c62828; font-size: 15px; flex-shrink: 0;">📉</span>
+                            <div style="line-height: 1.6;">
+                                <span style="color: #c62828; font-weight: 600;">최저 성과</span>
+                                <span style="color: #555; margin-left: 6px;">${worstDay.message}</span>
+                            </div>
+                        </div>`;
+                }
+
+                // 주중/주말 인사이트
+                if (weekendInsight) {
+                    const isWeekend = weekendInsight.type === 'weekend_better';
+                    insightHtml += `
+                        <div style="display: flex; align-items: flex-start; gap: 10px; padding-left: 4px;">
+                            <span style="color: #f57c00; font-size: 15px; flex-shrink: 0;">💡</span>
+                            <div style="line-height: 1.6;">
+                                <span style="color: #f57c00; font-weight: 600;">운영 제안</span>
+                                <span style="color: #555; margin-left: 6px;">${weekendInsight.message}</span>
+                            </div>
+                        </div>`;
+                }
+
+                insightHtml += '</div>';
+
+                insightText.innerHTML = insightHtml || '<div style="color: #888;">요일별 전환 데이터를 분석 중입니다.</div>';
             }
         }
 

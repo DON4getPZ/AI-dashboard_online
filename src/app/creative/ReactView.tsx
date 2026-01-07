@@ -420,9 +420,12 @@ function calcPercentileRanks(data: AggregatedCreative[], metric: keyof Aggregate
   const validData = data.filter(d => d[metric] != null && (d[metric] as number) > 0)
   if (validData.length === 0) return new Map()
 
-  const sorted = [...validData].sort((a, b) =>
-    lowerIsBetter ? (b[metric] as number) - (a[metric] as number) : (a[metric] as number) - (b[metric] as number)
-  )
+  // 동일 값일 경우 name으로 2차 정렬 (정렬 안정성 보장)
+  const sorted = [...validData].sort((a, b) => {
+    const diff = lowerIsBetter ? (b[metric] as number) - (a[metric] as number) : (a[metric] as number) - (b[metric] as number)
+    if (diff !== 0) return diff
+    return (a.name || '').localeCompare(b.name || '')
+  })
   const ranks = new Map<string, number>()
 
   sorted.forEach((item, idx) => {
@@ -520,7 +523,12 @@ function classifyCreatives(scoredData: AggregatedCreative[]): AggregatedCreative
   if (scoredData.length === 0) return []
 
   // 효율 점수 기준 정렬 (내림차순)
-  const sorted = [...scoredData].sort((a, b) => (b.efficiencyScore || 0) - (a.efficiencyScore || 0))
+  // 동일 점수일 경우 name으로 2차 정렬 (정렬 안정성 보장)
+  const sorted = [...scoredData].sort((a, b) => {
+    const diff = (b.efficiencyScore || 0) - (a.efficiencyScore || 0)
+    if (diff !== 0) return diff
+    return (a.name || '').localeCompare(b.name || '')
+  })
   const total = sorted.length
 
   const topCutoffIdx = Math.ceil(total * EFFICIENCY_CONFIG.TOP_PERCENT)
@@ -534,8 +542,8 @@ function classifyCreatives(scoredData: AggregatedCreative[]): AggregatedCreative
     } else if (index >= bottomCutoffIdx) {
       classification = 'low_efficiency'
     } else {
-      if (item.confidenceWeight < EFFICIENCY_CONFIG.CONFIDENCE_THRESHOLD &&
-          item.relativePerformance >= EFFICIENCY_CONFIG.RELATIVE_PERF_THRESHOLD) {
+      if ((item.confidenceWeight ?? 0) < EFFICIENCY_CONFIG.CONFIDENCE_THRESHOLD &&
+          (item.relativePerformance ?? 0) >= EFFICIENCY_CONFIG.RELATIVE_PERF_THRESHOLD) {
         classification = 'potential'
       } else {
         classification = 'needs_attention'
