@@ -1388,7 +1388,7 @@ export default function TypeDashboardReactView() {
   const [ageDimensionData, setAgeDimensionData] = useState<DimensionRow[]>([])
   const [platformDimensionData, setPlatformDimensionData] = useState<DimensionRow[]>([])
   const [devicePlatformDimensionData, setDevicePlatformDimensionData] = useState<DimensionRow[]>([])
-  const [deviceDimensionData, setDeviceDimensionData] = useState<DimensionRow[]>([])
+  const [deviceTypeDimensionData, setDeviceTypeDimensionData] = useState<DimensionRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -1406,7 +1406,7 @@ export default function TypeDashboardReactView() {
 
   // 성과 추이 분석 섹션 상태
   const [trendAnalysisExpanded, setTrendAnalysisExpanded] = useState(false)
-  const [trendAnalysisTab, setTrendAnalysisTab] = useState<'timeseries' | 'gender' | 'age' | 'platform' | 'device-platform' | 'device-type'>('timeseries')
+  const [trendAnalysisTab, setTrendAnalysisTab] = useState<'timeseries' | 'gender' | 'age' | 'platform' | 'devicePlatform' | 'deviceType'>('timeseries')
 
   // 광고세트(Timeseries) 추이 필터 (HTML: timeseriesFilters)
   const [timeseriesFilters, setTimeseriesFilters] = useState<{
@@ -1543,6 +1543,124 @@ export default function TypeDashboardReactView() {
   const [genderEndDate, setGenderEndDate] = useState<string>('')
 
   // ========================================
+  // 성과 테이블 분석 상태 관리 (HTML perfTableState 1:1)
+  // ========================================
+  const [perfTableActiveTab, setPerfTableActiveTab] = useState<string>('adset')
+  const [perfTableState, setPerfTableState] = useState<{
+    adset: { filters: { channel: string[], product: string[], brand: string[], promotion: string[] }, startDate: string, endDate: string, sortColumn: string, sortDirection: string }
+    gender: { filters: { channel: string[], product: string[], brand: string[], promotion: string[] }, startDate: string, endDate: string, sortColumn: string, sortDirection: string }
+    age: { filters: { channel: string[], product: string[], brand: string[], promotion: string[] }, startDate: string, endDate: string, sortColumn: string, sortDirection: string }
+    platform: { filters: { channel: string[], product: string[], brand: string[], promotion: string[] }, startDate: string, endDate: string, sortColumn: string, sortDirection: string }
+    devicePlatform: { filters: { channel: string[], product: string[], brand: string[], promotion: string[] }, startDate: string, endDate: string, sortColumn: string, sortDirection: string }
+    deviceType: { filters: { channel: string[], product: string[], brand: string[], promotion: string[] }, startDate: string, endDate: string, sortColumn: string, sortDirection: string }
+    genderAge: { filters: { channel: string[], product: string[], brand: string[], promotion: string[] }, startDate: string, endDate: string }
+  }>({
+    adset: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' },
+    gender: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' },
+    age: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' },
+    platform: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' },
+    devicePlatform: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' },
+    deviceType: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '', sortColumn: 'roas', sortDirection: 'desc' },
+    genderAge: { filters: { channel: [], product: [], brand: [], promotion: [] }, startDate: '', endDate: '' }
+  })
+  const [perfTableDropdownOpen, setPerfTableDropdownOpen] = useState<{ [key: string]: boolean }>({})
+  const [pivotDimensionData, setPivotDimensionData] = useState<Record<string, unknown>[]>([])
+  const [perfTableExpanded, setPerfTableExpanded] = useState<boolean>(false)
+
+  // ========== 성과 구분 비교 분석 섹션 State (HTML 1:1) ==========
+  const [perfAnalysisExpanded, setPerfAnalysisExpanded] = useState<boolean>(false)
+  const [perfAnalysisActiveTab, setPerfAnalysisActiveTab] = useState<string>('brand')
+  const [perfChartState, setPerfChartState] = useState<{
+    brand: { kpi: string; sort: string; startDate: string; endDate: string; compareActive: boolean; startDateComp: string; endDateComp: string; showAll: boolean; totalCount: number }
+    product: { kpi: string; sort: string; startDate: string; endDate: string; compareActive: boolean; startDateComp: string; endDateComp: string; showAll: boolean; totalCount: number }
+    promotion: { kpi: string; sort: string; startDate: string; endDate: string; compareActive: boolean; startDateComp: string; endDateComp: string; showAll: boolean; totalCount: number }
+    targeting: { kpi: string; sort: string; startDate: string; endDate: string; compareActive: boolean; startDateComp: string; endDateComp: string; showAll: boolean; totalCount: number }
+  }>({
+    brand: { kpi: 'roas', sort: 'desc', startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '', showAll: false, totalCount: 0 },
+    product: { kpi: 'roas', sort: 'desc', startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '', showAll: false, totalCount: 0 },
+    promotion: { kpi: 'roas', sort: 'desc', startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '', showAll: false, totalCount: 0 },
+    targeting: { kpi: 'roas', sort: 'desc', startDate: '', endDate: '', compareActive: false, startDateComp: '', endDateComp: '', showAll: false, totalCount: 0 }
+  })
+
+  // 성과 분석 상수 (HTML 1:1)
+  const PERF_DEFAULT_LIMIT = 10
+  const PERF_EXPANDED_LIMIT = 50
+
+  // KPI별 색상 (HTML kpiColors 1:1)
+  const kpiColors: Record<string, { bg: string; border: string }> = {
+    roas: { bg: 'rgba(0, 200, 83, 0.8)', border: 'rgba(0, 200, 83, 1)' },
+    cost: { bg: 'rgba(255, 152, 0, 0.8)', border: 'rgba(255, 152, 0, 1)' },
+    cpa: { bg: 'rgba(244, 67, 54, 0.8)', border: 'rgba(244, 67, 54, 1)' },
+    conversions: { bg: 'rgba(33, 150, 243, 0.8)', border: 'rgba(33, 150, 243, 1)' },
+    revenue: { bg: 'rgba(156, 39, 176, 0.8)', border: 'rgba(156, 39, 176, 1)' }
+  }
+
+  // KPI별 라벨 (HTML kpiLabels 1:1)
+  const kpiLabels: Record<string, string> = {
+    roas: 'ROAS (%)',
+    cost: '비용 (원)',
+    cpa: 'CPA (원)',
+    conversions: '전환수',
+    revenue: '전환값 (원)'
+  }
+
+  // 비교 기간 색상 (HTML compareColors 1:1)
+  const perfCompareColors = {
+    current: { bg: 'rgba(0, 200, 83, 0.8)', border: 'rgba(0, 200, 83, 1)' },
+    previous: { bg: 'rgba(158, 158, 158, 0.5)', border: 'rgba(158, 158, 158, 1)' }
+  }
+
+  // ========================================
+  // 리타겟팅 분석 State (HTML retargetingSortState 1:1)
+  // ========================================
+  const [retargetingExpanded, setRetargetingExpanded] = useState<boolean>(false)
+  const [retargetingActiveTab, setRetargetingActiveTab] = useState<string>('ageGender')
+  const [retargetingSortState, setRetargetingSortState] = useState<{
+    ageGender: { column: string; direction: string }
+    device: { column: string; direction: string }
+    platform: { column: string; direction: string }
+    devicePlatform: { column: string; direction: string }
+  }>({
+    ageGender: { column: 'roas', direction: 'desc' },
+    device: { column: 'roas', direction: 'desc' },
+    platform: { column: 'roas', direction: 'desc' },
+    devicePlatform: { column: 'roas', direction: 'desc' }
+  })
+
+  // 테이블 지표 정의 (HTML perfTableMetrics 1:1)
+  const perfTableMetrics = [
+    { key: 'cost', label: '비용', format: (v: number) => formatCurrency(v) },
+    { key: 'impressions', label: '노출수', format: (v: number) => formatNumber(v) },
+    { key: 'cpm', label: 'CPM', format: (v: number) => formatCurrency(v) },
+    { key: 'clicks', label: '클릭수', format: (v: number) => formatNumber(v) },
+    { key: 'cpc', label: 'CPC', format: (v: number) => formatCurrency(v) },
+    { key: 'ctr', label: 'CTR', format: (v: number) => v.toFixed(2) + '%' },
+    { key: 'conversions', label: '전환수', format: (v: number) => formatNumber(v) },
+    { key: 'cpa', label: 'CPA', format: (v: number) => formatCurrency(v) },
+    { key: 'cvr', label: '전환율', format: (v: number) => v.toFixed(2) + '%' },
+    { key: 'revenue', label: '전환값', format: (v: number) => formatCurrency(v) },
+    { key: 'roas', label: 'ROAS', format: (v: number) => v.toFixed(1) + '%' }
+  ]
+
+  // 색상 스케일 함수 (HTML getPerfTableColorScale 1:1)
+  const getPerfTableColorScale = (value: number, min: number, max: number, isInverse: boolean = false): string => {
+    if (max === min) return 'rgba(103, 58, 183, 0.1)'
+    let ratio = (value - min) / (max - min)
+    if (isInverse) ratio = 1 - ratio
+    const r = Math.round(255 - (152 * ratio))
+    const g = Math.round(255 - (197 * ratio))
+    const b = Math.round(255 - (72 * ratio))
+    const alpha = 0.1 + (ratio * 0.3)
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`
+  }
+
+  // isValidAge 함수 (HTML 1:1)
+  const isValidAge = (age: string | null | undefined): boolean => {
+    if (!age || age === '-' || age === '') return false
+    return true
+  }
+
+  // ========================================
   // 성별 추이 헬퍼 함수 (HTML 1:1 복사)
   // ========================================
   // HTML의 isValidGender 함수
@@ -1673,9 +1791,18 @@ export default function TypeDashboardReactView() {
         try {
           const deviceResponse = await fetch('/type/dimension_type5_adset_device.csv')
           const deviceText = await deviceResponse.text()
-          setDeviceDimensionData(parseCSV(deviceText))
+          setDeviceTypeDimensionData(parseCSV(deviceText))
         } catch (err) {
           console.warn('기기 차원 데이터 로딩 실패:', err)
+        }
+
+        // 성별연령 PIVOT 데이터 로딩 (성과 테이블 분석용)
+        try {
+          const pivotResponse = await fetch('/type/dimension_type2_adset_age_gender.csv')
+          const pivotText = await pivotResponse.text()
+          setPivotDimensionData(parseCSV(pivotText))
+        } catch (err) {
+          console.warn('성별연령 PIVOT 차원 데이터 로딩 실패:', err)
         }
 
         setLoading(false)
@@ -1705,6 +1832,170 @@ export default function TypeDashboardReactView() {
         const formatDate = (d: Date) => d.toISOString().split('T')[0]
         setTimeseriesStartDate(formatDate(minDate))
         setTimeseriesEndDate(formatDate(maxDate))
+      }
+    }
+  }, [adsetDimensionData])
+
+  // 성별 추이 기간 선택 초기값 설정 (HTML 1:1)
+  useEffect(() => {
+    if (genderDimensionData.length > 0) {
+      const dates = genderDimensionData
+        .map(row => row['일'] as string)
+        .filter(date => date && date !== '' && date !== '-')
+        .map(date => new Date(date))
+        .filter(date => !isNaN(date.getTime()))
+
+      if (dates.length > 0) {
+        const minDate = new Date(Math.min(...dates.map(d => d.getTime())))
+        const maxDate = new Date(Math.max(...dates.map(d => d.getTime())))
+        const formatDateForInput = (d: Date) => {
+          const year = d.getFullYear()
+          const month = String(d.getMonth() + 1).padStart(2, '0')
+          const day = String(d.getDate()).padStart(2, '0')
+          return `${year}-${month}-${day}`
+        }
+        setGenderStartDate(formatDateForInput(minDate))
+        setGenderEndDate(formatDateForInput(maxDate))
+      }
+    }
+  }, [genderDimensionData])
+
+  // 연령 추이 기간 선택 초기값 설정 (HTML 1:1)
+  useEffect(() => {
+    if (ageDimensionData.length > 0) {
+      const dates = ageDimensionData
+        .map(row => row['일'] as string)
+        .filter(date => date && date !== '' && date !== '-')
+        .map(date => new Date(date))
+        .filter(date => !isNaN(date.getTime()))
+
+      if (dates.length > 0) {
+        const minDate = new Date(Math.min(...dates.map(d => d.getTime())))
+        const maxDate = new Date(Math.max(...dates.map(d => d.getTime())))
+        const formatDateForInput = (d: Date) => {
+          const year = d.getFullYear()
+          const month = String(d.getMonth() + 1).padStart(2, '0')
+          const day = String(d.getDate()).padStart(2, '0')
+          return `${year}-${month}-${day}`
+        }
+        setAgeStartDate(formatDateForInput(minDate))
+        setAgeEndDate(formatDateForInput(maxDate))
+      }
+    }
+  }, [ageDimensionData])
+
+  // 플랫폼 추이 기간 선택 초기값 설정 (HTML 1:1)
+  useEffect(() => {
+    if (platformDimensionData.length > 0) {
+      const dates = platformDimensionData
+        .map(row => row['일'] as string)
+        .filter(date => date && date !== '' && date !== '-')
+        .map(date => new Date(date))
+        .filter(date => !isNaN(date.getTime()))
+
+      if (dates.length > 0) {
+        const minDate = new Date(Math.min(...dates.map(d => d.getTime())))
+        const maxDate = new Date(Math.max(...dates.map(d => d.getTime())))
+        const formatDateForInput = (d: Date) => {
+          const year = d.getFullYear()
+          const month = String(d.getMonth() + 1).padStart(2, '0')
+          const day = String(d.getDate()).padStart(2, '0')
+          return `${year}-${month}-${day}`
+        }
+        setPlatformStartDate(formatDateForInput(minDate))
+        setPlatformEndDate(formatDateForInput(maxDate))
+      }
+    }
+  }, [platformDimensionData])
+
+  // 기기플랫폼 추이 기간 선택 초기값 설정 (HTML 1:1)
+  useEffect(() => {
+    if (devicePlatformDimensionData.length > 0) {
+      const dates = devicePlatformDimensionData
+        .map(row => row['일'] as string)
+        .filter(date => date && date !== '' && date !== '-')
+        .map(date => new Date(date))
+        .filter(date => !isNaN(date.getTime()))
+
+      if (dates.length > 0) {
+        const minDate = new Date(Math.min(...dates.map(d => d.getTime())))
+        const maxDate = new Date(Math.max(...dates.map(d => d.getTime())))
+        const formatDateForInput = (d: Date) => {
+          const year = d.getFullYear()
+          const month = String(d.getMonth() + 1).padStart(2, '0')
+          const day = String(d.getDate()).padStart(2, '0')
+          return `${year}-${month}-${day}`
+        }
+        setDevicePlatformStartDate(formatDateForInput(minDate))
+        setDevicePlatformEndDate(formatDateForInput(maxDate))
+      }
+    }
+  }, [devicePlatformDimensionData])
+
+  // 기기 추이 기간 선택 초기값 설정 (HTML 1:1)
+  useEffect(() => {
+    if (deviceTypeDimensionData.length > 0) {
+      const dates = deviceTypeDimensionData
+        .map(row => row['일'] as string)
+        .filter(date => date && date !== '' && date !== '-')
+        .map(date => new Date(date))
+        .filter(date => !isNaN(date.getTime()))
+
+      if (dates.length > 0) {
+        const minDate = new Date(Math.min(...dates.map(d => d.getTime())))
+        const maxDate = new Date(Math.max(...dates.map(d => d.getTime())))
+        const formatDateForInput = (d: Date) => {
+          const year = d.getFullYear()
+          const month = String(d.getMonth() + 1).padStart(2, '0')
+          const day = String(d.getDate()).padStart(2, '0')
+          return `${year}-${month}-${day}`
+        }
+        setDeviceTypeStartDate(formatDateForInput(minDate))
+        setDeviceTypeEndDate(formatDateForInput(maxDate))
+      }
+    }
+  }, [deviceTypeDimensionData])
+
+  // 성과 테이블 분석 날짜 초기값 설정 (HTML initPerfTableDates 1:1)
+  useEffect(() => {
+    if (adsetDimensionData.length > 0) {
+      const dates = adsetDimensionData.map(row => row['일'] as string).filter(d => d).sort()
+      if (dates.length > 0) {
+        const minDate = dates[0]
+        const maxDate = dates[dates.length - 1]
+        setPerfTableState(prev => ({
+          ...prev,
+          adset: { ...prev.adset, startDate: minDate, endDate: maxDate },
+          gender: { ...prev.gender, startDate: minDate, endDate: maxDate },
+          age: { ...prev.age, startDate: minDate, endDate: maxDate },
+          platform: { ...prev.platform, startDate: minDate, endDate: maxDate },
+          devicePlatform: { ...prev.devicePlatform, startDate: minDate, endDate: maxDate },
+          deviceType: { ...prev.deviceType, startDate: minDate, endDate: maxDate },
+          genderAge: { ...prev.genderAge, startDate: minDate, endDate: maxDate }
+        }))
+      }
+    }
+  }, [adsetDimensionData])
+
+  // 성과 구분 비교 분석 날짜 초기값 설정 (HTML initPerfChartDates 1:1)
+  useEffect(() => {
+    if (adsetDimensionData.length > 0) {
+      const dates = adsetDimensionData.map(row => row['일'] as string).filter(d => d).map(d => new Date(d)).filter(d => !isNaN(d.getTime()))
+      if (dates.length > 0) {
+        const maxDate = new Date(Math.max(...dates.map(d => d.getTime())))
+        const startDate = new Date(maxDate)
+        startDate.setDate(maxDate.getDate() - 29) // 최근 30일
+        const minDate = new Date(Math.min(...dates.map(d => d.getTime())))
+        const adjustedStart = startDate < minDate ? minDate : startDate
+        const startStr = adjustedStart.toISOString().split('T')[0]
+        const endStr = maxDate.toISOString().split('T')[0]
+        setPerfChartState(prev => ({
+          ...prev,
+          brand: { ...prev.brand, startDate: startStr, endDate: endStr },
+          product: { ...prev.product, startDate: startStr, endDate: endStr },
+          promotion: { ...prev.promotion, startDate: startStr, endDate: endStr },
+          targeting: { ...prev.targeting, startDate: startStr, endDate: endStr }
+        }))
       }
     }
   }, [adsetDimensionData])
@@ -2360,16 +2651,16 @@ export default function TypeDashboardReactView() {
         metricData[p][period] = value
       })
     })
-    const colors = ['#4285f4', '#ea4335', '#34a853', '#fbbc04', '#673ab7']
+    const colors = ['#673ab7', '#2196f3', '#4caf50', '#ff9800', '#f44336']
     const platformArray = Array.from(platformsToShow).sort()
     const datasets = platformArray.map((p, index) => ({
       label: p,
       data: allPeriods.map(period => metricData[p][period] || 0),
       borderColor: colors[index % colors.length],
       backgroundColor: colors[index % colors.length] + '20',
-      borderWidth: 2, tension: 0.3, pointRadius: 4, pointHoverRadius: 6
+      borderWidth: 2, tension: 0.3
     }))
-    return { platformsToShow, chartData: { labels: allPeriods, datasets, aggregatedData }, hasActiveFilters }
+    return { platformsToShow, chartData: { labels: allPeriods, datasets, aggregatedData, platformArray }, hasActiveFilters }
   }, [platformDimensionData, currentPlatformFilters, platformStartDate, platformEndDate, currentPlatformPeriod, currentPlatformMetric])
 
   // ========================================
@@ -2482,36 +2773,36 @@ export default function TypeDashboardReactView() {
         metricData[dp][period] = value
       })
     })
-    const colors = ['#4285f4', '#ea4335', '#34a853', '#fbbc04', '#673ab7', '#009688']
-    const dpArray = Array.from(devicePlatformsToShow).sort()
-    const datasets = dpArray.map((dp, index) => ({
+    const colors = ['#673ab7', '#2196f3', '#4caf50', '#ff9800', '#f44336']
+    const devicePlatformArray = Array.from(devicePlatformsToShow).sort()
+    const datasets = devicePlatformArray.map((dp, index) => ({
       label: dp,
       data: allPeriods.map(period => metricData[dp][period] || 0),
       borderColor: colors[index % colors.length],
       backgroundColor: colors[index % colors.length] + '20',
-      borderWidth: 2, tension: 0.3, pointRadius: 4, pointHoverRadius: 6
+      borderWidth: 2, tension: 0.3
     }))
-    return { devicePlatformsToShow, chartData: { labels: allPeriods, datasets, aggregatedData }, hasActiveFilters }
+    return { devicePlatformsToShow, chartData: { labels: allPeriods, datasets, aggregatedData, devicePlatformArray }, hasActiveFilters }
   }, [devicePlatformDimensionData, currentDevicePlatformFilters, devicePlatformStartDate, devicePlatformEndDate, currentDevicePlatformPeriod, currentDevicePlatformMetric])
 
   // ========================================
   // 기기 추이 필터 옵션 및 데이터 계산
   // ========================================
   const deviceFilterOptions = useMemo(() => {
-    if (deviceDimensionData.length === 0) {
+    if (deviceTypeDimensionData.length === 0) {
       return { channels: [], products: [], brands: [], promotions: [], adsets: [], devices: [] }
     }
-    const channels = [...new Set(deviceDimensionData.map(row => row['유형구분'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
-    const products = [...new Set(deviceDimensionData.map(row => row['상품명'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
-    const brands = [...new Set(deviceDimensionData.map(row => row['브랜드명'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
-    const promotions = [...new Set(deviceDimensionData.map(row => row['프로모션'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
-    const adsets = [...new Set(deviceDimensionData.map(row => row['광고세트'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
-    const devices = [...new Set(deviceDimensionData.map(row => row['기기유형'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
+    const channels = [...new Set(deviceTypeDimensionData.map(row => row['유형구분'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
+    const products = [...new Set(deviceTypeDimensionData.map(row => row['상품명'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
+    const brands = [...new Set(deviceTypeDimensionData.map(row => row['브랜드명'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
+    const promotions = [...new Set(deviceTypeDimensionData.map(row => row['프로모션'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
+    const adsets = [...new Set(deviceTypeDimensionData.map(row => row['광고세트'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
+    const devices = [...new Set(deviceTypeDimensionData.map(row => row['기기유형'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
     return { channels, products, brands, promotions, adsets, devices }
-  }, [deviceDimensionData])
+  }, [deviceTypeDimensionData])
 
   const filteredDeviceData = useMemo(() => {
-    if (deviceDimensionData.length === 0) {
+    if (deviceTypeDimensionData.length === 0) {
       return { devicesToShow: new Set<string>(), chartData: null, hasActiveFilters: false }
     }
     const filterMap: Record<string, string> = {
@@ -2519,7 +2810,7 @@ export default function TypeDashboardReactView() {
     }
     const hasActiveFilters = Object.values(currentDeviceTypeFilters).some(arr => arr.length > 0)
     const devicesToShow = new Set<string>()
-    deviceDimensionData.forEach(row => {
+    deviceTypeDimensionData.forEach(row => {
       const device = row['기기유형'] as string
       if (!device || device === '-') return
       const rowDate = row['일'] as string
@@ -2543,7 +2834,7 @@ export default function TypeDashboardReactView() {
     }
     const aggregatedData: Record<string, Record<string, { cost: number; revenue: number; conversions: number; impressions: number; clicks: number }>> = {}
     devicesToShow.forEach(d => { aggregatedData[d] = {} })
-    deviceDimensionData.forEach(row => {
+    deviceTypeDimensionData.forEach(row => {
       const device = row['기기유형'] as string
       if (!devicesToShow.has(device)) return
       const rowDate = row['일'] as string
@@ -2604,17 +2895,535 @@ export default function TypeDashboardReactView() {
         metricData[d][period] = value
       })
     })
-    const colors = ['#4285f4', '#ea4335', '#34a853', '#fbbc04']
-    const deviceArray = Array.from(devicesToShow).sort()
-    const datasets = deviceArray.map((d, index) => ({
+    const colors = ['#673ab7', '#2196f3', '#4caf50', '#ff9800', '#f44336']
+    const deviceTypeArray = Array.from(devicesToShow).sort()
+    const datasets = deviceTypeArray.map((d, index) => ({
       label: d,
       data: allPeriods.map(period => metricData[d][period] || 0),
       borderColor: colors[index % colors.length],
       backgroundColor: colors[index % colors.length] + '20',
-      borderWidth: 2, tension: 0.3, pointRadius: 4, pointHoverRadius: 6
+      borderWidth: 2, tension: 0.3
     }))
-    return { devicesToShow, chartData: { labels: allPeriods, datasets, aggregatedData }, hasActiveFilters }
-  }, [deviceDimensionData, currentDeviceTypeFilters, deviceTypeStartDate, deviceTypeEndDate, currentDeviceTypePeriod, currentDeviceTypeMetric])
+    return { devicesToShow, chartData: { labels: allPeriods, datasets, aggregatedData, deviceTypeArray }, hasActiveFilters }
+  }, [deviceTypeDimensionData, currentDeviceTypeFilters, deviceTypeStartDate, deviceTypeEndDate, currentDeviceTypePeriod, currentDeviceTypeMetric])
+
+  // ========================================
+  // 성과 테이블 분석 필터 옵션 (HTML initPerfTableFilters 1:1)
+  // ========================================
+  const perfTableFilterOptions = useMemo(() => {
+    if (adsetDimensionData.length === 0) {
+      return { channels: [], products: [], brands: [], promotions: [] }
+    }
+    const channels = [...new Set(adsetDimensionData.map(row => row['유형구분'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
+    const products = [...new Set(adsetDimensionData.map(row => row['상품명'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
+    const brands = [...new Set(adsetDimensionData.map(row => row['브랜드명'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
+    const promotions = [...new Set(adsetDimensionData.map(row => row['프로모션'] as string).filter(v => v && v !== '' && v !== '-'))].sort()
+    return { channels, products, brands, promotions }
+  }, [adsetDimensionData])
+
+  // 성과 테이블 필터 업데이트 함수 (HTML updatePerfTableFilters 1:1)
+  const updatePerfTableFilters = (tabName: string, filterKey: string, values: string[]) => {
+    setPerfTableState(prev => ({
+      ...prev,
+      [tabName]: {
+        ...prev[tabName as keyof typeof prev],
+        filters: {
+          ...(prev[tabName as keyof typeof prev] as any).filters,
+          [filterKey]: values
+        }
+      }
+    }))
+  }
+
+  // 성과 테이블 정렬 변경 함수 (HTML setupPerfTableSortEvents 1:1)
+  const handlePerfTableSort = (tabName: string, column: string) => {
+    setPerfTableState(prev => {
+      const currentState = prev[tabName as keyof typeof prev] as any
+      const newDirection = currentState.sortColumn === column
+        ? (currentState.sortDirection === 'desc' ? 'asc' : 'desc')
+        : 'desc'
+      return {
+        ...prev,
+        [tabName]: {
+          ...currentState,
+          sortColumn: column,
+          sortDirection: newDirection
+        }
+      }
+    })
+  }
+
+  // 성과 테이블 날짜 변경 함수 (HTML setupPerfTableDateEvents 1:1)
+  const handlePerfTableDateChange = (tabName: string, isStart: boolean, value: string) => {
+    setPerfTableState(prev => ({
+      ...prev,
+      [tabName]: {
+        ...prev[tabName as keyof typeof prev],
+        [isStart ? 'startDate' : 'endDate']: value
+      }
+    }))
+  }
+
+  // 광고세트 테이블 데이터 계산 (HTML renderPerfTableAdset 1:1)
+  const perfTableAdsetData = useMemo(() => {
+    const state = perfTableState.adset
+    const filterMap: Record<string, string> = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' }
+    const allFiltersEmpty = Object.values(state.filters).every(arr => !arr || arr.length === 0)
+    if (allFiltersEmpty) return { dataList: [], count: 0 }
+
+    const aggregatedData: Record<string, { name: string, cost: number, revenue: number, conversions: number, impressions: number, clicks: number }> = {}
+    adsetDimensionData.forEach(row => {
+      for (const filterKey of Object.keys(filterMap)) {
+        const column = filterMap[filterKey]
+        const selectedValues = state.filters[filterKey as keyof typeof state.filters]
+        if (selectedValues && selectedValues.length > 0) {
+          if (!selectedValues.includes(row[column] as string)) return
+        }
+      }
+      const date = row['일'] as string
+      if (state.startDate || state.endDate) {
+        const rowDate = new Date(date)
+        if (isNaN(rowDate.getTime())) return
+        if (state.startDate && rowDate < new Date(state.startDate)) return
+        if (state.endDate && rowDate > new Date(state.endDate)) return
+      }
+      const adset = row['광고세트'] as string
+      if (!adset || adset === '' || adset === '-') return
+      if (!aggregatedData[adset]) {
+        aggregatedData[adset] = { name: adset, cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 }
+      }
+      aggregatedData[adset].cost += parseFloat(String(row['비용'])) || 0
+      aggregatedData[adset].revenue += parseFloat(String(row['전환값'])) || 0
+      aggregatedData[adset].conversions += parseFloat(String(row['전환수'])) || 0
+      aggregatedData[adset].impressions += parseFloat(String(row['노출'])) || 0
+      aggregatedData[adset].clicks += parseFloat(String(row['클릭'])) || 0
+    })
+
+    let dataList = Object.values(aggregatedData).map(item => ({
+      ...item,
+      roas: item.cost > 0 ? (item.revenue / item.cost * 100) : 0,
+      cpm: item.impressions > 0 ? (item.cost / item.impressions * 1000) : 0,
+      cpc: item.clicks > 0 ? (item.cost / item.clicks) : 0,
+      cpa: item.conversions > 0 ? (item.cost / item.conversions) : 0,
+      ctr: item.impressions > 0 ? (item.clicks / item.impressions * 100) : 0,
+      cvr: item.clicks > 0 ? (item.conversions / item.clicks * 100) : 0
+    }))
+    dataList.sort((a, b) => {
+      const aVal = (a as any)[state.sortColumn] || 0
+      const bVal = (b as any)[state.sortColumn] || 0
+      return state.sortDirection === 'desc' ? bVal - aVal : aVal - bVal
+    })
+    return { dataList, count: dataList.length }
+  }, [adsetDimensionData, perfTableState.adset])
+
+  // 범용 테이블 데이터 계산 함수 (HTML renderPerfTableGeneric 1:1)
+  const getPerfTableGenericData = (tabName: string, dataSource: Record<string, unknown>[], dimensionColumn: string) => {
+    const state = perfTableState[tabName as keyof typeof perfTableState] as any
+    if (!state) return { dataList: [], count: 0 }
+    const filterMap: Record<string, string> = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' }
+    const allFiltersEmpty = !state.filters || Object.values(state.filters).every((arr: any) => !arr || arr.length === 0)
+    if (allFiltersEmpty) return { dataList: [], count: 0 }
+
+    const aggregatedData: Record<string, { name: string, cost: number, revenue: number, conversions: number, impressions: number, clicks: number }> = {}
+    dataSource.forEach(row => {
+      if (state.filters) {
+        for (const filterKey of Object.keys(filterMap)) {
+          const column = filterMap[filterKey]
+          const selectedValues = state.filters[filterKey]
+          if (selectedValues && selectedValues.length > 0) {
+            if (!selectedValues.includes(row[column] as string)) return
+          }
+        }
+      }
+      const date = row['일'] as string
+      if (state.startDate || state.endDate) {
+        const rowDate = new Date(date)
+        if (isNaN(rowDate.getTime())) return
+        if (state.startDate && rowDate < new Date(state.startDate)) return
+        if (state.endDate && rowDate > new Date(state.endDate)) return
+      }
+      let dimensionValue = (row[dimensionColumn + '_통합'] || row[dimensionColumn]) as string
+      if (!dimensionValue || dimensionValue === '' || dimensionValue === '-') return
+      if (tabName === 'gender') {
+        const normalized = normalizeGender(dimensionValue)
+        if (!normalized || normalized === 'Unknown') return
+        dimensionValue = normalized
+      }
+      if (!aggregatedData[dimensionValue]) {
+        aggregatedData[dimensionValue] = { name: dimensionValue, cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0 }
+      }
+      aggregatedData[dimensionValue].cost += parseFloat(String(row['비용'])) || 0
+      aggregatedData[dimensionValue].revenue += parseFloat(String(row['전환값'])) || 0
+      aggregatedData[dimensionValue].conversions += parseFloat(String(row['전환수'])) || 0
+      aggregatedData[dimensionValue].impressions += parseFloat(String(row['노출'])) || 0
+      aggregatedData[dimensionValue].clicks += parseFloat(String(row['클릭'])) || 0
+    })
+
+    let dataList = Object.values(aggregatedData).map(item => ({
+      ...item,
+      roas: item.cost > 0 ? (item.revenue / item.cost * 100) : 0,
+      cpm: item.impressions > 0 ? (item.cost / item.impressions * 1000) : 0,
+      cpc: item.clicks > 0 ? (item.cost / item.clicks) : 0,
+      cpa: item.conversions > 0 ? (item.cost / item.conversions) : 0,
+      ctr: item.impressions > 0 ? (item.clicks / item.impressions * 100) : 0,
+      cvr: item.clicks > 0 ? (item.conversions / item.clicks * 100) : 0
+    }))
+    dataList.sort((a, b) => {
+      const aVal = (a as any)[state.sortColumn] || 0
+      const bVal = (b as any)[state.sortColumn] || 0
+      return state.sortDirection === 'desc' ? bVal - aVal : aVal - bVal
+    })
+    return { dataList, count: dataList.length }
+  }
+
+  // 각 탭별 데이터 계산 (HTML renderPerfTableGender, renderPerfTableAge 등 1:1)
+  const perfTableGenderData = useMemo(() => getPerfTableGenericData('gender', genderDimensionData, '성별'), [genderDimensionData, perfTableState.gender])
+  const perfTableAgeData = useMemo(() => getPerfTableGenericData('age', ageDimensionData, '연령'), [ageDimensionData, perfTableState.age])
+  const perfTablePlatformData = useMemo(() => getPerfTableGenericData('platform', platformDimensionData, '플랫폼'), [platformDimensionData, perfTableState.platform])
+  const perfTableDevicePlatformData = useMemo(() => getPerfTableGenericData('devicePlatform', devicePlatformDimensionData, '기기플랫폼'), [devicePlatformDimensionData, perfTableState.devicePlatform])
+  const perfTableDeviceTypeData = useMemo(() => getPerfTableGenericData('deviceType', deviceTypeDimensionData, '기기유형'), [deviceTypeDimensionData, perfTableState.deviceType])
+
+  // 성별x연령 PIVOT 테이블 데이터 계산 (HTML renderPerfTableGenderAge 1:1)
+  const perfTableGenderAgeData = useMemo(() => {
+    const state = perfTableState.genderAge
+    const filterMap: Record<string, string> = { 'channel': '유형구분', 'product': '상품명', 'brand': '브랜드명', 'promotion': '프로모션' }
+    const allFiltersEmpty = Object.values(state.filters).every(arr => !arr || arr.length === 0)
+    if (allFiltersEmpty || pivotDimensionData.length === 0) return { pivotData: {}, genders: [], ages: [], totalStats: null, allFiltersEmpty }
+
+    const rowMatchesFilters = (row: Record<string, unknown>) => {
+      for (const filterKey of Object.keys(filterMap)) {
+        const column = filterMap[filterKey]
+        const selectedValues = state.filters[filterKey as keyof typeof state.filters]
+        if (selectedValues && selectedValues.length > 0) {
+          if (!selectedValues.includes(row[column] as string)) return false
+        }
+      }
+      return true
+    }
+
+    const pivotData: Record<string, { gender: string, age: string, cost: number, revenue: number, conversions: number, impressions: number, clicks: number, roas: number, cpm: number, cpc: number, cpa: number }> = {}
+    pivotDimensionData.forEach(row => {
+      if (!rowMatchesFilters(row)) return
+      const rawGender = (row['성별_통합'] || row['성별']) as string
+      const normalizedGender = normalizeGender(rawGender)
+      const age = (row['연령_통합'] || row['연령']) as string
+      if (!normalizedGender || !age || age === '' || age === '-') return
+      const date = row['일'] as string
+      if (state.startDate || state.endDate) {
+        const rowDate = new Date(date)
+        if (isNaN(rowDate.getTime())) return
+        if (state.startDate && rowDate < new Date(state.startDate)) return
+        if (state.endDate && rowDate > new Date(state.endDate)) return
+      }
+      const key = `${normalizedGender}_${age}`
+      if (!pivotData[key]) {
+        pivotData[key] = { gender: normalizedGender, age, cost: 0, revenue: 0, conversions: 0, impressions: 0, clicks: 0, roas: 0, cpm: 0, cpc: 0, cpa: 0 }
+      }
+      pivotData[key].cost += parseFloat(String(row['비용'])) || 0
+      pivotData[key].revenue += parseFloat(String(row['전환값'])) || 0
+      pivotData[key].conversions += parseFloat(String(row['전환수'])) || 0
+      pivotData[key].impressions += parseFloat(String(row['노출'])) || 0
+      pivotData[key].clicks += parseFloat(String(row['클릭'])) || 0
+    })
+
+    Object.keys(pivotData).forEach(key => {
+      const data = pivotData[key]
+      data.roas = data.cost > 0 ? (data.revenue / data.cost * 100) : 0
+      data.cpm = data.impressions > 0 ? (data.cost / data.impressions * 1000) : 0
+      data.cpc = data.clicks > 0 ? (data.cost / data.clicks) : 0
+      data.cpa = data.conversions > 0 ? (data.cost / data.conversions) : 0
+    })
+
+    let genders = [...new Set(Object.values(pivotData).map(d => d.gender))].filter(g => g === '남성' || g === '여성').sort()
+    const ages = [...new Set(Object.values(pivotData).map(d => d.age))].filter(a => isValidAge(a)).sort()
+
+    const totalCost = Object.values(pivotData).reduce((sum, d) => sum + d.cost, 0)
+    const totalRevenue = Object.values(pivotData).reduce((sum, d) => sum + d.revenue, 0)
+    const totalConversions = Object.values(pivotData).reduce((sum, d) => sum + d.conversions, 0)
+    const totalImpressions = Object.values(pivotData).reduce((sum, d) => sum + d.impressions, 0)
+    const totalClicks = Object.values(pivotData).reduce((sum, d) => sum + d.clicks, 0)
+    const totalStats = {
+      totalCost,
+      avgRoas: totalCost > 0 ? (totalRevenue / totalCost * 100) : 0,
+      avgCpm: totalImpressions > 0 ? (totalCost / totalImpressions * 1000) : 0,
+      avgCpc: totalClicks > 0 ? (totalCost / totalClicks) : 0,
+      avgCpa: totalConversions > 0 ? (totalCost / totalConversions) : 0
+    }
+
+    return { pivotData, genders, ages, totalStats, allFiltersEmpty }
+  }, [pivotDimensionData, perfTableState.genderAge])
+
+  // ========================================
+  // 성과 구분 비교 분석 데이터 계산 (HTML 1:1)
+  // ========================================
+  // 기간별 데이터 필터링 함수 (HTML filterDataByDateRange 1:1)
+  const filterDataByDateRange = (data: Record<string, unknown>[], startDate: string, endDate: string): Record<string, unknown>[] => {
+    if (!startDate && !endDate) return data
+    return data.filter(row => {
+      const rowDate = row['일'] as string
+      if (!rowDate) return true
+      const date = new Date(rowDate)
+      if (isNaN(date.getTime())) return true
+      if (startDate && date < new Date(startDate)) return false
+      if (endDate && date > new Date(endDate)) return false
+      return true
+    })
+  }
+
+  // 증감률 계산 함수 (HTML calculateChangeRate 1:1)
+  const calculateChangeRate = (current: number, previous: number): number | null => {
+    if (!previous || previous === 0) return null
+    return ((current - previous) / previous) * 100
+  }
+
+  // 브랜드 데이터 집계 함수 (HTML aggregateBrandData 1:1)
+  const aggregatePerfData = (data: Record<string, unknown>[], groupKey: string) => {
+    const groupedData: Record<string, { name: string; cost: number; conversions: number; revenue: number }> = {}
+    data.forEach(row => {
+      const name = row[groupKey] as string
+      if (!name || name === '-') return
+      if (!groupedData[name]) {
+        groupedData[name] = { name, cost: 0, conversions: 0, revenue: 0 }
+      }
+      groupedData[name].cost += parseFloat(String(row['비용'])) || 0
+      groupedData[name].conversions += parseFloat(String(row['전환수'])) || 0
+      groupedData[name].revenue += parseFloat(String(row['전환값'])) || 0
+    })
+    return Object.values(groupedData).map(g => ({
+      ...g,
+      roas: g.cost > 0 ? (g.revenue / g.cost) * 100 : 0,
+      cpa: g.conversions > 0 ? g.cost / g.conversions : 0
+    })).filter(g => g.cost > 0)
+  }
+
+  // 성과 분석 차트 데이터 계산 (HTML renderPerformanceChart 기반)
+  const getPerfChartData = (category: 'brand' | 'product' | 'promotion' | 'targeting') => {
+    const state = perfChartState[category]
+    const groupKeyMap: Record<string, string> = { brand: '브랜드명', product: '상품명', promotion: '프로모션', targeting: '타겟팅' }
+    const groupKey = groupKeyMap[category]
+
+    // 현재 기간 데이터 필터링 및 집계
+    let currentData: { name: string; cost: number; conversions: number; revenue: number; roas: number; cpa: number }[] = []
+    let prevData: { name: string; cost: number; conversions: number; revenue: number; roas: number; cpa: number }[] = []
+
+    if (adsetDimensionData.length > 0) {
+      const filteredData = filterDataByDateRange(adsetDimensionData, state.startDate, state.endDate)
+      currentData = aggregatePerfData(filteredData, groupKey)
+
+      if (state.compareActive && state.startDateComp && state.endDateComp) {
+        const prevFilteredData = filterDataByDateRange(adsetDimensionData, state.startDateComp, state.endDateComp)
+        prevData = aggregatePerfData(prevFilteredData, groupKey)
+      }
+    }
+
+    // 정렬
+    const allSorted = [...currentData].sort((a, b) => {
+      const aVal = a[state.kpi as keyof typeof a] as number
+      const bVal = b[state.kpi as keyof typeof b] as number
+      return state.sort === 'desc' ? bVal - aVal : aVal - bVal
+    })
+    const totalCount = allSorted.length
+    const limit = state.showAll ? PERF_EXPANDED_LIMIT : PERF_DEFAULT_LIMIT
+    const sorted = allSorted.slice(0, limit)
+
+    // 비교 데이터 매핑
+    const prevDataMap: Record<string, typeof prevData[0]> = {}
+    prevData.forEach(item => { prevDataMap[item.name] = item })
+
+    // 라벨에 증감 화살표 추가
+    const labels = sorted.map(item => {
+      if (state.compareActive && prevDataMap[item.name]) {
+        const changeRate = calculateChangeRate(item[state.kpi as keyof typeof item] as number, prevDataMap[item.name][state.kpi as keyof typeof item] as number)
+        const arrow = changeRate !== null ? (changeRate >= 0 ? ' ▲' : ' ▼') : ''
+        return item.name + arrow
+      }
+      return item.name
+    })
+
+    const currentValues = sorted.map(item => item[state.kpi as keyof typeof item] as number)
+    const prevValues = sorted.map(item => prevDataMap[item.name] ? prevDataMap[item.name][state.kpi as keyof typeof item] as number : 0)
+
+    return { labels, currentValues, prevValues, totalCount, sorted, prevDataMap }
+  }
+
+  // 성과 분석 이벤트 핸들러 (HTML setupPerfChartDateEvents 1:1)
+  const handlePerfChartKpiChange = (category: string, kpi: string) => {
+    setPerfChartState(prev => ({ ...prev, [category]: { ...prev[category as keyof typeof prev], kpi } }))
+  }
+
+  const handlePerfChartSortChange = (category: string, sort: string) => {
+    setPerfChartState(prev => ({ ...prev, [category]: { ...prev[category as keyof typeof prev], sort } }))
+  }
+
+  const handlePerfChartDateChange = (category: string, isStart: boolean, value: string, isComp: boolean = false) => {
+    setPerfChartState(prev => {
+      const key = isComp ? (isStart ? 'startDateComp' : 'endDateComp') : (isStart ? 'startDate' : 'endDate')
+      return { ...prev, [category]: { ...prev[category as keyof typeof prev], [key]: value } }
+    })
+  }
+
+  const handlePerfChartPresetChange = (category: string, days: number, isComp: boolean = false) => {
+    const state = perfChartState[category as keyof typeof perfChartState]
+    if (isComp) {
+      const baseStart = state.startDate ? new Date(state.startDate) : new Date()
+      const endDate = new Date(baseStart)
+      endDate.setDate(baseStart.getDate() - 1)
+      const startDate = new Date(endDate)
+      startDate.setDate(endDate.getDate() - days + 1)
+      setPerfChartState(prev => ({
+        ...prev,
+        [category]: { ...prev[category as keyof typeof prev], startDateComp: startDate.toISOString().split('T')[0], endDateComp: endDate.toISOString().split('T')[0] }
+      }))
+    } else {
+      const dates = adsetDimensionData.map(row => row['일'] as string).filter(d => d).map(d => new Date(d)).filter(d => !isNaN(d.getTime()))
+      if (dates.length === 0) return
+      const maxDate = new Date(Math.max(...dates.map(d => d.getTime())))
+      const startDate = new Date(maxDate)
+      startDate.setDate(maxDate.getDate() - days + 1)
+      setPerfChartState(prev => ({
+        ...prev,
+        [category]: { ...prev[category as keyof typeof prev], startDate: startDate.toISOString().split('T')[0], endDate: maxDate.toISOString().split('T')[0] }
+      }))
+    }
+  }
+
+  const handlePerfChartCompareToggle = (category: string) => {
+    const state = perfChartState[category as keyof typeof perfChartState]
+    if (!state.compareActive) {
+      // 비교 모드 활성화 - 이전 기간 기본값 설정
+      if (state.startDate && state.endDate) {
+        const start = new Date(state.startDate)
+        const end = new Date(state.endDate)
+        const daysDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+        const prevEnd = new Date(start)
+        prevEnd.setDate(prevEnd.getDate() - 1)
+        const prevStart = new Date(prevEnd)
+        prevStart.setDate(prevStart.getDate() - daysDiff)
+        setPerfChartState(prev => ({
+          ...prev,
+          [category]: { ...prev[category as keyof typeof prev], compareActive: true, startDateComp: prevStart.toISOString().split('T')[0], endDateComp: prevEnd.toISOString().split('T')[0] }
+        }))
+      } else {
+        setPerfChartState(prev => ({ ...prev, [category]: { ...prev[category as keyof typeof prev], compareActive: true } }))
+      }
+    } else {
+      // 비교 모드 비활성화
+      setPerfChartState(prev => ({ ...prev, [category]: { ...prev[category as keyof typeof prev], compareActive: false, startDateComp: '', endDateComp: '' } }))
+    }
+  }
+
+  const handlePerfChartShowMoreToggle = (category: string) => {
+    setPerfChartState(prev => ({ ...prev, [category]: { ...prev[category as keyof typeof prev], showAll: !prev[category as keyof typeof prev].showAll } }))
+  }
+
+  // ========================================
+  // 리타겟팅 분석 Helper Functions (HTML 1:1)
+  // ========================================
+  // 효율 등급 반환 (HTML getEfficiencyGrade 1:1)
+  const getEfficiencyGrade = (roas: number, maxRoas: number): JSX.Element => {
+    if (maxRoas === 0) return <span style={{ background: '#f5f5f5', color: '#9e9e9e', padding: '4px 8px', borderRadius: 12, fontSize: 11, fontWeight: 600 }}>-</span>
+    const ratio = roas / maxRoas
+    if (ratio >= 0.8) {
+      return <span style={{ background: '#e8f5e9', color: '#2e7d32', padding: '4px 8px', borderRadius: 12, fontSize: 11, fontWeight: 600 }}>A등급</span>
+    } else if (ratio >= 0.5) {
+      return <span style={{ background: '#e3f2fd', color: '#1565c0', padding: '4px 8px', borderRadius: 12, fontSize: 11, fontWeight: 600 }}>B등급</span>
+    } else if (ratio >= 0.2) {
+      return <span style={{ background: '#fff3e0', color: '#e65100', padding: '4px 8px', borderRadius: 12, fontSize: 11, fontWeight: 600 }}>C등급</span>
+    } else {
+      return <span style={{ background: '#ffebee', color: '#d32f2f', padding: '4px 8px', borderRadius: 12, fontSize: 11, fontWeight: 600 }}>D등급</span>
+    }
+  }
+
+  // 기기 아이콘 반환 (HTML getDeviceIcon 1:1)
+  const getDeviceIcon = (device: string): string => {
+    const icons: Record<string, string> = { 'Computers': '🖥️', 'Mobile phones': '📱', 'Tablets': '📱', 'TV screens': '📺', 'OTHER': '❓' }
+    return icons[device] || '📊'
+  }
+
+  // 플랫폼 아이콘 반환 (HTML getPlatformIcon 1:1)
+  const getPlatformIcon = (platform: string): string => {
+    const icons: Record<string, string> = { 'Cross-network': '🌐', 'Display Network': '🖼️', 'Google search': '🔍', 'Search partners': '🔎', 'YouTube': '▶️' }
+    return icons[platform] || '📊'
+  }
+
+  // 노출기기 아이콘 반환 (HTML getDevicePlatformIcon 1:1)
+  const getDevicePlatformIcon = (devicePlatform: string): string => {
+    const icons: Record<string, string> = { 'Mobile app': '📱', 'Mobile web': '📲', 'Desktop': '🖥️', 'Uncategorized': '❓' }
+    return icons[devicePlatform] || '📊'
+  }
+
+  // 리타겟팅 테이블 정렬 핸들러 (HTML setupRetargetingSortEvents 1:1)
+  const handleRetargetingSortChange = (tableType: 'ageGender' | 'device' | 'platform' | 'devicePlatform', column: string) => {
+    setRetargetingSortState(prev => {
+      const currentState = prev[tableType]
+      if (currentState.column === column) {
+        return { ...prev, [tableType]: { column, direction: currentState.direction === 'desc' ? 'asc' : 'desc' } }
+      } else {
+        return { ...prev, [tableType]: { column, direction: 'desc' } }
+      }
+    })
+  }
+
+  // 리타겟팅 테이블 데이터 계산 (HTML renderAgeGenderRetargetTable 기반)
+  const getRetargetingTableData = (tableType: 'ageGender' | 'device' | 'platform' | 'devicePlatform') => {
+    const retargeting = (insightsData as any)?.retargeting_analysis || {} as any
+    const insights = ((insightsData as any)?.retargeting_insights || []) as any[]
+    const sortState = retargetingSortState[tableType]
+
+    let data: any[] = []
+    let insightType = ''
+    let labelKey = ''
+
+    switch (tableType) {
+      case 'ageGender':
+        data = retargeting.by_age_gender || []
+        insightType = 'retargeting_best_age_gender'
+        labelKey = 'label'
+        break
+      case 'device':
+        data = retargeting.by_device || []
+        insightType = 'retargeting_best_device'
+        labelKey = 'device'
+        break
+      case 'platform':
+        data = retargeting.by_platform || []
+        insightType = 'retargeting_best_platform'
+        labelKey = 'platform'
+        break
+      case 'devicePlatform':
+        data = retargeting.by_device_platform || []
+        insightType = 'retargeting_best_device_platform'
+        labelKey = 'device_platform'
+        break
+    }
+
+    // 필터링 (ageGender, device는 roas > 0 필터)
+    const filteredData = (tableType === 'ageGender' || tableType === 'device')
+      ? data.filter((item: any) => item.roas > 0)
+      : data
+
+    // 정렬
+    const sortedData = [...filteredData].sort((a: any, b: any) => {
+      const aVal = a[sortState.column] || 0
+      const bVal = b[sortState.column] || 0
+      return sortState.direction === 'desc' ? bVal - aVal : aVal - bVal
+    })
+
+    const maxRoas = Math.max(...filteredData.filter((d: any) => d.roas > 0).map((d: any) => d.roas), 100)
+
+    // 인사이트 찾기
+    const insight = insights.find((i: any) => i.type === insightType)
+    let insightText = ''
+    if (insight) {
+      insightText = insight.message
+    } else if (sortedData.length > 0 && sortedData[0].roas > 0) {
+      const firstItem = sortedData[0]
+      const label = firstItem[labelKey] || firstItem.label || ''
+      insightText = `<strong>${label}</strong> ${tableType === 'ageGender' ? '타겟' : tableType === 'device' ? '기기' : tableType === 'platform' ? '플랫폼' : '노출기기'}이 ROAS <strong>${formatPercent(firstItem.roas)}</strong>로 가장 높은 효율을 보이고 있습니다.`
+    }
+
+    return { sortedData, maxRoas, insightText, labelKey }
+  }
 
   // ========================================
   // KPI 계산
@@ -5764,12 +6573,12 @@ export default function TypeDashboardReactView() {
                 onClick={() => setTrendAnalysisTab('platform')}
               >플랫폼 추이</button>
               <button
-                className={`view-btn ${trendAnalysisTab === 'device-platform' ? 'active' : ''}`}
-                onClick={() => setTrendAnalysisTab('device-platform')}
+                className={`view-btn ${trendAnalysisTab === 'devicePlatform' ? 'active' : ''}`}
+                onClick={() => setTrendAnalysisTab('devicePlatform')}
               >기기플랫폼 추이</button>
               <button
-                className={`view-btn ${trendAnalysisTab === 'device-type' ? 'active' : ''}`}
-                onClick={() => setTrendAnalysisTab('device-type')}
+                className={`view-btn ${trendAnalysisTab === 'deviceType' ? 'active' : ''}`}
+                onClick={() => setTrendAnalysisTab('deviceType')}
               >기기 추이</button>
             </div>
 
@@ -6797,14 +7606,14 @@ export default function TypeDashboardReactView() {
                       <div className="trend-filter-dropdown" style={{ position: 'relative', minWidth: 150, flex: 1 }}><button type="button" onClick={(e) => { e.stopPropagation(); setTrendDropdownOpen(prev => ({ ...prev, adset: !prev.adset, channel: false, product: false, brand: false, promotion: false })) }} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, fontSize: 13, color: 'var(--grey-800)', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', textAlign: 'left' }}><span style={{ fontWeight: 500 }}>{currentPlatformFilters.adset.length === 0 ? '광고세트_전체' : currentPlatformFilters.adset.length === platformFilterOptions.adsets.length ? '광고세트_전체' : currentPlatformFilters.adset.length === 1 ? currentPlatformFilters.adset[0] : `${currentPlatformFilters.adset[0]} 외`}</span><span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ fontSize: 11, color: 'var(--grey-500)' }}>{currentPlatformFilters.adset.length === 0 ? '' : currentPlatformFilters.adset.length === platformFilterOptions.adsets.length ? `(${currentPlatformFilters.adset.length})` : currentPlatformFilters.adset.length === 1 ? '' : `(${currentPlatformFilters.adset.length})`}</span><span style={{ fontSize: 10 }}>▼</span></span></button>{trendDropdownOpen.adset && (<div onClick={(e) => e.stopPropagation()} style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 4, background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', maxHeight: 280, overflowY: 'auto', zIndex: 100 }}><div style={{ padding: 8 }}><div style={{ position: 'sticky', top: 0, background: 'white', padding: '6px 0', borderBottom: '1px solid var(--grey-200)', marginBottom: 6 }}><label style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', cursor: 'pointer', fontWeight: 600, fontSize: 12, borderRadius: 4 }}><input type="checkbox" checked={currentPlatformFilters.adset.length === platformFilterOptions.adsets.length && platformFilterOptions.adsets.length > 0} onChange={(e) => { if (e.target.checked) { setCurrentPlatformFilters(prev => ({ ...prev, adset: [...platformFilterOptions.adsets] })) } else { setCurrentPlatformFilters(prev => ({ ...prev, adset: [] })) }}} style={{ marginRight: 10, width: 16, height: 16, cursor: 'pointer' }} />전체 선택</label></div>{platformFilterOptions.adsets.map((item, idx) => (<label key={idx} style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', cursor: 'pointer', fontSize: 12, borderRadius: 4 }}><input type="checkbox" checked={currentPlatformFilters.adset.includes(item)} onChange={(e) => { if (e.target.checked) { setCurrentPlatformFilters(prev => ({ ...prev, adset: [...prev.adset, item] })) } else { setCurrentPlatformFilters(prev => ({ ...prev, adset: prev.adset.filter(v => v !== item) })) }}} style={{ marginRight: 10, width: 16, height: 16, cursor: 'pointer' }} />{item}</label>))}</div></div>)}</div>
                     </div>
                   </div>
-                  <div className="chart-container" style={{ position: 'relative', height: 350, marginBottom: 20 }}>{filteredPlatformData.chartData && filteredPlatformData.chartData.datasets.length > 0 ? (<Line data={filteredPlatformData.chartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' as const, labels: { usePointStyle: true, padding: 15 } }, tooltip: { mode: 'index' as const, intersect: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: '#e9ecef' } } } }} />) : (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#757575' }}><div style={{ fontSize: 48, marginBottom: 16 }}>📊</div><div style={{ fontSize: 15, fontWeight: 500, marginBottom: 8 }}>필터를 선택하여 차트를 확인하세요</div><div style={{ fontSize: 13, color: '#9e9e9e' }}>위 드롭다운에서 분류 기준을 선택하면 플랫폼별 추이 차트가 표시됩니다</div></div>)}</div>
+                  <div className="chart-container" style={{ position: 'relative', height: 350, marginBottom: 20 }}>{filteredPlatformData.chartData && filteredPlatformData.chartData.datasets.length > 0 ? (<Line data={filteredPlatformData.chartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top' as const }, datalabels: { display: false }, tooltip: { callbacks: { label: function(context: any) { const platformArray = filteredPlatformData.chartData?.platformArray || []; const allPeriods = filteredPlatformData.chartData?.labels || []; const aggregatedData = filteredPlatformData.chartData?.aggregatedData || {}; const platform = platformArray[context.datasetIndex]; const period = allPeriods[context.dataIndex]; const data = aggregatedData[platform]?.[period] || {}; const { cost = 0, revenue = 0, conversions = 0, impressions = 0, clicks = 0 } = data; const roas = cost > 0 ? (revenue / cost * 100) : 0; const cpm = impressions > 0 ? (cost / impressions * 1000) : 0; const cpc = clicks > 0 ? (cost / clicks) : 0; const cpa = conversions > 0 ? (cost / conversions) : 0; const ctr = impressions > 0 ? (clicks / impressions * 100) : 0; const cvr = clicks > 0 ? (conversions / clicks * 100) : 0; const lines = [`${platform}`]; switch(currentPlatformMetric) { case 'roas': lines.push(`ROAS: ${roas.toFixed(1)}%`); lines.push(`비용: ${formatCurrency(cost)}`); lines.push(`전환값: ${formatCurrency(revenue)}`); break; case 'cost': lines.push(`비용: ${formatCurrency(context.parsed.y)}`); lines.push(`ROAS: ${roas.toFixed(1)}%`); break; case 'revenue': lines.push(`전환값: ${formatCurrency(context.parsed.y)}`); lines.push(`비용: ${formatCurrency(cost)}`); lines.push(`ROAS: ${roas.toFixed(1)}%`); break; case 'conversions': lines.push(`전환수: ${conversions.toLocaleString()}건`); lines.push(`전환율: ${cvr.toFixed(2)}%`); break; case 'impressions': lines.push(`노출수: ${impressions.toLocaleString()}회`); lines.push(`CTR: ${ctr.toFixed(2)}%`); break; case 'clicks': lines.push(`클릭수: ${clicks.toLocaleString()}회`); lines.push(`CTR: ${ctr.toFixed(2)}%`); break; case 'cpm': lines.push(`CPM: ${formatCurrency(context.parsed.y)}`); lines.push(`노출수: ${impressions.toLocaleString()}회`); break; case 'cpc': lines.push(`CPC: ${formatCurrency(context.parsed.y)}`); lines.push(`클릭수: ${clicks.toLocaleString()}회`); break; case 'cpa': lines.push(`CPA: ${formatCurrency(context.parsed.y)}`); lines.push(`전환수: ${conversions.toLocaleString()}건`); break; case 'ctr': lines.push(`CTR: ${context.parsed.y.toFixed(2)}%`); lines.push(`클릭수: ${clicks.toLocaleString()}회`); lines.push(`노출수: ${impressions.toLocaleString()}회`); break; case 'cvr': lines.push(`전환율: ${context.parsed.y.toFixed(2)}%`); lines.push(`전환수: ${conversions.toLocaleString()}건`); lines.push(`클릭수: ${clicks.toLocaleString()}회`); break; } return lines; } } } }, scales: { y: { beginAtZero: true, title: { display: true, text: (() => { switch(currentPlatformMetric) { case 'roas': return 'ROAS (%)'; case 'cost': return '비용 (원)'; case 'revenue': return '전환값 (원)'; case 'conversions': return '전환수 (건)'; case 'impressions': return '노출수 (회)'; case 'clicks': return '클릭수 (회)'; case 'cpm': return 'CPM (원)'; case 'cpc': return 'CPC (원)'; case 'cpa': return 'CPA (원)'; case 'ctr': return 'CTR (%)'; case 'cvr': return '전환율 (%)'; default: return '지표'; } })() }, ticks: { callback: function(value: any) { switch(currentPlatformMetric) { case 'roas': case 'ctr': case 'cvr': return value.toFixed(1) + '%'; case 'cost': case 'revenue': case 'cpm': case 'cpc': case 'cpa': return formatCurrency(value); case 'conversions': case 'impressions': case 'clicks': return value.toLocaleString(); default: return value; } } } }, x: { title: { display: true, text: '기간' } } } }} />) : (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#757575' }}><div style={{ fontSize: 48, marginBottom: 16 }}>📊</div><div style={{ fontSize: 15, fontWeight: 500, marginBottom: 8 }}>필터를 선택하여 차트를 확인하세요</div><div style={{ fontSize: 13, color: '#9e9e9e' }}>위 드롭다운에서 분류 기준을 선택하면 플랫폼별 추이 차트가 표시됩니다</div></div>)}</div>
                   <div style={{ marginTop: 20, padding: 16, background: 'linear-gradient(135deg, #ede7f6 0%, #f3e5f5 100%)', borderRadius: 10, borderLeft: '4px solid #673ab7' }}><div style={{ fontSize: 13, fontWeight: 600, color: '#512da8', marginBottom: 8 }}>💡 플랫폼 최적화 팁</div><div style={{ fontSize: 13, color: 'var(--grey-800)', lineHeight: 1.6 }}>성과가 좋은 플랫폼에 예산을 집중하고, 각 플랫폼 특성에 맞는 광고 소재를 준비하세요.</div></div>
                 </div>
               </div>
             )}
 
             {/* 탭 5: 기기플랫폼 추이 - HTML 1:1 구현 */}
-            {trendAnalysisTab === 'device-platform' && (
+            {trendAnalysisTab === 'devicePlatform' && (
               <div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
                   <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%)', borderRadius: 8, borderLeft: '4px solid #2196f3', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}><div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>📊</span><strong style={{ color: '#1976d2', fontSize: 13 }}>이 분석의 목적</strong></div><p style={{ margin: 0, fontSize: 12, color: '#424242', lineHeight: 1.6 }}>시간에 따른 <strong style={{ color: '#1565c0' }}>기기플랫폼별 성과 변화</strong>를 추적하여<br />기기별 최적화 전략을 수립할 수 있습니다</p></div>
@@ -6822,14 +7631,14 @@ export default function TypeDashboardReactView() {
                       <div className="trend-filter-dropdown" style={{ position: 'relative', minWidth: 150, flex: 1 }}><button type="button" onClick={(e) => { e.stopPropagation(); setTrendDropdownOpen(prev => ({ ...prev, adset: !prev.adset, channel: false, product: false, brand: false, promotion: false })) }} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, fontSize: 13, color: 'var(--grey-800)', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', textAlign: 'left' }}><span style={{ fontWeight: 500 }}>{currentDevicePlatformFilters.adset.length === 0 ? '광고세트_전체' : currentDevicePlatformFilters.adset.length === devicePlatformFilterOptions.adsets.length ? '광고세트_전체' : currentDevicePlatformFilters.adset.length === 1 ? currentDevicePlatformFilters.adset[0] : `${currentDevicePlatformFilters.adset[0]} 외`}</span><span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ fontSize: 11, color: 'var(--grey-500)' }}>{currentDevicePlatformFilters.adset.length === 0 ? '' : currentDevicePlatformFilters.adset.length === devicePlatformFilterOptions.adsets.length ? `(${currentDevicePlatformFilters.adset.length})` : currentDevicePlatformFilters.adset.length === 1 ? '' : `(${currentDevicePlatformFilters.adset.length})`}</span><span style={{ fontSize: 10 }}>▼</span></span></button>{trendDropdownOpen.adset && (<div onClick={(e) => e.stopPropagation()} style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 4, background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', maxHeight: 280, overflowY: 'auto', zIndex: 100 }}><div style={{ padding: 8 }}><div style={{ position: 'sticky', top: 0, background: 'white', padding: '6px 0', borderBottom: '1px solid var(--grey-200)', marginBottom: 6 }}><label style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', cursor: 'pointer', fontWeight: 600, fontSize: 12, borderRadius: 4 }}><input type="checkbox" checked={currentDevicePlatformFilters.adset.length === devicePlatformFilterOptions.adsets.length && devicePlatformFilterOptions.adsets.length > 0} onChange={(e) => { if (e.target.checked) { setCurrentDevicePlatformFilters(prev => ({ ...prev, adset: [...devicePlatformFilterOptions.adsets] })) } else { setCurrentDevicePlatformFilters(prev => ({ ...prev, adset: [] })) }}} style={{ marginRight: 10, width: 16, height: 16, cursor: 'pointer' }} />전체 선택</label></div>{devicePlatformFilterOptions.adsets.map((item, idx) => (<label key={idx} style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', cursor: 'pointer', fontSize: 12, borderRadius: 4 }}><input type="checkbox" checked={currentDevicePlatformFilters.adset.includes(item)} onChange={(e) => { if (e.target.checked) { setCurrentDevicePlatformFilters(prev => ({ ...prev, adset: [...prev.adset, item] })) } else { setCurrentDevicePlatformFilters(prev => ({ ...prev, adset: prev.adset.filter(v => v !== item) })) }}} style={{ marginRight: 10, width: 16, height: 16, cursor: 'pointer' }} />{item}</label>))}</div></div>)}</div>
                     </div>
                   </div>
-                  <div className="chart-container" style={{ position: 'relative', height: 350, marginBottom: 20 }}>{filteredDevicePlatformData.chartData && filteredDevicePlatformData.chartData.datasets.length > 0 ? (<Line data={filteredDevicePlatformData.chartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' as const, labels: { usePointStyle: true, padding: 15 } }, tooltip: { mode: 'index' as const, intersect: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: '#e9ecef' } } } }} />) : (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#757575' }}><div style={{ fontSize: 48, marginBottom: 16 }}>📊</div><div style={{ fontSize: 15, fontWeight: 500, marginBottom: 8 }}>필터를 선택하여 차트를 확인하세요</div><div style={{ fontSize: 13, color: '#9e9e9e' }}>위 드롭다운에서 분류 기준을 선택하면 기기플랫폼별 추이 차트가 표시됩니다</div></div>)}</div>
+                  <div className="chart-container" style={{ position: 'relative', height: 350, marginBottom: 20 }}>{filteredDevicePlatformData.chartData && filteredDevicePlatformData.chartData.datasets.length > 0 ? (<Line data={filteredDevicePlatformData.chartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top' as const }, datalabels: { display: false }, tooltip: { callbacks: { label: function(context: any) { const devicePlatformArray = filteredDevicePlatformData.chartData?.devicePlatformArray || []; const allPeriods = filteredDevicePlatformData.chartData?.labels || []; const aggregatedData = filteredDevicePlatformData.chartData?.aggregatedData || {}; const devicePlatform = devicePlatformArray[context.datasetIndex]; const period = allPeriods[context.dataIndex]; const data = aggregatedData[devicePlatform]?.[period] || {}; const { cost = 0, revenue = 0, conversions = 0, impressions = 0, clicks = 0 } = data; const roas = cost > 0 ? (revenue / cost * 100) : 0; const cpm = impressions > 0 ? (cost / impressions * 1000) : 0; const cpc = clicks > 0 ? (cost / clicks) : 0; const cpa = conversions > 0 ? (cost / conversions) : 0; const ctr = impressions > 0 ? (clicks / impressions * 100) : 0; const cvr = clicks > 0 ? (conversions / clicks * 100) : 0; const lines = [`${devicePlatform}`]; switch(currentDevicePlatformMetric) { case 'roas': lines.push(`ROAS: ${roas.toFixed(1)}%`); lines.push(`비용: ${formatCurrency(cost)}`); lines.push(`전환값: ${formatCurrency(revenue)}`); break; case 'cost': lines.push(`비용: ${formatCurrency(context.parsed.y)}`); lines.push(`ROAS: ${roas.toFixed(1)}%`); break; case 'revenue': lines.push(`전환값: ${formatCurrency(context.parsed.y)}`); lines.push(`비용: ${formatCurrency(cost)}`); lines.push(`ROAS: ${roas.toFixed(1)}%`); break; case 'conversions': lines.push(`전환수: ${conversions.toLocaleString()}건`); lines.push(`전환율: ${cvr.toFixed(2)}%`); break; case 'impressions': lines.push(`노출수: ${impressions.toLocaleString()}회`); lines.push(`CTR: ${ctr.toFixed(2)}%`); break; case 'clicks': lines.push(`클릭수: ${clicks.toLocaleString()}회`); lines.push(`CTR: ${ctr.toFixed(2)}%`); break; case 'cpm': lines.push(`CPM: ${formatCurrency(context.parsed.y)}`); lines.push(`노출수: ${impressions.toLocaleString()}회`); break; case 'cpc': lines.push(`CPC: ${formatCurrency(context.parsed.y)}`); lines.push(`클릭수: ${clicks.toLocaleString()}회`); break; case 'cpa': lines.push(`CPA: ${formatCurrency(context.parsed.y)}`); lines.push(`전환수: ${conversions.toLocaleString()}건`); break; case 'ctr': lines.push(`CTR: ${context.parsed.y.toFixed(2)}%`); lines.push(`클릭수: ${clicks.toLocaleString()}회`); lines.push(`노출수: ${impressions.toLocaleString()}회`); break; case 'cvr': lines.push(`전환율: ${context.parsed.y.toFixed(2)}%`); lines.push(`전환수: ${conversions.toLocaleString()}건`); lines.push(`클릭수: ${clicks.toLocaleString()}회`); break; } return lines; } } } }, scales: { y: { beginAtZero: true, title: { display: true, text: (() => { switch(currentDevicePlatformMetric) { case 'roas': return 'ROAS (%)'; case 'cost': return '비용 (원)'; case 'revenue': return '전환값 (원)'; case 'conversions': return '전환수 (건)'; case 'impressions': return '노출수 (회)'; case 'clicks': return '클릭수 (회)'; case 'cpm': return 'CPM (원)'; case 'cpc': return 'CPC (원)'; case 'cpa': return 'CPA (원)'; case 'ctr': return 'CTR (%)'; case 'cvr': return '전환율 (%)'; default: return '지표'; } })() }, ticks: { callback: function(value: any) { switch(currentDevicePlatformMetric) { case 'roas': case 'ctr': case 'cvr': return value.toFixed(1) + '%'; case 'cost': case 'revenue': case 'cpm': case 'cpc': case 'cpa': return formatCurrency(value); case 'conversions': case 'impressions': case 'clicks': return value.toLocaleString(); default: return value; } } } }, x: { title: { display: true, text: '기간' } } } }} />) : (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#757575' }}><div style={{ fontSize: 48, marginBottom: 16 }}>📊</div><div style={{ fontSize: 15, fontWeight: 500, marginBottom: 8 }}>필터를 선택하여 차트를 확인하세요</div><div style={{ fontSize: 13, color: '#9e9e9e' }}>위 드롭다운에서 분류 기준을 선택하면 기기플랫폼별 추이 차트가 표시됩니다</div></div>)}</div>
                   <div style={{ marginTop: 20, padding: 16, background: 'linear-gradient(135deg, #e0f7fa 0%, #e8f5e9 100%)', borderRadius: 10, borderLeft: '4px solid #009688' }}><div style={{ fontSize: 13, fontWeight: 600, color: '#00796b', marginBottom: 8 }}>💡 기기플랫폼 최적화 팁</div><div style={{ fontSize: 13, color: 'var(--grey-800)', lineHeight: 1.6 }}>iOS와 Android 사용자 특성을 고려하여 각 플랫폼에 맞는 메시지와 소재를 준비하세요.</div></div>
                 </div>
               </div>
             )}
 
             {/* 탭 6: 기기 추이 - HTML 1:1 구현 */}
-            {trendAnalysisTab === 'device-type' && (
+            {trendAnalysisTab === 'deviceType' && (
               <div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
                   <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%)', borderRadius: 8, borderLeft: '4px solid #2196f3', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}><div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>📊</span><strong style={{ color: '#1976d2', fontSize: 13 }}>이 분석의 목적</strong></div><p style={{ margin: 0, fontSize: 12, color: '#424242', lineHeight: 1.6 }}>시간에 따른 <strong style={{ color: '#1565c0' }}>기기 유형별 성과 변화</strong>를 추적하여<br />기기별 광고 전략을 최적화할 수 있습니다</p></div>
@@ -6847,13 +7656,823 @@ export default function TypeDashboardReactView() {
                       <div className="trend-filter-dropdown" style={{ position: 'relative', minWidth: 150, flex: 1 }}><button type="button" onClick={(e) => { e.stopPropagation(); setTrendDropdownOpen(prev => ({ ...prev, adset: !prev.adset, channel: false, product: false, brand: false, promotion: false })) }} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, fontSize: 13, color: 'var(--grey-800)', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', textAlign: 'left' }}><span style={{ fontWeight: 500 }}>{currentDeviceTypeFilters.adset.length === 0 ? '광고세트_전체' : currentDeviceTypeFilters.adset.length === deviceFilterOptions.adsets.length ? '광고세트_전체' : currentDeviceTypeFilters.adset.length === 1 ? currentDeviceTypeFilters.adset[0] : `${currentDeviceTypeFilters.adset[0]} 외`}</span><span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ fontSize: 11, color: 'var(--grey-500)' }}>{currentDeviceTypeFilters.adset.length === 0 ? '' : currentDeviceTypeFilters.adset.length === deviceFilterOptions.adsets.length ? `(${currentDeviceTypeFilters.adset.length})` : currentDeviceTypeFilters.adset.length === 1 ? '' : `(${currentDeviceTypeFilters.adset.length})`}</span><span style={{ fontSize: 10 }}>▼</span></span></button>{trendDropdownOpen.adset && (<div onClick={(e) => e.stopPropagation()} style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 4, background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', maxHeight: 280, overflowY: 'auto', zIndex: 100 }}><div style={{ padding: 8 }}><div style={{ position: 'sticky', top: 0, background: 'white', padding: '6px 0', borderBottom: '1px solid var(--grey-200)', marginBottom: 6 }}><label style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', cursor: 'pointer', fontWeight: 600, fontSize: 12, borderRadius: 4 }}><input type="checkbox" checked={currentDeviceTypeFilters.adset.length === deviceFilterOptions.adsets.length && deviceFilterOptions.adsets.length > 0} onChange={(e) => { if (e.target.checked) { setCurrentDeviceTypeFilters(prev => ({ ...prev, adset: [...deviceFilterOptions.adsets] })) } else { setCurrentDeviceTypeFilters(prev => ({ ...prev, adset: [] })) }}} style={{ marginRight: 10, width: 16, height: 16, cursor: 'pointer' }} />전체 선택</label></div>{deviceFilterOptions.adsets.map((item, idx) => (<label key={idx} style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', cursor: 'pointer', fontSize: 12, borderRadius: 4 }}><input type="checkbox" checked={currentDeviceTypeFilters.adset.includes(item)} onChange={(e) => { if (e.target.checked) { setCurrentDeviceTypeFilters(prev => ({ ...prev, adset: [...prev.adset, item] })) } else { setCurrentDeviceTypeFilters(prev => ({ ...prev, adset: prev.adset.filter(v => v !== item) })) }}} style={{ marginRight: 10, width: 16, height: 16, cursor: 'pointer' }} />{item}</label>))}</div></div>)}</div>
                     </div>
                   </div>
-                  <div className="chart-container" style={{ position: 'relative', height: 350, marginBottom: 20 }}>{filteredDeviceData.chartData && filteredDeviceData.chartData.datasets.length > 0 ? (<Line data={filteredDeviceData.chartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' as const, labels: { usePointStyle: true, padding: 15 } }, tooltip: { mode: 'index' as const, intersect: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: '#e9ecef' } } } }} />) : (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#757575' }}><div style={{ fontSize: 48, marginBottom: 16 }}>📊</div><div style={{ fontSize: 15, fontWeight: 500, marginBottom: 8 }}>필터를 선택하여 차트를 확인하세요</div><div style={{ fontSize: 13, color: '#9e9e9e' }}>위 드롭다운에서 분류 기준을 선택하면 기기별 추이 차트가 표시됩니다</div></div>)}</div>
+                  <div className="chart-container" style={{ position: 'relative', height: 350, marginBottom: 20 }}>{filteredDeviceData.chartData && filteredDeviceData.chartData.datasets.length > 0 ? (<Line data={filteredDeviceData.chartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top' as const }, datalabels: { display: false }, tooltip: { callbacks: { label: function(context: any) { const deviceTypeArray = filteredDeviceData.chartData?.deviceTypeArray || []; const allPeriods = filteredDeviceData.chartData?.labels || []; const aggregatedData = filteredDeviceData.chartData?.aggregatedData || {}; const deviceType = deviceTypeArray[context.datasetIndex]; const period = allPeriods[context.dataIndex]; const data = aggregatedData[deviceType]?.[period] || {}; const { cost = 0, revenue = 0, conversions = 0, impressions = 0, clicks = 0 } = data; const roas = cost > 0 ? (revenue / cost * 100) : 0; const cpm = impressions > 0 ? (cost / impressions * 1000) : 0; const cpc = clicks > 0 ? (cost / clicks) : 0; const cpa = conversions > 0 ? (cost / conversions) : 0; const ctr = impressions > 0 ? (clicks / impressions * 100) : 0; const cvr = clicks > 0 ? (conversions / clicks * 100) : 0; const lines = [`${deviceType}`]; switch(currentDeviceTypeMetric) { case 'roas': lines.push(`ROAS: ${roas.toFixed(1)}%`); lines.push(`비용: ${formatCurrency(cost)}`); lines.push(`전환값: ${formatCurrency(revenue)}`); break; case 'cost': lines.push(`비용: ${formatCurrency(context.parsed.y)}`); lines.push(`ROAS: ${roas.toFixed(1)}%`); break; case 'revenue': lines.push(`전환값: ${formatCurrency(context.parsed.y)}`); lines.push(`비용: ${formatCurrency(cost)}`); lines.push(`ROAS: ${roas.toFixed(1)}%`); break; case 'conversions': lines.push(`전환수: ${conversions.toLocaleString()}건`); lines.push(`전환율: ${cvr.toFixed(2)}%`); break; case 'impressions': lines.push(`노출수: ${impressions.toLocaleString()}회`); lines.push(`CTR: ${ctr.toFixed(2)}%`); break; case 'clicks': lines.push(`클릭수: ${clicks.toLocaleString()}회`); lines.push(`CTR: ${ctr.toFixed(2)}%`); break; case 'cpm': lines.push(`CPM: ${formatCurrency(context.parsed.y)}`); lines.push(`노출수: ${impressions.toLocaleString()}회`); break; case 'cpc': lines.push(`CPC: ${formatCurrency(context.parsed.y)}`); lines.push(`클릭수: ${clicks.toLocaleString()}회`); break; case 'cpa': lines.push(`CPA: ${formatCurrency(context.parsed.y)}`); lines.push(`전환수: ${conversions.toLocaleString()}건`); break; case 'ctr': lines.push(`CTR: ${context.parsed.y.toFixed(2)}%`); lines.push(`클릭수: ${clicks.toLocaleString()}회`); lines.push(`노출수: ${impressions.toLocaleString()}회`); break; case 'cvr': lines.push(`전환율: ${context.parsed.y.toFixed(2)}%`); lines.push(`전환수: ${conversions.toLocaleString()}건`); lines.push(`클릭수: ${clicks.toLocaleString()}회`); break; } return lines; } } } }, scales: { y: { beginAtZero: true, title: { display: true, text: (() => { switch(currentDeviceTypeMetric) { case 'roas': return 'ROAS (%)'; case 'cost': return '비용 (원)'; case 'revenue': return '전환값 (원)'; case 'conversions': return '전환수 (건)'; case 'impressions': return '노출수 (회)'; case 'clicks': return '클릭수 (회)'; case 'cpm': return 'CPM (원)'; case 'cpc': return 'CPC (원)'; case 'cpa': return 'CPA (원)'; case 'ctr': return 'CTR (%)'; case 'cvr': return '전환율 (%)'; default: return '지표'; } })() }, ticks: { callback: function(value: any) { switch(currentDeviceTypeMetric) { case 'roas': case 'ctr': case 'cvr': return value.toFixed(1) + '%'; case 'cost': case 'revenue': case 'cpm': case 'cpc': case 'cpa': return formatCurrency(value); case 'conversions': case 'impressions': case 'clicks': return value.toLocaleString(); default: return value; } } } }, x: { title: { display: true, text: '기간' } } } }} />) : (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#757575' }}><div style={{ fontSize: 48, marginBottom: 16 }}>📊</div><div style={{ fontSize: 15, fontWeight: 500, marginBottom: 8 }}>필터를 선택하여 차트를 확인하세요</div><div style={{ fontSize: 13, color: '#9e9e9e' }}>위 드롭다운에서 분류 기준을 선택하면 기기별 추이 차트가 표시됩니다</div></div>)}</div>
                   <div style={{ marginTop: 20, padding: 16, background: 'linear-gradient(135deg, #e3f2fd 0%, #e8eaf6 100%)', borderRadius: 10, borderLeft: '4px solid #2196f3' }}><div style={{ fontSize: 13, fontWeight: 600, color: '#1565c0', marginBottom: 8 }}>💡 기기 유형 최적화 팁</div><div style={{ fontSize: 13, color: 'var(--grey-800)', lineHeight: 1.6 }}>모바일 사용자가 증가하는 추세라면 모바일 최적화 소재와 랜딩 페이지를 준비하세요.</div></div>
                 </div>
               </div>
             )}
           </div>
         )}
+
+        {/* ========== 성과 테이블 분석 섹션 (HTML 1:1) ========== */}
+        <div className="collapsible-section" style={{ marginTop: 24 }}>
+          <div className="collapsible-header" onClick={() => setPerfTableExpanded(!perfTableExpanded)}>
+            <div className="collapsible-title"><span className="collapsible-icon">📋</span><span>성과 테이블 분석 - 상세 지표를 테이블로 확인하세요</span></div>
+            <button className="collapsible-toggle"><span>{perfTableExpanded ? '접기' : '펼치기'}</span><span className={`collapsible-toggle-icon ${perfTableExpanded ? '' : 'collapsed'}`}>▼</span></button>
+          </div>
+          <div className={`collapsible-content ${perfTableExpanded ? 'expanded' : ''}`}>
+            {/* 탭 버튼 */}
+            <div className="view-type-section" style={{ marginBottom: 24 }}>
+              <button className={`view-btn ${perfTableActiveTab === 'adset' ? 'active' : ''}`} onClick={() => setPerfTableActiveTab('adset')}>광고세트</button>
+              <button className={`view-btn ${perfTableActiveTab === 'gender' ? 'active' : ''}`} onClick={() => setPerfTableActiveTab('gender')}>성별</button>
+              <button className={`view-btn ${perfTableActiveTab === 'age' ? 'active' : ''}`} onClick={() => setPerfTableActiveTab('age')}>연령</button>
+              <button className={`view-btn ${perfTableActiveTab === 'genderAge' ? 'active' : ''}`} onClick={() => setPerfTableActiveTab('genderAge')}>성별x연령</button>
+              <button className={`view-btn ${perfTableActiveTab === 'platform' ? 'active' : ''}`} onClick={() => setPerfTableActiveTab('platform')}>플랫폼</button>
+              <button className={`view-btn ${perfTableActiveTab === 'devicePlatform' ? 'active' : ''}`} onClick={() => setPerfTableActiveTab('devicePlatform')}>기기플랫폼</button>
+              <button className={`view-btn ${perfTableActiveTab === 'deviceType' ? 'active' : ''}`} onClick={() => setPerfTableActiveTab('deviceType')}>기기</button>
+            </div>
+
+            {/* 광고세트 탭 */}
+            {perfTableActiveTab === 'adset' && (
+              <div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+                  <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%)', borderRadius: 8, borderLeft: '4px solid #2196f3', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}><div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>📊</span><strong style={{ color: '#1976d2', fontSize: 13 }}>이 분석의 목적</strong></div><p style={{ margin: 0, fontSize: 12, color: '#424242', lineHeight: 1.6 }}>광고세트별 <strong style={{ color: '#1565c0' }}>상세 성과 지표</strong>를 테이블 형식으로<br />정렬하고 비교할 수 있습니다</p></div>
+                  <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: 8, borderLeft: '4px solid #4caf50', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}><div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>💡</span><strong style={{ color: '#388e3c', fontSize: 13 }}>사용 방법</strong></div><div style={{ fontSize: 12, color: '#424242', lineHeight: 1.6 }}><div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 4 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>1</span><span>드롭다운에서 원하는 필터 선택</span></div><div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>2</span><span>컬럼 헤더 클릭으로 정렬</span></div></div></div>
+                </div>
+                <div className="card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottom: '2px solid var(--grey-200)', paddingBottom: 16 }}><div><div className="card-title" style={{ marginBottom: 4 }}>광고세트별 성과 테이블</div><p style={{ color: 'var(--grey-600)', fontSize: 13, margin: 0 }}>광고세트별 상세 지표를 테이블로 확인할 수 있으며, KPI 버튼을 클릭해 원하는 기준으로 정렬할 수 있습니다.</p></div></div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', gap: 20, marginBottom: 20 }}><div style={{ flex: '0 0 auto' }}><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)', marginBottom: 12 }}>📅 기간 선택</div><div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><input type="date" value={perfTableState.adset.startDate} onChange={(e) => handlePerfTableDateChange('adset', true, e.target.value)} style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13, color: 'var(--grey-800)', cursor: 'pointer' }} /><span style={{ color: 'var(--grey-600)', fontWeight: 500 }}>~</span><input type="date" value={perfTableState.adset.endDate} onChange={(e) => handlePerfTableDateChange('adset', false, e.target.value)} style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13, color: 'var(--grey-800)', cursor: 'pointer' }} /></div></div></div>
+                  <div style={{ marginBottom: 20, padding: 16, background: 'var(--grey-50)', borderRadius: 8, border: '1px solid var(--grey-200)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)' }}>📊 분류 기준</div><div style={{ fontSize: 12, color: '#2e7d32', fontWeight: 600 }}>🎯 {perfTableAdsetData.count}개 광고세트</div></div>
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                      {['channel', 'product', 'brand', 'promotion'].map((filterKey) => {
+                        const labelMap: Record<string, string> = { channel: '채널', product: '제품', brand: '브랜드', promotion: '프로모션' }
+                        const optionsMap: Record<string, string[]> = { channel: perfTableFilterOptions.channels, product: perfTableFilterOptions.products, brand: perfTableFilterOptions.brands, promotion: perfTableFilterOptions.promotions }
+                        const options = optionsMap[filterKey] || []
+                        const selected = perfTableState.adset.filters[filterKey as keyof typeof perfTableState.adset.filters] || []
+                        const dropdownKey = `adset_${filterKey}`
+                        return (
+                          <div key={filterKey} style={{ position: 'relative', minWidth: 180, flex: 1 }}>
+                            <button type="button" onClick={() => setPerfTableDropdownOpen(prev => ({ ...prev, [dropdownKey]: !prev[dropdownKey] }))} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, fontSize: 13, color: 'var(--grey-800)', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', textAlign: 'left' }}><span style={{ fontWeight: 500 }}>{labelMap[filterKey]}_전체</span><div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ fontSize: 11, background: 'var(--grey-200)', padding: '2px 8px', borderRadius: 10, color: 'var(--grey-600)' }}>{selected.length}개</span><span style={{ color: 'var(--grey-400)', fontSize: 10 }}>▼</span></div></button>
+                            {perfTableDropdownOpen[dropdownKey] && (
+                              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 1000, maxHeight: 250, overflowY: 'auto', marginTop: 4 }}>
+                                <div style={{ padding: '8px 10px', borderBottom: '1px solid var(--grey-200)', background: 'var(--grey-50)' }}><label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: 12, fontWeight: 600, color: 'var(--grey-700)' }}><input type="checkbox" checked={selected.length === options.length && options.length > 0} onChange={(e) => updatePerfTableFilters('adset', filterKey, e.target.checked ? [...options] : [])} style={{ marginRight: 10, width: 16, height: 16, cursor: 'pointer' }} />전체 선택</label></div>
+                                {options.map((value, idx) => (<label key={idx} style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', cursor: 'pointer', fontSize: 12, color: 'var(--grey-700)', transition: 'background 0.2s', borderRadius: 4 }}><input type="checkbox" checked={selected.includes(value)} onChange={(e) => { if (e.target.checked) { updatePerfTableFilters('adset', filterKey, [...selected, value]) } else { updatePerfTableFilters('adset', filterKey, selected.filter(v => v !== value)) }}} style={{ marginRight: 10, width: 16, height: 16, cursor: 'pointer' }} />{value}</label>))}
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                  <div style={{ overflowX: 'auto', overflowY: 'visible' }}>
+                    {perfTableAdsetData.dataList.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--grey-500)' }}><div style={{ fontSize: 48, marginBottom: 16 }}>📊</div><div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>필터를 선택해주세요</div><div style={{ fontSize: 13, color: 'var(--grey-400)' }}>위의 분류 기준에서 하나 이상의 항목을 선택해주세요.</div></div>
+                    ) : (
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, minWidth: 1200 }}>
+                        <thead><tr style={{ background: 'var(--grey-100)' }}><th style={{ padding: '12px 10px', textAlign: 'left', fontWeight: 700, border: '1px solid var(--grey-300)', background: 'var(--grey-200)', minWidth: 150, position: 'sticky', left: 0, zIndex: 10 }}>광고세트</th>
+                          {perfTableMetrics.map(metric => {
+                            const isSorted = (perfTableState.adset as any).sortColumn === metric.key
+                            const sortIcon = isSorted ? ((perfTableState.adset as any).sortDirection === 'desc' ? ' ▼' : ' ▲') : ''
+                            return <th key={metric.key} onClick={() => handlePerfTableSort('adset', metric.key)} style={{ padding: '12px 8px', textAlign: 'right', fontWeight: 600, border: '1px solid var(--grey-300)', background: isSorted ? 'var(--primary-light)' : 'var(--grey-100)', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'background 0.2s' }}>{metric.label}{sortIcon}</th>
+                          })}
+                        </tr></thead>
+                        <tbody>{perfTableAdsetData.dataList.map((item, index) => {
+                          const metricRanges: Record<string, { min: number, max: number }> = {}
+                          perfTableMetrics.forEach(m => {
+                            let min = Infinity, max = -Infinity
+                            perfTableAdsetData.dataList.forEach(d => { const v = (d as any)[m.key] || 0; if (v < min) min = v; if (v > max) max = v })
+                            metricRanges[m.key] = { min, max }
+                          })
+                          const isInverseMetric = (key: string) => ['cpm', 'cpc', 'cpa'].includes(key)
+                          return (<tr key={index} style={{ background: index % 2 === 0 ? 'var(--paper)' : 'var(--grey-50)' }}><td style={{ padding: 10, fontWeight: 500, border: '1px solid var(--grey-300)', background: 'var(--grey-50)', position: 'sticky', left: 0, zIndex: 5, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.name}>{item.name}</td>
+                            {perfTableMetrics.map(metric => {
+                              const value = (item as any)[metric.key] || 0
+                              const range = metricRanges[metric.key]
+                              const bgColor = getPerfTableColorScale(value, range.min, range.max, isInverseMetric(metric.key))
+                              return <td key={metric.key} style={{ padding: '10px 8px', textAlign: 'right', border: '1px solid var(--grey-300)', background: bgColor, fontVariantNumeric: 'tabular-nums' }}>{metric.format(value)}</td>
+                            })}
+                          </tr>)
+                        })}</tbody>
+                      </table>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 성별 탭 */}
+            {perfTableActiveTab === 'gender' && (
+              <div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+                  <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%)', borderRadius: 8, borderLeft: '4px solid #2196f3', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>📊</span><strong style={{ color: '#1976d2', fontSize: 13 }}>이 분석의 목적</strong></div>
+                    <p style={{ margin: 0, fontSize: 12, color: '#424242', lineHeight: 1.6 }}>성별 <strong style={{ color: '#1565c0' }}>상세 성과 지표</strong>를 테이블 형식으로<br/>정렬하고 비교할 수 있습니다</p>
+                  </div>
+                  <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: 8, borderLeft: '4px solid #4caf50', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>💡</span><strong style={{ color: '#388e3c', fontSize: 13 }}>사용 방법</strong></div>
+                    <div style={{ fontSize: 12, color: '#424242', lineHeight: 1.6 }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 4 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>1</span><span>드롭다운에서 원하는 필터 선택</span></div>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>2</span><span>컬럼 헤더 클릭으로 정렬</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottom: '2px solid var(--grey-200)', paddingBottom: 16 }}><div><div className="card-title" style={{ marginBottom: 4 }}>성별 성과 테이블</div><p style={{ color: 'var(--grey-600)', fontSize: 13, margin: 0 }}>성별 상세 지표를 테이블로 확인할 수 있습니다.</p></div></div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 20 }}><div><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)', marginBottom: 12 }}>📅 기간 선택</div><div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><input type="date" value={perfTableState.gender.startDate} onChange={(e) => handlePerfTableDateChange('gender', true, e.target.value)} style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13 }} /><span style={{ color: 'var(--grey-600)', fontWeight: 500 }}>~</span><input type="date" value={perfTableState.gender.endDate} onChange={(e) => handlePerfTableDateChange('gender', false, e.target.value)} style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13 }} /></div></div></div>
+                  <div style={{ marginBottom: 20, padding: 16, background: 'var(--grey-50)', borderRadius: 8, border: '1px solid var(--grey-200)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)' }}>📊 분류 기준</div><div style={{ fontSize: 12, color: '#2e7d32', fontWeight: 600 }}>🎯 {perfTableGenderData.count}개 항목</div></div>
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                      {['channel', 'product', 'brand', 'promotion'].map((filterKey) => {
+                        const labelMap: Record<string, string> = { channel: '채널', product: '제품', brand: '브랜드', promotion: '프로모션' }
+                        const optionsMap: Record<string, string[]> = { channel: perfTableFilterOptions.channels, product: perfTableFilterOptions.products, brand: perfTableFilterOptions.brands, promotion: perfTableFilterOptions.promotions }
+                        const options = optionsMap[filterKey] || []
+                        const selected = perfTableState.gender.filters[filterKey as keyof typeof perfTableState.gender.filters] || []
+                        const dropdownKey = `gender_${filterKey}`
+                        return (
+                          <div key={filterKey} style={{ position: 'relative', minWidth: 180, flex: 1 }}>
+                            <button type="button" onClick={() => setPerfTableDropdownOpen(prev => ({ ...prev, [dropdownKey]: !prev[dropdownKey] }))} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, fontSize: 13, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><span style={{ fontWeight: 500 }}>{labelMap[filterKey]}_전체</span><div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ fontSize: 11, background: 'var(--grey-200)', padding: '2px 8px', borderRadius: 10 }}>{selected.length}개</span><span style={{ fontSize: 10 }}>▼</span></div></button>
+                            {perfTableDropdownOpen[dropdownKey] && (<div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 1000, maxHeight: 250, overflowY: 'auto', marginTop: 4 }}><div style={{ padding: '8px 10px', borderBottom: '1px solid var(--grey-200)', background: 'var(--grey-50)' }}><label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}><input type="checkbox" checked={selected.length === options.length && options.length > 0} onChange={(e) => updatePerfTableFilters('gender', filterKey, e.target.checked ? [...options] : [])} style={{ marginRight: 10, width: 16, height: 16 }} />전체 선택</label></div>{options.map((value, idx) => (<label key={idx} style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', cursor: 'pointer', fontSize: 12 }}><input type="checkbox" checked={selected.includes(value)} onChange={(e) => { if (e.target.checked) { updatePerfTableFilters('gender', filterKey, [...selected, value]) } else { updatePerfTableFilters('gender', filterKey, selected.filter(v => v !== value)) }}} style={{ marginRight: 10, width: 16, height: 16 }} />{value}</label>))}</div>)}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                  <div style={{ overflowX: 'auto' }}>
+                    {perfTableGenderData.dataList.length === 0 ? (<div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--grey-500)' }}><div style={{ fontSize: 48, marginBottom: 16 }}>📊</div><div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>필터를 선택해주세요</div></div>) : (
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, minWidth: 1200 }}><thead><tr style={{ background: 'var(--grey-100)' }}><th style={{ padding: '12px 10px', textAlign: 'left', fontWeight: 700, border: '1px solid var(--grey-300)', background: 'var(--grey-200)', minWidth: 120, position: 'sticky', left: 0, zIndex: 10 }}>성별</th>{perfTableMetrics.map(metric => { const isSorted = (perfTableState.gender as any).sortColumn === metric.key; const sortIcon = isSorted ? ((perfTableState.gender as any).sortDirection === 'desc' ? ' ▼' : ' ▲') : ''; return <th key={metric.key} onClick={() => handlePerfTableSort('gender', metric.key)} style={{ padding: '12px 8px', textAlign: 'right', fontWeight: 600, border: '1px solid var(--grey-300)', background: isSorted ? 'var(--primary-light)' : 'var(--grey-100)', cursor: 'pointer', whiteSpace: 'nowrap' }}>{metric.label}{sortIcon}</th> })}</tr></thead>
+                        <tbody>{perfTableGenderData.dataList.map((item, index) => { const metricRanges: Record<string, { min: number, max: number }> = {}; perfTableMetrics.forEach(m => { let min = Infinity, max = -Infinity; perfTableGenderData.dataList.forEach(d => { const v = (d as any)[m.key] || 0; if (v < min) min = v; if (v > max) max = v }); metricRanges[m.key] = { min, max } }); const isInverseMetric = (key: string) => ['cpm', 'cpc', 'cpa'].includes(key); return (<tr key={index} style={{ background: index % 2 === 0 ? 'var(--paper)' : 'var(--grey-50)' }}><td style={{ padding: 10, fontWeight: 500, border: '1px solid var(--grey-300)', background: 'var(--grey-50)', position: 'sticky', left: 0, zIndex: 5 }}>{item.name}</td>{perfTableMetrics.map(metric => { const value = (item as any)[metric.key] || 0; const range = metricRanges[metric.key]; const bgColor = getPerfTableColorScale(value, range.min, range.max, isInverseMetric(metric.key)); return <td key={metric.key} style={{ padding: '10px 8px', textAlign: 'right', border: '1px solid var(--grey-300)', background: bgColor, fontVariantNumeric: 'tabular-nums' }}>{metric.format(value)}</td> })}</tr>) })}</tbody></table>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 연령 탭 - 성별 탭과 동일 구조 */}
+            {perfTableActiveTab === 'age' && (
+              <div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+                  <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%)', borderRadius: 8, borderLeft: '4px solid #2196f3', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>📊</span><strong style={{ color: '#1976d2', fontSize: 13 }}>이 분석의 목적</strong></div>
+                    <p style={{ margin: 0, fontSize: 12, color: '#424242', lineHeight: 1.6 }}>연령대별 <strong style={{ color: '#1565c0' }}>상세 성과 지표</strong>를 테이블 형식으로<br/>정렬하고 비교할 수 있습니다</p>
+                  </div>
+                  <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: 8, borderLeft: '4px solid #4caf50', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>💡</span><strong style={{ color: '#388e3c', fontSize: 13 }}>사용 방법</strong></div>
+                    <div style={{ fontSize: 12, color: '#424242', lineHeight: 1.6 }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 4 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>1</span><span>드롭다운에서 원하는 필터 선택</span></div>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>2</span><span>컬럼 헤더 클릭으로 정렬</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottom: '2px solid var(--grey-200)', paddingBottom: 16 }}><div><div className="card-title" style={{ marginBottom: 4 }}>연령별 성과 테이블</div><p style={{ color: 'var(--grey-600)', fontSize: 13, margin: 0 }}>연령대별 상세 지표를 테이블로 확인할 수 있습니다.</p></div></div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 20 }}><div><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)', marginBottom: 12 }}>📅 기간 선택</div><div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><input type="date" value={perfTableState.age.startDate} onChange={(e) => handlePerfTableDateChange('age', true, e.target.value)} style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13 }} /><span style={{ color: 'var(--grey-600)', fontWeight: 500 }}>~</span><input type="date" value={perfTableState.age.endDate} onChange={(e) => handlePerfTableDateChange('age', false, e.target.value)} style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13 }} /></div></div></div>
+                  <div style={{ marginBottom: 20, padding: 16, background: 'var(--grey-50)', borderRadius: 8, border: '1px solid var(--grey-200)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)' }}>📊 분류 기준</div><div style={{ fontSize: 12, color: '#2e7d32', fontWeight: 600 }}>🎯 {perfTableAgeData.count}개 항목</div></div>
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                      {['channel', 'product', 'brand', 'promotion'].map((filterKey) => {
+                        const labelMap: Record<string, string> = { channel: '채널', product: '제품', brand: '브랜드', promotion: '프로모션' }
+                        const optionsMap: Record<string, string[]> = { channel: perfTableFilterOptions.channels, product: perfTableFilterOptions.products, brand: perfTableFilterOptions.brands, promotion: perfTableFilterOptions.promotions }
+                        const options = optionsMap[filterKey] || []
+                        const selected = perfTableState.age.filters[filterKey as keyof typeof perfTableState.age.filters] || []
+                        const dropdownKey = `age_${filterKey}`
+                        return (
+                          <div key={filterKey} style={{ position: 'relative', minWidth: 180, flex: 1 }}>
+                            <button type="button" onClick={() => setPerfTableDropdownOpen(prev => ({ ...prev, [dropdownKey]: !prev[dropdownKey] }))} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, fontSize: 13, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><span style={{ fontWeight: 500 }}>{labelMap[filterKey]}_전체</span><div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ fontSize: 11, background: 'var(--grey-200)', padding: '2px 8px', borderRadius: 10 }}>{selected.length}개</span><span style={{ fontSize: 10 }}>▼</span></div></button>
+                            {perfTableDropdownOpen[dropdownKey] && (<div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 1000, maxHeight: 250, overflowY: 'auto', marginTop: 4 }}><div style={{ padding: '8px 10px', borderBottom: '1px solid var(--grey-200)', background: 'var(--grey-50)' }}><label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}><input type="checkbox" checked={selected.length === options.length && options.length > 0} onChange={(e) => updatePerfTableFilters('age', filterKey, e.target.checked ? [...options] : [])} style={{ marginRight: 10, width: 16, height: 16 }} />전체 선택</label></div>{options.map((value, idx) => (<label key={idx} style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', cursor: 'pointer', fontSize: 12 }}><input type="checkbox" checked={selected.includes(value)} onChange={(e) => { if (e.target.checked) { updatePerfTableFilters('age', filterKey, [...selected, value]) } else { updatePerfTableFilters('age', filterKey, selected.filter(v => v !== value)) }}} style={{ marginRight: 10, width: 16, height: 16 }} />{value}</label>))}</div>)}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                  <div style={{ overflowX: 'auto' }}>
+                    {perfTableAgeData.dataList.length === 0 ? (<div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--grey-500)' }}><div style={{ fontSize: 48, marginBottom: 16 }}>📊</div><div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>필터를 선택해주세요</div></div>) : (
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, minWidth: 1200 }}><thead><tr style={{ background: 'var(--grey-100)' }}><th style={{ padding: '12px 10px', textAlign: 'left', fontWeight: 700, border: '1px solid var(--grey-300)', background: 'var(--grey-200)', minWidth: 120, position: 'sticky', left: 0, zIndex: 10 }}>연령</th>{perfTableMetrics.map(metric => { const isSorted = (perfTableState.age as any).sortColumn === metric.key; const sortIcon = isSorted ? ((perfTableState.age as any).sortDirection === 'desc' ? ' ▼' : ' ▲') : ''; return <th key={metric.key} onClick={() => handlePerfTableSort('age', metric.key)} style={{ padding: '12px 8px', textAlign: 'right', fontWeight: 600, border: '1px solid var(--grey-300)', background: isSorted ? 'var(--primary-light)' : 'var(--grey-100)', cursor: 'pointer', whiteSpace: 'nowrap' }}>{metric.label}{sortIcon}</th> })}</tr></thead>
+                        <tbody>{perfTableAgeData.dataList.map((item, index) => { const metricRanges: Record<string, { min: number, max: number }> = {}; perfTableMetrics.forEach(m => { let min = Infinity, max = -Infinity; perfTableAgeData.dataList.forEach(d => { const v = (d as any)[m.key] || 0; if (v < min) min = v; if (v > max) max = v }); metricRanges[m.key] = { min, max } }); const isInverseMetric = (key: string) => ['cpm', 'cpc', 'cpa'].includes(key); return (<tr key={index} style={{ background: index % 2 === 0 ? 'var(--paper)' : 'var(--grey-50)' }}><td style={{ padding: 10, fontWeight: 500, border: '1px solid var(--grey-300)', background: 'var(--grey-50)', position: 'sticky', left: 0, zIndex: 5 }}>{item.name}</td>{perfTableMetrics.map(metric => { const value = (item as any)[metric.key] || 0; const range = metricRanges[metric.key]; const bgColor = getPerfTableColorScale(value, range.min, range.max, isInverseMetric(metric.key)); return <td key={metric.key} style={{ padding: '10px 8px', textAlign: 'right', border: '1px solid var(--grey-300)', background: bgColor, fontVariantNumeric: 'tabular-nums' }}>{metric.format(value)}</td> })}</tr>) })}</tbody></table>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 성별x연령 PIVOT 탭 */}
+            {perfTableActiveTab === 'genderAge' && (
+              <div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+                  <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%)', borderRadius: 8, borderLeft: '4px solid #2196f3', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>📊</span><strong style={{ color: '#1976d2', fontSize: 13 }}>이 분석의 목적</strong></div>
+                    <p style={{ margin: 0, fontSize: 12, color: '#424242', lineHeight: 1.6 }}>성별과 연령대별 <strong style={{ color: '#1565c0' }}>교차 분석</strong>을 통해<br/>가장 효과적인 타겟 그룹을 파악합니다</p>
+                  </div>
+                  <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: 8, borderLeft: '4px solid #4caf50', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>💡</span><strong style={{ color: '#388e3c', fontSize: 13 }}>사용 방법</strong></div>
+                    <div style={{ fontSize: 12, color: '#424242', lineHeight: 1.6 }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 4 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>1</span><span>분류 기준 드롭다운에서 필터 선택</span></div>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>2</span><span>색상 스케일로 높은/낮은 값 확인</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="card">
+                  <div style={{ marginBottom: 20, borderBottom: '2px solid var(--grey-200)', paddingBottom: 16 }}>
+                    <div className="card-title" style={{ marginBottom: 4 }}>성별 × 연령대 성과 분석</div>
+                    <p style={{ color: 'var(--grey-600)', fontSize: 13, margin: 0 }}>성별과 연령대의 교차 분석으로 최적의 타겟을 발견하세요. 모든 주요 지표(비용, CPM, CPC, CPA, ROAS)를 한눈에 비교할 수 있습니다.</p>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 20 }}><div><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)', marginBottom: 12 }}>📅 기간 선택</div><div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><input type="date" value={perfTableState.genderAge.startDate} onChange={(e) => handlePerfTableDateChange('genderAge', true, e.target.value)} style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13 }} /><span style={{ color: 'var(--grey-600)', fontWeight: 500 }}>~</span><input type="date" value={perfTableState.genderAge.endDate} onChange={(e) => handlePerfTableDateChange('genderAge', false, e.target.value)} style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13 }} /></div></div></div>
+                  <div style={{ marginBottom: 20, padding: 16, background: 'var(--grey-50)', borderRadius: 8, border: '1px solid var(--grey-200)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)' }}>📊 분류 기준</div></div>
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                      {['channel', 'product', 'brand', 'promotion'].map((filterKey) => {
+                        const labelMap: Record<string, string> = { channel: '채널', product: '제품', brand: '브랜드', promotion: '프로모션' }
+                        const optionsMap: Record<string, string[]> = { channel: perfTableFilterOptions.channels, product: perfTableFilterOptions.products, brand: perfTableFilterOptions.brands, promotion: perfTableFilterOptions.promotions }
+                        const options = optionsMap[filterKey] || []
+                        const selected = perfTableState.genderAge.filters[filterKey as keyof typeof perfTableState.genderAge.filters] || []
+                        const dropdownKey = `genderAge_${filterKey}`
+                        return (
+                          <div key={filterKey} style={{ position: 'relative', minWidth: 180, flex: 1 }}>
+                            <button type="button" onClick={() => setPerfTableDropdownOpen(prev => ({ ...prev, [dropdownKey]: !prev[dropdownKey] }))} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, fontSize: 13, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><span style={{ fontWeight: 500 }}>{labelMap[filterKey]}_전체</span><div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ fontSize: 11, background: 'var(--grey-200)', padding: '2px 8px', borderRadius: 10 }}>{selected.length}개</span><span style={{ fontSize: 10 }}>▼</span></div></button>
+                            {perfTableDropdownOpen[dropdownKey] && (<div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 1000, maxHeight: 250, overflowY: 'auto', marginTop: 4 }}><div style={{ padding: '8px 10px', borderBottom: '1px solid var(--grey-200)', background: 'var(--grey-50)' }}><label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}><input type="checkbox" checked={selected.length === options.length && options.length > 0} onChange={(e) => updatePerfTableFilters('genderAge', filterKey, e.target.checked ? [...options] : [])} style={{ marginRight: 10, width: 16, height: 16 }} />전체 선택</label></div>{options.map((value, idx) => (<label key={idx} style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', cursor: 'pointer', fontSize: 12 }}><input type="checkbox" checked={selected.includes(value)} onChange={(e) => { if (e.target.checked) { updatePerfTableFilters('genderAge', filterKey, [...selected, value]) } else { updatePerfTableFilters('genderAge', filterKey, selected.filter(v => v !== value)) }}} style={{ marginRight: 10, width: 16, height: 16 }} />{value}</label>))}</div>)}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                  <div id="perfTableGenderAgeContainer" style={{ overflowX: 'auto', overflowY: 'visible' }}>
+                    {perfTableGenderAgeData.genders.length === 0 || perfTableGenderAgeData.ages.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--grey-500)' }}>
+                        <div style={{ fontSize: 48, marginBottom: 16 }}>📊</div>
+                        <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>{perfTableGenderAgeData.allFiltersEmpty ? '필터를 선택해주세요' : '데이터를 표시할 수 없습니다'}</div>
+                        <div style={{ fontSize: 13, color: 'var(--grey-400)' }}>{perfTableGenderAgeData.allFiltersEmpty ? '위의 분류 기준에서 하나 이상의 항목을 선택해주세요.' : '필터 조건에 맞는 데이터가 없습니다.'}</div>
+                      </div>
+                    ) : (
+                      <>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                          <thead>
+                            <tr style={{ background: 'var(--grey-100)' }}><th rowSpan={2} style={{ padding: '10px 8px', textAlign: 'center', fontWeight: 700, border: '1px solid var(--grey-300)', background: 'var(--grey-200)', width: 70 }}>연령</th>
+                              {[{ key: 'cost', label: '비용' }, { key: 'cpm', label: 'CPM' }, { key: 'cpc', label: 'CPC' }, { key: 'cpa', label: 'CPA' }, { key: 'roas', label: 'ROAS' }].map(metric => (<th key={metric.key} colSpan={2} style={{ padding: '8px 6px', textAlign: 'center', fontWeight: 700, border: '1px solid var(--grey-300)', background: 'var(--primary-light)', color: 'var(--primary-dark)', fontSize: 11 }}>{metric.label}</th>))}
+                            </tr>
+                            <tr style={{ background: 'var(--grey-50)' }}>{[{ key: 'cost', label: '비용' }, { key: 'cpm', label: 'CPM' }, { key: 'cpc', label: 'CPC' }, { key: 'cpa', label: 'CPA' }, { key: 'roas', label: 'ROAS' }].map(metric => perfTableGenderAgeData.genders.map(gender => (<th key={`${metric.key}_${gender}`} style={{ padding: '6px 4px', textAlign: 'center', fontWeight: 600, border: '1px solid var(--grey-300)', fontSize: 10 }}>{gender === '남성' ? '남' : '여'}</th>)))}</tr>
+                          </thead>
+                          <tbody>
+                            {perfTableGenderAgeData.ages.map((age, ageIndex) => (<tr key={age} style={{ background: ageIndex % 2 === 0 ? 'var(--paper)' : 'var(--grey-50)' }}><td style={{ padding: '8px 6px', fontWeight: 600, textAlign: 'center', border: '1px solid var(--grey-300)', background: 'var(--grey-100)', fontSize: 11 }}>{age}</td>
+                              {[{ key: 'cost', label: '비용', format: (v: number) => formatCurrency(v) }, { key: 'cpm', label: 'CPM', format: (v: number) => formatCurrency(v) }, { key: 'cpc', label: 'CPC', format: (v: number) => formatCurrency(v) }, { key: 'cpa', label: 'CPA', format: (v: number) => formatCurrency(v) }, { key: 'roas', label: 'ROAS', format: (v: number) => v.toFixed(1) + '%' }].map(metric => perfTableGenderAgeData.genders.map(gender => {
+                                const data = (perfTableGenderAgeData.pivotData as Record<string, { gender: string; age: string; cost: number; revenue: number; conversions: number; impressions: number; clicks: number; roas: number; cpm: number; cpc: number; cpa: number }>)[`${gender}_${age}`]
+                                if (data) {
+                                  const value = (data as any)[metric.key]
+                                  const allValues = Object.values(perfTableGenderAgeData.pivotData).map(d => (d as any)[metric.key])
+                                  const min = Math.min(...allValues), max = Math.max(...allValues)
+                                  const bgColor = getPerfTableColorScale(value, min, max, false)
+                                  return <td key={`${metric.key}_${gender}`} style={{ padding: '6px 4px', textAlign: 'right', background: bgColor, border: '1px solid var(--grey-300)', fontWeight: 500, fontSize: 10, whiteSpace: 'nowrap' }} title={`${gender} / ${age}\n${metric.label}: ${metric.format(value)}\n비용: ${formatCurrency(data.cost)}\nCPM: ${formatCurrency(data.cpm)}\nCPC: ${formatCurrency(data.cpc)}\nCPA: ${formatCurrency(data.cpa)}\nROAS: ${data.roas.toFixed(1)}%`}>{metric.format(value)}</td>
+                                }
+                                return <td key={`${metric.key}_${gender}`} style={{ padding: '6px 4px', textAlign: 'center', background: 'var(--grey-50)', border: '1px solid var(--grey-300)', color: 'var(--grey-400)', fontSize: 10 }}>-</td>
+                              }))}
+                            </tr>))}
+                          </tbody>
+                        </table>
+                        {perfTableGenderAgeData.totalStats && (
+                          <div style={{ marginTop: 20, padding: 16, background: 'linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%)', borderRadius: 8, display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
+                            <div style={{ textAlign: 'center', padding: 12, background: 'white', borderRadius: 6 }}><div style={{ fontSize: 11, color: 'var(--grey-600)', marginBottom: 4 }}>전체 비용</div><div style={{ fontSize: 16, fontWeight: 700, color: 'var(--grey-900)' }}>{formatCurrency(perfTableGenderAgeData.totalStats.totalCost)}</div></div>
+                            <div style={{ textAlign: 'center', padding: 12, background: 'white', borderRadius: 6 }}><div style={{ fontSize: 11, color: 'var(--grey-600)', marginBottom: 4 }}>평균 CPM</div><div style={{ fontSize: 16, fontWeight: 700, color: 'var(--grey-900)' }}>{formatCurrency(perfTableGenderAgeData.totalStats.avgCpm)}</div></div>
+                            <div style={{ textAlign: 'center', padding: 12, background: 'white', borderRadius: 6 }}><div style={{ fontSize: 11, color: 'var(--grey-600)', marginBottom: 4 }}>평균 CPC</div><div style={{ fontSize: 16, fontWeight: 700, color: 'var(--grey-900)' }}>{formatCurrency(perfTableGenderAgeData.totalStats.avgCpc)}</div></div>
+                            <div style={{ textAlign: 'center', padding: 12, background: 'white', borderRadius: 6 }}><div style={{ fontSize: 11, color: 'var(--grey-600)', marginBottom: 4 }}>평균 CPA</div><div style={{ fontSize: 16, fontWeight: 700, color: 'var(--grey-900)' }}>{formatCurrency(perfTableGenderAgeData.totalStats.avgCpa)}</div></div>
+                            <div style={{ textAlign: 'center', padding: 12, background: 'white', borderRadius: 6 }}><div style={{ fontSize: 11, color: 'var(--grey-600)', marginBottom: 4 }}>전체 ROAS</div><div style={{ fontSize: 16, fontWeight: 700, color: 'var(--primary-main)' }}>{perfTableGenderAgeData.totalStats.avgRoas.toFixed(1)}%</div></div>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 플랫폼 탭 */}
+            {perfTableActiveTab === 'platform' && (
+              <div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+                  <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%)', borderRadius: 8, borderLeft: '4px solid #2196f3', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>📊</span><strong style={{ color: '#1976d2', fontSize: 13 }}>이 분석의 목적</strong></div>
+                    <p style={{ margin: 0, fontSize: 12, color: '#424242', lineHeight: 1.6 }}>플랫폼별 <strong style={{ color: '#1565c0' }}>상세 성과 지표</strong>를 테이블 형식으로<br/>정렬하고 비교할 수 있습니다</p>
+                  </div>
+                  <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: 8, borderLeft: '4px solid #4caf50', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>💡</span><strong style={{ color: '#388e3c', fontSize: 13 }}>사용 방법</strong></div>
+                    <div style={{ fontSize: 12, color: '#424242', lineHeight: 1.6 }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 4 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>1</span><span>드롭다운에서 원하는 필터 선택</span></div>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>2</span><span>컬럼 헤더 클릭으로 정렬</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottom: '2px solid var(--grey-200)', paddingBottom: 16 }}><div><div className="card-title" style={{ marginBottom: 4 }}>플랫폼별 성과 테이블</div><p style={{ color: 'var(--grey-600)', fontSize: 13, margin: 0 }}>플랫폼별 상세 지표를 테이블로 확인할 수 있습니다.</p></div></div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 20 }}><div><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)', marginBottom: 12 }}>📅 기간 선택</div><div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><input type="date" value={perfTableState.platform.startDate} onChange={(e) => handlePerfTableDateChange('platform', true, e.target.value)} style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13 }} /><span style={{ color: 'var(--grey-600)', fontWeight: 500 }}>~</span><input type="date" value={perfTableState.platform.endDate} onChange={(e) => handlePerfTableDateChange('platform', false, e.target.value)} style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13 }} /></div></div></div>
+                  <div style={{ marginBottom: 20, padding: 16, background: 'var(--grey-50)', borderRadius: 8, border: '1px solid var(--grey-200)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)' }}>📊 분류 기준</div><div style={{ fontSize: 12, color: '#2e7d32', fontWeight: 600 }}>🎯 {perfTablePlatformData.count}개 항목</div></div>
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                      {['channel', 'product', 'brand', 'promotion'].map((filterKey) => {
+                        const labelMap: Record<string, string> = { channel: '채널', product: '제품', brand: '브랜드', promotion: '프로모션' }
+                        const optionsMap: Record<string, string[]> = { channel: perfTableFilterOptions.channels, product: perfTableFilterOptions.products, brand: perfTableFilterOptions.brands, promotion: perfTableFilterOptions.promotions }
+                        const options = optionsMap[filterKey] || []
+                        const selected = perfTableState.platform.filters[filterKey as keyof typeof perfTableState.platform.filters] || []
+                        const dropdownKey = `platform_${filterKey}`
+                        return (
+                          <div key={filterKey} style={{ position: 'relative', minWidth: 180, flex: 1 }}>
+                            <button type="button" onClick={() => setPerfTableDropdownOpen(prev => ({ ...prev, [dropdownKey]: !prev[dropdownKey] }))} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, fontSize: 13, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><span style={{ fontWeight: 500 }}>{labelMap[filterKey]}_전체</span><div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ fontSize: 11, background: 'var(--grey-200)', padding: '2px 8px', borderRadius: 10 }}>{selected.length}개</span><span style={{ fontSize: 10 }}>▼</span></div></button>
+                            {perfTableDropdownOpen[dropdownKey] && (<div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 1000, maxHeight: 250, overflowY: 'auto', marginTop: 4 }}><div style={{ padding: '8px 10px', borderBottom: '1px solid var(--grey-200)', background: 'var(--grey-50)' }}><label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}><input type="checkbox" checked={selected.length === options.length && options.length > 0} onChange={(e) => updatePerfTableFilters('platform', filterKey, e.target.checked ? [...options] : [])} style={{ marginRight: 10, width: 16, height: 16 }} />전체 선택</label></div>{options.map((value, idx) => (<label key={idx} style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', cursor: 'pointer', fontSize: 12 }}><input type="checkbox" checked={selected.includes(value)} onChange={(e) => { if (e.target.checked) { updatePerfTableFilters('platform', filterKey, [...selected, value]) } else { updatePerfTableFilters('platform', filterKey, selected.filter(v => v !== value)) }}} style={{ marginRight: 10, width: 16, height: 16 }} />{value}</label>))}</div>)}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                  <div style={{ overflowX: 'auto' }}>
+                    {perfTablePlatformData.dataList.length === 0 ? (<div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--grey-500)' }}><div style={{ fontSize: 48, marginBottom: 16 }}>📊</div><div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>필터를 선택해주세요</div></div>) : (
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, minWidth: 1200 }}><thead><tr style={{ background: 'var(--grey-100)' }}><th style={{ padding: '12px 10px', textAlign: 'left', fontWeight: 700, border: '1px solid var(--grey-300)', background: 'var(--grey-200)', minWidth: 120, position: 'sticky', left: 0, zIndex: 10 }}>플랫폼</th>{perfTableMetrics.map(metric => { const isSorted = (perfTableState.platform as any).sortColumn === metric.key; const sortIcon = isSorted ? ((perfTableState.platform as any).sortDirection === 'desc' ? ' ▼' : ' ▲') : ''; return <th key={metric.key} onClick={() => handlePerfTableSort('platform', metric.key)} style={{ padding: '12px 8px', textAlign: 'right', fontWeight: 600, border: '1px solid var(--grey-300)', background: isSorted ? 'var(--primary-light)' : 'var(--grey-100)', cursor: 'pointer', whiteSpace: 'nowrap' }}>{metric.label}{sortIcon}</th> })}</tr></thead>
+                        <tbody>{perfTablePlatformData.dataList.map((item, index) => { const metricRanges: Record<string, { min: number, max: number }> = {}; perfTableMetrics.forEach(m => { let min = Infinity, max = -Infinity; perfTablePlatformData.dataList.forEach(d => { const v = (d as any)[m.key] || 0; if (v < min) min = v; if (v > max) max = v }); metricRanges[m.key] = { min, max } }); const isInverseMetric = (key: string) => ['cpm', 'cpc', 'cpa'].includes(key); return (<tr key={index} style={{ background: index % 2 === 0 ? 'var(--paper)' : 'var(--grey-50)' }}><td style={{ padding: 10, fontWeight: 500, border: '1px solid var(--grey-300)', background: 'var(--grey-50)', position: 'sticky', left: 0, zIndex: 5 }}>{item.name}</td>{perfTableMetrics.map(metric => { const value = (item as any)[metric.key] || 0; const range = metricRanges[metric.key]; const bgColor = getPerfTableColorScale(value, range.min, range.max, isInverseMetric(metric.key)); return <td key={metric.key} style={{ padding: '10px 8px', textAlign: 'right', border: '1px solid var(--grey-300)', background: bgColor, fontVariantNumeric: 'tabular-nums' }}>{metric.format(value)}</td> })}</tr>) })}</tbody></table>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 기기플랫폼 탭 */}
+            {perfTableActiveTab === 'devicePlatform' && (
+              <div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+                  <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%)', borderRadius: 8, borderLeft: '4px solid #2196f3', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>📊</span><strong style={{ color: '#1976d2', fontSize: 13 }}>이 분석의 목적</strong></div>
+                    <p style={{ margin: 0, fontSize: 12, color: '#424242', lineHeight: 1.6 }}>기기플랫폼별 <strong style={{ color: '#1565c0' }}>상세 성과 지표</strong>를 테이블 형식으로<br/>정렬하고 비교할 수 있습니다</p>
+                  </div>
+                  <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: 8, borderLeft: '4px solid #4caf50', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>💡</span><strong style={{ color: '#388e3c', fontSize: 13 }}>사용 방법</strong></div>
+                    <div style={{ fontSize: 12, color: '#424242', lineHeight: 1.6 }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 4 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>1</span><span>드롭다운에서 원하는 필터 선택</span></div>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>2</span><span>컬럼 헤더 클릭으로 정렬</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottom: '2px solid var(--grey-200)', paddingBottom: 16 }}><div><div className="card-title" style={{ marginBottom: 4 }}>기기플랫폼별 성과 테이블</div><p style={{ color: 'var(--grey-600)', fontSize: 13, margin: 0 }}>기기플랫폼별 상세 지표를 테이블로 확인할 수 있습니다.</p></div></div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 20 }}><div><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)', marginBottom: 12 }}>📅 기간 선택</div><div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><input type="date" value={perfTableState.devicePlatform.startDate} onChange={(e) => handlePerfTableDateChange('devicePlatform', true, e.target.value)} style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13 }} /><span style={{ color: 'var(--grey-600)', fontWeight: 500 }}>~</span><input type="date" value={perfTableState.devicePlatform.endDate} onChange={(e) => handlePerfTableDateChange('devicePlatform', false, e.target.value)} style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13 }} /></div></div></div>
+                  <div style={{ marginBottom: 20, padding: 16, background: 'var(--grey-50)', borderRadius: 8, border: '1px solid var(--grey-200)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)' }}>📊 분류 기준</div><div style={{ fontSize: 12, color: '#2e7d32', fontWeight: 600 }}>🎯 {perfTableDevicePlatformData.count}개 항목</div></div>
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                      {['channel', 'product', 'brand', 'promotion'].map((filterKey) => {
+                        const labelMap: Record<string, string> = { channel: '채널', product: '제품', brand: '브랜드', promotion: '프로모션' }
+                        const optionsMap: Record<string, string[]> = { channel: perfTableFilterOptions.channels, product: perfTableFilterOptions.products, brand: perfTableFilterOptions.brands, promotion: perfTableFilterOptions.promotions }
+                        const options = optionsMap[filterKey] || []
+                        const selected = perfTableState.devicePlatform.filters[filterKey as keyof typeof perfTableState.devicePlatform.filters] || []
+                        const dropdownKey = `devicePlatform_${filterKey}`
+                        return (
+                          <div key={filterKey} style={{ position: 'relative', minWidth: 180, flex: 1 }}>
+                            <button type="button" onClick={() => setPerfTableDropdownOpen(prev => ({ ...prev, [dropdownKey]: !prev[dropdownKey] }))} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, fontSize: 13, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><span style={{ fontWeight: 500 }}>{labelMap[filterKey]}_전체</span><div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ fontSize: 11, background: 'var(--grey-200)', padding: '2px 8px', borderRadius: 10 }}>{selected.length}개</span><span style={{ fontSize: 10 }}>▼</span></div></button>
+                            {perfTableDropdownOpen[dropdownKey] && (<div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 1000, maxHeight: 250, overflowY: 'auto', marginTop: 4 }}><div style={{ padding: '8px 10px', borderBottom: '1px solid var(--grey-200)', background: 'var(--grey-50)' }}><label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}><input type="checkbox" checked={selected.length === options.length && options.length > 0} onChange={(e) => updatePerfTableFilters('devicePlatform', filterKey, e.target.checked ? [...options] : [])} style={{ marginRight: 10, width: 16, height: 16 }} />전체 선택</label></div>{options.map((value, idx) => (<label key={idx} style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', cursor: 'pointer', fontSize: 12 }}><input type="checkbox" checked={selected.includes(value)} onChange={(e) => { if (e.target.checked) { updatePerfTableFilters('devicePlatform', filterKey, [...selected, value]) } else { updatePerfTableFilters('devicePlatform', filterKey, selected.filter(v => v !== value)) }}} style={{ marginRight: 10, width: 16, height: 16 }} />{value}</label>))}</div>)}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                  <div style={{ overflowX: 'auto' }}>
+                    {perfTableDevicePlatformData.dataList.length === 0 ? (<div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--grey-500)' }}><div style={{ fontSize: 48, marginBottom: 16 }}>📊</div><div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>필터를 선택해주세요</div></div>) : (
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, minWidth: 1200 }}><thead><tr style={{ background: 'var(--grey-100)' }}><th style={{ padding: '12px 10px', textAlign: 'left', fontWeight: 700, border: '1px solid var(--grey-300)', background: 'var(--grey-200)', minWidth: 120, position: 'sticky', left: 0, zIndex: 10 }}>기기플랫폼</th>{perfTableMetrics.map(metric => { const isSorted = (perfTableState.devicePlatform as any).sortColumn === metric.key; const sortIcon = isSorted ? ((perfTableState.devicePlatform as any).sortDirection === 'desc' ? ' ▼' : ' ▲') : ''; return <th key={metric.key} onClick={() => handlePerfTableSort('devicePlatform', metric.key)} style={{ padding: '12px 8px', textAlign: 'right', fontWeight: 600, border: '1px solid var(--grey-300)', background: isSorted ? 'var(--primary-light)' : 'var(--grey-100)', cursor: 'pointer', whiteSpace: 'nowrap' }}>{metric.label}{sortIcon}</th> })}</tr></thead>
+                        <tbody>{perfTableDevicePlatformData.dataList.map((item, index) => { const metricRanges: Record<string, { min: number, max: number }> = {}; perfTableMetrics.forEach(m => { let min = Infinity, max = -Infinity; perfTableDevicePlatformData.dataList.forEach(d => { const v = (d as any)[m.key] || 0; if (v < min) min = v; if (v > max) max = v }); metricRanges[m.key] = { min, max } }); const isInverseMetric = (key: string) => ['cpm', 'cpc', 'cpa'].includes(key); return (<tr key={index} style={{ background: index % 2 === 0 ? 'var(--paper)' : 'var(--grey-50)' }}><td style={{ padding: 10, fontWeight: 500, border: '1px solid var(--grey-300)', background: 'var(--grey-50)', position: 'sticky', left: 0, zIndex: 5 }}>{item.name}</td>{perfTableMetrics.map(metric => { const value = (item as any)[metric.key] || 0; const range = metricRanges[metric.key]; const bgColor = getPerfTableColorScale(value, range.min, range.max, isInverseMetric(metric.key)); return <td key={metric.key} style={{ padding: '10px 8px', textAlign: 'right', border: '1px solid var(--grey-300)', background: bgColor, fontVariantNumeric: 'tabular-nums' }}>{metric.format(value)}</td> })}</tr>) })}</tbody></table>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 기기 탭 */}
+            {perfTableActiveTab === 'deviceType' && (
+              <div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+                  <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%)', borderRadius: 8, borderLeft: '4px solid #2196f3', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>📊</span><strong style={{ color: '#1976d2', fontSize: 13 }}>이 분석의 목적</strong></div>
+                    <p style={{ margin: 0, fontSize: 12, color: '#424242', lineHeight: 1.6 }}>기기유형별 <strong style={{ color: '#1565c0' }}>상세 성과 지표</strong>를 테이블 형식으로<br/>정렬하고 비교할 수 있습니다</p>
+                  </div>
+                  <div style={{ padding: '14px 16px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: 8, borderLeft: '4px solid #4caf50', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>💡</span><strong style={{ color: '#388e3c', fontSize: 13 }}>사용 방법</strong></div>
+                    <div style={{ fontSize: 12, color: '#424242', lineHeight: 1.6 }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 4 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>1</span><span>드롭다운에서 원하는 필터 선택</span></div>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>2</span><span>컬럼 헤더 클릭으로 정렬</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottom: '2px solid var(--grey-200)', paddingBottom: 16 }}><div><div className="card-title" style={{ marginBottom: 4 }}>기기유형별 성과 테이블</div><p style={{ color: 'var(--grey-600)', fontSize: 13, margin: 0 }}>기기유형별 상세 지표를 테이블로 확인할 수 있습니다.</p></div></div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 20 }}><div><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)', marginBottom: 12 }}>📅 기간 선택</div><div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><input type="date" value={perfTableState.deviceType.startDate} onChange={(e) => handlePerfTableDateChange('deviceType', true, e.target.value)} style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13 }} /><span style={{ color: 'var(--grey-600)', fontWeight: 500 }}>~</span><input type="date" value={perfTableState.deviceType.endDate} onChange={(e) => handlePerfTableDateChange('deviceType', false, e.target.value)} style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13 }} /></div></div></div>
+                  <div style={{ marginBottom: 20, padding: 16, background: 'var(--grey-50)', borderRadius: 8, border: '1px solid var(--grey-200)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)' }}>📊 분류 기준</div><div style={{ fontSize: 12, color: '#2e7d32', fontWeight: 600 }}>🎯 {perfTableDeviceTypeData.count}개 항목</div></div>
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                      {['channel', 'product', 'brand', 'promotion'].map((filterKey) => {
+                        const labelMap: Record<string, string> = { channel: '채널', product: '제품', brand: '브랜드', promotion: '프로모션' }
+                        const optionsMap: Record<string, string[]> = { channel: perfTableFilterOptions.channels, product: perfTableFilterOptions.products, brand: perfTableFilterOptions.brands, promotion: perfTableFilterOptions.promotions }
+                        const options = optionsMap[filterKey] || []
+                        const selected = perfTableState.deviceType.filters[filterKey as keyof typeof perfTableState.deviceType.filters] || []
+                        const dropdownKey = `deviceType_${filterKey}`
+                        return (
+                          <div key={filterKey} style={{ position: 'relative', minWidth: 180, flex: 1 }}>
+                            <button type="button" onClick={() => setPerfTableDropdownOpen(prev => ({ ...prev, [dropdownKey]: !prev[dropdownKey] }))} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, fontSize: 13, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><span style={{ fontWeight: 500 }}>{labelMap[filterKey]}_전체</span><div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ fontSize: 11, background: 'var(--grey-200)', padding: '2px 8px', borderRadius: 10 }}>{selected.length}개</span><span style={{ fontSize: 10 }}>▼</span></div></button>
+                            {perfTableDropdownOpen[dropdownKey] && (<div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 1000, maxHeight: 250, overflowY: 'auto', marginTop: 4 }}><div style={{ padding: '8px 10px', borderBottom: '1px solid var(--grey-200)', background: 'var(--grey-50)' }}><label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}><input type="checkbox" checked={selected.length === options.length && options.length > 0} onChange={(e) => updatePerfTableFilters('deviceType', filterKey, e.target.checked ? [...options] : [])} style={{ marginRight: 10, width: 16, height: 16 }} />전체 선택</label></div>{options.map((value, idx) => (<label key={idx} style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', cursor: 'pointer', fontSize: 12 }}><input type="checkbox" checked={selected.includes(value)} onChange={(e) => { if (e.target.checked) { updatePerfTableFilters('deviceType', filterKey, [...selected, value]) } else { updatePerfTableFilters('deviceType', filterKey, selected.filter(v => v !== value)) }}} style={{ marginRight: 10, width: 16, height: 16 }} />{value}</label>))}</div>)}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                  <div style={{ overflowX: 'auto' }}>
+                    {perfTableDeviceTypeData.dataList.length === 0 ? (<div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--grey-500)' }}><div style={{ fontSize: 48, marginBottom: 16 }}>📊</div><div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>필터를 선택해주세요</div></div>) : (
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, minWidth: 1200 }}><thead><tr style={{ background: 'var(--grey-100)' }}><th style={{ padding: '12px 10px', textAlign: 'left', fontWeight: 700, border: '1px solid var(--grey-300)', background: 'var(--grey-200)', minWidth: 120, position: 'sticky', left: 0, zIndex: 10 }}>기기유형</th>{perfTableMetrics.map(metric => { const isSorted = (perfTableState.deviceType as any).sortColumn === metric.key; const sortIcon = isSorted ? ((perfTableState.deviceType as any).sortDirection === 'desc' ? ' ▼' : ' ▲') : ''; return <th key={metric.key} onClick={() => handlePerfTableSort('deviceType', metric.key)} style={{ padding: '12px 8px', textAlign: 'right', fontWeight: 600, border: '1px solid var(--grey-300)', background: isSorted ? 'var(--primary-light)' : 'var(--grey-100)', cursor: 'pointer', whiteSpace: 'nowrap' }}>{metric.label}{sortIcon}</th> })}</tr></thead>
+                        <tbody>{perfTableDeviceTypeData.dataList.map((item, index) => { const metricRanges: Record<string, { min: number, max: number }> = {}; perfTableMetrics.forEach(m => { let min = Infinity, max = -Infinity; perfTableDeviceTypeData.dataList.forEach(d => { const v = (d as any)[m.key] || 0; if (v < min) min = v; if (v > max) max = v }); metricRanges[m.key] = { min, max } }); const isInverseMetric = (key: string) => ['cpm', 'cpc', 'cpa'].includes(key); return (<tr key={index} style={{ background: index % 2 === 0 ? 'var(--paper)' : 'var(--grey-50)' }}><td style={{ padding: 10, fontWeight: 500, border: '1px solid var(--grey-300)', background: 'var(--grey-50)', position: 'sticky', left: 0, zIndex: 5 }}>{item.name}</td>{perfTableMetrics.map(metric => { const value = (item as any)[metric.key] || 0; const range = metricRanges[metric.key]; const bgColor = getPerfTableColorScale(value, range.min, range.max, isInverseMetric(metric.key)); return <td key={metric.key} style={{ padding: '10px 8px', textAlign: 'right', border: '1px solid var(--grey-300)', background: bgColor, fontVariantNumeric: 'tabular-nums' }}>{metric.format(value)}</td> })}</tr>) })}</tbody></table>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+
+        {/* ========== 성과 구분 비교 분석 섹션 (HTML 1:1) ========== */}
+        <div className="collapsible-section" style={{ marginTop: 24 }}>
+          <div className="collapsible-header" onClick={() => setPerfAnalysisExpanded(!perfAnalysisExpanded)}>
+            <div className="collapsible-title"><span className="collapsible-icon">🏆</span><span>성과 구분 (브랜드/상품/프로모션/타겟팅) 비교 분석 - 비즈니스 현황을 빠르게 판단하세요</span></div>
+            <button className="collapsible-toggle"><span>{perfAnalysisExpanded ? '접기' : '펼치기'}</span><span className={`collapsible-toggle-icon ${perfAnalysisExpanded ? '' : 'collapsed'}`}>▼</span></button>
+          </div>
+          <div className={`collapsible-content ${perfAnalysisExpanded ? 'expanded' : ''}`}>
+            {/* 서브탭 버튼 */}
+            <div className="view-type-section" style={{ marginBottom: 0, padding: '20px 24px' }}>
+              <button className={`view-btn ${perfAnalysisActiveTab === 'brand' ? 'active' : ''}`} onClick={() => setPerfAnalysisActiveTab('brand')}>브랜드</button>
+              <button className={`view-btn ${perfAnalysisActiveTab === 'product' ? 'active' : ''}`} onClick={() => setPerfAnalysisActiveTab('product')}>상품</button>
+              <button className={`view-btn ${perfAnalysisActiveTab === 'promotion' ? 'active' : ''}`} onClick={() => setPerfAnalysisActiveTab('promotion')}>프로모션</button>
+              <button className={`view-btn ${perfAnalysisActiveTab === 'targeting' ? 'active' : ''}`} onClick={() => setPerfAnalysisActiveTab('targeting')}>타겟팅</button>
+            </div>
+
+            {/* 분석 목적/사용 방법 카드 */}
+            <div style={{ display: 'flex', gap: 16, padding: '20px 24px', background: '#fafafa', borderBottom: '1px solid #e9ecef' }}>
+              <div style={{ flex: 1, padding: '14px 16px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%)', borderRadius: 8, borderLeft: '4px solid #2196f3', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>📊</span><strong style={{ color: '#1976d2', fontSize: 13 }}>이 분석의 목적</strong></div>
+                <p style={{ margin: 0, fontSize: 12, color: '#424242', lineHeight: 1.6 }}><strong style={{ color: '#1565c0' }}>브랜드/상품/프로모션/타겟팅별 성과</strong>를 비교하여<br/>가장 효율적인 광고 요소를 파악할 수 있습니다</p>
+              </div>
+              <div style={{ flex: 1, padding: '14px 16px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: 8, borderLeft: '4px solid #4caf50', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><span style={{ fontSize: 16 }}>💡</span><strong style={{ color: '#388e3c', fontSize: 13 }}>사용 방법</strong></div>
+                <div style={{ fontSize: 12, color: '#424242', lineHeight: 1.6 }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 4 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>1</span><span>상단 탭에서 분석할 항목 선택</span></div>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 18, height: 18, background: '#4caf50', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>2</span><span>KPI 버튼으로 지표 변경, 비교 버튼으로 기간 비교</span></div>
+                </div>
+              </div>
+            </div>
+
+            {/* 각 탭별 컨텐츠 */}
+            {(['brand', 'product', 'promotion', 'targeting'] as const).map(category => {
+              const state = perfChartState[category]
+              const chartData = getPerfChartData(category)
+              const categoryLabel = { brand: '브랜드', product: '상품', promotion: '프로모션', targeting: '타겟팅' }[category]
+
+              if (perfAnalysisActiveTab !== category) return null
+
+              return (
+                <div key={category} style={{ margin: 16 }}>
+                  <div className="card" style={{ borderRadius: 12 }}>
+                    {/* 지표 선택 + 정렬 + 기간 선택 */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '16px 20px', borderBottom: '1px solid #e9ecef' }}>
+                      {/* 좌측: 지표 선택 + 정렬 */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: '#555' }}>📊 지표 선택</span>
+                        <div style={{ display: 'flex', gap: 10 }}>
+                          <select value={state.kpi} onChange={(e) => handlePerfChartKpiChange(category, e.target.value)} style={{ padding: '8px 12px', border: '1px solid #dee2e6', borderRadius: 4, fontSize: 13, cursor: 'pointer', minWidth: 140, background: 'white' }}>
+                            <option value="roas">ROAS</option>
+                            <option value="cpa">CPA</option>
+                            <option value="cost">비용</option>
+                            <option value="conversions">전환수</option>
+                            <option value="revenue">전환값</option>
+                          </select>
+                          <select value={state.sort} onChange={(e) => handlePerfChartSortChange(category, e.target.value)} style={{ padding: '8px 12px', border: '1px solid #dee2e6', borderRadius: 4, fontSize: 13, cursor: 'pointer', minWidth: 110, background: 'white' }}>
+                            <option value="desc">내림차순</option>
+                            <option value="asc">오름차순</option>
+                          </select>
+                        </div>
+                      </div>
+                      {/* 우측: 기간 선택 */}
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', padding: '10px 16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ fontSize: 13 }}>📅</span><span style={{ fontSize: 13, fontWeight: 600, color: '#333' }}>기간 선택</span></div>
+                          <button onClick={() => handlePerfChartCompareToggle(category)} style={{ padding: '4px 12px', fontSize: 11, fontWeight: 600, border: `1px solid ${state.compareActive ? '#d32f2f' : '#673ab7'}`, borderRadius: 4, cursor: 'pointer', background: state.compareActive ? '#d32f2f' : 'white', color: state.compareActive ? 'white' : '#673ab7' }}>{state.compareActive ? '취소' : '비교'}</button>
+                        </div>
+                        {/* 기준 기간 행 */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
+                          <span style={{ width: 12, height: 12, border: '2px solid #00C853', borderRadius: '50%', background: 'white', flexShrink: 0 }}></span>
+                          <select onChange={(e) => e.target.value && handlePerfChartPresetChange(category, parseInt(e.target.value))} style={{ width: 120, padding: '8px 12px', border: '1px solid #dee2e6', borderRadius: 20, fontSize: 13, fontWeight: 500, cursor: 'pointer', background: 'white' }}>
+                            <option value="">항목 선택</option>
+                            <option value="7">최근 7일</option>
+                            <option value="14">최근 14일</option>
+                            <option value="30">최근 30일</option>
+                          </select>
+                          <input type="date" value={state.startDate} onChange={(e) => handlePerfChartDateChange(category, true, e.target.value)} style={{ width: 130, padding: '8px 12px', border: '1px solid #dee2e6', borderRadius: 8, fontSize: 13, color: '#666', background: 'white' }} />
+                          <span style={{ width: 20, textAlign: 'center', color: '#999', fontSize: 13 }}>~</span>
+                          <input type="date" value={state.endDate} onChange={(e) => handlePerfChartDateChange(category, false, e.target.value)} style={{ width: 130, padding: '8px 12px', border: '1px solid #dee2e6', borderRadius: 8, fontSize: 13, color: '#666', background: 'white' }} />
+                        </div>
+                        {/* 비교 기간 행 */}
+                        {state.compareActive && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <span style={{ width: 12, height: 12, border: '2px solid #dee2e6', borderRadius: '50%', background: 'white', flexShrink: 0 }}></span>
+                            <select onChange={(e) => e.target.value && handlePerfChartPresetChange(category, parseInt(e.target.value), true)} style={{ width: 120, padding: '8px 12px', border: '1px solid #dee2e6', borderRadius: 20, fontSize: 13, fontWeight: 500, cursor: 'pointer', background: 'white' }}>
+                              <option value="">항목 선택</option>
+                              <option value="7">최근 7일</option>
+                              <option value="14">최근 14일</option>
+                              <option value="30">최근 30일</option>
+                            </select>
+                            <input type="date" value={state.startDateComp} onChange={(e) => handlePerfChartDateChange(category, true, e.target.value, true)} style={{ width: 130, padding: '8px 12px', border: '1px solid #dee2e6', borderRadius: 8, fontSize: 13, color: '#666', background: 'white' }} />
+                            <span style={{ width: 20, textAlign: 'center', color: '#999', fontSize: 13 }}>~</span>
+                            <input type="date" value={state.endDateComp} onChange={(e) => handlePerfChartDateChange(category, false, e.target.value, true)} style={{ width: 130, padding: '8px 12px', border: '1px solid #dee2e6', borderRadius: 8, fontSize: 13, color: '#666', background: 'white' }} />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    {/* 막대 그래프 */}
+                    <div style={{ padding: 20 }}>
+                      <div className="chart-container" style={{ height: 350 }}>
+                        {chartData.labels.length > 0 ? (
+                          <Bar
+                            data={{
+                              labels: chartData.labels,
+                              datasets: state.compareActive && chartData.prevValues.some(v => v > 0) ? [
+                                { label: '이전 기간', data: chartData.prevValues, backgroundColor: perfCompareColors.previous.bg, borderColor: perfCompareColors.previous.border, borderWidth: 1, borderRadius: 4 },
+                                { label: '현재 기간', data: chartData.currentValues, backgroundColor: kpiColors[state.kpi]?.bg || kpiColors.roas.bg, borderColor: kpiColors[state.kpi]?.border || kpiColors.roas.border, borderWidth: 1, borderRadius: 4 }
+                              ] : [
+                                { label: kpiLabels[state.kpi] || state.kpi, data: chartData.currentValues, backgroundColor: kpiColors[state.kpi]?.bg || kpiColors.roas.bg, borderColor: kpiColors[state.kpi]?.border || kpiColors.roas.border, borderWidth: 1, borderRadius: 4 }
+                              ]
+                            }}
+                            options={{
+                              responsive: true,
+                              maintainAspectRatio: false,
+                              indexAxis: 'y' as const,
+                              plugins: { legend: { display: state.compareActive }, datalabels: { display: false } },
+                              scales: {
+                                x: { beginAtZero: true, stacked: false },
+                                y: { stacked: false, ticks: { font: { size: 11 }, callback: function(this: any, value: any) { const label = this.getLabelForValue(value); return label && label.length > 15 ? label.substring(0, 15) + '...' : label; } } }
+                              }
+                            }}
+                          />
+                        ) : (
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#757575' }}>
+                            <div style={{ fontSize: 48, marginBottom: 16 }}>📊</div>
+                            <div style={{ fontSize: 15, fontWeight: 500, marginBottom: 8 }}>데이터가 없습니다</div>
+                            <div style={{ fontSize: 13, color: '#9e9e9e' }}>기간을 선택하거나 데이터를 확인해주세요</div>
+                          </div>
+                        )}
+                      </div>
+                      {/* 더보기 버튼 */}
+                      {chartData.totalCount > PERF_DEFAULT_LIMIT && (
+                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+                          <button onClick={() => handlePerfChartShowMoreToggle(category)} style={{ padding: '8px 20px', fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 6, cursor: 'pointer', background: state.showAll ? '#f5f5f5' : '#e3f2fd', color: state.showAll ? '#666' : '#1976d2' }}>
+                            {state.showAll ? '접기' : `더보기 (+${chartData.totalCount - PERF_DEFAULT_LIMIT}개)`}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* ========== 리타겟팅 분석 섹션 (HTML 1:1) ========== */}
+        <div className="collapsible-section" style={{ marginTop: 24 }}>
+          <div className="collapsible-header" onClick={() => setRetargetingExpanded(!retargetingExpanded)}>
+            <div className="collapsible-title"><span className="collapsible-icon">🎯</span><span>리타겟팅 분석 - 리타겟팅 캠페인의 타겟을 확인하세요</span></div>
+            <button className="collapsible-toggle"><span>{retargetingExpanded ? '접기' : '펼치기'}</span><span className={`collapsible-toggle-icon ${retargetingExpanded ? '' : 'collapsed'}`}>▼</span></button>
+          </div>
+          <div className={`collapsible-content ${retargetingExpanded ? 'expanded' : ''}`}>
+            {/* 서브탭 버튼 */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: '16px 24px', background: '#f8f9fa', borderBottom: '1px solid #e9ecef' }}>
+              {(['ageGender', 'device', 'platform', 'devicePlatform'] as const).map(tab => {
+                const labels: Record<string, string> = { ageGender: '성별/연령', device: '기기별', platform: '플랫폼별', devicePlatform: '노출기기별' }
+                const isActive = retargetingActiveTab === tab
+                return (
+                  <button key={tab} onClick={() => setRetargetingActiveTab(tab)} style={{ padding: '8px 16px', fontSize: 12, fontWeight: 600, border: isActive ? 'none' : '1px solid #dee2e6', borderRadius: 20, cursor: 'pointer', transition: 'all 0.2s', background: isActive ? '#673ab7' : 'white', color: isActive ? 'white' : '#495057' }}>
+                    {labels[tab]}
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* 성별/연령 리타겟팅 뷰 */}
+            {retargetingActiveTab === 'ageGender' && (() => {
+              const { sortedData, maxRoas, insightText } = getRetargetingTableData('ageGender')
+              const sortState = retargetingSortState.ageGender
+              return (
+                <div>
+                  <div style={{ padding: '20px 24px', background: 'linear-gradient(135deg, #fce4ec 0%, #fff5f7 100%)', borderBottom: '1px solid #e9ecef' }}>
+                    <div style={{ fontSize: 14, color: '#c2185b', fontWeight: 600, marginBottom: 8 }}>💡 성별/연령 타겟팅 인사이트</div>
+                    <div style={{ fontSize: 13, color: '#424242', lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: insightText || '로딩 중...' }} />
+                  </div>
+                  <div className="card" style={{ margin: 16, borderRadius: 12 }}>
+                    <div style={{ padding: '16px 20px', borderBottom: '1px solid #e9ecef' }}>
+                      <h4 style={{ fontSize: 14, fontWeight: 600, color: 'var(--grey-800)', margin: 0 }}>성별/연령 조합별 성과</h4>
+                      <p style={{ fontSize: 12, color: 'var(--grey-600)', margin: '4px 0 0 0' }}>어떤 연령대와 성별 조합이 가장 효과적인지 확인하세요</p>
+                    </div>
+                    <div style={{ padding: '16px 20px', overflowX: 'auto' }}>
+                      <table className="data-table" style={{ marginTop: 0 }}>
+                        <thead>
+                          <tr>
+                            <th style={{ minWidth: 140 }}>연령/성별</th>
+                            {['roas', 'cpa', 'cost', 'conversions', 'revenue'].map(col => (
+                              <th key={col} className="sortable-header" onClick={() => handleRetargetingSortChange('ageGender', col)} style={{ minWidth: col === 'cost' || col === 'revenue' ? 120 : col === 'conversions' ? 80 : 100, textAlign: 'right', cursor: 'pointer' }}>
+                                {col === 'roas' ? 'ROAS' : col === 'cpa' ? 'CPA' : col === 'cost' ? '광고비' : col === 'conversions' ? '전환수' : '전환값'}
+                                <div className={`sort-icon ${sortState.column === col ? 'active' : ''}`} style={{ display: 'inline-flex', marginLeft: 4 }}>
+                                  <div className={`sort-arrow up ${sortState.column === col && sortState.direction === 'asc' ? 'active' : ''}`}></div>
+                                  <div className={`sort-arrow down ${sortState.column === col && sortState.direction === 'desc' ? 'active' : ''}`}></div>
+                                </div>
+                              </th>
+                            ))}
+                            <th style={{ minWidth: 80, textAlign: 'center' }}>효율등급</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sortedData.length === 0 ? (
+                            <tr><td colSpan={7} style={{ textAlign: 'center', padding: 20, color: 'var(--grey-500)' }}>데이터가 없습니다</td></tr>
+                          ) : sortedData.map((item: any, idx: number) => {
+                            const genderIcon = item.gender === '남성' ? '👨' : '👩'
+                            const roasColor = item.roas >= 50 ? '#2e7d32' : item.roas >= 20 ? '#1565c0' : '#d32f2f'
+                            return (
+                              <tr key={idx}>
+                                <td style={{ fontWeight: 500 }}>{genderIcon} {item.label || (item.age + ' ' + item.gender)}</td>
+                                <td style={{ textAlign: 'right', fontWeight: 700, color: roasColor }}>{formatPercent(item.roas)}</td>
+                                <td style={{ textAlign: 'right' }}>{item.cpa > 0 ? formatCurrency(item.cpa) : '-'}</td>
+                                <td style={{ textAlign: 'right' }}>{formatCurrency(item.cost)}</td>
+                                <td style={{ textAlign: 'right' }}>{formatNumber(item.conversions)}</td>
+                                <td style={{ textAlign: 'right' }}>{formatCurrency(item.revenue)}</td>
+                                <td style={{ textAlign: 'center' }}>{getEfficiencyGrade(item.roas, maxRoas)}</td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )
+            })()}
+
+            {/* 기기별 리타겟팅 뷰 */}
+            {retargetingActiveTab === 'device' && (() => {
+              const { sortedData, maxRoas, insightText } = getRetargetingTableData('device')
+              const sortState = retargetingSortState.device
+              return (
+                <div>
+                  <div style={{ padding: '20px 24px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f5f9ff 100%)', borderBottom: '1px solid #e9ecef' }}>
+                    <div style={{ fontSize: 14, color: '#1565c0', fontWeight: 600, marginBottom: 8 }}>💡 기기별 리타겟팅 인사이트</div>
+                    <div style={{ fontSize: 13, color: '#424242', lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: insightText || '로딩 중...' }} />
+                  </div>
+                  <div className="card" style={{ margin: 16, borderRadius: 12 }}>
+                    <div style={{ padding: '16px 20px', borderBottom: '1px solid #e9ecef' }}>
+                      <h4 style={{ fontSize: 14, fontWeight: 600, color: 'var(--grey-800)', margin: 0 }}>기기별 리타겟팅 성과</h4>
+                      <p style={{ fontSize: 12, color: 'var(--grey-600)', margin: '4px 0 0 0' }}>Android, iPhone, Computers, Tablets 등 기기별 광고 효율</p>
+                    </div>
+                    <div style={{ padding: '16px 20px', overflowX: 'auto' }}>
+                      <table className="data-table" style={{ marginTop: 0 }}>
+                        <thead>
+                          <tr>
+                            <th style={{ minWidth: 150 }}>기기</th>
+                            {['roas', 'cpa', 'cost', 'conversions', 'revenue'].map(col => (
+                              <th key={col} className="sortable-header" onClick={() => handleRetargetingSortChange('device', col)} style={{ minWidth: col === 'cost' || col === 'revenue' ? 120 : col === 'conversions' ? 80 : 100, textAlign: 'right', cursor: 'pointer' }}>
+                                {col === 'roas' ? 'ROAS' : col === 'cpa' ? 'CPA' : col === 'cost' ? '광고비' : col === 'conversions' ? '전환수' : '전환값'}
+                                <div className={`sort-icon ${sortState.column === col ? 'active' : ''}`} style={{ display: 'inline-flex', marginLeft: 4 }}>
+                                  <div className={`sort-arrow up ${sortState.column === col && sortState.direction === 'asc' ? 'active' : ''}`}></div>
+                                  <div className={`sort-arrow down ${sortState.column === col && sortState.direction === 'desc' ? 'active' : ''}`}></div>
+                                </div>
+                              </th>
+                            ))}
+                            <th style={{ minWidth: 80, textAlign: 'center' }}>효율등급</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sortedData.length === 0 ? (
+                            <tr><td colSpan={7} style={{ textAlign: 'center', padding: 20, color: 'var(--grey-500)' }}>데이터가 없습니다</td></tr>
+                          ) : sortedData.map((item: any, idx: number) => {
+                            const roasColor = item.roas >= 200 ? '#2e7d32' : item.roas >= 100 ? '#1565c0' : '#d32f2f'
+                            return (
+                              <tr key={idx}>
+                                <td style={{ fontWeight: 500 }}>{getDeviceIcon(item.device)} {item.device}</td>
+                                <td style={{ textAlign: 'right', fontWeight: 700, color: roasColor }}>{formatPercent(item.roas)}</td>
+                                <td style={{ textAlign: 'right' }}>{item.cpa > 0 ? formatCurrency(item.cpa) : '-'}</td>
+                                <td style={{ textAlign: 'right' }}>{formatCurrency(item.cost)}</td>
+                                <td style={{ textAlign: 'right' }}>{formatNumber(item.conversions)}</td>
+                                <td style={{ textAlign: 'right' }}>{formatCurrency(item.revenue)}</td>
+                                <td style={{ textAlign: 'center' }}>{getEfficiencyGrade(item.roas, maxRoas)}</td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )
+            })()}
+
+            {/* 플랫폼별 리타겟팅 뷰 */}
+            {retargetingActiveTab === 'platform' && (() => {
+              const { sortedData, maxRoas, insightText } = getRetargetingTableData('platform')
+              const sortState = retargetingSortState.platform
+              return (
+                <div>
+                  <div style={{ padding: '20px 24px', background: 'linear-gradient(135deg, #f3e5f5 0%, #faf5ff 100%)', borderBottom: '1px solid #e9ecef' }}>
+                    <div style={{ fontSize: 14, color: '#7b1fa2', fontWeight: 600, marginBottom: 8 }}>💡 플랫폼별 리타겟팅 인사이트</div>
+                    <div style={{ fontSize: 13, color: '#424242', lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: insightText || '로딩 중...' }} />
+                  </div>
+                  <div className="card" style={{ margin: 16, borderRadius: 12 }}>
+                    <div style={{ padding: '16px 20px', borderBottom: '1px solid #e9ecef' }}>
+                      <h4 style={{ fontSize: 14, fontWeight: 600, color: 'var(--grey-800)', margin: 0 }}>플랫폼별 리타겟팅 성과</h4>
+                      <p style={{ fontSize: 12, color: 'var(--grey-600)', margin: '4px 0 0 0' }}>Cross-network, YouTube, Display 등 플랫폼별 광고 효율</p>
+                    </div>
+                    <div style={{ padding: '16px 20px', overflowX: 'auto' }}>
+                      <table className="data-table" style={{ marginTop: 0 }}>
+                        <thead>
+                          <tr>
+                            <th style={{ minWidth: 140 }}>플랫폼</th>
+                            {['roas', 'cpa', 'cost', 'conversions', 'revenue'].map(col => (
+                              <th key={col} className="sortable-header" onClick={() => handleRetargetingSortChange('platform', col)} style={{ minWidth: col === 'cost' || col === 'revenue' ? 120 : col === 'conversions' ? 80 : 100, textAlign: 'right', cursor: 'pointer' }}>
+                                {col === 'roas' ? 'ROAS' : col === 'cpa' ? 'CPA' : col === 'cost' ? '광고비' : col === 'conversions' ? '전환수' : '전환값'}
+                                <div className={`sort-icon ${sortState.column === col ? 'active' : ''}`} style={{ display: 'inline-flex', marginLeft: 4 }}>
+                                  <div className={`sort-arrow up ${sortState.column === col && sortState.direction === 'asc' ? 'active' : ''}`}></div>
+                                  <div className={`sort-arrow down ${sortState.column === col && sortState.direction === 'desc' ? 'active' : ''}`}></div>
+                                </div>
+                              </th>
+                            ))}
+                            <th style={{ minWidth: 80, textAlign: 'center' }}>효율등급</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sortedData.length === 0 ? (
+                            <tr><td colSpan={7} style={{ textAlign: 'center', padding: 20, color: 'var(--grey-500)' }}>데이터가 없습니다</td></tr>
+                          ) : sortedData.map((item: any, idx: number) => {
+                            const roasColor = item.roas >= 150 ? '#2e7d32' : item.roas >= 50 ? '#1565c0' : item.roas > 0 ? '#e65100' : '#9e9e9e'
+                            return (
+                              <tr key={idx}>
+                                <td style={{ fontWeight: 500 }}>{getPlatformIcon(item.platform)} {item.platform}</td>
+                                <td style={{ textAlign: 'right', fontWeight: 700, color: roasColor }}>{item.roas > 0 ? formatPercent(item.roas) : '-'}</td>
+                                <td style={{ textAlign: 'right' }}>{item.cpa > 0 ? formatCurrency(item.cpa) : '-'}</td>
+                                <td style={{ textAlign: 'right' }}>{formatCurrency(item.cost)}</td>
+                                <td style={{ textAlign: 'right' }}>{formatNumber(item.conversions)}</td>
+                                <td style={{ textAlign: 'right' }}>{formatCurrency(item.revenue)}</td>
+                                <td style={{ textAlign: 'center' }}>{item.roas > 0 ? getEfficiencyGrade(item.roas, maxRoas) : <span style={{ background: '#f5f5f5', color: '#9e9e9e', padding: '4px 8px', borderRadius: 12, fontSize: 11, fontWeight: 600 }}>-</span>}</td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )
+            })()}
+
+            {/* 노출기기별 리타겟팅 뷰 */}
+            {retargetingActiveTab === 'devicePlatform' && (() => {
+              const { sortedData, maxRoas, insightText } = getRetargetingTableData('devicePlatform')
+              const sortState = retargetingSortState.devicePlatform
+              return (
+                <div>
+                  <div style={{ padding: '20px 24px', background: 'linear-gradient(135deg, #e0f2f1 0%, #f5fffd 100%)', borderBottom: '1px solid #e9ecef' }}>
+                    <div style={{ fontSize: 14, color: '#00796b', fontWeight: 600, marginBottom: 8 }}>💡 노출기기별 리타겟팅 인사이트</div>
+                    <div style={{ fontSize: 13, color: '#424242', lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: insightText || '로딩 중...' }} />
+                  </div>
+                  <div className="card" style={{ margin: 16, borderRadius: 12 }}>
+                    <div style={{ padding: '16px 20px', borderBottom: '1px solid #e9ecef' }}>
+                      <h4 style={{ fontSize: 14, fontWeight: 600, color: 'var(--grey-800)', margin: 0 }}>노출기기별 리타겟팅 성과</h4>
+                      <p style={{ fontSize: 12, color: 'var(--grey-600)', margin: '4px 0 0 0' }}>Mobile app, Mobile web, Desktop 등 노출기기별 광고 효율</p>
+                    </div>
+                    <div style={{ padding: '16px 20px', overflowX: 'auto' }}>
+                      <table className="data-table" style={{ marginTop: 0 }}>
+                        <thead>
+                          <tr>
+                            <th style={{ minWidth: 140 }}>노출기기</th>
+                            {['roas', 'cpa', 'cost', 'conversions', 'revenue'].map(col => (
+                              <th key={col} className="sortable-header" onClick={() => handleRetargetingSortChange('devicePlatform', col)} style={{ minWidth: col === 'cost' || col === 'revenue' ? 120 : col === 'conversions' ? 80 : 100, textAlign: 'right', cursor: 'pointer' }}>
+                                {col === 'roas' ? 'ROAS' : col === 'cpa' ? 'CPA' : col === 'cost' ? '광고비' : col === 'conversions' ? '전환수' : '전환값'}
+                                <div className={`sort-icon ${sortState.column === col ? 'active' : ''}`} style={{ display: 'inline-flex', marginLeft: 4 }}>
+                                  <div className={`sort-arrow up ${sortState.column === col && sortState.direction === 'asc' ? 'active' : ''}`}></div>
+                                  <div className={`sort-arrow down ${sortState.column === col && sortState.direction === 'desc' ? 'active' : ''}`}></div>
+                                </div>
+                              </th>
+                            ))}
+                            <th style={{ minWidth: 80, textAlign: 'center' }}>효율등급</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sortedData.length === 0 ? (
+                            <tr><td colSpan={7} style={{ textAlign: 'center', padding: 20, color: 'var(--grey-500)' }}>데이터가 없습니다</td></tr>
+                          ) : sortedData.map((item: any, idx: number) => {
+                            const roasColor = item.roas >= 30 ? '#2e7d32' : item.roas >= 10 ? '#1565c0' : item.roas > 0 ? '#e65100' : '#9e9e9e'
+                            return (
+                              <tr key={idx}>
+                                <td style={{ fontWeight: 500 }}>{getDevicePlatformIcon(item.device_platform)} {item.device_platform}</td>
+                                <td style={{ textAlign: 'right', fontWeight: 700, color: roasColor }}>{item.roas > 0 ? formatPercent(item.roas) : '-'}</td>
+                                <td style={{ textAlign: 'right' }}>{item.cpa > 0 ? formatCurrency(item.cpa) : '-'}</td>
+                                <td style={{ textAlign: 'right' }}>{formatCurrency(item.cost)}</td>
+                                <td style={{ textAlign: 'right' }}>{formatNumber(item.conversions)}</td>
+                                <td style={{ textAlign: 'right' }}>{formatCurrency(item.revenue)}</td>
+                                <td style={{ textAlign: 'center' }}>{item.roas > 0 ? getEfficiencyGrade(item.roas, maxRoas) : <span style={{ background: '#f5f5f5', color: '#9e9e9e', padding: '4px 8px', borderRadius: 12, fontSize: 11, fontWeight: 600 }}>-</span>}</td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )
+            })()}
+          </div>
+        </div>
+
       </div>
     </div>
   )
