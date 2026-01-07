@@ -707,7 +707,7 @@ export default function ReactView() {
     roas: true
   })
   const [isTableExpanded, setIsTableExpanded] = useState(false)
-  const chartRef = useRef<ChartJS | null>(null)
+  const trendChart = useRef<ChartJS | null>(null)
 
   const TABLE_ROW_LIMIT = 10
 
@@ -756,7 +756,7 @@ export default function ReactView() {
   }, [allData])
 
   // 브랜드명 필터 옵션 (유형구분에 종속)
-  const brandOptions = useMemo(() => {
+  const updateBrandFilter = useMemo(() => {
     const filtered = allData.filter(row => {
       if (filters.type && row['유형구분'] !== filters.type) return false
       return true
@@ -765,7 +765,7 @@ export default function ReactView() {
   }, [allData, filters.type])
 
   // 상품명 필터 옵션 (브랜드명에 종속)
-  const productOptions = useMemo(() => {
+  const updateProductFilter = useMemo(() => {
     const filtered = allData.filter(row => {
       if (filters.type && row['유형구분'] !== filters.type) return false
       if (filters.brand && row['브랜드명'] !== filters.brand) return false
@@ -775,7 +775,7 @@ export default function ReactView() {
   }, [allData, filters.type, filters.brand])
 
   // 프로모션 필터 옵션 (상품명에 종속)
-  const promotionOptions = useMemo(() => {
+  const updatePromotionFilter = useMemo(() => {
     const filtered = allData.filter(row => {
       if (filters.type && row['유형구분'] !== filters.type) return false
       if (filters.brand && row['브랜드명'] !== filters.brand) return false
@@ -804,7 +804,7 @@ export default function ReactView() {
   }, [allData, filters.startDate, filters.endDate, filters.type, filters.brand, filters.product, filters.promotion])
 
   // 세트이름 필터 옵션 (캠페인에 종속)
-  const setNameOptions = useMemo(() => {
+  const updateSetNameFilter = useMemo(() => {
     const filtered = allData.filter(row => {
       if (filters.startDate || filters.endDate) {
         const rowDate = new Date(row['일 구분'])
@@ -823,7 +823,7 @@ export default function ReactView() {
   }, [allData, filters.startDate, filters.endDate, filters.type, filters.brand, filters.product, filters.promotion, filters.campaign])
 
   // 필터링된 데이터
-  const filteredData = useMemo(() => {
+  const filterData = useMemo(() => {
     return allData.filter(row => {
       if (filters.type && row['유형구분'] !== filters.type) return false
       if (filters.brand && row['브랜드명'] !== filters.brand) return false
@@ -845,7 +845,7 @@ export default function ReactView() {
   }, [allData, filters])
 
   // 집계된 데이터
-  const aggregatedData = useMemo(() => {
+  const aggregateData = useMemo(() => {
     const groupKey = {
       'daily': '일 구분',
       'weekly': '주 구분',
@@ -861,7 +861,7 @@ export default function ReactView() {
       전환값: number
     }> = {}
 
-    filteredData.forEach(row => {
+    filterData.forEach(row => {
       const key = row[groupKey]
       if (!key) return
 
@@ -894,11 +894,11 @@ export default function ReactView() {
       const dateB = new Date(b.period.replace(/\. /g, '-').replace(/\./g, ''))
       return dateA.getTime() - dateB.getTime()
     })
-  }, [filteredData, currentView])
+  }, [filterData, currentView])
 
   // 전체 합계 계산
   const totals = useMemo(() => {
-    const result = aggregatedData.reduce((acc, row) => {
+    const result = aggregateData.reduce((acc, row) => {
       acc.비용 += row.비용
       acc.노출 += row.노출
       acc.클릭 += row.클릭
@@ -914,14 +914,14 @@ export default function ReactView() {
       CPA: result.전환수 > 0 ? (result.비용 / result.전환수) : 0,
       ROAS: result.비용 > 0 ? (result.전환값 / result.비용 * 100) : 0
     }
-  }, [aggregatedData])
+  }, [aggregateData])
 
   // 트렌드 계산 (마지막 기간 vs 직전 기간)
   const trendData = useMemo(() => {
-    if (aggregatedData.length < 2) return null
+    if (aggregateData.length < 2) return null
 
-    const lastPeriodData = aggregatedData[aggregatedData.length - 1]
-    const prevPeriodData = aggregatedData[aggregatedData.length - 2]
+    const lastPeriodData = aggregateData[aggregateData.length - 1]
+    const prevPeriodData = aggregateData[aggregateData.length - 2]
 
     const calcMetrics = (row: AggregatedData) => ({
       비용: row.비용,
@@ -958,7 +958,7 @@ export default function ReactView() {
         ROAS: calcChange(second.ROAS, first.ROAS)
       }
     }
-  }, [aggregatedData])
+  }, [aggregateData])
 
   // 필터 변경 핸들러
   const handleFilterChange = useCallback((key: keyof Filters, value: string) => {
@@ -1077,8 +1077,8 @@ export default function ReactView() {
   }, [])
 
   // 차트 데이터
-  const chartData = useMemo(() => {
-    const labels = aggregatedData.map(d => d.period)
+  const currentChartData = useMemo(() => {
+    const labels = aggregateData.map(d => d.period)
     const datasets: any[] = []
 
     const showCost = chartToggles.cost
@@ -1098,7 +1098,7 @@ export default function ReactView() {
     if (showCost) {
       datasets.push({
         label: '비용',
-        data: aggregatedData.map(d => d.비용),
+        data: aggregateData.map(d => d.비용),
         backgroundColor: 'rgba(103, 58, 183, 0.7)',
         borderColor: 'rgba(103, 58, 183, 1)',
         borderWidth: 1,
@@ -1111,7 +1111,7 @@ export default function ReactView() {
     if (showCPM) {
       datasets.push({
         label: 'CPM',
-        data: aggregatedData.map(d => d.CPM),
+        data: aggregateData.map(d => d.CPM),
         type: 'line' as const,
         borderColor: 'rgba(255, 171, 0, 1)',
         backgroundColor: 'rgba(255, 171, 0, 0.1)',
@@ -1131,7 +1131,7 @@ export default function ReactView() {
     if (showCPC) {
       datasets.push({
         label: 'CPC',
-        data: aggregatedData.map(d => d.CPC),
+        data: aggregateData.map(d => d.CPC),
         type: 'line' as const,
         borderColor: 'rgba(33, 150, 243, 1)',
         backgroundColor: 'rgba(33, 150, 243, 0.1)',
@@ -1151,7 +1151,7 @@ export default function ReactView() {
     if (showCPA) {
       datasets.push({
         label: 'CPA',
-        data: aggregatedData.map(d => d.CPA),
+        data: aggregateData.map(d => d.CPA),
         type: 'line' as const,
         borderColor: 'rgba(255, 152, 0, 1)',
         backgroundColor: 'rgba(255, 152, 0, 0.1)',
@@ -1171,7 +1171,7 @@ export default function ReactView() {
     if (showROAS) {
       datasets.push({
         label: 'ROAS (%)',
-        data: aggregatedData.map(d => d.ROAS),
+        data: aggregateData.map(d => d.ROAS),
         type: 'line' as const,
         borderColor: 'rgba(0, 200, 83, 1)',
         backgroundColor: 'rgba(0, 200, 83, 0.1)',
@@ -1189,11 +1189,11 @@ export default function ReactView() {
     }
 
     return { labels, datasets, useRightAxis, showCost, showCPM, showCPC, showCPA, showROAS, hasCostMetric, hasCpmMetric, hasCpcMetric, hasCpaMetric }
-  }, [aggregatedData, chartToggles])
+  }, [aggregateData, chartToggles])
 
   // 차트 옵션
   const chartOptions = useMemo(() => {
-    const { useRightAxis, showCost, showCPM, showCPC, showCPA, showROAS, hasCostMetric, hasCpmMetric, hasCpcMetric, hasCpaMetric } = chartData
+    const { useRightAxis, showCost, showCPM, showCPC, showCPA, showROAS, hasCostMetric, hasCpmMetric, hasCpcMetric, hasCpaMetric } = currentChartData
 
     const y1Title = (() => {
       const rightMetrics: string[] = []
@@ -1371,17 +1371,17 @@ export default function ReactView() {
         }
       }
     }
-  }, [chartData, showDataLabels])
+  }, [currentChartData, showDataLabels])
 
   // 테이블 데이터 (표시용)
   const tableData = useMemo(() => {
     if (isTableExpanded) {
-      return aggregatedData
+      return aggregateData
     }
-    return aggregatedData.slice(0, TABLE_ROW_LIMIT)
-  }, [aggregatedData, isTableExpanded])
+    return aggregateData.slice(0, TABLE_ROW_LIMIT)
+  }, [aggregateData, isTableExpanded])
 
-  const hiddenCount = Math.max(0, aggregatedData.length - TABLE_ROW_LIMIT)
+  const hiddenCount = Math.max(0, aggregateData.length - TABLE_ROW_LIMIT)
 
   // 로딩 상태
   if (allData.length === 0) {
@@ -1482,7 +1482,7 @@ export default function ReactView() {
                       onChange={(e) => handleFilterChange('brand', e.target.value)}
                     >
                       <option value="">전체</option>
-                      {brandOptions.map(opt => (
+                      {updateBrandFilter.map(opt => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
@@ -1495,7 +1495,7 @@ export default function ReactView() {
                       onChange={(e) => handleFilterChange('product', e.target.value)}
                     >
                       <option value="">전체</option>
-                      {productOptions.map(opt => (
+                      {updateProductFilter.map(opt => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
@@ -1508,7 +1508,7 @@ export default function ReactView() {
                       onChange={(e) => handleFilterChange('promotion', e.target.value)}
                     >
                       <option value="">전체</option>
-                      {promotionOptions.map(opt => (
+                      {updatePromotionFilter.map(opt => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
@@ -1548,7 +1548,7 @@ export default function ReactView() {
                   onChange={(e) => handleFilterChange('setName', e.target.value)}
                 >
                   <option value="">전체</option>
-                  {setNameOptions.map(opt => (
+                  {updateSetNameFilter.map(opt => (
                     <option key={opt} value={opt}>{opt}</option>
                   ))}
                 </select>
@@ -1867,11 +1867,11 @@ export default function ReactView() {
         </div>
         <div style={styles.chartContainer}>
           <Chart
-            ref={chartRef as any}
+            ref={trendChart as any}
             type="bar"
             data={{
-              labels: chartData.labels,
-              datasets: chartData.datasets
+              labels: currentChartData.labels,
+              datasets: currentChartData.datasets
             }}
             options={chartOptions}
           />
@@ -1901,7 +1901,7 @@ export default function ReactView() {
               </tr>
             </thead>
             <tbody>
-              {aggregatedData.length === 0 ? (
+              {aggregateData.length === 0 ? (
                 <tr>
                   <td colSpan={10} style={styles.loading}>데이터가 없습니다.</td>
                 </tr>
@@ -1951,7 +1951,7 @@ export default function ReactView() {
             </button>
           </div>
         )}
-        {isTableExpanded && aggregatedData.length > TABLE_ROW_LIMIT && (
+        {isTableExpanded && aggregateData.length > TABLE_ROW_LIMIT && (
           <div style={styles.showMoreContainer}>
             <button style={styles.showMoreBtn} onClick={() => setIsTableExpanded(false)}>
               접기

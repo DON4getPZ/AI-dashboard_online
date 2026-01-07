@@ -753,46 +753,46 @@ export default function ReactView() {
     return Array.from(new Set(allData.map(d => d['유형구분']))).filter(Boolean).sort()
   }, [allData])
 
-  const brandOptions = useMemo(() => {
-    const filteredData = allData.filter(row => {
+  const updateBrandFilter = useMemo(() => {
+    const filterData = allData.filter(row => {
       if (filters.type && row['유형구분'] !== filters.type) return false
       return true
     })
-    return Array.from(new Set(filteredData.map(d => d['브랜드명']))).filter(Boolean).sort()
+    return Array.from(new Set(filterData.map(d => d['브랜드명']))).filter(Boolean).sort()
   }, [allData, filters.type])
 
-  const productOptions = useMemo(() => {
-    const filteredData = allData.filter(row => {
+  const updateProductFilter = useMemo(() => {
+    const filterData = allData.filter(row => {
       if (filters.type && row['유형구분'] !== filters.type) return false
       if (filters.brand && row['브랜드명'] !== filters.brand) return false
       return true
     })
-    return Array.from(new Set(filteredData.map(d => d['상품명']))).filter(Boolean).sort()
+    return Array.from(new Set(filterData.map(d => d['상품명']))).filter(Boolean).sort()
   }, [allData, filters.type, filters.brand])
 
-  const promotionOptions = useMemo(() => {
-    const filteredData = allData.filter(row => {
+  const updatePromotionFilter = useMemo(() => {
+    const filterData = allData.filter(row => {
       if (filters.type && row['유형구분'] !== filters.type) return false
       if (filters.brand && row['브랜드명'] !== filters.brand) return false
       if (filters.product && row['상품명'] !== filters.product) return false
       return true
     })
-    return Array.from(new Set(filteredData.map(d => d['프로모션']))).filter(Boolean).sort()
+    return Array.from(new Set(filterData.map(d => d['프로모션']))).filter(Boolean).sort()
   }, [allData, filters.type, filters.brand, filters.product])
 
-  const campaignOptions = useMemo(() => {
-    const filteredData = allData.filter(row => {
+  const updateCampaignFilter = useMemo(() => {
+    const filterData = allData.filter(row => {
       if (filters.type && row['유형구분'] !== filters.type) return false
       if (filters.brand && row['브랜드명'] !== filters.brand) return false
       if (filters.product && row['상품명'] !== filters.product) return false
       if (filters.promotion && row['프로모션'] !== filters.promotion) return false
       return true
     })
-    return Array.from(new Set(filteredData.map(d => d['캠페인']))).filter(Boolean).sort()
+    return Array.from(new Set(filterData.map(d => d['캠페인']))).filter(Boolean).sort()
   }, [allData, filters.type, filters.brand, filters.product, filters.promotion])
 
-  const adSetOptions = useMemo(() => {
-    const filteredData = allData.filter(row => {
+  const updateAdSetFilter = useMemo(() => {
+    const filterData = allData.filter(row => {
       if (filters.type && row['유형구분'] !== filters.type) return false
       if (filters.brand && row['브랜드명'] !== filters.brand) return false
       if (filters.product && row['상품명'] !== filters.product) return false
@@ -800,14 +800,14 @@ export default function ReactView() {
       if (filters.campaign && row['캠페인'] !== filters.campaign) return false
       return true
     })
-    return Array.from(new Set(filteredData.map(d => d['광고세트']))).filter(Boolean).sort()
+    return Array.from(new Set(filterData.map(d => d['광고세트']))).filter(Boolean).sort()
   }, [allData, filters.type, filters.brand, filters.product, filters.promotion, filters.campaign])
 
   // ========================================
   // 데이터 필터링 및 집계
   // ========================================
 
-  const filteredData = useMemo(() => {
+  const filterData = useMemo(() => {
     return allData.filter(row => {
       if (filters.type && row['유형구분'] !== filters.type) return false
       if (filters.brand && row['브랜드명'] !== filters.brand) return false
@@ -827,10 +827,10 @@ export default function ReactView() {
     })
   }, [allData, filters])
 
-  const aggregatedData = useMemo(() => {
+  const aggregateByCreative = useMemo(() => {
     const groups: Record<string, { name: string; 비용: number; 노출: number; 클릭: number; 전환수: number; 전환값: number }> = {}
 
-    filteredData.forEach(row => {
+    filterData.forEach(row => {
       const key = row['소재이름'] || '기타'
 
       if (!groups[key]) {
@@ -856,7 +856,7 @@ export default function ReactView() {
       const bVal = (b as unknown as Record<string, number>)[sortConfig.metric] || 0
       return sortConfig.order === 'desc' ? bVal - aVal : aVal - bVal
     })
-  }, [filteredData, sortConfig])
+  }, [filterData, sortConfig])
 
   // ========================================
   // 고급 필터 함수
@@ -903,7 +903,7 @@ export default function ReactView() {
   // ========================================
 
   const creativeData = useMemo(() => {
-    let data: AggregatedCreative[] = [...aggregatedData]
+    let data: AggregatedCreative[] = [...aggregateByCreative]
 
     // 고급 필터 적용
     if (kpiFilter.enabled && kpiFilter.advancedFilterFunction) {
@@ -1015,7 +1015,7 @@ export default function ReactView() {
     }
 
     return data
-  }, [aggregatedData, kpiFilter, filters.searchText, sortConfig, useEfficiencyScoreSort, filterHighEfficiency, filterPotential, filterNeedsAttention, filterLowEfficiency])
+  }, [aggregateByCreative, kpiFilter, filters.searchText, sortConfig, useEfficiencyScoreSort, filterHighEfficiency, filterPotential, filterNeedsAttention, filterLowEfficiency])
 
   // ========================================
   // 요약 계산
@@ -1201,7 +1201,7 @@ export default function ReactView() {
   // ========================================
 
   const showCreativeDetail = useCallback((creativeName: string) => {
-    const creativeRawData = filteredData.filter(row => row['소재이름'] === creativeName)
+    const creativeRawData = filterData.filter(row => row['소재이름'] === creativeName)
 
     if (creativeRawData.length === 0) {
       alert('해당 소재의 데이터가 없습니다.')
@@ -1214,7 +1214,7 @@ export default function ReactView() {
     setModalTableSortOrder('desc')
     setModalTitle(creativeName)
     setModalOpen(true)
-  }, [filteredData])
+  }, [filterData])
 
   const modalAggregatedData = useMemo((): ModalAggregatedData[] => {
     const groups: Record<string, { 비용: number; 노출: number; 클릭: number; 전환수: number; 전환값: number }> = {}
@@ -1636,7 +1636,7 @@ export default function ReactView() {
                       onChange={(e) => handleFilterChange('brand', e.target.value)}
                     >
                       <option value="">전체</option>
-                      {brandOptions.map(opt => (
+                      {updateBrandFilter.map(opt => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
@@ -1648,7 +1648,7 @@ export default function ReactView() {
                       onChange={(e) => handleFilterChange('product', e.target.value)}
                     >
                       <option value="">전체</option>
-                      {productOptions.map(opt => (
+                      {updateProductFilter.map(opt => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
@@ -1660,7 +1660,7 @@ export default function ReactView() {
                       onChange={(e) => handleFilterChange('promotion', e.target.value)}
                     >
                       <option value="">전체</option>
-                      {promotionOptions.map(opt => (
+                      {updatePromotionFilter.map(opt => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
@@ -1683,7 +1683,7 @@ export default function ReactView() {
                   onChange={(e) => handleFilterChange('campaign', e.target.value)}
                 >
                   <option value="">전체</option>
-                  {campaignOptions.map(opt => (
+                  {updateCampaignFilter.map(opt => (
                     <option key={opt} value={opt}>{opt}</option>
                   ))}
                 </select>
@@ -1695,7 +1695,7 @@ export default function ReactView() {
                   onChange={(e) => handleFilterChange('adSet', e.target.value)}
                 >
                   <option value="">전체</option>
-                  {adSetOptions.map(opt => (
+                  {updateAdSetFilter.map(opt => (
                     <option key={opt} value={opt}>{opt}</option>
                   ))}
                 </select>
