@@ -1,21 +1,19 @@
 'use client'
 
+import dynamic from 'next/dynamic'
+
+const ReactView = dynamic(() => import('./ReactView'), { ssr: false })
+
 export default function FunnelPage() {
   return (
     <div style={{
       width: '100%',
-      height: 'calc(100vh - 64px)',
-      overflow: 'hidden'
+      minHeight: 'calc(100vh - 64px)',
+      overflow: 'auto',
+      padding: '24px',
+      background: '#f8fafc'
     }}>
-      <iframe
-        src="/funnel_dashboard.html?embed=true"
-        style={{
-          width: '100%',
-          height: '100%',
-          border: 'none'
-        }}
-        title="퍼널 대시보드"
-      />
+      <ReactView />
     </div>
   )
 }

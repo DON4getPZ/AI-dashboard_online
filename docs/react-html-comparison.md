@@ -272,21 +272,196 @@
 
 ---
 
-## 4. 채널별 비교
+## 4. 시계열 대시보드 (timeseries)
+
+| 구분 | 파일 경로 |
+|------|----------|
+| **React** | `src/app/timeseries/ReactView.tsx` |
+| **HTML** | `public/timeseries.html` |
+
+### 4.1 전역 변수/State 비교
+
+| HTML 변수명 | React 변수명 | 상태 |
+|-------------|--------------|------|
+| `forecastData` | `forecastData` (useState) | ✅ 동일 |
+| `insightsData` | `insightsData` (useState) | ✅ 동일 |
+| `currentPeriod` | `currentPeriod` (useState) | ✅ 동일 |
+| `aiSummaryPeriod` | `aiSummaryPeriod` (useState) | ✅ 동일 |
+| `segmentData` | `segmentData` (useState) | ✅ 동일 |
+
+### 4.2 유틸리티 함수 비교
+
+| HTML 함수명 | React 함수명 | 상태 |
+|-------------|--------------|------|
+| `formatNumber(num)` | `formatNumber(num)` | ✅ 동일 |
+| `formatDecimal(num)` | `formatDecimal(num)` | ✅ 동일 |
+| `formatPercent(num)` | `formatPercent(num)` | ✅ 동일 |
+| `parseCSV(text)` | `parseCSV(text)` | ✅ 동일 |
+| `transformRecommendationText()` | `transformRecommendationText()` (useCallback) | ✅ 동일 |
+
+### 4.3 기간/데이터 함수 비교
+
+| HTML 함수명 | React 함수명 | 상태 |
+|-------------|--------------|------|
+| `getPeriodData()` | `getPeriodData()` (useCallback) | ✅ 동일 |
+| `getAiSummaryPeriodData()` | `getAiSummaryPeriodData()` (useCallback) | ✅ 동일 |
+| `updateKPISummary()` | `kpiSummary` (useMemo) | ⚠️ 구현방식 다름 |
+| `updateAiSummary()` | `aiSummary` (useMemo) | ⚠️ 구현방식 다름 |
+| `opportunities` (변수) | `opportunities` (useMemo) | ✅ 동일 |
+| `alerts` (변수) | `alerts` (useMemo) | ✅ 동일 |
+| `recommendations` (변수) | `recommendations` (useMemo) | ✅ 동일 |
+| `matrixInsights` (변수) | `matrixInsights` (useMemo) | ✅ 동일 |
+| `performanceTrends` (변수) | `performanceTrends` (useMemo) | ✅ 동일 |
+| `updateTrendPeriodIndicator()` | `trendPeriodIndicator()` (useCallback) | ✅ 동일 |
+| `improvements` (데이터) | `improvements()` (useCallback) | ✅ 동일 |
+| `declines` (데이터) | `declines()` (useCallback) | ✅ 동일 |
+
+### 4.4 시뮬레이션 함수 비교
+
+| HTML 함수명 | React 함수명 | 상태 |
+|-------------|--------------|------|
+| `formatSimCurrency()` | `formatSimCurrency()` (useCallback) | ✅ 동일 |
+| `simulationData` | `simulationData` (useMemo) | ✅ 동일 |
+| `simulationResults` | `simulationResults` (useMemo) | ✅ 동일 |
+
+### 4.5 데이터 경로 비교
+
+| HTML 경로 | React 경로 | 상태 |
+|-----------|------------|------|
+| `forecast/predictions_daily.csv` | `/forecast/predictions_daily.csv` | ✅ 동일 |
+| `forecast/insights.json` | `/forecast/insights.json` | ✅ 동일 |
+| `forecast/segment_*.csv` | `/forecast/segment_*.csv` | ✅ 동일 |
+
+---
+
+## 5. 퍼널 대시보드 (funnel)
+
+| 구분 | 파일 경로 |
+|------|----------|
+| **React** | `src/app/funnel/ReactView.tsx` |
+| **HTML** | `public/funnel_dashboard.html` |
+
+### 5.1 전역 변수/State 비교
+
+| HTML 변수명 | React 변수명 | 상태 |
+|-------------|--------------|------|
+| `dailyData` | `dailyData` (useState) | ✅ 동일 |
+| `weeklyData` | `weeklyData` (useState) | ✅ 동일 |
+| `channelData` | `channelData` (useState) | ✅ 동일 |
+| `newVsReturningData` | `newVsReturningData` (useState) | ✅ 동일 |
+| `channelEngagementData` | `channelEngagementData` (useState) | ✅ 동일 |
+| `newVsReturningConversionData` | `newVsReturningConversionData` (useState) | ✅ 동일 |
+| `insightsData` | `insightsData` (useState) | ✅ 동일 |
+| `currentPeriod` | `currentPeriod` (useState) | ✅ 동일 |
+| `insightPeriod` | `insightPeriod` (useState) | ✅ 동일 |
+| `microSegmentPeriod` | `microSegmentPeriod` (useState) | ✅ 동일 |
+| `newVsReturningView` | `newVsReturningView` (useState) | ✅ 동일 |
+| `currentKpiType` | `currentKpiType` (useState) | ✅ 동일 |
+| `currentChurnStage` | `currentChurnStage` (useState) | ✅ 동일 |
+| `currentChurnSort` | `currentChurnSort` (useState) | ✅ 동일 |
+| `currentChannelFunnel` | `currentChannelFunnel` (useState) | ✅ 동일 |
+| `trendPeriod` | `trendPeriod` (useState) | ✅ 동일 |
+| `isCompareMode` | `isCompareMode` (useState) | ✅ 동일 |
+| `selectedFunnelChannel` | `selectedFunnelChannel` (useState) | ✅ 동일 |
+
+### 5.2 유틸리티 함수 비교
+
+| HTML 함수명 | React 함수명 | 상태 |
+|-------------|--------------|------|
+| `formatNumber(num)` | `formatNumber(num)` | ✅ 동일 |
+| `formatDecimal(num)` | `formatDecimal(num)` | ✅ 동일 |
+| `parseCSV(text)` | `parseCSV(text)` | ✅ 동일 |
+| `calculateChurnRates(row)` | `calculateChurnRates(row)` | ✅ 동일 |
+
+### 5.3 기간/데이터 함수 비교
+
+| HTML 함수명 | React 함수명 | 상태 |
+|-------------|--------------|------|
+| `getPeriodData()` | `getPeriodData()` (useCallback) | ✅ 동일 |
+| `getInsightPeriodData()` | `getInsightPeriodData()` (useCallback) | ✅ 동일 |
+| `getMicroSegmentPeriodData()` | `getMicroSegmentPeriodData()` (useCallback) | ✅ 동일 |
+| `switchPeriod(period)` | `switchPeriod(period)` (useCallback) | ✅ 동일 |
+| `switchInsightPeriod(period)` | `switchInsightPeriod(period)` (useCallback) | ✅ 동일 |
+| `switchMicroSegmentPeriod(period)` | `switchMicroSegmentPeriod(period)` (useCallback) | ✅ 동일 |
+
+### 5.4 업데이트 함수 비교 (useMemo로 변환)
+
+| HTML 함수명 | React 변수명 | 상태 |
+|-------------|--------------|------|
+| `updateKPISummary()` | `kpiSummary` (useMemo) | ⚠️ 구현방식 다름 |
+| `updateSummaryCardBanner()` | `summaryCardBanner` (useMemo) | ⚠️ 구현방식 다름 |
+| `updateUrgentAlerts()` | `urgentAlertsData` (useMemo) | ⚠️ 구현방식 다름 |
+| `updateMicroSegmentAlerts()` | `microSegmentData` (useMemo) | ⚠️ 구현방식 다름 |
+| `updateBCGMatrix()` | `bcgMatrix` (useMemo) | ⚠️ 구현방식 다름 |
+| `updateAdvancedAnalysis()` | `investmentGuide` (useMemo) | ⚠️ 구현방식 다름 |
+| `renderCrmActions()` | `crmActions` (useMemo) | ⚠️ 구현방식 다름 |
+| `renderPerformanceTrends()` | `performanceTrends` (useMemo) | ⚠️ 구현방식 다름 |
+| `updateInsights()` | `keyInsights` (useMemo) | ⚠️ 구현방식 다름 |
+| `updateFunnelChart()` | `funnelData` (useMemo) + D3 렌더링 | ⚠️ 구현방식 다름 |
+| `updateChurnChart()` | `channelChurnData` (useMemo) | ⚠️ 구현방식 다름 |
+| `updateCompareChart()` | `channelCompareData` (useMemo) | ⚠️ 구현방식 다름 |
+| `updateCustomerTrendChart()` | `customerTrendData` (useMemo) | ⚠️ 구현방식 다름 |
+
+### 5.5 기타 함수 비교
+
+| HTML 함수명 | React 함수명 | 상태 |
+|-------------|--------------|------|
+| `getStageInsights(stage, index)` | `getStageInsights(stage, index)` (useCallback) | ✅ 동일 |
+| `loadData()` | useEffect (데이터 로드) | ⚠️ 구현방식 다름 |
+
+### 5.6 데이터 경로 비교
+
+| HTML 경로 | React 경로 | 상태 |
+|-----------|------------|------|
+| `funnel/channel_daily_funnel.csv` | `/funnel/channel_daily_funnel.csv` | ✅ 동일 |
+| `funnel/weekly_funnel.csv` | `/funnel/weekly_funnel.csv` | ✅ 동일 |
+| `funnel/channel_funnel.csv` | `/funnel/channel_funnel.csv` | ✅ 동일 |
+| `funnel/new_vs_returning.csv` | `/funnel/new_vs_returning.csv` | ✅ 동일 |
+| `funnel/channel_engagement.csv` | `/funnel/channel_engagement.csv` | ✅ 동일 |
+| `funnel/new_vs_returning_conversion.csv` | `/funnel/new_vs_returning_conversion.csv` | ✅ 동일 |
+| `funnel/insights.json` | `/funnel/insights.json` | ✅ 동일 |
+
+> **참고**: 퍼널 대시보드는 2026-01-08에 React로 신규 변환되었습니다.
+> HTML의 DOM 조작 함수들은 React의 useMemo/useCallback으로 변환되어 구현방식은 다르지만 로직은 동일합니다.
+> D3.js 퍼널 차트는 useEffect 내에서 동일하게 렌더링됩니다.
+
+---
+
+## 6. 채널별 비교
 
 > ⚠️ **참고**: '채널별 비교' 대시보드에 해당하는 React 파일 및 HTML 파일을 찾지 못했습니다.
->
-> 확인된 React 파일:
-> - `src/app/ReactView.tsx` (광고 성과 대시보드)
-> - `src/app/creative/ReactView.tsx` (소재별 대시보드)
-> - `src/app/timeseries/ReactView.tsx` (시계열 데이터 분석)
-> - `src/app/type/ReactView.tsx` (유형별 대시보드)
->
-> '채널별 비교' 파일 경로 확인이 필요합니다.
 
 ---
 
 ## 변경 이력
+
+### 2026-01-08 (v4) - funnel 대시보드 React 변환
+**퍼널 대시보드 신규 변환 (`src/app/funnel/ReactView.tsx`)**
+
+- `funnel_dashboard.html`을 React로 완전 변환
+- D3.js 퍼널 차트 구현
+- Chart.js 이탈률/비교/추세 차트 구현
+- 18개 전역 변수 → useState로 변환
+- 13개 업데이트 함수 → useMemo로 변환
+- 6개 기간/데이터 함수 → useCallback으로 변환
+- 모든 함수명/변수명 HTML과 동일하게 유지
+
+### 2026-01-08 (v3) - timeseries 대시보드 함수명 통일
+HTML과 동일한 함수명으로 변경:
+
+**시계열 대시보드 (`src/app/timeseries/ReactView.tsx`)**
+| 변경 전 | 변경 후 |
+|---------|---------|
+| `formatDec` | `formatDecimal` |
+| `getAiPeriodData` | `getAiSummaryPeriodData` |
+| `kpiData` | `kpiSummary` |
+| `aiSummaryCards` | `aiSummary` |
+| `allOpportunities` | `opportunities` |
+| `allAlerts` | `alerts` |
+| `allRecommendations` | `recommendations` |
+| `getTrendPeriodText` | `trendPeriodIndicator` |
+| `getImprovements` | `improvements` |
+| `getDeclines` | `declines` |
 
 ### 2026-01-07 (v2) - 함수명 통일 작업
 HTML과 동일한 함수명으로 변경:
@@ -331,6 +506,15 @@ HTML과 동일한 함수명으로 변경:
 ### 유형별 대시보드 (type)
 - **✅ 동일**: 모든 함수명/변수명이 HTML과 완전히 일치
 - **변경 필요 없음**: 처음부터 HTML 명칭과 동일하게 구현됨
+
+### 시계열 대시보드 (timeseries)
+- **✅ 동일**: 10개 변수명 HTML 기준으로 통일 완료
+- **⚠️ 구현방식 다름**: React 훅 패턴 사용 (useMemo, useCallback)
+
+### 퍼널 대시보드 (funnel)
+- **✅ 신규 변환**: 2026-01-08 React로 변환 완료
+- **✅ 동일**: 모든 함수명/변수명이 HTML과 완전히 일치
+- **⚠️ 구현방식 다름**: React 훅 패턴 사용 (useMemo, useCallback, D3.js)
 
 ### 주요 패턴
 | HTML 패턴 | React 패턴 | 함수명 |

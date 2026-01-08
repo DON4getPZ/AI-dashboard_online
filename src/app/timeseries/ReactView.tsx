@@ -347,13 +347,13 @@ export default function ReactView() {
     return insightsData.by_period[currentPeriod] || insightsData.by_period['full']
   }, [insightsData, currentPeriod])
 
-  const getAiPeriodData = useCallback(() => {
+  const getAiSummaryPeriodData = useCallback(() => {
     if (!insightsData?.by_period) return null
     return insightsData.by_period[aiSummaryPeriod] || insightsData.by_period['full']
   }, [insightsData, aiSummaryPeriod])
 
   // KPI 계산 - 원본 updateKPISummary() 함수 1:1 복제
-  const kpiData = useMemo(() => {
+  const kpiSummary = useMemo(() => {
     // 원본과 동일하게 actual/forecast 분리
     const actualData = forecastData.filter(d => d.type === 'actual')
     const forecastDataOnly = forecastData.filter(d => d.type === 'forecast')
@@ -402,7 +402,7 @@ export default function ReactView() {
       return Math.round(num).toLocaleString('ko-KR')
     }
 
-    const formatDec = (num: number): string => {
+    const formatDecimal = (num: number): string => {
       if (num === 0 || num === null || num === undefined || !isFinite(num)) return '0'
       return num.toLocaleString('ko-KR', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
     }
@@ -417,8 +417,8 @@ export default function ReactView() {
       { label: '예측 비용', value: formatNum(forecastTotals.비용), unit: '원', change: calcChange(forecastTotals.비용, actualTotals.비용), icon: '💰', highlight: false },
       { label: '예측 ROAS', value: formatPct(forecastROAS), unit: '%', change: calcChange(forecastROAS, actualROAS), icon: '📈', highlight: true },
       { label: '예측 CPA', value: formatNum(forecastCPA), unit: '원', change: calcChange(forecastCPA, actualCPA), icon: '🎯', highlight: false },
-      { label: '예측 CPC', value: formatDec(forecastCPC), unit: '원', change: calcChange(forecastCPC, actualCPC), icon: '🖱️', highlight: false },
-      { label: '예측 CPM', value: formatDec(forecastCPM), unit: '원', change: calcChange(forecastCPM, actualCPM), icon: '👁️', highlight: false }
+      { label: '예측 CPC', value: formatDecimal(forecastCPC), unit: '원', change: calcChange(forecastCPC, actualCPC), icon: '🖱️', highlight: false },
+      { label: '예측 CPM', value: formatDecimal(forecastCPM), unit: '원', change: calcChange(forecastCPM, actualCPM), icon: '👁️', highlight: false }
     ]
 
     // 하위 행: 세부 성과 (4개) - 원본과 동일
@@ -439,8 +439,8 @@ export default function ReactView() {
   }, [getPeriodData])
 
   // 원본 updateAiSummary() 함수 그대로 복제 - summary 텍스트 파싱
-  const aiSummaryCards = useMemo(() => {
-    const periodData = getAiPeriodData()
+  const aiSummary = useMemo(() => {
+    const periodData = getAiSummaryPeriodData()
     if (!periodData?.summary) return []
 
     const summary = periodData.summary
@@ -558,34 +558,34 @@ export default function ReactView() {
         ? recommendations[cardIndex % recommendations.length]
         : null
     }))
-  }, [getAiPeriodData])
+  }, [getAiSummaryPeriodData])
 
   // 경고 데이터 - 원본 updateInsightsFromData() 함수 그대로 복제
-  const allAlerts = useMemo(() => {
-    const periodData = getAiPeriodData()
+  const alerts = useMemo(() => {
+    const periodData = getAiSummaryPeriodData()
     if (!periodData) return []
     const segmentAlerts = periodData.segments?.alerts || []
-    const overallAlerts = periodData.overall?.alerts || []
-    return [...segmentAlerts, ...overallAlerts]
-  }, [getAiPeriodData])
+    const overalerts = periodData.overall?.alerts || []
+    return [...segmentAlerts, ...overalerts]
+  }, [getAiSummaryPeriodData])
 
   // 추천 데이터 - 원본 updateRecommendations() 함수 그대로 복제
-  const allRecommendations = useMemo(() => {
-    const periodData = getAiPeriodData()
+  const recommendations = useMemo(() => {
+    const periodData = getAiSummaryPeriodData()
     return periodData?.segments?.recommendations || []
-  }, [getAiPeriodData])
+  }, [getAiSummaryPeriodData])
 
   // 기회 요소 데이터 - 원본 updateOpportunities() 함수 그대로 복제
-  const allOpportunities = useMemo(() => {
-    const periodData = getAiPeriodData()
+  const opportunities = useMemo(() => {
+    const periodData = getAiSummaryPeriodData()
     return periodData?.opportunities || []
-  }, [getAiPeriodData])
+  }, [getAiSummaryPeriodData])
 
   // Matrix 데이터 - 원본 renderMatrixInsights() 함수 그대로 복제
   const matrixInsights = useMemo(() => {
-    const periodData = getAiPeriodData()
+    const periodData = getAiSummaryPeriodData()
     return periodData?.matrix_insights || {}
-  }, [getAiPeriodData])
+  }, [getAiSummaryPeriodData])
 
   // 성과 트렌드 데이터 - 원본 updatePerformanceTrends() 함수 그대로 복제
   // 항상 'full' 기간 데이터 사용 (원본과 동일)
@@ -595,20 +595,20 @@ export default function ReactView() {
   }, [insightsData])
 
   // 선택된 기간의 개선/하락 데이터 가져오기
-  const getImprovements = useCallback((period: string) => {
+  const improvements = useCallback((period: string) => {
     if (!performanceTrends) return []
     const key = `improvements_${period}` as keyof typeof performanceTrends
     return (performanceTrends[key] as PerformanceTrendItem[]) || []
   }, [performanceTrends])
 
-  const getDeclines = useCallback((period: string) => {
+  const declines = useCallback((period: string) => {
     if (!performanceTrends) return []
     const key = `declines_${period}` as keyof typeof performanceTrends
     return (performanceTrends[key] as PerformanceTrendItem[]) || []
   }, [performanceTrends])
 
   // 기간 텍스트 계산 (원본 updateTrendPeriodIndicator 함수 그대로 복제)
-  const getTrendPeriodText = useCallback((period: string) => {
+  const trendPeriodIndicator = useCallback((period: string) => {
     // 실제 데이터의 마지막 날짜 기준으로 계산
     let lastDate = new Date()
 
@@ -1064,7 +1064,7 @@ export default function ReactView() {
           <div id="kpiSummaryGrid">
             {/* 주요 성과 (5개) - 원본과 동일 */}
             <section className="kpi-grid kpi-grid-primary" style={{ marginBottom: 0 }}>
-              {kpiData.topKpis.map((kpi, i) => (
+              {kpiSummary.topKpis.map((kpi, i) => (
                 <div key={i} className={`kpi-card${kpi.highlight ? ' highlight' : ''}`}>
                   <div className="kpi-header">
                     <span className="kpi-title">{kpi.label}</span>
@@ -1082,7 +1082,7 @@ export default function ReactView() {
             </section>
             {/* 세부 성과 (4개) - 원본과 동일 */}
             <section className="kpi-grid kpi-grid-secondary" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: 0 }}>
-              {kpiData.bottomKpis.map((kpi, i) => (
+              {kpiSummary.bottomKpis.map((kpi, i) => (
                 <div key={i} className="kpi-card secondary">
                   <div className="kpi-header">
                     <span className="kpi-title">{kpi.label}</span>
@@ -1177,14 +1177,14 @@ export default function ReactView() {
                   onClick={() => setInsightsTab('alerts')}
                   style={{ padding: '10px 18px', fontSize: 13, fontWeight: 600 }}
                 >
-                  ⚠️ 경고 및 추천 {(allAlerts.length + allRecommendations.length) > 0 && <span style={{ padding: '2px 8px', background: '#ef5350', color: 'white', borderRadius: 10, fontSize: 11, marginLeft: 4 }}>{allAlerts.length + allRecommendations.length}</span>}
+                  ⚠️ 경고 및 추천 {(alerts.length + recommendations.length) > 0 && <span style={{ padding: '2px 8px', background: '#ef5350', color: 'white', borderRadius: 10, fontSize: 11, marginLeft: 4 }}>{alerts.length + recommendations.length}</span>}
                 </button>
                 <button
                   className={`view-btn insights-tab-btn ${insightsTab === 'opportunities' ? 'active' : ''}`}
                   onClick={() => setInsightsTab('opportunities')}
                   style={{ padding: '10px 18px', fontSize: 13, fontWeight: 600 }}
                 >
-                  🎯 기회 요소 {allOpportunities.length > 0 && <span style={{ padding: '2px 8px', background: '#4caf50', color: 'white', borderRadius: 10, fontSize: 11, marginLeft: 4 }}>{allOpportunities.length}</span>}
+                  🎯 기회 요소 {opportunities.length > 0 && <span style={{ padding: '2px 8px', background: '#4caf50', color: 'white', borderRadius: 10, fontSize: 11, marginLeft: 4 }}>{opportunities.length}</span>}
                 </button>
                 <button
                   className={`view-btn insights-tab-btn ${insightsTab === 'matrix' ? 'active' : ''}`}
@@ -1199,7 +1199,7 @@ export default function ReactView() {
               {insightsTab === 'summary' && (
                 <div className="insights-tab-content" style={{ display: 'block', background: 'none', border: 'none', boxShadow: 'none', borderRadius: 0, overflow: 'visible' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, paddingTop: 4 }}>
-                    {aiSummaryCards.length > 0 ? aiSummaryCards.map((card, i) => {
+                    {aiSummary.length > 0 ? aiSummary.map((card, i) => {
                       // 증감 강조 함수 (원본 highlightChanges와 동일)
                       const highlightChanges = (text: string) => {
                         let result = text
@@ -1299,7 +1299,7 @@ export default function ReactView() {
                         </div>
                         <div>
                           <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--grey-900)' }}>주요 경고</span>
-                          <span style={{ fontSize: 11, color: 'var(--grey-500)', fontWeight: 500, marginLeft: 8 }}>({allAlerts.length}건)</span>
+                          <span style={{ fontSize: 11, color: 'var(--grey-500)', fontWeight: 500, marginLeft: 8 }}>({alerts.length}건)</span>
                         </div>
                       </div>
                       <div className="insight-content" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -1308,7 +1308,7 @@ export default function ReactView() {
                             <div className="insight-type">로딩</div>
                             <div className="insight-message">데이터를 불러오는 중...</div>
                           </div>
-                        ) : allAlerts.length > 0 ? allAlerts.slice(0, 3).map((alert, i) => {
+                        ) : alerts.length > 0 ? alerts.slice(0, 3).map((alert, i) => {
                           const severityColors: Record<string, { bg: string; border: string; titleColor: string }> = {
                             'high': { bg: '#ffebee', border: '#ef5350', titleColor: '#c62828' },
                             'medium': { bg: '#fff3e0', border: '#ff9800', titleColor: '#e65100' },
@@ -1365,7 +1365,7 @@ export default function ReactView() {
                         </div>
                         <div>
                           <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--grey-900)' }}>투자 추천</span>
-                          <span style={{ fontSize: 11, color: 'var(--grey-500)', fontWeight: 500, marginLeft: 8 }}>({allRecommendations.length}건)</span>
+                          <span style={{ fontSize: 11, color: 'var(--grey-500)', fontWeight: 500, marginLeft: 8 }}>({recommendations.length}건)</span>
                         </div>
                       </div>
                       <div className="insight-content recommendation-list" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -1374,7 +1374,7 @@ export default function ReactView() {
                             <div className="insight-type">로딩</div>
                             <div className="insight-message">데이터를 불러오는 중...</div>
                           </div>
-                        ) : allRecommendations.length > 0 ? allRecommendations.slice(0, 3).map((rec, i) => {
+                        ) : recommendations.length > 0 ? recommendations.slice(0, 3).map((rec, i) => {
                           const priorityColors: Record<number, { bg: string; border: string; titleColor: string; icon: string }> = {
                             1: { bg: '#e8f5e9', border: '#4caf50', titleColor: '#2e7d32', icon: '🥇' },
                             2: { bg: '#e3f2fd', border: '#2196f3', titleColor: '#1565c0', icon: '🥈' },
@@ -1441,7 +1441,7 @@ export default function ReactView() {
                         <div className="insight-card neutral">
                           <div className="insight-message">데이터를 불러오는 중...</div>
                         </div>
-                      ) : allOpportunities.length > 0 ? allOpportunities.map((opp, i) => {
+                      ) : opportunities.length > 0 ? opportunities.map((opp, i) => {
                         // 기회 유형별 스타일 (원본과 동일)
                         const oppStyles: Record<string, { icon: string; bg: string; border: string; titleColor: string; label: string }> = {
                           'scale_up': { icon: '🚀', bg: '#e8f5e9', border: '#4caf50', titleColor: '#2e7d32', label: '예산 증액' },
@@ -1674,7 +1674,7 @@ export default function ReactView() {
                 </div>
                 {/* 기간 텍스트 표시 (원본 trendPeriodText와 동일) */}
                 <span style={{ fontSize: 12, color: '#37474f', marginLeft: 'auto' }}>
-                  <strong style={{ color: '#1565c0' }}>{getTrendPeriodText(trendPeriod).recent}</strong> {getTrendPeriodText(trendPeriod).recentDates} vs <strong style={{ color: '#7b1fa2' }}>{getTrendPeriodText(trendPeriod).previous}</strong> {getTrendPeriodText(trendPeriod).previousDates}
+                  <strong style={{ color: '#1565c0' }}>{trendPeriodIndicator(trendPeriod).recent}</strong> {trendPeriodIndicator(trendPeriod).recentDates} vs <strong style={{ color: '#7b1fa2' }}>{trendPeriodIndicator(trendPeriod).previous}</strong> {trendPeriodIndicator(trendPeriod).previousDates}
                 </span>
               </div>
             </div>
@@ -1699,9 +1699,9 @@ export default function ReactView() {
                         <p style={{ fontSize: 14, color: 'var(--grey-600)', margin: 0 }}>성과 트렌드 데이터가 아직 생성되지 않았습니다.</p>
                       </div>
                     </div>
-                  ) : getImprovements(trendPeriod).length > 0 ? (
+                  ) : improvements(trendPeriod).length > 0 ? (
                     <div style={{ display: 'grid', gap: 12 }}>
-                      {getImprovements(trendPeriod).map((item, i) => (
+                      {improvements(trendPeriod).map((item, i) => (
                         <div key={i} style={{ background: '#e8f5e9', border: '2px solid #4caf50', borderRadius: 10, padding: 14, transition: 'transform 0.2s' }}>
                           {/* 헤더 */}
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
@@ -1761,9 +1761,9 @@ export default function ReactView() {
                         <p style={{ fontSize: 14, color: 'var(--grey-600)', margin: 0 }}>성과 트렌드 데이터가 아직 생성되지 않았습니다.</p>
                       </div>
                     </div>
-                  ) : getDeclines(trendPeriod).length > 0 ? (
+                  ) : declines(trendPeriod).length > 0 ? (
                     <div style={{ display: 'grid', gap: 12 }}>
-                      {getDeclines(trendPeriod).map((item, i) => {
+                      {declines(trendPeriod).map((item, i) => {
                         const isHigh = item.risk_level === 'high'
                         const bgColor = isHigh ? '#ffebee' : '#fff3e0'
                         const borderColor = isHigh ? '#f44336' : '#ff9800'

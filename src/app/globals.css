@@ -156,3 +156,326 @@ body {
   cursor: grabbing;
   transform: scale(1.1);
 }
+
+/* ========================================
+   Funnel Dashboard - HTML 1:1 CSS 클래스
+   ======================================== */
+
+/* 카드 기본 스타일 */
+.card {
+  background: var(--paper);
+  border-radius: 12px;
+  box-shadow: 0 2px 14px 0 rgba(32, 40, 45, 0.08);
+}
+
+/* 차트 섹션 */
+.chart-section {
+  margin-bottom: 24px;
+  padding: 24px;
+  overflow: visible;
+}
+
+.chart-header {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--grey-900);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chart-header::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: var(--secondary-main);
+  border-radius: 2px;
+}
+
+/* 뷰 버튼 */
+.view-btn {
+  padding: 10px 24px;
+  border: none;
+  background: var(--paper);
+  color: var(--grey-700);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.view-btn:hover {
+  background: var(--primary-light);
+  color: var(--primary-main);
+}
+
+.view-btn.active {
+  background: var(--primary-main);
+  color: white;
+  box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+}
+
+/* 필터 섹션 */
+.filter-section {
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.filter-header {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--grey-900);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-header::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: var(--primary-main);
+  border-radius: 2px;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 날짜 범위 */
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.date-range input[type="date"] {
+  padding: 10px 14px;
+  border: 1px solid var(--grey-300);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--paper);
+  color: var(--grey-900);
+  transition: all 0.2s ease;
+}
+
+.date-range input[type="date"]:hover {
+  border-color: var(--primary-main);
+}
+
+.date-range input[type="date"]:focus {
+  outline: none;
+  border-color: var(--primary-main);
+  box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.1);
+}
+
+.date-range span {
+  color: var(--grey-500);
+  font-weight: 500;
+}
+
+/* KPI 요약 그리드 */
+.kpi-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-summary-card {
+  background: var(--paper);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kpi-summary-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+.kpi-summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+}
+
+.kpi-summary-card:nth-child(1)::before { background: #d6beff; }
+.kpi-summary-card:nth-child(2)::before { background: #be9ff2; }
+.kpi-summary-card:nth-child(3)::before { background: #ab87ea; }
+.kpi-summary-card:nth-child(4)::before { background: #8c63d3; }
+.kpi-summary-card:nth-child(5)::before { background: #673ab7; }
+
+.kpi-summary-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--grey-600);
+  margin-bottom: 12px;
+}
+
+.kpi-summary-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--grey-900);
+  margin-bottom: 8px;
+}
+
+.kpi-summary-unit {
+  font-size: 13px;
+  color: var(--grey-500);
+}
+
+/* 반응형 - KPI 그리드 */
+@media (max-width: 1200px) {
+  .kpi-summary-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .kpi-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 퍼널 차트 툴팁 */
+.funnel-tooltip {
+  position: fixed;
+  background: white;
+  border: 2px solid var(--primary-main);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(103, 58, 183, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  z-index: 9999;
+  max-width: 380px;
+  min-width: 300px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.funnel-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.funnel-tooltip::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: -10px;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid var(--primary-main);
+}
+
+.funnel-tooltip-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-main);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.funnel-tooltip-title::before {
+  content: '📊';
+  font-size: 20px;
+}
+
+.funnel-tooltip-metric {
+  font-size: 14px;
+  color: var(--grey-700);
+  margin: 8px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 8px;
+  background: var(--grey-50);
+  border-radius: 6px;
+}
+
+.funnel-tooltip-metric-label {
+  font-weight: 600;
+  color: var(--grey-700);
+}
+
+.funnel-tooltip-metric-value {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--primary-main);
+}
+
+.funnel-tooltip-insight {
+  margin-top: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
+  border-radius: 8px;
+  border-left: 4px solid var(--secondary-main);
+  font-size: 13px;
+  color: var(--grey-700);
+  line-height: 1.6;
+}
+
+.funnel-tooltip-insight::before {
+  content: '💡 ';
+  font-size: 16px;
+}
+
+.funnel-tooltip-recommendation {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, var(--warning-light) 0%, #fff9e6 100%);
+  border-radius: 8px;
+  border-left: 4px solid var(--warning-main);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--grey-900);
+  line-height: 1.6;
+}
+
+.funnel-tooltip-recommendation::before {
+  content: '🎯 추천: ';
+  font-weight: 700;
+  color: var(--warning-main);
+}
+
+/* 퍼널 차트 단계 텍스트 스타일 */
+.funnel-stage-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.funnel-stage-value {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.funnel-stage-conversion {
+  font-size: 12px;
+}
