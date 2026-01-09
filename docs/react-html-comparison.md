@@ -202,7 +202,7 @@
 | 구분 | 파일 경로 |
 |------|----------|
 | **React** | `src/app/type/ReactView.tsx` |
-| **HTML** | `public/type_dashboard.html` |
+| **HTML** | `data/type_dashboard.html` |
 
 ### 3.1 전역 변수/State 비교
 
@@ -217,6 +217,7 @@
 | `platformDimensionData` | `platformDimensionData` (useState) | ✅ 동일 |
 | `devicePlatformDimensionData` | `devicePlatformDimensionData` (useState) | ✅ 동일 |
 | `deviceTypeDimensionData` | `deviceTypeDimensionData` (useState) | ✅ 동일 |
+| `pivotDimensionData` | `pivotDimensionData` (useState) | ✅ 동일 |
 
 ### 3.2 Timeseries 필터 변수 비교
 
@@ -227,6 +228,7 @@
 | `currentTimeseriesMetric` | `currentTimeseriesMetric` (useState) | ✅ 동일 |
 | `timeseriesStartDate` | `timeseriesStartDate` (useState) | ✅ 동일 |
 | `timeseriesEndDate` | `timeseriesEndDate` (useState) | ✅ 동일 |
+| `timeseriesTrendChart` | React-Chartjs-2 컴포넌트 | ⚠️ 구현방식 다름 |
 
 ### 3.3 각 탭별 필터 변수 비교
 
@@ -236,39 +238,236 @@
 | `currentGenderMetric` | `currentGenderMetric` (useState) | ✅ 동일 |
 | `genderStartDate` | `genderStartDate` (useState) | ✅ 동일 |
 | `genderEndDate` | `genderEndDate` (useState) | ✅ 동일 |
+| `selectedGenderItems` | `selectedGenderItems` (useState) | ✅ 동일 |
+| `genderTrendChart` | React-Chartjs-2 컴포넌트 | ⚠️ 구현방식 다름 |
 | `currentAgePeriod` | `currentAgePeriod` (useState) | ✅ 동일 |
 | `currentAgeMetric` | `currentAgeMetric` (useState) | ✅ 동일 |
 | `ageStartDate` | `ageStartDate` (useState) | ✅ 동일 |
 | `ageEndDate` | `ageEndDate` (useState) | ✅ 동일 |
+| `selectedAgeItems` | `selectedAgeItems` (useState) | ✅ 동일 |
+| `ageTrendChart` | React-Chartjs-2 컴포넌트 | ⚠️ 구현방식 다름 |
 | `currentPlatformPeriod` | `currentPlatformPeriod` (useState) | ✅ 동일 |
 | `currentPlatformMetric` | `currentPlatformMetric` (useState) | ✅ 동일 |
 | `platformStartDate` | `platformStartDate` (useState) | ✅ 동일 |
 | `platformEndDate` | `platformEndDate` (useState) | ✅ 동일 |
+| `selectedPlatformItems` | `selectedPlatformItems` (useState) | ✅ 동일 |
+| `platformTrendChart` | React-Chartjs-2 컴포넌트 | ⚠️ 구현방식 다름 |
 | `currentDevicePlatformPeriod` | `currentDevicePlatformPeriod` (useState) | ✅ 동일 |
 | `currentDevicePlatformMetric` | `currentDevicePlatformMetric` (useState) | ✅ 동일 |
 | `devicePlatformStartDate` | `devicePlatformStartDate` (useState) | ✅ 동일 |
 | `devicePlatformEndDate` | `devicePlatformEndDate` (useState) | ✅ 동일 |
+| `selectedDevicePlatformItems` | `selectedDevicePlatformItems` (useState) | ✅ 동일 |
+| `devicePlatformTrendChart` | React-Chartjs-2 컴포넌트 | ⚠️ 구현방식 다름 |
 | `currentDeviceTypePeriod` | `currentDeviceTypePeriod` (useState) | ✅ 동일 |
 | `currentDeviceTypeMetric` | `currentDeviceTypeMetric` (useState) | ✅ 동일 |
 | `deviceTypeStartDate` | `deviceTypeStartDate` (useState) | ✅ 동일 |
 | `deviceTypeEndDate` | `deviceTypeEndDate` (useState) | ✅ 동일 |
+| `selectedDeviceTypeItems` | `selectedDeviceTypeItems` (useState) | ✅ 동일 |
+| `deviceTypeTrendChart` | React-Chartjs-2 컴포넌트 | ⚠️ 구현방식 다름 |
 
-### 3.4 유틸리티 함수 비교
+### 3.4 상수 비교
+
+| HTML 상수 | React 상수 | 상태 |
+|-----------|------------|------|
+| `DETAIL_DEFAULT_LIMIT` (10) | `DETAIL_DEFAULT_LIMIT` (10) | ✅ 동일 |
+| `DETAIL_EXPANDED_LIMIT` (50) | `DETAIL_EXPANDED_LIMIT` (50) | ✅ 동일 |
+
+### 3.5 유틸리티 함수 비교
 
 | HTML 함수명 | React 함수명 | 상태 |
 |-------------|--------------|------|
+| `parseCSV(text)` | `parseCSV(text)` | ✅ 동일 |
+| `parseLine(line)` | `parseLine(line)` (내부 함수) | ✅ 동일 |
 | `filterDataByDateRange(data, startDate, endDate)` | `filterDataByDateRange(data, startDate, endDate)` | ✅ 동일 |
 | `calculateChangeRate(current, previous)` | `calculateChangeRate(current, previous)` | ✅ 동일 |
-| `getMatrixInsightForTarget(...)` | `getMatrixInsightForTarget(...)` | ✅ 동일 |
+| `getMatrixInsightForTarget(...)` | `getMatrixInsightForTarget(...)` (useCallback) | ✅ 동일 |
+| `isValidGender(gender)` | `isValidGender(gender)` | ✅ 동일 |
+| `isValidAge(age)` | `isValidAge(age)` | ✅ 동일 |
+| `normalizeGender(gender)` | `normalizeGender(gender)` | ✅ 동일 |
+| `getGenderDisplayName(normalizedGender)` | `getGenderDisplayName(normalizedGender)` | ✅ 동일 |
+| `getPeriodKey(dateString, period)` | `getPeriodKey(dateString, period)` | ✅ 동일 |
+| `formatCurrency(value)` | `formatCurrency(value)` | ✅ 동일 |
+| `formatNumber(value)` | `formatNumber(value)` | ✅ 동일 |
+| `formatPercent(value)` | `formatPercent(value)` | ✅ 동일 |
+| `formatValue(value)` | `formatValue(value)` | ✅ 동일 |
+| `getSeverityLabel(severity)` | `getSeverityLabel(severity)` | ✅ 동일 |
+| `getEfficiencyGrade(roas, maxRoas)` | `getEfficiencyGrade(roas, maxRoas)` | ✅ 동일 |
+| `getDeviceIcon(device)` | `getDeviceIcon(device)` | ✅ 동일 |
+| `getPlatformIcon(platform)` | `getPlatformIcon(platform)` | ✅ 동일 |
+| `getDevicePlatformIcon(devicePlatform)` | `getDevicePlatformIcon(devicePlatform)` | ✅ 동일 |
+| `getDayEmoji(day)` | `getDayEmoji(day)` | ✅ 동일 |
+| `getCategoryIcon(category)` | `getCategoryIcon(category)` | ✅ 동일 |
+| `getPerfTableColorScale(...)` | `getPerfTableColorScale(...)` | ✅ 동일 |
 
-### 3.5 데이터 경로 비교
+### 3.6 핵심 데이터/로직 함수 비교
+
+| HTML 함수명 | React 구현 | 상태 |
+|-------------|------------|------|
+| `loadData()` | `useEffect` (데이터 로드) | ⚠️ 구현방식 다름 |
+| `initDashboard()` | React 상태 기반 렌더링 | ⚠️ 구현방식 다름 |
+| `getPeriodData()` | `getPeriodData()` (useCallback) | ✅ 동일 |
+| `getSeasonalityData()` | `getSeasonalityData()` (useCallback) | ✅ 동일 |
+| `switchPeriod(period)` | `setCurrentPeriod(period)` | ⚠️ 구현방식 다름 |
+| `updatePeriodInfo()` | `periodInfo` (useMemo) | ⚠️ 구현방식 다름 |
+| `updatePeriodDateRange()` | JSX 인라인 표시 | ⚠️ 구현방식 다름 |
+
+### 3.7 렌더링 함수 비교 (useMemo 변환)
+
+| HTML 함수명 | React 변수명 | 상태 |
+|-------------|--------------|------|
+| `renderKPICards()` | `kpiData` (useMemo) | ⚠️ 구현방식 다름 |
+| `renderDecisionTools()` | `decisionToolData` (useMemo) | ⚠️ 구현방식 다름 |
+| `renderSummaryTab()` | JSX 직접 렌더링 | ⚠️ 구현방식 다름 |
+| `renderOpportunityTab()` | `recommendationGroups` (useMemo) | ⚠️ 구현방식 다름 |
+| `renderBudgetGuideTab()` | JSX 직접 렌더링 | ⚠️ 구현방식 다름 |
+| `renderWarningTab()` | `warningGroups` (useMemo) | ⚠️ 구현방식 다름 |
+| `renderTargetingTab()` | `topTargets`, `matrixQuadrants` (useMemo) | ⚠️ 구현방식 다름 |
+| `renderForecastTab()` | JSX 직접 렌더링 | ⚠️ 구현방식 다름 |
+| `renderRecommendationCard(rec, idx)` | JSX 인라인 컴포넌트 | ⚠️ 구현방식 다름 |
+| `renderAlertCard(alert)` | JSX 인라인 컴포넌트 | ⚠️ 구현방식 다름 |
+| `renderCpaCard(cat)` | JSX 인라인 컴포넌트 | ⚠️ 구현방식 다름 |
+| `renderMatrixBadge(matrixType)` | JSX 인라인 컴포넌트 | ⚠️ 구현방식 다름 |
+
+### 3.8 추이 분석 함수 비교
+
+| HTML 함수명 | React 구현 | 상태 |
+|-------------|------------|------|
+| `renderTimeseriesTrendChart()` | `filteredTrendData` (useMemo) + Chart.js | ⚠️ 구현방식 다름 |
+| `renderGenderTrendChart()` | `filteredGenderData` (useMemo) + Chart.js | ⚠️ 구현방식 다름 |
+| `renderAgeTrendChart()` | `filteredAgeData` (useMemo) + Chart.js | ⚠️ 구현방식 다름 |
+| `renderPlatformTrendChart()` | `filteredPlatformData` (useMemo) + Chart.js | ⚠️ 구현방식 다름 |
+| `renderDevicePlatformTrendChart()` | `filteredDevicePlatformData` (useMemo) + Chart.js | ⚠️ 구현방식 다름 |
+| `renderDeviceTypeTrendChart()` | `filteredDeviceData` (useMemo) + Chart.js | ⚠️ 구현방식 다름 |
+| `initTimeseriesDropdowns()` | `trendFilterOptions` (useMemo) | ⚠️ 구현방식 다름 |
+| `updateTimeseriesFilters()` | useState setters | ⚠️ 구현방식 다름 |
+| `initGenderDropdowns()` | `genderFilterOptions` (useMemo) | ⚠️ 구현방식 다름 |
+| `updateGenderFilters()` | useState setters | ⚠️ 구현방식 다름 |
+| `initAgeDropdowns()` | `ageFilterOptions` (useMemo) | ⚠️ 구현방식 다름 |
+| `updateAgeFilters()` | useState setters | ⚠️ 구현방식 다름 |
+| `initPlatformDropdowns()` | `platformFilterOptions` (useMemo) | ⚠️ 구현방식 다름 |
+| `updatePlatformFilters()` | useState setters | ⚠️ 구현방식 다름 |
+| `initDevicePlatformDropdowns()` | `devicePlatformFilterOptions` (useMemo) | ⚠️ 구현방식 다름 |
+| `updateDevicePlatformFilters()` | useState setters | ⚠️ 구현방식 다름 |
+| `initDeviceTypeDropdowns()` | `deviceFilterOptions` (useMemo) | ⚠️ 구현방식 다름 |
+| `updateDeviceTypeFilters()` | useState setters | ⚠️ 구현방식 다름 |
+
+### 3.9 성능 테이블 함수 비교
+
+| HTML 함수명 | React 구현 | 상태 |
+|-------------|------------|------|
+| `renderPerfTableAdset()` | `perfTableAdsetData` (useMemo) | ⚠️ 구현방식 다름 |
+| `renderPerfTableGender()` | `perfTableGenderData` (useMemo) | ⚠️ 구현방식 다름 |
+| `renderPerfTableAge()` | `perfTableAgeData` (useMemo) | ⚠️ 구현방식 다름 |
+| `renderPerfTablePlatform()` | `perfTablePlatformData` (useMemo) | ⚠️ 구현방식 다름 |
+| `renderPerfTableDevicePlatform()` | `perfTableDevicePlatformData` (useMemo) | ⚠️ 구현방식 다름 |
+| `renderPerfTableDeviceType()` | `perfTableDeviceTypeData` (useMemo) | ⚠️ 구현방식 다름 |
+| `renderPerfTableGenderAge()` | `perfTableGenderAgeData` (useMemo) | ⚠️ 구현방식 다름 |
+| `renderPerfTableGeneric(...)` | `getPerfTableGenericData(...)` | ✅ 동일 |
+| `initPerfTableFilters()` | `perfTableFilterOptions` (useMemo) | ⚠️ 구현방식 다름 |
+| `updatePerfTableFilters(...)` | `updatePerfTableFilters(...)` | ✅ 동일 |
+| `setupPerfTableSortEvents()` | `handlePerfTableSort(...)` | ✅ 동일 |
+| `setupPerfTableDateEvents()` | `handlePerfTableDateChange(...)` | ✅ 동일 |
+| `aggregatePerfData(data, groupKey)` | `aggregatePerfData(data, groupKey)` | ✅ 동일 |
+
+### 3.10 성능 차트 함수 비교
+
+| HTML 함수명 | React 구현 | 상태 |
+|-------------|------------|------|
+| `renderAllPerformanceCharts()` | 상태 기반 렌더링 | ⚠️ 구현방식 다름 |
+| `renderBrandPerformanceChart()` | `getPerfChartData('brand')` | ⚠️ 구현방식 다름 |
+| `renderProductPerformanceChart()` | `getPerfChartData('product')` | ⚠️ 구현방식 다름 |
+| `renderPromotionPerformanceChart()` | `getPerfChartData('promotion')` | ⚠️ 구현방식 다름 |
+| `renderTargetingPerformanceChart()` | `getPerfChartData('targeting')` | ⚠️ 구현방식 다름 |
+| `aggregateBrandData(data)` | `aggregatePerfData(...)` 통합 | ⚠️ 구현방식 다름 |
+| `aggregateProductData(data)` | `aggregatePerfData(...)` 통합 | ⚠️ 구현방식 다름 |
+| `aggregatePromotionData(data)` | `aggregatePerfData(...)` 통합 | ⚠️ 구현방식 다름 |
+| `aggregateTargetingData(data)` | `aggregatePerfData(...)` 통합 | ⚠️ 구현방식 다름 |
+| `setupPerformanceControls()` | useState + 이벤트 핸들러 | ⚠️ 구현방식 다름 |
+| `initPerfChartDates()` | useEffect 초기화 | ⚠️ 구현방식 다름 |
+| `updatePerfShowMoreButton(...)` | `handlePerfChartShowMoreToggle(...)` | ✅ 동일 |
+
+### 3.11 리타겟팅 분석 함수 비교
+
+| HTML 함수명 | React 구현 | 상태 |
+|-------------|------------|------|
+| `initRetargetingAnalysis()` | 상태 기반 렌더링 | ⚠️ 구현방식 다름 |
+| `renderAgeGenderRetargetTable()` | `getRetargetingTableData('ageGender')` | ⚠️ 구현방식 다름 |
+| `renderDeviceRetargetTable()` | `getRetargetingTableData('device')` | ⚠️ 구현방식 다름 |
+| `renderPlatformRetargetTable()` | `getRetargetingTableData('platform')` | ⚠️ 구현방식 다름 |
+| `renderDevicePlatformRetargetTable()` | `getRetargetingTableData('devicePlatform')` | ⚠️ 구현방식 다름 |
+| `setupRetargetingSortEvents()` | `handleRetargetingSortChange(...)` | ✅ 동일 |
+| `setupRetargetingTabEvents()` | 상태 기반 탭 전환 | ⚠️ 구현방식 다름 |
+| `updateRetargetingSortIcons(...)` | useState + 정렬 아이콘 상태 | ⚠️ 구현방식 다름 |
+
+### 3.12 계절성 분석 함수 비교
+
+| HTML 함수명 | React 구현 | 상태 |
+|-------------|------------|------|
+| `renderQuarterlyTrendChart()` | Chart.js 컴포넌트 | ⚠️ 구현방식 다름 |
+| `renderQuarterlyKpiCards(...)` | JSX 인라인 렌더링 | ⚠️ 구현방식 다름 |
+| `renderQuarterlySeasonalityInsight(...)` | JSX 인라인 렌더링 | ⚠️ 구현방식 다름 |
+| `renderQuarterlyTable()` | JSX 인라인 렌더링 | ⚠️ 구현방식 다름 |
+| `renderSeasonalityTable()` | JSX 인라인 렌더링 | ⚠️ 구현방식 다름 |
+| `renderChannelDayKpiCards()` | JSX 인라인 렌더링 | ⚠️ 구현방식 다름 |
+| `renderChannelDayRoasChart()` | Chart.js 컴포넌트 | ⚠️ 구현방식 다름 |
+| `renderSeasonalityCategoryTable()` | JSX 인라인 렌더링 | ⚠️ 구현방식 다름 |
+| `renderChannelDayTableForCategory(...)` | JSX 인라인 렌더링 | ⚠️ 구현방식 다름 |
+| `renderChannelDayInsight()` | JSX 인라인 렌더링 | ⚠️ 구현방식 다름 |
+
+### 3.13 예측 분석 함수 비교
+
+| HTML 함수명 | React 구현 | 상태 |
+|-------------|------------|------|
+| `initForecastSubtabs(forecast)` | useState 탭 상태 | ⚠️ 구현방식 다름 |
+| `initForecastAccordions()` | useState 펼침 상태 | ⚠️ 구현방식 다름 |
+| `handleForecastAccordionClick(e)` | onClick 핸들러 | ⚠️ 구현방식 다름 |
+| `generateAIOpportunities(forecast)` | useMemo 변환 | ⚠️ 구현방식 다름 |
+| `generateAIActions(forecast)` | useMemo 변환 | ⚠️ 구현방식 다름 |
+| `renderForecastSubtab(...)` | JSX 조건부 렌더링 | ⚠️ 구현방식 다름 |
+
+### 3.14 UI 상태 변수 비교
+
+| HTML 변수명 | React 변수명 | 상태 |
+|-------------|--------------|------|
+| (DOM 상태) | `loading` (useState) | ⚠️ 구현방식 다름 |
+| (DOM 상태) | `decisionToolExpanded` (useState) | ⚠️ 구현방식 다름 |
+| (DOM 상태) | `trendAnalysisExpanded` (useState) | ⚠️ 구현방식 다름 |
+| (DOM 상태) | `showMoreRecommendations` (useState) | ⚠️ 구현방식 다름 |
+| (DOM 상태) | `showMoreAlerts` (useState) | ⚠️ 구현방식 다름 |
+| (DOM 상태) | `showMoreCpa` (useState) | ⚠️ 구현방식 다름 |
+| (DOM 상태) | `expandedTopAdsets` (useState) | ⚠️ 구현방식 다름 |
+| (DOM 상태) | `expandedDevicePlatform` (useState) | ⚠️ 구현방식 다름 |
+| (DOM 상태) | `expandedDevice` (useState) | ⚠️ 구현방식 다름 |
+| (DOM 상태) | `expandedAgeGender` (useState) | ⚠️ 구현방식 다름 |
+| (DOM 상태) | `expandedAiOpportunity` (useState) | ⚠️ 구현방식 다름 |
+| (DOM 상태) | `expandedAiAction` (useState) | ⚠️ 구현방식 다름 |
+
+### 3.15 데이터 경로 비교
 
 | HTML 경로 | React 경로 | 상태 |
 |-----------|------------|------|
 | `./type/type_insights.json` | `/type/type_insights.json` | ✅ 동일 |
-| `./type/dimension_*.csv` | `/type/dimension_*.csv` | ✅ 동일 |
+| `./type/dimension_adset.csv` | `/type/dimension_adset.csv` | ✅ 동일 |
+| `./type/dimension_gender.csv` | `/type/dimension_gender.csv` | ✅ 동일 |
+| `./type/dimension_age.csv` | `/type/dimension_age.csv` | ✅ 동일 |
+| `./type/dimension_platform.csv` | `/type/dimension_platform.csv` | ✅ 동일 |
+| `./type/dimension_device_platform.csv` | `/type/dimension_device_platform.csv` | ✅ 동일 |
+| `./type/dimension_device_type.csv` | `/type/dimension_device_type.csv` | ✅ 동일 |
+| `./type/dimension_pivot.csv` | `/type/dimension_pivot.csv` | ✅ 동일 |
 
-> **참고**: type 대시보드는 처음부터 HTML과 동일한 명칭으로 구현되어 있어 추가 변경이 필요하지 않습니다.
+### 3.16 함수 통계 요약
+
+| 구분 | HTML 함수 수 | React 함수/변수 수 | 상태 |
+|------|-------------|-------------------|------|
+| 유틸리티 함수 | 22개 | 22개 | ✅ 모두 동일 |
+| 렌더링 함수 | 약 60개 | useMemo/JSX 변환 | ⚠️ 구현방식 다름 |
+| 초기화 함수 | 약 30개 | useEffect/useState | ⚠️ 구현방식 다름 |
+| 이벤트 핸들러 | 약 40개 | onClick/onChange | ⚠️ 구현방식 다름 |
+| 전역 변수 | 약 80개 | useState로 변환 | ✅ 명칭 동일 |
+
+> **참고**: type 대시보드는 HTML 파일에 약 150개 이상의 함수가 정의되어 있습니다.
+> React에서는 이들을 useMemo, useCallback, useState를 활용한 선언적 패턴으로 변환하였습니다.
+> 대부분의 유틸리티 함수명과 상태 변수명은 HTML과 동일하게 유지되어 있습니다.
 
 ---
 
@@ -289,7 +488,15 @@
 | `aiSummaryPeriod` | `aiSummaryPeriod` (useState) | ✅ 동일 |
 | `segmentData` | `segmentData` (useState) | ✅ 동일 |
 
-### 4.2 유틸리티 함수 비교
+### 4.2 상수 비교
+
+| HTML 상수 | React 상수 | 상태 |
+|-----------|------------|------|
+| `INITIAL_ALERTS_COUNT` (6) | `INITIAL_ALERTS_COUNT` (6) | ✅ 동일 |
+| `INITIAL_RECOMMENDATIONS_COUNT` (4) | `INITIAL_RECOMMENDATIONS_COUNT` (4) | ✅ 동일 |
+| `DIMINISHING_FACTOR` (0.15) | `DIMINISHING_FACTOR` (0.15) | ✅ 동일 |
+
+### 4.3 유틸리티 함수 비교
 
 | HTML 함수명 | React 함수명 | 상태 |
 |-------------|--------------|------|
@@ -299,7 +506,7 @@
 | `parseCSV(text)` | `parseCSV(text)` | ✅ 동일 |
 | `transformRecommendationText()` | `transformRecommendationText()` (useCallback) | ✅ 동일 |
 
-### 4.3 기간/데이터 함수 비교
+### 4.4 기간/데이터 함수 비교
 
 | HTML 함수명 | React 함수명 | 상태 |
 |-------------|--------------|------|
@@ -316,7 +523,7 @@
 | `improvements` (데이터) | `improvements()` (useCallback) | ✅ 동일 |
 | `declines` (데이터) | `declines()` (useCallback) | ✅ 동일 |
 
-### 4.4 시뮬레이션 함수 비교
+### 4.5 시뮬레이션 함수 비교
 
 | HTML 함수명 | React 함수명 | 상태 |
 |-------------|--------------|------|
@@ -324,7 +531,7 @@
 | `simulationData` | `simulationData` (useMemo) | ✅ 동일 |
 | `simulationResults` | `simulationResults` (useMemo) | ✅ 동일 |
 
-### 4.5 데이터 경로 비교
+### 4.6 데이터 경로 비교
 
 | HTML 경로 | React 경로 | 상태 |
 |-----------|------------|------|
@@ -571,6 +778,31 @@
 
 ## 변경 이력
 
+### 2026-01-09 (v6) - type/timeseries 대시보드 상수명 통일
+**유형별 대시보드 함수/변수 상세 비교 (`docs/react-html-comparison.md` Section 3)**
+
+- HTML 파일 150개+ 함수 분석 완료
+- React 파일 useMemo/useCallback/useState 변환 내역 정리
+- **type 상수명 통일**: `PERF_DEFAULT_LIMIT` → `DETAIL_DEFAULT_LIMIT`, `PERF_EXPANDED_LIMIT` → `DETAIL_EXPANDED_LIMIT`
+- **timeseries 상수 추가**: `INITIAL_ALERTS_COUNT` (6), `INITIAL_RECOMMENDATIONS_COUNT` (4) 추가 및 하드코딩 값 대체
+- 16개 하위 섹션으로 상세 분류:
+  - 3.1 전역 변수/State 비교 (10개)
+  - 3.2 Timeseries 필터 변수 비교 (6개)
+  - 3.3 각 탭별 필터 변수 비교 (30개)
+  - 3.4 상수 비교 (2개)
+  - 3.5 유틸리티 함수 비교 (22개)
+  - 3.6 핵심 데이터/로직 함수 비교 (7개)
+  - 3.7 렌더링 함수 비교 (12개)
+  - 3.8 추이 분석 함수 비교 (18개)
+  - 3.9 성능 테이블 함수 비교 (13개)
+  - 3.10 성능 차트 함수 비교 (12개)
+  - 3.11 리타겟팅 분석 함수 비교 (8개)
+  - 3.12 계절성 분석 함수 비교 (10개)
+  - 3.13 예측 분석 함수 비교 (6개)
+  - 3.14 UI 상태 변수 비교 (12개)
+  - 3.15 데이터 경로 비교 (8개)
+  - 3.16 함수 통계 요약
+
 ### 2026-01-09 (v5) - QnA 페이지 React 변환
 **FAQ & 문의하기 신규 변환 (`src/app/qna/ReactView.tsx`)**
 
@@ -651,8 +883,8 @@ HTML과 동일한 함수명으로 변경:
 - **⚠️ 구현방식 다름**: React 훅 패턴 사용 (useMemo, useState, useCallback)
 
 ### 유형별 대시보드 (type)
-- **✅ 동일**: 모든 함수명/변수명이 HTML과 완전히 일치
-- **변경 필요 없음**: 처음부터 HTML 명칭과 동일하게 구현됨
+- **✅ 동일**: 22개 유틸리티 함수명, 약 80개 전역 변수명, 상수명이 HTML과 완전히 일치
+- **⚠️ 구현방식 다름**: 약 100개+ 렌더링/초기화/이벤트 함수가 React 훅 패턴으로 변환 (기능 동일)
 
 ### 시계열 대시보드 (timeseries)
 - **✅ 동일**: 10개 변수명 HTML 기준으로 통일 완료

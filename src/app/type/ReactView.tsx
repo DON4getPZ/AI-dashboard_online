@@ -1584,8 +1584,8 @@ export default function TypeDashboardReactView() {
   })
 
   // 성과 분석 상수 (HTML 1:1)
-  const PERF_DEFAULT_LIMIT = 10
-  const PERF_EXPANDED_LIMIT = 50
+  const DETAIL_DEFAULT_LIMIT = 10
+  const DETAIL_EXPANDED_LIMIT = 50
 
   // KPI별 색상 (HTML kpiColors 1:1)
   const kpiColors: Record<string, { bg: string; border: string }> = {
@@ -3224,7 +3224,7 @@ export default function TypeDashboardReactView() {
       return state.sort === 'desc' ? bVal - aVal : aVal - bVal
     })
     const totalCount = allSorted.length
-    const limit = state.showAll ? PERF_EXPANDED_LIMIT : PERF_DEFAULT_LIMIT
+    const limit = state.showAll ? DETAIL_EXPANDED_LIMIT : DETAIL_DEFAULT_LIMIT
     const sorted = allSorted.slice(0, limit)
 
     // 비교 데이터 매핑
@@ -8208,10 +8208,10 @@ export default function TypeDashboardReactView() {
                         )}
                       </div>
                       {/* 더보기 버튼 */}
-                      {chartData.totalCount > PERF_DEFAULT_LIMIT && (
+                      {chartData.totalCount > DETAIL_DEFAULT_LIMIT && (
                         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
                           <button onClick={() => handlePerfChartShowMoreToggle(category)} style={{ padding: '8px 20px', fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 6, cursor: 'pointer', background: state.showAll ? '#f5f5f5' : '#e3f2fd', color: state.showAll ? '#666' : '#1976d2' }}>
-                            {state.showAll ? '접기' : `더보기 (+${chartData.totalCount - PERF_DEFAULT_LIMIT}개)`}
+                            {state.showAll ? '접기' : `더보기 (+${chartData.totalCount - DETAIL_DEFAULT_LIMIT}개)`}
                           </button>
                         </div>
                       )}

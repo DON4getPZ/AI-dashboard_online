@@ -179,6 +179,10 @@ interface PerformanceTrendItem {
   recommendation: string
 }
 
+// 상수 정의 (HTML 1:1)
+const INITIAL_ALERTS_COUNT = 6  // 초기 표시 개수 (2x3)
+const INITIAL_RECOMMENDATIONS_COUNT = 4  // 초기 추천 표시 개수
+
 // 숫자 포맷팅
 const formatNumber = (num: number): string => {
   if (num >= 100000000) return (num / 100000000).toFixed(1) + '억'
@@ -1308,7 +1312,7 @@ export default function ReactView() {
                             <div className="insight-type">로딩</div>
                             <div className="insight-message">데이터를 불러오는 중...</div>
                           </div>
-                        ) : alerts.length > 0 ? alerts.slice(0, 3).map((alert, i) => {
+                        ) : alerts.length > 0 ? alerts.slice(0, INITIAL_ALERTS_COUNT).map((alert, i) => {
                           const severityColors: Record<string, { bg: string; border: string; titleColor: string }> = {
                             'high': { bg: '#ffebee', border: '#ef5350', titleColor: '#c62828' },
                             'medium': { bg: '#fff3e0', border: '#ff9800', titleColor: '#e65100' },
@@ -1374,7 +1378,7 @@ export default function ReactView() {
                             <div className="insight-type">로딩</div>
                             <div className="insight-message">데이터를 불러오는 중...</div>
                           </div>
-                        ) : recommendations.length > 0 ? recommendations.slice(0, 3).map((rec, i) => {
+                        ) : recommendations.length > 0 ? recommendations.slice(0, INITIAL_RECOMMENDATIONS_COUNT).map((rec, i) => {
                           const priorityColors: Record<number, { bg: string; border: string; titleColor: string; icon: string }> = {
                             1: { bg: '#e8f5e9', border: '#4caf50', titleColor: '#2e7d32', icon: '🥇' },
                             2: { bg: '#e3f2fd', border: '#2196f3', titleColor: '#1565c0', icon: '🥈' },
