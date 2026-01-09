@@ -29,30 +29,7 @@ ChartJS.register(
   ChartDataLabels
 )
 
-// CSS 변수
-const cssVars = {
-  primaryMain: '#673ab7',
-  primaryLight: '#ede7f6',
-  primaryDark: '#5e35b1',
-  secondaryMain: '#2196f3',
-  secondaryLight: '#e3f2fd',
-  successMain: '#00c853',
-  successLight: '#b9f6ca',
-  warningMain: '#ffab00',
-  warningLight: '#fff8e1',
-  errorMain: '#ff1744',
-  errorLight: '#ffeaea',
-  grey50: '#fafafa',
-  grey100: '#f5f5f5',
-  grey200: '#eeeeee',
-  grey300: '#e0e0e0',
-  grey500: '#9e9e9e',
-  grey600: '#757575',
-  grey700: '#616161',
-  grey900: '#212121',
-  paper: '#ffffff',
-  background: '#f8fafc'
-}
+// CSS 변수 참조 (globals.css의 :root 변수 사용)
 
 // 스타일 정의
 const styles: { [key: string]: React.CSSProperties } = {
@@ -61,9 +38,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     margin: '0 auto',
     padding: '24px',
     fontFamily: "'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif",
-    backgroundColor: cssVars.background,
+    backgroundColor: 'var(--background)',
     minHeight: '100vh',
-    color: cssVars.grey900,
+    color: 'var(--grey-900)',
     lineHeight: 1.5
   },
   header: {
@@ -75,16 +52,16 @@ const styles: { [key: string]: React.CSSProperties } = {
   h1: {
     fontSize: '24px',
     fontWeight: 700,
-    color: cssVars.grey900,
+    color: 'var(--grey-900)',
     margin: 0
   },
   headerSubtitle: {
     fontSize: '14px',
-    color: cssVars.grey500,
+    color: 'var(--grey-600)',
     marginTop: '4px'
   },
   card: {
-    background: cssVars.paper,
+    background: 'var(--paper)',
     borderRadius: '12px',
     boxShadow: '0 2px 14px 0 rgba(32, 40, 45, 0.08)',
     transition: 'box-shadow 0.3s ease'
@@ -100,7 +77,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     cursor: 'pointer',
     userSelect: 'none',
     padding: '16px 20px',
-    background: cssVars.paper,
+    background: 'var(--paper)',
     borderRadius: '12px',
     boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
     transition: 'box-shadow 0.2s ease'
@@ -111,12 +88,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: '10px',
     fontSize: '16px',
     fontWeight: 600,
-    color: cssVars.grey900
+    color: 'var(--grey-900)'
   },
   collapsibleGuide: {
     fontSize: '12px',
     fontWeight: 400,
-    color: cssVars.grey500,
+    color: 'var(--grey-600)',
     marginLeft: '8px'
   },
   collapsibleToggle: {
@@ -124,8 +101,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: 'center',
     gap: '8px',
     padding: '8px 16px',
-    background: cssVars.primaryLight,
-    color: cssVars.primaryMain,
+    background: 'var(--primary-light)',
+    color: 'var(--primary-main)',
     border: 'none',
     borderRadius: '8px',
     fontSize: '13px',
@@ -148,7 +125,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   filterSection: {
     padding: '20px 24px',
     marginBottom: '16px',
-    background: cssVars.paper,
+    background: 'var(--paper)',
     borderRadius: '12px',
     boxShadow: '0 2px 14px 0 rgba(32, 40, 45, 0.08)'
   },
@@ -161,7 +138,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   filterHeader: {
     fontSize: '16px',
     fontWeight: 600,
-    color: cssVars.grey900,
+    color: 'var(--grey-900)',
     display: 'flex',
     alignItems: 'center',
     gap: '8px'
@@ -169,14 +146,14 @@ const styles: { [key: string]: React.CSSProperties } = {
   filterHeaderBar: {
     width: '4px',
     height: '20px',
-    background: cssVars.primaryMain,
+    background: 'var(--primary-main)',
     borderRadius: '2px'
   },
   resetBtn: {
     padding: '8px 16px',
     border: 'none',
-    background: cssVars.paper,
-    color: cssVars.grey700,
+    background: 'var(--paper)',
+    color: 'var(--grey-700)',
     borderRadius: '8px',
     cursor: 'pointer',
     fontSize: '12px',
@@ -198,7 +175,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   filterLabel: {
     fontSize: '14px',
     fontWeight: 600,
-    color: cssVars.grey900,
+    color: 'var(--grey-900)',
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
@@ -207,7 +184,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   filterLabelBar: {
     width: '4px',
     height: '18px',
-    background: cssVars.primaryMain,
+    background: 'var(--primary-main)',
     borderRadius: '2px'
   },
   dateRange: {
@@ -217,12 +194,12 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   dateInput: {
     padding: '10px 14px',
-    border: `1px solid ${cssVars.grey300}`,
+    border: `1px solid ${'var(--grey-300)'}`,
     borderRadius: '8px',
     fontSize: '14px',
     fontFamily: 'inherit',
-    background: cssVars.paper,
-    color: cssVars.grey900,
+    background: 'var(--paper)',
+    color: 'var(--grey-900)',
     transition: 'all 0.2s ease'
   },
   filterSettingSection: {
@@ -246,19 +223,19 @@ const styles: { [key: string]: React.CSSProperties } = {
   filterGroupLabel: {
     fontSize: '12px',
     fontWeight: 500,
-    color: cssVars.grey700,
+    color: 'var(--grey-700)',
     marginBottom: '8px',
     textTransform: 'uppercase' as const,
     letterSpacing: '0.5px'
   },
   select: {
     padding: '10px 14px',
-    border: `1px solid ${cssVars.grey300}`,
+    border: `1px solid ${'var(--grey-300)'}`,
     borderRadius: '8px',
     fontSize: '14px',
     fontFamily: 'inherit',
-    background: cssVars.paper,
-    color: cssVars.grey900,
+    background: 'var(--paper)',
+    color: 'var(--grey-900)',
     transition: 'all 0.2s ease',
     cursor: 'pointer'
   },
@@ -284,8 +261,8 @@ const styles: { [key: string]: React.CSSProperties } = {
   kpiTab: {
     padding: '10px 24px',
     border: 'none',
-    background: cssVars.paper,
-    color: cssVars.grey700,
+    background: 'var(--paper)',
+    color: 'var(--grey-700)',
     borderRadius: '8px',
     cursor: 'pointer',
     fontWeight: 500,
@@ -293,7 +270,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
   },
   kpiTabActive: {
-    background: cssVars.primaryMain,
+    background: 'var(--primary-main)',
     color: 'white',
     boxShadow: '0 4px 12px rgba(103, 58, 183, 0.4)'
   },
@@ -304,8 +281,8 @@ const styles: { [key: string]: React.CSSProperties } = {
   kpiViewBtn: {
     padding: '10px 24px',
     border: 'none',
-    background: cssVars.paper,
-    color: cssVars.grey700,
+    background: 'var(--paper)',
+    color: 'var(--grey-700)',
     borderRadius: '8px',
     cursor: 'pointer',
     fontWeight: 500,
@@ -313,7 +290,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
   },
   kpiViewBtnActive: {
-    background: cssVars.primaryMain,
+    background: 'var(--primary-main)',
     color: 'white',
     boxShadow: '0 4px 12px rgba(103, 58, 183, 0.4)'
   },
@@ -324,7 +301,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '24px'
   },
   kpiCard: {
-    background: cssVars.paper,
+    background: 'var(--paper)',
     padding: '20px',
     borderRadius: '12px',
     boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
@@ -333,10 +310,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     transition: 'transform 0.2s, box-shadow 0.2s'
   },
   kpiCardHighlight: {
-    borderLeft: `4px solid ${cssVars.primaryMain}`
+    borderLeft: `4px solid ${'var(--primary-main)'}`
   },
   kpiCardSecondary: {
-    background: cssVars.grey50
+    background: 'var(--grey-50)'
   },
   kpiHeader: {
     display: 'flex',
@@ -346,28 +323,28 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   kpiTitle: {
     fontSize: '13px',
-    color: cssVars.grey600,
+    color: 'var(--grey-600)',
     fontWeight: 600
   },
   kpiIcon: {
     width: '36px',
     height: '36px',
-    background: cssVars.grey100,
+    background: 'var(--grey-100)',
     borderRadius: '50%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: cssVars.primaryMain,
+    color: 'var(--primary-main)',
     fontSize: '16px'
   },
   kpiValue: {
     fontSize: '26px',
     fontWeight: 700,
-    color: cssVars.grey900,
+    color: 'var(--grey-900)',
     marginBottom: '8px'
   },
   kpiValueHighlight: {
-    color: cssVars.primaryMain
+    color: 'var(--primary-main)'
   },
   kpiTrend: {
     fontSize: '13px',
@@ -377,13 +354,13 @@ const styles: { [key: string]: React.CSSProperties } = {
     flexWrap: 'wrap' as const
   },
   kpiTrendUp: {
-    color: cssVars.successMain
+    color: 'var(--success-main)'
   },
   kpiTrendDown: {
-    color: cssVars.errorMain
+    color: 'var(--error-main)'
   },
   kpiTrendNeutral: {
-    color: cssVars.grey500
+    color: 'var(--grey-600)'
   },
   trendValue: {
     fontWeight: 600
@@ -395,20 +372,20 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontSize: '11px',
     fontWeight: 600,
     borderRadius: '4px',
-    background: cssVars.grey100,
-    color: cssVars.grey600
+    background: 'var(--grey-100)',
+    color: 'var(--grey-600)'
   },
   trendPpPositive: {
-    color: cssVars.successMain,
+    color: 'var(--success-main)',
     background: 'rgba(76, 175, 80, 0.1)'
   },
   trendPpNegative: {
-    color: cssVars.errorMain,
+    color: 'var(--error-main)',
     background: 'rgba(244, 67, 54, 0.1)'
   },
   trendDetail: {
     fontSize: '11px',
-    color: cssVars.grey500,
+    color: 'var(--grey-600)',
     marginTop: '6px'
   },
   prevLabel: {
@@ -416,13 +393,13 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   prevValue: {
     fontWeight: 600,
-    color: cssVars.grey700
+    color: 'var(--grey-700)'
   },
   // 차트 섹션
   chartSection: {
     marginBottom: '24px',
     padding: '24px',
-    background: cssVars.paper,
+    background: 'var(--paper)',
     borderRadius: '12px',
     boxShadow: '0 2px 14px 0 rgba(32, 40, 45, 0.08)'
   },
@@ -435,7 +412,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   chartHeader: {
     fontSize: '16px',
     fontWeight: 600,
-    color: cssVars.grey900,
+    color: 'var(--grey-900)',
     display: 'flex',
     alignItems: 'center',
     gap: '8px'
@@ -443,7 +420,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   chartHeaderBar: {
     width: '4px',
     height: '20px',
-    background: cssVars.secondaryMain,
+    background: 'var(--secondary-main)',
     borderRadius: '2px'
   },
   dataLabelToggle: {
@@ -452,8 +429,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: '6px',
     padding: '8px 16px',
     border: 'none',
-    background: cssVars.paper,
-    color: cssVars.grey700,
+    background: 'var(--paper)',
+    color: 'var(--grey-700)',
     borderRadius: '8px',
     cursor: 'pointer',
     fontSize: '13px',
@@ -463,7 +440,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
   },
   dataLabelToggleActive: {
-    background: cssVars.primaryMain,
+    background: 'var(--primary-main)',
     color: 'white',
     boxShadow: '0 4px 12px rgba(103, 58, 183, 0.4)'
   },
@@ -486,16 +463,16 @@ const styles: { [key: string]: React.CSSProperties } = {
   // 테이블 섹션
   tableSection: {
     overflow: 'hidden',
-    background: cssVars.paper,
+    background: 'var(--paper)',
     borderRadius: '12px',
     boxShadow: '0 2px 14px 0 rgba(32, 40, 45, 0.08)'
   },
   tableHeader: {
     padding: '20px 24px',
-    borderBottom: `1px solid ${cssVars.grey200}`,
+    borderBottom: `1px solid ${'var(--grey-200)'}`,
     fontSize: '16px',
     fontWeight: 600,
-    color: cssVars.grey900,
+    color: 'var(--grey-900)',
     display: 'flex',
     alignItems: 'center',
     gap: '8px'
@@ -503,7 +480,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   tableHeaderBar: {
     width: '4px',
     height: '20px',
-    background: cssVars.successMain,
+    background: 'var(--success-main)',
     borderRadius: '2px'
   },
   tableContainer: {
@@ -517,10 +494,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '14px 16px',
     textAlign: 'right' as const,
     fontSize: '14px',
-    background: cssVars.grey50,
+    background: 'var(--grey-50)',
     fontWeight: 600,
-    color: cssVars.grey700,
-    borderBottom: `2px solid ${cssVars.grey200}`,
+    color: 'var(--grey-700)',
+    borderBottom: `2px solid ${'var(--grey-200)'}`,
     whiteSpace: 'nowrap' as const
   },
   thFirst: {
@@ -530,39 +507,39 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '14px 16px',
     textAlign: 'right' as const,
     fontSize: '14px',
-    borderBottom: `1px solid ${cssVars.grey100}`,
-    color: cssVars.grey900
+    borderBottom: `1px solid ${'var(--grey-100)'}`,
+    color: 'var(--grey-900)'
   },
   tdFirst: {
     textAlign: 'left' as const,
     fontWeight: 500
   },
   positive: {
-    color: cssVars.successMain,
+    color: 'var(--success-main)',
     fontWeight: 600
   },
   negative: {
-    color: cssVars.errorMain,
+    color: 'var(--error-main)',
     fontWeight: 600
   },
   totalRow: {
     fontWeight: 600,
-    background: `${cssVars.primaryLight} !important`
+    background: `${'var(--primary-light)'} !important`
   },
   totalRowTd: {
-    borderTop: `2px solid ${cssVars.primaryMain}`,
-    color: cssVars.primaryDark
+    borderTop: `2px solid ${'var(--primary-main)'}`,
+    color: 'var(--primary-dark)'
   },
   showMoreContainer: {
     padding: '16px 24px',
     textAlign: 'center' as const,
-    borderTop: `1px solid ${cssVars.grey200}`
+    borderTop: `1px solid ${'var(--grey-200)'}`
   },
   showMoreBtn: {
     padding: '10px 32px',
-    background: cssVars.grey100,
-    color: cssVars.grey700,
-    border: `1px solid ${cssVars.grey300}`,
+    background: 'var(--grey-100)',
+    color: 'var(--grey-700)',
+    border: `1px solid ${'var(--grey-300)'}`,
     borderRadius: '8px',
     cursor: 'pointer',
     fontWeight: 500,
@@ -573,7 +550,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   loading: {
     textAlign: 'center' as const,
     padding: '60px 40px',
-    color: cssVars.grey500
+    color: 'var(--grey-600)'
   }
 }
 
@@ -1445,7 +1422,7 @@ export default function ReactView() {
                     value={filters.startDate}
                     onChange={(e) => handleFilterChange('startDate', e.target.value)}
                   />
-                  <span style={{ color: cssVars.grey500, fontWeight: 500 }}>~</span>
+                  <span style={{ color: 'var(--grey-600)', fontWeight: 500 }}>~</span>
                   <input
                     type="date"
                     style={styles.dateInput}
@@ -1666,7 +1643,7 @@ export default function ReactView() {
                 <div style={{ ...styles.kpiCard, ...styles.kpiCardSecondary }}>
                   <div style={styles.kpiHeader}>
                     <span style={styles.kpiTitle}>총 노출</span>
-                    <div style={{ ...styles.kpiIcon, background: cssVars.grey200 }}>👀</div>
+                    <div style={{ ...styles.kpiIcon, background: 'var(--grey-200)' }}>👀</div>
                   </div>
                   <div style={styles.kpiValue}>{formatNumber(totals.노출)}</div>
                   <div style={{ ...styles.kpiTrend, ...styles.kpiTrendNeutral }}>
@@ -1676,7 +1653,7 @@ export default function ReactView() {
                 <div style={{ ...styles.kpiCard, ...styles.kpiCardSecondary }}>
                   <div style={styles.kpiHeader}>
                     <span style={styles.kpiTitle}>총 클릭</span>
-                    <div style={{ ...styles.kpiIcon, background: cssVars.grey200 }}>👆</div>
+                    <div style={{ ...styles.kpiIcon, background: 'var(--grey-200)' }}>👆</div>
                   </div>
                   <div style={styles.kpiValue}>{formatNumber(totals.클릭)}</div>
                   <div style={{ ...styles.kpiTrend, ...styles.kpiTrendNeutral }}>
@@ -1686,7 +1663,7 @@ export default function ReactView() {
                 <div style={{ ...styles.kpiCard, ...styles.kpiCardSecondary }}>
                   <div style={styles.kpiHeader}>
                     <span style={styles.kpiTitle}>총 전환수</span>
-                    <div style={{ ...styles.kpiIcon, background: cssVars.grey200 }}>✅</div>
+                    <div style={{ ...styles.kpiIcon, background: 'var(--grey-200)' }}>✅</div>
                   </div>
                   <div style={styles.kpiValue}>{formatNumber(totals.전환수)}</div>
                   <div style={{ ...styles.kpiTrend, ...styles.kpiTrendNeutral }}>
@@ -1696,7 +1673,7 @@ export default function ReactView() {
                 <div style={{ ...styles.kpiCard, ...styles.kpiCardSecondary }}>
                   <div style={styles.kpiHeader}>
                     <span style={styles.kpiTitle}>총 전환값</span>
-                    <div style={{ ...styles.kpiIcon, background: cssVars.grey200 }}>💵</div>
+                    <div style={{ ...styles.kpiIcon, background: 'var(--grey-200)' }}>💵</div>
                   </div>
                   <div style={styles.kpiValue}>{formatNumber(totals.전환값)}</div>
                   <div style={{ ...styles.kpiTrend, ...styles.kpiTrendNeutral }}>
@@ -1768,7 +1745,7 @@ export default function ReactView() {
                 <div style={{ ...styles.kpiCard, ...styles.kpiCardSecondary }}>
                   <div style={styles.kpiHeader}>
                     <span style={styles.kpiTitle}>노출</span>
-                    <div style={{ ...styles.kpiIcon, background: cssVars.grey200 }}>👀</div>
+                    <div style={{ ...styles.kpiIcon, background: 'var(--grey-200)' }}>👀</div>
                   </div>
                   <div style={styles.kpiValue}>{trendData ? formatNumber(trendData.current.노출) : '-'}</div>
                   {trendData ? renderTrend(trendData.changes.노출, trendData.prev.노출, trendData.current.노출, true, false) : (
@@ -1778,7 +1755,7 @@ export default function ReactView() {
                 <div style={{ ...styles.kpiCard, ...styles.kpiCardSecondary }}>
                   <div style={styles.kpiHeader}>
                     <span style={styles.kpiTitle}>클릭</span>
-                    <div style={{ ...styles.kpiIcon, background: cssVars.grey200 }}>👆</div>
+                    <div style={{ ...styles.kpiIcon, background: 'var(--grey-200)' }}>👆</div>
                   </div>
                   <div style={styles.kpiValue}>{trendData ? formatNumber(trendData.current.클릭) : '-'}</div>
                   {trendData ? renderTrend(trendData.changes.클릭, trendData.prev.클릭, trendData.current.클릭, true, false) : (
@@ -1788,7 +1765,7 @@ export default function ReactView() {
                 <div style={{ ...styles.kpiCard, ...styles.kpiCardSecondary }}>
                   <div style={styles.kpiHeader}>
                     <span style={styles.kpiTitle}>전환수</span>
-                    <div style={{ ...styles.kpiIcon, background: cssVars.grey200 }}>✅</div>
+                    <div style={{ ...styles.kpiIcon, background: 'var(--grey-200)' }}>✅</div>
                   </div>
                   <div style={styles.kpiValue}>{trendData ? formatNumber(trendData.current.전환수) : '-'}</div>
                   {trendData ? renderTrend(trendData.changes.전환수, trendData.prev.전환수, trendData.current.전환수, true, false) : (
@@ -1798,7 +1775,7 @@ export default function ReactView() {
                 <div style={{ ...styles.kpiCard, ...styles.kpiCardSecondary }}>
                   <div style={styles.kpiHeader}>
                     <span style={styles.kpiTitle}>전환값</span>
-                    <div style={{ ...styles.kpiIcon, background: cssVars.grey200 }}>💵</div>
+                    <div style={{ ...styles.kpiIcon, background: 'var(--grey-200)' }}>💵</div>
                   </div>
                   <div style={styles.kpiValue}>{trendData ? formatNumber(trendData.current.전환값) : '-'}</div>
                   {trendData ? renderTrend(trendData.changes.전환값, trendData.prev.전환값, trendData.current.전환값, true, false) : (
@@ -1925,16 +1902,16 @@ export default function ReactView() {
                   ))}
                   {/* 합계 행 */}
                   <tr style={styles.totalRow}>
-                    <td style={{ ...styles.td, ...styles.tdFirst, ...styles.totalRowTd, background: cssVars.primaryLight }}>합계</td>
-                    <td style={{ ...styles.td, ...styles.totalRowTd, background: cssVars.primaryLight }}>{formatNumber(totals.비용)}</td>
-                    <td style={{ ...styles.td, ...styles.totalRowTd, background: cssVars.primaryLight }}>{formatNumber(totals.노출)}</td>
-                    <td style={{ ...styles.td, ...styles.totalRowTd, background: cssVars.primaryLight }}>{formatNumber(totals.CPM)}</td>
-                    <td style={{ ...styles.td, ...styles.totalRowTd, background: cssVars.primaryLight }}>{formatNumber(totals.클릭)}</td>
-                    <td style={{ ...styles.td, ...styles.totalRowTd, background: cssVars.primaryLight }}>{formatNumber(totals.CPC)}</td>
-                    <td style={{ ...styles.td, ...styles.totalRowTd, background: cssVars.primaryLight }}>{formatNumber(totals.전환수)}</td>
-                    <td style={{ ...styles.td, ...styles.totalRowTd, background: cssVars.primaryLight }}>{formatNumber(totals.CPA)}</td>
-                    <td style={{ ...styles.td, ...styles.totalRowTd, background: cssVars.primaryLight }}>{formatNumber(totals.전환값)}</td>
-                    <td style={{ ...styles.td, ...styles.totalRowTd, background: cssVars.primaryLight, ...(totals.ROAS >= 100 ? styles.positive : styles.negative) }}>
+                    <td style={{ ...styles.td, ...styles.tdFirst, ...styles.totalRowTd, background: 'var(--primary-light)' }}>합계</td>
+                    <td style={{ ...styles.td, ...styles.totalRowTd, background: 'var(--primary-light)' }}>{formatNumber(totals.비용)}</td>
+                    <td style={{ ...styles.td, ...styles.totalRowTd, background: 'var(--primary-light)' }}>{formatNumber(totals.노출)}</td>
+                    <td style={{ ...styles.td, ...styles.totalRowTd, background: 'var(--primary-light)' }}>{formatNumber(totals.CPM)}</td>
+                    <td style={{ ...styles.td, ...styles.totalRowTd, background: 'var(--primary-light)' }}>{formatNumber(totals.클릭)}</td>
+                    <td style={{ ...styles.td, ...styles.totalRowTd, background: 'var(--primary-light)' }}>{formatNumber(totals.CPC)}</td>
+                    <td style={{ ...styles.td, ...styles.totalRowTd, background: 'var(--primary-light)' }}>{formatNumber(totals.전환수)}</td>
+                    <td style={{ ...styles.td, ...styles.totalRowTd, background: 'var(--primary-light)' }}>{formatNumber(totals.CPA)}</td>
+                    <td style={{ ...styles.td, ...styles.totalRowTd, background: 'var(--primary-light)' }}>{formatNumber(totals.전환값)}</td>
+                    <td style={{ ...styles.td, ...styles.totalRowTd, background: 'var(--primary-light)', ...(totals.ROAS >= 100 ? styles.positive : styles.negative) }}>
                       {formatROAS(totals.ROAS)}
                     </td>
                   </tr>

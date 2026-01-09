@@ -1750,7 +1750,7 @@ export default function ReactView() {
       )}
 
       {/* 1. 핵심 KPI 요약 */}
-      <div className="kpi-summary-grid" id="kpiSummaryGrid">
+      <div className="kpi-summary-grid" id="funnelKpiSummaryGrid">
         {kpiSummary.map((kpi, index) => (
           <div key={index} className="kpi-summary-card card">
             <div className="kpi-summary-label">{kpi.label} (총 합계)</div>

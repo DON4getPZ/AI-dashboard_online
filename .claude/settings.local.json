@@ -29,7 +29,9 @@
       "Bash(findstr:*)",
       "Bash(powershell:*)",
       "Bash(npm run dev:*)",
-      "Bash(taskkill /F /PID 11624)"
+      "Bash(taskkill /F /PID 11624)",
+      "Bash(comm -23:*)",
+      "Bash(comm -12:*)"
     ],
     "deny": [],
     "ask": []

@@ -862,6 +862,16 @@
 
 ## 변경 이력
 
+### 2026-01-09 (v10) - 광고 성과 대시보드 CSS 변수 통일
+**메인 대시보드 스타일 방식 통일 (`src/app/ReactView.tsx`)**
+
+- **CSS 변수 방식 통일**: JS 객체 (`cssVars.propertyName`) → CSS 변수 (`var(--property-name)`)
+  - 기존: `cssVars = { primaryMain: '#673ab7', ... }` 객체 정의 후 참조
+  - 변경: `globals.css`의 `:root` CSS 변수 직접 참조
+- 91개 cssVars 참조를 CSS 변수로 변환
+- 다른 대시보드(소재별, 시계열, 유형별, QnA)와 동일한 방식으로 통일
+- **디자인 차이점 점검 완료**: HTML 원본과 React 스타일 일치 확인
+
 ### 2026-01-09 (v9) - type 분기별 추이 차트 및 스타일 통일
 **유형별 대시보드 계절성 분석 탭 (Section 3.17, 3.18, 3.19 추가)**
 

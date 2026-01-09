@@ -371,40 +371,6 @@
             margin-bottom: 24px;
         }
 
-        .kpi-summary-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .kpi-summary-card {
-            padding: 20px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--paper) 0%, var(--grey-50) 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .kpi-summary-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-        }
-
-        .kpi-summary-card:nth-child(1)::before { background: #673ab7; }
-        .kpi-summary-card:nth-child(2)::before { background: #2196f3; }
-        .kpi-summary-card:nth-child(3)::before { background: #ff9800; }
-        .kpi-summary-card:nth-child(4)::before { background: #4caf50; }
-        .kpi-summary-card:nth-child(5)::before { background: #00c853; }
-        .kpi-summary-card:nth-child(6)::before { background: #9c27b0; }
-        .kpi-summary-card:nth-child(7)::before { background: #03a9f4; }
-        .kpi-summary-card:nth-child(8)::before { background: #8bc34a; }
-        .kpi-summary-card:nth-child(9)::before { background: #ff5722; }
-
         /* KPI 행 구분 스타일 */
         .kpi-row-label {
             font-size: 12px;
@@ -422,27 +388,6 @@
 
         .kpi-row-container:last-child {
             margin-bottom: 0;
-        }
-
-        .kpi-summary-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--grey-500);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-
-        .kpi-summary-value {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--grey-900);
-        }
-
-        .kpi-summary-unit {
-            font-size: 11px;
-            color: var(--grey-500);
-            margin-top: 4px;
         }
 
         .kpi-forecast-badge {
@@ -512,10 +457,6 @@
 
         .kpi-section.show-all .kpi-grid.kpi-grid-secondary {
             display: grid;
-        }
-
-        .kpi-summary-card.secondary {
-            background: var(--grey-50);
         }
 
         /* KPI 그리드 - 업그레이드 디자인 */
@@ -1308,9 +1249,6 @@
 
         /* 반응형 */
         @media (max-width: 1400px) {
-            .kpi-summary-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
             .visualization-grid {
                 grid-template-columns: 1fr;
             }
@@ -1331,9 +1269,6 @@
         @media (max-width: 768px) {
             .main-content {
                 padding: 16px;
-            }
-            .kpi-summary-grid {
-                grid-template-columns: repeat(2, 1fr);
             }
             .chart-container {
                 height: 300px;
