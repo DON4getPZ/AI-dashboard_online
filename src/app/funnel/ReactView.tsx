@@ -107,26 +107,41 @@ interface SummaryCard {
 }
 
 interface KeyInsight {
-  title: string;
-  description: string;
-  type: string;
-  action?: {
-    text: string;
-    link?: string;
-  };
+  category: string;
+  icon: string;
+  label: string;
+  bg_color: string;
+  border_color: string;
+  text_color: string;
+  message: string;
+  urgency_score?: number;
   sub_items?: string[];
+  action?: {
+    type?: string;
+    text: string;
+    secondary?: string;
+  };
 }
 
 interface MicroSegmentAlert {
   type: 'problem' | 'opportunity';
   category: string;
   sub_type: string;
-  severity: 'high' | 'medium' | 'low';
+  severity: 'critical' | 'high' | 'medium' | 'low';
   title: string;
   diagnosis?: string;
   reason?: string;
-  impact?: Record<string, unknown>;
-  action_detail?: Record<string, unknown>;
+  action?: string;
+  impact?: {
+    lost_users?: number;
+    potential_revenue?: number;
+    [key: string]: unknown;
+  };
+  action_detail?: {
+    primary?: string;
+    secondary?: string;
+    [key: string]: unknown;
+  };
   urgency_score?: number;
   metrics?: Record<string, string | number>;
 }
@@ -182,6 +197,10 @@ interface TrendItem {
   change_pct: number;
   direction: string;
   risk_level?: string;
+  improvement_level?: string;
+  recent_avg?: number;
+  previous_avg?: number;
+  recommendation?: string;
 }
 
 interface CrmAction {
@@ -362,6 +381,7 @@ export default function ReactView() {
   // 탭 상태
   const [decisionToolTab, setDecisionToolTab] = useState<string>('summary');
   const [channelAnalysisTab, setChannelAnalysisTab] = useState<string>('table');
+  const [currentTop10Funnel, setCurrentTop10Funnel] = useState<string>('purchase');
   const [customerAnalysisTab, setCustomerAnalysisTab] = useState<string>('newVsReturning');
 
   // Refs
@@ -494,7 +514,7 @@ export default function ReactView() {
       .sort((a: MicroSegmentAlert, b: MicroSegmentAlert) => (b.urgency_score || 0) - (a.urgency_score || 0));
 
     return {
-      high: problemAlerts.filter((a: MicroSegmentAlert) => a.severity === 'high'),
+      high: problemAlerts.filter((a: MicroSegmentAlert) => ['critical', 'high'].includes(a.severity)),
       medium: problemAlerts.filter((a: MicroSegmentAlert) => a.severity === 'medium')
     };
   }, [getPeriodData]);
@@ -521,18 +541,53 @@ export default function ReactView() {
   // performanceTrends (useMemo)
   // ========================================
   const performanceTrends = useMemo(() => {
-    if (!insightsData?.performance_trends) return { improvements: [], declines: [] };
+    const formatDate = (date: Date) => {
+      const m = date.getMonth() + 1;
+      const d = date.getDate();
+      return `${m}/${d}`;
+    };
+
+    const getPeriodDateRange = (days: number) => {
+      let lastDate = new Date();
+      if (insightsData?.overall?.current_period?.end_date) {
+        lastDate = new Date(insightsData.overall.current_period.end_date);
+      }
+
+      const recentEnd = new Date(lastDate);
+      const recentStart = new Date(lastDate);
+      recentStart.setDate(recentStart.getDate() - (days - 1));
+
+      const previousEnd = new Date(lastDate);
+      previousEnd.setDate(previousEnd.getDate() - days);
+      const previousStart = new Date(lastDate);
+      previousStart.setDate(previousStart.getDate() - (days * 2 - 1));
+
+      return { recentStart, recentEnd, previousStart, previousEnd };
+    };
+
+    if (!insightsData?.performance_trends) return { improvements: [], declines: [], periodText: '최근 7일 vs 이전 7일', periodTextHtml: '' };
 
     const trends = insightsData.performance_trends;
     const dataKeyMapImp: Record<string, string> = { '7d': 'improvements_7d', '14d': 'improvements_14d', '30d': 'improvements_30d' };
     const dataKeyMapDec: Record<string, string> = { '7d': 'declines_7d', '14d': 'declines_14d', '30d': 'declines_30d' };
+    const periodTextMap: Record<string, string> = { '7d': '최근 7일 vs 이전 7일', '14d': '최근 14일 vs 이전 14일', '30d': '최근 30일 vs 이전 30일' };
+    const daysMap: Record<string, number> = { '7d': 7, '14d': 14, '30d': 30 };
 
     const impKey = dataKeyMapImp[trendPeriod] || 'improvements_7d';
     const decKey = dataKeyMapDec[trendPeriod] || 'declines_7d';
+    const periodText = periodTextMap[trendPeriod] || '최근 7일 vs 이전 7일';
+    const days = daysMap[trendPeriod] || 7;
+    const { recentStart, recentEnd, previousStart, previousEnd } = getPeriodDateRange(days);
 
     return {
       improvements: (trends as Record<string, TrendItem[]>)[impKey] || [],
-      declines: (trends as Record<string, TrendItem[]>)[decKey] || []
+      declines: (trends as Record<string, TrendItem[]>)[decKey] || [],
+      periodText,
+      days,
+      recentStart: formatDate(recentStart),
+      recentEnd: formatDate(recentEnd),
+      previousStart: formatDate(previousStart),
+      previousEnd: formatDate(previousEnd)
     };
   }, [insightsData, trendPeriod]);
 
@@ -1361,20 +1416,24 @@ export default function ReactView() {
   // ========================================
   const bcgMatrix = useMemo(() => {
     const periodData = getPeriodData();
-    if (!periodData?.channel_strategy?.channels) return null;
+    if (!periodData?.channel_strategy || periodData.channel_strategy.status !== 'success') return null;
 
     const strategy = periodData.channel_strategy;
-    const quadrants: Record<string, { channels: string[]; color: string; description: string }> = {
-      'star': { channels: [], color: '#4caf50', description: '스타 채널 (높은 성장, 높은 점유)' },
-      'question_mark': { channels: [], color: '#ff9800', description: '물음표 채널 (높은 성장, 낮은 점유)' },
-      'cash_cow': { channels: [], color: '#2196f3', description: '캐시카우 채널 (낮은 성장, 높은 점유)' },
-      'dog': { channels: [], color: '#9e9e9e', description: '도그 채널 (낮은 성장, 낮은 점유)' }
+    const quadrants: Record<string, { channels: { name: string; cvr: number; action: string }[]; color: string; bgColor: string; title: string; desc: string }> = {
+      'cash_cow': { channels: [], color: '#4caf50', bgColor: '#e8f5e9', title: '👑 Cash Cow (효자 채널)', desc: '트래픽도 많고 전환율도 높음 - 투자 유지' },
+      'hidden_gem': { channels: [], color: '#2196f3', bgColor: '#e3f2fd', title: '💎 Hidden Gem (숨은 보석)', desc: '전환율은 높지만 트래픽이 적음 - 투자 확대' },
+      'money_pit': { channels: [], color: '#ff9800', bgColor: '#fff3e0', title: '💸 Money Pit (밑 빠진 독)', desc: '트래픽은 많지만 전환율이 낮음 - 최적화 필요' },
+      'dog': { channels: [], color: '#9e9e9e', bgColor: '#fafafa', title: '🤔 Dog (재검토 필요)', desc: '트래픽도 전환율도 낮음 - 전략 재고' }
     };
 
-    Object.entries(strategy.channels!).forEach(([channelName, channelInfo]) => {
+    Object.entries(strategy.channels || {}).forEach(([channelName, channelInfo]) => {
       const quadrant = channelInfo.bcg_matrix?.quadrant;
       if (quadrant && quadrants[quadrant]) {
-        quadrants[quadrant].channels.push(channelName);
+        quadrants[quadrant].channels.push({
+          name: channelName,
+          cvr: channelInfo.stats?.cvr || 0,
+          action: channelInfo.bcg_matrix?.action || ''
+        });
       }
     });
 
@@ -1402,11 +1461,16 @@ export default function ReactView() {
   // ========================================
   // crmActions (useMemo for renderCrmActions)
   // ========================================
-  const crmActions = useMemo(() => {
-    if (!insightsData?.crm_actions_by_period) return [];
+  const crmActionsData = useMemo(() => {
+    if (!insightsData?.crm_actions_by_period) return { hasData: false, actions: [], periodLabel: '' };
     const crmActionsByPeriod = insightsData.crm_actions_by_period;
-    if (!crmActionsByPeriod[currentPeriod]) return [];
-    return crmActionsByPeriod[currentPeriod].crm_actions || [];
+    if (!crmActionsByPeriod[currentPeriod]) return { hasData: false, actions: [], periodLabel: '' };
+    const periodCrmData = crmActionsByPeriod[currentPeriod];
+    return {
+      hasData: true,
+      actions: periodCrmData.crm_actions || [],
+      periodLabel: periodCrmData.period_label || currentPeriod
+    };
   }, [insightsData, currentPeriod]);
 
   // ========================================
@@ -1836,601 +1900,1104 @@ export default function ReactView() {
       </div>
 
       {/* 3. 고급 분석 결과 (A/B Testing, Clustering, Churn Prediction) */}
-      <div style={{ marginBottom: '24px' }}>
-        {/* 접기/펼치기 헤더 */}
-        <div
-          onClick={() => setDecisionToolExpanded(!decisionToolExpanded)}
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            cursor: 'pointer',
-            padding: '20px 24px',
-            background: 'white',
-            borderRadius: decisionToolExpanded ? '12px 12px 0 0' : '12px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', fontWeight: 600, color: '#212121' }}>
-            <span>🔬</span>
+      <div className="collapsible-section">
+        <div className="collapsible-header" onClick={() => setDecisionToolExpanded(!decisionToolExpanded)}>
+          <div className="collapsible-title">
+            <span className="collapsible-icon">🔬</span>
             <span>데이터 기반 의사결정 도구 (핵심 요약, 긴급 개선, 채널 분석, 예산, CRM 가이드)</span>
           </div>
-          <button style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '8px 16px',
-            background: '#ede7f6',
-            color: '#673ab7',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: 500,
-            cursor: 'pointer'
-          }}>
+          <button className="collapsible-toggle">
             <span>{decisionToolExpanded ? '접기' : '펼치기'}</span>
-            <span style={{ transform: decisionToolExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>▼</span>
+            <span className={`collapsible-toggle-icon ${decisionToolExpanded ? '' : 'collapsed'}`}>▼</span>
           </button>
         </div>
-
-        {/* 접기/펼치기 콘텐츠 */}
-        <div style={{
-          maxHeight: decisionToolExpanded ? '10000px' : '0',
-          overflow: 'hidden',
-          transition: 'max-height 0.4s ease, opacity 0.3s ease',
-          opacity: decisionToolExpanded ? 1 : 0,
-          background: 'white',
-          borderRadius: '0 0 12px 12px',
-          boxShadow: decisionToolExpanded ? '0 2px 8px rgba(0,0,0,0.08)' : 'none'
-        }}>
-          <div style={{ padding: '24px' }}>
-            {/* 기간 필터 버튼 */}
-            <div style={{
-              marginBottom: '12px',
-              padding: '12px 16px',
-              background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-              borderRadius: '10px',
-              border: '1px solid #dee2e6'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '12px', fontWeight: 600, color: '#495057' }}>📅 분석 기간:</span>
-                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                  {['full', '180d', '90d', '30d'].map(period => (
-                    <button
-                      key={period}
-                      onClick={() => switchPeriod(period)}
-                      style={{
-                        padding: '6px 14px',
-                        fontSize: '11px',
-                        fontWeight: 600,
-                        border: currentPeriod === period ? '1px solid #673ab7' : '1px solid #dee2e6',
-                        borderRadius: '20px',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        background: currentPeriod === period ? '#673ab7' : 'white',
-                        color: currentPeriod === period ? 'white' : '#495057'
-                      }}
-                    >
-                      {period === 'full' ? '전체 기간' : `최근 ${period}`}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* 탭 버튼 */}
-            <div style={{ display: 'flex', gap: '6px', marginBottom: '24px', flexWrap: 'wrap', alignItems: 'center' }}>
-              {[
-                { key: 'summary', label: '📊 핵심 요약' },
-                { key: 'urgent', label: `🚨 긴급 개선 (${urgentAlertsData.high.length + urgentAlertsData.medium.length})` },
-                { key: 'clustering', label: '채널 그룹별 분석' },
-                { key: 'budget', label: '예산 투자 가이드' },
-                { key: 'crm_guide', label: 'CRM 가이드' }
-              ].map(tab => (
+        <div className={`collapsible-content ${decisionToolExpanded ? 'expanded' : ''}`}>
+          {/* 기간 필터 버튼 */}
+          <div style={{ marginBottom: '12px', padding: '12px 16px', background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)', borderRadius: '10px', border: '1px solid #dee2e6' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#495057' }}>📅 분석 기간:</span>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 <button
-                  key={tab.key}
-                  onClick={() => setDecisionToolTab(tab.key)}
+                  className={`period-filter-btn ${currentPeriod === 'full' ? 'active' : ''}`}
+                  data-period="full"
+                  onClick={() => switchPeriod('full')}
                   style={{
-                    padding: '10px 24px',
-                    border: 'none',
-                    background: decisionToolTab === tab.key ? '#673ab7' : 'white',
-                    color: decisionToolTab === tab.key ? 'white' : '#616161',
-                    borderRadius: '8px',
+                    padding: '6px 14px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    border: currentPeriod === 'full' ? '1px solid #673ab7' : '1px solid #dee2e6',
+                    borderRadius: '20px',
                     cursor: 'pointer',
-                    fontWeight: 500,
-                    fontSize: '14px',
-                    boxShadow: decisionToolTab === tab.key ? '0 4px 12px rgba(103, 58, 183, 0.4)' : '0 1px 3px rgba(0,0,0,0.08)'
+                    transition: 'all 0.2s',
+                    background: currentPeriod === 'full' ? '#673ab7' : 'white',
+                    color: currentPeriod === 'full' ? 'white' : '#495057'
                   }}
                 >
-                  {tab.label}
+                  전체 기간
                 </button>
-              ))}
+                <button
+                  className={`period-filter-btn ${currentPeriod === '180d' ? 'active' : ''}`}
+                  data-period="180d"
+                  onClick={() => switchPeriod('180d')}
+                  style={{
+                    padding: '6px 14px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    border: currentPeriod === '180d' ? '1px solid #673ab7' : '1px solid #dee2e6',
+                    borderRadius: '20px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    background: currentPeriod === '180d' ? '#673ab7' : 'white',
+                    color: currentPeriod === '180d' ? 'white' : '#495057'
+                  }}
+                >
+                  최근 180일
+                </button>
+                <button
+                  className={`period-filter-btn ${currentPeriod === '90d' ? 'active' : ''}`}
+                  data-period="90d"
+                  onClick={() => switchPeriod('90d')}
+                  style={{
+                    padding: '6px 14px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    border: currentPeriod === '90d' ? '1px solid #673ab7' : '1px solid #dee2e6',
+                    borderRadius: '20px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    background: currentPeriod === '90d' ? '#673ab7' : 'white',
+                    color: currentPeriod === '90d' ? 'white' : '#495057'
+                  }}
+                >
+                  최근 90일
+                </button>
+                <button
+                  className={`period-filter-btn ${currentPeriod === '30d' ? 'active' : ''}`}
+                  data-period="30d"
+                  onClick={() => switchPeriod('30d')}
+                  style={{
+                    padding: '6px 14px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    border: currentPeriod === '30d' ? '1px solid #673ab7' : '1px solid #dee2e6',
+                    borderRadius: '20px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    background: currentPeriod === '30d' ? '#673ab7' : 'white',
+                    color: currentPeriod === '30d' ? 'white' : '#495057'
+                  }}
+                >
+                  최근 30일
+                </button>
+              </div>
+              <span id="periodDateRange" style={{ fontSize: '11px', color: '#6c757d', marginLeft: 'auto' }}></span>
             </div>
+          </div>
 
-            {/* 탭 1: 핵심 요약 */}
-            {decisionToolTab === 'summary' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-                {keyInsights.length > 0 ? keyInsights.map((insight, index) => {
-                  const typeStyles: Record<string, { bg: string; border: string }> = {
-                    positive: { bg: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%)', border: '#4caf50' },
-                    negative: { bg: 'linear-gradient(135deg, #ffebee 0%, #fce4ec 100%)', border: '#f44336' },
-                    neutral: { bg: 'linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%)', border: '#ff9800' },
-                    opportunity: { bg: 'linear-gradient(135deg, #e3f2fd 0%, #e1f5fe 100%)', border: '#2196f3' }
-                  };
-                  const style = typeStyles[insight.type] || typeStyles.neutral;
+          {/* 탭 버튼 */}
+          <div className="view-type-section" style={{ marginBottom: '24px', flexWrap: 'wrap', gap: '6px', alignItems: 'center', display: 'flex' }}>
+            <button
+              className={`view-btn decision-tool-tab-btn period-filter-enabled ${decisionToolTab === 'summary' ? 'active' : ''}`}
+              data-tab="summary"
+              title="선택한 기간 필터가 적용됩니다"
+              onClick={() => setDecisionToolTab('summary')}
+            >
+              📊 핵심 요약
+            </button>
+            <button
+              className={`view-btn decision-tool-tab-btn period-filter-enabled ${decisionToolTab === 'urgent' ? 'active' : ''}`}
+              data-tab="urgent"
+              title="선택한 기간 필터가 적용됩니다"
+              onClick={() => setDecisionToolTab('urgent')}
+            >
+              🚨 긴급 개선 <span id="urgentTotalCount" style={{ fontSize: '11px', opacity: 0.8 }}>({urgentAlertsData.high.length + urgentAlertsData.medium.length})</span>
+            </button>
+            <button
+              className={`view-btn decision-tool-tab-btn period-filter-enabled ${decisionToolTab === 'clustering' ? 'active' : ''}`}
+              data-tab="clustering"
+              title="선택한 기간 필터가 적용됩니다"
+              onClick={() => setDecisionToolTab('clustering')}
+            >
+              채널 그룹별 분석
+            </button>
+            <button
+              className={`view-btn decision-tool-tab-btn period-filter-enabled ${decisionToolTab === 'budget' ? 'active' : ''}`}
+              data-tab="budget"
+              title="선택한 기간 필터가 적용됩니다"
+              onClick={() => setDecisionToolTab('budget')}
+            >
+              예산 투자 가이드
+            </button>
+            <button
+              className={`view-btn decision-tool-tab-btn period-filter-enabled ${decisionToolTab === 'crm_guide' ? 'active' : ''}`}
+              data-tab="crm_guide"
+              title="선택한 기간 필터가 적용됩니다"
+              onClick={() => setDecisionToolTab('crm_guide')}
+            >
+              CRM 가이드
+            </button>
+          </div>
 
-                  return (
-                    <div key={index} style={{
-                      padding: '18px 20px',
-                      background: style.bg,
-                      borderRadius: '12px',
-                      borderLeft: `4px solid ${style.border}`
-                    }}>
-                      <h4 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>{insight.title}</h4>
-                      <p style={{ fontSize: '13px', color: '#616161', margin: 0 }}>{insight.description}</p>
-                      {insight.action && (
-                        <div style={{ marginTop: '12px', fontSize: '12px', color: '#673ab7', fontWeight: 600 }}>
-                          💡 {insight.action.text}
-                        </div>
+          {/* 탭 1: 핵심 요약 */}
+          <div className={`decision-tool-tab-content ${decisionToolTab === 'summary' ? 'active' : ''}`} id="summaryTab">
+            <div className="insight-content" id="insightContent">
+              {keyInsights.length > 0 ? keyInsights.map((card, index) => {
+                const hasAction = card.action && card.action.text;
+                const hasSubItems = card.sub_items && card.sub_items.length > 0 && card.sub_items[0];
+
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      background: card.bg_color,
+                      border: `2px solid ${card.border_color}`,
+                      borderRadius: '10px',
+                      padding: '14px',
+                      transition: 'transform 0.2s',
+                      display: 'flex',
+                      flexDirection: 'column'
+                    }}
+                    onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
+                    onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+                  >
+                    {/* 헤더 */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                      <div style={{
+                        width: '32px',
+                        height: '32px',
+                        background: `${card.border_color}20`,
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <span style={{ fontSize: '16px' }}>{card.icon}</span>
+                      </div>
+                      <span style={{
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        color: card.text_color,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
+                      }}>{card.label}</span>
+                      {card.urgency_score && (
+                        <span style={{
+                          marginLeft: 'auto',
+                          fontSize: '10px',
+                          padding: '2px 6px',
+                          background: card.border_color,
+                          color: 'white',
+                          borderRadius: '8px'
+                        }}>긴급도 {card.urgency_score}</span>
                       )}
                     </div>
-                  );
-                }) : (
-                  <div style={{ padding: '20px', textAlign: 'center', color: '#9e9e9e' }}>데이터를 불러오는 중...</div>
-                )}
-              </div>
-            )}
-
-            {/* 탭 2: 긴급 개선 포인트 */}
-            {decisionToolTab === 'urgent' && (
-              <div>
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-                  <button
-                    onClick={() => setUrgentAlertTab('high')}
-                    style={{
-                      padding: '8px 16px',
-                      border: 'none',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
+                    {/* 메시지 */}
+                    <div style={{
                       fontSize: '13px',
-                      background: urgentAlertTab === 'high' ? '#673ab7' : 'white',
-                      color: urgentAlertTab === 'high' ? 'white' : '#616161',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.08)'
-                    }}
-                  >
-                    ⚠️ 즉시 조치 필요 ({urgentAlertsData.high.length})
-                  </button>
-                  <button
-                    onClick={() => setUrgentAlertTab('medium')}
-                    style={{
-                      padding: '8px 16px',
-                      border: 'none',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontSize: '13px',
-                      background: urgentAlertTab === 'medium' ? '#673ab7' : 'white',
-                      color: urgentAlertTab === 'medium' ? 'white' : '#616161',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.08)'
-                    }}
-                  >
-                    📌 개선 권장 ({urgentAlertsData.medium.length})
-                  </button>
-                </div>
-                <div style={{ display: 'grid', gap: '12px' }}>
-                  {(urgentAlertTab === 'high' ? urgentAlertsData.high : urgentAlertsData.medium)
-                    .slice(0, urgentAlertsShowAll[urgentAlertTab] ? undefined : 3)
-                    .map((alert, index) => (
-                      <div key={index} style={{
-                        padding: '16px',
-                        background: alert.severity === 'high' ? 'linear-gradient(135deg, #ffebee 0%, #fce4ec 100%)' : 'linear-gradient(135deg, #fff3e0 0%, #fff8e1 100%)',
-                        borderRadius: '8px',
-                        borderLeft: `4px solid ${alert.severity === 'high' ? '#f44336' : '#ff9800'}`
+                      fontWeight: 500,
+                      color: 'var(--grey-900)',
+                      lineHeight: 1.6,
+                      flex: 1,
+                      marginBottom: hasAction || hasSubItems ? '10px' : '0'
+                    }}>{card.message}</div>
+                    {/* 서브 아이템 */}
+                    {hasSubItems && (
+                      <div style={{
+                        background: 'rgba(255,255,255,0.7)',
+                        borderRadius: '6px',
+                        padding: '10px',
+                        borderLeft: `3px solid ${card.border_color}`,
+                        marginBottom: hasAction ? '10px' : '0'
                       }}>
-                        <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>{alert.title}</div>
-                        <div style={{ fontSize: '13px', color: '#616161', marginBottom: '8px' }}>{alert.diagnosis}</div>
-                        {alert.action_detail && (
-                          <div style={{ padding: '12px', background: 'white', borderRadius: '6px', fontSize: '12px' }}>
-                            💡 {(alert.action_detail as Record<string, string>).primary || '데이터 분석 후 대응'}
-                          </div>
+                        <div style={{ fontSize: '10px', fontWeight: 600, color: card.text_color, marginBottom: '4px' }}>📌 상세 정보</div>
+                        {card.sub_items!.filter(item => item).map((item, i) => (
+                          <div key={i} style={{ fontSize: '11px', color: '#333', lineHeight: 1.5 }}>→ {item}</div>
+                        ))}
+                      </div>
+                    )}
+                    {/* 추천 액션 */}
+                    {hasAction && (
+                      <div style={{
+                        background: 'rgba(255,255,255,0.7)',
+                        borderRadius: '6px',
+                        padding: '10px',
+                        borderLeft: '3px solid #ab47bc'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                          <div style={{ fontSize: '10px', fontWeight: 600, color: '#7b1fa2' }}>💡 추천 액션</div>
+                          {card.action!.type && (
+                            <span style={{
+                              fontSize: '9px',
+                              padding: '2px 6px',
+                              background: card.action!.type === 'scale_up' || card.action!.type === 'opportunity' ? '#e8f5e9' : card.action!.type === 'primary' ? '#fff3e0' : '#e3f2fd',
+                              color: card.action!.type === 'scale_up' || card.action!.type === 'opportunity' ? '#2e7d32' : card.action!.type === 'primary' ? '#e65100' : '#1565c0',
+                              borderRadius: '4px',
+                              fontWeight: 600
+                            }}>
+                              {card.action!.type === 'scale_up' ? '증액' : card.action!.type === 'opportunity' ? '기회' : card.action!.type === 'primary' ? '개선' : '유지'}
+                            </span>
+                          )}
+                        </div>
+                        <div style={{ fontSize: '11px', color: '#333', lineHeight: 1.4 }}>{card.action!.text}</div>
+                        {card.action!.secondary && (
+                          <div style={{ fontSize: '10px', color: '#5e35b1', marginTop: '6px', paddingTop: '6px', borderTop: '1px dashed #d1c4e9', lineHeight: 1.4 }}>➕ {card.action!.secondary}</div>
                         )}
                       </div>
-                    ))}
+                    )}
+                  </div>
+                );
+              }) : (
+                <div className="insight-card neutral">
+                  <div className="insight-text">데이터를 불러오는 중...</div>
                 </div>
-                {/* 더보기/접기 버튼 */}
-                {(urgentAlertTab === 'high' ? urgentAlertsData.high : urgentAlertsData.medium).length > 3 && (
-                  <div style={{ textAlign: 'center', marginTop: '12px' }}>
-                    <button
-                      onClick={() => setUrgentAlertsShowAll(prev => ({ ...prev, [urgentAlertTab]: !prev[urgentAlertTab] }))}
-                      style={{
-                        padding: '8px 20px',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontSize: '13px',
-                        background: '#f5f5f5',
-                        color: '#616161'
-                      }}
-                    >
-                      {urgentAlertsShowAll[urgentAlertTab] ? '접기 ▲' : '더 보기 ▼'}
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* 탭 3: 채널 그룹별 분석 */}
-            {decisionToolTab === 'clustering' && channelClusters && (
-              <div>
-                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '16px' }}>
-                  채널 클러스터링 ({channelClusters.n_clusters}개 그룹)
-                </h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-                  {Object.entries(channelClusters.clusters).map(([clusterName, channels], index) => {
-                    const colors = ['#4caf50', '#ff9800', '#f44336'];
-                    const bgColors = ['#e8f5e9', '#fff3e0', '#ffebee'];
-                    return (
-                      <div key={clusterName} style={{
-                        padding: '16px',
-                        background: bgColors[index % 3],
-                        borderRadius: '8px',
-                        borderLeft: `4px solid ${colors[index % 3]}`
-                      }}>
-                        <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>
-                          {channelClusters.description[clusterName] || clusterName}
-                        </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                          {channels.map(ch => (
-                            <span key={ch} style={{
-                              padding: '4px 8px',
-                              background: 'white',
-                              borderRadius: '4px',
-                              fontSize: '12px'
-                            }}>{ch}</span>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* BCG Matrix */}
-                {bcgMatrix && (
-                  <div>
-                    <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '16px' }}>BCG 매트릭스 채널 전략</h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-                      {Object.entries(bcgMatrix).map(([key, quadrant]) => (
-                        <div key={key} style={{
-                          padding: '16px',
-                          borderRadius: '8px',
-                          background: key === 'star' ? '#e8f5e9' : key === 'question_mark' ? '#fff3e0' : key === 'cash_cow' ? '#e3f2fd' : '#f5f5f5',
-                          borderLeft: `4px solid ${quadrant.color}`
-                        }}>
-                          <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '8px', color: quadrant.color }}>
-                            {quadrant.description}
-                          </div>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                            {quadrant.channels.map(ch => (
-                              <span key={ch} style={{
-                                padding: '4px 8px',
-                                background: 'white',
-                                borderRadius: '4px',
-                                fontSize: '12px'
-                              }}>{ch}</span>
-                            ))}
-                            {quadrant.channels.length === 0 && (
-                              <span style={{ color: '#9e9e9e', fontSize: '12px' }}>해당 채널 없음</span>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* 탭 4: 예산 투자 가이드 */}
-            {decisionToolTab === 'budget' && (
-              <div>
-                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '16px' }}>예산 투자 가이드</h3>
-                <div style={{ display: 'grid', gap: '12px' }}>
-            {investmentGuide.slice(0, investmentExpanded ? undefined : 3).map((channel, index) => {
-              const rankEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}위`;
-              const bgColor = channel.confidenceScore >= 3 ? 'linear-gradient(135deg, #e8f5e9 0%, #f0fff4 100%)' :
-                channel.confidenceScore === 2 ? 'linear-gradient(135deg, #fff3e0 0%, #fff9e6 100%)' : '#fafafa';
-              const borderColor = channel.confidenceScore >= 3 ? '#4caf50' :
-                channel.confidenceScore === 2 ? '#ff9800' : '#e0e0e0';
-
-              return (
-                <div key={channel.channel} style={{
-                  padding: '16px',
-                  background: bgColor,
-                  borderRadius: '8px',
-                  borderLeft: `4px solid ${borderColor}`
-                }}>
-                  <div style={{ fontSize: '16px', fontWeight: 700, marginBottom: '12px' }}>
-                    {rankEmoji} {channel.channel}
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '12px' }}>
-                    <div style={{ padding: '8px', background: 'white', borderRadius: '6px' }}>
-                      <div style={{ fontSize: '11px', color: '#757575' }}>전환율</div>
-                      <div style={{ fontSize: '16px', fontWeight: 700, color: '#673ab7' }}>{formatDecimal(channel.cvr)}%</div>
-                    </div>
-                    <div style={{ padding: '8px', background: 'white', borderRadius: '6px' }}>
-                      <div style={{ fontSize: '11px', color: '#757575' }}>평균 객단가</div>
-                      <div style={{ fontSize: '16px', fontWeight: 700, color: '#4caf50' }}>{formatNumber(Math.round(channel.arpu))}원</div>
-                    </div>
-                    <div style={{ padding: '8px', background: 'white', borderRadius: '6px' }}>
-                      <div style={{ fontSize: '11px', color: '#757575' }}>데이터 신뢰도</div>
-                      <div style={{ fontSize: '13px', fontWeight: 700, color: borderColor }}>{channel.confidence}</div>
-                    </div>
-                  </div>
-                  {channel.isInvestable && channel.confidenceScore >= 2 && (
-                    <div style={{ padding: '14px', background: 'white', borderRadius: '8px', borderLeft: '3px solid #673ab7' }}>
-                      <div style={{ fontSize: '13px', fontWeight: 700, marginBottom: '10px' }}>
-                        💰 100만원 투자 시 예상 성과
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-                        <div>
-                          <div style={{ fontSize: '11px', color: '#757575' }}>예상 유입</div>
-                          <div style={{ fontSize: '16px', fontWeight: 700, color: '#2196f3' }}>약 {formatNumber(Math.round(channel.estimatedVisitors))}명</div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '11px', color: '#757575' }}>예상 구매</div>
-                          <div style={{ fontSize: '16px', fontWeight: 700, color: '#673ab7' }}>약 {formatNumber(Math.round(channel.expectedPurchases))}건</div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '11px', color: '#757575' }}>예상 ROI</div>
-                          <div style={{ fontSize: '16px', fontWeight: 700, color: channel.roi > 0 ? '#4caf50' : '#f44336' }}>
-                            {channel.roi > 0 ? '+' : ''}{formatDecimal(channel.roi)}%
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+              )}
+            </div>
           </div>
-          {investmentGuide.length > 3 && (
-            <div style={{ textAlign: 'center', marginTop: '12px' }}>
+
+          {/* 탭 2: 긴급 개선 포인트 */}
+          <div className={`decision-tool-tab-content ${decisionToolTab === 'urgent' ? 'active' : ''}`} id="urgentTab">
+            {/* 서브탭: 즉시 조치 / 개선 권장 */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
               <button
-                onClick={() => setInvestmentExpanded(!investmentExpanded)}
-                style={{
-                  padding: '8px 24px',
-                  border: '1px solid #e0e0e0',
-                  borderRadius: '20px',
-                  background: 'white',
-                  cursor: 'pointer',
-                  fontSize: '13px',
-                  color: '#616161'
-                }}
+                className={`view-btn urgent-alert-tab-btn ${urgentAlertTab === 'high' ? 'active' : ''}`}
+                data-tab="high"
+                onClick={() => setUrgentAlertTab('high')}
+                style={{ fontSize: '13px' }}
               >
-                {investmentExpanded ? '접기' : `더 보기 (${investmentGuide.length - 3}개)`}
+                ⚠️ 즉시 조치 필요 <span id="highAlertCount" style={{ fontSize: '11px', opacity: 0.8 }}>({urgentAlertsData.high.length}건)</span>
+              </button>
+              <button
+                className={`view-btn urgent-alert-tab-btn ${urgentAlertTab === 'medium' ? 'active' : ''}`}
+                data-tab="medium"
+                onClick={() => setUrgentAlertTab('medium')}
+                style={{ fontSize: '13px' }}
+              >
+                📌 개선 권장 <span id="mediumAlertCount" style={{ fontSize: '11px', opacity: 0.8 }}>({urgentAlertsData.medium.length}건)</span>
               </button>
             </div>
-          )}
-              </div>
-            )}
-
-            {/* 탭 5: CRM 가이드 */}
-            {decisionToolTab === 'crm_guide' && crmActions.length > 0 && (
-              <div>
-                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '16px' }}>CRM 액션 가이드</h3>
-                <div style={{ display: 'grid', gap: '12px' }}>
-                  {crmActions.map((action, index) => {
-                    const priorityColors: Record<string, { border: string; bg: string }> = {
-                      'high': { border: '#ef5350', bg: '#ffebee' },
-                      'medium': { border: '#ffa726', bg: '#fff3e0' },
-                      'low': { border: '#66bb6a', bg: '#e8f5e9' }
+            {/* 즉시 조치 필요 */}
+            <div id="highAlertsTab" className={`urgent-alert-tab-content ${urgentAlertTab === 'high' ? 'active' : ''}`}>
+              <div id="highAlertsCards" style={{ display: 'grid', gap: '12px' }}>
+                {urgentAlertsData.high.length === 0 ? (
+                  <div style={{ padding: '20px', textAlign: 'center', color: 'var(--grey-500)' }}>
+                    즉시 조치가 필요한 항목이 없습니다.
+                  </div>
+                ) : urgentAlertsData.high
+                  .slice(0, urgentAlertsShowAll.high ? undefined : 3)
+                  .map((alert, index) => {
+                    const severityStyles: Record<string, { bgColor: string; borderColor: string; textColor: string }> = {
+                      critical: { bgColor: '#ffebee', borderColor: '#f44336', textColor: '#c62828' },
+                      high: { bgColor: '#fff3e0', borderColor: '#ff9800', textColor: '#e65100' },
+                      medium: { bgColor: '#fff8e1', borderColor: '#ffc107', textColor: '#f57f17' }
                     };
-                    const colors = priorityColors[action.priority] || priorityColors.medium;
+                    const subTypeIcons: Record<string, string> = {
+                      'traffic_leak': '🚿', 'hidden_vip': '💎', 'checkout_friction': '🛒',
+                      'growth_engine': '🚀', 'activation_drop': '🚪', 'engagement_gap': '📉', 'silent_majority': '😶'
+                    };
+                    const style = severityStyles[alert.severity] || severityStyles.medium;
+                    const icon = subTypeIcons[alert.sub_type] || '⚠️';
+                    const diagnosis = alert.diagnosis || alert.reason || '';
+                    const urgencyScore = alert.urgency_score || 0;
+                    const urgencyLabel = urgencyScore >= 70 ? '긴급' : urgencyScore >= 40 ? '주의' : '참고';
 
                     return (
-                      <div key={index} style={{
-                        padding: '16px',
-                        background: colors.bg,
-                        borderRadius: '8px',
-                        borderLeft: `4px solid ${colors.border}`
-                      }}>
-                        <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '10px' }}>
-                          📍 {action.stage}
+                      <div
+                        key={index}
+                        style={{
+                          background: style.bgColor,
+                          border: `2px solid ${style.borderColor}`,
+                          borderRadius: '10px',
+                          padding: '14px',
+                          transition: 'transform 0.2s'
+                        }}
+                        onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
+                        onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+                      >
+                        {/* 헤더 */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '18px' }}>{icon}</span>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: '13px', fontWeight: 700, color: style.textColor }}>{alert.title}</div>
+                            <div style={{ fontSize: '10px', color: style.textColor, opacity: 0.8 }}>{alert.category || '일반'} &gt; {alert.sub_type || '분석'}</div>
+                          </div>
+                          {urgencyScore > 0 && (
+                            <span style={{ background: style.borderColor, color: 'white', fontSize: '9px', padding: '2px 8px', borderRadius: '10px', fontWeight: 600 }}>
+                              {urgencyLabel} {urgencyScore}
+                            </span>
+                          )}
                         </div>
-                        <div style={{ fontSize: '13px', color: '#616161', marginBottom: '6px' }}>
-                          <strong>현황:</strong> {action.trend}
-                        </div>
-                        <div style={{ fontSize: '13px', color: '#757575', marginBottom: '10px', fontStyle: 'italic' }}>
-                          <strong>진단:</strong> {action.diagnosis}
-                        </div>
-                        <div style={{
-                          fontSize: '13px',
-                          padding: '12px',
-                          background: 'white',
-                          borderRadius: '6px',
-                          boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-                        }}>
-                          💊 <strong>처방:</strong> {action.prescription}
+                        {/* 메트릭스 배지 */}
+                        {alert.metrics && Object.keys(alert.metrics).length > 0 && (
+                          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                            {Object.entries(alert.metrics).map(([k, v]) => {
+                              const colorMap: Record<string, { color: string; border: string }> = {
+                                '유입→활동': { color: '#1565c0', border: '#90caf9' },
+                                '활동→관심': { color: '#1565c0', border: '#90caf9' },
+                                '관심→구매': { color: '#1565c0', border: '#90caf9' },
+                                '전환율': { color: '#2e7d32', border: '#a5d6a7' },
+                                'CVR': { color: '#2e7d32', border: '#a5d6a7' },
+                                '유입': { color: '#5e35b1', border: '#b39ddb' },
+                                '활동': { color: '#5e35b1', border: '#b39ddb' },
+                                '관심': { color: '#5e35b1', border: '#b39ddb' },
+                                'RPV': { color: '#e65100', border: '#ffcc80' }
+                              };
+                              const percentKeys1 = ['유입→활동', '활동→관심', '관심→구매'];
+                              const percentKeys2 = ['전환율', 'CVR'];
+                              let formatted: string;
+                              if (percentKeys2.includes(k)) {
+                                formatted = (typeof v === 'number' ? v.toFixed(2) : v) + '%';
+                              } else if (percentKeys1.includes(k)) {
+                                formatted = (typeof v === 'number' ? v.toFixed(1) : v) + '%';
+                              } else {
+                                formatted = typeof v === 'number' ? v.toLocaleString() : String(v);
+                              }
+                              const s = colorMap[k] || { color: '#616161', border: '#bdbdbd' };
+                              return (
+                                <span key={k} style={{ background: 'white', padding: '3px 8px', borderRadius: '12px', fontSize: '10px', color: s.color, border: `1px solid ${s.border}`, fontWeight: 500 }}>
+                                  {k} {formatted}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
+                        {/* 진단 (체크마크 스타일) */}
+                        {diagnosis && (
+                          <div style={{ fontSize: '11px', color: '#555', lineHeight: 1.6, marginBottom: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                              <span style={{ color: style.borderColor }}>✓</span>
+                              <span>{diagnosis}</span>
+                            </div>
+                          </div>
+                        )}
+                        {/* 추천 액션 */}
+                        <div style={{ background: '#ffffff', borderRadius: '6px', padding: '10px', borderLeft: `3px solid ${style.borderColor}` }}>
+                          <div style={{ fontSize: '10px', fontWeight: 600, color: style.textColor, marginBottom: '4px' }}>💡 추천 액션</div>
+                          <div style={{ fontSize: '11px', color: '#333', lineHeight: 1.4 }}>{alert.action_detail?.primary || alert.action || '데이터 분석 후 대응 방안을 수립하세요.'}</div>
+                          {alert.action_detail?.secondary && (
+                            <div style={{ fontSize: '10px', color: '#5e35b1', marginTop: '6px', paddingTop: '6px', borderTop: '1px dashed #d1c4e9', lineHeight: 1.4 }}>➕ {alert.action_detail.secondary}</div>
+                          )}
+                          {(alert.impact?.lost_users || alert.impact?.potential_revenue) ? (
+                            <div style={{ fontSize: '10px', color: '#c62828', marginTop: '6px' }}>
+                              📉 영향: {alert.impact.lost_users ? `이탈 ${alert.impact.lost_users}명` : ''}{alert.impact.potential_revenue ? ` · 잠재 손실 ₩${alert.impact.potential_revenue.toLocaleString()}` : ''}
+                            </div>
+                          ) : null}
                         </div>
                       </div>
                     );
                   })}
+              </div>
+              <div id="highAlertsToggleContainer" style={{ textAlign: 'center', marginTop: '12px', display: urgentAlertsData.high.length > 3 ? 'block' : 'none' }}>
+                <button
+                  id="highAlertsToggleBtn"
+                  className="view-btn"
+                  onClick={() => setUrgentAlertsShowAll(prev => ({ ...prev, high: !prev.high }))}
+                  style={{ fontSize: '13px', padding: '8px 20px' }}
+                >
+                  {urgentAlertsShowAll.high ? '접기' : `더 보기 (${urgentAlertsData.high.length - 3}건)`}
+                </button>
+              </div>
+            </div>
+            {/* 개선 권장 */}
+            <div id="mediumAlertsTab" className={`urgent-alert-tab-content ${urgentAlertTab === 'medium' ? 'active' : ''}`}>
+              <div id="mediumAlertsCards" style={{ display: 'grid', gap: '12px' }}>
+                {urgentAlertsData.medium.length === 0 ? (
+                  <div style={{ padding: '20px', textAlign: 'center', color: 'var(--grey-500)' }}>
+                    개선 권장 항목이 없습니다.
+                  </div>
+                ) : urgentAlertsData.medium
+                  .slice(0, urgentAlertsShowAll.medium ? undefined : 3)
+                  .map((alert, index) => {
+                    const severityStyles: Record<string, { bgColor: string; borderColor: string; textColor: string }> = {
+                      critical: { bgColor: '#ffebee', borderColor: '#f44336', textColor: '#c62828' },
+                      high: { bgColor: '#fff3e0', borderColor: '#ff9800', textColor: '#e65100' },
+                      medium: { bgColor: '#fff8e1', borderColor: '#ffc107', textColor: '#f57f17' }
+                    };
+                    const subTypeIcons: Record<string, string> = {
+                      'traffic_leak': '🚿', 'hidden_vip': '💎', 'checkout_friction': '🛒',
+                      'growth_engine': '🚀', 'activation_drop': '🚪', 'engagement_gap': '📉', 'silent_majority': '😶'
+                    };
+                    const style = severityStyles[alert.severity] || severityStyles.medium;
+                    const icon = subTypeIcons[alert.sub_type] || '⚠️';
+                    const diagnosis = alert.diagnosis || alert.reason || '';
+                    const urgencyScore = alert.urgency_score || 0;
+                    const urgencyLabel = urgencyScore >= 70 ? '긴급' : urgencyScore >= 40 ? '주의' : '참고';
+
+                    return (
+                      <div
+                        key={index}
+                        style={{
+                          background: style.bgColor,
+                          border: `2px solid ${style.borderColor}`,
+                          borderRadius: '10px',
+                          padding: '14px',
+                          transition: 'transform 0.2s'
+                        }}
+                        onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
+                        onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+                      >
+                        {/* 헤더 */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '18px' }}>{icon}</span>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: '13px', fontWeight: 700, color: style.textColor }}>{alert.title}</div>
+                            <div style={{ fontSize: '10px', color: style.textColor, opacity: 0.8 }}>{alert.category || '일반'} &gt; {alert.sub_type || '분석'}</div>
+                          </div>
+                          {urgencyScore > 0 && (
+                            <span style={{ background: style.borderColor, color: 'white', fontSize: '9px', padding: '2px 8px', borderRadius: '10px', fontWeight: 600 }}>
+                              {urgencyLabel} {urgencyScore}
+                            </span>
+                          )}
+                        </div>
+                        {/* 메트릭스 배지 */}
+                        {alert.metrics && Object.keys(alert.metrics).length > 0 && (
+                          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                            {Object.entries(alert.metrics).map(([k, v]) => {
+                              const colorMap: Record<string, { color: string; border: string }> = {
+                                '유입→활동': { color: '#1565c0', border: '#90caf9' },
+                                '활동→관심': { color: '#1565c0', border: '#90caf9' },
+                                '관심→구매': { color: '#1565c0', border: '#90caf9' },
+                                '전환율': { color: '#2e7d32', border: '#a5d6a7' },
+                                'CVR': { color: '#2e7d32', border: '#a5d6a7' },
+                                '유입': { color: '#5e35b1', border: '#b39ddb' },
+                                '활동': { color: '#5e35b1', border: '#b39ddb' },
+                                '관심': { color: '#5e35b1', border: '#b39ddb' },
+                                'RPV': { color: '#e65100', border: '#ffcc80' }
+                              };
+                              const percentKeys1 = ['유입→활동', '활동→관심', '관심→구매'];
+                              const percentKeys2 = ['전환율', 'CVR'];
+                              let formatted: string;
+                              if (percentKeys2.includes(k)) {
+                                formatted = (typeof v === 'number' ? v.toFixed(2) : v) + '%';
+                              } else if (percentKeys1.includes(k)) {
+                                formatted = (typeof v === 'number' ? v.toFixed(1) : v) + '%';
+                              } else {
+                                formatted = typeof v === 'number' ? v.toLocaleString() : String(v);
+                              }
+                              const s = colorMap[k] || { color: '#616161', border: '#bdbdbd' };
+                              return (
+                                <span key={k} style={{ background: 'white', padding: '3px 8px', borderRadius: '12px', fontSize: '10px', color: s.color, border: `1px solid ${s.border}`, fontWeight: 500 }}>
+                                  {k} {formatted}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
+                        {/* 진단 (체크마크 스타일) */}
+                        {diagnosis && (
+                          <div style={{ fontSize: '11px', color: '#555', lineHeight: 1.6, marginBottom: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                              <span style={{ color: style.borderColor }}>✓</span>
+                              <span>{diagnosis}</span>
+                            </div>
+                          </div>
+                        )}
+                        {/* 추천 액션 */}
+                        <div style={{ background: '#ffffff', borderRadius: '6px', padding: '10px', borderLeft: `3px solid ${style.borderColor}` }}>
+                          <div style={{ fontSize: '10px', fontWeight: 600, color: style.textColor, marginBottom: '4px' }}>💡 추천 액션</div>
+                          <div style={{ fontSize: '11px', color: '#333', lineHeight: 1.4 }}>{alert.action_detail?.primary || alert.action || '데이터 분석 후 대응 방안을 수립하세요.'}</div>
+                          {alert.action_detail?.secondary && (
+                            <div style={{ fontSize: '10px', color: '#5e35b1', marginTop: '6px', paddingTop: '6px', borderTop: '1px dashed #d1c4e9', lineHeight: 1.4 }}>➕ {alert.action_detail.secondary}</div>
+                          )}
+                          {(alert.impact?.lost_users || alert.impact?.potential_revenue) ? (
+                            <div style={{ fontSize: '10px', color: '#c62828', marginTop: '6px' }}>
+                              📉 영향: {alert.impact.lost_users ? `이탈 ${alert.impact.lost_users}명` : ''}{alert.impact.potential_revenue ? ` · 잠재 손실 ₩${alert.impact.potential_revenue.toLocaleString()}` : ''}
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+              <div id="mediumAlertsToggleContainer" style={{ textAlign: 'center', marginTop: '12px', display: urgentAlertsData.medium.length > 3 ? 'block' : 'none' }}>
+                <button
+                  id="mediumAlertsToggleBtn"
+                  className="view-btn"
+                  onClick={() => setUrgentAlertsShowAll(prev => ({ ...prev, medium: !prev.medium }))}
+                  style={{ fontSize: '13px', padding: '8px 20px' }}
+                >
+                  {urgentAlertsShowAll.medium ? '접기' : `더 보기 (${urgentAlertsData.medium.length - 3}건)`}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* 탭 3: 채널 클러스터링 + BCG Matrix 통합 */}
+          <div className={`decision-tool-tab-content ${decisionToolTab === 'clustering' ? 'active' : ''}`} id="clusteringTab">
+            {/* BCG Matrix 채널 전략 */}
+            <div className="chart-section card" style={{ marginBottom: '16px' }}>
+              <div className="chart-header">📈 BCG Matrix 채널 전략</div>
+              <div style={{ fontSize: '13px', color: 'var(--grey-600)', padding: '0 20px 12px 20px' }}>
+                <strong>&apos;지금 어떤 채널에 돈을 써야하나?&apos;</strong> 투자 의사결정을 돕기위해 트래픽과 전환율을 기준으로 각 채널을 4가지 유형으로 분류했습니다.
+              </div>
+              <div id="bcgMatrixContent" style={{ padding: '20px', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                {bcgMatrix ? (
+                  Object.entries(bcgMatrix).filter(([, q]) => q.channels.length > 0).map(([key, q]) => (
+                    <div key={key} style={{ padding: '16px', background: q.bgColor, borderRadius: '12px', borderLeft: `4px solid ${q.color}` }}>
+                      <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--grey-900)', marginBottom: '4px' }}>
+                        {q.title}
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-600)', marginBottom: '12px' }}>
+                        {q.desc}
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+                        {q.channels.map(ch => (
+                          <span key={ch.name} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'white', borderRadius: '6px', fontSize: '13px', fontWeight: 500, color: 'var(--grey-800)' }}>
+                            {ch.name}
+                            <span style={{ fontSize: '11px', color: q.color }}>(CVR {ch.cvr}%)</span>
+                          </span>
+                        ))}
+                      </div>
+                      {q.channels[0] ? (
+                        <div style={{ fontSize: '12px', color: 'var(--grey-700)', padding: '10px', background: 'white', borderRadius: '6px' }}>
+                          {q.channels[0].action}
+                        </div>
+                      ) : null}
+                    </div>
+                  ))
+                ) : (
+                  <div style={{ padding: '20px', textAlign: 'center', color: 'var(--grey-500)', gridColumn: 'span 2' }}>채널 전략 데이터가 없습니다.</div>
+                )}
+                {bcgMatrix && Object.values(bcgMatrix).every(q => q.channels.length === 0) && (
+                  <div style={{ padding: '20px', textAlign: 'center', color: 'var(--grey-500)', gridColumn: 'span 2' }}>분류된 채널이 없습니다.</div>
+                )}
+              </div>
+            </div>
+            {/* 채널 퍼널 건강도 분석 */}
+            <div className="chart-section card" style={{ marginBottom: '16px' }}>
+              <div className="chart-header">🩺 채널 퍼널 건강도 분석</div>
+              <div style={{ fontSize: '13px', color: 'var(--grey-600)', padding: '0 20px 12px 20px' }}>
+                <strong>&apos;지금 어떤 채널의 퍼널 흐름이 건강해?&apos;</strong> 각 채널의 유입→활동→관심→결제 단계별 전환 효율을 K-mean 툴로 종합 분석했습니다. 퍼널 건강 그룹은 모든 단계가 원활하고, 점검 필요 그룹은 중간 이탈이 심합니다.
+              </div>
+              <div id="channelClusters" style={{ padding: '20px' }}>
+                {channelClusters?.clusters ? (
+                  <>
+                    <div style={{ marginBottom: '16px' }}>
+                      <p style={{ fontSize: '14px', color: 'var(--grey-700)', marginBottom: '12px' }}>
+                        퍼널 건강도 기준 <strong>{channelClusters.n_clusters}개</strong> 그룹으로 분류
+                        <span style={{ fontSize: '12px', color: 'var(--grey-500)', marginLeft: '8px' }}>(유입→활동→관심→결제 단계별 전환율 평균)</span>
+                      </p>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+                      {Object.entries(channelClusters.clusters).map(([clusterName, channels], index) => {
+                        const colors = ['var(--success-main)', 'var(--warning-main)', 'var(--error-main)'];
+                        const bgColors = ['var(--success-light)', 'var(--warning-light)', 'var(--error-light)'];
+                        return (
+                          <div key={clusterName} style={{ padding: '16px', background: bgColors[index % 3], borderRadius: '8px', borderLeft: `4px solid ${colors[index % 3]}` }}>
+                            <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--grey-900)', marginBottom: '8px' }}>
+                              {channelClusters.description?.[clusterName] || clusterName}
+                            </div>
+                            <div style={{ fontSize: '13px', color: 'var(--grey-700)' }}>
+                              {(channels as string[]).map((ch: string) => (
+                                <span key={ch} style={{ display: 'inline-block', padding: '4px 8px', background: 'white', borderRadius: '4px', margin: '2px' }}>{ch}</span>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : (
+                  <p style={{ color: 'var(--grey-500)' }}>클러스터링 결과가 없습니다.</p>
+                )}
+              </div>
+              {/* A/B 테스트 통계 결과 컨테이너 */}
+              <div id="abTestStatsContainer" style={{ padding: '0 20px 20px 20px' }}>
+                {(() => {
+                  const periodData = getPeriodData();
+                  const hasAbTestResults = periodData?.ab_test_results && periodData.ab_test_results.length > 0;
+
+                  if (hasAbTestResults && abTestResults.length > 0) {
+                    // Case 1: 유의미한 결과 있음
+                    return (
+                      <div style={{ padding: '16px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: '8px', borderLeft: '4px solid var(--success-main)' }}>
+                        <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--success-main)', marginBottom: '12px' }}>
+                          📊 통계적으로 유의미한 채널 비교 ({abTestResults.length}건)
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'var(--grey-600)', marginBottom: '12px' }}>
+                          p-value &lt; 0.05로 통계적으로 유의미한 전환율 차이가 확인된 채널 조합입니다.
+                        </div>
+                        <div style={{ display: 'grid', gap: '8px' }}>
+                          {abTestResults.map((test, index) => (
+                            <div key={index} style={{ padding: '12px', background: 'white', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ fontWeight: 600, color: 'var(--grey-800)' }}>{test.group_a}</span>
+                                <span style={{ fontSize: '12px', color: test.cvr_a < test.cvr_b ? 'var(--error-main)' : 'var(--success-main)' }}>({test.cvr_a}%)</span>
+                              </div>
+                              <span style={{ color: 'var(--grey-400)' }}>vs</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ fontWeight: 600, color: 'var(--grey-800)' }}>{test.group_b}</span>
+                                <span style={{ fontSize: '12px', color: test.cvr_b < test.cvr_a ? 'var(--error-main)' : 'var(--success-main)' }}>({test.cvr_b}%)</span>
+                              </div>
+                              <span style={{ fontSize: '11px', color: 'var(--grey-500)', marginLeft: 'auto' }}>p={test.p_value.toFixed(4)}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{ marginTop: '12px', padding: '10px', background: '#f5f5f5', borderRadius: '6px', fontSize: '12px', color: 'var(--grey-700)' }}>
+                          💡 <strong>활용 방법:</strong> 전환율이 높은 채널의 전략을 전환율이 낮은 채널에 적용해보세요.
+                        </div>
+                      </div>
+                    );
+                  } else if (hasAbTestResults && abTestResults.length === 0) {
+                    // Case 2: 데이터는 있지만 유의미한 결과 없음
+                    return (
+                      <div style={{ padding: '16px', background: 'linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%)', borderRadius: '8px', borderLeft: '4px solid var(--grey-400)' }}>
+                        <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--grey-600)', marginBottom: '8px' }}>
+                          📊 통계적으로 유의미한 채널 비교
+                        </div>
+                        <div style={{ fontSize: '13px', color: 'var(--grey-500)' }}>
+                          선택한 기간 내에서는 통계적으로 유의미한 전환율 차이(p-value &lt; 0.05)를 보이는 채널 조합이 없습니다.
+                        </div>
+                        <div style={{ marginTop: '12px', padding: '10px', background: 'white', borderRadius: '6px', fontSize: '12px', color: 'var(--grey-600)' }}>
+                          💡 <strong>참고:</strong> 분석 기간을 &apos;전체 기간&apos;으로 변경하면 더 많은 데이터를 기반으로 유의미한 결과를 확인할 수 있습니다.
+                        </div>
+                      </div>
+                    );
+                  } else {
+                    // Case 3: 데이터 자체가 없음
+                    return (
+                      <div style={{ padding: '16px', background: 'linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%)', borderRadius: '8px', borderLeft: '4px solid var(--grey-400)' }}>
+                        <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--grey-600)', marginBottom: '8px' }}>
+                          📊 통계적으로 유의미한 채널 비교
+                        </div>
+                        <div style={{ fontSize: '13px', color: 'var(--grey-500)' }}>
+                          채널 비교 분석 데이터가 없습니다.
+                        </div>
+                      </div>
+                    );
+                  }
+                })()}
+              </div>
+            </div>
+          </div>
+
+          {/* 탭 4: 예산 투자 가이드 */}
+          <div className={`decision-tool-tab-content ${decisionToolTab === 'budget' ? 'active' : ''}`} id="budgetTab">
+            <div className="chart-section card" style={{ marginBottom: '16px' }}>
+              <div className="chart-header">💰 예산 투자 가이드: 채널별 투자 효율성 분석</div>
+              <div style={{ fontSize: '13px', color: 'var(--grey-600)', padding: '0 20px 12px 20px' }}>
+                각 채널의 전환율, 객단가, 실제 성과 데이터를 종합하여 <strong>100만원 투자 시 예상되는 구체적인 성과</strong>를 시뮬레이션했습니다.
+                <strong>&quot;신뢰도&quot;</strong>는 데이터 양에 기반한 분석의 정확도를 나타내며, 채널 타입별로 다른 투자 전략을 제시합니다.
+                <div style={{ marginTop: '8px', padding: '8px', background: 'var(--grey-50)', borderRadius: '6px', fontSize: '12px' }}>
+                  <strong>📌 분석 기준:</strong> 광고 채널(1,500원/방문자), 오가닉 최적화(300원/방문자), 레퍼럴(500원/방문자) 등 업계 평균 CPA 적용
                 </div>
               </div>
-            )}
+              <div id="abTestResults" style={{ padding: '20px' }}>
+                {(() => {
+                  const periodData = getPeriodData();
+                  const channelStrategy = periodData?.channel_strategy;
+
+                  if (!channelStrategy || channelStrategy.status !== 'success' || !channelStrategy.channels) {
+                    return <p style={{ color: 'var(--grey-500)' }}>채널 전략 데이터가 없습니다.</p>;
+                  }
+
+                  if (investmentGuide.length === 0) {
+                    return <p style={{ color: 'var(--grey-500)' }}>선택한 기간에 분석 가능한 채널 데이터가 없습니다.</p>;
+                  }
+
+                  return (
+                    <>
+                      <div style={{ marginBottom: '16px' }}>
+                        <p style={{ fontSize: '14px', color: 'var(--grey-700)', marginBottom: '8px' }}>
+                          <strong>{investmentGuide.length}개</strong> 채널의 투자 효율성 분석 완료
+                        </p>
+                        <p style={{ fontSize: '12px', color: 'var(--grey-600)' }}>
+                          💡 전환율, 평균 객단가, 데이터 신뢰도를 종합하여 투자 시 기대 성과가 높은 순으로 정렬했습니다.
+                        </p>
+                      </div>
+                      <div id="investmentItemsContainer" style={{ display: 'grid', gap: '12px' }}>
+                        {investmentGuide.map((channel, index) => {
+                          const rankEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}위`;
+                          const confidenceColor = channel.confidenceScore >= 3 ? 'var(--success-main)' :
+                            channel.confidenceScore === 2 ? 'var(--warning-main)' : 'var(--grey-400)';
+                          const bgColor = channel.confidenceScore >= 3 ? 'linear-gradient(135deg, var(--success-light) 0%, #f0fff4 100%)' :
+                            channel.confidenceScore === 2 ? 'linear-gradient(135deg, var(--warning-light) 0%, #fff9e6 100%)' : 'var(--grey-50)';
+                          const borderColor = channel.confidenceScore >= 3 ? 'var(--success-main)' :
+                            channel.confidenceScore === 2 ? 'var(--warning-main)' : 'var(--grey-300)';
+                          const hiddenClass = index >= 3 && !investmentExpanded ? ' hidden-row' : '';
+
+                          // 투자 전략 메시지 생성
+                          const getInvestmentStrategy = () => {
+                            if (channel.channelType === 'paid') {
+                              if (channel.roi > 200) return `이 광고 채널은 <strong style="color: var(--success-main);">매우 높은 수익률(+${formatDecimal(channel.roi)}%)</strong>을 보입니다. 100만원 투자 시 약 <strong>${formatNumber(Math.round(channel.expectedRevenue))}원</strong>의 매출이 예상되며, <strong>추가 예산 투입</strong>을 적극 권장합니다.`;
+                              if (channel.roi > 100) return `이 광고 채널은 <strong style="color: var(--success-main);">양호한 수익률(+${formatDecimal(channel.roi)}%)</strong>을 보입니다. 100만원 투자로 약 ${formatNumber(Math.round(channel.estimatedVisitors))}명 유입, ${formatNumber(Math.round(channel.expectedPurchases))}건 구매가 예상됩니다. <strong>예산 증액 고려</strong>를 추천합니다.`;
+                              if (channel.roi > 0) return `이 광고 채널은 수익성이 있으나(+${formatDecimal(channel.roi)}%), 다른 채널 대비 효율이 낮습니다. 광고 소재와 타겟팅을 개선하면 더 나은 성과를 기대할 수 있습니다.`;
+                              return `현재 이 광고 채널은 손실(${formatDecimal(channel.roi)}%)이 예상됩니다. <strong>캠페인 최적화 또는 예산 재분배</strong>가 필요합니다.`;
+                            } else if (channel.channelType === 'organic_optimizable') {
+                              if (channel.roi > 200) return `SEO/콘텐츠 최적화에 <strong>100만원 투자 시 약 ${formatNumber(Math.round(channel.estimatedVisitors))}명의 추가 유입</strong>과 <strong>${formatNumber(Math.round(channel.expectedRevenue))}원의 매출</strong>이 예상됩니다. 전환율이 ${formatDecimal(channel.cvr)}%로 높아 <strong style="color: var(--success-main);">매우 효율적인 투자처</strong>입니다.`;
+                              if (channel.roi > 0) return `이 채널은 오가닉 트래픽 최적화를 통해 수익을 창출할 수 있습니다. SEO, 블로그 콘텐츠, 쇼핑몰 최적화 등에 투자하면 지속 가능한 성장이 가능합니다.`;
+                              return `현재 전환율(${formatDecimal(channel.cvr)}%)과 객단가(${formatNumber(Math.round(channel.arpu))}원)를 고려할 때, 투자 전 콘텐츠 품질과 사용자 경험 개선이 우선입니다.`;
+                            }
+                            return `이 채널은 전환율 ${formatDecimal(channel.cvr)}%, 객단가 ${formatNumber(Math.round(channel.arpu))}원으로 투자 효율성이 확인되었습니다. 파트너십 강화나 제휴 확대를 고려해보세요.`;
+                          };
+
+                          return (
+                            <div key={channel.channel} className={`investment-item${hiddenClass}`} style={{ padding: '16px', background: bgColor, borderRadius: '8px', borderLeft: `4px solid ${borderColor}` }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px' }}>
+                                <div style={{ flex: 1 }}>
+                                  <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--grey-900)', marginBottom: '8px' }}>
+                                    {rankEmoji} {channel.channel}
+                                  </div>
+                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '12px' }}>
+                                    <div style={{ padding: '8px', background: 'white', borderRadius: '6px' }}>
+                                      <div style={{ fontSize: '11px', color: 'var(--grey-600)', marginBottom: '2px' }}>전환율</div>
+                                      <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--primary-main)' }}>{formatDecimal(channel.cvr)}%</div>
+                                    </div>
+                                    <div style={{ padding: '8px', background: 'white', borderRadius: '6px' }}>
+                                      <div style={{ fontSize: '11px', color: 'var(--grey-600)', marginBottom: '2px' }}>평균 객단가</div>
+                                      <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--success-main)' }}>{formatNumber(Math.round(channel.arpu))}원</div>
+                                    </div>
+                                    <div style={{ padding: '8px', background: 'white', borderRadius: '6px' }}>
+                                      <div style={{ fontSize: '11px', color: 'var(--grey-600)', marginBottom: '2px' }}>데이터 신뢰도</div>
+                                      <div style={{ fontSize: '13px', fontWeight: 700, color: confidenceColor }}>{channel.confidence}</div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {channel.confidenceScore >= 2 ? (
+                                channel.isInvestable ? (
+                                  <>
+                                    <div style={{ padding: '14px', background: 'white', borderRadius: '8px', borderLeft: '3px solid var(--primary-main)', marginBottom: '8px' }}>
+                                      <div style={{ fontSize: '13px', color: 'var(--grey-900)', fontWeight: 700, marginBottom: '10px' }}>
+                                        💰 100만원 투자 시 예상 성과
+                                        <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--grey-600)', marginLeft: '8px' }}>
+                                          (예상 CPA: {formatNumber(channel.estimatedCPA)}원/방문자)
+                                        </span>
+                                      </div>
+                                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '12px' }}>
+                                        <div>
+                                          <div style={{ fontSize: '11px', color: 'var(--grey-600)', marginBottom: '4px' }}>예상 유입</div>
+                                          <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--secondary-main)' }}>약 {formatNumber(Math.round(channel.estimatedVisitors))}명</div>
+                                        </div>
+                                        <div>
+                                          <div style={{ fontSize: '11px', color: 'var(--grey-600)', marginBottom: '4px' }}>예상 구매</div>
+                                          <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--primary-main)' }}>약 {formatNumber(Math.round(channel.expectedPurchases))}건</div>
+                                        </div>
+                                        <div>
+                                          <div style={{ fontSize: '11px', color: 'var(--grey-600)', marginBottom: '4px' }}>예상 매출</div>
+                                          <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--success-main)' }}>약 {formatNumber(Math.round(channel.expectedRevenue))}원</div>
+                                        </div>
+                                      </div>
+                                      <div style={{ padding: '10px', background: channel.roi > 100 ? '#e8f5e9' : channel.roi > 0 ? '#fff3e0' : '#ffebee', borderRadius: '6px' }}>
+                                        <div style={{ fontSize: '11px', color: 'var(--grey-600)', marginBottom: '4px' }}>예상 ROI (투자수익률)</div>
+                                        <div style={{ fontSize: '22px', fontWeight: 700, color: channel.roi > 0 ? 'var(--success-main)' : 'var(--error-main)' }}>
+                                          {channel.roi > 0 ? '+' : ''}{formatDecimal(channel.roi)}%
+                                          <span style={{ fontSize: '12px', fontWeight: 500, marginLeft: '8px' }}>
+                                            (순이익: {channel.roi > 0 ? '+' : ''}{formatNumber(Math.round(channel.expectedRevenue - 1000000))}원)
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #e8eaf6 0%, #f3f4f9 100%)', borderRadius: '6px' }}>
+                                      <div style={{ fontSize: '12px', color: 'var(--grey-800)', lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: `💡 <strong>투자 전략:</strong><br>${getInvestmentStrategy()}` }} />
+                                    </div>
+                                  </>
+                                ) : (
+                                  <div style={{ padding: '14px', background: 'linear-gradient(135deg, #fff3e0 0%, #fff9e6 100%)', borderRadius: '8px', borderLeft: '3px solid var(--warning-main)' }}>
+                                    <div style={{ fontSize: '13px', color: 'var(--grey-900)', fontWeight: 700, marginBottom: '8px' }}>
+                                      ℹ️ Direct 자연 유입 채널
+                                    </div>
+                                    <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.6 }}>
+                                      이 채널은 <strong>자연 유입(Direct Traffic)</strong>으로, 직접적인 광고 투자 대상이 아닙니다.<br /><br />
+                                      <strong>현재 성과:</strong><br />
+                                      • 전환율: {formatDecimal(channel.cvr)}%<br />
+                                      • 평균 객단가: {formatNumber(Math.round(channel.arpu))}원<br />
+                                      • 총 매출: {formatNumber(channel.revenue)}원<br /><br />
+                                      💡 <strong>개선 방안:</strong> 브랜드 인지도 향상, 이메일 마케팅, 리마케팅 등을 통해 Direct 유입을 늘릴 수 있습니다. 현재 높은 전환율({formatDecimal(channel.cvr)}%)을 유지하면서 유입량을 증가시키는 것이 핵심입니다.
+                                    </div>
+                                  </div>
+                                )
+                              ) : (
+                                <div style={{ padding: '12px', background: 'white', borderRadius: '6px', borderLeft: '3px solid var(--grey-300)' }}>
+                                  <div style={{ fontSize: '12px', color: 'var(--grey-700)' }}>
+                                    ⚠️ 데이터가 충분하지 않아 정확한 투자 성과 예측이 어렵습니다. 더 많은 데이터를 수집한 후 재평가하세요. (현재 유입: {formatNumber(channel.acquisition)}명)
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {investmentGuide.length > 3 && (
+                        <>
+                          <div className="show-more-container" id="investmentShowMoreContainer" style={{ marginTop: '12px', display: investmentExpanded ? 'none' : 'block' }}>
+                            <button className="show-more-btn" id="investmentShowMoreBtn" onClick={() => setInvestmentExpanded(true)}>
+                              더 보기 (<span id="investmentHiddenCount">{investmentGuide.length - 3}</span>개)
+                            </button>
+                          </div>
+                          <div className="show-more-container" id="investmentCollapseContainer" style={{ display: investmentExpanded ? 'block' : 'none', marginTop: '12px' }}>
+                            <button className="show-more-btn" id="investmentCollapseBtn" onClick={() => setInvestmentExpanded(false)}>
+                              접기
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+
+          {/* 탭 5: CRM 가이드 (기간 필터 적용) */}
+          <div className={`decision-tool-tab-content ${decisionToolTab === 'crm_guide' ? 'active' : ''}`} id="crmGuideTab">
+            <div className="chart-section card" style={{ marginBottom: '16px' }}>
+              <div className="chart-header">📋 CRM 액션 가이드</div>
+              <div style={{ fontSize: '13px', color: 'var(--grey-600)', padding: '0 20px 12px 20px' }}>
+                선택한 기간의 데이터를 분석하여 이탈 위험을 방지하기 위한 <strong>구체적인 CRM 액션</strong>을 제안합니다.
+                각 단계별로 즉시 실행 가능한 처방을 확인하세요.
+              </div>
+              <div id="crmActionsContainer" style={{ padding: '20px' }}>
+                {(() => {
+                  if (!crmActionsData.hasData) {
+                    return (
+                      <div style={{ padding: '20px', textAlign: 'center', color: 'var(--grey-500)' }}>
+                        <p>선택한 기간의 CRM 액션 데이터가 없습니다.</p>
+                      </div>
+                    );
+                  }
+
+                  if (crmActionsData.actions.length === 0) {
+                    return (
+                      <div style={{ padding: '20px', textAlign: 'center', color: 'var(--success-main)' }}>
+                        <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: '48px', height: '48px', marginBottom: '12px' }}>
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <p style={{ fontSize: '16px', fontWeight: 600, marginBottom: '4px' }}>이탈 위험 없음</p>
+                        <p style={{ fontSize: '14px', color: 'var(--grey-600)' }}>{crmActionsData.periodLabel} 동안 특별한 CRM 액션이 필요하지 않습니다.</p>
+                      </div>
+                    );
+                  }
+
+                  const priorityColors: Record<string, { border: string; bg: string; badge: string; label: string }> = {
+                    'high': { border: '#ef5350', bg: '#ffebee', badge: '#c62828', label: '긴급' },
+                    'medium': { border: '#ffa726', bg: '#fff3e0', badge: '#ef6c00', label: '주의' },
+                    'low': { border: '#66bb6a', bg: '#e8f5e9', badge: '#2e7d32', label: '모니터링' }
+                  };
+
+                  return (
+                    <>
+                      <div style={{ marginBottom: '16px', padding: '12px', background: '#f5f5f5', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '13px', color: 'var(--grey-700)' }}>
+                          <strong>{crmActionsData.periodLabel}</strong> 기간 분석 결과, <strong style={{ color: 'var(--primary-main)' }}>{crmActionsData.actions.length}건</strong>의 CRM 액션이 필요합니다.
+                        </div>
+                      </div>
+                      <div style={{ display: 'grid', gap: '12px' }}>
+                        {crmActionsData.actions.map((action: { priority?: string; stage?: string; trend?: string; diagnosis?: string; prescription?: string }, index: number) => {
+                          const priority = action.priority || 'medium';
+                          const colors = priorityColors[priority] || priorityColors['medium'];
+                          return (
+                            <div key={index} style={{ padding: '16px', background: colors.bg, borderRadius: '8px', borderLeft: `4px solid ${colors.border}` }}>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--grey-900)' }}>
+                                  📍 {action.stage || '알 수 없는 단계'}
+                                </div>
+                                <span style={{ fontSize: '11px', padding: '3px 8px', background: colors.badge, color: 'white', borderRadius: '10px' }}>
+                                  {colors.label}
+                                </span>
+                              </div>
+                              <div style={{ fontSize: '13px', color: 'var(--grey-700)', marginBottom: '6px' }}>
+                                <strong>현황:</strong> {action.trend || '데이터 없음'}
+                              </div>
+                              <div style={{ fontSize: '13px', color: 'var(--grey-600)', marginBottom: '10px', fontStyle: 'italic' }}>
+                                <strong>진단:</strong> {action.diagnosis || '진단 정보 없음'}
+                              </div>
+                              <div style={{ fontSize: '13px', color: 'var(--grey-900)', padding: '12px', background: 'white', borderRadius: '6px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                                💊 <strong>처방:</strong> {action.prescription || '처방 정보 없음'}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* 4. 최근 변화 인사이트 (접기/펼치기) */}
-      <div style={{ marginBottom: '24px' }}>
-        {/* 접기/펼치기 헤더 */}
-        <div
-          onClick={() => setTrendInsightExpanded(!trendInsightExpanded)}
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            cursor: 'pointer',
-            padding: '20px 24px',
-            background: 'white',
-            borderRadius: trendInsightExpanded ? '12px 12px 0 0' : '12px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', fontWeight: 600, color: '#212121' }}>
-            <span>📈</span>
+      <div className="collapsible-section" style={{ marginBottom: '24px' }}>
+        <div className="collapsible-header" onClick={() => setTrendInsightExpanded(!trendInsightExpanded)}>
+          <div className="collapsible-title">
+            <span className="collapsible-icon">📈</span>
             <span>최근 변화 인사이트</span>
           </div>
-          <button style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '8px 16px',
-            background: '#ede7f6',
-            color: '#673ab7',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: 500,
-            cursor: 'pointer'
-          }}>
+          <button className="collapsible-toggle">
             <span>{trendInsightExpanded ? '접기' : '펼치기'}</span>
-            <span style={{ transform: trendInsightExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>▼</span>
+            <span className={`collapsible-toggle-icon ${trendInsightExpanded ? '' : 'collapsed'}`}>▼</span>
           </button>
         </div>
-
-        {/* 접기/펼치기 콘텐츠 */}
-        <div style={{
-          maxHeight: trendInsightExpanded ? '10000px' : '0',
-          overflow: 'hidden',
-          transition: 'max-height 0.4s ease, opacity 0.3s ease',
-          opacity: trendInsightExpanded ? 1 : 0,
-          background: 'white',
-          borderRadius: '0 0 12px 12px',
-          boxShadow: trendInsightExpanded ? '0 2px 8px rgba(0,0,0,0.08)' : 'none'
-        }}>
-          <div style={{ padding: '24px' }}>
-            {/* 기간 비교 선택 */}
-            <div style={{
-              marginBottom: '16px',
-              padding: '14px 18px',
-              background: 'linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)',
-              borderRadius: '10px',
-              border: '1px solid #bbdefb'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '16px' }}>📊</span>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: '#1565c0' }}>비교 기간:</span>
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  {['30d', '14d', '7d'].map(period => (
-                    <button
-                      key={period}
-                      onClick={() => setTrendPeriod(period)}
-                      style={{
-                        padding: '6px 14px',
-                        fontSize: '11px',
-                        fontWeight: 600,
-                        border: trendPeriod === period ? '1px solid #673ab7' : '1px solid #dee2e6',
-                        borderRadius: '20px',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        background: trendPeriod === period ? '#673ab7' : 'white',
-                        color: trendPeriod === period ? 'white' : '#495057'
-                      }}
-                    >
-                      {period.replace('d', '일')}
-                    </button>
-                  ))}
+        <div className={`collapsible-content ${trendInsightExpanded ? 'expanded' : ''}`}>
+          {/* 기간 비교 선택 */}
+          <div id="trendPeriodIndicator" style={{ marginBottom: '16px', padding: '14px 18px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)', borderRadius: '10px', border: '1px solid #bbdefb' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '16px' }}>📊</span>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: '#1565c0' }}>비교 기간:</span>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                {(['30d', '14d', '7d'] as const).map(period => (
+                  <button
+                    key={period}
+                    className={`trend-period-btn ${trendPeriod === period ? 'active' : ''}`}
+                    data-trend-period={period}
+                    onClick={() => setTrendPeriod(period)}
+                    style={{
+                      padding: '6px 14px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      border: trendPeriod === period ? '1px solid #673ab7' : '1px solid #dee2e6',
+                      borderRadius: '20px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      background: trendPeriod === period ? '#673ab7' : 'white',
+                      color: trendPeriod === period ? 'white' : '#495057'
+                    }}
+                  >
+                    {period === '30d' ? '30일' : period === '14d' ? '14일' : '7일'}
+                  </button>
+                ))}
+              </div>
+              <span id="trendPeriodText" style={{ fontSize: '12px', color: '#37474f', marginLeft: 'auto' }}>
+                <strong style={{ color: '#1565c0' }}>최근 {performanceTrends.days || 7}일</strong> ({performanceTrends.recentStart}~{performanceTrends.recentEnd}) vs <strong style={{ color: '#7b1fa2' }}>이전 {performanceTrends.days || 7}일</strong> ({performanceTrends.previousStart}~{performanceTrends.previousEnd})
+              </span>
+            </div>
+          </div>
+          {/* 2열 그리드 */}
+          <div className="compact-grid-2" style={{ marginBottom: 0, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, background: 'white', border: '1px solid var(--grey-200)', borderRadius: '12px', overflow: 'hidden' }}>
+            {/* 성과 개선 분석 */}
+            <div style={{ padding: '24px', borderRight: '1px solid var(--grey-200)', background: '#fafafa' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', paddingBottom: '12px', borderBottom: '2px solid #4caf50' }}>
+                <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg, #66bb6a 0%, #4caf50 100%)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: '14px', filter: 'brightness(10)' }}>✨</span>
                 </div>
+                <span style={{ fontSize: '14px', fontWeight: 700, color: '#2e7d32' }}>좋은 소식: 어떤 부분이 좋아졌나요?</span>
+              </div>
+              <div className="insight-content" id="improvementTrendContent" style={{ display: 'block', maxHeight: '400px', overflowY: 'auto', paddingTop: '4px' }}>
+                {!insightsData?.performance_trends ? (
+                  <div className="insight-card neutral">
+                    <div className="insight-text" style={{ textAlign: 'center', padding: '20px' }}>
+                      <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: '48px', height: '48px', opacity: 0.5, color: 'var(--grey-500)', display: 'block', margin: '0 auto 12px auto' }}>
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v2h-2v-2zm0-12h2v10h-2V5z"/>
+                      </svg>
+                      <p style={{ fontSize: '16px', fontWeight: 600, marginBottom: '4px', color: 'var(--grey-700)' }}>데이터 없음</p>
+                      <p style={{ fontSize: '14px', color: 'var(--grey-600)' }}>성과 트렌드 데이터가 아직 생성되지 않았습니다.</p>
+                    </div>
+                  </div>
+                ) : performanceTrends.improvements.length === 0 ? (
+                  <div className="insight-card neutral">
+                    <div className="insight-text" style={{ textAlign: 'center', padding: '20px' }}>
+                      <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: '48px', height: '48px', opacity: 0.5, color: 'var(--grey-500)', display: 'block', margin: '0 auto 12px auto' }}>
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v2h-2v-2zm0-12h2v10h-2V5z"/>
+                      </svg>
+                      <p style={{ fontSize: '16px', fontWeight: 600, marginBottom: '4px', color: 'var(--grey-700)' }}>개선 사항 없음</p>
+                      <p style={{ fontSize: '14px', color: 'var(--grey-600)' }}>현재 기간에 유의미한 성과 개선이 감지되지 않았습니다.</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ display: 'grid', gap: '12px' }}>
+                    {performanceTrends.improvements.map((item, index) => (
+                      <div
+                        key={index}
+                        style={{ background: '#e8f5e9', border: '2px solid #4caf50', borderRadius: '10px', padding: '14px', transition: 'transform 0.2s' }}
+                        onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                        onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
+                      >
+                        {/* 헤더 */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '18px' }}>📈</span>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: '13px', fontWeight: 700, color: '#2e7d32' }}>{item.metric}</div>
+                            <div style={{ fontSize: '10px', color: '#2e7d32', opacity: 0.8 }}>{performanceTrends.periodText}</div>
+                          </div>
+                          <span style={{ background: '#4caf50', color: 'white', fontSize: '9px', padding: '2px 8px', borderRadius: '10px', fontWeight: 600 }}>+{item.change_pct}% {item.improvement_level === 'high' ? '높음' : '중간'}</span>
+                        </div>
+                        {/* 메트릭스 배지 */}
+                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                          <span style={{ background: 'white', padding: '3px 8px', borderRadius: '12px', fontSize: '10px', color: '#1565c0', border: '1px solid #90caf9', fontWeight: 500 }}>최근 {formatNumber(item.recent_avg)}</span>
+                          <span style={{ background: 'white', padding: '3px 8px', borderRadius: '12px', fontSize: '10px', color: '#5e35b1', border: '1px solid #b39ddb', fontWeight: 500 }}>이전 {formatNumber(item.previous_avg)}</span>
+                        </div>
+                        {/* 추천 액션 */}
+                        <div style={{ background: '#ffffff', borderRadius: '6px', padding: '10px', borderLeft: '3px solid #4caf50' }}>
+                          <div style={{ fontSize: '10px', fontWeight: 600, color: '#2e7d32', marginBottom: '4px' }}>💡 추천 액션</div>
+                          <div style={{ fontSize: '11px', color: '#333', lineHeight: 1.4 }}>{item.recommendation}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* 2열 그리드 */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 0,
-              background: 'white',
-              border: '1px solid #e0e0e0',
-              borderRadius: '12px',
-              overflow: 'hidden'
-            }}>
-              {/* 성과 개선 분석 */}
-              <div style={{ padding: '24px', borderRight: '1px solid #e0e0e0', background: '#fafafa' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', paddingBottom: '12px', borderBottom: '2px solid #4caf50' }}>
-                  <div style={{
-                    width: '32px',
-                    height: '32px',
-                    background: 'linear-gradient(135deg, #66bb6a 0%, #4caf50 100%)',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <span style={{ fontSize: '14px', filter: 'brightness(10)' }}>✨</span>
-                  </div>
-                  <span style={{ fontSize: '14px', fontWeight: 700, color: '#2e7d32' }}>좋은 소식: 어떤 부분이 좋아졌나요?</span>
+            {/* 성과 하락 경고 */}
+            <div style={{ padding: '24px', background: '#fafafa' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', paddingBottom: '12px', borderBottom: '2px solid #ef5350' }}>
+                <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg, #ef5350 0%, #f44336 100%)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: '14px', filter: 'brightness(10)' }}>⚠️</span>
                 </div>
-                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                  {performanceTrends.improvements.length > 0 ? (
-                    <div style={{ display: 'grid', gap: '8px' }}>
-                      {performanceTrends.improvements.map((item, index) => (
-                        <div key={index} style={{
-                          padding: '12px',
-                          background: '#e8f5e9',
-                          borderRadius: '8px',
-                          borderLeft: '3px solid #4caf50'
-                        }}>
-                          <div style={{ fontWeight: 600, marginBottom: '4px' }}>{item.metric}</div>
-                          <div style={{ color: '#4caf50', fontWeight: 700 }}>+{formatDecimal(item.change_pct)}%</div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div style={{ padding: '20px', textAlign: 'center', color: '#9e9e9e' }}>개선 데이터 없음</div>
-                  )}
-                </div>
+                <span style={{ fontSize: '14px', fontWeight: 700, color: '#c62828' }}>주의 필요: 성과 하락 감지</span>
               </div>
-
-              {/* 성과 하락 경고 */}
-              <div style={{ padding: '24px', background: '#fafafa' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', paddingBottom: '12px', borderBottom: '2px solid #ef5350' }}>
-                  <div style={{
-                    width: '32px',
-                    height: '32px',
-                    background: 'linear-gradient(135deg, #ef5350 0%, #f44336 100%)',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <span style={{ fontSize: '14px', filter: 'brightness(10)' }}>⚠️</span>
+              <div className="insight-content" id="declineTrendContent" style={{ display: 'block', maxHeight: '400px', overflowY: 'auto', paddingTop: '4px' }}>
+                {!insightsData?.performance_trends ? (
+                  <div className="insight-card neutral">
+                    <div className="insight-text" style={{ textAlign: 'center', padding: '20px' }}>
+                      <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: '48px', height: '48px', opacity: 0.5, color: 'var(--grey-500)', display: 'block', margin: '0 auto 12px auto' }}>
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v2h-2v-2zm0-12h2v10h-2V5z"/>
+                      </svg>
+                      <p style={{ fontSize: '16px', fontWeight: 600, marginBottom: '4px', color: 'var(--grey-700)' }}>데이터 없음</p>
+                      <p style={{ fontSize: '14px', color: 'var(--grey-600)' }}>성과 트렌드 데이터가 아직 생성되지 않았습니다.</p>
+                    </div>
                   </div>
-                  <span style={{ fontSize: '14px', fontWeight: 700, color: '#c62828' }}>주의 필요: 성과 하락 감지</span>
-                </div>
-                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                  {performanceTrends.declines.length > 0 ? (
-                    <div style={{ display: 'grid', gap: '8px' }}>
-                      {performanceTrends.declines.map((item, index) => (
-                        <div key={index} style={{
-                          padding: '12px',
-                          background: item.risk_level === 'high' ? '#ffebee' : '#fff3e0',
-                          borderRadius: '8px',
-                          borderLeft: `3px solid ${item.risk_level === 'high' ? '#f44336' : '#ff9800'}`
-                        }}>
-                          <div style={{ fontWeight: 600, marginBottom: '4px' }}>{item.metric}</div>
-                          <div style={{ color: item.risk_level === 'high' ? '#f44336' : '#ff9800', fontWeight: 700 }}>
-                            {formatDecimal(item.change_pct)}%
+                ) : performanceTrends.declines.length === 0 ? (
+                  <div className="insight-card neutral">
+                    <div className="insight-text" style={{ textAlign: 'center', padding: '20px' }}>
+                      <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: '48px', height: '48px', color: 'var(--success-main)', display: 'block', margin: '0 auto 12px auto' }}>
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      </svg>
+                      <p style={{ fontSize: '16px', fontWeight: 600, marginBottom: '4px', color: 'var(--success-main)' }}>하락 없음</p>
+                      <p style={{ fontSize: '14px', color: 'var(--grey-600)' }}>모든 지표가 안정적이거나 개선되고 있습니다.</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ display: 'grid', gap: '12px' }}>
+                    {performanceTrends.declines.map((item, index) => {
+                      const isHigh = item.risk_level === 'high';
+                      const bgColor = isHigh ? '#ffebee' : '#fff3e0';
+                      const borderColor = isHigh ? '#f44336' : '#ff9800';
+                      const textColor = isHigh ? '#c62828' : '#e65100';
+                      const badgeColor = isHigh ? '#f44336' : '#ff9800';
+                      return (
+                        <div
+                          key={index}
+                          style={{ background: bgColor, border: `2px solid ${borderColor}`, borderRadius: '10px', padding: '14px', transition: 'transform 0.2s' }}
+                          onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                          onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
+                        >
+                          {/* 헤더 */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                            <span style={{ fontSize: '18px' }}>📉</span>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontSize: '13px', fontWeight: 700, color: textColor }}>{item.metric}</div>
+                              <div style={{ fontSize: '10px', color: textColor, opacity: 0.8 }}>{performanceTrends.periodText}</div>
+                            </div>
+                            <span style={{ background: badgeColor, color: 'white', fontSize: '9px', padding: '2px 8px', borderRadius: '10px', fontWeight: 600 }}>{item.change_pct}% {isHigh ? '높음' : '중간'}</span>
+                          </div>
+                          {/* 메트릭스 배지 */}
+                          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                            <span style={{ background: 'white', padding: '3px 8px', borderRadius: '12px', fontSize: '10px', color: '#1565c0', border: '1px solid #90caf9', fontWeight: 500 }}>최근 {formatNumber(item.recent_avg)}</span>
+                            <span style={{ background: 'white', padding: '3px 8px', borderRadius: '12px', fontSize: '10px', color: '#5e35b1', border: '1px solid #b39ddb', fontWeight: 500 }}>이전 {formatNumber(item.previous_avg)}</span>
+                          </div>
+                          {/* 추천 액션 */}
+                          <div style={{ background: '#ffffff', borderRadius: '6px', padding: '10px', borderLeft: `3px solid ${borderColor}` }}>
+                            <div style={{ fontSize: '10px', fontWeight: 600, color: textColor, marginBottom: '4px' }}>⚠️ 주의 필요</div>
+                            <div style={{ fontSize: '11px', color: '#333', lineHeight: 1.4 }}>{item.recommendation}</div>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div style={{ padding: '20px', textAlign: 'center', color: '#9e9e9e' }}>하락 데이터 없음</div>
-                  )}
-                </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -2438,513 +3005,730 @@ export default function ReactView() {
       </div>
 
       {/* 5. 유형별 조치 가이드 (독립 섹션) */}
-      <div style={{ marginBottom: '24px' }}>
-        {/* 접기/펼치기 헤더 */}
-        <div
-          onClick={() => setMicroSegmentSectionExpanded(!microSegmentSectionExpanded)}
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            cursor: 'pointer',
-            padding: '20px 24px',
-            background: 'white',
-            borderRadius: microSegmentSectionExpanded ? '12px 12px 0 0' : '12px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', fontWeight: 600, color: '#212121' }}>
-            <span>🎯</span>
+      <div className="collapsible-section">
+        <div className="collapsible-header" onClick={() => setMicroSegmentSectionExpanded(!microSegmentSectionExpanded)}>
+          <div className="collapsible-title">
+            <span className="collapsible-icon">🎯</span>
             <span>유형별 조치 가이드 (SA, DA, PR, CRM, etc)</span>
           </div>
-          <button style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '8px 16px',
-            background: '#ede7f6',
-            color: '#673ab7',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: 500,
-            cursor: 'pointer'
-          }}>
+          <button className="collapsible-toggle">
             <span>{microSegmentSectionExpanded ? '접기' : '펼치기'}</span>
-            <span style={{ transform: microSegmentSectionExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>▼</span>
+            <span className={`collapsible-toggle-icon ${microSegmentSectionExpanded ? 'expanded' : 'collapsed'}`}>▼</span>
           </button>
         </div>
-
-        {/* 접기/펼치기 콘텐츠 */}
-        <div style={{
-          maxHeight: microSegmentSectionExpanded ? '10000px' : '0',
-          overflow: 'hidden',
-          transition: 'max-height 0.4s ease, opacity 0.3s ease',
-          opacity: microSegmentSectionExpanded ? 1 : 0,
-          background: 'white',
-          borderRadius: '0 0 12px 12px',
-          boxShadow: microSegmentSectionExpanded ? '0 2px 8px rgba(0,0,0,0.08)' : 'none'
-        }}>
-          <div style={{ padding: '24px' }}>
-            <div style={{ fontSize: '13px', color: '#757575', marginBottom: '16px' }}>
-              채널 카테고리(SA, DA, SNS 등)별로 <strong>맞춤 처방</strong>과 <strong>조치 가이드</strong>를 제공합니다. 카테고리를 선택하면 해당 유형의 문제점과 개선 방안을 확인할 수 있습니다.
-            </div>
-
-            {/* 기간 필터 */}
-            <div style={{
-              marginBottom: '12px',
-              padding: '12px 16px',
-              background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-              borderRadius: '10px',
-              border: '1px solid #dee2e6'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '12px', fontWeight: 600, color: '#495057' }}>📅 분석 기간:</span>
-                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                  {['full', '180d', '90d', '30d'].map(period => (
-                    <button
-                      key={period}
-                      onClick={() => switchMicroSegmentPeriod(period)}
-                      style={{
-                        padding: '6px 14px',
-                        fontSize: '11px',
-                        fontWeight: 600,
-                        border: microSegmentPeriod === period ? '1px solid #673ab7' : '1px solid #dee2e6',
-                        borderRadius: '20px',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        background: microSegmentPeriod === period ? '#673ab7' : 'white',
-                        color: microSegmentPeriod === period ? 'white' : '#495057'
-                      }}
-                    >
-                      {period === 'full' ? '전체 기간' : `최근 ${period}`}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* 카테고리 필터 */}
-            <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: '#757575' }}>카테고리:</span>
-              {['all', 'SA', 'DA', 'SNS', 'CRM', 'PR', 'Organic', 'etc'].map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => setCurrentMicroCategoryFilter(cat)}
-                  style={{
-                    padding: '5px 10px',
-                    fontSize: '11px',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    background: currentMicroCategoryFilter === cat ? '#673ab7' : '#f5f5f5',
-                    color: currentMicroCategoryFilter === cat ? 'white' : '#616161'
-                  }}
-                >
-                  {cat === 'all' ? '전체' : cat === 'etc' ? '기타' : cat}
-                </button>
-              ))}
-            </div>
-
-            {/* 문제점/기회 탭 */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-              <button
-                onClick={() => setMicroSegmentTab('problem')}
-                style={{
-                  padding: '10px 20px',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '13px',
-                  background: microSegmentTab === 'problem' ? '#673ab7' : 'white',
-                  color: microSegmentTab === 'problem' ? 'white' : '#616161',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.08)'
-                }}
-              >
-                🚧 문제점 ({microSegmentData.problems.length})
-              </button>
-              <button
-                onClick={() => setMicroSegmentTab('opportunity')}
-                style={{
-                  padding: '10px 20px',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '13px',
-                  background: microSegmentTab === 'opportunity' ? '#673ab7' : 'white',
-                  color: microSegmentTab === 'opportunity' ? 'white' : '#616161',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.08)'
-                }}
-              >
-                🚀 기회 ({microSegmentData.opportunities.length})
-              </button>
-            </div>
-
-            {/* 문제점 카드 */}
-            {microSegmentTab === 'problem' && (
-              <div>
-                <div style={{ display: 'grid', gap: '12px' }}>
-                  {microSegmentData.problems
-                    .filter(item => currentMicroCategoryFilter === 'all' || item.category === currentMicroCategoryFilter)
-                    .slice(0, microSegmentShowAll.problem ? undefined : 5)
-                    .map((item, index) => (
-                      <div key={index} style={{
-                        padding: '16px',
-                        background: 'linear-gradient(135deg, #ffebee 0%, #fce4ec 100%)',
-                        borderRadius: '8px',
-                        borderLeft: '4px solid #f44336'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                          <span style={{ fontSize: '11px', padding: '2px 8px', background: '#f44336', color: 'white', borderRadius: '4px' }}>{item.category}</span>
-                          <span style={{ fontSize: '14px', fontWeight: 600 }}>{item.channel}</span>
-                        </div>
-                        <div style={{ fontSize: '13px', color: '#616161', marginBottom: '8px' }}>{item.issue}</div>
-                        {item.recommendation && (
-                          <div style={{ padding: '10px', background: 'white', borderRadius: '6px', fontSize: '12px' }}>
-                            💡 {item.recommendation}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  {microSegmentData.problems.filter(item => currentMicroCategoryFilter === 'all' || item.category === currentMicroCategoryFilter).length === 0 && (
-                    <div style={{ padding: '20px', textAlign: 'center', color: '#9e9e9e' }}>해당 카테고리에 문제점이 없습니다.</div>
-                  )}
-                </div>
-                {/* 더보기/접기 버튼 */}
-                {microSegmentData.problems.filter(item => currentMicroCategoryFilter === 'all' || item.category === currentMicroCategoryFilter).length > 5 && (
-                  <div style={{ textAlign: 'center', marginTop: '12px' }}>
-                    <button
-                      onClick={() => setMicroSegmentShowAll(prev => ({ ...prev, problem: !prev.problem }))}
-                      style={{
-                        padding: '8px 20px',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontSize: '13px',
-                        background: '#f5f5f5',
-                        color: '#616161'
-                      }}
-                    >
-                      {microSegmentShowAll.problem ? '접기 ▲' : '더 보기 ▼'}
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* 기회 카드 */}
-            {microSegmentTab === 'opportunity' && (
-              <div>
-                <div style={{ display: 'grid', gap: '12px' }}>
-                  {microSegmentData.opportunities
-                    .filter(item => currentMicroCategoryFilter === 'all' || item.category === currentMicroCategoryFilter)
-                    .slice(0, microSegmentShowAll.opportunity ? undefined : 5)
-                    .map((item, index) => (
-                      <div key={index} style={{
-                        padding: '16px',
-                        background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%)',
-                        borderRadius: '8px',
-                        borderLeft: '4px solid #4caf50'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                          <span style={{ fontSize: '11px', padding: '2px 8px', background: '#4caf50', color: 'white', borderRadius: '4px' }}>{item.category}</span>
-                          <span style={{ fontSize: '14px', fontWeight: 600 }}>{item.channel}</span>
-                        </div>
-                        <div style={{ fontSize: '13px', color: '#616161', marginBottom: '8px' }}>{item.opportunity}</div>
-                        {item.action && (
-                          <div style={{ padding: '10px', background: 'white', borderRadius: '6px', fontSize: '12px' }}>
-                            🎯 {item.action}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  {microSegmentData.opportunities.filter(item => currentMicroCategoryFilter === 'all' || item.category === currentMicroCategoryFilter).length === 0 && (
-                    <div style={{ padding: '20px', textAlign: 'center', color: '#9e9e9e' }}>해당 카테고리에 기회가 없습니다.</div>
-                  )}
-                </div>
-                {/* 더보기/접기 버튼 */}
-                {microSegmentData.opportunities.filter(item => currentMicroCategoryFilter === 'all' || item.category === currentMicroCategoryFilter).length > 5 && (
-                  <div style={{ textAlign: 'center', marginTop: '12px' }}>
-                    <button
-                      onClick={() => setMicroSegmentShowAll(prev => ({ ...prev, opportunity: !prev.opportunity }))}
-                      style={{
-                        padding: '8px 20px',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontSize: '13px',
-                        background: '#f5f5f5',
-                        color: '#616161'
-                      }}
-                    >
-                      {microSegmentShowAll.opportunity ? '접기 ▲' : '더 보기 ▼'}
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
+        <div className={`collapsible-content ${microSegmentSectionExpanded ? 'expanded' : ''}`}>
+          <div style={{ fontSize: '13px', color: 'var(--grey-600)', marginBottom: '16px' }}>
+            채널 카테고리(SA, DA, SNS 등)별로 <strong>맞춤 처방</strong>과 <strong>조치 가이드</strong>를 제공합니다. 카테고리를 선택하면 해당 유형의 문제점과 개선 방안을 확인할 수 있습니다.
           </div>
+
+          {/* 기간 필터 */}
+          <div style={{ marginBottom: '12px', padding: '12px 16px', background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)', borderRadius: '10px', border: '1px solid #dee2e6' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#495057' }}>📅 분석 기간:</span>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                {[
+                  { period: 'full', label: '전체 기간' },
+                  { period: '180d', label: '최근 180일' },
+                  { period: '90d', label: '최근 90일' },
+                  { period: '30d', label: '최근 30일' }
+                ].map(({ period, label }) => (
+                  <button
+                    key={period}
+                    className={`micro-segment-period-btn ${microSegmentPeriod === period ? 'active' : ''}`}
+                    data-period={period}
+                    onClick={() => switchMicroSegmentPeriod(period)}
+                    style={{
+                      padding: '6px 14px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      border: microSegmentPeriod === period ? '1px solid #673ab7' : '1px solid #dee2e6',
+                      borderRadius: '20px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      background: microSegmentPeriod === period ? '#673ab7' : 'white',
+                      color: microSegmentPeriod === period ? 'white' : '#495057'
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <span id="microSegmentPeriodDateRange" style={{ fontSize: '11px', color: '#6c757d', marginLeft: 'auto' }}>
+                {(() => {
+                  const periodData = getMicroSegmentPeriodData();
+                  if (periodData?.overall?.current_period) {
+                    const { start_date, end_date } = periodData.overall.current_period;
+                    const start = new Date(start_date);
+                    const end = new Date(end_date);
+                    const diffTime = Math.abs(end.getTime() - start.getTime());
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    return `${start_date} ~ ${end_date} (${diffDays}일)`;
+                  }
+                  return '';
+                })()}
+              </span>
+            </div>
+          </div>
+
+          {/* 카테고리 필터 */}
+          <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--grey-600)' }}>카테고리:</span>
+            {[
+              { cat: 'all', label: '전체' },
+              { cat: 'SA', label: 'SA' },
+              { cat: 'DA', label: 'DA' },
+              { cat: 'SNS', label: 'SNS' },
+              { cat: 'CRM', label: 'CRM' },
+              { cat: 'PR', label: 'PR' },
+              { cat: 'Organic', label: 'Organic' },
+              { cat: 'etc', label: '기타' }
+            ].map(({ cat, label }) => (
+              <button
+                key={cat}
+                className={`view-btn micro-category-filter ${currentMicroCategoryFilter === cat ? 'active' : ''}`}
+                data-category={cat}
+                onClick={() => setCurrentMicroCategoryFilter(cat)}
+                style={{ fontSize: '11px', padding: '5px 10px' }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* 세그먼트 알림 서브탭 */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+            <button
+              className={`view-btn micro-segment-tab-btn ${microSegmentTab === 'problem' ? 'active' : ''}`}
+              data-type="problem"
+              onClick={() => setMicroSegmentTab('problem')}
+              style={{ fontSize: '13px' }}
+            >
+              🚧 문제점 <span id="microProblemCount" style={{ fontSize: '11px', opacity: 0.8 }}>({microSegmentData.problems.length}건)</span>
+            </button>
+            <button
+              className={`view-btn micro-segment-tab-btn ${microSegmentTab === 'opportunity' ? 'active' : ''}`}
+              data-type="opportunity"
+              onClick={() => setMicroSegmentTab('opportunity')}
+              style={{ fontSize: '13px' }}
+            >
+              🚀 기회 <span id="microOpportunityCount" style={{ fontSize: '11px', opacity: 0.8 }}>({microSegmentData.opportunities.length}건)</span>
+            </button>
+          </div>
+
+          {/* 문제점 알림 */}
+          <div id="microProblemTab" className="micro-segment-tab-content" style={{ display: microSegmentTab === 'problem' ? 'block' : 'none' }}>
+            <div id="microProblemCards" style={{ display: 'grid', gap: '12px' }}>
+              {microSegmentData.problems.length === 0 ? (
+                <div style={{ padding: '20px', textAlign: 'center', color: 'var(--grey-500)' }}>
+                  현재 문제점이 없습니다.
+                </div>
+              ) : (
+                microSegmentData.problems
+                  .slice(0, microSegmentShowAll.problem ? undefined : 5)
+                  .map((alert, index) => {
+                    const severityStyles: Record<string, { bgColor: string; borderColor: string; textColor: string; icon: string }> = {
+                      critical: { bgColor: '#ffebee', borderColor: '#f44336', textColor: '#c62828', icon: '🚨' },
+                      high: { bgColor: '#fff3e0', borderColor: '#ff9800', textColor: '#e65100', icon: '⚠️' },
+                      medium: { bgColor: '#fff8e1', borderColor: '#ffc107', textColor: '#f57f17', icon: '📌' },
+                      opportunity: { bgColor: '#e8f5e9', borderColor: '#4caf50', textColor: '#2e7d32', icon: '🚀' }
+                    };
+                    const style = severityStyles[alert.severity] || severityStyles.medium;
+                    const subTypeIcons: Record<string, string> = {
+                      'traffic_leak': '🚿',
+                      'hidden_vip': '💎',
+                      'checkout_friction': '🛒',
+                      'growth_engine': '🚀',
+                      'activation_drop': '🚪',
+                      'engagement_gap': '📉',
+                      'silent_majority': '😶'
+                    };
+                    const icon = subTypeIcons[alert.sub_type] || (alert.type === 'opportunity' ? '✨' : '⚠️');
+                    const urgencyScore = alert.urgency_score || 0;
+                    const urgencyLabel = urgencyScore >= 70 ? '긴급' : urgencyScore >= 40 ? '주의' : '참고';
+
+                    const renderMetricsBadges = (metrics: Record<string, string | number> | undefined) => {
+                      if (!metrics) return null;
+                      const colorMap: Record<string, { color: string; border: string }> = {
+                        '유입→활동': { color: '#1565c0', border: '#90caf9' },
+                        '활동→관심': { color: '#1565c0', border: '#90caf9' },
+                        '관심→구매': { color: '#1565c0', border: '#90caf9' },
+                        '전환율': { color: '#2e7d32', border: '#a5d6a7' },
+                        'CVR': { color: '#2e7d32', border: '#a5d6a7' },
+                        '유입': { color: '#5e35b1', border: '#b39ddb' },
+                        '활동': { color: '#5e35b1', border: '#b39ddb' },
+                        '관심': { color: '#5e35b1', border: '#b39ddb' },
+                        'RPV': { color: '#e65100', border: '#ffcc80' }
+                      };
+                      const percentKeys1 = ['유입→활동', '활동→관심', '관심→구매'];
+                      const percentKeys2 = ['전환율', 'CVR'];
+                      return Object.entries(metrics).map(([k, v], i) => {
+                        let formatted: string;
+                        if (percentKeys2.includes(k)) {
+                          formatted = (typeof v === 'number' ? v.toFixed(2) : v) + '%';
+                        } else if (percentKeys1.includes(k)) {
+                          formatted = (typeof v === 'number' ? v.toFixed(1) : v) + '%';
+                        } else {
+                          formatted = typeof v === 'number' ? v.toLocaleString() : String(v);
+                        }
+                        const s = colorMap[k] || { color: '#616161', border: '#bdbdbd' };
+                        return (
+                          <span key={i} style={{ background: 'white', padding: '3px 8px', borderRadius: '12px', fontSize: '10px', color: s.color, border: `1px solid ${s.border}`, fontWeight: 500 }}>
+                            {k} {formatted}
+                          </span>
+                        );
+                      });
+                    };
+
+                    return (
+                      <div
+                        key={index}
+                        className="micro-segment-card"
+                        style={{ background: style.bgColor, border: `2px solid ${style.borderColor}`, borderRadius: '10px', padding: '14px', cursor: 'pointer', transition: 'transform 0.2s' }}
+                        onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                        onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
+                      >
+                        {/* 헤더 */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '18px' }}>{icon}</span>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: '13px', fontWeight: 700, color: style.textColor }}>{alert.title}</div>
+                            <div style={{ fontSize: '10px', color: style.textColor, opacity: 0.8 }}>{alert.category} &gt; {alert.sub_type || '일반'}</div>
+                          </div>
+                          {urgencyScore > 0 && (
+                            <span style={{ background: style.borderColor, color: 'white', fontSize: '9px', padding: '2px 8px', borderRadius: '10px', fontWeight: 600 }}>
+                              {urgencyLabel} {urgencyScore}
+                            </span>
+                          )}
+                        </div>
+                        {/* 메트릭스 배지 */}
+                        {alert.metrics && (
+                          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                            {renderMetricsBadges(alert.metrics)}
+                          </div>
+                        )}
+                        {/* 진단 */}
+                        {alert.diagnosis && (
+                          <div style={{ fontSize: '11px', color: '#555', lineHeight: 1.6, marginBottom: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                              <span style={{ color: style.borderColor }}>✓</span>
+                              <span>{alert.diagnosis}</span>
+                            </div>
+                          </div>
+                        )}
+                        {/* 추천 액션 */}
+                        {alert.action && (
+                          <div style={{ background: '#ffffff', borderRadius: '6px', padding: '10px', borderLeft: `3px solid ${style.borderColor}` }}>
+                            <div style={{ fontSize: '10px', fontWeight: 600, color: style.textColor, marginBottom: '4px' }}>💡 추천 액션</div>
+                            <div style={{ fontSize: '11px', color: '#333', lineHeight: 1.4 }}>{alert.action}</div>
+                            {alert.impact?.potential_revenue ? (
+                              <div style={{ fontSize: '10px', color: '#2e7d32', marginTop: '6px' }}>
+                                📈 예상 효과: {alert.impact.potential_revenue > 0 ? `${alert.impact.potential_revenue.toLocaleString()}원 매출 기회` : '이탈 방지'}
+                              </div>
+                            ) : null}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+              )}
+            </div>
+            <div id="microProblemToggleContainer" style={{ textAlign: 'center', marginTop: '12px', display: microSegmentData.problems.length > 5 ? 'block' : 'none' }}>
+              <button
+                id="microProblemToggleBtn"
+                className="view-btn"
+                style={{ fontSize: '13px', padding: '8px 20px' }}
+                onClick={() => setMicroSegmentShowAll(prev => ({ ...prev, problem: !prev.problem }))}
+              >
+                {microSegmentShowAll.problem ? '접기' : `더 보기 (${microSegmentData.problems.length - 5}건)`}
+              </button>
+            </div>
+          </div>
+
+          {/* 기회 알림 */}
+          <div id="microOpportunityTab" className="micro-segment-tab-content" style={{ display: microSegmentTab === 'opportunity' ? 'block' : 'none' }}>
+            <div id="microOpportunityCards" style={{ display: 'grid', gap: '12px' }}>
+              {microSegmentData.opportunities.length === 0 ? (
+                <div style={{ padding: '20px', textAlign: 'center', color: 'var(--grey-500)' }}>
+                  현재 기회 항목이 없습니다.
+                </div>
+              ) : (
+                microSegmentData.opportunities
+                  .slice(0, microSegmentShowAll.opportunity ? undefined : 5)
+                  .map((alert, index) => {
+                    const style = { bgColor: '#e8f5e9', borderColor: '#4caf50', textColor: '#2e7d32', icon: '🚀' };
+                    const subTypeIcons: Record<string, string> = {
+                      'traffic_leak': '🚿',
+                      'hidden_vip': '💎',
+                      'checkout_friction': '🛒',
+                      'growth_engine': '🚀',
+                      'activation_drop': '🚪',
+                      'engagement_gap': '📉',
+                      'silent_majority': '😶'
+                    };
+                    const icon = subTypeIcons[alert.sub_type] || '✨';
+                    const urgencyScore = alert.urgency_score || 0;
+                    const urgencyLabel = urgencyScore >= 70 ? '긴급' : urgencyScore >= 40 ? '주의' : '참고';
+
+                    const renderMetricsBadges = (metrics: Record<string, string | number> | undefined) => {
+                      if (!metrics) return null;
+                      const colorMap: Record<string, { color: string; border: string }> = {
+                        '유입→활동': { color: '#1565c0', border: '#90caf9' },
+                        '활동→관심': { color: '#1565c0', border: '#90caf9' },
+                        '관심→구매': { color: '#1565c0', border: '#90caf9' },
+                        '전환율': { color: '#2e7d32', border: '#a5d6a7' },
+                        'CVR': { color: '#2e7d32', border: '#a5d6a7' },
+                        '유입': { color: '#5e35b1', border: '#b39ddb' },
+                        '활동': { color: '#5e35b1', border: '#b39ddb' },
+                        '관심': { color: '#5e35b1', border: '#b39ddb' },
+                        'RPV': { color: '#e65100', border: '#ffcc80' }
+                      };
+                      const percentKeys1 = ['유입→활동', '활동→관심', '관심→구매'];
+                      const percentKeys2 = ['전환율', 'CVR'];
+                      return Object.entries(metrics).map(([k, v], i) => {
+                        let formatted: string;
+                        if (percentKeys2.includes(k)) {
+                          formatted = (typeof v === 'number' ? v.toFixed(2) : v) + '%';
+                        } else if (percentKeys1.includes(k)) {
+                          formatted = (typeof v === 'number' ? v.toFixed(1) : v) + '%';
+                        } else {
+                          formatted = typeof v === 'number' ? v.toLocaleString() : String(v);
+                        }
+                        const s = colorMap[k] || { color: '#616161', border: '#bdbdbd' };
+                        return (
+                          <span key={i} style={{ background: 'white', padding: '3px 8px', borderRadius: '12px', fontSize: '10px', color: s.color, border: `1px solid ${s.border}`, fontWeight: 500 }}>
+                            {k} {formatted}
+                          </span>
+                        );
+                      });
+                    };
+
+                    return (
+                      <div
+                        key={index}
+                        className="micro-segment-card"
+                        style={{ background: style.bgColor, border: `2px solid ${style.borderColor}`, borderRadius: '10px', padding: '14px', cursor: 'pointer', transition: 'transform 0.2s' }}
+                        onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                        onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
+                      >
+                        {/* 헤더 */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '18px' }}>{icon}</span>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: '13px', fontWeight: 700, color: style.textColor }}>{alert.title}</div>
+                            <div style={{ fontSize: '10px', color: style.textColor, opacity: 0.8 }}>{alert.category} &gt; {alert.sub_type || '일반'}</div>
+                          </div>
+                          {urgencyScore > 0 && (
+                            <span style={{ background: style.borderColor, color: 'white', fontSize: '9px', padding: '2px 8px', borderRadius: '10px', fontWeight: 600 }}>
+                              {urgencyLabel} {urgencyScore}
+                            </span>
+                          )}
+                        </div>
+                        {/* 메트릭스 배지 */}
+                        {alert.metrics && (
+                          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                            {renderMetricsBadges(alert.metrics)}
+                          </div>
+                        )}
+                        {/* 진단 */}
+                        {alert.diagnosis && (
+                          <div style={{ fontSize: '11px', color: '#555', lineHeight: 1.6, marginBottom: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                              <span style={{ color: style.borderColor }}>✓</span>
+                              <span>{alert.diagnosis}</span>
+                            </div>
+                          </div>
+                        )}
+                        {/* 추천 액션 */}
+                        {alert.action && (
+                          <div style={{ background: '#ffffff', borderRadius: '6px', padding: '10px', borderLeft: `3px solid ${style.borderColor}` }}>
+                            <div style={{ fontSize: '10px', fontWeight: 600, color: style.textColor, marginBottom: '4px' }}>💡 추천 액션</div>
+                            <div style={{ fontSize: '11px', color: '#333', lineHeight: 1.4 }}>{alert.action}</div>
+                            {alert.impact?.potential_revenue ? (
+                              <div style={{ fontSize: '10px', color: '#2e7d32', marginTop: '6px' }}>
+                                📈 예상 효과: {alert.impact.potential_revenue > 0 ? `${alert.impact.potential_revenue.toLocaleString()}원 매출 기회` : '이탈 방지'}
+                              </div>
+                            ) : null}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+              )}
+            </div>
+            <div id="microOpportunityToggleContainer" style={{ textAlign: 'center', marginTop: '12px', display: microSegmentData.opportunities.length > 5 ? 'block' : 'none' }}>
+              <button
+                id="microOpportunityToggleBtn"
+                className="view-btn"
+                style={{ fontSize: '13px', padding: '8px 20px' }}
+                onClick={() => setMicroSegmentShowAll(prev => ({ ...prev, opportunity: !prev.opportunity }))}
+              >
+                {microSegmentShowAll.opportunity ? '접기' : `더 보기 (${microSegmentData.opportunities.length - 5}건)`}
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
 
       {/* 6. 채널별 분석 (접기 가능) */}
-      <div style={{ marginBottom: '24px' }}>
-        {/* 접기/펼치기 헤더 */}
-        <div
-          onClick={() => setChannelAnalysisExpanded(!channelAnalysisExpanded)}
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            cursor: 'pointer',
-            padding: '20px 24px',
-            background: 'white',
-            borderRadius: channelAnalysisExpanded ? '12px 12px 0 0' : '12px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', fontWeight: 600, color: '#212121' }}>
-            <span>📊</span>
+      <div className="collapsible-section">
+        <div className="collapsible-header" onClick={() => setChannelAnalysisExpanded(!channelAnalysisExpanded)}>
+          <div className="collapsible-title">
+            <span className="collapsible-icon">📊</span>
             <span>유입 채널별 상세 분석 (네이버, 구글, 인스타그램 등)</span>
           </div>
-          <button style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '8px 16px',
-            background: '#ede7f6',
-            color: '#673ab7',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: 500,
-            cursor: 'pointer'
-          }}>
+          <button className="collapsible-toggle">
             <span>{channelAnalysisExpanded ? '접기' : '펼치기'}</span>
-            <span style={{ transform: channelAnalysisExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>▼</span>
+            <span className={`collapsible-toggle-icon ${channelAnalysisExpanded ? 'expanded' : 'collapsed'}`}>▼</span>
           </button>
         </div>
+        <div className={`collapsible-content ${channelAnalysisExpanded ? 'expanded' : ''}`}>
+          {/* 탭 버튼 */}
+          <div className="view-type-section" style={{ marginBottom: '24px' }}>
+            {[
+              { key: 'table', label: '채널별 고객 흐름' },
+              { key: 'kpi', label: '지표별 비교' },
+              { key: 'balance', label: '효율성과 규모' },
+              { key: 'top10', label: '전환율 TOP 10' }
+            ].map(tab => (
+              <button
+                key={tab.key}
+                className={`view-btn channel-analysis-tab-btn ${channelAnalysisTab === tab.key ? 'active' : ''}`}
+                data-tab={tab.key}
+                onClick={() => setChannelAnalysisTab(tab.key)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
 
-        {/* 접기/펼치기 콘텐츠 */}
-        <div style={{
-          maxHeight: channelAnalysisExpanded ? '20000px' : '0',
-          overflow: 'hidden',
-          transition: 'max-height 0.4s ease, opacity 0.3s ease',
-          opacity: channelAnalysisExpanded ? 1 : 0,
-          background: 'white',
-          borderRadius: '0 0 12px 12px',
-          boxShadow: channelAnalysisExpanded ? '0 2px 8px rgba(0,0,0,0.08)' : 'none'
-        }}>
-          <div style={{ padding: '24px' }}>
-            {/* 탭 버튼 */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
-              {[
-                { key: 'table', label: '채널별 고객 흐름' },
-                { key: 'kpi', label: '지표별 비교' },
-                { key: 'churn', label: '이탈률 분석' }
-              ].map(tab => (
-                <button
-                  key={tab.key}
-                  onClick={() => setChannelAnalysisTab(tab.key)}
-                  style={{
-                    padding: '10px 24px',
-                    border: 'none',
-                    background: channelAnalysisTab === tab.key ? '#673ab7' : 'white',
-                    color: channelAnalysisTab === tab.key ? 'white' : '#616161',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontWeight: 500,
-                    fontSize: '14px',
-                    boxShadow: channelAnalysisTab === tab.key ? '0 4px 12px rgba(103, 58, 183, 0.4)' : '0 1px 3px rgba(0,0,0,0.08)'
-                  }}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+            {/* 탭 1: 채널별 단계별 고객 수 테이블 */}
+            <div className={`channel-analysis-tab-content ${channelAnalysisTab === 'table' ? 'active' : ''}`} id="tableTab" style={{ display: channelAnalysisTab === 'table' ? 'block' : 'none' }}>
+              <div className="table-section card" style={{ marginBottom: '16px' }}>
+                <div className="table-header">📊 채널별 고객 흐름: 각 채널에서 얼마나 많은 고객이 구매까지 도달하나요?</div>
 
-            {/* 탭 1: 채널별 고객 흐름 테이블 */}
-            {channelAnalysisTab === 'table' && channelData.length > 0 && (
-              <div>
-                <div style={{ marginBottom: '16px' }}>
-                  <div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>📊 채널별 고객 흐름: 각 채널에서 얼마나 많은 고객이 구매까지 도달하나요?</div>
-                  <div style={{ fontSize: '13px', color: '#757575', lineHeight: 1.7 }}>
-                    <strong style={{ color: '#673ab7' }}>📖 이 표는 무엇을 보여주나요?</strong><br />
-                    각 마케팅 채널에서 고객이 <strong>5단계 여정</strong>을 어떻게 거치는지 보여줍니다.
-                    <strong style={{ color: '#673ab7', marginLeft: '8px' }}>💡 열 제목을 클릭하면 정렬됩니다.</strong>
+                {/* 설명 섹션 */}
+                <div style={{ fontSize: '13px', color: 'var(--grey-700)', padding: '16px 24px', background: 'linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%)', lineHeight: 1.7 }}>
+                  <strong style={{ color: 'var(--primary-main)' }}>📖 이 표는 무엇을 보여주나요?</strong><br />
+                  각 마케팅 채널(네이버, 구글, 인스타그램 등)에서 고객이 <strong>5단계 여정</strong>을 어떻게 거치는지 보여줍니다.<br />
+                  <span style={{ color: 'var(--grey-600)' }}>예시: 유입 1,000명 → 활동 800명 → 관심 400명 → 결제진행 100명 → 구매완료 50명 (CVR 5%)</span><br /><br />
+                  <strong style={{ color: 'var(--primary-main)' }}>💡 표 보는 법:</strong><br />
+                  • <strong>왼쪽에서 오른쪽</strong>으로 갈수록 숫자가 줄어드는 것이 정상입니다 (고객이 단계를 거치며 이탈)<br />
+                  • <strong>CVR(전환율)</strong>은 방문자 100명 중 몇 명이 최종 구매했는지를 나타냅니다 (높을수록 좋음)<br />
+                  • <strong>매출</strong>이 높아도 CVR이 낮으면 개선 여지가 많다는 의미입니다<br />
+                  • <strong>열 제목을 클릭</strong>하면 해당 기준으로 정렬됩니다
+                </div>
+
+                {/* 자동 인사이트 박스 */}
+                <div id="channelTableInsightSummary" style={{ margin: '16px 24px', padding: '16px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: '10px', borderLeft: '4px solid #4caf50' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#4caf50', marginBottom: '8px' }}>
+                    🎯 데이터 분석 결과
+                  </div>
+                  <div id="channelTableInsightText" style={{ fontSize: '13px', color: 'var(--grey-800)', lineHeight: 1.6 }}>
+                    {channelData.length > 0 ? (() => {
+                      const topChannel = [...channelData].sort((a, b) => parseFloat(String(b['유입'])) - parseFloat(String(a['유입'])))[0];
+                      const topCvrChannel = [...channelData].sort((a, b) => {
+                        const cvrA = parseFloat(String(a['구매완료'])) / parseFloat(String(a['유입']));
+                        const cvrB = parseFloat(String(b['구매완료'])) / parseFloat(String(b['유입']));
+                        return cvrB - cvrA;
+                      })[0];
+                      return `가장 많은 유입을 가진 채널은 "${topChannel?.channel}"이며, 전환율이 가장 높은 채널은 "${topCvrChannel?.channel}"입니다.`;
+                    })() : '데이터를 불러오는 중...'}
                   </div>
                 </div>
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
+
+                <div className="table-container">
+                  <table id="channelTable">
                     <thead>
-                      <tr style={{ background: '#f5f5f5' }}>
-                        {[
-                          { key: 'Channel', label: '채널', align: 'left' },
-                          { key: '유입', label: '유입', align: 'right' },
-                          { key: '활동', label: '활동', align: 'right' },
-                          { key: '관심', label: '관심', align: 'right' },
-                          { key: '결제진행', label: '결제진행', align: 'right' },
-                          { key: '구매완료', label: '구매완료', align: 'right' },
-                          { key: 'Revenue', label: '매출', align: 'right' },
-                          { key: 'CVR', label: 'CVR', align: 'right' }
-                        ].map(col => (
+                      <tr>
+                        <th>채널</th>
+                        {['유입', '활동', '관심', '결제진행', '구매완료', 'Revenue', 'CVR'].map(col => (
                           <th
-                            key={col.key}
-                            onClick={() => handleTableSort(col.key)}
-                            style={{
-                              padding: '14px 16px',
-                              textAlign: col.align as 'left' | 'right',
-                              fontWeight: 600,
-                              cursor: 'pointer',
-                              userSelect: 'none',
-                              background: channelTableSort.column === col.key ? '#e8e8e8' : '#f5f5f5',
-                              transition: 'background 0.2s'
-                            }}
+                            key={col}
+                            className="sortable-header"
+                            data-column={col}
+                            data-type="number"
+                            onClick={() => handleTableSort(col)}
+                            style={{ cursor: 'pointer' }}
                           >
-                            {col.label}
-                            {channelTableSort.column === col.key && (
-                              <span style={{ marginLeft: '4px', fontSize: '10px' }}>
-                                {channelTableSort.direction === 'desc' ? '▼' : '▲'}
-                              </span>
-                            )}
+                            {col === 'Revenue' ? '매출' : col}
+                            <div className={`sort-icon ${channelTableSort.column === col ? 'active' : ''}`}>
+                              <div className={`sort-arrow up ${channelTableSort.column === col && channelTableSort.direction === 'asc' ? 'active' : ''}`}></div>
+                              <div className={`sort-arrow down ${channelTableSort.column === col && channelTableSort.direction === 'desc' ? 'active' : ''}`}></div>
+                            </div>
+                            <div className="sort-tooltip" style={{ position: 'fixed', opacity: 0, visibility: 'hidden', pointerEvents: 'none' }}>클릭하여 {col === 'Revenue' ? '매출' : col} 기준으로 정렬</div>
                           </th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody>
-                      {sortedChannelData.slice(0, 10).map((row, index) => (
-                        <tr key={index} style={{ borderBottom: '1px solid #e0e0e0' }}>
-                          <td style={{ padding: '14px 16px', fontWeight: 500 }}>{row['Channel']}</td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right' }}>{formatNumber(row['유입'])}</td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right' }}>{formatNumber(row['활동'])}</td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right' }}>{formatNumber(row['관심'])}</td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right' }}>{formatNumber(row['결제진행'])}</td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right' }}>{formatNumber(row['구매완료'])}</td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right' }}>{formatNumber(row['Revenue'])}원</td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right', color: '#673ab7', fontWeight: 600 }}>
-                            {formatDecimal((parseFloat(String(row['구매완료'])) / parseFloat(String(row['유입']))) * 100)}%
-                          </td>
+                    <tbody id="channelTableBody">
+                      {channelData.length > 0 ? (() => {
+                        // 각 열의 최대값 계산 (색상 스케일용)
+                        const maxValues = {
+                          '유입': Math.max(...channelData.map(r => parseFloat(String(r['유입'])) || 0)),
+                          '활동': Math.max(...channelData.map(r => parseFloat(String(r['활동'])) || 0)),
+                          '관심': Math.max(...channelData.map(r => parseFloat(String(r['관심'])) || 0)),
+                          '결제진행': Math.max(...channelData.map(r => parseFloat(String(r['결제진행'])) || 0)),
+                          '구매완료': Math.max(...channelData.map(r => parseFloat(String(r['구매완료'])) || 0)),
+                          'Revenue': Math.max(...channelData.map(r => parseFloat(String(r['Revenue'])) || 0)),
+                          'CVR': Math.max(...channelData.map(r => parseFloat(String(r['CVR'])) || 0))
+                        };
+                        const getScaleWidth = (value: number, maxValue: number) => {
+                          if (maxValue === 0) return 0;
+                          return (value / maxValue) * 100;
+                        };
+                        return sortedChannelData.slice(0, 10).map((row, index) => {
+                          const acqVal = parseFloat(String(row['유입'])) || 0;
+                          const actVal = parseFloat(String(row['활동'])) || 0;
+                          const conVal = parseFloat(String(row['관심'])) || 0;
+                          const convVal = parseFloat(String(row['결제진행'])) || 0;
+                          const purVal = parseFloat(String(row['구매완료'])) || 0;
+                          const revVal = parseFloat(String(row['Revenue'])) || 0;
+                          const cvrVal = (purVal / acqVal) * 100;
+                          return (
+                            <tr key={index}>
+                              <td>{row.channel}</td>
+                              <td className="has-bg" style={{ position: 'relative', padding: '14px 16px' }}>
+                                <div className="cell-bg scale-acquisition" style={{ position: 'absolute', top: 0, left: 0, height: '100%', opacity: 0.15, width: `${getScaleWidth(acqVal, maxValues['유입'])}%`, background: 'linear-gradient(90deg, transparent, #673ab7)' }}></div>
+                                <span style={{ position: 'relative', zIndex: 1 }}>{formatNumber(acqVal)}</span>
+                              </td>
+                              <td className="has-bg" style={{ position: 'relative', padding: '14px 16px' }}>
+                                <div className="cell-bg scale-activation" style={{ position: 'absolute', top: 0, left: 0, height: '100%', opacity: 0.15, width: `${getScaleWidth(actVal, maxValues['활동'])}%`, background: 'linear-gradient(90deg, transparent, #2196f3)' }}></div>
+                                <span style={{ position: 'relative', zIndex: 1 }}>{formatNumber(actVal)}</span>
+                              </td>
+                              <td className="has-bg" style={{ position: 'relative', padding: '14px 16px' }}>
+                                <div className="cell-bg scale-consideration" style={{ position: 'absolute', top: 0, left: 0, height: '100%', opacity: 0.15, width: `${getScaleWidth(conVal, maxValues['관심'])}%`, background: 'linear-gradient(90deg, transparent, #ff9800)' }}></div>
+                                <span style={{ position: 'relative', zIndex: 1 }}>{formatNumber(conVal)}</span>
+                              </td>
+                              <td className="has-bg" style={{ position: 'relative', padding: '14px 16px' }}>
+                                <div className="cell-bg scale-conversion" style={{ position: 'absolute', top: 0, left: 0, height: '100%', opacity: 0.15, width: `${getScaleWidth(convVal, maxValues['결제진행'])}%`, background: 'linear-gradient(90deg, transparent, #4caf50)' }}></div>
+                                <span style={{ position: 'relative', zIndex: 1 }}>{formatNumber(convVal)}</span>
+                              </td>
+                              <td className="has-bg" style={{ position: 'relative', padding: '14px 16px' }}>
+                                <div className="cell-bg scale-purchase" style={{ position: 'absolute', top: 0, left: 0, height: '100%', opacity: 0.15, width: `${getScaleWidth(purVal, maxValues['구매완료'])}%`, background: 'linear-gradient(90deg, transparent, #00c853)' }}></div>
+                                <span style={{ position: 'relative', zIndex: 1 }}>{formatNumber(purVal)}</span>
+                              </td>
+                              <td className="has-bg" style={{ position: 'relative', padding: '14px 16px' }}>
+                                <div className="cell-bg scale-revenue" style={{ position: 'absolute', top: 0, left: 0, height: '100%', opacity: 0.15, width: `${getScaleWidth(revVal, maxValues['Revenue'])}%`, background: 'linear-gradient(90deg, transparent, #f44336)' }}></div>
+                                <span style={{ position: 'relative', zIndex: 1 }}>{formatNumber(revVal)}원</span>
+                              </td>
+                              <td className="has-bg" style={{ position: 'relative', padding: '14px 16px', color: 'var(--primary-main)', fontWeight: 600 }}>
+                                <div className="cell-bg scale-cvr" style={{ position: 'absolute', top: 0, left: 0, height: '100%', opacity: 0.15, width: `${getScaleWidth(cvrVal, maxValues['CVR'])}%`, background: 'linear-gradient(90deg, transparent, #9c27b0)' }}></div>
+                                <span style={{ position: 'relative', zIndex: 1 }}>{formatDecimal(cvrVal)}%</span>
+                              </td>
+                            </tr>
+                          );
+                        });
+                      })() : (
+                        <tr>
+                          <td colSpan={8}>데이터를 불러오는 중...</td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </table>
                 </div>
+
+                {/* 해석 가이드 */}
+                <div style={{ marginTop: '20px', padding: '0 24px 20px 24px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--grey-900)', marginBottom: '12px' }}>
+                    📋 데이터 해석 가이드
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '16px' }}>
+                    {/* CVR이 높은 경우 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: '8px', borderLeft: '3px solid #4caf50' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#4caf50', marginBottom: '6px' }}>
+                        ✅ CVR이 높은 채널 (3% 이상)
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>의미:</strong> 효율적인 채널. 적은 방문자로도 많이 구매<br />
+                        <strong>전략:</strong> 광고비를 더 투자하고, 이 채널의 성공 요인을 다른 채널에 적용하세요
+                      </div>
+                    </div>
+
+                    {/* 매출이 높지만 CVR이 낮은 경우 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%)', borderRadius: '8px', borderLeft: '3px solid #ff9800' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#ff9800', marginBottom: '6px' }}>
+                        ⚠️ 매출은 높은데 CVR이 낮은 채널
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>의미:</strong> 방문자가 많지만 전환율이 낮아 비효율적<br />
+                        <strong>전략:</strong> 랜딩 페이지 개선, 타겟팅 정밀화로 CVR을 높이면 매출이 크게 증가합니다
+                      </div>
+                    </div>
+
+                    {/* 방문자가 많지만 이탈이 높은 경우 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%)', borderRadius: '8px', borderLeft: '3px solid #2196f3' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#2196f3', marginBottom: '6px' }}>
+                        🚪 유입은 많은데 활동 수가 급감하는 채널
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>의미:</strong> 첫 화면에서 대부분 이탈. 광고와 페이지 불일치 가능성<br />
+                        <strong>전략:</strong> 광고 메시지와 랜딩 페이지의 일관성 확인, 로딩 속도 개선
+                      </div>
+                    </div>
+
+                    {/* 관심까지는 가지만 결제로 안 가는 경우 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #f3e5f5 0%, #faf5fc 100%)', borderRadius: '8px', borderLeft: '3px solid #9c27b0' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#9c27b0', marginBottom: '6px' }}>
+                        💭 관심까지는 가는데 결제 안 하는 채널
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>의미:</strong> 관심은 있지만 구매 결정을 망설임. 가격이나 신뢰 문제<br />
+                        <strong>전략:</strong> 리뷰/후기 강화, 첫 구매 할인 제공, 결제 과정 간소화
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 실행 체크리스트 */}
+                  <div style={{ padding: '16px', background: 'linear-gradient(135deg, #fff9e6 0%, #fffcf5 100%)', borderRadius: '8px', borderLeft: '3px solid #ffc107' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#f57c00', marginBottom: '10px' }}>
+                      ✅ 이 표를 보고 바로 실행할 수 있는 것들
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.8 }}>
+                      1. <strong>CVR 1위 채널</strong>을 찾아 광고 예산을 20% 더 배정하세요<br />
+                      2. <strong>유입은 많지만 CVR이 낮은 채널</strong>의 광고 소재와 랜딩 페이지를 점검하세요<br />
+                      3. <strong>단계별 이탈률이 가장 높은 구간</strong>을 찾아 집중 개선하세요 (예: 유입→활동 50% 이상 이탈)<br />
+                      4. <strong>매출 상위 3개 채널</strong>의 공통점을 찾아 성공 패턴을 문서화하세요<br />
+                      5. <strong>CVR 0.5% 이하 채널</strong>은 일시 중단하고 예산을 재배분하세요
+                    </div>
+                  </div>
+                </div>
               </div>
-            )}
+            </div>
 
             {/* 탭 2: 지표별 비교 */}
-            {channelAnalysisTab === 'kpi' && channelCompareData && (
-              <div>
-                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '16px' }}>채널별 종합 성과 비교</h3>
-                <div style={{ height: '400px' }}>
-                  <Bar
-                    data={{
-                      labels: channelCompareData.labels,
-                      datasets: channelCompareData.datasets.map(ds => ({
-                        ...ds,
-                        backgroundColor: ds.backgroundColor,
-                        borderColor: ds.borderColor
-                      }))
-                    }}
-                    options={{
-                      indexAxis: 'y',
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: {
-                        legend: { display: true, position: 'top' },
-                        datalabels: { display: false }
-                      },
-                      scales: {
-                        x: {
-                          beginAtZero: true,
-                          max: 100,
-                          title: { display: true, text: '정규화된 값 (0-100)' }
-                        }
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-            )}
+            <div className={`channel-analysis-tab-content ${channelAnalysisTab === 'kpi' ? 'active' : ''}`} id="kpiTab" style={{ display: channelAnalysisTab === 'kpi' ? 'block' : 'none' }}>
+              <div className="chart-section card" style={{ marginBottom: '16px' }}>
+                <div className="chart-header">📈 각 지표별로 어떤 채널이 1등인가요?</div>
 
-            {/* 탭 3: 이탈률 분석 */}
-            {channelAnalysisTab === 'churn' && (
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <h3 style={{ fontSize: '14px', fontWeight: 600, margin: 0 }}>채널별 이탈률 분석</h3>
+                {/* 설명 섹션 */}
+                <div style={{ fontSize: '13px', color: 'var(--grey-700)', padding: '16px 24px', background: 'linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%)', marginBottom: '16px', lineHeight: 1.7 }}>
+                  <strong style={{ color: 'var(--primary-main)' }}>📖 이 차트는 무엇을 보여주나요?</strong><br />
+                  원하는 지표(전환율, 방문자 수, 매출 등)별로 각 채널의 성과를 한눈에 비교할 수 있습니다.<br /><br />
+                  <strong style={{ color: 'var(--primary-main)' }}>💡 사용 방법:</strong><br />
+                  • 아래 버튼을 클릭하여 보고 싶은 지표를 선택하세요<br />
+                  • <strong>전환율</strong>은 효율성을, <strong>매출</strong>은 실제 수익을, <strong>방문자 수</strong>는 트래픽 규모를 나타냅니다<br />
+                  • <strong>차트 위에 마우스를 올리면</strong> 해당 지표에 대한 자세한 설명과 개선 전략을 볼 수 있습니다
                 </div>
 
-                {/* 퍼널 단계 선택 */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#616161' }}>📊 퍼널 단계:</span>
+                {/* KPI 버튼 */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', flexWrap: 'wrap', padding: '0 24px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--grey-700)' }}>📊 보고 싶은 지표:</span>
                   {[
-                    { key: 'activation', label: '유입→활동' },
-                    { key: 'consideration', label: '활동→관심' },
-                    { key: 'conversion', label: '관심→결제' },
-                    { key: 'purchase', label: '결제→구매' },
-                    { key: 'avg', label: '평균 이탈률' }
-                  ].map(stage => (
+                    { key: 'cvr', label: '전환율 (%)' },
+                    { key: 'acquisition', label: '방문자 수' },
+                    { key: 'activation', label: '활성 사용자' },
+                    { key: 'consideration', label: '관심 고객' },
+                    { key: 'conversion', label: '결제 시도' },
+                    { key: 'purchase', label: '구매 건수' },
+                    { key: 'revenue', label: '매출액' }
+                  ].map(kpi => (
                     <button
-                      key={stage.key}
-                      onClick={() => setCurrentChurnStage(stage.key)}
-                      style={{
-                        padding: '6px 12px',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        background: currentChurnStage === stage.key ? '#673ab7' : '#f5f5f5',
-                        color: currentChurnStage === stage.key ? 'white' : '#616161'
-                      }}
+                      key={kpi.key}
+                      className={`view-btn channel-kpi-btn ${currentKpiType === kpi.key ? 'active' : ''}`}
+                      data-kpi={kpi.key}
+                      data-chart="kpi"
+                      onClick={() => setCurrentKpiType(kpi.key)}
                     >
-                      {stage.label}
+                      {kpi.label}
                     </button>
                   ))}
                 </div>
 
-                {/* 정렬 선택 */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#616161' }}>🔢 정렬:</span>
-                  {[
-                    { key: 'desc', label: '📉 높은순' },
-                    { key: 'asc', label: '📈 낮은순' }
-                  ].map(sort => (
-                    <button
-                      key={sort.key}
-                      onClick={() => setCurrentChurnSort(sort.key)}
-                      style={{
-                        padding: '6px 12px',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        background: currentChurnSort === sort.key ? '#673ab7' : '#f5f5f5',
-                        color: currentChurnSort === sort.key ? 'white' : '#616161'
-                      }}
-                    >
-                      {sort.label}
-                    </button>
-                  ))}
+                {/* 자동 인사이트 박스 */}
+                <div id="kpiChartInsightSummary" style={{ margin: '16px 24px', padding: '16px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%)', borderRadius: '10px', borderLeft: '4px solid #2196f3' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#2196f3', marginBottom: '8px' }}>
+                    💡 지표 분석 인사이트
+                  </div>
+                  <div id="kpiChartInsightText" style={{ fontSize: '13px', color: 'var(--grey-800)', lineHeight: 1.6 }}>
+                    {channelData.length > 0 ? (() => {
+                      const kpiLabels: Record<string, string> = {
+                        cvr: '전환율', acquisition: '방문자 수', activation: '활성 사용자',
+                        consideration: '관심 고객', conversion: '결제 시도', purchase: '구매 건수', revenue: '매출액'
+                      };
+                      return `현재 "${kpiLabels[currentKpiType]}" 지표로 채널을 비교하고 있습니다.`;
+                    })() : '버튼을 클릭하여 지표를 선택하면 자동 분석 결과가 여기에 표시됩니다.'}
+                  </div>
                 </div>
 
-                {channelChurnData.config && (
-                  <div style={{ height: '400px' }}>
+                {/* KPI 차트 */}
+                <div className="chart-container-small" style={{ position: 'relative', height: '400px', padding: '0 24px' }}>
+                  {channelData.length > 0 && (
                     <Bar
                       data={{
-                        labels: channelChurnData.labels,
+                        labels: (() => {
+                          return [...channelData]
+                            .sort((a, b) => {
+                              if (currentKpiType === 'cvr') {
+                                const cvrA = parseFloat(String(a['구매완료'])) / parseFloat(String(a['유입']));
+                                const cvrB = parseFloat(String(b['구매완료'])) / parseFloat(String(b['유입']));
+                                return cvrB - cvrA;
+                              } else if (currentKpiType === 'acquisition') {
+                                return parseFloat(String(b['유입'])) - parseFloat(String(a['유입']));
+                              } else if (currentKpiType === 'activation') {
+                                return parseFloat(String(b['활동'])) - parseFloat(String(a['활동']));
+                              } else if (currentKpiType === 'consideration') {
+                                return parseFloat(String(b['관심'])) - parseFloat(String(a['관심']));
+                              } else if (currentKpiType === 'conversion') {
+                                return parseFloat(String(b['결제진행'])) - parseFloat(String(a['결제진행']));
+                              } else if (currentKpiType === 'purchase') {
+                                return parseFloat(String(b['구매완료'])) - parseFloat(String(a['구매완료']));
+                              } else {
+                                return parseFloat(String(b['Revenue'])) - parseFloat(String(a['Revenue']));
+                              }
+                            })
+                            .slice(0, 10)
+                            .map(row => row.channel);
+                        })(),
                         datasets: [{
-                          label: channelChurnData.config.label,
-                          data: channelChurnData.values,
-                          backgroundColor: (() => {
-                            const hex = channelChurnData.config!.color;
-                            const r = parseInt(hex.slice(1, 3), 16);
-                            const g = parseInt(hex.slice(3, 5), 16);
-                            const b = parseInt(hex.slice(5, 7), 16);
-                            return `rgba(${r}, ${g}, ${b}, 0.8)`;
+                          label: currentKpiType === 'cvr' ? '전환율 (%)' :
+                                 currentKpiType === 'acquisition' ? '방문자 수' :
+                                 currentKpiType === 'activation' ? '활성 사용자' :
+                                 currentKpiType === 'consideration' ? '관심 고객' :
+                                 currentKpiType === 'conversion' ? '결제 시도' :
+                                 currentKpiType === 'purchase' ? '구매 건수' : '매출액',
+                          data: (() => {
+                            return [...channelData]
+                              .sort((a, b) => {
+                                if (currentKpiType === 'cvr') {
+                                  const cvrA = parseFloat(String(a['구매완료'])) / parseFloat(String(a['유입']));
+                                  const cvrB = parseFloat(String(b['구매완료'])) / parseFloat(String(b['유입']));
+                                  return cvrB - cvrA;
+                                } else if (currentKpiType === 'acquisition') {
+                                  return parseFloat(String(b['유입'])) - parseFloat(String(a['유입']));
+                                } else if (currentKpiType === 'activation') {
+                                  return parseFloat(String(b['활동'])) - parseFloat(String(a['활동']));
+                                } else if (currentKpiType === 'consideration') {
+                                  return parseFloat(String(b['관심'])) - parseFloat(String(a['관심']));
+                                } else if (currentKpiType === 'conversion') {
+                                  return parseFloat(String(b['결제진행'])) - parseFloat(String(a['결제진행']));
+                                } else if (currentKpiType === 'purchase') {
+                                  return parseFloat(String(b['구매완료'])) - parseFloat(String(a['구매완료']));
+                                } else {
+                                  return parseFloat(String(b['Revenue'])) - parseFloat(String(a['Revenue']));
+                                }
+                              })
+                              .slice(0, 10)
+                              .map(row => {
+                                if (currentKpiType === 'cvr') {
+                                  return (parseFloat(String(row['구매완료'])) / parseFloat(String(row['유입']))) * 100;
+                                } else if (currentKpiType === 'acquisition') {
+                                  return parseFloat(String(row['유입']));
+                                } else if (currentKpiType === 'activation') {
+                                  return parseFloat(String(row['활동']));
+                                } else if (currentKpiType === 'consideration') {
+                                  return parseFloat(String(row['관심']));
+                                } else if (currentKpiType === 'conversion') {
+                                  return parseFloat(String(row['결제진행']));
+                                } else if (currentKpiType === 'purchase') {
+                                  return parseFloat(String(row['구매완료']));
+                                } else {
+                                  return parseFloat(String(row['Revenue']));
+                                }
+                              });
                           })(),
-                          borderColor: channelChurnData.config.color,
+                          backgroundColor: 'rgba(33, 150, 243, 0.8)',
+                          borderColor: '#2196f3',
                           borderWidth: 1
                         }]
                       }}
@@ -2959,16 +3743,353 @@ export default function ReactView() {
                         scales: {
                           x: {
                             beginAtZero: true,
-                            title: { display: true, text: channelChurnData.config.label }
+                            title: { display: true, text: currentKpiType === 'cvr' ? '전환율 (%)' : currentKpiType === 'revenue' ? '매출 (원)' : '수' }
+                          }
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+
+                {/* 해석 가이드 */}
+                <div style={{ marginTop: '20px', padding: '0 24px 20px 24px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--grey-900)', marginBottom: '12px' }}>
+                    📋 각 지표를 볼 때 주의할 점
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+                    {/* 전환율 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: '8px', borderLeft: '3px solid #4caf50' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#4caf50', marginBottom: '6px' }}>
+                        📊 전환율 (CVR)을 볼 때
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>높을수록 좋음:</strong> 효율성을 나타냅니다<br />
+                        <strong>주의:</strong> 방문자가 너무 적으면 통계적으로 불안정할 수 있어요
+                      </div>
+                    </div>
+
+                    {/* 방문자/매출 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%)', borderRadius: '8px', borderLeft: '3px solid #ff9800' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#ff9800', marginBottom: '6px' }}>
+                        👥 방문자 수 / 💰 매출을 볼 때
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>높을수록 좋음:</strong> 규모를 나타냅니다<br />
+                        <strong>주의:</strong> 방문자만 많고 전환율이 낮으면 비효율적이에요
+                      </div>
+                    </div>
+
+                    {/* 활성 사용자 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%)', borderRadius: '8px', borderLeft: '3px solid #2196f3' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#2196f3', marginBottom: '6px' }}>
+                        ⚡ 활성 사용자를 볼 때
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>의미:</strong> 실제로 사이트를 사용한 방문자 수<br />
+                        <strong>활용:</strong> 방문자 수와 비교해 첫 이탈률을 파악하세요
+                      </div>
+                    </div>
+
+                    {/* 관심/결제/구매 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #f3e5f5 0%, #faf5fc 100%)', borderRadius: '8px', borderLeft: '3px solid #9c27b0' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#9c27b0', marginBottom: '6px' }}>
+                        🛒 관심/결제/구매를 볼 때
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>의미:</strong> 구매 여정의 각 단계별 고객 수<br />
+                        <strong>활용:</strong> 단계별로 급감하는 구간을 찾아 개선하세요
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 탭 3: 효율성과 규모 (balance) */}
+            <div className={`channel-analysis-tab-content ${channelAnalysisTab === 'balance' ? 'active' : ''}`} id="balanceTab" style={{ display: channelAnalysisTab === 'balance' ? 'block' : 'none' }}>
+              <div className="chart-section card" style={{ marginBottom: '16px' }}>
+                <div className="chart-header">🔄 어떤 채널이 효율성과 규모를 모두 갖췄나요?</div>
+
+                {/* 설명 섹션 */}
+                <div style={{ fontSize: '13px', color: 'var(--grey-700)', padding: '16px 24px', background: 'linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%)', marginBottom: '16px', lineHeight: 1.7 }}>
+                  <strong style={{ color: 'var(--primary-main)' }}>📖 이 차트는 무엇을 보여주나요?</strong><br />
+                  전환율, 방문자 수, 구매 건수, 매출을 모두 <strong>100점 만점</strong>으로 환산하여 비교합니다.<br />
+                  <span style={{ color: 'var(--grey-600)' }}>예시: CVR이 가장 높은 채널을 100점으로 했을 때, 다른 채널들은 몇 점인지 보여줍니다.</span><br /><br />
+                  <strong style={{ color: 'var(--primary-main)' }}>💡 차트 보는 법:</strong><br />
+                  • <strong>모든 막대가 고르게 높은 채널</strong> = 효율도 좋고 규모도 큰 최고의 채널<br />
+                  • <strong>CVR만 높고 다른 막대가 낮은 채널</strong> = 효율은 좋지만 규모가 작은 채널 (투자 확대 필요)<br />
+                  • <strong>방문자/매출만 높고 CVR이 낮은 채널</strong> = 규모는 크지만 비효율적인 채널 (개선 필요)<br />
+                  • <strong>차트 위에 마우스를 올리면</strong> 더 자세한 해석 방법을 볼 수 있습니다
+                </div>
+
+                {/* 자동 인사이트 박스 */}
+                <div id="compareChartInsightSummary" style={{ margin: '16px 24px', padding: '16px', background: 'linear-gradient(135deg, #f3e5f5 0%, #faf5fc 100%)', borderRadius: '10px', borderLeft: '4px solid #9c27b0' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#9c27b0', marginBottom: '8px' }}>
+                    💎 균형 분석 결과
+                  </div>
+                  <div id="compareChartInsightText" style={{ fontSize: '13px', color: 'var(--grey-800)', lineHeight: 1.6 }}>
+                    {channelCompareData ? `상위 채널들의 효율성과 규모를 비교하고 있습니다.` : '데이터를 불러오는 중...'}
+                  </div>
+                </div>
+
+                {channelCompareData && (
+                  <div style={{ position: 'relative', height: '450px', padding: '0 24px' }}>
+                    <Bar
+                      data={{
+                        labels: channelCompareData.labels,
+                        datasets: channelCompareData.datasets.map(ds => ({
+                          ...ds,
+                          backgroundColor: ds.backgroundColor,
+                          borderColor: ds.borderColor
+                        }))
+                      }}
+                      options={{
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                          legend: { display: true, position: 'top' },
+                          datalabels: { display: false }
+                        },
+                        scales: {
+                          x: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: '정규화된 값 (0-100)' }
                           }
                         }
                       }}
                     />
                   </div>
                 )}
+
+                {/* 해석 가이드 */}
+                <div style={{ marginTop: '20px', padding: '0 24px 20px 24px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--grey-900)', marginBottom: '12px' }}>
+                    📋 채널 유형별 전략
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: '8px', borderLeft: '3px solid #4caf50' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#4caf50', marginBottom: '6px' }}>
+                        🌟 모든 막대가 고르게 높은 채널
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>유형:</strong> 완벽한 채널 (효율↑ + 규모↑)<br />
+                        <strong>전략:</strong> 최우선 투자 대상. 광고비를 적극 늘리세요
+                      </div>
+                    </div>
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%)', borderRadius: '8px', borderLeft: '3px solid #2196f3' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#2196f3', marginBottom: '6px' }}>
+                        💎 CVR은 높은데 방문자가 적은 채널
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>유형:</strong> 숨겨진 보석 (효율↑ + 규모↓)<br />
+                        <strong>전략:</strong> 광고 예산을 늘려 방문자를 확대하세요
+                      </div>
+                    </div>
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%)', borderRadius: '8px', borderLeft: '3px solid #ff9800' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#ff9800', marginBottom: '6px' }}>
+                        ⚠️ 방문자/매출은 높은데 CVR이 낮은 채널
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>유형:</strong> 개선 필요 채널 (효율↓ + 규모↑)<br />
+                        <strong>전략:</strong> 랜딩 페이지 개선으로 CVR을 높이면 매출 급증
+                      </div>
+                    </div>
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #ffebee 0%, #fff5f5 100%)', borderRadius: '8px', borderLeft: '3px solid #f44336' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#f44336', marginBottom: '6px' }}>
+                        ❌ 모든 막대가 낮은 채널
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>유형:</strong> 저성과 채널 (효율↓ + 규모↓)<br />
+                        <strong>전략:</strong> 일시 중단하고 예산을 상위 채널로 이동
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 실행 팁 */}
+                  <div style={{ marginTop: '12px', padding: '16px', background: 'linear-gradient(135deg, #fff9e6 0%, #fffcf5 100%)', borderRadius: '8px', borderLeft: '3px solid #ffc107' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#f57c00', marginBottom: '10px' }}>
+                      ✅ 이 차트로 바로 실행할 수 있는 것
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.8 }}>
+                      1. <strong>모든 막대가 높은 채널</strong>을 찾아 광고비를 30-50% 증액하세요<br />
+                      2. <strong>CVR만 높고 규모가 작은 채널</strong>은 타겟을 확대하여 방문자를 늘리세요<br />
+                      3. <strong>규모는 크지만 CVR이 낮은 채널</strong>은 랜딩 페이지 A/B 테스트를 시작하세요<br />
+                      4. <strong>모든 지표가 낮은 채널</strong>은 일시 중단하고 원인 분석을 먼저 하세요
+                    </div>
+                  </div>
+                </div>
               </div>
-            )}
-          </div>
+            </div>
+
+            {/* 탭 4: 전환율 TOP 10 */}
+            <div className={`channel-analysis-tab-content ${channelAnalysisTab === 'top10' ? 'active' : ''}`} id="top10Tab" style={{ display: channelAnalysisTab === 'top10' ? 'block' : 'none' }}>
+              <div className="chart-section card">
+                <div className="chart-header">🎯 각 단계별 전환율 TOP 10: 어떤 채널이 가장 효율적인가요?</div>
+
+                {/* 설명 섹션 */}
+                <div style={{ fontSize: '13px', color: 'var(--grey-700)', padding: '16px 24px', background: 'linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%)', marginBottom: '16px', lineHeight: 1.7 }}>
+                  <strong style={{ color: 'var(--primary-main)' }}>📖 이 차트는 무엇을 보여주나요?</strong><br />
+                  각 고객 여정 단계별로 전환율이 높은 상위 10개 채널을 보여줍니다.<br />
+                  <span style={{ color: 'var(--grey-600)' }}>예시: &quot;활동&quot; 단계를 선택하면, 유입한 고객 중 실제로 활동까지 이어진 비율이 높은 채널 순위를 볼 수 있습니다.</span><br /><br />
+                  <strong style={{ color: 'var(--primary-main)' }}>💡 전환율이란?</strong><br />
+                  • <strong>활동 전환율</strong> = (활동 고객 ÷ 유입 고객) × 100<br />
+                  • <strong>관심 전환율</strong> = (관심 고객 ÷ 유입 고객) × 100<br />
+                  • <strong>결제진행 전환율</strong> = (결제진행 ÷ 유입 고객) × 100<br />
+                  • <strong>구매완료 전환율(CVR)</strong> = (구매 고객 ÷ 유입 고객) × 100 ← 가장 중요!<br /><br />
+                  <strong>높을수록</strong> 효율적인 채널입니다 (적은 방문자로도 많은 전환 달성)
+                </div>
+
+                {/* 전환율 기준 버튼 */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', flexWrap: 'wrap', padding: '0 24px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--grey-700)' }}>📊 전환율 기준:</span>
+                  {[
+                    { key: 'activation', label: '활동' },
+                    { key: 'consideration', label: '관심' },
+                    { key: 'conversion', label: '결제진행' },
+                    { key: 'purchase', label: '구매완료' }
+                  ].map(funnel => (
+                    <button
+                      key={funnel.key}
+                      className={`view-btn channel-funnel-btn ${currentTop10Funnel === funnel.key ? 'active' : ''}`}
+                      data-funnel={funnel.key}
+                      onClick={() => setCurrentTop10Funnel(funnel.key)}
+                    >
+                      {funnel.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* 자동 인사이트 박스 */}
+                <div id="top10ChartInsightSummary" style={{ margin: '16px 24px', padding: '16px', background: 'linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%)', borderRadius: '10px', borderLeft: '4px solid #ff9800' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#ff9800', marginBottom: '8px' }}>
+                    🏆 TOP 10 분석 결과
+                  </div>
+                  <div id="top10ChartInsightText" style={{ fontSize: '13px', color: 'var(--grey-800)', lineHeight: 1.6 }}>
+                    {channelData.length > 0 ? `${currentTop10Funnel === 'purchase' ? '구매완료' : currentTop10Funnel === 'conversion' ? '결제진행' : currentTop10Funnel === 'consideration' ? '관심' : '활동'} 전환율 기준 상위 10개 채널을 분석합니다.` : '데이터를 불러오는 중...'}
+                  </div>
+                </div>
+
+                {/* TOP 10 차트 */}
+                {channelData.length > 0 && (
+                  <div style={{ position: 'relative', height: '400px', padding: '0 24px' }}>
+                    <Bar
+                      data={{
+                        labels: (() => {
+                          const funnelKey = currentTop10Funnel === 'purchase' ? '구매완료' : currentTop10Funnel === 'conversion' ? '결제진행' : currentTop10Funnel === 'consideration' ? '관심' : '활동';
+                          return [...channelData]
+                            .map(row => ({
+                              channel: row.channel,
+                              rate: (parseFloat(String(row[funnelKey])) / parseFloat(String(row['유입']))) * 100
+                            }))
+                            .sort((a, b) => b.rate - a.rate)
+                            .slice(0, 10)
+                            .map(item => item.channel);
+                        })(),
+                        datasets: [{
+                          label: `${currentTop10Funnel === 'purchase' ? '구매완료' : currentTop10Funnel === 'conversion' ? '결제진행' : currentTop10Funnel === 'consideration' ? '관심' : '활동'} 전환율 (%)`,
+                          data: (() => {
+                            const funnelKey = currentTop10Funnel === 'purchase' ? '구매완료' : currentTop10Funnel === 'conversion' ? '결제진행' : currentTop10Funnel === 'consideration' ? '관심' : '활동';
+                            return [...channelData]
+                              .map(row => ({
+                                channel: row.channel,
+                                rate: (parseFloat(String(row[funnelKey])) / parseFloat(String(row['유입']))) * 100
+                              }))
+                              .sort((a, b) => b.rate - a.rate)
+                              .slice(0, 10)
+                              .map(item => item.rate);
+                          })(),
+                          backgroundColor: 'rgba(255, 152, 0, 0.8)',
+                          borderColor: '#ff9800',
+                          borderWidth: 1
+                        }]
+                      }}
+                      options={{
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                          legend: { display: false },
+                          datalabels: { display: false }
+                        },
+                        scales: {
+                          x: {
+                            beginAtZero: true,
+                            title: { display: true, text: '전환율 (%)' }
+                          }
+                        }
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* 해석 가이드 */}
+                <div style={{ marginTop: '20px', padding: '0 24px 20px 24px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--grey-900)', marginBottom: '12px' }}>
+                    📋 전환율 순위를 볼 때 주의할 점
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '16px' }}>
+                    {/* 전환율 높지만 규모 작은 경우 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%)', borderRadius: '8px', borderLeft: '3px solid #2196f3' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#2196f3', marginBottom: '6px' }}>
+                        ⚠️ 전환율은 높은데 방문자가 적다면?
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>의미:</strong> 효율은 우수하지만 규모가 작음<br />
+                        <strong>전략:</strong> 광고 예산을 늘려 방문자 확대 (큰 성과 기대)
+                      </div>
+                    </div>
+
+                    {/* 전환율 낮지만 규모 큰 경우 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #fff3e0 0%, #fff8f0 100%)', borderRadius: '8px', borderLeft: '3px solid #ff9800' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#ff9800', marginBottom: '6px' }}>
+                        ⚠️ 전환율은 낮은데 매출이 높다면?
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>의미:</strong> 규모는 크지만 비효율적<br />
+                        <strong>전략:</strong> 랜딩 페이지 개선으로 CVR 상승 → 매출 폭발적 증가
+                      </div>
+                    </div>
+
+                    {/* 초기 단계 전환율이 낮은 경우 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #ffebee 0%, #fff5f5 100%)', borderRadius: '8px', borderLeft: '3px solid #f44336' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#f44336', marginBottom: '6px' }}>
+                        🚨 활동 전환율이 50% 이하라면?
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>의미:</strong> 첫 화면에서 절반 이상이 이탈<br />
+                        <strong>전략:</strong> 광고 메시지와 랜딩 페이지 일치 확인, 로딩 속도 개선
+                      </div>
+                    </div>
+
+                    {/* 최종 전환율이 높은 경우 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: '8px', borderLeft: '3px solid #4caf50' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#4caf50', marginBottom: '6px' }}>
+                        ✅ 구매완료 전환율이 3% 이상이라면?
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>의미:</strong> 매우 우수한 채널!<br />
+                        <strong>전략:</strong> 최우선 투자 대상. 광고비를 30-50% 증액하세요
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 실행 팁 */}
+                  <div style={{ padding: '16px', background: 'linear-gradient(135deg, #fff9e6 0%, #fffcf5 100%)', borderRadius: '8px', borderLeft: '3px solid #ffc107' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#f57c00', marginBottom: '10px' }}>
+                      ✅ 이 순위표로 바로 실행할 수 있는 것
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.8 }}>
+                      1. <strong>구매완료 TOP 3 채널</strong>의 공통점을 찾아 다른 채널에 적용하세요<br />
+                      2. <strong>활동 전환율이 높은 채널</strong>은 첫 화면이 효과적. 랜딩 페이지를 벤치마킹하세요<br />
+                      3. <strong>결제진행까지는 가지만 구매는 안 하는 채널</strong>은 결제 과정을 간소화하세요<br />
+                      4. <strong>전환율 1% 미만 채널</strong>은 일시 중단하고 원인 분석을 먼저 하세요
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
         </div>
       </div>
 

@@ -11165,7 +11165,12 @@
         }
 
         // 리타겟팅 테이블 정렬 이벤트 설정
+        let retargetingSortEventsInitialized = false;
         function setupRetargetingSortEvents() {
+            // 이미 초기화된 경우 중복 등록 방지
+            if (retargetingSortEventsInitialized) return;
+            retargetingSortEventsInitialized = true;
+
             document.querySelectorAll('.sortable-header[data-table]').forEach(th => {
                 th.addEventListener('click', function() {
                     const tableType = this.getAttribute('data-table');

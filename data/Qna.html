@@ -651,6 +651,13 @@
             color: var(--grey-500);
         }
     </style>
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("jpwOGZJVBg6iE3ZT0");
+        })();
+    </script>
 </head>
 <body>
     <div class="app-wrapper">
@@ -1666,16 +1673,16 @@
                                 <svg viewBox="0 0 24 24">
                                     <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                                 </svg>
-                                문의 저장하기
+                                문의 발송하기
                             </button>
                         </form>
 
                         <div class="success-message" id="successMessage">
                             <div class="success-message-icon">✅</div>
-                            <div class="success-message-title">메일 앱이 열렸습니다!</div>
+                            <div class="success-message-title">문의가 전송되었습니다!</div>
                             <div class="success-message-text">
-                                Gmail 또는 기본 메일 앱에서 메일 전송을 완료해 주세요.<br>
-                                빠른 시일 내에 답변 드리겠습니다.
+                                접수된 문의는 담당자가 확인 후 빠르게 답변 드리겠습니다.<br>
+                                감사합니다.
                             </div>
                         </div>
 
@@ -1684,8 +1691,7 @@
                             <div class="help-box-content">
                                 <div class="help-box-title">빠른 답변을 원하시나요?</div>
                                 <div class="help-box-text">
-                                    긴급한 문의는 <a href="mailto:support@growthmaker.kr">support@growthmaker.kr</a>로 직접 메일을 보내주시거나,
-                                    담당 Growth Manager에게 연락해 주세요.
+                                    긴급한 문의는 <a href="mailto:support@growthmaker.kr">tee1228@naver.com</a>로 직접 메일을 보내주세요.
                                 </div>
                             </div>
                         </div>
@@ -1756,7 +1762,7 @@
             }
         });
 
-        // 문의 폼 제출 - Gmail mailto 사용
+        // 문의 폼 제출 - EmailJS 사용
         function submitForm(event) {
             event.preventDefault();
 
@@ -1766,46 +1772,49 @@
             const inquiryType = document.getElementById('inquiryType').value;
             const inquiryContent = document.getElementById('inquiryContent').value;
 
-            // 메일 본문 구성
-            const subject = encodeURIComponent(`[${inquiryType}] ${companyName} 문의`);
-            const body = encodeURIComponent(
-`안녕하세요, 대시보드 관련 문의드립니다.
+            // 전송 버튼 비활성화
+            const submitBtn = document.querySelector('.submit-btn');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '전송 중...';
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-📌 문의 정보
-━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // EmailJS 템플릿 파라미터
+            const templateParams = {
+                to_email: 'tee1228@naver.com',
+                from_name: contactName || companyName,
+                from_email: contactEmail,
+                name: contactName || '미입력',
+                company_name: companyName,
+                inquiry_type: inquiryType,
+                subject: `[${inquiryType}] ${companyName} 문의`,
+                message: inquiryContent
+            };
 
-회사명: ${companyName}
-담당자: ${contactName || '미입력'}
-이메일: ${contactEmail || '미입력'}
-문의 유형: ${inquiryType}
+            // EmailJS로 이메일 전송
+            emailjs.send('service_bvmgctx', 'template_9mrqtki', templateParams)
+                .then(function(response) {
+                    console.log('이메일 전송 성공:', response.status, response.text);
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-📝 문의 내용
-━━━━━━━━━━━━━━━━━━━━━━━━━━
+                    // 성공 메시지 표시
+                    document.getElementById('successMessage').classList.add('show');
 
-${inquiryContent}
+                    // 폼 초기화
+                    document.getElementById('contactForm').reset();
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-`
-            );
-
-            // Gmail mailto 링크 생성
-            const mailtoLink = `mailto:support@growthmaker.kr?subject=${subject}&body=${body}`;
-
-            // 메일 앱 열기
-            window.location.href = mailtoLink;
-
-            // 성공 메시지 표시
-            document.getElementById('successMessage').classList.add('show');
-
-            // 폼 초기화
-            document.getElementById('contactForm').reset();
-
-            // 3초 후 성공 메시지 숨기기
-            setTimeout(() => {
-                document.getElementById('successMessage').classList.remove('show');
-            }, 5000);
+                    // 5초 후 성공 메시지 숨기기
+                    setTimeout(() => {
+                        document.getElementById('successMessage').classList.remove('show');
+                    }, 5000);
+                })
+                .catch(function(error) {
+                    console.error('이메일 전송 실패:', error);
+                    alert('이메일 전송에 실패했습니다. 다시 시도해 주세요.');
+                })
+                .finally(function() {
+                    // 버튼 복원
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                });
         }
     </script>
 </body>

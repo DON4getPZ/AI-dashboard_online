@@ -218,6 +218,34 @@ body {
   box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
 }
 
+.show-more-container {
+  padding: 16px 24px;
+  text-align: center;
+}
+
+.show-more-btn {
+  padding: 10px 32px;
+  background: var(--grey-100);
+  color: var(--grey-700);
+  border: 1px solid var(--grey-300);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.show-more-btn:hover {
+  background: var(--primary-light);
+  color: var(--primary-main);
+  border-color: var(--primary-main);
+}
+
+.hidden-row {
+  display: none;
+}
+
 /* 필터 섹션 */
 .filter-section {
   padding: 20px 24px;
@@ -478,4 +506,151 @@ body {
 
 .funnel-stage-conversion {
   font-size: 12px;
+}
+
+/* ========================================
+   Collapsible Section Styles
+   ======================================== */
+
+.collapsible-section {
+  margin-bottom: 24px;
+}
+
+.collapsible-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  padding: 20px 24px;
+  background: var(--paper);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+}
+
+.collapsible-header:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.collapsible-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--grey-900);
+}
+
+.collapsible-icon {
+  font-size: 20px;
+}
+
+.collapsible-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--primary-light);
+  color: var(--primary-main);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.collapsible-toggle:hover {
+  background: var(--primary-main);
+  color: white;
+}
+
+.collapsible-toggle-icon {
+  transition: transform 0.3s ease;
+  transform: rotate(180deg);
+}
+
+.collapsible-toggle-icon.collapsed {
+  transform: rotate(0deg);
+}
+
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
+.collapsible-content.expanded {
+  max-height: 10000px;
+  opacity: 1;
+  padding-top: 16px;
+  overflow: visible;
+}
+
+/* 탭 컨텐츠 */
+.decision-tool-tab-content {
+  display: none;
+}
+
+.decision-tool-tab-content.active {
+  display: block;
+}
+
+.urgent-alert-tab-content {
+  display: none;
+}
+
+.urgent-alert-tab-content.active {
+  display: block;
+}
+
+/* 인사이트 카드 */
+.insight-content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.insight-card {
+  padding: 18px 20px;
+  background: var(--grey-50);
+  border-radius: 12px;
+  border-left: 4px solid var(--primary-main);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.insight-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.insight-card.positive {
+  background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+  border-left-color: var(--success-main);
+}
+
+.insight-card.negative {
+  background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+  border-left-color: var(--error-main);
+}
+
+.insight-card.neutral {
+  background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+  border-left-color: var(--warning-main);
+}
+
+.insight-card.opportunity {
+  background: linear-gradient(135deg, #e3f2fd 0%, #e1f5fe 100%);
+  border-left-color: var(--secondary-main);
+}
+
+.insight-text {
+  font-size: 14px;
+  color: var(--grey-700);
+  line-height: 1.6;
 }
