@@ -193,6 +193,13 @@ body {
   border-radius: 2px;
 }
 
+/* 뷰 타입 버튼 섹션 */
+.view-type-section {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
 /* 뷰 버튼 */
 .view-btn {
   padding: 10px 24px;
@@ -653,4 +660,299 @@ body {
   font-size: 14px;
   color: var(--grey-700);
   line-height: 1.6;
+}
+
+/* ========================================
+   채널별 테이블 셀 배경 스타일
+   ======================================== */
+
+.cell-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  opacity: 0.15;
+  transition: opacity 0.3s ease;
+  border-radius: 4px;
+}
+
+tr:hover .cell-bg {
+  opacity: 0.25;
+}
+
+/* 색상 스케일 - 각 메트릭별 */
+.scale-acquisition { background: linear-gradient(90deg, transparent, #673ab7); }
+.scale-activation { background: linear-gradient(90deg, transparent, #2196f3); }
+.scale-consideration { background: linear-gradient(90deg, transparent, #ff9800); }
+.scale-conversion { background: linear-gradient(90deg, transparent, #4caf50); }
+.scale-purchase { background: linear-gradient(90deg, transparent, #00c853); }
+.scale-revenue { background: linear-gradient(90deg, transparent, #f44336); }
+.scale-cvr { background: linear-gradient(90deg, transparent, #9c27b0); }
+
+/* 테이블 셀 패딩 조정 */
+td.has-bg {
+  position: relative;
+  padding: 14px 16px;
+}
+
+td.has-bg > span {
+  position: relative;
+  z-index: 1;
+}
+
+/* ========================================
+   테이블 정렬 기능
+   ======================================== */
+
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  padding-right: 24px !important;
+  transition: background 0.2s ease;
+  z-index: 100;
+}
+
+.sortable-header:hover {
+  background: var(--grey-100);
+}
+
+.sort-icon {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  opacity: 0.3;
+  transition: opacity 0.2s ease;
+}
+
+.sortable-header:hover .sort-icon {
+  opacity: 0.6;
+}
+
+.sort-icon.active {
+  opacity: 1;
+}
+
+.sort-arrow {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+.sort-arrow.up {
+  border-bottom: 5px solid var(--grey-700);
+}
+
+.sort-arrow.down {
+  border-top: 5px solid var(--grey-700);
+}
+
+.sort-arrow.active {
+  border-bottom-color: var(--primary-main);
+  border-top-color: var(--primary-main);
+}
+
+/* 정렬 툴팁 */
+.sort-tooltip {
+  position: fixed;
+  transform: translate(-50%, -100%);
+  background: var(--grey-900);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 9999;
+  margin-top: -8px;
+  visibility: hidden;
+}
+
+.sort-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--grey-900);
+}
+
+.sortable-header:hover .sort-tooltip {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* ========================================
+   데이터 테이블 기본 스타일
+   ======================================== */
+
+.table-section {
+  overflow: visible;
+  position: relative;
+}
+
+.table-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--grey-200);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--grey-900);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-header::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: var(--success-main);
+  border-radius: 2px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  position: relative;
+  z-index: 50;
+}
+
+th, td {
+  padding: 14px 16px;
+  text-align: right;
+  font-size: 14px;
+}
+
+th {
+  background: var(--grey-50);
+  font-weight: 600;
+  color: var(--grey-700);
+  border-bottom: 2px solid var(--grey-200);
+  white-space: nowrap;
+  overflow: visible;
+  position: relative;
+}
+
+td {
+  border-bottom: 1px solid var(--grey-100);
+  color: var(--grey-900);
+}
+
+th:first-child,
+td:first-child {
+  text-align: left;
+  position: sticky;
+  left: 0;
+  background: var(--paper);
+  font-weight: 500;
+}
+
+th:first-child {
+  background: var(--grey-50);
+  z-index: 51;
+}
+
+tbody tr {
+  transition: background 0.2s ease;
+}
+
+tbody tr:hover {
+  background: var(--grey-50);
+}
+
+tbody tr:hover td:first-child {
+  background: var(--grey-50);
+}
+
+/* ========================================
+   차트 컨테이너
+   ======================================== */
+
+.chart-container {
+  position: relative;
+  height: 400px;
+  overflow: visible;
+}
+
+.chart-container-small {
+  position: relative;
+  height: 300px;
+  overflow: visible;
+}
+
+/* 차트 인사이트 툴팁 */
+.chart-insight-tooltip {
+  position: fixed;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 0;
+  display: none;
+  z-index: 99999;
+  max-width: 320px;
+  min-width: 280px;
+  pointer-events: none;
+}
+
+.chart-insight-tooltip.show {
+  display: block;
+}
+
+.tooltip-insight-section {
+  padding: 16px;
+  background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+  border-radius: 12px 12px 0 0;
+  border-bottom: 2px solid #ffd54f;
+}
+
+.tooltip-insight-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #f57c00;
+  margin-bottom: 8px;
+}
+
+.tooltip-insight-text {
+  font-size: 13px;
+  color: var(--grey-800);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.tooltip-recommendation-section {
+  padding: 16px;
+  background: white;
+  border-radius: 0 0 12px 12px;
+}
+
+.tooltip-recommendation-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-main);
+  margin-bottom: 8px;
+}
+
+.tooltip-recommendation-text {
+  font-size: 13px;
+  color: var(--grey-700);
+  line-height: 1.5;
+  margin: 0;
 }

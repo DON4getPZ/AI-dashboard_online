@@ -521,13 +521,14 @@ const styles = `
     max-height: 0;
     overflow: hidden;
     opacity: 0;
+    padding: 0 24px;
     transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
   }
 
   .collapsible-content.expanded {
     max-height: 5000px;
     opacity: 1;
-    padding: 24px 0;
+    padding: 24px;
   }
 
   /* 기간 필터 버튼 */

@@ -13,7 +13,7 @@ import {
   Legend,
   Filler,
 } from 'chart.js';
-import { Bar, Line } from 'react-chartjs-2';
+import { Bar, Line, Scatter } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import * as d3 from 'd3';
 
@@ -232,17 +232,17 @@ interface ChurnRates {
 // 유틸리티 함수
 // ========================================
 function formatNumber(num: number | string | undefined): string {
-  if (num === undefined || num === null) return '0';
+  if (num === 0 || num === null || num === undefined) return '0';
   const n = typeof num === 'string' ? parseFloat(num) : num;
   if (isNaN(n)) return '0';
-  return n.toLocaleString('ko-KR');
+  return Math.round(n).toLocaleString('ko-KR');
 }
 
 function formatDecimal(num: number | string | undefined): string {
-  if (num === undefined || num === null) return '0.00';
+  if (num === 0 || num === null || num === undefined) return '0';
   const n = typeof num === 'string' ? parseFloat(num) : num;
-  if (isNaN(n)) return '0.00';
-  return n.toFixed(2);
+  if (isNaN(n) || !isFinite(n)) return '0';
+  return n.toLocaleString('ko-KR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 }
 
 function parseCSV(text: string): Record<string, string>[] {
@@ -382,7 +382,13 @@ export default function ReactView() {
   const [decisionToolTab, setDecisionToolTab] = useState<string>('summary');
   const [channelAnalysisTab, setChannelAnalysisTab] = useState<string>('table');
   const [currentTop10Funnel, setCurrentTop10Funnel] = useState<string>('purchase');
-  const [customerAnalysisTab, setCustomerAnalysisTab] = useState<string>('newVsReturning');
+  const [customerAnalysisTab, setCustomerAnalysisTab] = useState<string>('trend');
+
+  // 차트 인사이트 툴팁 상태
+  const [compareChartTooltip, setCompareChartTooltip] = useState<{ show: boolean; x: number; y: number }>({ show: false, x: 0, y: 0 });
+  const [customerTrendTooltip, setCustomerTrendTooltip] = useState<{ show: boolean; x: number; y: number }>({ show: false, x: 0, y: 0 });
+  const [conversionTooltip, setConversionTooltip] = useState<{ show: boolean; x: number; y: number }>({ show: false, x: 0, y: 0 });
+  const [churnTooltip, setChurnTooltip] = useState<{ show: boolean; x: number; y: number }>({ show: false, x: 0, y: 0 });
 
   // Refs
   const d3FunnelRef = useRef<HTMLDivElement>(null);
@@ -604,38 +610,43 @@ export default function ReactView() {
   // channelChurnData (useMemo for updateChurnChart)
   // ========================================
   const channelChurnData = useMemo(() => {
-    if (channelData.length === 0) return { labels: [], values: [], config: null };
+    if (channelData.length === 0) return { labels: [], values: [], config: null, allData: [] };
 
-    const stageConfig: Record<string, { label: string; color: string; getValue: (row: ChannelDataRow) => number }> = {
+    const stageConfig: Record<string, { label: string; color: string; tooltip: string; getValue: (row: ChannelDataRow) => number }> = {
       activation: {
         label: '유입→활동 이탈률 (%)',
         color: '#673ab7',
+        tooltip: '(유입 - 활동) / 유입 × 100',
         getValue: (row) => calculateChurnRates(row).activation
       },
       consideration: {
         label: '활동→관심 이탈률 (%)',
         color: '#2196f3',
+        tooltip: '(활동 - 관심) / 활동 × 100',
         getValue: (row) => calculateChurnRates(row).consideration
       },
       conversion: {
         label: '관심→결제진행 이탈률 (%)',
         color: '#ff9800',
+        tooltip: '(관심 - 결제진행) / 관심 × 100',
         getValue: (row) => calculateChurnRates(row).conversion
       },
       purchase: {
         label: '결제진행→구매완료 이탈률 (%)',
         color: '#4caf50',
+        tooltip: '(결제진행 - 구매완료) / 결제진행 × 100',
         getValue: (row) => calculateChurnRates(row).purchase
       },
       avg: {
         label: '평균 이탈률 (%)',
         color: '#e91e63',
+        tooltip: '4개 단계 이탈률의 평균',
         getValue: (row) => calculateChurnRates(row).avg
       }
     };
 
     const config = stageConfig[currentChurnStage];
-    if (!config) return { labels: [], values: [], config: null };
+    if (!config) return { labels: [], values: [], config: null, allData: [] };
 
     const sortedData = [...channelData].sort((a, b) => {
       const aVal = config.getValue(a);
@@ -646,7 +657,8 @@ export default function ReactView() {
     return {
       labels: sortedData.map(row => row.channel),
       values: sortedData.map(row => config.getValue(row)),
-      config
+      config,
+      allData: channelData
     };
   }, [channelData, currentChurnStage, currentChurnSort]);
 
@@ -784,7 +796,8 @@ export default function ReactView() {
           tension: 0.3,
           fill: true,
           pointRadius: 3,
-          pointHoverRadius: 6
+          pointHoverRadius: 6,
+          yAxisID: 'y'
         },
         {
           label: '재방문율 (%)',
@@ -794,7 +807,8 @@ export default function ReactView() {
           tension: 0.3,
           fill: true,
           pointRadius: 3,
-          pointHoverRadius: 6
+          pointHoverRadius: 6,
+          yAxisID: 'y'
         }
       ]
     };
@@ -3426,13 +3440,117 @@ export default function ReactView() {
                   </div>
                   <div id="channelTableInsightText" style={{ fontSize: '13px', color: 'var(--grey-800)', lineHeight: 1.6 }}>
                     {channelData.length > 0 ? (() => {
-                      const topChannel = [...channelData].sort((a, b) => parseFloat(String(b['유입'])) - parseFloat(String(a['유입'])))[0];
-                      const topCvrChannel = [...channelData].sort((a, b) => {
-                        const cvrA = parseFloat(String(a['구매완료'])) / parseFloat(String(a['유입']));
-                        const cvrB = parseFloat(String(b['구매완료'])) / parseFloat(String(b['유입']));
-                        return cvrB - cvrA;
-                      })[0];
-                      return `가장 많은 유입을 가진 채널은 "${topChannel?.channel}"이며, 전환율이 가장 높은 채널은 "${topCvrChannel?.channel}"입니다.`;
+                      // channelStats 계산 (HTML과 동일)
+                      const channelStats = channelData.map(row => {
+                        const acquisition = parseFloat(String(row['유입'])) || 0;
+                        const activation = parseFloat(String(row['활동'])) || 0;
+                        const consideration = parseFloat(String(row['관심'])) || 0;
+                        const conversion = parseFloat(String(row['결제진행'])) || 0;
+                        const purchase = parseFloat(String(row['구매완료'])) || 0;
+                        const revenue = parseFloat(String(row['Revenue'])) || 0;
+                        const cvr = parseFloat(String(row['CVR'])) || 0;
+
+                        // 단계별 이탈률 계산
+                        const activationChurn = acquisition > 0 ? ((acquisition - activation) / acquisition * 100) : 0;
+                        const considerationChurn = activation > 0 ? ((activation - consideration) / activation * 100) : 0;
+                        const conversionChurn = consideration > 0 ? ((consideration - conversion) / consideration * 100) : 0;
+                        const purchaseChurn = conversion > 0 ? ((conversion - purchase) / conversion * 100) : 0;
+
+                        return {
+                          channel: row['channel'],
+                          acquisition, activation, consideration, conversion, purchase, revenue, cvr,
+                          activationChurn, considerationChurn, conversionChurn, purchaseChurn
+                        };
+                      });
+
+                      // CVR 상위 채널
+                      const topCVRChannels = [...channelStats].sort((a, b) => b.cvr - a.cvr);
+
+                      // CVR 평균
+                      const avgCVR = channelStats.reduce((sum, ch) => sum + ch.cvr, 0) / channelStats.length;
+
+                      // 매출 높지만 CVR 낮은 채널 찾기 (매출 상위 50%, CVR 평균 이하)
+                      const sortedByRevenue = [...channelStats].sort((a, b) => b.revenue - a.revenue);
+                      const revenueMedian = sortedByRevenue[Math.floor(sortedByRevenue.length / 2)]?.revenue || 0;
+                      const highRevenueLowCVR = channelStats.filter(ch => ch.revenue >= revenueMedian && ch.cvr < avgCVR);
+
+                      // 유입→활동 이탈률이 높은 채널 (50% 이상)
+                      const highEarlyChurn = channelStats.filter(ch => ch.activationChurn >= 50);
+
+                      // 전체 평균 이탈률
+                      const avgActivationChurn = channelStats.reduce((sum, ch) => sum + ch.activationChurn, 0) / channelStats.length;
+                      const avgConsiderationChurn = channelStats.reduce((sum, ch) => sum + ch.considerationChurn, 0) / channelStats.length;
+                      const avgConversionChurn = channelStats.reduce((sum, ch) => sum + ch.conversionChurn, 0) / channelStats.length;
+                      const avgPurchaseChurn = channelStats.reduce((sum, ch) => sum + ch.purchaseChurn, 0) / channelStats.length;
+
+                      // 가장 이탈률이 높은 단계 찾기
+                      const churnStages = [
+                        { stage: '유입→활동', avg: avgActivationChurn },
+                        { stage: '활동→관심', avg: avgConsiderationChurn },
+                        { stage: '관심→결제진행', avg: avgConversionChurn },
+                        { stage: '결제진행→구매완료', avg: avgPurchaseChurn }
+                      ];
+                      const highestChurnStage = churnStages.reduce((max, item) => item.avg > max.avg ? item : max, churnStages[0]);
+
+                      // 인사이트 생성
+                      const insights: JSX.Element[] = [];
+
+                      // 1. 최고 성과 채널
+                      if (topCVRChannels[0]) {
+                        insights.push(
+                          <span key="top">
+                            <strong style={{ color: '#4caf50' }}>🏆 최고 성과 채널:</strong>{' '}
+                            <strong>{topCVRChannels[0].channel}</strong> (CVR {topCVRChannels[0].cvr.toFixed(2)}%)이 가장 효율적입니다.{' '}
+                            {topCVRChannels[0].cvr > 3 ? '매우 우수한 전환율입니다! 이 채널의 광고 예산을 늘리세요. ' :
+                             topCVRChannels[0].cvr > 1.5 ? '양호한 전환율입니다. 추가 투자를 고려하세요. ' : ''}
+                          </span>
+                        );
+                      }
+
+                      // 2. 매출 vs CVR 불균형
+                      if (highRevenueLowCVR.length > 0) {
+                        insights.push(
+                          <span key="improve">
+                            <br /><br /><strong style={{ color: '#ff9800' }}>⚠️ 개선 기회:</strong>{' '}
+                            <strong>{highRevenueLowCVR[0].channel}</strong>은 매출은 높지만 (₩{formatNumber(highRevenueLowCVR[0].revenue)}){' '}
+                            CVR이 {highRevenueLowCVR[0].cvr.toFixed(2)}%로 평균({avgCVR.toFixed(2)}%)보다 낮습니다.{' '}
+                            <strong>랜딩 페이지를 개선하면 매출을 크게 늘릴 수 있습니다!</strong>{' '}
+                          </span>
+                        );
+                      }
+
+                      // 3. 초기 이탈 문제 또는 전체 분석
+                      if (highEarlyChurn.length > 0) {
+                        const worstChannel = [...highEarlyChurn].sort((a, b) => b.activationChurn - a.activationChurn)[0];
+                        insights.push(
+                          <span key="urgent">
+                            <br /><br /><strong style={{ color: '#f44336' }}>🚨 긴급 조치 필요:</strong>{' '}
+                            <strong>{worstChannel.channel}</strong>은 첫 단계(유입→활동)에서 {worstChannel.activationChurn.toFixed(1)}%가 이탈합니다.{' '}
+                            광고 메시지와 랜딩 페이지의 일치 여부, 로딩 속도를 즉시 점검하세요.{' '}
+                          </span>
+                        );
+                      } else {
+                        // 가장 이탈률 높은 단계 안내
+                        insights.push(
+                          <span key="analysis">
+                            <br /><br /><strong style={{ color: '#2196f3' }}>📊 전체 분석:</strong>{' '}
+                            전체 채널에서 <strong>{highestChurnStage.stage}</strong> 단계의 평균 이탈률이 {highestChurnStage.avg.toFixed(1)}%로 가장 높습니다.{' '}
+                            이 구간에 집중적으로 개선 노력을 기울이세요.{' '}
+                          </span>
+                        );
+                      }
+
+                      // 4. 실행 가능한 추천
+                      insights.push(
+                        <span key="action">
+                          <br /><br /><strong style={{ color: 'var(--primary-main)' }}>💡 오늘 바로 실행:</strong>{' '}
+                          {topCVRChannels[0]?.cvr > avgCVR * 1.5 ? `1) ${topCVRChannels[0].channel} 광고비를 20-30% 증액하고, ` : ''}
+                          {highRevenueLowCVR.length > 0 ? `2) ${highRevenueLowCVR[0].channel}의 랜딩 페이지 A/B 테스트를 시작하고, ` : ''}
+                          3) CVR {(avgCVR * 0.5).toFixed(2)}% 이하 채널은 일시 중단을 검토하세요.
+                        </span>
+                      );
+
+                      return insights;
                     })() : '데이터를 불러오는 중...'}
                   </div>
                 </div>
@@ -3449,14 +3567,13 @@ export default function ReactView() {
                             data-column={col}
                             data-type="number"
                             onClick={() => handleTableSort(col)}
-                            style={{ cursor: 'pointer' }}
                           >
                             {col === 'Revenue' ? '매출' : col}
                             <div className={`sort-icon ${channelTableSort.column === col ? 'active' : ''}`}>
                               <div className={`sort-arrow up ${channelTableSort.column === col && channelTableSort.direction === 'asc' ? 'active' : ''}`}></div>
                               <div className={`sort-arrow down ${channelTableSort.column === col && channelTableSort.direction === 'desc' ? 'active' : ''}`}></div>
                             </div>
-                            <div className="sort-tooltip" style={{ position: 'fixed', opacity: 0, visibility: 'hidden', pointerEvents: 'none' }}>클릭하여 {col === 'Revenue' ? '매출' : col} 기준으로 정렬</div>
+                            <div className="sort-tooltip">클릭하여 {col === 'Revenue' ? '매출' : col} 기준으로 정렬</div>
                           </th>
                         ))}
                       </tr>
@@ -3477,44 +3594,44 @@ export default function ReactView() {
                           if (maxValue === 0) return 0;
                           return (value / maxValue) * 100;
                         };
-                        return sortedChannelData.slice(0, 10).map((row, index) => {
+                        return sortedChannelData.map((row, index) => {
                           const acqVal = parseFloat(String(row['유입'])) || 0;
                           const actVal = parseFloat(String(row['활동'])) || 0;
                           const conVal = parseFloat(String(row['관심'])) || 0;
                           const convVal = parseFloat(String(row['결제진행'])) || 0;
                           const purVal = parseFloat(String(row['구매완료'])) || 0;
                           const revVal = parseFloat(String(row['Revenue'])) || 0;
-                          const cvrVal = (purVal / acqVal) * 100;
+                          const cvrVal = parseFloat(String(row['CVR'])) || 0;
                           return (
                             <tr key={index}>
-                              <td>{row.channel}</td>
-                              <td className="has-bg" style={{ position: 'relative', padding: '14px 16px' }}>
-                                <div className="cell-bg scale-acquisition" style={{ position: 'absolute', top: 0, left: 0, height: '100%', opacity: 0.15, width: `${getScaleWidth(acqVal, maxValues['유입'])}%`, background: 'linear-gradient(90deg, transparent, #673ab7)' }}></div>
-                                <span style={{ position: 'relative', zIndex: 1 }}>{formatNumber(acqVal)}</span>
+                              <td>{row['channel']}</td>
+                              <td className="has-bg">
+                                <div className="cell-bg scale-acquisition" style={{ width: `${getScaleWidth(acqVal, maxValues['유입'])}%` }}></div>
+                                <span>{formatNumber(acqVal)}</span>
                               </td>
-                              <td className="has-bg" style={{ position: 'relative', padding: '14px 16px' }}>
-                                <div className="cell-bg scale-activation" style={{ position: 'absolute', top: 0, left: 0, height: '100%', opacity: 0.15, width: `${getScaleWidth(actVal, maxValues['활동'])}%`, background: 'linear-gradient(90deg, transparent, #2196f3)' }}></div>
-                                <span style={{ position: 'relative', zIndex: 1 }}>{formatNumber(actVal)}</span>
+                              <td className="has-bg">
+                                <div className="cell-bg scale-activation" style={{ width: `${getScaleWidth(actVal, maxValues['활동'])}%` }}></div>
+                                <span>{formatNumber(actVal)}</span>
                               </td>
-                              <td className="has-bg" style={{ position: 'relative', padding: '14px 16px' }}>
-                                <div className="cell-bg scale-consideration" style={{ position: 'absolute', top: 0, left: 0, height: '100%', opacity: 0.15, width: `${getScaleWidth(conVal, maxValues['관심'])}%`, background: 'linear-gradient(90deg, transparent, #ff9800)' }}></div>
-                                <span style={{ position: 'relative', zIndex: 1 }}>{formatNumber(conVal)}</span>
+                              <td className="has-bg">
+                                <div className="cell-bg scale-consideration" style={{ width: `${getScaleWidth(conVal, maxValues['관심'])}%` }}></div>
+                                <span>{formatNumber(conVal)}</span>
                               </td>
-                              <td className="has-bg" style={{ position: 'relative', padding: '14px 16px' }}>
-                                <div className="cell-bg scale-conversion" style={{ position: 'absolute', top: 0, left: 0, height: '100%', opacity: 0.15, width: `${getScaleWidth(convVal, maxValues['결제진행'])}%`, background: 'linear-gradient(90deg, transparent, #4caf50)' }}></div>
-                                <span style={{ position: 'relative', zIndex: 1 }}>{formatNumber(convVal)}</span>
+                              <td className="has-bg">
+                                <div className="cell-bg scale-conversion" style={{ width: `${getScaleWidth(convVal, maxValues['결제진행'])}%` }}></div>
+                                <span>{formatNumber(convVal)}</span>
                               </td>
-                              <td className="has-bg" style={{ position: 'relative', padding: '14px 16px' }}>
-                                <div className="cell-bg scale-purchase" style={{ position: 'absolute', top: 0, left: 0, height: '100%', opacity: 0.15, width: `${getScaleWidth(purVal, maxValues['구매완료'])}%`, background: 'linear-gradient(90deg, transparent, #00c853)' }}></div>
-                                <span style={{ position: 'relative', zIndex: 1 }}>{formatNumber(purVal)}</span>
+                              <td className="has-bg">
+                                <div className="cell-bg scale-purchase" style={{ width: `${getScaleWidth(purVal, maxValues['구매완료'])}%` }}></div>
+                                <span>{formatNumber(purVal)}</span>
                               </td>
-                              <td className="has-bg" style={{ position: 'relative', padding: '14px 16px' }}>
-                                <div className="cell-bg scale-revenue" style={{ position: 'absolute', top: 0, left: 0, height: '100%', opacity: 0.15, width: `${getScaleWidth(revVal, maxValues['Revenue'])}%`, background: 'linear-gradient(90deg, transparent, #f44336)' }}></div>
-                                <span style={{ position: 'relative', zIndex: 1 }}>{formatNumber(revVal)}원</span>
+                              <td className="has-bg">
+                                <div className="cell-bg scale-revenue" style={{ width: `${getScaleWidth(revVal, maxValues['Revenue'])}%` }}></div>
+                                <span>{formatNumber(revVal)}</span>
                               </td>
-                              <td className="has-bg" style={{ position: 'relative', padding: '14px 16px', color: 'var(--primary-main)', fontWeight: 600 }}>
-                                <div className="cell-bg scale-cvr" style={{ position: 'absolute', top: 0, left: 0, height: '100%', opacity: 0.15, width: `${getScaleWidth(cvrVal, maxValues['CVR'])}%`, background: 'linear-gradient(90deg, transparent, #9c27b0)' }}></div>
-                                <span style={{ position: 'relative', zIndex: 1 }}>{formatDecimal(cvrVal)}%</span>
+                              <td className="has-bg">
+                                <div className="cell-bg scale-cvr" style={{ width: `${getScaleWidth(cvrVal, maxValues['CVR'])}%` }}></div>
+                                <span>{formatDecimal(cvrVal)}%</span>
                               </td>
                             </tr>
                           );
@@ -3642,113 +3759,203 @@ export default function ReactView() {
                   </div>
                   <div id="kpiChartInsightText" style={{ fontSize: '13px', color: 'var(--grey-800)', lineHeight: 1.6 }}>
                     {channelData.length > 0 ? (() => {
-                      const kpiLabels: Record<string, string> = {
+                      const kpiNames: Record<string, string> = {
                         cvr: '전환율', acquisition: '방문자 수', activation: '활성 사용자',
-                        consideration: '관심 고객', conversion: '결제 시도', purchase: '구매 건수', revenue: '매출액'
+                        consideration: '관심 고객', conversion: '결제 시도', purchase: '구매 건수', revenue: '매출'
                       };
-                      return `현재 "${kpiLabels[currentKpiType]}" 지표로 채널을 비교하고 있습니다.`;
+                      const kpiKeys: Record<string, string> = {
+                        cvr: 'CVR', acquisition: '유입', activation: '활동',
+                        consideration: '관심', conversion: '결제진행', purchase: '구매완료', revenue: 'Revenue'
+                      };
+
+                      const currentKpiName = kpiNames[currentKpiType];
+                      const currentKpiKey = kpiKeys[currentKpiType];
+
+                      // 데이터 추출 및 정렬
+                      const sortedData = [...channelData].map(row => ({
+                        channel: String(row['channel']),
+                        value: parseFloat(String(row[currentKpiKey as keyof typeof row])) || 0
+                      })).sort((a, b) => b.value - a.value);
+
+                      const top1 = sortedData[0];
+                      const top2 = sortedData[1];
+                      const top3 = sortedData[2];
+                      const bottom = sortedData[sortedData.length - 1];
+
+                      // 평균 계산
+                      const avgValue = sortedData.reduce((sum, item) => sum + item.value, 0) / sortedData.length;
+
+                      // 인사이트 생성
+                      const insights: JSX.Element[] = [];
+
+                      // 1. 1등 채널 정보
+                      let topInfo = '';
+                      if (currentKpiType === 'cvr') {
+                        topInfo = `(${top1.value.toFixed(2)}%). `;
+                        if (top1.value > 3) {
+                          topInfo += '매우 우수한 전환율이므로 광고 예산을 더 투자하세요! ';
+                        } else if (top1.value > 1.5) {
+                          topInfo += '양호한 전환율입니다. ';
+                        } else {
+                          topInfo += '전환율이 낮은 편입니다. 전반적인 개선이 필요합니다. ';
+                        }
+                      } else if (currentKpiType === 'revenue') {
+                        topInfo = `(₩${formatNumber(top1.value)}). 이 채널의 성공 요인을 분석하여 다른 채널에 적용하세요. `;
+                      } else {
+                        topInfo = `(${formatNumber(top1.value)}명). `;
+                      }
+
+                      insights.push(
+                        <span key="top1">
+                          <strong style={{ color: '#2196f3' }}>🥇 1위 채널:</strong>{' '}
+                          <strong>{top1.channel}</strong>이 {currentKpiName}에서 1등입니다 {topInfo}
+                        </span>
+                      );
+
+                      // 2. 1등과 2등의 격차
+                      const gap = top1.value - top2.value;
+                      const gapPercent = (gap / top1.value * 100);
+                      if (gapPercent > 30) {
+                        insights.push(
+                          <span key="gap">
+                            <br /><br /><strong style={{ color: '#ff9800' }}>⚠️ 주의:</strong>{' '}
+                            1위와 2위의 격차가 {gapPercent.toFixed(0)}%로 매우 큽니다.{' '}
+                            <strong>{top1.channel}</strong>에 과도하게 의존하고 있으므로, 다른 채널도 육성하여 리스크를 분산하세요.{' '}
+                          </span>
+                        );
+                      } else {
+                        insights.push(
+                          <span key="gap">
+                            {' '}2위는 <strong>{top2.channel}</strong>이며, 1위와의 격차는 {gapPercent.toFixed(0)}%입니다.{' '}
+                          </span>
+                        );
+                      }
+
+                      // 3. 상위 vs 하위 비교
+                      const topBottomRatio = top1.value / (bottom.value || 1);
+                      let analysisText = '';
+                      if (topBottomRatio > 10) {
+                        analysisText = `최고와 최저의 차이가 ${topBottomRatio.toFixed(1)}배로 매우 큽니다. ` +
+                          `${bottom.channel} 같은 저성과 채널은 일시 중단을 검토하고, 예산을 상위 채널로 재배분하세요. `;
+                      } else if (topBottomRatio > 3) {
+                        analysisText = `채널 간 성과 차이가 ${topBottomRatio.toFixed(1)}배로 존재합니다. 저성과 채널의 원인을 분석하고 개선하세요. `;
+                      } else {
+                        analysisText = '채널 간 성과가 비교적 고르게 분포되어 있습니다. ';
+                      }
+                      insights.push(
+                        <span key="analysis">
+                          <br /><br /><strong style={{ color: 'var(--primary-main)' }}>📊 전체 분석:</strong>{' '}
+                          {analysisText}
+                        </span>
+                      );
+
+                      // 4. 지표별 맞춤 추천
+                      let strategyText = '';
+                      switch(currentKpiType) {
+                        case 'cvr':
+                          if (avgValue < 1.5) {
+                            strategyText = `전체 평균 CVR이 ${avgValue.toFixed(2)}%로 낮습니다. 랜딩 페이지 개선과 타겟팅 정밀화가 시급합니다. `;
+                          } else if (avgValue > 3) {
+                            strategyText = `전체 평균 CVR이 ${avgValue.toFixed(2)}%로 우수합니다! 현재 전략을 유지하세요. `;
+                          } else {
+                            strategyText = `전체 평균 CVR은 ${avgValue.toFixed(2)}%입니다. A/B 테스트로 추가 개선을 시도하세요. `;
+                          }
+                          break;
+                        case 'revenue':
+                          strategyText = `${top1.channel}이 전체 매출의 핵심입니다. 이 채널의 광고 소재, 타겟팅, 랜딩 페이지를 분석하여 다른 채널에 적용하세요. `;
+                          break;
+                        case 'acquisition':
+                          strategyText = '방문자가 많다고 좋은 것은 아닙니다. CVR과 함께 비교하여 효율적인 채널에 집중 투자하세요. ';
+                          break;
+                        default:
+                          strategyText = `상위 3개 채널(${top1.channel}, ${top2.channel}, ${top3.channel})에 집중하여 최적화하세요. `;
+                      }
+                      insights.push(
+                        <span key="strategy">
+                          <br /><br /><strong style={{ color: 'var(--primary-main)' }}>💡 {currentKpiName} 개선 전략:</strong>{' '}
+                          {strategyText}
+                        </span>
+                      );
+
+                      return insights;
                     })() : '버튼을 클릭하여 지표를 선택하면 자동 분석 결과가 여기에 표시됩니다.'}
                   </div>
                 </div>
 
                 {/* KPI 차트 */}
-                <div className="chart-container-small" style={{ position: 'relative', height: '400px', padding: '0 24px' }}>
-                  {channelData.length > 0 && (
-                    <Bar
-                      data={{
-                        labels: (() => {
-                          return [...channelData]
-                            .sort((a, b) => {
-                              if (currentKpiType === 'cvr') {
-                                const cvrA = parseFloat(String(a['구매완료'])) / parseFloat(String(a['유입']));
-                                const cvrB = parseFloat(String(b['구매완료'])) / parseFloat(String(b['유입']));
-                                return cvrB - cvrA;
-                              } else if (currentKpiType === 'acquisition') {
-                                return parseFloat(String(b['유입'])) - parseFloat(String(a['유입']));
-                              } else if (currentKpiType === 'activation') {
-                                return parseFloat(String(b['활동'])) - parseFloat(String(a['활동']));
-                              } else if (currentKpiType === 'consideration') {
-                                return parseFloat(String(b['관심'])) - parseFloat(String(a['관심']));
-                              } else if (currentKpiType === 'conversion') {
-                                return parseFloat(String(b['결제진행'])) - parseFloat(String(a['결제진행']));
-                              } else if (currentKpiType === 'purchase') {
-                                return parseFloat(String(b['구매완료'])) - parseFloat(String(a['구매완료']));
-                              } else {
-                                return parseFloat(String(b['Revenue'])) - parseFloat(String(a['Revenue']));
+                <div className="chart-container-small" style={{ position: 'relative' }}>
+                  {channelData.length > 0 && (() => {
+                    // KPI별 설정 (HTML과 동일)
+                    const kpiConfig: Record<string, { label: string; key: string; color: string; bgColor: string }> = {
+                      cvr: { label: 'CVR (%)', key: 'CVR', color: '#673ab7', bgColor: 'rgba(103, 58, 183, 0.8)' },
+                      acquisition: { label: '유입 (명)', key: '유입', color: '#2196f3', bgColor: 'rgba(33, 150, 243, 0.8)' },
+                      activation: { label: '활동 (명)', key: '활동', color: '#00bcd4', bgColor: 'rgba(0, 188, 212, 0.8)' },
+                      consideration: { label: '관심 (명)', key: '관심', color: '#ff9800', bgColor: 'rgba(255, 152, 0, 0.8)' },
+                      conversion: { label: '결제진행 (명)', key: '결제진행', color: '#4caf50', bgColor: 'rgba(76, 175, 80, 0.8)' },
+                      purchase: { label: '구매완료 (명)', key: '구매완료', color: '#00c853', bgColor: 'rgba(0, 200, 83, 0.8)' },
+                      revenue: { label: '매출 (원)', key: 'Revenue', color: '#f44336', bgColor: 'rgba(244, 67, 54, 0.8)' }
+                    };
+
+                    const config = kpiConfig[currentKpiType];
+                    const getValue = (row: ChannelDataRow) => parseFloat(String(row[config.key as keyof ChannelDataRow])) || 0;
+
+                    // 정렬 및 상위 10개 추출
+                    const sortedData = [...channelData]
+                      .sort((a, b) => getValue(b) - getValue(a))
+                      .slice(0, 10);
+
+                    const labels = sortedData.map(row => String(row['channel']));
+                    const values = sortedData.map(row => getValue(row));
+
+                    return (
+                      <Bar
+                        key={`kpi-chart-${currentKpiType}`}
+                        data={{
+                          labels,
+                          datasets: [{
+                            label: config.label,
+                            data: values,
+                            backgroundColor: config.bgColor,
+                            borderColor: config.color,
+                            borderWidth: 1
+                          }]
+                        }}
+                        options={{
+                          indexAxis: 'y',
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          animation: {
+                            duration: 750,
+                            easing: 'easeOutQuart'
+                          },
+                          plugins: {
+                            legend: { display: false },
+                            datalabels: { display: false },
+                            tooltip: {
+                              callbacks: {
+                                label: function(context: { parsed: { x: number } }) {
+                                  const val = context.parsed.x;
+                                  if (currentKpiType === 'cvr') {
+                                    return config.label + ': ' + (val !== undefined ? val.toFixed(2) : '0') + '%';
+                                  } else if (currentKpiType === 'revenue') {
+                                    return config.label + ': ' + formatNumber(val) + '원';
+                                  } else {
+                                    return config.label + ': ' + formatNumber(val) + '명';
+                                  }
+                                }
                               }
-                            })
-                            .slice(0, 10)
-                            .map(row => row.channel);
-                        })(),
-                        datasets: [{
-                          label: currentKpiType === 'cvr' ? '전환율 (%)' :
-                                 currentKpiType === 'acquisition' ? '방문자 수' :
-                                 currentKpiType === 'activation' ? '활성 사용자' :
-                                 currentKpiType === 'consideration' ? '관심 고객' :
-                                 currentKpiType === 'conversion' ? '결제 시도' :
-                                 currentKpiType === 'purchase' ? '구매 건수' : '매출액',
-                          data: (() => {
-                            return [...channelData]
-                              .sort((a, b) => {
-                                if (currentKpiType === 'cvr') {
-                                  const cvrA = parseFloat(String(a['구매완료'])) / parseFloat(String(a['유입']));
-                                  const cvrB = parseFloat(String(b['구매완료'])) / parseFloat(String(b['유입']));
-                                  return cvrB - cvrA;
-                                } else if (currentKpiType === 'acquisition') {
-                                  return parseFloat(String(b['유입'])) - parseFloat(String(a['유입']));
-                                } else if (currentKpiType === 'activation') {
-                                  return parseFloat(String(b['활동'])) - parseFloat(String(a['활동']));
-                                } else if (currentKpiType === 'consideration') {
-                                  return parseFloat(String(b['관심'])) - parseFloat(String(a['관심']));
-                                } else if (currentKpiType === 'conversion') {
-                                  return parseFloat(String(b['결제진행'])) - parseFloat(String(a['결제진행']));
-                                } else if (currentKpiType === 'purchase') {
-                                  return parseFloat(String(b['구매완료'])) - parseFloat(String(a['구매완료']));
-                                } else {
-                                  return parseFloat(String(b['Revenue'])) - parseFloat(String(a['Revenue']));
-                                }
-                              })
-                              .slice(0, 10)
-                              .map(row => {
-                                if (currentKpiType === 'cvr') {
-                                  return (parseFloat(String(row['구매완료'])) / parseFloat(String(row['유입']))) * 100;
-                                } else if (currentKpiType === 'acquisition') {
-                                  return parseFloat(String(row['유입']));
-                                } else if (currentKpiType === 'activation') {
-                                  return parseFloat(String(row['활동']));
-                                } else if (currentKpiType === 'consideration') {
-                                  return parseFloat(String(row['관심']));
-                                } else if (currentKpiType === 'conversion') {
-                                  return parseFloat(String(row['결제진행']));
-                                } else if (currentKpiType === 'purchase') {
-                                  return parseFloat(String(row['구매완료']));
-                                } else {
-                                  return parseFloat(String(row['Revenue']));
-                                }
-                              });
-                          })(),
-                          backgroundColor: 'rgba(33, 150, 243, 0.8)',
-                          borderColor: '#2196f3',
-                          borderWidth: 1
-                        }]
-                      }}
-                      options={{
-                        indexAxis: 'y',
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                          legend: { display: false },
-                          datalabels: { display: false }
-                        },
-                        scales: {
-                          x: {
-                            beginAtZero: true,
-                            title: { display: true, text: currentKpiType === 'cvr' ? '전환율 (%)' : currentKpiType === 'revenue' ? '매출 (원)' : '수' }
+                            }
+                          },
+                          scales: {
+                            x: {
+                              beginAtZero: true,
+                              title: { display: true, text: config.label }
+                            }
                           }
-                        }
-                      }}
-                    />
-                  )}
+                        }}
+                      />
+                    );
+                  })()}
                 </div>
 
                 {/* 해석 가이드 */}
@@ -3828,13 +4035,149 @@ export default function ReactView() {
                     💎 균형 분석 결과
                   </div>
                   <div id="compareChartInsightText" style={{ fontSize: '13px', color: 'var(--grey-800)', lineHeight: 1.6 }}>
-                    {channelCompareData ? `상위 채널들의 효율성과 규모를 비교하고 있습니다.` : '데이터를 불러오는 중...'}
+                    {channelData.length > 0 ? (() => {
+                      // 데이터 파싱 (상위 8개만, 차트와 동일)
+                      const sortedData = [...channelData].sort((a, b) =>
+                        (parseFloat(String(b['CVR'])) || 0) - (parseFloat(String(a['CVR'])) || 0)
+                      ).slice(0, 8).map(row => ({
+                        channel: String(row['channel']),
+                        cvr: parseFloat(String(row['CVR'])) || 0,
+                        acquisition: parseFloat(String(row['유입'])) || 0,
+                        purchase: parseFloat(String(row['구매완료'])) || 0,
+                        revenue: parseFloat(String(row['Revenue'])) || 0
+                      }));
+
+                      // 정규화 (100점 만점으로 환산)
+                      const maxCVR = Math.max(...sortedData.map(ch => ch.cvr));
+                      const maxAcquisition = Math.max(...sortedData.map(ch => ch.acquisition));
+                      const maxPurchase = Math.max(...sortedData.map(ch => ch.purchase));
+                      const maxRevenue = Math.max(...sortedData.map(ch => ch.revenue));
+
+                      const normalizedData = sortedData.map(ch => {
+                        const normCVR = maxCVR > 0 ? (ch.cvr / maxCVR * 100) : 0;
+                        const normAcquisition = maxAcquisition > 0 ? (ch.acquisition / maxAcquisition * 100) : 0;
+                        const normPurchase = maxPurchase > 0 ? (ch.purchase / maxPurchase * 100) : 0;
+                        const normRevenue = maxRevenue > 0 ? (ch.revenue / maxRevenue * 100) : 0;
+
+                        // 균형도 계산 (표준편차 기반)
+                        const values = [normCVR, normAcquisition, normPurchase, normRevenue];
+                        const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
+                        const variance = values.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / values.length;
+                        const balance = 100 - Math.sqrt(variance); // 높을수록 균형잡힘
+
+                        return { ...ch, normCVR, normAcquisition, normPurchase, normRevenue, avg, balance };
+                      });
+
+                      // 채널 유형 분류
+                      const perfectChannels = normalizedData.filter(ch => ch.avg >= 60 && ch.balance >= 50);
+                      const efficientSmallChannels = normalizedData.filter(ch => ch.normCVR >= 70 && ch.normAcquisition < 50);
+                      const inefficientLargeChannels = normalizedData.filter(ch => ch.normAcquisition >= 70 && ch.normCVR < 50);
+                      const lowPerformers = normalizedData.filter(ch => ch.avg < 40);
+
+                      // 최고 균형 채널
+                      const mostBalanced = normalizedData.reduce((max, ch) => ch.balance > max.balance ? ch : max, normalizedData[0]);
+
+                      const insights: JSX.Element[] = [];
+
+                      // 1. 최고 균형 채널
+                      if (perfectChannels.length > 0) {
+                        insights.push(
+                          <span key="perfect">
+                            <strong style={{ color: '#4caf50' }}>🌟 완벽한 채널:</strong>{' '}
+                            <strong>{perfectChannels[0].channel}</strong>이 효율과 규모를 모두 갖춘 최고의 채널입니다.{' '}
+                            모든 지표(CVR, 방문자, 구매, 매출)가 균형있게 높습니다. 최우선 투자 대상입니다!{' '}
+                          </span>
+                        );
+                      } else {
+                        insights.push(
+                          <span key="balanced">
+                            <strong style={{ color: '#9c27b0' }}>💎 가장 균형잡힌 채널:</strong>{' '}
+                            <strong>{mostBalanced.channel}</strong>이 상대적으로 가장 균형잡혀 있습니다 (균형도: {mostBalanced.balance.toFixed(0)}점).{' '}
+                          </span>
+                        );
+                      }
+
+                      // 2. 숨겨진 보석
+                      if (efficientSmallChannels.length > 0) {
+                        const gems = efficientSmallChannels.slice(0, 2).map(ch => ch.channel).join(', ');
+                        insights.push(
+                          <span key="gems">
+                            <br /><br /><strong style={{ color: '#2196f3' }}>💎 숨겨진 보석:</strong>{' '}
+                            <strong>{gems}</strong>은 전환율이 우수하지만 방문자가 적습니다.{' '}
+                            <strong>광고 예산을 늘려 규모를 키우면 큰 효과</strong>를 볼 수 있습니다!{' '}
+                          </span>
+                        );
+                      }
+
+                      // 3. 개선 필요 채널
+                      if (inefficientLargeChannels.length > 0) {
+                        insights.push(
+                          <span key="improve">
+                            <br /><br /><strong style={{ color: '#ff9800' }}>⚠️ 개선 기회:</strong>{' '}
+                            <strong>{inefficientLargeChannels[0].channel}</strong>은 방문자는 많지만 ({formatNumber(inefficientLargeChannels[0].acquisition)}명){' '}
+                            전환율이 {inefficientLargeChannels[0].cvr.toFixed(2)}%로 낮습니다.{' '}
+                            <strong>랜딩 페이지와 타겟팅을 개선하면 매출이 크게 증가</strong>할 수 있습니다!{' '}
+                          </span>
+                        );
+                      }
+
+                      // 4. 저성과 채널
+                      if (lowPerformers.length > 0) {
+                        const lowChannels = lowPerformers.map(ch => ch.channel).join(', ');
+                        insights.push(
+                          <span key="low">
+                            <br /><br /><strong style={{ color: '#f44336' }}>❌ 저성과 채널:</strong>{' '}
+                            <strong>{lowChannels}</strong>은 모든 지표가 낮습니다.{' '}
+                            일시 중단을 검토하고 예산을 상위 채널로 재배분하세요.{' '}
+                          </span>
+                        );
+                      }
+
+                      // 5. 포트폴리오 평가
+                      let portfolioText = '상위 8개 채널 중 ';
+                      const parts: string[] = [];
+                      if (perfectChannels.length > 0) parts.push(`${perfectChannels.length}개가 완벽`);
+                      if (efficientSmallChannels.length > 0) parts.push(`${efficientSmallChannels.length}개가 확장 가능`);
+                      if (inefficientLargeChannels.length > 0) parts.push(`${inefficientLargeChannels.length}개가 개선 필요`);
+                      if (lowPerformers.length > 0) parts.push(`${lowPerformers.length}개가 저성과`);
+                      portfolioText += parts.join(', ') + ' 상태입니다.';
+
+                      insights.push(
+                        <span key="portfolio">
+                          <br /><br /><strong style={{ color: 'var(--primary-main)' }}>📊 채널 포트폴리오:</strong>{' '}
+                          {portfolioText}
+                        </span>
+                      );
+
+                      // 6. 우선순위 액션
+                      const actions: string[] = [];
+                      if (perfectChannels.length > 0) actions.push(`1) ${perfectChannels[0].channel} 예산 30-50% 증액`);
+                      if (efficientSmallChannels.length > 0) actions.push(`2) ${efficientSmallChannels[0].channel} 타겟 확대로 방문자 늘리기`);
+                      if (inefficientLargeChannels.length > 0) actions.push(`3) ${inefficientLargeChannels[0].channel} 랜딩 페이지 A/B 테스트 시작`);
+
+                      if (actions.length > 0) {
+                        insights.push(
+                          <span key="actions">
+                            <br /><br /><strong style={{ color: 'var(--primary-main)' }}>💡 우선순위 액션:</strong>{' '}
+                            {actions.join(', ')}
+                          </span>
+                        );
+                      }
+
+                      return insights;
+                    })() : '데이터를 불러오는 중...'}
                   </div>
                 </div>
 
                 {channelCompareData && (
-                  <div style={{ position: 'relative', height: '450px', padding: '0 24px' }}>
+                  <div
+                    style={{ position: 'relative', height: '450px' }}
+                    onMouseEnter={(e) => setCompareChartTooltip({ show: true, x: e.clientX + 15, y: e.clientY + 15 })}
+                    onMouseMove={(e) => setCompareChartTooltip(prev => prev.show ? { ...prev, x: e.clientX + 15, y: e.clientY + 15 } : prev)}
+                    onMouseLeave={() => setCompareChartTooltip({ show: false, x: 0, y: 0 })}
+                  >
                     <Bar
+                      key="compare-chart"
                       data={{
                         labels: channelCompareData.labels,
                         datasets: channelCompareData.datasets.map(ds => ({
@@ -3847,9 +4190,42 @@ export default function ReactView() {
                         indexAxis: 'y',
                         responsive: true,
                         maintainAspectRatio: false,
+                        animation: {
+                          duration: 750,
+                          easing: 'easeOutQuart'
+                        },
+                        interaction: {
+                          mode: 'y' as const,
+                          intersect: false
+                        },
+                        layout: {
+                          padding: {
+                            right: 100
+                          }
+                        },
                         plugins: {
                           legend: { display: true, position: 'top' },
-                          datalabels: { display: false }
+                          datalabels: { display: false },
+                          tooltip: {
+                            callbacks: {
+                              label: function(context: { datasetIndex: number; dataIndex: number; dataset: { label?: string; originalData?: number[] } }) {
+                                const dataIndex = context.dataIndex;
+                                const originalValue = context.dataset.originalData?.[dataIndex] || 0;
+                                const label = context.dataset.label || '';
+
+                                if (label.includes('CVR')) {
+                                  return label + ': ' + formatDecimal(originalValue) + '%';
+                                } else if (label.includes('유입')) {
+                                  return '유입: ' + formatNumber(originalValue) + '명';
+                                } else if (label.includes('구매완료')) {
+                                  return '구매완료: ' + formatNumber(originalValue) + '명';
+                                } else if (label.includes('매출')) {
+                                  return '매출: ' + formatNumber(originalValue) + '원';
+                                }
+                                return label;
+                              }
+                            }
+                          }
                         },
                         scales: {
                           x: {
@@ -3862,6 +4238,25 @@ export default function ReactView() {
                     />
                   </div>
                 )}
+
+                {/* 비교 차트 인사이트 툴팁 */}
+                <div
+                  className={`chart-insight-tooltip ${compareChartTooltip.show ? 'show' : ''}`}
+                  style={{ left: compareChartTooltip.x, top: compareChartTooltip.y }}
+                >
+                  <div className="tooltip-insight-section">
+                    <div className="tooltip-insight-header">💡 인사이트</div>
+                    <p className="tooltip-insight-text">
+                      각 채널의 전환율(CVR), 고객 유입, 구매 건수, 매출을 100점 만점으로 환산하여 비교합니다. 모든 지표가 골고루 높은 채널이 가장 균형있는 성과를 내고 있습니다.
+                    </p>
+                  </div>
+                  <div className="tooltip-recommendation-section">
+                    <div className="tooltip-recommendation-header">🎯 추천 사항</div>
+                    <p className="tooltip-recommendation-text">
+                      한 가지 지표만 좋은 채널은 개선 여지가 있습니다. 예를 들어, 유입은 많은데 전환율이 낮다면 고객 타게팅을 개선해야 합니다. 전환율은 높은데 매출이 낮다면 고가 상품 판매를 늘려야 합니다.
+                    </p>
+                  </div>
+                </div>
 
                 {/* 해석 가이드 */}
                 <div style={{ marginTop: '20px', padding: '0 24px 20px 24px' }}>
@@ -3972,57 +4367,89 @@ export default function ReactView() {
                 </div>
 
                 {/* TOP 10 차트 */}
-                {channelData.length > 0 && (
-                  <div style={{ position: 'relative', height: '400px', padding: '0 24px' }}>
-                    <Bar
-                      data={{
-                        labels: (() => {
-                          const funnelKey = currentTop10Funnel === 'purchase' ? '구매완료' : currentTop10Funnel === 'conversion' ? '결제진행' : currentTop10Funnel === 'consideration' ? '관심' : '활동';
-                          return [...channelData]
-                            .map(row => ({
-                              channel: row.channel,
-                              rate: (parseFloat(String(row[funnelKey])) / parseFloat(String(row['유입']))) * 100
-                            }))
-                            .sort((a, b) => b.rate - a.rate)
-                            .slice(0, 10)
-                            .map(item => item.channel);
-                        })(),
-                        datasets: [{
-                          label: `${currentTop10Funnel === 'purchase' ? '구매완료' : currentTop10Funnel === 'conversion' ? '결제진행' : currentTop10Funnel === 'consideration' ? '관심' : '활동'} 전환율 (%)`,
-                          data: (() => {
-                            const funnelKey = currentTop10Funnel === 'purchase' ? '구매완료' : currentTop10Funnel === 'conversion' ? '결제진행' : currentTop10Funnel === 'consideration' ? '관심' : '활동';
-                            return [...channelData]
-                              .map(row => ({
-                                channel: row.channel,
-                                rate: (parseFloat(String(row[funnelKey])) / parseFloat(String(row['유입']))) * 100
-                              }))
-                              .sort((a, b) => b.rate - a.rate)
-                              .slice(0, 10)
-                              .map(item => item.rate);
-                          })(),
-                          backgroundColor: 'rgba(255, 152, 0, 0.8)',
-                          borderColor: '#ff9800',
-                          borderWidth: 1
-                        }]
-                      }}
-                      options={{
-                        indexAxis: 'y',
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                          legend: { display: false },
-                          datalabels: { display: false }
-                        },
-                        scales: {
-                          x: {
-                            beginAtZero: true,
-                            title: { display: true, text: '전환율 (%)' }
+                {channelData.length > 0 && (() => {
+                  const funnelKeyMap: Record<string, string> = {
+                    'activation': '활동',
+                    'consideration': '관심',
+                    'conversion': '결제진행',
+                    'purchase': '구매완료'
+                  };
+                  const colorMap: Record<string, { bg: string; border: string }> = {
+                    'activation': { bg: 'rgba(33, 150, 243, 0.8)', border: '#2196f3' },
+                    'consideration': { bg: 'rgba(255, 152, 0, 0.8)', border: '#ff9800' },
+                    'conversion': { bg: 'rgba(76, 175, 80, 0.8)', border: '#4caf50' },
+                    'purchase': { bg: 'rgba(0, 200, 83, 0.8)', border: '#00c853' }
+                  };
+                  const labelMap: Record<string, string> = {
+                    'activation': '활동 전환율 (%)',
+                    'consideration': '관심 전환율 (%)',
+                    'conversion': '결제진행 전환율 (%)',
+                    'purchase': '구매완료 전환율 (%)'
+                  };
+
+                  const funnelKey = funnelKeyMap[currentTop10Funnel];
+                  const colors = colorMap[currentTop10Funnel];
+                  const chartLabel = labelMap[currentTop10Funnel];
+
+                  const sortedData = [...channelData]
+                    .map(row => ({
+                      channel: row.channel,
+                      rate: (parseFloat(String(row[funnelKey as keyof typeof row])) / parseFloat(String(row['유입']))) * 100
+                    }))
+                    .filter(item => !isNaN(item.rate) && isFinite(item.rate))
+                    .sort((a, b) => b.rate - a.rate)
+                    .slice(0, 10);
+
+                  const labels = sortedData.map(item => {
+                    const name = item.channel;
+                    return name.length > 20 ? name.substring(0, 20) + '...' : name;
+                  });
+                  const data = sortedData.map(item => item.rate);
+
+                  return (
+                    <div className="chart-container-small">
+                      <Bar
+                        key={`top10-chart-${currentTop10Funnel}`}
+                        data={{
+                          labels,
+                          datasets: [{
+                            label: chartLabel,
+                            data,
+                            backgroundColor: colors.bg,
+                            borderColor: colors.border,
+                            borderWidth: 1
+                          }]
+                        }}
+                        options={{
+                          indexAxis: 'y',
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          animation: {
+                            duration: 750,
+                            easing: 'easeOutQuart'
+                          },
+                          plugins: {
+                            legend: { display: false },
+                            datalabels: { display: false },
+                            tooltip: {
+                              callbacks: {
+                                label: function(context: { parsed: { x: number } }) {
+                                  return chartLabel + ': ' + formatDecimal(context.parsed.x) + '%';
+                                }
+                              }
+                            }
+                          },
+                          scales: {
+                            x: {
+                              beginAtZero: true,
+                              title: { display: true, text: '전환율 (%)' }
+                            }
                           }
-                        }
-                      }}
-                    />
-                  </div>
-                )}
+                        }}
+                      />
+                    </div>
+                  );
+                })()}
 
                 {/* 해석 가이드 */}
                 <div style={{ marginTop: '20px', padding: '0 24px 20px 24px' }}>
@@ -4084,7 +4511,8 @@ export default function ReactView() {
                       1. <strong>구매완료 TOP 3 채널</strong>의 공통점을 찾아 다른 채널에 적용하세요<br />
                       2. <strong>활동 전환율이 높은 채널</strong>은 첫 화면이 효과적. 랜딩 페이지를 벤치마킹하세요<br />
                       3. <strong>결제진행까지는 가지만 구매는 안 하는 채널</strong>은 결제 과정을 간소화하세요<br />
-                      4. <strong>전환율 1% 미만 채널</strong>은 일시 중단하고 원인 분석을 먼저 하세요
+                      4. <strong>전환율 1% 미만 채널</strong>은 일시 중단하고 원인 분석을 먼저 하세요<br />
+                      5. 각 단계별 탭을 클릭하며 어느 구간에서 이탈이 많은지 파악하세요
                     </div>
                   </div>
                 </div>
@@ -4094,156 +4522,1271 @@ export default function ReactView() {
       </div>
 
       {/* 6. 신규 vs 재방문 및 이탈 분석 (접기 가능) */}
-      <div style={{ marginBottom: '24px' }}>
-        {/* 접기/펼치기 헤더 */}
-        <div
-          onClick={() => setCustomerAnalysisExpanded(!customerAnalysisExpanded)}
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            cursor: 'pointer',
-            padding: '20px 24px',
-            background: 'white',
-            borderRadius: customerAnalysisExpanded ? '12px 12px 0 0' : '12px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', fontWeight: 600, color: '#212121' }}>
-            <span>👥</span>
-            <span>신규 vs 재방문 고객 분석</span>
+      <div className="collapsible-section">
+        <div className="collapsible-header" onClick={() => setCustomerAnalysisExpanded(!customerAnalysisExpanded)}>
+          <div className="collapsible-title">
+            <span className="collapsible-icon">👥</span>
+            <span>고객 재방문 및 이탈 분석</span>
           </div>
-          <button style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '8px 16px',
-            background: '#ede7f6',
-            color: '#673ab7',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: 500,
-            cursor: 'pointer'
-          }}>
+          <button className="collapsible-toggle">
             <span>{customerAnalysisExpanded ? '접기' : '펼치기'}</span>
-            <span style={{ transform: customerAnalysisExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>▼</span>
+            <span className={`collapsible-toggle-icon ${customerAnalysisExpanded ? '' : 'collapsed'}`}>▼</span>
           </button>
         </div>
-
-        {/* 접기/펼치기 콘텐츠 */}
-        <div style={{
-          maxHeight: customerAnalysisExpanded ? '10000px' : '0',
-          overflow: 'hidden',
-          transition: 'max-height 0.4s ease, opacity 0.3s ease',
-          opacity: customerAnalysisExpanded ? 1 : 0,
-          background: 'white',
-          borderRadius: '0 0 12px 12px',
-          boxShadow: customerAnalysisExpanded ? '0 2px 8px rgba(0,0,0,0.08)' : 'none'
-        }}>
-          <div style={{ padding: '24px' }}>
-            <div style={{ fontSize: '13px', color: '#757575', marginBottom: '16px' }}>
-              신규 방문자와 재방문 고객의 비율 추세를 분석합니다. 건강한 비즈니스는 적절한 신규 유입과 높은 재방문율을 유지합니다.
-            </div>
-
-            {/* 기간 선택 */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
-              {['daily', 'weekly', 'monthly'].map(view => (
-                <button
-                  key={view}
-                  onClick={() => setNewVsReturningView(view)}
-                  style={{
-                    padding: '8px 16px',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    background: newVsReturningView === view ? '#673ab7' : 'white',
-                    color: newVsReturningView === view ? 'white' : '#616161',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.08)'
-                  }}
-                >
-                  {view === 'daily' ? '일별' : view === 'weekly' ? '주별' : '월별'}
-                </button>
-              ))}
-            </div>
-
-            {/* 차트 */}
-            {customerTrendData && (
-              <div style={{ height: '350px' }}>
-                <Line
-                  data={customerTrendData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    plugins: {
-                      legend: { display: true, position: 'top' },
-                      datalabels: { display: false }
-                    },
-                    scales: {
-                      y: {
-                        beginAtZero: true,
-                        max: 100,
-                        ticks: { callback: (value) => value + '%' },
-                        title: { display: true, text: '비율 (%)' }
-                      },
-                      x: {
-                        ticks: { maxRotation: 45, minRotation: 45 }
-                      }
-                    }
-                  }}
-                />
-              </div>
-            )}
+        <div className={`collapsible-content ${customerAnalysisExpanded ? 'expanded' : ''}`}>
+          {/* 탭 버튼 */}
+          <div className="view-type-section" style={{ marginBottom: '24px' }}>
+            <button className={`view-btn customer-analysis-tab-btn ${customerAnalysisTab === 'trend' ? 'active' : ''}`} onClick={() => setCustomerAnalysisTab('trend')}>신규 vs 재방문 추세</button>
+            <button className={`view-btn customer-analysis-tab-btn ${customerAnalysisTab === 'conversion' ? 'active' : ''}`} onClick={() => setCustomerAnalysisTab('conversion')}>전환율 비교</button>
+            <button className={`view-btn customer-analysis-tab-btn ${customerAnalysisTab === 'churn' ? 'active' : ''}`} onClick={() => setCustomerAnalysisTab('churn')}>이탈률 분석</button>
+            <button className={`view-btn customer-analysis-tab-btn ${customerAnalysisTab === 'matrix' ? 'active' : ''}`} onClick={() => setCustomerAnalysisTab('matrix')}>채널 품질 매트릭스</button>
+            <button className={`view-btn customer-analysis-tab-btn ${customerAnalysisTab === 'engagement' ? 'active' : ''}`} onClick={() => setCustomerAnalysisTab('engagement')}>고객 참여도</button>
           </div>
+
+          {/* 탭 1: 통합 신규/재방문 고객 추세 차트 */}
+          {customerAnalysisTab === 'trend' && (
+            <div className="customer-analysis-tab-content active" id="trendTab">
+              {/* 데이터 기준 선택 */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px', padding: '16px 0' }}>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--grey-700)' }}>📊 데이터 기준:</span>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button className={`view-btn new-vs-returning-view-btn ${newVsReturningView === 'monthly' ? 'active' : ''}`} onClick={() => setNewVsReturningView('monthly')}>📆 월별</button>
+                  <button className={`view-btn new-vs-returning-view-btn ${newVsReturningView === 'weekly' ? 'active' : ''}`} onClick={() => setNewVsReturningView('weekly')}>📆 주별</button>
+                  <button className={`view-btn new-vs-returning-view-btn ${newVsReturningView === 'daily' ? 'active' : ''}`} onClick={() => setNewVsReturningView('daily')}>📅 일별</button>
+                </div>
+              </div>
+              <div className="chart-section card" style={{ marginBottom: '16px' }}>
+                <div className="chart-header">📊 신규 vs 재방문 고객 추세 분석</div>
+                <div style={{ fontSize: '13px', color: 'var(--grey-600)', marginBottom: '12px', padding: '0 24px' }}>
+                  시간에 따른 신규 고객 비율과 재방문율의 변화를 추적합니다. 신규 고객 비율이 높으면 새로운 고객 유입이 활발한 것이고, 재방문율이 높으면 고객 충성도가 높다는 뜻입니다. <strong>차트 위에 마우스를 올리면</strong> 추가 인사이트를 확인할 수 있습니다.
+                </div>
+                <div
+                  className="chart-container-small"
+                  style={{ position: 'relative' }}
+                  onMouseEnter={(e) => setCustomerTrendTooltip({ show: true, x: e.clientX + 15, y: e.clientY + 15 })}
+                  onMouseMove={(e) => customerTrendTooltip.show && setCustomerTrendTooltip({ show: true, x: e.clientX + 15, y: e.clientY + 15 })}
+                  onMouseLeave={() => setCustomerTrendTooltip({ show: false, x: 0, y: 0 })}
+                >
+                  {customerTrendData && (
+                    <Line
+                      key={`customer-trend-${newVsReturningView}`}
+                      data={customerTrendData}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                          legend: { display: true, position: 'top' },
+                          datalabels: { display: false },
+                          tooltip: {
+                            callbacks: {
+                              label: (context) => `${context.dataset.label}: ${context.parsed.y}%`
+                            }
+                          }
+                        },
+                        scales: {
+                          y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { callback: (value) => value + '%' },
+                            title: { display: true, text: '비율 (%)' }
+                          },
+                          x: {
+                            ticks: { maxRotation: 45, minRotation: 45 }
+                          }
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* customerTrendTooltip 인사이트 툴팁 */}
+          <div
+            id="customerTrendTooltip"
+            className={`chart-insight-tooltip ${customerTrendTooltip.show ? 'show' : ''}`}
+            style={{ left: customerTrendTooltip.x, top: customerTrendTooltip.y }}
+          >
+            <div className="tooltip-insight-section">
+              <div className="tooltip-insight-header">💡 인사이트</div>
+              <p className="tooltip-insight-text">
+                신규 고객 비율과 재방문율의 균형을 확인하세요. 신규 비율이 높으면 성장 중이며, 재방문율이 높으면 충성도가 높습니다.
+              </p>
+            </div>
+            <div className="tooltip-recommendation-section">
+              <div className="tooltip-recommendation-header">🎯 추천 사항</div>
+              <p className="tooltip-recommendation-text">
+                이상적으로는 꾸준한 신규 유입(30-40%)과 높은 재방문율(60-70%)을 유지하는 것이 좋습니다. 두 지표가 함께 성장하는 것이 건강한 비즈니스의 신호입니다.
+              </p>
+            </div>
+          </div>
+
+          {/* 탭 2: 신규 vs 재방문 고객 전환율 비교 */}
+          {customerAnalysisTab === 'conversion' && (
+            <div className="customer-analysis-tab-content active" id="conversionTab">
+              <div className="chart-section card" style={{ marginBottom: '16px' }}>
+                <div className="chart-header">🔄 첫 방문 고객 vs 재방문 고객: 구매 전환율 차이 분석</div>
+                <div style={{ fontSize: '13px', color: 'var(--grey-600)', marginBottom: '16px', padding: '0 24px', lineHeight: 1.7 }}>
+                  <strong>이 차트는 무엇을 보여주나요?</strong><br />
+                  처음 우리 사이트에 온 사람(신규)과 이미 왔던 적이 있는 사람(재방문)의 행동을 비교합니다.
+                  각 단계별로 얼마나 많은 사람이 다음 단계로 넘어가는지 전환율(%)로 표시됩니다.
+                  <strong>차트 위에 마우스를 올리면</strong> 더 자세한 분석과 개선 방법을 확인할 수 있습니다.
+                </div>
+
+                {/* 주요 인사이트 요약 */}
+                <div id="conversionInsightSummary" style={{ margin: '0 24px 16px 24px', padding: '16px', background: 'linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%)', borderRadius: '10px', borderLeft: '4px solid var(--primary-main)' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary-main)', marginBottom: '8px' }}>
+                    💡 핵심 인사이트
+                  </div>
+                  <div id="conversionInsightText" style={{ fontSize: '13px', color: 'var(--grey-800)', lineHeight: 1.6 }}>
+                    {(() => {
+                      if (newVsReturningConversionData.length === 0) return '데이터를 불러오는 중...';
+
+                      const labels = newVsReturningConversionData.map(r => r.funnel_stage);
+                      const newUserCVR = newVsReturningConversionData.map(r => parseFloat(r['New user CVR'] || '0'));
+                      const returningUserCVR = newVsReturningConversionData.map(r => parseFloat(r['Returning user CVR'] || '0'));
+
+                      // 각 단계별 차이 계산
+                      const gaps = labels.map((label, i) => ({
+                        stage: label,
+                        newCVR: newUserCVR[i],
+                        returningCVR: returningUserCVR[i],
+                        gap: returningUserCVR[i] - newUserCVR[i]
+                      }));
+
+                      // 가장 차이가 큰 단계 찾기
+                      const maxGap = gaps.reduce((max, item) => item.gap > max.gap ? item : max, gaps[0]);
+
+                      // 평균 신규/재방문 전환율
+                      const avgNew = newUserCVR.reduce((sum, val) => sum + val, 0) / newUserCVR.length;
+                      const avgReturning = returningUserCVR.reduce((sum, val) => sum + val, 0) / returningUserCVR.length;
+                      const avgGap = avgReturning - avgNew;
+
+                      // 인사이트 텍스트 생성
+                      const parts: React.ReactNode[] = [];
+
+                      if (avgReturning > avgNew) {
+                        const ratio = (avgReturning / avgNew).toFixed(1);
+                        parts.push(
+                          <span key="avg">
+                            재방문 고객의 평균 전환율은 <strong style={{ color: '#673ab7' }}>{avgReturning.toFixed(1)}%</strong>로,
+                            신규 고객(<strong style={{ color: '#ff9800' }}>{avgNew.toFixed(1)}%</strong>)보다 <strong style={{ color: 'var(--success-main)' }}>{ratio}배 높습니다</strong>.
+                          </span>
+                        );
+                      } else {
+                        parts.push(<span key="avg">신규 고객과 재방문 고객의 전환율이 비슷합니다. </span>);
+                      }
+
+                      if (maxGap.gap > 5) {
+                        let stageAdvice = '';
+                        if (maxGap.stage.includes('유입') || maxGap.stage.includes('활동')) {
+                          stageAdvice = '신규 고객이 이 단계에서 이탈하지 않도록 첫 화면을 간결하게 만들고 로딩 속도를 개선하세요.';
+                        } else if (maxGap.stage.includes('관심')) {
+                          stageAdvice = '신규 고객에게 제품 리뷰와 고객 후기를 강조하여 신뢰를 구축하세요.';
+                        } else if (maxGap.stage.includes('결제') || maxGap.stage.includes('구매')) {
+                          stageAdvice = '신규 고객도 쉽게 구매할 수 있도록 게스트 체크아웃과 간편 결제를 도입하세요.';
+                        }
+                        parts.push(
+                          <span key="gap"><br /><strong>특히 &quot;{maxGap.stage}&quot; 단계</strong>에서 재방문 고객이 {maxGap.gap.toFixed(1)}%p 더 높습니다. {stageAdvice}</span>
+                        );
+                      } else {
+                        parts.push(<span key="gap">모든 단계에서 비슷한 패턴을 보입니다. 신규 고객과 재방문 고객 모두에게 효과적인 전략을 유지하세요.</span>);
+                      }
+
+                      // 핵심 전략
+                      let coreStrategy = '';
+                      if (avgGap > 10) {
+                        coreStrategy = '재방문율을 높이는 것이 가장 효과적입니다. 이메일 마케팅, 리타겟팅 광고, 쿠폰 제공으로 재방문을 유도하세요.';
+                      } else if (avgNew < 3) {
+                        coreStrategy = '신규 고객 전환율이 낮습니다. 랜딩페이지 개선과 첫 구매 할인 혜택 제공을 고려하세요.';
+                      } else {
+                        coreStrategy = '균형잡힌 성과를 보이고 있습니다. 지속적인 A/B 테스트로 두 그룹 모두의 전환율을 개선하세요.';
+                      }
+                      parts.push(
+                        <span key="strategy"><br /><br /><strong style={{ color: 'var(--primary-main)' }}>💡 핵심 전략:</strong> {coreStrategy}</span>
+                      );
+
+                      return parts;
+                    })()}
+                  </div>
+                </div>
+
+                <div
+                  className="chart-container-small"
+                  style={{ position: 'relative' }}
+                  onMouseEnter={(e) => setConversionTooltip({ show: true, x: e.clientX + 15, y: e.clientY + 15 })}
+                  onMouseMove={(e) => conversionTooltip.show && setConversionTooltip({ show: true, x: e.clientX + 15, y: e.clientY + 15 })}
+                  onMouseLeave={() => setConversionTooltip({ show: false, x: 0, y: 0 })}
+                >
+                  {newVsReturningConversionData.length > 0 && (
+                    <Bar
+                      data={{
+                        labels: newVsReturningConversionData.map(r => r.funnel_stage),
+                        datasets: [
+                          {
+                            label: '신규 고객 전환율 (%)',
+                            data: newVsReturningConversionData.map(r => parseFloat(r['New user CVR'] || '0')),
+                            backgroundColor: 'rgba(255, 152, 0, 0.7)',
+                            borderColor: '#ff9800',
+                            borderWidth: 2,
+                            borderRadius: 6,
+                            barThickness: 'flex' as const,
+                            maxBarThickness: 60
+                          },
+                          {
+                            label: '재방문 고객 전환율 (%)',
+                            data: newVsReturningConversionData.map(r => parseFloat(r['Returning user CVR'] || '0')),
+                            backgroundColor: 'rgba(103, 58, 183, 0.7)',
+                            borderColor: '#673ab7',
+                            borderWidth: 2,
+                            borderRadius: 6,
+                            barThickness: 'flex' as const,
+                            maxBarThickness: 60
+                          }
+                        ]
+                      }}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                          legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                              font: { size: 13, weight: 'bold' },
+                              padding: 15,
+                              usePointStyle: true,
+                              pointStyle: 'rectRounded'
+                            }
+                          },
+                          datalabels: {
+                            display: true,
+                            anchor: 'end',
+                            align: 'top',
+                            offset: 4,
+                            formatter: (value: number) => value.toFixed(1) + '%',
+                            font: { size: 11, weight: 'bold' },
+                            color: (context) => context.datasetIndex === 0 ? '#f57c00' : '#673ab7'
+                          },
+                          tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 },
+                            callbacks: {
+                              title: (context) => context[0].label + ' 단계',
+                              label: (context) => `${context.dataset.label}: ${(context.parsed.y).toFixed(2)}%`,
+                              afterBody: (context) => {
+                                if (context.length === 2) {
+                                  const newValue = context[0].parsed.y;
+                                  const returningValue = context[1].parsed.y;
+                                  const gap = Math.abs(returningValue - newValue);
+                                  const higherGroup = returningValue > newValue ? '재방문 고객' : '신규 고객';
+                                  return ['', `📊 전환율 차이: ${gap.toFixed(2)}%p`, `${higherGroup}이 더 높음`];
+                                }
+                                return '';
+                              }
+                            }
+                          }
+                        },
+                        scales: {
+                          y: {
+                            beginAtZero: true,
+                            ticks: {
+                              callback: (value) => value + '%',
+                              font: { size: 12 }
+                            },
+                            title: {
+                              display: true,
+                              text: '전환율 (%)',
+                              font: { size: 13, weight: 'bold' }
+                            },
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                          },
+                          x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 12, weight: 'bold' } }
+                          }
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+
+                {/* conversionTooltip 인사이트 툴팁 */}
+                <div
+                  className={`chart-insight-tooltip ${conversionTooltip.show ? 'show' : ''}`}
+                  style={{ left: conversionTooltip.x, top: conversionTooltip.y }}
+                >
+                  <div className="tooltip-insight-section">
+                    <div className="tooltip-insight-header">💡 인사이트</div>
+                    <p className="tooltip-insight-text">
+                      신규 고객과 재방문 고객의 전환율 차이는 고객 경험의 질을 보여주는 중요한 지표입니다. 재방문 고객이 높다면 브랜드 충성도가 좋다는 뜻이고, 신규 고객이 낮다면 첫인상 개선이 필요합니다.
+                    </p>
+                  </div>
+                  <div className="tooltip-recommendation-section">
+                    <div className="tooltip-recommendation-header">🎯 추천 사항</div>
+                    <p className="tooltip-recommendation-text">
+                      차이가 큰 단계를 집중 개선하세요. 예를 들어, 재방문 고객만 구매율이 높다면 신규 고객을 위한 &quot;첫 구매 10% 할인&quot; 같은 인센티브를 제공하거나, 재방문 고객에게는 VIP 혜택을 제공하여 충성도를 더 높이세요.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 해석 가이드 */}
+                <div style={{ marginTop: '20px', padding: '0 24px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--grey-900)', marginBottom: '12px' }}>
+                    📋 차트 해석 가이드
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #fff3e0 0%, #fff9e6 100%)', borderRadius: '8px', borderLeft: '3px solid #ff9800' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#f57c00', marginBottom: '6px' }}>
+                        🆕 신규 고객 (주황색 막대)
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        처음 방문한 고객들의 전환율입니다. 신규 고객은 우리 사이트를 처음 경험하기 때문에 일반적으로 전환율이 낮습니다.
+                        <strong>첫인상이 중요</strong>하므로 랜딩페이지와 첫 화면 최적화가 핵심입니다.
+                      </div>
+                    </div>
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #ede7f6 0%, #f3f0ff 100%)', borderRadius: '8px', borderLeft: '3px solid #673ab7' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#673ab7', marginBottom: '6px' }}>
+                        🔄 재방문 고객 (보라색 막대)
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        이미 방문한 적이 있는 고객들의 전환율입니다. 재방문 고객은 우리 브랜드를 알고 있어 <strong>신뢰도가 높고 구매 가능성이 큽니다</strong>.
+                        이메일 마케팅이나 리타겟팅으로 재방문을 유도하세요.
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 실행 가능한 팁 */}
+                  <div style={{ marginTop: '12px', padding: '14px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: '8px', borderLeft: '3px solid var(--success-main)' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--success-main)', marginBottom: '6px' }}>
+                      ✅ 실행 가능한 개선 방법
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.6 }}>
+                      <strong>신규 고객 전환율이 낮다면:</strong>
+                      첫 화면 로딩 속도 개선, 명확한 가치 제안 표시, 신뢰 요소 강화(리뷰, 보안 인증 등), 회원가입 없이 둘러보기 가능하게<br />
+                      <strong>재방문 고객 전환율이 낮다면:</strong>
+                      개인화된 추천 시스템 도입, 재방문 쿠폰 제공, 이메일로 신상품 알림, 로그인 시 이전 장바구니 자동 복원<br />
+                      <strong>두 그룹 모두 낮다면:</strong>
+                      전체적인 사용자 경험(UX) 점검 필요, 가격 경쟁력 확인, 결제 옵션 다양화
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 탭 3: 이탈률 차트 */}
+          {customerAnalysisTab === 'churn' && (
+            <div className="customer-analysis-tab-content active" id="churnTab">
+              <div className="chart-section card" style={{ marginBottom: '16px' }}>
+                <div className="chart-header">📉 채널별 고객 이탈 분석: 어느 단계에서 가장 많이 떠나나요?</div>
+
+                {/* 설명 */}
+                <div style={{ fontSize: '13px', color: 'var(--grey-600)', marginBottom: '16px', padding: '0 24px', lineHeight: 1.7 }}>
+                  <strong>이탈률이란?</strong><br />
+                  각 퍼널 단계에서 다음 단계로 넘어가지 못하고 떠나는 고객의 비율입니다.
+                  예를 들어, &quot;유입→활동&quot; 이탈률 80%는 방문자 100명 중 80명이 아무 행동도 하지 않고 떠났다는 뜻입니다.
+                  <strong>이탈률이 높은 단계를 찾아 집중 개선</strong>하면 전체 전환율을 크게 향상시킬 수 있습니다.
+                  <strong>차트 위에 마우스를 올리면</strong> 더 자세한 분석을 확인할 수 있습니다.
+                </div>
+
+                {/* 이탈률 자동 인사이트 */}
+                <div id="churnInsightSummary" style={{ margin: '0 24px 16px 24px', padding: '16px', background: 'linear-gradient(135deg, #ffebee 0%, #fff5f5 100%)', borderRadius: '10px', borderLeft: '4px solid #ff5722' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#ff5722', marginBottom: '8px' }}>
+                    ⚠️ 이탈률 분석 결과
+                  </div>
+                  <div id="churnInsightText" style={{ fontSize: '13px', color: 'var(--grey-800)', lineHeight: 1.6 }}>
+                    {(() => {
+                      if (channelChurnData.values.length === 0 || !channelChurnData.allData || channelChurnData.allData.length === 0) return '데이터를 불러오는 중...';
+
+                      // 각 단계별 평균 이탈률 계산
+                      const allData = channelChurnData.allData;
+                      let totalActivation = 0, totalConsideration = 0, totalConversion = 0, totalPurchase = 0;
+
+                      allData.forEach((row) => {
+                        const acquisition = parseFloat(String(row['유입'] || '0'));
+                        const activity = parseFloat(String(row['활동'] || '0'));
+                        const interest = parseFloat(String(row['관심'] || '0'));
+                        const checkout = parseFloat(String(row['결제진행'] || '0'));
+                        const purchase = parseFloat(String(row['구매완료'] || '0'));
+
+                        totalActivation += acquisition > 0 ? ((acquisition - activity) / acquisition) * 100 : 0;
+                        totalConsideration += activity > 0 ? ((activity - interest) / activity) * 100 : 0;
+                        totalConversion += interest > 0 ? ((interest - checkout) / interest) * 100 : 0;
+                        totalPurchase += checkout > 0 ? ((checkout - purchase) / checkout) * 100 : 0;
+                      });
+
+                      const count = allData.length || 1;
+                      const avgActivation = totalActivation / count;
+                      const avgConsideration = totalConsideration / count;
+                      const avgConversion = totalConversion / count;
+                      const avgPurchase = totalPurchase / count;
+
+                      // 산업 평균 벤치마크
+                      const benchmarks: Record<string, { min: number; max: number; label: string }> = {
+                        activation: { min: 40, max: 60, label: '유입→활동' },
+                        consideration: { min: 50, max: 70, label: '활동→관심' },
+                        conversion: { min: 60, max: 80, label: '관심→결제진행' },
+                        purchase: { min: 20, max: 30, label: '결제진행→구매완료' }
+                      };
+
+                      // 가장 높은 이탈률 단계 찾기
+                      const stageAverages: { stage: string; avg: number; label: string }[] = [
+                        { stage: 'activation', avg: avgActivation, label: '유입→활동' },
+                        { stage: 'consideration', avg: avgConsideration, label: '활동→관심' },
+                        { stage: 'conversion', avg: avgConversion, label: '관심→결제진행' },
+                        { stage: 'purchase', avg: avgPurchase, label: '결제진행→구매완료' }
+                      ];
+
+                      const highestChurnStage = stageAverages.reduce((max, item) =>
+                        item.avg > max.avg ? item : max, stageAverages[0]
+                      );
+
+                      const benchmark = benchmarks[highestChurnStage.stage];
+                      const parts: React.ReactNode[] = [];
+
+                      // 전체 상황 요약
+                      parts.push(
+                        <span key="main">
+                          가장 많은 고객이 이탈하는 구간은 <strong style={{ color: '#ff5722' }}>{highestChurnStage.label}</strong> 단계로,
+                          평균 <strong style={{ color: '#ff5722' }}>{highestChurnStage.avg.toFixed(1)}%</strong>의 고객이 이 단계에서 떠납니다.{' '}
+                        </span>
+                      );
+
+                      // 산업 평균과 비교
+                      if (highestChurnStage.avg > benchmark.max) {
+                        parts.push(
+                          <span key="benchmark"><strong style={{ color: 'var(--error-main)' }}>⚠️ 산업 평균({benchmark.min}-{benchmark.max}%)보다 높아 즉시 개선이 필요합니다!</strong> </span>
+                        );
+                      } else if (highestChurnStage.avg < benchmark.min) {
+                        parts.push(
+                          <span key="benchmark"><strong style={{ color: 'var(--success-main)' }}>✅ 산업 평균({benchmark.min}-{benchmark.max}%)보다 낮아 양호합니다!</strong> </span>
+                        );
+                      } else {
+                        parts.push(
+                          <span key="benchmark">산업 평균({benchmark.min}-{benchmark.max}%) 범위 내입니다. </span>
+                        );
+                      }
+
+                      // 해당 단계에서 이탈률이 가장 높은 채널들 찾기 (TOP 3)
+                      const getChurnRate = (row: typeof allData[0], stage: string) => {
+                        const acquisition = parseFloat(String(row['유입'] || '0'));
+                        const activity = parseFloat(String(row['활동'] || '0'));
+                        const interest = parseFloat(String(row['관심'] || '0'));
+                        const checkout = parseFloat(String(row['결제진행'] || '0'));
+                        const purchase = parseFloat(String(row['구매완료'] || '0'));
+                        if (stage === 'activation') return acquisition > 0 ? ((acquisition - activity) / acquisition) * 100 : 0;
+                        if (stage === 'consideration') return activity > 0 ? ((activity - interest) / activity) * 100 : 0;
+                        if (stage === 'conversion') return interest > 0 ? ((interest - checkout) / interest) * 100 : 0;
+                        if (stage === 'purchase') return checkout > 0 ? ((checkout - purchase) / checkout) * 100 : 0;
+                        return 0;
+                      };
+
+                      const channelsWithHighChurn = allData.map(row => ({
+                        channel: row.channel,
+                        churnRate: getChurnRate(row, highestChurnStage.stage)
+                      })).sort((a, b) => b.churnRate - a.churnRate).slice(0, 3);
+
+                      // 문제 채널 강조
+                      parts.push(
+                        <span key="channels">
+                          <br /><br /><strong style={{ color: 'var(--primary-main)' }}>🎯 집중 개선 대상 채널:</strong><br />
+                          {channelsWithHighChurn.map((item, index) => (
+                            <span key={`ch-${index}`}>
+                              {index + 1}. <strong>{item.channel}</strong>: {item.churnRate.toFixed(1)}% 이탈
+                              {index < channelsWithHighChurn.length - 1 && <br />}
+                            </span>
+                          ))}
+                        </span>
+                      );
+
+                      // 단계별 구체적인 추천사항
+                      let recommendations: React.ReactNode[] = [];
+                      if (highestChurnStage.stage === 'activation') {
+                        if (highestChurnStage.avg > 60) {
+                          recommendations = [
+                            <span key="r1">• <strong>랜딩 페이지 로딩 속도</strong>를 3초 이내로 최적화하세요 (현재 이탈률이 매우 높음)<br /></span>,
+                            <span key="r2">• 광고 문구와 랜딩 페이지의 <strong>메시지가 일치</strong>하는지 즉시 확인하세요<br /></span>,
+                            <span key="r3">• 모바일 사용자 경험을 우선적으로 개선하세요</span>
+                          ];
+                        } else {
+                          recommendations = [
+                            <span key="r1">• 첫 화면에 너무 많은 정보가 있는지 확인하고 <strong>핵심 메시지만 강조</strong>하세요<br /></span>,
+                            <span key="r2">• 랜딩 페이지 디자인이 신뢰감을 주는지 점검하세요<br /></span>,
+                            <span key="r3">• CTA(행동 유도) 버튼이 눈에 잘 띄는지 확인하세요</span>
+                          ];
+                        }
+                      } else if (highestChurnStage.stage === 'consideration') {
+                        if (highestChurnStage.avg > 70) {
+                          recommendations = [
+                            <span key="r1">• <strong>상세 페이지에 정보가 부족</strong>합니다. 제품 설명, 사양, 사용법을 보강하세요<br /></span>,
+                            <span key="r2">• <strong>고객 리뷰와 평점</strong>을 눈에 띄게 배치하세요 (신뢰도 향상)<br /></span>,
+                            <span key="r3">• 경쟁사 대비 차별화 포인트를 명확히 전달하세요</span>
+                          ];
+                        } else {
+                          recommendations = [
+                            <span key="r1">• 제품 이미지의 품질을 높이고 다양한 각도로 제공하세요<br /></span>,
+                            <span key="r2">• FAQ나 챗봇을 추가하여 즉시 궁금증을 해결하세요<br /></span>,
+                            <span key="r3">• 사용 사례나 후기 영상을 추가하세요</span>
+                          ];
+                        }
+                      } else if (highestChurnStage.stage === 'conversion') {
+                        if (highestChurnStage.avg > 75) {
+                          recommendations = [
+                            <span key="r1">• <strong>가격이 너무 높거나</strong> 할인/프로모션이 부족합니다. 첫 구매 할인을 제공하세요<br /></span>,
+                            <span key="r2">• <strong>회원가입 없이</strong> 게스트로 결제할 수 있게 하세요 (이탈률 크게 감소)<br /></span>,
+                            <span key="r3">• 배송비가 높거나 배송 기간이 길면 명확히 안내하세요</span>
+                          ];
+                        } else {
+                          recommendations = [
+                            <span key="r1">• &quot;장바구니 담기&quot; 버튼을 더 눈에 띄게 만드세요<br /></span>,
+                            <span key="r2">• 재고 부족 시 알림 받기 기능을 제공하세요<br /></span>,
+                            <span key="r3">• 위시리스트 기능으로 나중에 구매를 유도하세요</span>
+                          ];
+                        }
+                      } else if (highestChurnStage.stage === 'purchase') {
+                        if (highestChurnStage.avg > 30) {
+                          recommendations = [
+                            <span key="r1">• <strong>결제 과정이 너무 복잡</strong>합니다. 단계를 3단계 이하로 줄이세요<br /></span>,
+                            <span key="r2">• <strong>카카오페이, 네이버페이</strong> 등 간편결제 옵션을 추가하세요 (이탈률 급감)<br /></span>,
+                            <span key="r3">• 보안 인증서 표시로 결제 안전성을 강조하세요</span>
+                          ];
+                        } else {
+                          recommendations = [
+                            <span key="r1">• 결제 단계마다 진행 상황 표시줄을 보여주세요<br /></span>,
+                            <span key="r2">• 예상치 못한 추가 비용(배송비, 수수료)이 없는지 확인하세요<br /></span>,
+                            <span key="r3">• 결제 실패 시 명확한 오류 메시지와 해결 방법을 제공하세요</span>
+                          ];
+                        }
+                      }
+
+                      parts.push(
+                        <span key="recommendations">
+                          <br /><br /><strong style={{ color: 'var(--primary-main)' }}>💡 {highestChurnStage.label} 이탈률 개선 방법:</strong><br />
+                          {recommendations}
+                        </span>
+                      );
+
+                      // 전체적인 이탈률 패턴 분석
+                      const allChurns = [avgActivation, avgConsideration, avgConversion, avgPurchase];
+                      const overallAvg = allChurns.reduce((sum, val) => sum + val, 0) / 4;
+
+                      let overallStatus = '';
+                      if (overallAvg > 60) {
+                        overallStatus = '전반적으로 이탈률이 높습니다. <strong>전체 고객 여정을 재검토</strong>하고, 각 단계마다 A/B 테스트를 진행하세요.';
+                      } else if (overallAvg < 40) {
+                        overallStatus = '전반적으로 우수한 상태입니다! 현재 전략을 유지하면서 세부적인 최적화에 집중하세요.';
+                      } else {
+                        overallStatus = '평균적인 수준입니다. 위의 개선 방법을 우선순위에 따라 하나씩 적용해보세요.';
+                      }
+
+                      parts.push(
+                        <span key="overall-status">
+                          <br /><br /><strong style={{ color: 'var(--primary-main)' }}>📊 전체 퍼널 상태:</strong>{' '}
+                          <span dangerouslySetInnerHTML={{ __html: overallStatus }} />
+                        </span>
+                      );
+
+                      return parts;
+                    })()}
+                  </div>
+                </div>
+
+                {/* 필터 버튼 */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', padding: '0 24px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--grey-700)' }}>📊 퍼널 단계:</span>
+                  <button className={`view-btn channel-churn-stage-btn ${currentChurnStage === 'activation' ? 'active' : ''}`} onClick={() => setCurrentChurnStage('activation')}>유입→활동</button>
+                  <button className={`view-btn channel-churn-stage-btn ${currentChurnStage === 'consideration' ? 'active' : ''}`} onClick={() => setCurrentChurnStage('consideration')}>활동→관심</button>
+                  <button className={`view-btn channel-churn-stage-btn ${currentChurnStage === 'conversion' ? 'active' : ''}`} onClick={() => setCurrentChurnStage('conversion')}>관심→결제진행</button>
+                  <button className={`view-btn channel-churn-stage-btn ${currentChurnStage === 'purchase' ? 'active' : ''}`} onClick={() => setCurrentChurnStage('purchase')}>결제진행→구매완료</button>
+                  <button className={`view-btn channel-churn-stage-btn ${currentChurnStage === 'avg' ? 'active' : ''}`} onClick={() => setCurrentChurnStage('avg')}>평균 이탈률</button>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', flexWrap: 'wrap', padding: '0 24px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--grey-700)' }}>🔢 정렬:</span>
+                  <button className={`view-btn channel-churn-sort-btn ${currentChurnSort === 'desc' ? 'active' : ''}`} onClick={() => setCurrentChurnSort('desc')}>📉 높은순</button>
+                  <button className={`view-btn channel-churn-sort-btn ${currentChurnSort === 'asc' ? 'active' : ''}`} onClick={() => setCurrentChurnSort('asc')}>📈 낮은순</button>
+                </div>
+
+                <div
+                  className="chart-container-small"
+                  style={{ position: 'relative' }}
+                  onMouseEnter={(e) => setChurnTooltip({ show: true, x: e.clientX + 15, y: e.clientY + 15 })}
+                  onMouseMove={(e) => churnTooltip.show && setChurnTooltip({ show: true, x: e.clientX + 15, y: e.clientY + 15 })}
+                  onMouseLeave={() => setChurnTooltip({ show: false, x: 0, y: 0 })}
+                >
+                  {channelChurnData.labels.length > 0 && channelChurnData.config && (
+                    <Bar
+                      key={`churn-${currentChurnStage}-${currentChurnSort}`}
+                      data={{
+                        labels: channelChurnData.labels,
+                        datasets: [{
+                          label: channelChurnData.config.label,
+                          data: channelChurnData.values,
+                          backgroundColor: channelChurnData.config.color.replace(')', ', 0.8)').replace('rgb', 'rgba'),
+                          borderColor: channelChurnData.config.color,
+                          borderWidth: 1
+                        }]
+                      }}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        plugins: {
+                          legend: { display: false },
+                          datalabels: { display: false },
+                          tooltip: {
+                            callbacks: {
+                              label: (context) => `${channelChurnData.config?.label || '이탈률'}: ${(context.raw as number).toFixed(1)}%`,
+                              afterLabel: () => `계산식: ${channelChurnData.config?.tooltip || ''}`
+                            }
+                          }
+                        },
+                        scales: {
+                          x: {
+                            beginAtZero: true,
+                            title: {
+                              display: true,
+                              text: channelChurnData.config.label
+                            }
+                          }
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+
+                {/* churnTooltip 인사이트 툴팁 */}
+                <div
+                  className={`chart-insight-tooltip ${churnTooltip.show ? 'show' : ''}`}
+                  style={{ left: churnTooltip.x, top: churnTooltip.y }}
+                >
+                  <div className="tooltip-insight-section">
+                    <div className="tooltip-insight-header">💡 인사이트</div>
+                    <p className="tooltip-insight-text">
+                      채널 이탈률을 개선하면 전환율이 높아지고 매출이 증가합니다.
+                    </p>
+                  </div>
+                  <div className="tooltip-recommendation-section">
+                    <div className="tooltip-recommendation-header">🎯 추천 사항</div>
+                    <p className="tooltip-recommendation-text">
+                      이탈률이 높은 채널일수록 개선 여지가 크다는 뜻입니다. 그 단계를 집중적으로 개선하면 효과가 큽니다.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 이탈률 해석 가이드 */}
+                <div style={{ marginTop: '20px', padding: '0 24px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--grey-900)', marginBottom: '12px' }}>
+                    📋 단계별 이탈 원인과 개선 방법
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '16px' }}>
+                    {/* 유입→활동 이탈 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%)', borderRadius: '8px', borderLeft: '3px solid #2196f3' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#2196f3', marginBottom: '6px' }}>
+                        🚪 유입→활동 이탈이 높다면
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>원인:</strong> 랜딩 페이지가 느리거나, 광고 내용과 실제 페이지가 다르거나, 첫 화면이 복잡함<br />
+                        <strong>해결:</strong> 로딩 속도 개선(3초 이내), 광고와 랜딩 페이지 메시지 일치, 명확한 헤드라인 배치
+                      </div>
+                    </div>
+
+                    {/* 활동→관심 이탈 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #fff3e0 0%, #fff9e6 100%)', borderRadius: '8px', borderLeft: '3px solid #ff9800' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#f57c00', marginBottom: '6px' }}>
+                        👀 활동→관심 이탈이 높다면
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>원인:</strong> 제품/서비스 정보 부족, 신뢰 요소 부족, 가격 정보 숨김<br />
+                        <strong>해결:</strong> 상세한 제품 설명, 고객 후기/리뷰 강조, 가격 투명하게 공개, 비교표 제공
+                      </div>
+                    </div>
+
+                    {/* 관심→결제진행 이탈 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #f3e5f5 0%, #fce4ec 100%)', borderRadius: '8px', borderLeft: '3px solid #9c27b0' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#9c27b0', marginBottom: '6px' }}>
+                        🛒 관심→결제진행 이탈이 높다면
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>원인:</strong> 가격이 예상보다 높음, 배송비 추가 비용 발견, 회원가입 강요<br />
+                        <strong>해결:</strong> 첫 구매 할인 제공, 무료 배송 임계값 낮추기, 게스트 체크아웃 허용
+                      </div>
+                    </div>
+
+                    {/* 결제진행→구매완료 이탈 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #ffebee 0%, #fff5f5 100%)', borderRadius: '8px', borderLeft: '3px solid #ff5722' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#ff5722', marginBottom: '6px' }}>
+                        💳 결제진행→구매완료 이탈이 높다면
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>원인:</strong> 결제 과정 복잡, 보안 불안, 결제 수단 부족, 시스템 오류<br />
+                        <strong>해결:</strong> 간편 결제 도입(카카오페이, 네이버페이), SSL 인증 표시, 다양한 결제 옵션, 장바구니 복원 이메일
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 이탈률 벤치마크 */}
+                  <div style={{ padding: '14px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: '8px', borderLeft: '3px solid #00c853', marginBottom: '12px' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#00c853', marginBottom: '6px' }}>
+                      📊 업계 평균 이탈률 벤치마크
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.6 }}>
+                      <strong>유입→활동:</strong> 평균 40-60% (낮을수록 좋음)<br />
+                      <strong>활동→관심:</strong> 평균 50-70%<br />
+                      <strong>관심→결제진행:</strong> 평균 60-80%<br />
+                      <strong>결제진행→구매완료:</strong> 평균 20-40% (이 단계는 특히 낮아야 함)<br /><br />
+                      <strong>💡 팁:</strong> 업계 평균보다 10%p 이상 높다면 즉시 개선이 필요합니다.
+                    </div>
+                  </div>
+
+                  {/* 실행 체크리스트 */}
+                  <div style={{ padding: '14px', background: 'var(--primary-light)', borderRadius: '8px', borderLeft: '3px solid var(--primary-main)' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary-main)', marginBottom: '8px' }}>
+                      ✅ 이탈률 개선 우선순위 체크리스트
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.6 }}>
+                      <strong>1단계:</strong> 차트에서 <strong>이탈률이 가장 높은 단계</strong>를 찾기 (예: 유입→활동 80%)<br />
+                      <strong>2단계:</strong> 해당 단계에서 <strong>이탈률이 가장 높은 채널 TOP 3</strong> 확인<br />
+                      <strong>3단계:</strong> 위 가이드에서 해당 단계의 <strong>원인과 해결책</strong> 확인<br />
+                      <strong>4단계:</strong> 가장 이탈률이 높은 1-2개 채널에 대해 <strong>즉시 개선 작업 시작</strong><br />
+                      <strong>5단계:</strong> 2주 후 다시 측정하여 이탈률이 10%p 이상 감소했는지 확인<br /><br />
+                      <strong>⚡ 빠른 개선 팁:</strong> 한 번에 모든 채널을 고치려 하지 마세요. 이탈률이 가장 높은 1-2개 채널에만 집중하면 전체 전환율이 극적으로 개선됩니다.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 탭 4: 채널별 재방문율 vs 이탈률 매트릭스 */}
+          {customerAnalysisTab === 'matrix' && (
+            <div className="customer-analysis-tab-content active" id="matrixTab">
+              <div className="chart-section card" style={{ marginBottom: '16px' }}>
+                <div className="chart-header">🎯 채널 품질 매트릭스: 재방문율 vs 이탈률</div>
+                <div style={{ fontSize: '13px', color: 'var(--grey-600)', marginBottom: '12px', padding: '0 24px' }}>
+                  채널을 재방문율(Y축)과 이탈률(X축)로 분류합니다. 평균 기준선을 중심으로 4개 분면으로 자동 구분되며, 각 채널 유형에 맞는 액션 플랜을 아래에서 확인하세요.
+                </div>
+                <div style={{ position: 'relative', height: '450px' }}>
+                  {(() => {
+                    // 채널별 재방문율과 이탈률(Bounce rate) 계산 (HTML 원본과 동일: 필터 없음)
+                    const matrixData = channelEngagementData.map(row => ({
+                      x: parseFloat(row['Bounce rate']) || 0,
+                      y: parseFloat(row['Return rate']) || 0,
+                      channel: row['channel']
+                    }));
+
+                    if (matrixData.length === 0) return <div>데이터를 불러오는 중...</div>;
+
+                    // 평균값 계산 (기준선용)
+                    const avgBounceRate = matrixData.reduce((sum, d) => sum + d.x, 0) / matrixData.length;
+                    const avgReturnRate = matrixData.reduce((sum, d) => sum + d.y, 0) / matrixData.length;
+
+                    // 사분면별로 데이터 분리
+                    const starChannels: typeof matrixData = [];
+                    const growthChannels: typeof matrixData = [];
+                    const stableChannels: typeof matrixData = [];
+                    const problemChannels: typeof matrixData = [];
+
+                    matrixData.forEach(d => {
+                      if (d.x < avgBounceRate && d.y > avgReturnRate) {
+                        starChannels.push(d);
+                      } else if (d.x >= avgBounceRate && d.y > avgReturnRate) {
+                        growthChannels.push(d);
+                      } else if (d.x < avgBounceRate && d.y <= avgReturnRate) {
+                        stableChannels.push(d);
+                      } else {
+                        problemChannels.push(d);
+                      }
+                    });
+
+                    return (
+                      <Scatter
+                        data={{
+                          datasets: [
+                            {
+                              label: '⭐ 스타 채널',
+                              data: starChannels,
+                              backgroundColor: '#00c853',
+                              borderColor: '#00a344',
+                              borderWidth: 2,
+                              pointRadius: 10,
+                              pointHoverRadius: 14
+                            },
+                            {
+                              label: '📈 성장 채널',
+                              data: growthChannels,
+                              backgroundColor: '#2196f3',
+                              borderColor: '#1976d2',
+                              borderWidth: 2,
+                              pointRadius: 10,
+                              pointHoverRadius: 14
+                            },
+                            {
+                              label: '🔒 안정 채널',
+                              data: stableChannels,
+                              backgroundColor: '#9e9e9e',
+                              borderColor: '#757575',
+                              borderWidth: 2,
+                              pointRadius: 10,
+                              pointHoverRadius: 14
+                            },
+                            {
+                              label: '⚠️ 문제 채널',
+                              data: problemChannels,
+                              backgroundColor: '#ff5722',
+                              borderColor: '#e64a19',
+                              borderWidth: 2,
+                              pointRadius: 10,
+                              pointHoverRadius: 14
+                            }
+                          ]
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: {
+                              display: true,
+                              position: 'top',
+                              labels: {
+                                font: { size: 12, weight: 'bold' },
+                                padding: 15,
+                                usePointStyle: true
+                              }
+                            },
+                            datalabels: { display: false },
+                            tooltip: {
+                              callbacks: {
+                                title: (tooltipItems) => {
+                                  const item = tooltipItems[0];
+                                  return (item.raw as { channel: string }).channel;
+                                },
+                                label: (context) => {
+                                  const raw = context.raw as { x: number; y: number };
+                                  return [
+                                    `이탈률: ${raw.x.toFixed(2)}%`,
+                                    `재방문율: ${raw.y.toFixed(2)}%`,
+                                    `분류: ${context.dataset.label}`
+                                  ];
+                                }
+                              }
+                            },
+                            annotation: {
+                              annotations: {
+                                vline: {
+                                  type: 'line',
+                                  xMin: avgBounceRate,
+                                  xMax: avgBounceRate,
+                                  borderColor: 'rgba(0, 0, 0, 0.3)',
+                                  borderWidth: 2,
+                                  borderDash: [5, 5],
+                                  label: {
+                                    content: '평균 이탈률',
+                                    display: true,
+                                    position: 'start'
+                                  }
+                                },
+                                hline: {
+                                  type: 'line',
+                                  yMin: avgReturnRate,
+                                  yMax: avgReturnRate,
+                                  borderColor: 'rgba(0, 0, 0, 0.3)',
+                                  borderWidth: 2,
+                                  borderDash: [5, 5],
+                                  label: {
+                                    content: '평균 재방문율',
+                                    display: true,
+                                    position: 'start'
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          scales: {
+                            x: {
+                              title: {
+                                display: true,
+                                text: '이탈률 (%) →',
+                                font: { size: 14, weight: 'bold' }
+                              },
+                              ticks: {
+                                callback: function(value) {
+                                  return value + '%';
+                                }
+                              }
+                            },
+                            y: {
+                              title: {
+                                display: true,
+                                text: '← 재방문율 (%)',
+                                font: { size: 14, weight: 'bold' }
+                              },
+                              ticks: {
+                                callback: function(value) {
+                                  return value + '%';
+                                }
+                              }
+                            }
+                          }
+                        }}
+                      />
+                    );
+                  })()}
+                </div>
+
+                {/* 채널 유형별 액션 가이드 */}
+                <div style={{ marginTop: '24px', padding: '0 24px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--grey-900)', marginBottom: '16px' }}>
+                    📋 채널 유형별 액션 가이드
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                    {/* 스타 채널 */}
+                    <div style={{ padding: '16px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: '10px', borderLeft: '4px solid #00c853' }}>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: '#00c853', marginBottom: '8px' }}>
+                        ⭐ 스타 채널 (낮은 이탈 + 높은 재방문)
+                      </div>
+                      <div style={{ fontSize: '13px', color: 'var(--grey-700)', lineHeight: 1.6 }}>
+                        <strong>💡 해야 할 일:</strong> 투자 확대 및 현재 전략 유지<br />
+                        <strong>✨ 기대 효과:</strong> 안정적인 매출 증대, ROI 극대화<br />
+                        <strong>🎯 구체적 행동:</strong>
+                        <ul style={{ margin: '8px 0 0 20px', padding: 0 }}>
+                          <li>마케팅 예산을 20-30% 증액</li>
+                          <li>유사한 타겟 오디언스로 확장</li>
+                          <li>성공 요인 분석 후 다른 채널에 적용</li>
+                          <li>고객 추천 프로그램 운영</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    {/* 성장 채널 */}
+                    <div style={{ padding: '16px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%)', borderRadius: '10px', borderLeft: '4px solid #2196f3' }}>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: '#2196f3', marginBottom: '8px' }}>
+                        📈 성장 채널 (높은 이탈 + 높은 재방문)
+                      </div>
+                      <div style={{ fontSize: '13px', color: 'var(--grey-700)', lineHeight: 1.6 }}>
+                        <strong>💡 해야 할 일:</strong> 이탈률 개선에 집중<br />
+                        <strong>✨ 기대 효과:</strong> 전환율 상승, 신규 고객 확보<br />
+                        <strong>🎯 구체적 행동:</strong>
+                        <ul style={{ margin: '8px 0 0 20px', padding: 0 }}>
+                          <li>랜딩 페이지 개선 (로딩 속도, 디자인)</li>
+                          <li>첫 방문 고객 경험 최적화</li>
+                          <li>명확한 CTA(행동 유도) 버튼 배치</li>
+                          <li>신뢰 요소 강화 (리뷰, 보안 인증)</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    {/* 안정 채널 */}
+                    <div style={{ padding: '16px', background: 'linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%)', borderRadius: '10px', borderLeft: '4px solid #9e9e9e' }}>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: '#757575', marginBottom: '8px' }}>
+                        🔒 안정 채널 (낮은 이탈 + 낮은 재방문)
+                      </div>
+                      <div style={{ fontSize: '13px', color: 'var(--grey-700)', lineHeight: 1.6 }}>
+                        <strong>💡 해야 할 일:</strong> 재방문 유도 전략 구축<br />
+                        <strong>✨ 기대 효과:</strong> 고객 생애가치(LTV) 증가<br />
+                        <strong>🎯 구체적 행동:</strong>
+                        <ul style={{ margin: '8px 0 0 20px', padding: 0 }}>
+                          <li>리타겟팅 광고 캠페인 운영</li>
+                          <li>이메일/SMS 마케팅 자동화</li>
+                          <li>쿠폰/할인 프로모션 제공</li>
+                          <li>회원 등급제 및 포인트 적립 도입</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    {/* 문제 채널 */}
+                    <div style={{ padding: '16px', background: 'linear-gradient(135deg, #ffebee 0%, #fff5f5 100%)', borderRadius: '10px', borderLeft: '4px solid #ff5722' }}>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: '#ff5722', marginBottom: '8px' }}>
+                        ⚠️ 문제 채널 (높은 이탈 + 낮은 재방문)
+                      </div>
+                      <div style={{ fontSize: '13px', color: 'var(--grey-700)', lineHeight: 1.6 }}>
+                        <strong>💡 해야 할 일:</strong> 전면 재검토 또는 중단<br />
+                        <strong>✨ 기대 효과:</strong> 비용 절감, 효율적 자원 배분<br />
+                        <strong>🎯 구체적 행동:</strong>
+                        <ul style={{ margin: '8px 0 0 20px', padding: 0 }}>
+                          <li>타겟 오디언스 재설정</li>
+                          <li>광고 크리에이티브 전면 교체</li>
+                          <li>예산 축소 또는 일시 중단</li>
+                          <li>A/B 테스트로 개선 가능성 검증</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 추가 팁 */}
+                  <div style={{ marginTop: '16px', padding: '12px 16px', background: 'var(--primary-light)', borderRadius: '8px', borderLeft: '4px solid var(--primary-main)' }}>
+                    <div style={{ fontSize: '13px', color: 'var(--grey-800)', lineHeight: 1.6 }}>
+                      <strong>💡 프로 팁:</strong> 모든 채널을 한 번에 변경하지 마세요. 한 번에 1-2개 채널에 집중하여 개선하고, 2-4주 후 결과를 측정한 뒤 다음 채널로 넘어가는 것이 효과적입니다.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 탭 5: 채널별 참여도 분석 */}
+          {customerAnalysisTab === 'engagement' && (
+            <div className="customer-analysis-tab-content active" id="engagementTab">
+              <div className="chart-section card">
+                <div className="chart-header">💎 채널별 고객 참여도: 어떤 채널이 진짜 관심 있는 고객을 데려오나요?</div>
+
+                {/* 설명 */}
+                <div style={{ fontSize: '13px', color: 'var(--grey-600)', marginBottom: '16px', padding: '0 24px', lineHeight: 1.7 }}>
+                  <strong>참여도(Engagement Rate)란?</strong><br />
+                  방문자 중 실제로 웹사이트를 적극적으로 사용한 비율입니다. 단순 클릭 실수나 즉시 이탈한 방문이 아니라,
+                  <strong>페이지를 여러 개 보거나 일정 시간 이상 머문 &quot;진짜 관심 있는&quot; 고객의 비율</strong>입니다.
+                  <strong>차트 위에 마우스를 올리면</strong> 더 자세한 분석을 확인할 수 있습니다.
+                </div>
+
+                {/* 참여도 자동 인사이트 */}
+                <div id="engagementInsightSummary" style={{ margin: '0 24px 16px 24px', padding: '16px', background: 'linear-gradient(135deg, #f3e5f5 0%, #fce4ec 100%)', borderRadius: '10px', borderLeft: '4px solid #9c27b0' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#9c27b0', marginBottom: '8px' }}>
+                    💡 참여도 분석 결과
+                  </div>
+                  <div id="engagementInsightText" style={{ fontSize: '13px', color: 'var(--grey-800)', lineHeight: 1.6 }}>
+                    {(() => {
+                      if (channelEngagementData.length === 0) return '데이터를 불러오는 중...';
+
+                      // 참여율 기준으로 정렬
+                      const allData = [...channelEngagementData].sort((a, b) =>
+                        parseFloat(b['Engagement rate']) - parseFloat(a['Engagement rate'])
+                      );
+
+                      if (allData.length === 0) return '데이터를 불러오는 중...';
+
+                      // 전체 평균 참여도
+                      const avgEngagement = allData.reduce((sum, row) => sum + (parseFloat(row['Engagement rate']) || 0), 0) / allData.length;
+
+                      // 최고/최저 참여도 채널
+                      const highest = allData[0];
+                      const lowest = allData[allData.length - 1];
+
+                      // 참여도 범위 분류
+                      const highEngagement = allData.filter(row => parseFloat(row['Engagement rate']) >= 60);
+                      const mediumEngagement = allData.filter(row => {
+                        const rate = parseFloat(row['Engagement rate']);
+                        return rate >= 40 && rate < 60;
+                      });
+                      const lowEngagement = allData.filter(row => parseFloat(row['Engagement rate']) < 40);
+
+                      // TOP 10의 평균 참여도
+                      const top10 = allData.slice(0, 10);
+                      const top10Rates = top10.map(row => parseFloat(row['Engagement rate']) || 0);
+                      const top10Avg = top10Rates.reduce((sum, rate) => sum + rate, 0) / top10Rates.length;
+
+                      const parts: React.ReactNode[] = [];
+
+                      // 전체 상황 요약
+                      parts.push(
+                        <span key="avg">
+                          전체 채널의 평균 참여도는 <strong style={{ color: '#9c27b0' }}>{avgEngagement.toFixed(1)}%</strong>입니다.{' '}
+                        </span>
+                      );
+
+                      if (avgEngagement >= 60) {
+                        parts.push(<span key="eval"><strong style={{ color: 'var(--success-main)' }}>매우 우수한</strong> 수준입니다! </span>);
+                      } else if (avgEngagement >= 40) {
+                        parts.push(<span key="eval">평균적인 수준이며 개선 여지가 있습니다. </span>);
+                      } else {
+                        parts.push(<span key="eval"><strong style={{ color: 'var(--error-main)' }}>주의가 필요한</strong> 수준입니다. </span>);
+                      }
+
+                      // 최고/최저 채널 정보
+                      parts.push(
+                        <span key="highlow">
+                          <br />가장 높은 참여도는 <strong>{highest['channel']}</strong> ({parseFloat(highest['Engagement rate']).toFixed(1)}%)이고,{' '}
+                          가장 낮은 참여도는 <strong>{lowest['channel']}</strong> ({parseFloat(lowest['Engagement rate']).toFixed(1)}%)입니다.{' '}
+                        </span>
+                      );
+
+                      // 범위별 분포
+                      const distParts: string[] = [];
+                      if (highEngagement.length > 0) {
+                        distParts.push(`<strong style="color: var(--success-main);">${highEngagement.length}개 채널</strong>이 우수(60% 이상)`);
+                      }
+                      if (mediumEngagement.length > 0) {
+                        distParts.push(`<strong style="color: #ff9800;">${mediumEngagement.length}개 채널</strong>이 보통(40-60%)`);
+                      }
+                      if (lowEngagement.length > 0) {
+                        distParts.push(`<strong style="color: var(--error-main);">${lowEngagement.length}개 채널</strong>이 저조(40% 미만)`);
+                      }
+
+                      parts.push(
+                        <span key="dist">
+                          <br /><br /><strong style={{ color: 'var(--primary-main)' }}>📊 채널 분포:</strong>{' '}
+                          <span dangerouslySetInnerHTML={{ __html: distParts.join(', ') + '입니다. ' }} />
+                        </span>
+                      );
+
+                      // 핵심 추천사항
+                      let strategy = '';
+                      if (highEngagement.length >= allData.length * 0.3) {
+                        strategy = `우수한 채널이 많습니다! 이들 채널의 공통점을 분석하여 다른 채널에도 적용하세요. 특히 <strong>${highest['channel']}</strong>의 성공 요인을 자세히 연구하세요.`;
+                      } else if (lowEngagement.length >= allData.length * 0.3) {
+                        strategy = `참여도가 낮은 채널이 많습니다. <strong>즉시 광고 타겟팅과 랜딩 페이지를 재검토</strong>하세요. 저참여도 채널의 예산을 고참여도 채널로 재배분하는 것을 고려하세요.`;
+                      } else {
+                        strategy = `대부분 채널이 개선 가능한 상태입니다. <strong>A/B 테스트를 통해 랜딩 페이지를 최적화</strong>하고, 타겟 오디언스를 세분화하여 참여도를 높이세요.`;
+                      }
+
+                      parts.push(
+                        <span key="strategy">
+                          <br /><br /><strong style={{ color: 'var(--primary-main)' }}>💡 핵심 전략:</strong>{' '}
+                          <span dangerouslySetInnerHTML={{ __html: strategy }} />
+                        </span>
+                      );
+
+                      // 구체적 예시 (top10Avg - avgEngagement > 10)
+                      if (top10Avg - avgEngagement > 10) {
+                        parts.push(
+                          <span key="warning">
+                            <br /><br /><strong>⚠️ 주의:</strong> 상위 10개 채널의 평균 참여도({top10Avg.toFixed(1)}%)가 전체 평균보다 {(top10Avg - avgEngagement).toFixed(1)}%p 높습니다.{' '}
+                            나머지 채널들의 품질이 낮으므로, 저성과 채널을 정리하거나 개선하는 것이 시급합니다.
+                          </span>
+                        );
+                      }
+
+                      return parts;
+                    })()}
+                  </div>
+                </div>
+
+                <div className="chart-container-small" style={{ position: 'relative' }}>
+                  {channelEngagementData.length > 0 && (() => {
+                    // 참여율 기준으로 정렬 (HTML과 동일: 필터 없음)
+                    const sortedData = [...channelEngagementData].sort((a, b) =>
+                      parseFloat(b['Engagement rate']) - parseFloat(a['Engagement rate'])
+                    );
+
+                    // 상위 10개 채널만 표시
+                    const top10 = sortedData.slice(0, 10);
+                    const labels = top10.map(row => row['channel']);
+                    const engagementRates = top10.map(row => parseFloat(row['Engagement rate']) || 0);
+
+                    // 색상 그라데이션 (높을수록 진한 색)
+                    const colors = engagementRates.map(rate => {
+                      const intensity = Math.min(rate / 100, 1);
+                      return `rgba(103, 58, 183, ${0.3 + intensity * 0.5})`;
+                    });
+
+                    return (
+                      <Bar
+                        data={{
+                          labels: labels,
+                          datasets: [{
+                            label: '참여율 (%)',
+                            data: engagementRates,
+                            backgroundColor: colors,
+                            borderColor: '#673ab7',
+                            borderWidth: 2
+                          }]
+                        }}
+                        options={{
+                          indexAxis: 'y',
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: { display: false },
+                            datalabels: { display: false },
+                            tooltip: {
+                              callbacks: {
+                                label: (context) => `참여율: ${context.parsed.x.toFixed(2)}%`
+                              }
+                            }
+                          },
+                          scales: {
+                            x: {
+                              beginAtZero: true,
+                              max: 100,
+                              ticks: {
+                                callback: function(value) {
+                                  return value + '%';
+                                }
+                              }
+                            }
+                          }
+                        }}
+                      />
+                    );
+                  })()}
+                </div>
+
+                {/* 참여도 해석 가이드 */}
+                <div style={{ marginTop: '20px', padding: '0 24px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--grey-900)', marginBottom: '12px' }}>
+                    📋 참여도 수치 해석 가이드
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '16px' }}>
+                    {/* 높은 참여도 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', borderRadius: '8px', borderLeft: '3px solid #00c853' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#00c853', marginBottom: '6px' }}>
+                        🌟 높음 (60% 이상)
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>의미:</strong> 매우 질 좋은 트래픽. 관심도 높은 고객을 데려오고 있습니다.<br />
+                        <strong>행동:</strong> 이 채널에 예산을 더 투자하세요. 성공 요인을 분석하여 다른 채널에도 적용하세요.
+                      </div>
+                    </div>
+
+                    {/* 중간 참여도 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #fff3e0 0%, #fff9e6 100%)', borderRadius: '8px', borderLeft: '3px solid #ff9800' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#f57c00', marginBottom: '6px' }}>
+                        ⚖️ 보통 (40-60%)
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>의미:</strong> 평균적인 트래픽. 개선 여지가 있습니다.<br />
+                        <strong>행동:</strong> 랜딩 페이지를 최적화하거나 타겟팅을 조정하세요. A/B 테스트로 참여도 향상을 시도하세요.
+                      </div>
+                    </div>
+
+                    {/* 낮은 참여도 */}
+                    <div style={{ padding: '14px', background: 'linear-gradient(135deg, #ffebee 0%, #fff5f5 100%)', borderRadius: '8px', borderLeft: '3px solid #ff5722' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#ff5722', marginBottom: '6px' }}>
+                        ⚠️ 낮음 (40% 미만)
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.5 }}>
+                        <strong>의미:</strong> 품질이 낮은 트래픽. 잘못된 고객층이 유입되고 있을 수 있습니다.<br />
+                        <strong>행동:</strong> 광고 타겟팅을 재검토하거나 예산을 줄이세요. 광고 메시지와 랜딩 페이지의 일치 여부를 확인하세요.
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 추가 팁 */}
+                  <div style={{ padding: '14px', background: 'linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%)', borderRadius: '8px', borderLeft: '3px solid #2196f3' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#2196f3', marginBottom: '6px' }}>
+                      💡 참여도와 전환율의 관계
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.6 }}>
+                      <strong>핵심:</strong> 참여도가 높으면 전환율도 높아집니다. 참여도가 낮은 채널은 방문자 수가 많아도 실제 매출은 적을 수 있습니다.
+                      따라서 단순히 클릭 수만 보지 말고, <strong>참여도와 전환율을 함께 고려</strong>하여 예산을 배분하세요.<br /><br />
+                      <strong>예시:</strong> A채널은 방문자 1,000명에 참여도 30%, B채널은 방문자 500명에 참여도 70%라면,
+                      실제로 B채널이 더 많은 매출을 가져올 가능성이 큽니다.
+                    </div>
+                  </div>
+
+                  {/* 실행 체크리스트 */}
+                  <div style={{ marginTop: '12px', padding: '14px', background: 'var(--primary-light)', borderRadius: '8px', borderLeft: '3px solid var(--primary-main)' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary-main)', marginBottom: '8px' }}>
+                      ✅ 지금 바로 실행할 체크리스트
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--grey-700)', lineHeight: 1.6 }}>
+                      1. <strong>참여도 상위 3개 채널</strong>의 공통점을 찾아 다른 채널에 적용<br />
+                      2. <strong>참여도 하위 3개 채널</strong>의 광고 타겟팅 또는 랜딩 페이지 점검<br />
+                      3. 참여도가 높지만 전환율이 낮은 채널이 있다면 <strong>결제 프로세스나 가격 정책</strong> 개선<br />
+                      4. 참여도가 낮은 채널은 예산을 줄이고, 참여도가 높은 채널에 재투자
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Key Insights */}
-      {keyInsights.length > 0 && (
-        <div style={{
-          background: 'white',
-          borderRadius: '12px',
-          boxShadow: '0 2px 14px 0 rgba(32, 40, 45, 0.08)',
-          padding: '24px',
-          marginBottom: '24px'
-        }}>
-          <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ width: '4px', height: '20px', background: '#ffab00', borderRadius: '2px' }}></span>
-            핵심 인사이트
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-            {keyInsights.map((insight, index) => {
-              const typeStyles: Record<string, { bg: string; border: string }> = {
-                positive: { bg: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%)', border: '#4caf50' },
-                negative: { bg: 'linear-gradient(135deg, #ffebee 0%, #fce4ec 100%)', border: '#f44336' },
-                neutral: { bg: 'linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%)', border: '#ff9800' },
-                opportunity: { bg: 'linear-gradient(135deg, #e3f2fd 0%, #e1f5fe 100%)', border: '#2196f3' }
-              };
-              const style = typeStyles[insight.type] || typeStyles.neutral;
-
-              return (
-                <div key={index} style={{
-                  padding: '18px 20px',
-                  background: style.bg,
-                  borderRadius: '12px',
-                  borderLeft: `4px solid ${style.border}`
-                }}>
-                  <h4 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>{insight.title}</h4>
-                  <p style={{ fontSize: '13px', color: '#616161', margin: 0 }}>{insight.description}</p>
-                  {insight.action && (
-                    <div style={{ marginTop: '12px', fontSize: '12px', color: '#673ab7', fontWeight: 600 }}>
-                      💡 {insight.action.text}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

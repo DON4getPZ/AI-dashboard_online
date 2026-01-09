@@ -1,0 +1,927 @@
+'use client'
+
+import { useState, useMemo, useEffect } from 'react'
+
+// FAQ 데이터 타입
+interface FaqItem {
+  question: string
+  answer: string
+}
+
+interface FaqCategory {
+  title: string
+  items: FaqItem[]
+}
+
+// FAQ 데이터
+const faqData: FaqCategory[] = [
+  {
+    title: '마케팅 성과 대시보드',
+    items: [
+      {
+        question: '탭을 전환하면 차트와 테이블도 바뀌나요?',
+        answer: `네, 맞습니다. <strong>전체/일별/주별/월별</strong> 탭을 전환하면 KPI 카드, 차트, 테이블이 모두 해당 집계 단위로 변경됩니다.<br><br>예를 들어, "월별" 탭을 선택하면:<br>• KPI 카드: 월별 집계 데이터의 마지막 월 vs 직전 월 비교<br>• 차트: 월별 추이 그래프<br>• 테이블: 월별 상세 데이터`
+      },
+      {
+        question: '증감율이 "-"로 표시되는 이유는 무엇인가요?',
+        answer: `증감율이 "-"로 표시되는 경우는 다음과 같습니다:<br><br>• <strong>직전 기간 데이터가 없는 경우</strong>: 비교할 기준이 없음<br>• <strong>직전 기간 값이 0인 경우</strong>: 0으로 나눌 수 없음<br>• <strong>데이터가 1개 기간만 있는 경우</strong>: 비교 대상 없음<br><br>이 경우 필터 기간을 더 넓게 설정하면 해결될 수 있습니다.`
+      },
+      {
+        question: 'ROAS 퍼센트 포인트(%p)는 무엇인가요?',
+        answer: `퍼센트 포인트(%p)는 <strong>비율의 절대적 차이</strong>를 나타냅니다.<br><br>예시:<br>• 지난달 ROAS: 200%<br>• 이번달 ROAS: 215%<br>• 변화: <strong>+15%p</strong> (215 - 200 = 15)<br><br>일반 증감율(%)과 다르게, ROAS는 이미 비율(%)이므로 단순 뺄셈으로 변화량을 계산하여 %p로 표시합니다.`
+      },
+      {
+        question: 'CPA/CPC 증가가 왜 빨간색인가요?',
+        answer: `<strong>CPA(전환당 비용)</strong>와 <strong>CPC(클릭당 비용)</strong>는 <strong>낮을수록 효율적</strong>인 지표입니다.<br><br>따라서:<br>• CPA/CPC <strong>감소</strong> → 효율 개선 → <span style="color: #00c853; font-weight: 600;">녹색</span><br>• CPA/CPC <strong>증가</strong> → 효율 악화 → <span style="color: #ff1744; font-weight: 600;">빨간색</span><br><br>이는 ROAS(높을수록 좋음)와 반대되는 개념입니다.`
+      },
+      {
+        question: '차트에서 여러 지표를 동시에 볼 수 있나요?',
+        answer: `네, <strong>체크박스를 여러 개 선택</strong>하면 됩니다.<br><br>• <strong>비용</strong>: 왼쪽 Y축 (Bar 차트)<br>• <strong>CPM/CPC/CPA/ROAS</strong>: 오른쪽 Y축 (Line 차트)<br><br>듀얼 Y축을 사용하므로 단위가 다른 지표도 함께 비교할 수 있습니다. 예: 비용(원) + ROAS(%)를 한 차트에서 확인 가능`
+      },
+      {
+        question: '필터를 초기화하려면 어떻게 하나요?',
+        answer: `필터를 초기화하려면:<br>1. 각 필터 드롭다운에서 <strong>"전체"</strong> 옵션을 선택<br>2. 또는 <strong>페이지를 새로고침</strong> (F5)<br><br>새로고침 시 데이터가 다시 로드되며 모든 필터가 초기 상태로 돌아갑니다.`
+      },
+      {
+        question: '테이블 데이터를 엑셀로 내보낼 수 있나요?',
+        answer: `현재 버전에서는 직접 내보내기 기능이 제공되지 않습니다.<br><br>임시 방법:<br>1. 테이블 영역을 <strong>마우스로 드래그</strong>하여 선택<br>2. <strong>Ctrl+C</strong>로 복사<br>3. Excel이나 Google Sheets에 <strong>Ctrl+V</strong>로 붙여넣기<br><br>추후 업데이트에서 CSV/Excel 내보내기 기능이 추가될 예정입니다.`
+      }
+    ]
+  },
+  {
+    title: '광고 소재별 분석',
+    items: [
+      {
+        question: '소재 이미지가 표시되지 않아요',
+        answer: `소재 이미지는 광고 플랫폼(Facebook, Google 등)의 CDN에서 가져옵니다. 다음 경우에 이미지가 표시되지 않을 수 있습니다:<br><br>• <strong>광고가 삭제/비활성화</strong>된 경우<br>• <strong>이미지 URL이 만료</strong>된 경우<br>• <strong>네트워크 문제</strong>로 로드 실패<br><br>이 경우 "이미지 로드 실패" 플레이스홀더가 표시됩니다.`
+      },
+      {
+        question: 'KPI 필터를 여러 개 설정하면 어떻게 적용되나요?',
+        answer: `KPI 필터는 최대 3개 조건을 설정할 수 있으며, <strong>"또는 (OR)"</strong>과 <strong>"그리고 (AND)"</strong> 연산자로 조합됩니다.<br><br>예시: ROAS ≥ 200% <strong>그리고</strong> CPA ≤ 15,000<br>→ 두 조건을 <strong>모두 만족</strong>하는 소재만 표시<br><br>예시: ROAS ≥ 300% <strong>또는</strong> 전환수 ≥ 50<br>→ 두 조건 중 <strong>하나라도 만족</strong>하는 소재 표시`
+      },
+      {
+        question: 'ROAS가 0%로 표시되는 소재는 무엇인가요?',
+        answer: `ROAS가 0%인 소재는 <strong>전환값(매출)이 0원</strong>인 경우입니다.<br><br>가능한 원인:<br>• 전환 추적이 제대로 설정되지 않음<br>• 아직 전환이 발생하지 않음 (러닝 초기)<br>• 전환값이 GA4/광고 플랫폼에 기록되지 않음<br><br>전환 추적 설정을 점검하거나, 충분한 러닝 기간이 지난 후 다시 확인하세요.`
+      },
+      {
+        question: '소재 A/B 테스트 결과를 비교하고 싶어요',
+        answer: `A/B 테스트 비교를 위한 추천 워크플로우:<br><br>1. <strong>캠페인 또는 광고세트 필터</strong>로 테스트 그룹 선택<br>2. <strong>ROAS 내림차순</strong>으로 정렬<br>3. 상위 소재들의 KPI 비교<br>4. 각 소재 클릭하여 <strong>일별 추이</strong> 확인<br><br>특정 기간의 테스트라면 <strong>날짜 필터</strong>를 함께 설정하세요.`
+      }
+    ]
+  },
+  {
+    title: '채널별 분석 & 일반',
+    items: [
+      {
+        question: '데이터는 얼마나 자주 업데이트되나요?',
+        answer: `대시보드 데이터는 <strong>매일 자동으로 업데이트</strong>됩니다. 각 광고 플랫폼(Meta, Google, Naver, Kakao 등)의 API를 통해 전일 데이터를 수집하며, 보통 오전 중으로 전날까지의 성과가 반영됩니다. 실시간 데이터가 아닌 점 참고해 주세요.`
+      },
+      {
+        question: 'ROAS가 100% 미만이면 문제가 있는 건가요?',
+        answer: `ROAS 100% 미만은 광고비보다 매출이 적다는 의미입니다. 단, 이것이 항상 나쁜 것은 아닙니다. <strong>브랜드 인지도 캠페인</strong>이나 <strong>신규 고객 확보</strong> 목적의 광고는 단기 ROAS보다 LTV(고객 생애 가치)를 고려해야 합니다. 지속적으로 ROAS가 낮다면 타겟팅, 크리에이티브, 랜딩페이지 등을 점검해 보세요.`
+      },
+      {
+        question: 'AI 예측은 얼마나 정확한가요?',
+        answer: `AI 예측은 과거 데이터 패턴을 학습하여 미래를 예측합니다. 일반적으로 데이터가 많을수록, 패턴이 일정할수록 정확도가 높습니다. 다만, 예상치 못한 외부 요인(시즌, 경쟁사 활동, 시장 변화 등)에 따라 실제 결과는 달라질 수 있습니다. <strong>예측은 의사결정의 참고 자료</strong>로 활용하시고, 정기적으로 실제 성과와 비교하여 검증하세요.`
+      },
+      {
+        question: '모바일에서도 대시보드를 볼 수 있나요?',
+        answer: `네, 대시보드는 <strong>반응형 디자인</strong>으로 제작되어 모바일 기기에서도 확인할 수 있습니다. 다만, 복잡한 차트와 테이블은 데스크톱 환경에서 보시는 것을 권장드립니다. 주요 KPI와 AI 인사이트 확인은 모바일에서도 편하게 하실 수 있습니다.`
+      },
+      {
+        question: '경고 알림이 떴는데 어떻게 대응해야 하나요?',
+        answer: `각 경고 알림에는 <strong>Financial Impact</strong>와 <strong>Action 가이드</strong>가 함께 제공됩니다. Action 가이드에 따라 1차 조치를 취하시고, 추가 분석이나 전략 수정이 필요하시면 담당 Growth Manager와 상의하세요. 경고는 "문제"가 아닌 "개선 기회"로 보시면 됩니다!`
+      },
+      {
+        question: '데이터를 다운로드할 수 있나요?',
+        answer: `현재 대시보드 내 직접 다운로드 기능은 제공되지 않습니다. 데이터 다운로드가 필요하시면 담당 Growth Manager에게 요청해 주세요. CSV 또는 Excel 형식으로 원하시는 기간과 지표의 데이터를 제공해 드립니다.`
+      }
+    ]
+  },
+  {
+    title: '실무 가이드 & 의사결정',
+    items: [
+      {
+        question: '오늘 아침에 대시보드에서 뭘 먼저 봐야 하나요?',
+        answer: `매일 아침 체크해야 할 순서를 알려드립니다:<br><br><strong>1단계: AI 인사이트 확인</strong><br>• 시계열 분석 → 통합 인사이트에서 경고/이상 징후 확인<br><br><strong>2단계: KPI 카드 훑어보기</strong><br>• 마케팅 대시보드 → 전일 대비 ROAS, CPA 변화 확인<br>• 빨간색 지표가 있으면 즉시 원인 파악<br><br><strong>3단계: 문제 채널 드릴다운</strong><br>• 성과가 급락한 채널/캠페인 클릭하여 상세 분석<br><br><strong>소요 시간:</strong> 5~10분이면 전체 현황 파악 가능!`
+      },
+      {
+        question: '어떤 채널에 예산을 더 투자해야 하나요?',
+        answer: `예산 배분 결정을 위한 3단계 분석법:<br><br><strong>Step 1: BCG 매트릭스 확인</strong><br>• 퍼널 대시보드 → BCG 매트릭스에서 "Star" 위치 채널 확인<br>• 트래픽 높음 + 전환율 높음 = 예산 증액 1순위<br><br><strong>Step 2: Forecast Matrix 확인</strong><br>• 시계열 분석 → "Super Star" 세그먼트 확인<br>• 현재 ROAS 높음 + 미래 성장 예측 = 투자 가치 높음<br><br><strong>Step 3: 예산 시뮬레이션</strong><br>• 예산 슬라이더로 +20%, +50% 시뮬레이션<br>• 투자 효율이 100% 이상이면 증액 권장`
+      },
+      {
+        question: '갑자기 ROAS가 떨어졌어요. 어디서부터 확인해야 하나요?',
+        answer: `ROAS 하락 시 체계적인 원인 분석 방법:<br><br><strong>1. 전체 vs 채널별 비교</strong><br>• 마케팅 대시보드에서 채널별 ROAS 확인<br>• 특정 채널만 하락? → 해당 채널 집중 분석<br>• 전체적으로 하락? → 외부 요인(시즌, 경쟁) 검토<br><br><strong>2. 비용 vs 매출 분석</strong><br>• 비용이 급증했나? → CPC/CPM 상승 여부 확인<br>• 매출이 급감했나? → 전환율, 객단가 확인<br><br><strong>3. 소재별 분석</strong><br>• 소재별 대시보드에서 ROAS 하락 소재 파악<br>• 피로도 높은 소재 교체 검토<br><br><strong>4. 퍼널 점검</strong><br>• 퍼널 대시보드에서 이탈 급증 단계 확인`
+      },
+      {
+        question: '이번 주 리포트에 어떤 내용을 넣어야 할까요?',
+        answer: `주간 리포트 작성 시 대시보드 활용법:<br><br><strong>1. Executive Summary</strong><br>• 마케팅 대시보드 → "주별" 탭 선택<br>• 주간 총 비용, 매출, ROAS 요약<br><br><strong>2. 채널별 성과 비교</strong><br>• 채널별 ROAS 테이블 캡처<br>• Top 3 / Bottom 3 채널 하이라이트<br><br><strong>3. 핵심 인사이트</strong><br>• 시계열 분석 → AI 인사이트 요약 활용<br>• 주요 이상 징후 및 개선 제안 포함<br><br><strong>4. 다음 주 액션 플랜</strong><br>• Forecast Matrix 기반 투자 방향<br>• 마이크로 세그먼트 기반 최적화 계획`
+      },
+      {
+        question: '상사/클라이언트에게 성과를 어떻게 설명해야 하나요?',
+        answer: `비전문가에게 설명할 때 유용한 표현:<br><br><strong>ROAS 설명</strong><br>"광고비 100원당 ○○원의 매출이 발생했습니다."<br>예: ROAS 250% → "광고비 1만원당 2만5천원 매출"<br><br><strong>CPA 설명</strong><br>"한 명의 고객을 확보하는 데 ○○원이 들었습니다."<br><br><strong>증감 설명</strong><br>• 좋은 경우: "지난주 대비 효율이 15% 개선되었습니다."<br>• 나쁜 경우: "일시적 하락이지만 ○○ 조치로 회복 중입니다."<br><br><strong>Tip:</strong> 차트 캡처 + 한 문장 요약이 가장 효과적!`
+      },
+      {
+        question: '광고를 껐다 켜야 할지 어떻게 판단하나요?',
+        answer: `광고 ON/OFF 의사결정 기준:<br><br><strong>끄는 것을 고려해야 할 때:</strong><br>• ROAS가 목표 대비 50% 이하로 2주 이상 지속<br>• 마이크로 세그먼트에서 "Traffic Waste"로 분류<br>• Forecast Matrix에서 "Problem Child" + 하락 추세<br><br><strong>유지해야 할 때:</strong><br>• 신규 캠페인 (최소 2주 학습 기간 필요)<br>• 브랜딩 목적 캠페인 (ROAS 외 지표 확인)<br>• "Rising Star" 또는 "Hidden VIP" 분류<br><br><strong>예산만 줄일 때:</strong><br>• ROAS 목표의 70~100% 수준<br>• 예산 시뮬레이션에서 "효율 점검" 등급`
+      }
+    ]
+  },
+  {
+    title: 'AARRR 퍼널 대시보드',
+    items: [
+      {
+        question: 'AARRR 퍼널이란 무엇인가요?',
+        answer: `AARRR은 고객 여정을 5단계로 분석하는 프레임워크입니다:<br><br>• <strong>Acquisition (유입)</strong>: 사용자가 처음 방문<br>• <strong>Activation (활동)</strong>: 첫 의미 있는 행동 (스크롤, 페이지뷰 등)<br>• <strong>Retention (관심)</strong>: 상품 조회, 장바구니 담기<br>• <strong>Revenue (결제)</strong>: 결제 시작<br>• <strong>Referral (구매)</strong>: 구매 완료<br><br>각 단계별 전환율과 이탈률을 분석하여 개선 포인트를 찾습니다.`
+      },
+      {
+        question: '유형별 조치 가이드(마이크로 세그먼트)란 무엇인가요?',
+        answer: `마이크로 세그먼트는 채널별 세부 데이터를 분석하여 <strong>4가지 유형</strong>으로 분류하고, 각 유형에 맞는 최적화 전략을 제시합니다:<br><br>• <strong>Hidden VIP</strong>: 높은 전환율, 낮은 트래픽 → 예산 확대 권장<br>• <strong>Traffic Waste</strong>: 낮은 전환율, 높은 트래픽 → 타겟팅 개선 필요<br>• <strong>Checkout Friction</strong>: 장바구니 이탈 높음 → 결제 프로세스 점검<br>• <strong>Rising Star</strong>: 성장률 높음 → 적극 투자 권장`
+      },
+      {
+        question: '마이크로 세그먼트 각 유형의 판별 조건은?',
+        answer: `각 유형은 다음 조건으로 판별됩니다:<br><br><strong>Hidden VIP</strong><br>• 전환율 ≥ 전체 평균 × 1.5<br>• 트래픽 ≤ 전체 평균 × 0.5<br><br><strong>Traffic Waste</strong><br>• 전환율 ≤ 전체 평균 × 0.5<br>• 트래픽 ≥ 전체 평균 × 1.5<br><br><strong>Checkout Friction</strong><br>• 장바구니→결제 전환율 ≤ 30%<br><br><strong>Rising Star</strong><br>• 전주 대비 전환수 성장률 ≥ 50%<br>• 전환율 ≥ 전체 평균`
+      },
+      {
+        question: 'BCG 매트릭스의 분류 기준은 무엇인가요?',
+        answer: `BCG 매트릭스는 두 가지 축으로 분류합니다:<br><br>• <strong>X축 (트래픽)</strong>: 채널별 방문자 수 (전체 평균 대비)<br>• <strong>Y축 (전환율)</strong>: 채널별 구매 전환율 (전체 평균 대비)<br><br>평균 이상이면 "높음", 평균 미만이면 "낮음"으로 분류하여 4분면에 배치합니다.`
+      },
+      {
+        question: '퍼널에서 이탈이 가장 심한 단계를 어떻게 개선하나요?',
+        answer: `단계별 이탈 개선 체크리스트:<br><br><strong>유입 → 활동 이탈이 높을 때:</strong><br>• 랜딩 페이지 로딩 속도 체크 (3초 이내가 이상적)<br>• 광고 메시지와 랜딩 페이지 일관성 확인<br>• 모바일 최적화 상태 점검<br><br><strong>관심 → 결제 이탈이 높을 때:</strong><br>• 장바구니 리마인더 이메일/푸시 설정<br>• 할인 쿠폰 팝업 테스트<br>• 상품 상세 페이지 정보 보강<br><br><strong>결제 → 구매 이탈이 높을 때:</strong><br>• 결제 수단 다양화 (간편결제 추가)<br>• 결제 프로세스 단계 축소<br>• 보안 인증 마크 노출`
+      },
+      {
+        question: 'Hidden VIP 채널을 발견했어요. 어떻게 활용하나요?',
+        answer: `Hidden VIP는 숨겨진 보석! 다음 순서로 활용하세요:<br><br><strong>1단계: 원인 분석</strong><br>• 왜 트래픽이 적은지 파악 (예산 부족? 노출 제한?)<br>• 현재 타겟팅 설정 확인<br><br><strong>2단계: 테스트 확대</strong><br>• 예산 +30~50% 증액 테스트<br>• 유사 타겟으로 확장 테스트<br><br><strong>3단계: 모니터링</strong><br>• 2주간 ROAS 변화 추적<br>• 전환율이 유지되면 추가 증액<br><br><strong>주의:</strong> 급격한 예산 증가는 체감 수익 효과로 효율 하락 가능!`
+      },
+      {
+        question: 'Traffic Waste 채널, 바로 꺼야 하나요?',
+        answer: `바로 끄기 전에 개선 가능성을 먼저 점검하세요:<br><br><strong>끄기 전 체크리스트:</strong><br>• 타겟팅이 너무 넓지 않은가? → 세분화 테스트<br>• 광고 소재가 전환에 최적화되어 있나? → A/B 테스트<br>• 랜딩 페이지가 해당 채널에 맞는가? → 전용 랜딩 테스트<br><br><strong>OFF 결정 기준:</strong><br>• 2주 이상 최적화 시도 후에도 개선 없음<br>• ROAS가 목표의 30% 미만 지속<br>• 예산을 다른 채널에 투입 시 더 높은 ROI 예상<br><br><strong>대안:</strong> 완전 OFF 대신 예산 80% 감축 후 관찰`
+      }
+    ]
+  },
+  {
+    title: '시계열 데이터 분석',
+    items: [
+      {
+        question: 'Forecast Matrix 4분면 분류 기준은 무엇인가요?',
+        answer: `Forecast Matrix는 <strong>현재 ROAS</strong>와 <strong>예측 성장률</strong>을 기준으로 4분면에 배치합니다:<br><br>• <strong>Super Star (★)</strong>: 현재 ROAS 높음 + 성장 예측 → 최우선 투자<br>• <strong>Fading Hero</strong>: 현재 ROAS 높음 + 하락 예측 → 대체 채널 준비<br>• <strong>Rising Potential</strong>: 현재 ROAS 낮음 + 성장 예측 → 테스트 확대<br>• <strong>Problem Child</strong>: 현재 ROAS 낮음 + 하락 예측 → 즉시 점검<br><br>기준값: ROAS 평균 대비 비교, 예측 성장률 0% 기준으로 상승/하락 판정`
+      },
+      {
+        question: '예산 시뮬레이션은 어떻게 계산되나요?',
+        answer: `예산 시뮬레이션은 <strong>체감 수익 모델</strong>을 적용하여 계산됩니다:<br><br><strong>예산 증가 시:</strong><br>조정 ROAS = 현재 ROAS × (1 - 0.15 × ln(1 + 예산 변화율))<br><br><strong>예산 감소 시:</strong><br>조정 ROAS = 현재 ROAS × (1 + 0.15 × ln(1 + |예산 변화율|) × 0.5)<br><br><strong>추천 등급:</strong><br>• 투자 효율 ≥ 150%: 증액 추천<br>• 100% ~ 149%: 유지<br>• 50% ~ 99%: 효율 점검<br>• 50% 미만: 감액 검토`
+      },
+      {
+        question: '체감 수익 효과(Diminishing Returns)란?',
+        answer: `광고 예산을 늘릴수록 추가 전환당 비용이 증가하는 현상입니다.<br><br><strong>왜 발생하나요?</strong><br>• 핵심 타겟 소진: 가장 반응 좋은 사용자부터 전환됨<br>• 광고 피로도: 동일 사용자에게 반복 노출 시 효과 감소<br>• 경쟁 심화: 예산 증가 시 입찰 경쟁으로 CPC 상승<br><br><strong>시뮬레이션 상수:</strong> DIMINISHING_FACTOR = 0.15 (15% 체감률)<br>예: 예산 100% 증가 시 → ROAS 약 10.4% 감소 예상`
+      },
+      {
+        question: 'Prophet 예측은 얼마나 정확한가요?',
+        answer: `Prophet 예측의 정확도는 <strong>데이터의 양과 패턴의 일관성</strong>에 따라 달라집니다. 일반적으로 데이터가 많고, 계절성이 뚜렷하며, 외부 요인 변동이 적을수록 정확도가 높습니다.<br><br>광고 데이터의 경우 평균 <strong>MAPE(평균 절대 백분율 오차) 10~20%</strong> 수준을 기대할 수 있습니다. 예측은 참고용으로 활용하시고, 실제 데이터와 정기적으로 비교하여 검증하세요.`
+      },
+      {
+        question: '주요 항목 트렌드 탭에서는 무엇을 볼 수 있나요?',
+        answer: `주요 항목 트렌드 탭에서는 세그먼트별로 주요 지표의 시계열 추이를 확인할 수 있습니다:<br><br>• <strong>비용 추이</strong>: 일/주/월별 광고비 변화<br>• <strong>ROAS 추이</strong>: 효율 변화 트렌드<br>• <strong>전환수 추이</strong>: 성과 볼륨 변화<br>• <strong>매출 추이</strong>: 매출액 시계열 분석<br><br>각 지표의 트렌드를 분석하여 성과 변화 원인을 파악하고 최적화 전략을 수립하세요.`
+      },
+      {
+        question: '예산을 얼마나 늘려야 최적일까요?',
+        answer: `예산 시뮬레이션을 활용한 최적 증액폭 찾기:<br><br><strong>Step 1: 현재 상태 확인</strong><br>• 시계열 분석 → 예산 시뮬레이션 탭 이동<br>• 세그먼트 선택 후 현재 ROAS 확인<br><br><strong>Step 2: 단계별 시뮬레이션</strong><br>• 슬라이더로 +20%, +50%, +100% 테스트<br>• 각 단계별 예상 ROAS와 투자 효율 확인<br><br><strong>Step 3: 최적점 찾기</strong><br>• 투자 효율이 100% 이상 유지되는 최대 증액폭 선택<br>• 보통 +30~50%가 효율 대비 안전한 증액폭<br><br><strong>실무 팁:</strong> 한 번에 +100% 이상 증액보다 2주 간격 단계별 증액이 안전!`
+      },
+      {
+        question: 'Fading Hero가 나왔어요. 지금 바로 조치해야 하나요?',
+        answer: `Fading Hero는 "지금은 좋지만 미래가 불투명"한 채널입니다:<br><br><strong>즉시 조치 (1주 이내):</strong><br>• 해당 채널의 소재 피로도 점검<br>• 경쟁사 활동 증가 여부 확인<br>• 새로운 크리에이티브 테스트 시작<br><br><strong>단기 대비 (2~4주):</strong><br>• 대체 가능한 "Rising Potential" 채널 예산 확대<br>• Fading Hero 채널 예산 점진적 감축 (주 10%씩)<br><br><strong>중기 대비:</strong><br>• 해당 채널 완전 OFF 시 대체할 포트폴리오 구축<br>• 예측대로 하락 시 빠른 전환 가능하도록 준비<br><br><strong>핵심:</strong> 당장 끄지 말고, 대안 준비하면서 점진적 축소!`
+      },
+      {
+        question: '예측값과 실제값 차이가 커요. 예측을 믿어도 되나요?',
+        answer: `예측 신뢰도 판단 가이드:<br><br><strong>예측을 신뢰할 수 있을 때:</strong><br>• 과거 예측값과 실제값 차이가 20% 이내였음<br>• 외부 요인(시즌, 프로모션)이 안정적<br>• 데이터가 6개월 이상 축적됨<br><br><strong>예측을 참고만 해야 할 때:</strong><br>• 최근 예측 오차가 30% 이상<br>• 새로운 캠페인/채널 (데이터 부족)<br>• 시즌 변동기 (추석, 연말 등)<br><br><strong>차이가 큰 이유 분석:</strong><br>• 프로모션 일정이 반영 안 됨<br>• 경쟁사 활동 변화<br>• 광고 설정 변경 (타겟, 입찰 등)<br><br><strong>활용법:</strong> 예측값 자체보다 "방향성"을 참고하세요!`
+      }
+    ]
+  },
+  {
+    title: '트러블슈팅 & 문제해결',
+    items: [
+      {
+        question: '대시보드가 로딩되지 않거나 느려요',
+        answer: `로딩 문제 해결 순서:<br><br><strong>1. 기본 점검:</strong><br>• 인터넷 연결 상태 확인<br>• 브라우저 새로고침 (Ctrl+Shift+R)<br>• 다른 브라우저로 접속 시도 (Chrome 권장)<br><br><strong>2. 캐시 정리:</strong><br>• Chrome: Ctrl+Shift+Delete → 캐시된 이미지 및 파일 삭제<br>• 시크릿 모드로 접속 테스트<br><br><strong>3. 필터 범위 축소:</strong><br>• 날짜 범위를 최근 30일로 줄여서 로딩<br>• 채널/캠페인 필터로 데이터 양 줄이기<br><br><strong>계속 문제 시:</strong> support@growthmaker.kr로 문의`
+      },
+      {
+        question: '데이터가 어제와 다르게 보여요',
+        answer: `데이터 불일치 원인과 해결법:<br><br><strong>정상적인 경우:</strong><br>• 광고 플랫폼의 전환 지연 반영 (최대 72시간)<br>• Attribution Window 내 전환 재집계<br>• 일별 → 주별/월별 탭 전환 시 집계 방식 차이<br><br><strong>확인이 필요한 경우:</strong><br>• 특정 채널 데이터만 급변 → 해당 플랫폼 점검<br>• 모든 채널 데이터 급변 → 데이터 파이프라인 확인 필요<br><br><strong>조치 방법:</strong><br>• 광고 플랫폼 관리자 화면에서 교차 검증<br>• 큰 차이 지속 시 담당 GM에게 연락`
+      },
+      {
+        question: '차트가 비어있거나 "데이터 없음"이 표시돼요',
+        answer: `데이터 없음 문제 해결:<br><br><strong>필터 설정 확인:</strong><br>• 날짜 범위가 너무 좁지 않은지 확인<br>• 채널/캠페인 필터가 빈 데이터 조합 아닌지 확인<br>• "전체"로 필터 초기화 후 다시 시도<br><br><strong>데이터 존재 여부:</strong><br>• 해당 기간에 광고 집행이 있었는지 확인<br>• 새로 추가된 채널은 데이터 수집에 1~2일 소요<br><br><strong>특정 차트만 빈 경우:</strong><br>• 해당 지표에 데이터가 없을 수 있음<br>• 예: 전환 추적 미설정 시 ROAS 차트 공백`
+      },
+      {
+        question: '광고 플랫폼 수치와 대시보드 수치가 달라요',
+        answer: `수치 차이가 발생하는 일반적인 이유:<br><br><strong>1. 시간대 차이:</strong><br>• 대시보드: 한국 시간(KST) 기준<br>• 광고 플랫폼: 계정 설정 시간대 기준<br>• → 광고 플랫폼 시간대 설정 확인<br><br><strong>2. 데이터 수집 시점:</strong><br>• 대시보드: 매일 새벽 배치 수집<br>• 플랫폼: 실시간 업데이트<br>• → 당일 데이터는 차이 발생 정상<br><br><strong>3. Attribution 모델 차이:</strong><br>• 플랫폼마다 전환 귀속 방식이 다름<br>• → 대시보드 기준을 표준으로 사용 권장<br><br><strong>5% 이상 차이 시:</strong> 담당 GM에게 점검 요청`
+      }
+    ]
+  }
+]
+
+// 문의 유형 옵션
+const inquiryTypes = [
+  '일반 문의',
+  '기능 관련',
+  '데이터 관련',
+  '오류 신고',
+  '기능 요청',
+  '기타'
+]
+
+export default function QnaReactView() {
+  // 탭 상태
+  const [activeTab, setActiveTab] = useState<'faq' | 'contact'>('faq')
+
+  // FAQ 검색어
+  const [searchTerm, setSearchTerm] = useState('')
+
+  // FAQ 열림 상태 (question을 key로)
+  const [openFaqs, setOpenFaqs] = useState<Set<string>>(new Set())
+
+  // 문의 폼 상태
+  const [formData, setFormData] = useState({
+    companyName: '',
+    contactName: '',
+    contactEmail: '',
+    inquiryType: '일반 문의',
+    inquiryContent: ''
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+
+  // EmailJS 초기화
+  useEffect(() => {
+    const script = document.createElement('script')
+    script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js'
+    script.async = true
+    script.onload = () => {
+      if ((window as any).emailjs) {
+        (window as any).emailjs.init('jpwOGZJVBg6iE3ZT0')
+      }
+    }
+    document.head.appendChild(script)
+
+    return () => {
+      document.head.removeChild(script)
+    }
+  }, [])
+
+  // 검색 필터링된 FAQ
+  const filteredFaqData = useMemo(() => {
+    if (!searchTerm.trim()) return faqData
+
+    const term = searchTerm.toLowerCase()
+    return faqData.map(category => ({
+      ...category,
+      items: category.items.filter(
+        item =>
+          item.question.toLowerCase().includes(term) ||
+          item.answer.toLowerCase().includes(term)
+      )
+    })).filter(category => category.items.length > 0)
+  }, [searchTerm])
+
+  // FAQ 토글
+  const toggleFaq = (question: string) => {
+    setOpenFaqs(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(question)) {
+        newSet.delete(question)
+      } else {
+        newSet.add(question)
+      }
+      return newSet
+    })
+  }
+
+  // 검색 시 자동 열기
+  const isFaqOpen = (question: string) => {
+    if (searchTerm.trim()) return true
+    return openFaqs.has(question)
+  }
+
+  // 폼 제출
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+
+    try {
+      // EmailJS 사용
+      const emailjs = (window as any).emailjs
+      if (emailjs) {
+        const templateParams = {
+          to_email: 'tee1228@naver.com',
+          from_name: formData.contactName || formData.companyName,
+          from_email: formData.contactEmail,
+          name: formData.contactName || '미입력',
+          company_name: formData.companyName,
+          inquiry_type: formData.inquiryType,
+          subject: `[${formData.inquiryType}] ${formData.companyName} 문의`,
+          message: formData.inquiryContent
+        }
+
+        await emailjs.send('service_bvmgctx', 'template_9mrqtki', templateParams)
+      }
+
+      setShowSuccess(true)
+      setFormData({
+        companyName: '',
+        contactName: '',
+        contactEmail: '',
+        inquiryType: '일반 문의',
+        inquiryContent: ''
+      })
+
+      setTimeout(() => setShowSuccess(false), 5000)
+    } catch (error) {
+      console.error('이메일 전송 실패:', error)
+      alert('이메일 전송에 실패했습니다. 다시 시도해 주세요.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <>
+      <style jsx global>{`
+        .qna-container {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .qna-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 32px;
+        }
+
+        .qna-header h1 {
+          font-size: 28px;
+          font-weight: 700;
+          color: var(--grey-900);
+          margin: 0;
+        }
+
+        .qna-header-subtitle {
+          font-size: 14px;
+          color: var(--grey-500);
+          margin-top: 4px;
+        }
+
+        .tab-nav {
+          display: flex;
+          gap: 8px;
+          margin-bottom: 24px;
+        }
+
+        .tab-btn {
+          padding: 12px 24px;
+          border: none;
+          background: var(--paper);
+          color: var(--grey-700);
+          border-radius: 10px;
+          cursor: pointer;
+          font-weight: 500;
+          font-size: 14px;
+          font-family: inherit;
+          transition: all 0.2s;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .tab-btn:hover {
+          background: var(--primary-light);
+          color: var(--primary-main);
+        }
+
+        .tab-btn.active {
+          background: var(--primary-main);
+          color: white;
+          box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+        }
+
+        .faq-section {
+          margin-bottom: 32px;
+        }
+
+        .search-box {
+          position: relative;
+          margin-bottom: 24px;
+        }
+
+        .search-input {
+          width: 100%;
+          padding: 14px 20px 14px 50px;
+          border: 1px solid var(--grey-300);
+          border-radius: 10px;
+          font-size: 15px;
+          font-family: inherit;
+          background: var(--paper);
+          transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+          outline: none;
+          border-color: var(--primary-main);
+          box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .search-icon {
+          position: absolute;
+          left: 18px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: var(--grey-500);
+        }
+
+        .faq-category {
+          margin-bottom: 24px;
+        }
+
+        .faq-category-title {
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--primary-main);
+          margin-bottom: 16px;
+          padding-left: 12px;
+          border-left: 3px solid var(--primary-main);
+        }
+
+        .faq-list {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .faq-item {
+          background: var(--paper);
+          border-radius: 10px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+          overflow: hidden;
+          transition: box-shadow 0.2s ease;
+        }
+
+        .faq-item:hover {
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .faq-question {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 18px 20px;
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 15px;
+          font-weight: 500;
+          color: var(--grey-900);
+          text-align: left;
+          font-family: inherit;
+          transition: background 0.2s ease;
+        }
+
+        .faq-question:hover {
+          background: var(--grey-50);
+        }
+
+        .faq-icon {
+          font-size: 12px;
+          color: var(--grey-500);
+          transition: transform 0.3s ease;
+        }
+
+        .faq-item.open .faq-icon {
+          transform: rotate(180deg);
+        }
+
+        .faq-answer {
+          max-height: 0;
+          overflow: hidden;
+          transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-item.open .faq-answer {
+          max-height: 500px;
+        }
+
+        .faq-answer-content {
+          padding: 0 20px 20px 20px;
+          font-size: 14px;
+          line-height: 1.8;
+          color: var(--grey-700);
+        }
+
+        .faq-answer-content strong {
+          color: var(--grey-900);
+        }
+
+        .qna-card {
+          background: var(--paper);
+          border-radius: 12px;
+          box-shadow: 0 2px 14px 0 rgba(32, 40, 45, 0.08);
+          transition: box-shadow 0.3s ease;
+        }
+
+        .qna-card:hover {
+          box-shadow: 0 4px 20px 0 rgba(32, 40, 45, 0.12);
+        }
+
+        .contact-section {
+          padding: 32px;
+        }
+
+        .section-header {
+          font-size: 18px;
+          font-weight: 600;
+          color: var(--grey-900);
+          margin-bottom: 20px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .section-header::before {
+          content: '';
+          width: 4px;
+          height: 24px;
+          background: var(--primary-main);
+          border-radius: 2px;
+        }
+
+        .contact-form {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
+
+        .form-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+        }
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .form-label {
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--grey-700);
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .form-label .required {
+          color: var(--error-main);
+          font-size: 12px;
+        }
+
+        .form-input {
+          padding: 14px 16px;
+          border: 1px solid var(--grey-300);
+          border-radius: 10px;
+          font-size: 15px;
+          font-family: inherit;
+          background: var(--paper);
+          color: var(--grey-900);
+          transition: all 0.2s ease;
+        }
+
+        .form-input:hover {
+          border-color: var(--primary-main);
+        }
+
+        .form-input:focus {
+          outline: none;
+          border-color: var(--primary-main);
+          box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-input::placeholder {
+          color: var(--grey-500);
+        }
+
+        .form-textarea {
+          min-height: 180px;
+          resize: vertical;
+        }
+
+        .submit-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          padding: 16px 32px;
+          background: linear-gradient(135deg, var(--primary-main) 0%, var(--primary-dark) 100%);
+          color: white;
+          border: none;
+          border-radius: 10px;
+          font-size: 16px;
+          font-weight: 600;
+          font-family: inherit;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 14px rgba(103, 58, 183, 0.4);
+        }
+
+        .submit-btn:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(103, 58, 183, 0.5);
+        }
+
+        .submit-btn:active:not(:disabled) {
+          transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+
+        .submit-btn svg {
+          width: 20px;
+          height: 20px;
+          fill: currentColor;
+        }
+
+        .help-box {
+          display: flex;
+          align-items: flex-start;
+          gap: 16px;
+          padding: 20px;
+          background: var(--primary-light);
+          border-radius: 10px;
+          margin-top: 24px;
+        }
+
+        .help-box-icon {
+          font-size: 24px;
+        }
+
+        .help-box-content {
+          flex: 1;
+        }
+
+        .help-box-title {
+          font-size: 15px;
+          font-weight: 600;
+          color: var(--primary-dark);
+          margin-bottom: 4px;
+        }
+
+        .help-box-text {
+          font-size: 13px;
+          color: var(--grey-700);
+          line-height: 1.6;
+        }
+
+        .help-box-text a {
+          color: var(--primary-main);
+          font-weight: 500;
+          text-decoration: none;
+        }
+
+        .help-box-text a:hover {
+          text-decoration: underline;
+        }
+
+        .success-message {
+          padding: 20px;
+          background: var(--success-light);
+          border-radius: 10px;
+          text-align: center;
+          margin-top: 20px;
+        }
+
+        .success-message-icon {
+          font-size: 48px;
+          margin-bottom: 12px;
+        }
+
+        .success-message-title {
+          font-size: 18px;
+          font-weight: 600;
+          color: var(--success-main);
+          margin-bottom: 8px;
+        }
+
+        .success-message-text {
+          font-size: 14px;
+          color: var(--grey-700);
+        }
+
+        @media (max-width: 768px) {
+          .form-row {
+            grid-template-columns: 1fr;
+          }
+
+          .contact-section {
+            padding: 20px;
+          }
+
+          .qna-header h1 {
+            font-size: 22px;
+          }
+        }
+      `}</style>
+
+      <div className="qna-container">
+        {/* 헤더 */}
+        <div className="qna-header">
+          <div>
+            <h1>FAQ & 문의하기</h1>
+            <div className="qna-header-subtitle">자주 묻는 질문과 직접 문의하기</div>
+          </div>
+        </div>
+
+        {/* 탭 네비게이션 */}
+        <div className="tab-nav">
+          <button
+            className={`tab-btn ${activeTab === 'faq' ? 'active' : ''}`}
+            onClick={() => setActiveTab('faq')}
+          >
+            자주 묻는 질문 (FAQ)
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'contact' ? 'active' : ''}`}
+            onClick={() => setActiveTab('contact')}
+          >
+            문의하기
+          </button>
+        </div>
+
+        {/* FAQ 탭 */}
+        {activeTab === 'faq' && (
+          <div>
+            {/* 검색 */}
+            <div className="search-box">
+              <span className="search-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+              </span>
+              <input
+                type="text"
+                className="search-input"
+                placeholder="질문 검색하기..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            {/* FAQ 목록 */}
+            <div className="faq-section">
+              {filteredFaqData.map((category, catIdx) => (
+                <div key={catIdx} className="faq-category">
+                  <div className="faq-category-title">{category.title}</div>
+                  <div className="faq-list">
+                    {category.items.map((item, itemIdx) => (
+                      <div
+                        key={itemIdx}
+                        className={`faq-item ${isFaqOpen(item.question) ? 'open' : ''}`}
+                      >
+                        <button
+                          className="faq-question"
+                          onClick={() => toggleFaq(item.question)}
+                        >
+                          <span>{item.question}</span>
+                          <span className="faq-icon">▼</span>
+                        </button>
+                        <div className="faq-answer">
+                          <div
+                            className="faq-answer-content"
+                            dangerouslySetInnerHTML={{ __html: item.answer }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              {filteredFaqData.length === 0 && (
+                <div style={{ textAlign: 'center', padding: 40, color: 'var(--grey-500)' }}>
+                  검색 결과가 없습니다.
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* 문의하기 탭 */}
+        {activeTab === 'contact' && (
+          <div className="qna-card contact-section">
+            <div className="section-header">직접 문의하기</div>
+            <p style={{ color: 'var(--grey-600)', marginBottom: 24, fontSize: 14 }}>
+              FAQ에서 답을 찾지 못하셨나요? 아래 양식을 작성해 주시면 담당자가 빠르게 답변 드리겠습니다.
+            </p>
+
+            <form className="contact-form" onSubmit={handleSubmit}>
+              <div className="form-row">
+                <div className="form-group">
+                  <label className="form-label">
+                    회사명
+                    <span className="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="회사명을 입력해 주세요"
+                    value={formData.companyName}
+                    onChange={(e) => setFormData({...formData, companyName: e.target.value})}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">담당자명</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="담당자명 (선택사항)"
+                    value={formData.contactName}
+                    onChange={(e) => setFormData({...formData, contactName: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label className="form-label">이메일</label>
+                  <input
+                    type="email"
+                    className="form-input"
+                    placeholder="회신받으실 이메일 (선택사항)"
+                    value={formData.contactEmail}
+                    onChange={(e) => setFormData({...formData, contactEmail: e.target.value})}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">문의 유형</label>
+                  <select
+                    className="form-input"
+                    value={formData.inquiryType}
+                    onChange={(e) => setFormData({...formData, inquiryType: e.target.value})}
+                  >
+                    {inquiryTypes.map(type => (
+                      <option key={type} value={type}>{type}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">
+                  문의 내용
+                  <span className="required">*</span>
+                </label>
+                <textarea
+                  className="form-input form-textarea"
+                  placeholder="문의하실 내용을 상세히 작성해 주세요."
+                  value={formData.inquiryContent}
+                  onChange={(e) => setFormData({...formData, inquiryContent: e.target.value})}
+                  required
+                />
+              </div>
+
+              <button type="submit" className="submit-btn" disabled={isSubmitting}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+                {isSubmitting ? '전송 중...' : '문의 발송하기'}
+              </button>
+            </form>
+
+            {showSuccess && (
+              <div className="success-message">
+                <div className="success-message-icon">✅</div>
+                <div className="success-message-title">문의가 전송되었습니다!</div>
+                <div className="success-message-text">
+                  접수된 문의는 담당자가 확인 후 빠르게 답변 드리겠습니다.<br/>
+                  감사합니다.
+                </div>
+              </div>
+            )}
+
+            <div className="help-box">
+              <div className="help-box-icon">💡</div>
+              <div className="help-box-content">
+                <div className="help-box-title">빠른 답변을 원하시나요?</div>
+                <div className="help-box-text">
+                  긴급한 문의는 <a href="mailto:support@growthmaker.kr">tee1228@naver.com</a>로 직접 메일을 보내주세요.
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  )
+}

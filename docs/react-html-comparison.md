@@ -433,7 +433,154 @@
 
 ---
 
+## 7. FAQ & 문의하기 (QnA)
+
+| 구분 | 파일 경로 |
+|------|----------|
+| **React** | `src/app/qna/ReactView.tsx` |
+| **HTML** | `data/Qna.html` |
+
+### 7.1 전역 변수/State 비교
+
+| HTML 변수명 | React 변수명 | 상태 |
+|-------------|--------------|------|
+| (탭 상태) | `activeTab` (useState) | ⚠️ 구현방식 다름 |
+| `faqSearch` (input) | `searchTerm` (useState) | ⚠️ 구현방식 다름 |
+| (FAQ 열림 상태) | `openFaqs` (useState - Set) | ⚠️ 구현방식 다름 |
+| (폼 데이터) | `formData` (useState) | ⚠️ 구현방식 다름 |
+| (제출 상태) | `isSubmitting` (useState) | ⚠️ 구현방식 다름 |
+| (성공 메시지) | `showSuccess` (useState) | ⚠️ 구현방식 다름 |
+
+### 7.2 함수명 비교
+
+| HTML 함수명 | React 함수명 | 상태 | 비고 |
+|-------------|--------------|------|------|
+| `toggleFaq(button)` | `toggleFaq(question)` | ⚠️ 구현방식 다름 | 파라미터 타입 다름 |
+| `submitForm(event)` | `handleSubmit(e)` | ⚠️ 구현방식 다름 | React 이벤트 핸들러 |
+| (탭 클릭 익명함수) | `setActiveTab()` | ⚠️ 구현방식 다름 | useState setter |
+| (검색 input 익명함수) | `useMemo` + `setSearchTerm()` | ⚠️ 구현방식 다름 | React 패턴 |
+| - | `isFaqOpen(question)` | 신규 | 검색 시 자동 열기 로직 |
+
+### 7.3 CSS 클래스명 비교
+
+#### 동일한 클래스명
+
+| CSS 클래스 | HTML | React | 상태 |
+|-----------|------|-------|------|
+| `.tab-nav` | ✓ | ✓ | ✅ 동일 |
+| `.tab-btn` | ✓ | ✓ | ✅ 동일 |
+| `.tab-btn.active` | ✓ | ✓ | ✅ 동일 |
+| `.search-box` | ✓ | ✓ | ✅ 동일 |
+| `.search-icon` | ✓ | ✓ | ✅ 동일 |
+| `.search-input` | ✓ | ✓ | ✅ 동일 |
+| `.faq-section` | ✓ | ✓ | ✅ 동일 |
+| `.faq-category` | ✓ | ✓ | ✅ 동일 |
+| `.faq-category-title` | ✓ | ✓ | ✅ 동일 |
+| `.faq-list` | ✓ | ✓ | ✅ 동일 |
+| `.faq-item` | ✓ | ✓ | ✅ 동일 |
+| `.faq-item.open` | ✓ | ✓ | ✅ 동일 |
+| `.faq-question` | ✓ | ✓ | ✅ 동일 |
+| `.faq-icon` | ✓ | ✓ | ✅ 동일 |
+| `.faq-answer` | ✓ | ✓ | ✅ 동일 |
+| `.faq-answer-content` | ✓ | ✓ | ✅ 동일 |
+| `.contact-section` | ✓ | ✓ | ✅ 동일 |
+| `.section-header` | ✓ | ✓ | ✅ 동일 |
+| `.contact-form` | ✓ | ✓ | ✅ 동일 |
+| `.form-row` | ✓ | ✓ | ✅ 동일 |
+| `.form-group` | ✓ | ✓ | ✅ 동일 |
+| `.form-label` | ✓ | ✓ | ✅ 동일 |
+| `.form-label .required` | ✓ | ✓ | ✅ 동일 |
+| `.form-input` | ✓ | ✓ | ✅ 동일 |
+| `.form-textarea` | ✓ | ✓ | ✅ 동일 |
+| `.submit-btn` | ✓ | ✓ | ✅ 동일 |
+| `.success-message` | ✓ | ✓ | ✅ 동일 |
+| `.success-message-icon` | ✓ | ✓ | ✅ 동일 |
+| `.success-message-title` | ✓ | ✓ | ✅ 동일 |
+| `.success-message-text` | ✓ | ✓ | ✅ 동일 |
+| `.help-box` | ✓ | ✓ | ✅ 동일 |
+| `.help-box-icon` | ✓ | ✓ | ✅ 동일 |
+| `.help-box-content` | ✓ | ✓ | ✅ 동일 |
+| `.help-box-title` | ✓ | ✓ | ✅ 동일 |
+| `.help-box-text` | ✓ | ✓ | ✅ 동일 |
+
+#### 변경된 클래스명 (전역 충돌 방지)
+
+| 용도 | HTML | React | 상태 |
+|------|------|-------|------|
+| 컨테이너 | `.container` | `.qna-container` | ⚠️ 접두사 추가 |
+| 헤더 | `.header` | `.qna-header` | ⚠️ 접두사 추가 |
+| 헤더 부제목 | `.header-subtitle` | `.qna-header-subtitle` | ⚠️ 접두사 추가 |
+| 카드 | `.card` | `.qna-card` | ⚠️ 접두사 추가 |
+
+### 7.4 FAQ 데이터 비교
+
+| 항목 | HTML | React | 상태 |
+|------|------|-------|------|
+| 카테고리 수 | 7개 | 7개 | ✅ 동일 |
+| FAQ 항목 수 | 47개 | 47개 | ✅ 동일 |
+| 카테고리 제목 | 모두 일치 | 모두 일치 | ✅ 동일 |
+| 질문 텍스트 | 모두 일치 | 모두 일치 | ✅ 동일 |
+| 답변 내용 | 모두 일치 | 모두 일치 | ✅ 동일 |
+
+#### FAQ 카테고리 목록
+1. 마케팅 성과 대시보드 (7개)
+2. 광고 소재별 분석 (4개)
+3. 채널별 분석 & 일반 (6개)
+4. 실무 가이드 & 의사결정 (6개)
+5. AARRR 퍼널 대시보드 (7개)
+6. 시계열 데이터 분석 (8개)
+7. 트러블슈팅 & 문제해결 (4개)
+
+### 7.5 폼 필드명 비교
+
+| HTML ID | React formData 필드 | 상태 |
+|---------|---------------------|------|
+| `companyName` | `formData.companyName` | ✅ 동일 |
+| `contactName` | `formData.contactName` | ✅ 동일 |
+| `contactEmail` | `formData.contactEmail` | ✅ 동일 |
+| `inquiryType` | `formData.inquiryType` | ✅ 동일 |
+| `inquiryContent` | `formData.inquiryContent` | ✅ 동일 |
+
+### 7.6 EmailJS 설정 비교
+
+| 항목 | HTML | React | 상태 |
+|------|------|-------|------|
+| Service ID | `service_bvmgctx` | `service_bvmgctx` | ✅ 동일 |
+| Template ID | `template_9mrqtki` | `template_9mrqtki` | ✅ 동일 |
+| Public Key | `jpwOGZJVBg6iE3ZT0` | `jpwOGZJVBg6iE3ZT0` | ✅ 동일 |
+| SDK 로드 | `<script>` 태그 | `useEffect` 동적 로드 | ⚠️ 구현방식 다름 |
+
+### 7.7 UI 텍스트 비교
+
+| 항목 | HTML | React | 상태 |
+|------|------|-------|------|
+| 페이지 제목 | FAQ & 문의하기 | FAQ & 문의하기 | ✅ 동일 |
+| 부제목 | 자주 묻는 질문과 직접 문의하기 | 자주 묻는 질문과 직접 문의하기 | ✅ 동일 |
+| 탭1 | 자주 묻는 질문 (FAQ) | 자주 묻는 질문 (FAQ) | ✅ 동일 |
+| 탭2 | 문의하기 | 문의하기 | ✅ 동일 |
+| 검색 placeholder | 질문 검색하기... | 질문 검색하기... | ✅ 동일 |
+| 폼 제목 | 직접 문의하기 | 직접 문의하기 | ✅ 동일 |
+| 버튼 텍스트 | 문의 발송하기 | 문의 발송하기 | ✅ 동일 |
+| 도움말 제목 | 빠른 답변을 원하시나요? | 빠른 답변을 원하시나요? | ✅ 동일 |
+
+> **참고**: QnA 페이지는 2026-01-09에 React로 신규 변환되었습니다.
+> HTML의 DOM 조작 및 이벤트 리스너는 React의 useState/useMemo로 변환되어 구현방식은 다르지만 기능은 동일합니다.
+> 사이드바는 Next.js 레이아웃 시스템을 사용하므로 React 컴포넌트에 포함되지 않습니다.
+
+---
+
 ## 변경 이력
+
+### 2026-01-09 (v5) - QnA 페이지 React 변환
+**FAQ & 문의하기 신규 변환 (`src/app/qna/ReactView.tsx`)**
+
+- `data/Qna.html`을 React로 완전 변환
+- 7개 FAQ 카테고리, 47개 FAQ 항목 데이터 이관
+- FAQ 아코디언 토글 기능 구현
+- FAQ 검색 필터링 기능 구현 (useMemo)
+- 문의하기 폼 + EmailJS 연동
+- 34개 CSS 클래스 동일, 4개 클래스 `qna-` 접두사로 변경 (전역 충돌 방지)
+- 모든 UI 텍스트, 폼 필드명, EmailJS 설정 HTML과 동일하게 유지
 
 ### 2026-01-08 (v4) - funnel 대시보드 React 변환
 **퍼널 대시보드 신규 변환 (`src/app/funnel/ReactView.tsx`)**
@@ -515,6 +662,12 @@ HTML과 동일한 함수명으로 변경:
 - **✅ 신규 변환**: 2026-01-08 React로 변환 완료
 - **✅ 동일**: 모든 함수명/변수명이 HTML과 완전히 일치
 - **⚠️ 구현방식 다름**: React 훅 패턴 사용 (useMemo, useCallback, D3.js)
+
+### FAQ & 문의하기 (QnA)
+- **✅ 신규 변환**: 2026-01-09 React로 변환 완료
+- **✅ 동일**: 34개 CSS 클래스명, 모든 UI 텍스트, FAQ 데이터 일치
+- **⚠️ 접두사 변경**: 4개 클래스 `qna-` 접두사 추가 (전역 충돌 방지)
+- **⚠️ 구현방식 다름**: React 훅 패턴 사용 (useState, useMemo)
 
 ### 주요 패턴
 | HTML 패턴 | React 패턴 | 함수명 |
