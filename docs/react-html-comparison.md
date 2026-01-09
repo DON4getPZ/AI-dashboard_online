@@ -472,6 +472,42 @@
 > React에서는 이들을 useMemo, useCallback, useState를 활용한 선언적 패턴으로 변환하였습니다.
 > 대부분의 유틸리티 함수명과 상태 변수명은 HTML과 동일하게 유지되어 있습니다.
 
+### 3.17 계절성 분석 변수 비교 (요일별 분석 탭)
+
+| HTML 변수명 | React 변수명 | 상태 | 비고 |
+|-------------|--------------|------|------|
+| `quarterlyTrendChartInstance` | Chart.js `Bar` 컴포넌트 | ⚠️ 구현방식 다름 | Chart.js 인스턴스 → 컴포넌트 |
+| `channelDayRoasChartInstance` | Chart.js `Bar` 컴포넌트 | ⚠️ 구현방식 다름 | Chart.js 인스턴스 → 컴포넌트 |
+| `channelDaySelectorInitialized` | (불필요) | ⚠️ 구현방식 다름 | React는 useState로 관리 |
+| (DOM `#channelDaySelector`) | `selectedChannelDay` (useState) | ✅ 신규 | React UI 상태 |
+| (탭 DOM 상태) | `dayAnalysisSubtab` (useState) | ✅ 신규 | 하위탭 상태 |
+| `retargetingSortState['seasonality']` | `daySortConfig` (useState) | ⚠️ 명칭 다름 | 정렬 상태 관리 |
+
+### 3.18 계절성 분석 함수 비교 (요일별 분석 탭)
+
+| HTML 함수명 | React 구현 | 상태 |
+|-------------|------------|------|
+| `renderQuarterlyTrendChart()` | Chart.js `Bar` 컴포넌트 | ⚠️ 구현방식 다름 |
+| `renderQuarterlyTable()` | JSX 인라인 렌더링 | ⚠️ 구현방식 다름 |
+| `renderQuarterlyKpiCards(data)` | JSX 인라인 렌더링 | ⚠️ 구현방식 다름 |
+| `renderQuarterlySeasonalityInsight(data, insights)` | JSX 인라인 렌더링 | ⚠️ 구현방식 다름 |
+| `renderSeasonalityTable()` | JSX 인라인 렌더링 + `daySortConfig` | ⚠️ 구현방식 다름 |
+| `renderSeasonalityCategoryTable()` | JSX 인라인 렌더링 | ⚠️ 구현방식 다름 |
+| `renderChannelDayKpiCards()` | JSX 인라인 렌더링 | ⚠️ 구현방식 다름 |
+| `renderChannelDayRoasChart()` | Chart.js `Bar` 컴포넌트 | ⚠️ 구현방식 다름 |
+| `initChannelDaySelector()` | `selectedChannelDay` useState | ⚠️ 구현방식 다름 |
+| `renderChannelDayTableForCategory(cat)` | JSX 인라인 렌더링 | ⚠️ 구현방식 다름 |
+| `renderChannelDayInsight()` | JSX 인라인 렌더링 | ⚠️ 구현방식 다름 |
+
+### 3.19 스타일 상수 비교 (요일별 분석 탭)
+
+| HTML 상수 | React 값 | 상태 | 비고 |
+|-----------|----------|------|------|
+| `--primary-main: #673ab7` | `#673ab7` | ✅ 동일 | v9에서 정렬 화살표 색상 통일 |
+| `--grey-600: #757575` | `#757575` | ✅ 동일 | |
+
+> **참고**: `daySortConfig`는 HTML의 `retargetingSortState['seasonality']`와 명칭은 다르지만, UI 정렬 상태 관리용으로 Phase 3 API 연결에 영향 없음.
+
 ---
 
 ## 4. 시계열 대시보드 (timeseries)
@@ -825,6 +861,17 @@
 ---
 
 ## 변경 이력
+
+### 2026-01-09 (v9) - type 분기별 추이 차트 및 스타일 통일
+**유형별 대시보드 계절성 분석 탭 (Section 3.17, 3.18, 3.19 추가)**
+
+- **분기별 추이 차트 교체**: 커스텀 SVG 렌더링 → Chart.js `Bar` 컴포넌트 (react-chartjs-2)
+  - 비용 막대 + ROAS/CPA 라인 혼합 차트로 HTML과 동일하게 구현
+- **정렬 화살표 색상 통일**: `#1976d2` (파랑) → `#673ab7` (보라, --primary-main)
+- **timeseries 차트 legend 수정**: `pointBackgroundColor: color` 추가 (속이 빈 원 → 채워진 원)
+- 계절성 분석 변수 비교 테이블 추가 (Section 3.17)
+- 계절성 분석 함수 비교 테이블 추가 (Section 3.18)
+- 스타일 상수 비교 테이블 추가 (Section 3.19)
 
 ### 2026-01-09 (v8) - timeseries 세그먼트 트렌드 변수명 통일
 **시계열 대시보드 세그먼트 트렌드 탭 (Section 4.8, 4.9 추가)**
