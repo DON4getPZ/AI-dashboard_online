@@ -147,10 +147,13 @@
 | `calcPercentileRanks(...)` | `calcPercentileRanks(...)` | ✅ 동일 |
 | `calculateEfficiencyScores(data)` | `calculateEfficiencyScores(data)` | ✅ 동일 |
 | `classifyCreatives(scoredData)` | `classifyCreatives(scoredData)` | ✅ 동일 |
-| `filterHighEfficiency(data)` | `filterHighEfficiency(data)` | ✅ 동일 |
-| `filterPotential(data)` | `filterPotential(data)` | ✅ 동일 |
-| `filterNeedsAttention(data)` | `filterNeedsAttention(data)` | ✅ 동일 |
-| `filterLowEfficiency(data)` | `filterLowEfficiency(data)` | ✅ 동일 |
+| `_filterHighEfficiency(data)` | `filterHighEfficiency(data)` | ⚠️ 접두사 `_` 제거 |
+| `_filterPotential(data)` | `filterPotential(data)` | ⚠️ 접두사 `_` 제거 |
+| `_filterNeedsAttention(data)` | `filterNeedsAttention(data)` | ⚠️ 접두사 `_` 제거 |
+| `_filterLowEfficiency(data)` | `filterLowEfficiency(data)` | ⚠️ 접두사 `_` 제거 |
+| `updateKpiToggleUI()` | `handleKpiFilterToggle()` | ⚠️ 함수명 변경 (React 컨벤션) |
+
+> **참고**: `_` 접두사는 HTML에서 private 함수를 표시하는 컨벤션입니다. React에서는 모듈 스코프로 관리되므로 제거했습니다. 데이터 연결에 영향 없음.
 
 ### 2.5 필터 관련 함수 비교
 
@@ -539,6 +542,49 @@
 | `forecast/insights.json` | `/forecast/insights.json` | ✅ 동일 |
 | `forecast/segment_*.csv` | `/forecast/segment_*.csv` | ✅ 동일 |
 
+### 4.7 UI 상태 변수명 차이 (Phase 3 영향 없음)
+
+| HTML 변수명 | React 변수명 | 상태 | 비고 |
+|-------------|--------------|------|------|
+| `alertsExpanded` | `insightsDashboardExpanded` | ⚠️ 명칭 다름 | UI 펼침 상태 |
+| `recommendationsExpanded` | `recentChangesExpanded` | ⚠️ 명칭 다름 | UI 펼침 상태 |
+| `currentSimSegmentType` | `simSegmentType` | ⚠️ 명칭 다름 | 시뮬레이션 필터 |
+| `updateImprovementTrends()` | `improvements()` | ⚠️ 명칭 다름 | 함수 → useCallback |
+| `updateDeclineTrends()` | `declines()` | ⚠️ 명칭 다름 | 함수 → useCallback |
+
+> **참고**: 위 변수들은 UI 상태 관리용으로, 백엔드 API 연결에 영향을 주지 않습니다.
+
+### 4.8 세그먼트 트렌드 변수 비교 (탭 2)
+
+| HTML 변수명 | React 변수명 | 상태 | 비고 |
+|-------------|--------------|------|------|
+| `segmentTrendChart` | React-Chartjs-2 컴포넌트 | ⚠️ 구현방식 다름 | Chart.js 인스턴스 → 컴포넌트 |
+| `segmentTrendViewType` | `segmentTrendViewType` (useState) | ✅ 동일 | v8에서 통일 |
+| `segmentTrendMetric` | `segmentTrendMetric` (useState) | ✅ 동일 | |
+| `segmentTrendStartDate` | `segmentTrendStartDate` (useState) | ✅ 동일 | |
+| `segmentTrendEndDate` | `segmentTrendEndDate` (useState) | ✅ 동일 | |
+| (DOM 상태) | `segmentTrendType` (useState) | ✅ 신규 | 탭 타입 (overall/channel 등) |
+| (체크박스 상태) | `segmentTrendSelectedItems` (useState) | ✅ 신규 | 선택된 항목 배열 |
+| (드롭다운 상태) | `segmentTrendDropdownOpen` (useState) | ✅ 신규 | React UI 상태 |
+| (토글 상태) | `segmentTrendChartToggles` (useState) | ✅ 신규 | overall 차트 토글 |
+| (데이터 계산) | `segmentTrendUniqueItems` (useMemo) | ✅ 신규 | 유니크 항목 추출 |
+| (날짜 계산) | `segmentTrendDateRange` (useMemo) | ✅ 신규 | min/max 날짜 계산 |
+| (차트 데이터) | `segmentTrendChartData` (useMemo) | ⚠️ 구현방식 다름 | 함수 내 계산 → useMemo |
+| (차트 옵션) | `segmentTrendChartOptions` (useMemo) | ⚠️ 구현방식 다름 | 인라인 → useMemo |
+
+### 4.9 세그먼트 트렌드 함수 비교 (탭 2)
+
+| HTML 함수명/로직 | React 구현 | 상태 |
+|------------------|------------|------|
+| `renderSegmentTrendDropdown()` | JSX 인라인 + `segmentTrendUniqueItems` | ⚠️ 구현방식 다름 |
+| `updateSegmentTrendDropdownLabel()` | JSX 조건부 렌더링 | ⚠️ 구현방식 다름 |
+| `renderSegmentTrendChart()` | `segmentTrendChartData` + Line 컴포넌트 | ⚠️ 구현방식 다름 |
+| `addEventListener('click', dropdown)` | `onClick` props | ⚠️ 구현방식 다름 |
+| `addEventListener('change', selectAll)` | `onChange` props | ⚠️ 구현방식 다름 |
+| `document.addEventListener('click', outsideClick)` | `useEffect` 외부 클릭 핸들러 | ⚠️ 구현방식 다름 |
+
+> **참고**: React에 추가된 변수들(`segmentTrendType`, `segmentTrendSelectedItems` 등)은 React UI 상태 관리를 위한 신규 변수로, HTML에서는 DOM 상태로 관리되던 항목들입니다.
+
 ---
 
 ## 5. 퍼널 대시보드 (funnel)
@@ -662,11 +708,13 @@
 
 | HTML 함수명 | React 함수명 | 상태 | 비고 |
 |-------------|--------------|------|------|
-| `toggleFaq(button)` | `toggleFaq(question)` | ⚠️ 구현방식 다름 | 파라미터 타입 다름 |
-| `submitForm(event)` | `handleSubmit(e)` | ⚠️ 구현방식 다름 | React 이벤트 핸들러 |
+| `toggleFaq(button)` | `toggleFaq(question)` | ⚠️ 파라미터 다름 | DOM 요소 → 문자열 |
+| `submitForm(event)` | `handleSubmit(e)` | ⚠️ 함수명 다름 | React 컨벤션 `handle*` |
 | (탭 클릭 익명함수) | `setActiveTab()` | ⚠️ 구현방식 다름 | useState setter |
 | (검색 input 익명함수) | `useMemo` + `setSearchTerm()` | ⚠️ 구현방식 다름 | React 패턴 |
 | - | `isFaqOpen(question)` | 신규 | 검색 시 자동 열기 로직 |
+
+> **참고**: `submitForm` → `handleSubmit` 변경은 React 컨벤션입니다. EmailJS 연동 로직은 동일하므로 Phase 3 영향 없음.
 
 ### 7.3 CSS 클래스명 비교
 
@@ -778,6 +826,24 @@
 
 ## 변경 이력
 
+### 2026-01-09 (v8) - timeseries 세그먼트 트렌드 변수명 통일
+**시계열 대시보드 세그먼트 트렌드 탭 (Section 4.8, 4.9 추가)**
+
+- **변수명 통일**: `segmentTrendView` → `segmentTrendViewType` (HTML과 동일하게)
+- 세그먼트 트렌드 변수 비교 테이블 추가 (Section 4.8)
+- 세그먼트 트렌드 함수 비교 테이블 추가 (Section 4.9)
+- React 신규 변수 문서화 (`segmentTrendType`, `segmentTrendSelectedItems`, `segmentTrendDropdownOpen`, `segmentTrendChartToggles`, `segmentTrendUniqueItems`, `segmentTrendDateRange`, `segmentTrendChartData`, `segmentTrendChartOptions`)
+
+### 2026-01-09 (v7) - 전체 대시보드 최종 명칭 점검
+**모든 대시보드 함수명/상수명/변수명 최종 점검 완료**
+
+- 5개 대시보드 병렬 비교 분석 수행
+- Phase 3 데이터 연결 영향 분석 섹션 추가
+- 소재별 대시보드: `_filter*` 접두사 제거, `updateKpiToggleUI` → `handleKpiFilterToggle` 차이 문서화
+- 시계열 대시보드: UI 상태 변수명 차이 (Section 4.7) 추가
+- QnA 페이지: `submitForm` → `handleSubmit` 차이 문서화
+- **결론**: Phase 3 백엔드 API 연결에 영향을 주는 명칭 불일치 없음
+
 ### 2026-01-09 (v6) - type/timeseries 대시보드 상수명 통일
 **유형별 대시보드 함수/변수 상세 비교 (`docs/react-html-comparison.md` Section 3)**
 
@@ -880,6 +946,7 @@ HTML과 동일한 함수명으로 변경:
 
 ### 소재별 대시보드
 - **✅ 동일**: 대부분의 함수명/변수명 일치
+- **⚠️ 접두사 제거**: `_filter*` → `filter*` (private 표기 제거)
 - **⚠️ 구현방식 다름**: React 훅 패턴 사용 (useMemo, useState, useCallback)
 
 ### 유형별 대시보드 (type)
@@ -887,7 +954,8 @@ HTML과 동일한 함수명으로 변경:
 - **⚠️ 구현방식 다름**: 약 100개+ 렌더링/초기화/이벤트 함수가 React 훅 패턴으로 변환 (기능 동일)
 
 ### 시계열 대시보드 (timeseries)
-- **✅ 동일**: 10개 변수명 HTML 기준으로 통일 완료
+- **✅ 동일**: 상수, 데이터 변수, 유틸리티 함수 모두 일치
+- **⚠️ UI 변수명 다름**: `alertsExpanded` → `insightsDashboardExpanded` 등 (Phase 3 영향 없음)
 - **⚠️ 구현방식 다름**: React 훅 패턴 사용 (useMemo, useCallback)
 
 ### 퍼널 대시보드 (funnel)
@@ -899,6 +967,7 @@ HTML과 동일한 함수명으로 변경:
 - **✅ 신규 변환**: 2026-01-09 React로 변환 완료
 - **✅ 동일**: 34개 CSS 클래스명, 모든 UI 텍스트, FAQ 데이터 일치
 - **⚠️ 접두사 변경**: 4개 클래스 `qna-` 접두사 추가 (전역 충돌 방지)
+- **⚠️ 함수명 변경**: `submitForm` → `handleSubmit` (React 컨벤션)
 - **⚠️ 구현방식 다름**: React 훅 패턴 사용 (useState, useMemo)
 
 ### 주요 패턴
@@ -907,3 +976,39 @@ HTML과 동일한 함수명으로 변경:
 | `function xxx()` | `const xxx = useMemo/useCallback` | ✅ 동일하게 유지 |
 | DOM 직접 조작 | JSX + 상태 기반 렌더링 | - |
 | Chart.js 직접 사용 | react-chartjs-2 컴포넌트 | - |
+
+---
+
+## Phase 3 데이터 연결 영향 분석 (최종 점검 결과)
+
+### ✅ 영향 없음 - 모두 동일
+
+| 항목 | 설명 |
+|------|------|
+| **상수** | `TABLE_ROW_LIMIT`, `INITIAL_ALERTS_COUNT`, `DETAIL_DEFAULT_LIMIT` 등 모두 통일 완료 |
+| **데이터 변수** | `insightsData`, `forecastData`, `allData` 등 모두 동일 |
+| **유틸리티 함수** | `parseCSV`, `formatNumber`, `filterDataByDateRange` 등 모두 동일 |
+| **필터 변수** | `filters`, `currentPeriod`, `timeseriesFilters` 등 모두 동일 |
+| **데이터 경로** | `/type/type_insights.json`, `/forecast/*.csv` 등 모두 동일 |
+
+### ⚠️ 차이 있으나 영향 없음
+
+| 대시보드 | 차이 항목 | 이유 |
+|----------|----------|------|
+| **소재별** | `_filter*` → `filter*` | private 표기 제거, 내부 함수 |
+| **소재별** | `updateKpiToggleUI` → `handleKpiFilterToggle` | UI 이벤트 핸들러 |
+| **시계열** | `alertsExpanded` → `insightsDashboardExpanded` | UI 펼침 상태 |
+| **시계열** | `updateImprovementTrends` → `improvements` | 렌더링 함수 |
+| **QnA** | `submitForm` → `handleSubmit` | 이벤트 핸들러 (React 컨벤션) |
+
+### 결론
+
+**Phase 3 백엔드 API 연결에 영향을 주는 명칭 불일치는 없습니다.**
+
+모든 차이점은:
+1. UI 상태 관리 변수 (펼침/접힘 등)
+2. 이벤트 핸들러 함수명 (React `handle*` 컨벤션)
+3. Private 함수 표기 (`_` 접두사)
+4. 렌더링/초기화 함수 (React 훅 패턴으로 변환)
+
+위 항목들은 프론트엔드 내부 구현에만 해당하며, API 요청/응답 처리에는 영향을 주지 않습니다.

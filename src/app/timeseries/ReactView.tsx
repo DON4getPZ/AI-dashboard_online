@@ -1,7 +1,30 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from 'chart.js'
+import { Line } from 'react-chartjs-2'
 import './timeseries-original.css'
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+)
 
 // 타입 정의 - 원본 CSV 컬럼명과 동일하게
 interface ForecastData {
@@ -228,6 +251,74 @@ export default function ReactView() {
   const [budgetAdjustments, setBudgetAdjustments] = useState<Record<string, number>>({})
   const [selectedSimItems, setSelectedSimItems] = useState<string[]>([])
   const [simItemDropdownOpen, setSimItemDropdownOpen] = useState(false)
+
+  // 세그먼트 트렌드 탭 상태
+  const [segmentTrendType, setSegmentTrendType] = useState<'overall' | 'channel' | 'product' | 'brand' | 'promotion'>('overall')
+  const [segmentTrendViewType, setSegmentTrendViewType] = useState<'monthly' | 'weekly' | 'daily'>('monthly')
+  const [segmentTrendMetric, setSegmentTrendMetric] = useState<'roas' | 'cost' | 'revenue' | 'conversions'>('roas')
+  const [segmentTrendSelectedItems, setSegmentTrendSelectedItems] = useState<string[]>([])
+  const [segmentTrendStartDate, setSegmentTrendStartDate] = useState('')
+  const [segmentTrendEndDate, setSegmentTrendEndDate] = useState('')
+  const [segmentTrendDropdownOpen, setSegmentTrendDropdownOpen] = useState(false)
+  const [segmentTrendChartToggles, setSegmentTrendChartToggles] = useState({
+    cost: true,
+    cpm: false,
+    cpc: false,
+    cpa: false,
+    roas: true
+  })
+
+  // 세그먼트 타입별 고유 항목 목록 (HTML updateSegmentTrendCheckboxes와 동일)
+  const segmentTrendUniqueItems = useMemo(() => {
+    if (segmentTrendType === 'overall' || !segmentData[segmentTrendType]) {
+      return []
+    }
+    const data = segmentData[segmentTrendType]
+    const uniqueNames = [...new Set(data.map(row =>
+      row.name || row[segmentTrendType as keyof SegmentData] as string
+    ))].filter(Boolean) as string[]
+    return uniqueNames
+  }, [segmentData, segmentTrendType])
+
+  // 세그먼트 트렌드 날짜 범위 (데이터 기반 min/max)
+  const segmentTrendDateRange = useMemo(() => {
+    // channel 데이터를 기본으로 사용 (HTML과 동일)
+    const data = segmentData['channel'] || []
+    if (data.length === 0) return { minDate: '', maxDate: '' }
+
+    const dates = data.map(row => row['일 구분'] as string).filter(Boolean).sort()
+    if (dates.length === 0) return { minDate: '', maxDate: '' }
+
+    return { minDate: dates[0], maxDate: dates[dates.length - 1] }
+  }, [segmentData])
+
+  // 세그먼트 타입 변경 시 처음 3개 자동 선택 및 날짜 초기화 (HTML과 동일)
+  useEffect(() => {
+    if (segmentTrendType !== 'overall' && segmentTrendUniqueItems.length > 0) {
+      const initialItems = segmentTrendUniqueItems.slice(0, 3)
+      setSegmentTrendSelectedItems(initialItems)
+      setSegmentTrendDropdownOpen(false)
+      // 날짜 기본값 설정
+      if (segmentTrendDateRange.minDate && segmentTrendDateRange.maxDate) {
+        setSegmentTrendStartDate(segmentTrendDateRange.minDate)
+        setSegmentTrendEndDate(segmentTrendDateRange.maxDate)
+      }
+    } else {
+      setSegmentTrendSelectedItems([])
+    }
+  }, [segmentTrendType, segmentTrendUniqueItems, segmentTrendDateRange])
+
+  // 드롭다운 외부 클릭 시 닫기 (HTML과 동일)
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (!target.closest('.segment-trend-dropdown-container')) {
+        setSegmentTrendDropdownOpen(false)
+      }
+    }
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [])
 
   // 데이터 로드
   useEffect(() => {
@@ -939,6 +1030,458 @@ export default function ReactView() {
       }
     }
   }, [simulationItems, selectedSimItems, budgetAdjustments])
+
+  // 세그먼트 트렌드 - 전체 성과 예측 차트 데이터 (HTML updateOverallForecastChart와 동일)
+  const overallForecastChartData = useMemo(() => {
+    if (!forecastData || forecastData.length === 0) {
+      return { labels: [], datasets: [], hasAmountMetric: false, hasEfficiencyMetric: false }
+    }
+
+    // 뷰 타입에 따라 데이터 집계 (HTML aggregateData 함수와 동일)
+    let aggregatedData: ForecastData[]
+    if (segmentTrendViewType === 'daily') {
+      aggregatedData = forecastData
+    } else {
+      const groups: { [key: string]: { 비용: number; 노출: number; 클릭: number; 전환수: number; 전환값: number; hasActual: boolean; hasForecast: boolean } } = {}
+
+      forecastData.forEach(row => {
+        const date = new Date(row['일 구분'])
+        let key: string
+
+        if (segmentTrendViewType === 'weekly') {
+          const day = date.getDay()
+          const diff = date.getDate() - day + (day === 0 ? -6 : 1)
+          const monday = new Date(date)
+          monday.setDate(diff)
+          key = monday.toISOString().split('T')[0]
+        } else {
+          // monthly
+          key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+        }
+
+        if (!groups[key]) {
+          groups[key] = { 비용: 0, 노출: 0, 클릭: 0, 전환수: 0, 전환값: 0, hasActual: false, hasForecast: false }
+        }
+
+        groups[key].비용 += row['비용_예측'] || 0
+        groups[key].노출 += row['노출_예측'] || 0
+        groups[key].클릭 += row['클릭_예측'] || 0
+        groups[key].전환수 += row['전환수_예측'] || 0
+        groups[key].전환값 += row['전환값_예측'] || 0
+
+        if (row.type === 'actual') groups[key].hasActual = true
+        if (row.type === 'forecast') groups[key].hasForecast = true
+      })
+
+      aggregatedData = Object.entries(groups)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([period, values]) => ({
+          '일 구분': period,
+          '비용_예측': values.비용,
+          '노출_예측': values.노출,
+          '클릭_예측': values.클릭,
+          '전환수_예측': values.전환수,
+          '전환값_예측': values.전환값,
+          type: (values.hasForecast && !values.hasActual ? 'forecast' :
+                 values.hasForecast && values.hasActual ? 'forecast' : 'actual') as 'actual' | 'forecast'
+        }))
+    }
+
+    const labels = aggregatedData.map(d => d['일 구분'])
+    const lastActualIndex = aggregatedData.findIndex(d => d.type === 'forecast') - 1
+
+    // 실제값과 예측값을 분리하는 함수
+    const createSplitDatasets = (label: string, data: number[], color: string, yAxisID: string) => {
+      const actualData = data.map((val, idx) => {
+        const type = aggregatedData[idx].type
+        return (type === 'actual') ? val : null
+      })
+      const forecastDataArr = data.map((val, idx) => {
+        const type = aggregatedData[idx].type
+        return (type === 'forecast') ? val : null
+      })
+
+      // 연결점 추가
+      if (lastActualIndex >= 0 && lastActualIndex < data.length - 1) {
+        forecastDataArr[lastActualIndex] = data[lastActualIndex]
+      }
+
+      return [
+        {
+          label: label,
+          data: actualData,
+          borderColor: color,
+          backgroundColor: color.replace(')', ', 0.1)').replace('rgb', 'rgba'),
+          pointBackgroundColor: color,
+          borderWidth: 2,
+          pointRadius: 3,
+          pointStyle: 'circle' as const,
+          yAxisID: yAxisID,
+          fill: false,
+          tension: 0.4,
+          spanGaps: false
+        },
+        {
+          label: label + ' (예측)',
+          data: forecastDataArr,
+          borderColor: color,
+          backgroundColor: color.replace(')', ', 0.05)').replace('rgb', 'rgba'),
+          borderWidth: 2,
+          borderDash: [6, 4],
+          pointRadius: 4,
+          pointStyle: 'triangle' as const,
+          yAxisID: yAxisID,
+          fill: false,
+          tension: 0.4,
+          spanGaps: false
+        }
+      ]
+    }
+
+    const datasets: any[] = []
+    const hasAmountMetric = segmentTrendChartToggles.cost
+    const hasEfficiencyMetric = segmentTrendChartToggles.cpm || segmentTrendChartToggles.cpc || segmentTrendChartToggles.cpa || segmentTrendChartToggles.roas
+
+    if (segmentTrendChartToggles.cost) {
+      const data = aggregatedData.map(d => d['비용_예측'] || 0)
+      datasets.push(...createSplitDatasets('비용', data, 'rgb(103, 58, 183)', 'y'))
+    }
+
+    if (segmentTrendChartToggles.cpm) {
+      const data = aggregatedData.map(d => {
+        const cost = d['비용_예측'] || 0
+        const impressions = d['노출_예측'] || 0
+        return impressions > 0 ? (cost / impressions * 1000) : 0
+      })
+      datasets.push(...createSplitDatasets('CPM', data, 'rgb(255, 171, 0)', hasAmountMetric ? 'y1' : 'y'))
+    }
+
+    if (segmentTrendChartToggles.cpc) {
+      const data = aggregatedData.map(d => {
+        const cost = d['비용_예측'] || 0
+        const clicks = d['클릭_예측'] || 0
+        return clicks > 0 ? (cost / clicks) : 0
+      })
+      datasets.push(...createSplitDatasets('CPC', data, 'rgb(33, 150, 243)', hasAmountMetric ? 'y1' : 'y'))
+    }
+
+    if (segmentTrendChartToggles.cpa) {
+      const data = aggregatedData.map(d => {
+        const cost = d['비용_예측'] || 0
+        const conversions = d['전환수_예측'] || 0
+        return conversions > 0 ? (cost / conversions) : 0
+      })
+      datasets.push(...createSplitDatasets('CPA', data, 'rgb(255, 152, 0)', hasAmountMetric ? 'y1' : 'y'))
+    }
+
+    if (segmentTrendChartToggles.roas) {
+      const data = aggregatedData.map(d => {
+        const cost = d['비용_예측'] || 0
+        const value = d['전환값_예측'] || 0
+        return cost > 0 ? (value / cost * 100) : 0
+      })
+      datasets.push(...createSplitDatasets('ROAS', data, 'rgb(0, 200, 83)', hasAmountMetric ? 'y1' : 'y'))
+    }
+
+    return { labels, datasets, hasAmountMetric, hasEfficiencyMetric }
+  }, [forecastData, segmentTrendChartToggles, segmentTrendViewType])
+
+  // 전체 성과 예측 차트 옵션
+  const overallForecastChartOptions = useMemo(() => {
+    const showRightAxis = overallForecastChartData.hasAmountMetric && overallForecastChartData.hasEfficiencyMetric
+
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'index' as const,
+        intersect: false
+      },
+      plugins: {
+        legend: {
+          position: 'top' as const,
+          align: 'end' as const,
+          labels: {
+            usePointStyle: true,
+            padding: 15,
+            filter: (item: any) => !item.text.includes('(예측)')
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(33, 33, 33, 0.9)',
+          padding: 12,
+          cornerRadius: 8,
+          callbacks: {
+            label: (context: any) => {
+              let label = context.dataset.label || ''
+              const baseLabel = label.replace(' (예측)', '')
+              let formattedValue = ''
+
+              if (baseLabel === 'ROAS') {
+                formattedValue = context.parsed.y.toFixed(1) + '%'
+              } else if (baseLabel === '비용' || baseLabel === 'CPA') {
+                formattedValue = formatNumber(context.parsed.y) + '원'
+              } else if (baseLabel === 'CPM' || baseLabel === 'CPC') {
+                formattedValue = formatNumber(Math.round(context.parsed.y)) + '원'
+              } else {
+                formattedValue = formatNumber(context.parsed.y)
+              }
+
+              let result = baseLabel + ': ' + formattedValue
+              if (context.dataset.borderDash) {
+                result += ' (예측)'
+              }
+              return result
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { maxRotation: 45, minRotation: 45 }
+        },
+        y: {
+          type: 'linear' as const,
+          position: 'left' as const,
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: overallForecastChartData.hasAmountMetric ? '금액 (원)' : '효율 지표'
+          }
+        },
+        ...(showRightAxis ? {
+          y1: {
+            type: 'linear' as const,
+            position: 'right' as const,
+            beginAtZero: true,
+            grid: { drawOnChartArea: false },
+            title: { display: true, text: '효율 지표' }
+          }
+        } : {})
+      }
+    }
+  }, [overallForecastChartData])
+
+  // 세그먼트별 트렌드 차트 데이터 (HTML updateSegmentTrendChart와 동일)
+  const segmentTrendChartData = useMemo(() => {
+    if (segmentTrendSelectedItems.length === 0 || !segmentData[segmentTrendType]) {
+      return { labels: [], datasets: [] }
+    }
+
+    const data = segmentData[segmentTrendType] || []
+
+    // 날짜 키 생성 함수 (뷰 타입에 따라)
+    const getDateKey = (dateStr: string) => {
+      const date = new Date(dateStr)
+      if (segmentTrendViewType === 'weekly') {
+        const day = date.getDay()
+        const diff = date.getDate() - day + (day === 0 ? -6 : 1)
+        const monday = new Date(date)
+        monday.setDate(diff)
+        return monday.toISOString().split('T')[0]
+      } else if (segmentTrendViewType === 'monthly') {
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+      }
+      return dateStr
+    }
+
+    // 날짜별로 데이터 그룹화
+    const dateGroups: { [key: string]: { [segment: string]: { cost: number; conversions: number; revenue: number; hasActual: boolean; hasForecast: boolean } } } = {}
+
+    data.forEach((row: any) => {
+      const rowDate = row['일 구분']
+      if (!rowDate) return
+
+      // 기간 필터 적용
+      if (segmentTrendStartDate && rowDate < segmentTrendStartDate) return
+      if (segmentTrendEndDate && rowDate > segmentTrendEndDate) return
+
+      const dateKey = getDateKey(rowDate)
+      const segmentName = row.name || row[segmentTrendType]
+
+      if (!segmentTrendSelectedItems.includes(segmentName)) return
+
+      if (!dateGroups[dateKey]) {
+        dateGroups[dateKey] = {}
+      }
+      if (!dateGroups[dateKey][segmentName]) {
+        dateGroups[dateKey][segmentName] = {
+          cost: 0,
+          conversions: 0,
+          revenue: 0,
+          hasActual: false,
+          hasForecast: false
+        }
+      }
+
+      dateGroups[dateKey][segmentName].cost += parseFloat(row['비용_예측']) || 0
+      dateGroups[dateKey][segmentName].conversions += parseFloat(row['전환수_예측']) || 0
+      dateGroups[dateKey][segmentName].revenue += parseFloat(row['전환값_예측']) || 0
+
+      if (row.type === 'actual') dateGroups[dateKey][segmentName].hasActual = true
+      if (row.type === 'forecast') dateGroups[dateKey][segmentName].hasForecast = true
+    })
+
+    const dates = Object.keys(dateGroups).sort()
+
+    // 지표별 값 계산 함수
+    const getMetricValue = (seg: { cost: number; revenue: number; conversions: number } | undefined) => {
+      if (!seg) return 0
+      switch (segmentTrendMetric) {
+        case 'roas':
+          return seg.cost > 0 ? (seg.revenue / seg.cost * 100) : 0
+        case 'cost':
+          return seg.cost
+        case 'revenue':
+          return seg.revenue
+        case 'conversions':
+          return seg.conversions
+        default:
+          return seg.cost > 0 ? (seg.revenue / seg.cost * 100) : 0
+      }
+    }
+
+    // 데이터셋 생성
+    const colors = ['#673ab7', '#2196f3', '#ff9800', '#4caf50', '#00c853', '#9c27b0', '#03a9f4', '#8bc34a', '#ff5722']
+    const datasets = segmentTrendSelectedItems.map((segmentName, index) => {
+      const values = dates.map(date => {
+        const seg = dateGroups[date]?.[segmentName]
+        return getMetricValue(seg)
+      })
+
+      // 실제/예측 구분
+      const actualValues = values.map((val, idx) => {
+        const seg = dateGroups[dates[idx]]?.[segmentName]
+        const isActual = seg && seg.hasActual && !seg.hasForecast
+        const isMixed = seg && seg.hasActual && seg.hasForecast
+        return (isActual || isMixed) ? val : null
+      })
+      const forecastValues = values.map((val, idx) => {
+        const seg = dateGroups[dates[idx]]?.[segmentName]
+        const isForecast = seg && seg.hasForecast && !seg.hasActual
+        return isForecast ? val : null
+      })
+
+      // 연결을 위해 마지막 실제값을 예측 시작점에 추가
+      const lastActualIdx = actualValues.reduce((last, v, i) => v !== null ? i : last, -1)
+      if (lastActualIdx >= 0 && lastActualIdx < forecastValues.length - 1) {
+        forecastValues[lastActualIdx] = actualValues[lastActualIdx]
+      }
+
+      const color = colors[index % colors.length]
+
+      return [
+        {
+          label: segmentName,
+          data: actualValues,
+          borderColor: color,
+          backgroundColor: color + '1a',
+          pointBackgroundColor: color,
+          borderWidth: 2,
+          pointRadius: 3,
+          pointStyle: 'circle' as const,
+          fill: false,
+          tension: 0.4,
+          spanGaps: false
+        },
+        {
+          label: segmentName + ' (예측)',
+          data: forecastValues,
+          borderColor: color,
+          backgroundColor: color + '0d',
+          borderWidth: 2,
+          borderDash: [6, 4],
+          pointRadius: 4,
+          pointStyle: 'triangle' as const,
+          fill: false,
+          tension: 0.4,
+          spanGaps: false
+        }
+      ]
+    }).flat()
+
+    return { labels: dates, datasets }
+  }, [segmentData, segmentTrendType, segmentTrendSelectedItems, segmentTrendViewType, segmentTrendMetric, segmentTrendStartDate, segmentTrendEndDate])
+
+  // 세그먼트별 차트 옵션
+  const segmentTrendChartOptions = useMemo(() => {
+    const metricLabels: { [key: string]: string } = {
+      roas: 'ROAS (%)',
+      cost: '비용 (원)',
+      revenue: '전환값 (원)',
+      conversions: '전환수'
+    }
+
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'index' as const,
+        intersect: false
+      },
+      plugins: {
+        legend: {
+          position: 'top' as const,
+          align: 'end' as const,
+          labels: {
+            usePointStyle: true,
+            padding: 15,
+            filter: (item: any) => !item.text.includes('(예측)')
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(33, 33, 33, 0.9)',
+          padding: 12,
+          cornerRadius: 8,
+          callbacks: {
+            label: (context: any) => {
+              let label = context.dataset.label || ''
+              label = label.replace(' (예측)', '')
+              if (label) label += ': '
+
+              if (segmentTrendMetric === 'roas') {
+                label += context.parsed.y.toFixed(1) + '%'
+              } else if (segmentTrendMetric === 'conversions') {
+                label += formatNumber(context.parsed.y) + '건'
+              } else {
+                label += formatNumber(context.parsed.y) + '원'
+              }
+
+              if (context.dataset.borderDash) {
+                label += ' (예측)'
+              }
+              return label
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { maxRotation: 45, minRotation: 45 }
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: metricLabels[segmentTrendMetric] || 'ROAS (%)'
+          },
+          ticks: {
+            callback: (value: any) => {
+              if (segmentTrendMetric === 'roas') {
+                return value + '%'
+              } else if (segmentTrendMetric === 'conversions') {
+                return formatNumber(value)
+              } else {
+                return formatNumber(value)
+              }
+            }
+          }
+        }
+      }
+    }
+  }, [segmentTrendMetric])
 
   // 기간 전환
   const switchAiSummaryPeriod = (period: string) => {
@@ -2239,12 +2782,287 @@ export default function ReactView() {
 
             {/* 탭 2: 주요 항목 트렌드 */}
             {analysisTab === 'segment-trend' && (
-              <div className="card" style={{ padding: 24 }}>
-                <div style={{ textAlign: 'center', padding: 40, color: 'var(--grey-500)' }}>
-                  <div style={{ fontSize: 48, marginBottom: 16 }}>📊</div>
-                  <div>주요 항목 트렌드 차트</div>
-                  <div style={{ fontSize: 13, marginTop: 8 }}>세그먼트별 성과 추이를 확인할 수 있습니다.</div>
+              <div>
+                {/* 세그먼트 타입 하위탭 및 집계 단위 */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <div className="view-type-section" style={{ marginBottom: 0 }}>
+                    <button
+                      className={`view-btn segment-trend-type-btn ${segmentTrendType === 'overall' ? 'active' : ''}`}
+                      onClick={() => setSegmentTrendType('overall')}
+                    >
+                      전체
+                    </button>
+                    <button
+                      className={`view-btn segment-trend-type-btn ${segmentTrendType === 'channel' ? 'active' : ''}`}
+                      onClick={() => setSegmentTrendType('channel')}
+                    >
+                      채널별
+                    </button>
+                    <button
+                      className={`view-btn segment-trend-type-btn ${segmentTrendType === 'product' ? 'active' : ''}`}
+                      onClick={() => setSegmentTrendType('product')}
+                    >
+                      제품별
+                    </button>
+                    <button
+                      className={`view-btn segment-trend-type-btn ${segmentTrendType === 'brand' ? 'active' : ''}`}
+                      onClick={() => setSegmentTrendType('brand')}
+                    >
+                      브랜드별
+                    </button>
+                    <button
+                      className={`view-btn segment-trend-type-btn ${segmentTrendType === 'promotion' ? 'active' : ''}`}
+                      onClick={() => setSegmentTrendType('promotion')}
+                    >
+                      프로모션별
+                    </button>
+                  </div>
+                  <div className="view-type-section" style={{ marginBottom: 0 }}>
+                    <button
+                      className={`view-btn segment-trend-view-btn ${segmentTrendViewType === 'monthly' ? 'active' : ''}`}
+                      onClick={() => setSegmentTrendView('monthly')}
+                    >
+                      월별
+                    </button>
+                    <button
+                      className={`view-btn segment-trend-view-btn ${segmentTrendViewType === 'weekly' ? 'active' : ''}`}
+                      onClick={() => setSegmentTrendView('weekly')}
+                    >
+                      주별
+                    </button>
+                    <button
+                      className={`view-btn segment-trend-view-btn ${segmentTrendViewType === 'daily' ? 'active' : ''}`}
+                      onClick={() => setSegmentTrendView('daily')}
+                    >
+                      일별
+                    </button>
+                  </div>
                 </div>
+
+                {/* 전체 성과 예측 콘텐츠 (하위탭: 전체) */}
+                {segmentTrendType === 'overall' && (
+                  <div className="chart-section card">
+                    <div className="chart-section-header">
+                      <div className="chart-header">성과 예측 추이</div>
+                    </div>
+                    {/* 차트 컨트롤 영역 */}
+                    <div className="chart-controls">
+                      <div className="chart-toggle-group" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                        <button
+                          type="button"
+                          className={`data-label-toggle ${segmentTrendChartToggles.cost ? 'active' : ''}`}
+                          onClick={() => setSegmentTrendChartToggles(prev => ({ ...prev, cost: !prev.cost }))}
+                        >
+                          <span className="toggle-checkbox">{segmentTrendChartToggles.cost ? '✓' : '☐'}</span>
+                          <span>비용</span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`data-label-toggle ${segmentTrendChartToggles.cpm ? 'active' : ''}`}
+                          onClick={() => setSegmentTrendChartToggles(prev => ({ ...prev, cpm: !prev.cpm }))}
+                        >
+                          <span className="toggle-checkbox">{segmentTrendChartToggles.cpm ? '✓' : '☐'}</span>
+                          <span>CPM</span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`data-label-toggle ${segmentTrendChartToggles.cpc ? 'active' : ''}`}
+                          onClick={() => setSegmentTrendChartToggles(prev => ({ ...prev, cpc: !prev.cpc }))}
+                        >
+                          <span className="toggle-checkbox">{segmentTrendChartToggles.cpc ? '✓' : '☐'}</span>
+                          <span>CPC</span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`data-label-toggle ${segmentTrendChartToggles.cpa ? 'active' : ''}`}
+                          onClick={() => setSegmentTrendChartToggles(prev => ({ ...prev, cpa: !prev.cpa }))}
+                        >
+                          <span className="toggle-checkbox">{segmentTrendChartToggles.cpa ? '✓' : '☐'}</span>
+                          <span>CPA</span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`data-label-toggle ${segmentTrendChartToggles.roas ? 'active' : ''}`}
+                          onClick={() => setSegmentTrendChartToggles(prev => ({ ...prev, roas: !prev.roas }))}
+                        >
+                          <span className="toggle-checkbox">{segmentTrendChartToggles.roas ? '✓' : '☐'}</span>
+                          <span>ROAS</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div className="chart-container" style={{ height: 350 }}>
+                      <Line
+                        data={{
+                          labels: overallForecastChartData.labels,
+                          datasets: overallForecastChartData.datasets
+                        }}
+                        options={overallForecastChartOptions}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* 세그먼트별 콘텐츠 (하위탭: 채널별/제품별/브랜드별/프로모션별) */}
+                {segmentTrendType !== 'overall' && (
+                  <div className="chart-section card">
+                    {/* 상단 헤더 */}
+                    <div style={{ marginBottom: 20, borderBottom: '2px solid var(--grey-200)', paddingBottom: 16 }}>
+                      <div className="chart-header" style={{ marginBottom: 4 }}>시간에 따른 주요 항목 성과 추이</div>
+                      <p style={{ color: 'var(--grey-600)', fontSize: 13, margin: 0 }}>
+                        시간에 따른 각 주요 항목의 성과 변화를 추적하여 트렌드를 파악할 수 있습니다.
+                      </p>
+                    </div>
+
+                    {/* 지표 선택, 기간 선택, 항목 선택 */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 20, marginBottom: 20, flexWrap: 'wrap' }}>
+                      {/* 지표 선택 */}
+                      <div style={{ flex: '0 0 auto' }}>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)', marginBottom: 12 }}>📈 지표 선택</div>
+                        <select
+                          value={segmentTrendMetric}
+                          onChange={(e) => setSegmentTrendMetric(e.target.value as 'roas' | 'cost' | 'revenue' | 'conversions')}
+                          style={{ minWidth: 200, padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13, color: 'var(--grey-800)', cursor: 'pointer', transition: 'all 0.2s' }}
+                        >
+                          <option value="roas">ROAS</option>
+                          <option value="cost">비용</option>
+                          <option value="revenue">전환값</option>
+                          <option value="conversions">전환수</option>
+                        </select>
+                      </div>
+
+                      {/* 항목 선택 */}
+                      <div style={{ flex: '0 0 auto' }}>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)', marginBottom: 12 }}>
+                          📊 항목 선택 <span style={{ fontSize: 12, color: '#2e7d32', fontWeight: 600 }}>🎯 <span>{segmentTrendSelectedItems.length}</span>개 선택됨</span>
+                        </div>
+                        <div className="segment-trend-dropdown-container" style={{ position: 'relative' }}>
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); setSegmentTrendDropdownOpen(!segmentTrendDropdownOpen) }}
+                            style={{ minWidth: 200, padding: '10px 14px', background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, fontSize: 13, color: 'var(--grey-800)', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'all 0.2s', textAlign: 'left' }}
+                          >
+                            <span style={{ fontWeight: 500 }}>
+                              {segmentTrendSelectedItems.length === 0
+                                ? '항목을 선택하세요'
+                                : segmentTrendSelectedItems.length === 1
+                                  ? segmentTrendSelectedItems[0]
+                                  : `${segmentTrendSelectedItems[0]} 외 ${segmentTrendSelectedItems.length - 1}개`}
+                            </span>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <span style={{ fontSize: 11, color: 'var(--grey-500)' }}>{segmentTrendSelectedItems.length > 0 ? `${segmentTrendSelectedItems.length}개` : ''}</span>
+                              <span style={{ fontSize: 10 }}>▼</span>
+                            </span>
+                          </button>
+                          {segmentTrendDropdownOpen && (
+                            <div style={{ position: 'absolute', top: '100%', left: 0, minWidth: 250, marginTop: 4, background: 'white', border: '1px solid var(--grey-300)', borderRadius: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', maxHeight: 280, overflowY: 'auto', zIndex: 100 }}>
+                              <div style={{ padding: 8 }}>
+                                <div style={{ position: 'sticky', top: 0, background: 'white', padding: '6px 0', borderBottom: '1px solid var(--grey-200)', marginBottom: 6, zIndex: 1 }}>
+                                  <label style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', cursor: 'pointer', fontWeight: 600, fontSize: 12, borderRadius: 4, transition: 'background 0.2s' }}>
+                                    <input
+                                      type="checkbox"
+                                      checked={segmentTrendSelectedItems.length === Math.min(5, segmentTrendUniqueItems.length)}
+                                      onChange={(e) => {
+                                        const items = segmentTrendUniqueItems.slice(0, 5)
+                                        setSegmentTrendSelectedItems(e.target.checked ? items : [])
+                                      }}
+                                      style={{ marginRight: 10, width: 16, height: 16, cursor: 'pointer' }}
+                                    />
+                                    전체 선택 (최대 5개)
+                                  </label>
+                                </div>
+                                <div className="segment-trend-checkbox-list">
+                                  {segmentTrendUniqueItems.length > 0 ? (
+                                    segmentTrendUniqueItems.map((name, idx) => (
+                                      <label
+                                        key={idx}
+                                        style={{ display: 'flex', alignItems: 'center', padding: '6px 10px', cursor: 'pointer', fontSize: 12, borderRadius: 4, transition: 'background 0.2s', background: segmentTrendSelectedItems.includes(name) ? 'var(--grey-100)' : 'transparent' }}
+                                      >
+                                        <input
+                                          type="checkbox"
+                                          checked={segmentTrendSelectedItems.includes(name)}
+                                          onChange={(e) => {
+                                            if (e.target.checked) {
+                                              if (segmentTrendSelectedItems.length < 5) {
+                                                setSegmentTrendSelectedItems([...segmentTrendSelectedItems, name])
+                                              }
+                                            } else {
+                                              setSegmentTrendSelectedItems(segmentTrendSelectedItems.filter(n => n !== name))
+                                            }
+                                          }}
+                                          disabled={!segmentTrendSelectedItems.includes(name) && segmentTrendSelectedItems.length >= 5}
+                                          style={{ marginRight: 10, width: 14, height: 14, cursor: 'pointer' }}
+                                        />
+                                        <span>{name}</span>
+                                      </label>
+                                    ))
+                                  ) : (
+                                    <div style={{ padding: 12, textAlign: 'center', color: 'var(--grey-600)', fontSize: 12 }}>
+                                      해당 주요 항목 데이터가 없습니다.
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* 기간 선택 */}
+                      <div style={{ flex: '0 0 auto', marginLeft: 'auto' }}>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grey-700)', marginBottom: 12 }}>📅 기간 선택</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <input
+                            type="date"
+                            value={segmentTrendStartDate}
+                            min={segmentTrendDateRange.minDate}
+                            max={segmentTrendDateRange.maxDate}
+                            onChange={(e) => setSegmentTrendStartDate(e.target.value)}
+                            style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13, color: 'var(--grey-800)', cursor: 'pointer', transition: 'all 0.2s' }}
+                          />
+                          <span style={{ color: 'var(--grey-600)', fontWeight: 500 }}>~</span>
+                          <input
+                            type="date"
+                            value={segmentTrendEndDate}
+                            min={segmentTrendDateRange.minDate}
+                            max={segmentTrendDateRange.maxDate}
+                            onChange={(e) => setSegmentTrendEndDate(e.target.value)}
+                            style={{ padding: '10px 12px', border: '1px solid var(--grey-300)', borderRadius: 6, background: 'white', fontSize: 13, color: 'var(--grey-800)', cursor: 'pointer', transition: 'all 0.2s' }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 트렌드 차트 */}
+                    <div className="chart-container" style={{ height: 350 }}>
+                      {segmentTrendSelectedItems.length > 0 ? (
+                        <Line
+                          data={{
+                            labels: segmentTrendChartData.labels,
+                            datasets: segmentTrendChartData.datasets
+                          }}
+                          options={segmentTrendChartOptions}
+                        />
+                      ) : (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--grey-500)' }}>
+                          <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: 48, marginBottom: 16 }}>📊</div>
+                            <div>항목을 선택하면 차트가 표시됩니다</div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 트렌드 분석 팁 */}
+                    <div style={{ marginTop: 20, padding: 16, background: 'linear-gradient(135deg, #e3f2fd 0%, #f1f8fc 100%)', borderRadius: 10, borderLeft: '4px solid #2196f3' }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: '#2196f3', marginBottom: 8 }}>
+                        💡 트렌드 분석 팁
+                      </div>
+                      <div style={{ fontSize: 13, color: 'var(--grey-800)', lineHeight: 1.6 }}>
+                        상승 추세를 보이는 주요 항목은 예산을 확대하고, 하락 추세를 보이는 주요 항목은 원인을 분석하여 개선하세요.
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

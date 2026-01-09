@@ -586,19 +586,19 @@ const styles = `
   /* 탭 버튼 */
   .view-type-section {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     flex-wrap: wrap;
     margin-bottom: 16px;
     align-items: center;
   }
 
   .view-btn {
-    padding: 8px 14px;
+    padding: 10px 20px;
     background: var(--grey-100);
     color: var(--grey-700);
     border: 1px solid var(--grey-300);
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
@@ -5905,148 +5905,143 @@ export default function TypeDashboardReactView() {
                         const costData = sortedQuarterly.map(q => Math.round((q.avg_cost || 0) / 10000)) // 만원 단위
                         const roasData = sortedQuarterly.map(q => q.avg_roas || 0)
                         const cpaData = sortedQuarterly.map(q => Math.round((q.avg_cpa || 0) / 1000)) // 천원 단위
-                        const maxCost = Math.max(...costData, 1)
-                        const maxSecondary = Math.max(...roasData, ...cpaData, 1)
-                        const chartHeight = 280
-                        const chartPadding = { top: 30, bottom: 50, left: 60, right: 60 }
-                        const chartInnerHeight = chartHeight - chartPadding.top - chartPadding.bottom
-                        const barWidth = 40
-                        const barGap = 60
 
                         return (
-                          <>
-                            {/* 범례 - HTML 동일 */}
-                            <div style={{ display: 'flex', gap: 24, marginBottom: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <div style={{ width: 24, height: 14, background: 'rgba(66, 133, 244, 0.7)', borderRadius: 2, border: '1px solid rgba(66, 133, 244, 1)' }}></div>
-                                <span style={{ fontSize: 12, color: '#666' }}>비용 (만원)</span>
-                              </div>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <div style={{ width: 24, height: 3, background: '#34a853', borderRadius: 2, position: 'relative' }}>
-                                  <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', width: 8, height: 8, background: '#34a853', borderRadius: '50%' }}></div>
-                                </div>
-                                <span style={{ fontSize: 12, color: '#666' }}>ROAS (%)</span>
-                              </div>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <div style={{ width: 24, height: 3, background: '#ea4335', borderRadius: 2, position: 'relative' }}>
-                                  <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', width: 8, height: 8, background: '#ea4335', borderRadius: '50%' }}></div>
-                                </div>
-                                <span style={{ fontSize: 12, color: '#666' }}>CPA (천원)</span>
-                              </div>
-                            </div>
-
-                            {/* 차트 영역 - Chart.js 스타일 재현 */}
-                            <div style={{ position: 'relative', height: chartHeight, marginTop: 10 }}>
-                              {/* Y축 왼쪽 - 비용 */}
-                              <div style={{ position: 'absolute', left: 0, top: chartPadding.top, height: chartInnerHeight, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-end', width: 50 }}>
-                                {[100, 75, 50, 25, 0].map((pct, i) => (
-                                  <span key={i} style={{ fontSize: 11, color: '#666' }}>{Math.round(maxCost * (100 - pct * 1) / 100)}</span>
-                                ))}
-                              </div>
-
-                              {/* Y축 오른쪽 - ROAS/CPA */}
-                              <div style={{ position: 'absolute', right: 0, top: chartPadding.top, height: chartInnerHeight, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', width: 50 }}>
-                                {[100, 75, 50, 25, 0].map((pct, i) => (
-                                  <span key={i} style={{ fontSize: 11, color: '#666' }}>{Math.round(maxSecondary * (100 - pct * 1) / 100)}</span>
-                                ))}
-                              </div>
-
-                              {/* 그리드 라인 */}
-                              <div style={{ position: 'absolute', left: chartPadding.left, right: chartPadding.right, top: chartPadding.top, height: chartInnerHeight }}>
-                                {[0, 25, 50, 75, 100].map((pct, i) => (
-                                  <div key={i} style={{ position: 'absolute', left: 0, right: 0, top: `${pct}%`, borderTop: '1px solid #e9ecef' }}></div>
-                                ))}
-                              </div>
-
-                              {/* 바 차트 + 라인 차트 */}
-                              <div style={{ position: 'absolute', left: chartPadding.left, right: chartPadding.right, top: chartPadding.top, height: chartInnerHeight }}>
-                                {/* 바 차트 */}
-                                <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'flex-end', height: '100%', position: 'relative' }}>
-                                  {sortedQuarterly.map((q, idx) => {
-                                    const costHeight = (costData[idx] / maxCost) * chartInnerHeight
-                                    return (
-                                      <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', width: barWidth + barGap }}>
-                                        <div style={{
-                                          width: barWidth,
-                                          height: costHeight || 2,
-                                          background: 'rgba(66, 133, 244, 0.7)',
-                                          border: '1px solid rgba(66, 133, 244, 1)',
-                                          borderRadius: 4,
-                                          position: 'absolute',
-                                          bottom: 0
-                                        }}></div>
-                                      </div>
-                                    )
-                                  })}
-                                </div>
-
-                                {/* ROAS 라인 */}
-                                <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
-                                  <polyline
-                                    fill="none"
-                                    stroke="#34a853"
-                                    strokeWidth="2"
-                                    points={sortedQuarterly.map((q, idx) => {
-                                      const x = ((idx + 0.5) / sortedQuarterly.length) * 100
-                                      const y = 100 - (roasData[idx] / maxSecondary) * 100
-                                      return `${x}%,${y}%`
-                                    }).join(' ')}
-                                  />
-                                  {sortedQuarterly.map((q, idx) => {
-                                    const x = ((idx + 0.5) / sortedQuarterly.length) * 100
-                                    const y = 100 - (roasData[idx] / maxSecondary) * 100
-                                    return (
-                                      <circle
-                                        key={idx}
-                                        cx={`${x}%`}
-                                        cy={`${y}%`}
-                                        r="5"
-                                        fill="#34a853"
-                                        stroke="white"
-                                        strokeWidth="2"
-                                      />
-                                    )
-                                  })}
-                                </svg>
-
-                                {/* CPA 라인 */}
-                                <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
-                                  <polyline
-                                    fill="none"
-                                    stroke="#ea4335"
-                                    strokeWidth="2"
-                                    points={sortedQuarterly.map((q, idx) => {
-                                      const x = ((idx + 0.5) / sortedQuarterly.length) * 100
-                                      const y = 100 - (cpaData[idx] / maxSecondary) * 100
-                                      return `${x}%,${y}%`
-                                    }).join(' ')}
-                                  />
-                                  {sortedQuarterly.map((q, idx) => {
-                                    const x = ((idx + 0.5) / sortedQuarterly.length) * 100
-                                    const y = 100 - (cpaData[idx] / maxSecondary) * 100
-                                    return (
-                                      <circle
-                                        key={idx}
-                                        cx={`${x}%`}
-                                        cy={`${y}%`}
-                                        r="5"
-                                        fill="#ea4335"
-                                        stroke="white"
-                                        strokeWidth="2"
-                                      />
-                                    )
-                                  })}
-                                </svg>
-                              </div>
-
-                              {/* X축 레이블 */}
-                              <div style={{ position: 'absolute', left: chartPadding.left, right: chartPadding.right, bottom: 10, display: 'flex', justifyContent: 'space-around' }}>
-                                {sortedQuarterly.map((q, idx) => (
-                                  <span key={idx} style={{ fontSize: 12, color: '#666', fontWeight: 500 }}>{q.quarter}</span>
-                                ))}
-                              </div>
-                            </div>
-                          </>
+                          <div style={{ height: 280 }}>
+                              <Bar
+                                data={{
+                                  labels: sortedQuarterly.map(q => q.quarter),
+                                  datasets: [
+                                    {
+                                      label: '비용 (만원)',
+                                      data: costData,
+                                      backgroundColor: 'rgba(66, 133, 244, 0.7)',
+                                      borderColor: 'rgba(66, 133, 244, 1)',
+                                      borderWidth: 1,
+                                      borderRadius: 4,
+                                      yAxisID: 'y',
+                                      order: 2
+                                    },
+                                    {
+                                      label: 'ROAS (%)',
+                                      data: roasData,
+                                      type: 'line' as const,
+                                      borderColor: '#34a853',
+                                      backgroundColor: 'rgba(52, 168, 83, 0.1)',
+                                      borderWidth: 3,
+                                      pointRadius: 6,
+                                      pointBackgroundColor: '#34a853',
+                                      pointBorderColor: '#fff',
+                                      pointBorderWidth: 2,
+                                      tension: 0.3,
+                                      fill: false,
+                                      yAxisID: 'y1',
+                                      order: 1
+                                    },
+                                    {
+                                      label: 'CPA (천원)',
+                                      data: cpaData,
+                                      type: 'line' as const,
+                                      borderColor: '#ea4335',
+                                      backgroundColor: 'rgba(234, 67, 53, 0.1)',
+                                      borderWidth: 3,
+                                      pointRadius: 6,
+                                      pointBackgroundColor: '#ea4335',
+                                      pointBorderColor: '#fff',
+                                      pointBorderWidth: 2,
+                                      tension: 0.3,
+                                      fill: false,
+                                      yAxisID: 'y2',
+                                      order: 0
+                                    }
+                                  ]
+                                }}
+                                options={{
+                                  responsive: true,
+                                  maintainAspectRatio: false,
+                                  interaction: {
+                                    mode: 'index' as const,
+                                    intersect: false
+                                  },
+                                  plugins: {
+                                    legend: {
+                                      display: true,
+                                      position: 'top' as const,
+                                      labels: {
+                                        usePointStyle: true,
+                                        padding: 20,
+                                        font: { size: 12, weight: 500 }
+                                      }
+                                    },
+                                    tooltip: {
+                                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                      titleColor: '#333',
+                                      bodyColor: '#666',
+                                      borderColor: '#e0e0e0',
+                                      borderWidth: 1,
+                                      padding: 12,
+                                      callbacks: {
+                                        label: (context: any) => {
+                                          const label = context.dataset.label || ''
+                                          const value = context.parsed.y
+                                          if (label.includes('비용')) return label + ': ' + value.toLocaleString() + '만원'
+                                          if (label.includes('ROAS')) return label + ': ' + value.toFixed(1) + '%'
+                                          if (label.includes('CPA')) return label + ': ' + value.toLocaleString() + '천원'
+                                          return label + ': ' + value
+                                        }
+                                      }
+                                    },
+                                    datalabels: {
+                                      display: false
+                                    }
+                                  },
+                                  scales: {
+                                    x: {
+                                      grid: { display: false },
+                                      ticks: { font: { size: 12, weight: 600 } }
+                                    },
+                                    y: {
+                                      type: 'linear' as const,
+                                      display: true,
+                                      position: 'left' as const,
+                                      title: {
+                                        display: true,
+                                        text: '비용 (만원)',
+                                        color: '#4285f4',
+                                        font: { size: 11, weight: 600 }
+                                      },
+                                      grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                                      ticks: {
+                                        color: '#4285f4',
+                                        callback: (value: any) => value.toLocaleString()
+                                      }
+                                    },
+                                    y1: {
+                                      type: 'linear' as const,
+                                      display: true,
+                                      position: 'right' as const,
+                                      title: {
+                                        display: true,
+                                        text: 'ROAS (%)',
+                                        color: '#34a853',
+                                        font: { size: 11, weight: 600 }
+                                      },
+                                      grid: { drawOnChartArea: false },
+                                      ticks: {
+                                        color: '#34a853',
+                                        callback: (value: any) => value.toFixed(0) + '%'
+                                      }
+                                    },
+                                    y2: {
+                                      type: 'linear' as const,
+                                      display: false,
+                                      position: 'right' as const,
+                                      grid: { drawOnChartArea: false }
+                                    }
+                                  }
+                                }}
+                              />
+                          </div>
                         )
                       })()}
                     </div>
@@ -6210,7 +6205,7 @@ export default function TypeDashboardReactView() {
                                       height: 0,
                                       borderLeft: '4px solid transparent',
                                       borderRight: '4px solid transparent',
-                                      borderBottom: `4px solid ${isAsc ? '#1976d2' : '#757575'}`
+                                      borderBottom: `4px solid ${isAsc ? '#673ab7' : '#757575'}`
                                     }}></div>
                                     {/* sort-arrow down */}
                                     <div style={{
@@ -6218,7 +6213,7 @@ export default function TypeDashboardReactView() {
                                       height: 0,
                                       borderLeft: '4px solid transparent',
                                       borderRight: '4px solid transparent',
-                                      borderTop: `4px solid ${isDesc ? '#1976d2' : '#757575'}`
+                                      borderTop: `4px solid ${isDesc ? '#673ab7' : '#757575'}`
                                     }}></div>
                                   </div>
                                 </th>
