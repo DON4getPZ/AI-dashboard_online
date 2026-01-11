@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { DATA_PATHS } from '@/config/client'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -1722,88 +1723,48 @@ export default function TypeDashboardReactView() {
   const [forecastSubtab, setForecastSubtab] = useState<string>('product')
 
   // ========================================
-  // 데이터 로딩
+  // 데이터 로딩 (클라이언트 데이터 경로 사용)
   // ========================================
   useEffect(() => {
     async function loadData() {
       try {
         setLoading(true)
 
-        // insights.json 로딩
-        const insightsResponse = await fetch('/type/insights.json?t=' + Date.now())
+        // insights.json 로딩 (클라이언트 경로)
+        const insightsResponse = await fetch(DATA_PATHS.insights + '?t=' + Date.now())
         const insightsJson = await insightsResponse.json()
         setInsightsData(insightsJson)
 
-        // adset dimension data 로딩
+        // dimensions.json 로딩 (클라이언트 경로 - 모든 차원 데이터 통합)
         try {
-          const adsetResponse = await fetch('/type/dimension_type1_campaign_adset.csv')
-          const adsetText = await adsetResponse.text()
-          setAdsetDimensionData(parseCSV(adsetText))
-        } catch (err) {
-          console.warn('광고세트 차원 데이터 로딩 실패:', err)
-        }
+          const dimensionsResponse = await fetch(DATA_PATHS.dimensions + '?t=' + Date.now())
+          const dimensionsJson = await dimensionsResponse.json()
 
-        // merged_data.csv 로딩
-        try {
-          const dimensionResponse = await fetch('/type/merged_data.csv')
-          const dimensionText = await dimensionResponse.text()
-          setDimensionData(parseCSV(dimensionText))
+          // 각 차원 데이터 설정 (JSON → 기존 상태에 맞게 매핑)
+          if (dimensionsJson.campaign_adset) {
+            setAdsetDimensionData(dimensionsJson.campaign_adset)
+            setDimensionData(dimensionsJson.campaign_adset) // merged_data 대체
+          }
+          if (dimensionsJson.adset_gender) {
+            setGenderDimensionData(dimensionsJson.adset_gender)
+          }
+          if (dimensionsJson.adset_age) {
+            setAgeDimensionData(dimensionsJson.adset_age)
+          }
+          if (dimensionsJson.adset_platform) {
+            setPlatformDimensionData(dimensionsJson.adset_platform)
+          }
+          if (dimensionsJson.adset_deviceplatform) {
+            setDevicePlatformDimensionData(dimensionsJson.adset_deviceplatform)
+          }
+          if (dimensionsJson.adset_device) {
+            setDeviceTypeDimensionData(dimensionsJson.adset_device)
+          }
+          if (dimensionsJson.adset_age_gender) {
+            setPivotDimensionData(dimensionsJson.adset_age_gender)
+          }
         } catch (err) {
           console.warn('차원 데이터 로딩 실패:', err)
-        }
-
-        // 성별 추이 데이터 로딩
-        try {
-          const genderResponse = await fetch('/type/dimension_type4_adset_gender.csv')
-          const genderText = await genderResponse.text()
-          setGenderDimensionData(parseCSV(genderText))
-        } catch (err) {
-          console.warn('성별 차원 데이터 로딩 실패:', err)
-        }
-
-        // 연령 추이 데이터 로딩
-        try {
-          const ageResponse = await fetch('/type/dimension_type3_adset_age.csv')
-          const ageText = await ageResponse.text()
-          setAgeDimensionData(parseCSV(ageText))
-        } catch (err) {
-          console.warn('연령 차원 데이터 로딩 실패:', err)
-        }
-
-        // 플랫폼 추이 데이터 로딩
-        try {
-          const platformResponse = await fetch('/type/dimension_type6_adset_platform.csv')
-          const platformText = await platformResponse.text()
-          setPlatformDimensionData(parseCSV(platformText))
-        } catch (err) {
-          console.warn('플랫폼 차원 데이터 로딩 실패:', err)
-        }
-
-        // 기기플랫폼 추이 데이터 로딩
-        try {
-          const devicePlatformResponse = await fetch('/type/dimension_type7_adset_deviceplatform.csv')
-          const devicePlatformText = await devicePlatformResponse.text()
-          setDevicePlatformDimensionData(parseCSV(devicePlatformText))
-        } catch (err) {
-          console.warn('기기플랫폼 차원 데이터 로딩 실패:', err)
-        }
-
-        // 기기 추이 데이터 로딩
-        try {
-          const deviceResponse = await fetch('/type/dimension_type5_adset_device.csv')
-          const deviceText = await deviceResponse.text()
-          setDeviceTypeDimensionData(parseCSV(deviceText))
-        } catch (err) {
-          console.warn('기기 차원 데이터 로딩 실패:', err)
-        }
-
-        // 성별연령 PIVOT 데이터 로딩 (성과 테이블 분석용)
-        try {
-          const pivotResponse = await fetch('/type/dimension_type2_adset_age_gender.csv')
-          const pivotText = await pivotResponse.text()
-          setPivotDimensionData(parseCSV(pivotText))
-        } catch (err) {
-          console.warn('성별연령 PIVOT 차원 데이터 로딩 실패:', err)
         }
 
         setLoading(false)

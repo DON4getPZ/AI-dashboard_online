@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { DATA_PATHS } from '@/config/client'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -636,11 +637,13 @@ export default function ReactView() {
 
   const loadData = async () => {
     try {
-      // 1. 이미지 URL 매핑 데이터 로드
-      const urlResponse = await fetch('/creative/Creative_url.csv')
-      if (urlResponse.ok) {
-        const urlText = await urlResponse.text()
-        const urlData = parseCSVWithQuotes(urlText)
+      // creative.json 로딩 (클라이언트 경로 - URL 및 성과 데이터 통합)
+      const creativeResponse = await fetch(DATA_PATHS.creative + '?t=' + Date.now())
+      const creativeJson = await creativeResponse.json()
+
+      // 1. 이미지 URL 매핑 데이터 처리
+      if (creativeJson.urls && creativeJson.urls.length > 0) {
+        const urlData = creativeJson.urls
 
         const newImageUrlMap: Record<string, string> = {}
         const newFallbackUrlMap: Record<string, string> = {}
@@ -654,7 +657,7 @@ export default function ReactView() {
           return url
         }
 
-        urlData.forEach(row => {
+        urlData.forEach((row: Record<string, string>) => {
           const creativeName = row['광고,에셋이름'] || row['광고']
           const url = row['url']
           const originalUrl = row['원본 url / ID'] || row['원본url/ID'] || ''
@@ -721,16 +724,14 @@ export default function ReactView() {
         setOriginalUrlMap(newOriginalUrlMap)
       }
 
-      // 2. 소재 성과 데이터 로드
-      const dataResponse = await fetch('/creative/Creative_data.csv')
-      if (!dataResponse.ok) throw new Error('Failed to load creative data')
-      const dataText = await dataResponse.text()
-      const parsedData = parseCSV(dataText)
-      setAllData(parsedData)
+      // 2. 소재 성과 데이터 처리
+      if (creativeJson.performance && creativeJson.performance.length > 0) {
+        const parsedData: RawCreativeData[] = creativeJson.performance
+        setAllData(parsedData)
 
       // 날짜 범위 설정
       const dates = parsedData
-        .map(d => d['날짜'])
+        .map((d: RawCreativeData) => d['날짜'])
         .filter(Boolean)
         .map(d => new Date(d))
         .filter(d => !isNaN(d.getTime()))
@@ -743,6 +744,7 @@ export default function ReactView() {
           startDate: formatDateForInput(minDate),
           endDate: formatDateForInput(maxDate)
         }))
+      }
       }
 
       setIsLoading(false)

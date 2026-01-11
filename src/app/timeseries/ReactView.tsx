@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { DATA_PATHS } from '@/config/client'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -367,14 +368,13 @@ export default function ReactView() {
 
     const loadData = async () => {
       try {
-        // Forecast 데이터 로드 - 원본과 동일하게
-        const forecastRes = await fetch('/forecast/predictions_daily.csv')
-        if (forecastRes.ok) {
-          const text = await forecastRes.text()
-          const rawData = parseCSV(text)
+        // forecast.json 로딩 (클라이언트 경로 - 예측 및 세그먼트 데이터 통합)
+        const forecastRes = await fetch(DATA_PATHS.forecast + '?t=' + Date.now())
+        const forecastJson = await forecastRes.json()
 
-          // 데이터 변환 (원본과 동일)
-          const data: ForecastData[] = rawData.map(row => ({
+        // Forecast 데이터 처리
+        if (forecastJson.predictions?.daily) {
+          const data: ForecastData[] = forecastJson.predictions.daily.map((row: any) => ({
             '일 구분': row['일 구분'],
             '비용_예측': parseFloat(row['비용_예측']) || 0,
             '노출_예측': parseFloat(row['노출_예측']) || 0,
@@ -386,45 +386,26 @@ export default function ReactView() {
           setForecastData(data)
         }
 
-        // Insights 데이터 로드
-        const insightsRes = await fetch('/forecast/insights.json')
-        if (insightsRes.ok) {
-          const data = await insightsRes.json()
-          setInsightsData(data)
+        // Insights 데이터 처리
+        if (forecastJson.insights) {
+          setInsightsData(forecastJson.insights)
         }
 
-        // 세그먼트 데이터 로드
-        const segments = ['brand', 'channel', 'product', 'promotion']
-        const segData: { [key: string]: SegmentData[] } = {}
+        // 세그먼트 데이터 처리
+        if (forecastJson.segments) {
+          const segData: { [key: string]: SegmentData[] } = {}
+          const segments = ['brand', 'channel', 'product', 'promotion']
 
-        for (const seg of segments) {
-          try {
-            const res = await fetch(`/forecast/segment_${seg}.csv`)
-            if (res.ok) {
-              const text = await res.text()
-              const lines = text.trim().split('\n')
-              const headers = lines[0].split(',').map(h => h.trim())
-              segData[seg] = lines.slice(1).map(line => {
-                const values = line.split(',')
-                const row: any = {}
-                headers.forEach((h, i) => {
-                  const val = values[i]?.trim() || ''
-                  // 문자열로 유지해야 하는 컬럼들
-                  if (h === 'type' || h === 'model' || h === '일 구분' || h === seg || h === 'channel' || h === 'product' || h === 'brand' || h === 'promotion') {
-                    row[h] = val
-                    if (h === seg) row.name = val
-                  } else {
-                    row[h] = parseFloat(val) || 0
-                  }
-                })
-                return row
-              })
+          for (const seg of segments) {
+            if (forecastJson.segments[seg]) {
+              segData[seg] = forecastJson.segments[seg].map((row: any) => ({
+                ...row,
+                name: row[seg] || row.name
+              }))
             }
-          } catch (e) {
-            console.error(`Failed to load segment_${seg}.csv`)
           }
+          setSegmentData(segData)
         }
-        setSegmentData(segData)
 
       } catch (error) {
         console.error('데이터 로드 실패:', error)

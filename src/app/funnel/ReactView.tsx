@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { DATA_PATHS } from '@/config/client';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -405,46 +406,36 @@ export default function ReactView() {
   const d3FunnelRightRef = useRef<HTMLDivElement>(null);
 
   // ========================================
-  // 데이터 로드 (loadData 함수)
+  // 데이터 로드 (클라이언트 데이터 경로 사용)
   // ========================================
   useEffect(() => {
     const loadData = async () => {
       try {
-        // channel_daily_funnel.csv
-        const dailyResponse = await fetch('/funnel/channel_daily_funnel.csv');
-        const dailyText = await dailyResponse.text();
-        const parsedDaily = parseCSV(dailyText) as DailyDataRow[];
-        setDailyData(parsedDaily);
+        // funnel.json 로딩 (클라이언트 경로 - 모든 퍼널 데이터 통합)
+        const funnelResponse = await fetch(DATA_PATHS.funnel + '?t=' + Date.now());
+        const funnelJson = await funnelResponse.json();
 
-        // weekly_funnel.csv
-        const weeklyResponse = await fetch('/funnel/weekly_funnel.csv');
-        const weeklyText = await weeklyResponse.text();
-        setWeeklyData(parseCSV(weeklyText));
-
-        // channel_funnel.csv
-        const channelResponse = await fetch('/funnel/channel_funnel.csv');
-        const channelText = await channelResponse.text();
-        setChannelData(parseCSV(channelText) as unknown as ChannelDataRow[]);
-
-        // new_vs_returning.csv
-        const newVsReturningResponse = await fetch('/funnel/new_vs_returning.csv');
-        const newVsReturningText = await newVsReturningResponse.text();
-        setNewVsReturningData(parseCSV(newVsReturningText) as unknown as NewVsReturningRow[]);
-
-        // channel_engagement.csv
-        const channelEngagementResponse = await fetch('/funnel/channel_engagement.csv');
-        const channelEngagementText = await channelEngagementResponse.text();
-        setChannelEngagementData(parseCSV(channelEngagementText));
-
-        // new_vs_returning_conversion.csv
-        const newVsReturningConversionResponse = await fetch('/funnel/new_vs_returning_conversion.csv');
-        const newVsReturningConversionText = await newVsReturningConversionResponse.text();
-        setNewVsReturningConversionData(parseCSV(newVsReturningConversionText));
-
-        // insights.json
-        const insightsResponse = await fetch('/funnel/insights.json');
-        const insightsJson = await insightsResponse.json();
-        setInsightsData(insightsJson);
+        // 각 데이터 설정
+        if (funnelJson.daily) {
+          setDailyData(funnelJson.daily as DailyDataRow[]);
+        }
+        if (funnelJson.weekly) {
+          setWeeklyData(funnelJson.weekly);
+        }
+        if (funnelJson.channel) {
+          setChannelData(funnelJson.channel as ChannelDataRow[]);
+        }
+        if (funnelJson.new_vs_returning) {
+          setNewVsReturningData(funnelJson.new_vs_returning as NewVsReturningRow[]);
+          // new_vs_returning_conversion은 new_vs_returning에서 파생
+          setNewVsReturningConversionData(funnelJson.new_vs_returning);
+        }
+        if (funnelJson.channel_engagement) {
+          setChannelEngagementData(funnelJson.channel_engagement);
+        }
+        if (funnelJson.insights) {
+          setInsightsData(funnelJson.insights);
+        }
       } catch (error) {
         console.error('데이터 로드 오류:', error);
       }
