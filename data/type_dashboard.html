@@ -9067,6 +9067,11 @@
                             renderQuarterlyTable();
                         }
 
+                        // 요일별 분석 탭 선택 시 테이블 렌더링
+                        if (targetTab === 'dayConversion') {
+                            renderSeasonalityTable();
+                        }
+
                         // 채널별 요일 탭 선택 시 차트 및 KPI 카드 렌더링
                         if (targetTab === 'channelDay') {
                             renderChannelDayKpiCards();

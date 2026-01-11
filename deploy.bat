@@ -135,7 +135,7 @@ if %SKIP_ETL%==1 (
     echo [1/3] ETL 실행 중... 클라이언트: %CLIENT_ID%
     echo.
 
-    python scripts/run_all_clients.py --client %CLIENT_ID%
+    python scripts/run_all_clients.py --client %CLIENT_ID% --with-images
 
     if errorlevel 1 (
         echo.
@@ -185,8 +185,8 @@ echo.
 echo [3/3] Git Commit ^& Push
 echo.
 
-:: 변경된 파일 추가
-git add data/%CLIENT_ID%/
+:: 변경된 파일 추가 (데이터 + 이미지)
+git add data/%CLIENT_ID%/ public/creative/images/
 
 :: 커밋 메시지 생성
 set COMMIT_DATE=%date:~0,4%-%date:~5,2%-%date:~8,2%

@@ -9,6 +9,7 @@ test_1_fetch.bat, test_2_mapping.bat, test_3_analysis.bat에서 검증된
     python scripts/run_all_clients.py --client clientA   # 특정 클라이언트만
     python scripts/run_all_clients.py --stage fetch      # 특정 단계만
     python scripts/run_all_clients.py --dry-run          # 실행 없이 계획만 출력
+    python scripts/run_all_clients.py --with-images      # 소재 이미지 다운로드 포함
 """
 
 import json
@@ -91,7 +92,7 @@ def load_clients(config_path: Path) -> List[Dict[str, Any]]:
 
 def run_script(script_name: str, client_id: Optional[str],
                index: int, total: int, description: str,
-               dry_run: bool = False) -> bool:
+               dry_run: bool = False, with_images: bool = False) -> bool:
     """
     단일 스크립트 실행
 
@@ -104,6 +105,10 @@ def run_script(script_name: str, client_id: Optional[str],
     cmd = [sys.executable, str(script_path)]
     if client_id:
         cmd.extend(['--client', client_id])
+
+    # fetch_creative_url.py 실행 시 이미지 다운로드 옵션 추가
+    if script_name == 'fetch_creative_url.py' and with_images:
+        cmd.extend(['--download-images'])
 
     # 진행 표시 (test_*.bat 패턴)
     client_display = f"[{client_id}]" if client_id else "[레거시]"
@@ -146,7 +151,8 @@ def run_script(script_name: str, client_id: Optional[str],
 
 def run_client_pipeline(client_id: Optional[str],
                         scripts: List[tuple],
-                        dry_run: bool = False) -> Dict[str, Any]:
+                        dry_run: bool = False,
+                        with_images: bool = False) -> Dict[str, Any]:
     """
     단일 클라이언트에 대해 전체 파이프라인 실행
 
@@ -159,6 +165,8 @@ def run_client_pipeline(client_id: Optional[str],
     print("\n" + "=" * 70)
     print(f"클라이언트: {client_display}")
     print(f"실행 스크립트: {total}개")
+    if with_images:
+        print("이미지 다운로드: 포함")
     print("=" * 70)
 
     results = {
@@ -177,7 +185,8 @@ def run_client_pipeline(client_id: Optional[str],
             index=idx,
             total=total,
             description=description,
-            dry_run=dry_run
+            dry_run=dry_run,
+            with_images=with_images
         )
 
         if success:
@@ -233,6 +242,11 @@ def main():
         action='store_true',
         help='레거시 모드 (data/ 경로, --client 없이 실행)'
     )
+    parser.add_argument(
+        '--with-images',
+        action='store_true',
+        help='소재 이미지 다운로드 포함 (fetch_creative_url.py에 --download-images 전달)'
+    )
 
     args = parser.parse_args()
 
@@ -243,6 +257,8 @@ def main():
     print(f"실행 시간: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"설정 파일: {CONFIG_FILE}")
     print(f"실행 단계: {args.stage}")
+    if args.with_images:
+        print("이미지 다운로드: 포함")
     if args.dry_run:
         print("[DRY-RUN 모드] 실행 없이 계획만 출력합니다.")
 
@@ -279,7 +295,8 @@ def main():
         result = run_client_pipeline(
             client_id=client_id,
             scripts=scripts,
-            dry_run=args.dry_run
+            dry_run=args.dry_run,
+            with_images=args.with_images
         )
         all_results.append(result)
 

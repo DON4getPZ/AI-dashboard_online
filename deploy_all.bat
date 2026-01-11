@@ -160,9 +160,9 @@ if %SKIP_ETL%==1 (
     echo.
 
     if %AUTO_MODE%==1 (
-        python scripts/run_all_clients.py >> "%LOG_FILE%" 2>&1
+        python scripts/run_all_clients.py --with-images >> "%LOG_FILE%" 2>&1
     ) else (
-        python scripts/run_all_clients.py
+        python scripts/run_all_clients.py --with-images
     )
 
     if errorlevel 1 (
@@ -217,8 +217,8 @@ echo.
 call :LOG "[3/3] Git Commit & Push"
 echo.
 
-:: 변경된 data 폴더 전체 추가
-git add data/
+:: 변경된 data 폴더 및 이미지 추가
+git add data/ public/creative/images/
 
 :: 커밋 메시지 생성
 set COMMIT_DATE=%date:~0,4%-%date:~5,2%-%date:~8,2%
