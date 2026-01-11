@@ -5703,7 +5703,7 @@ export default function ReactView() {
                             datalabels: { display: false },
                             tooltip: {
                               callbacks: {
-                                label: (context) => `참여율: ${context.parsed.x.toFixed(2)}%`
+                                label: (context) => `참여율: ${(context.parsed.x ?? 0).toFixed(2)}%`
                               }
                             }
                           },
