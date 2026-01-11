@@ -42,9 +42,18 @@ from scripts.common.paths import ClientPaths, get_client_config, get_google_cred
 
 def get_image_filename(creative_name: str, url: str) -> str:
     """소재명과 URL로 고유한 파일명 생성"""
-    # 소재명 정제 (파일명에 사용 불가능한 문자 제거)
-    safe_name = re.sub(r'[<>:"/\\|?*]', '_', creative_name)
-    safe_name = safe_name[:50]  # 최대 50자
+    # 소재명 정제 (파일명에 사용 불가능한 문자 및 제어 문자 제거)
+    # 1. 제어 문자 제거 (0x00-0x1F, 0x7F)
+    safe_name = re.sub(r'[\x00-\x1f\x7f]', '', creative_name)
+    # 2. 파일명에 사용 불가능한 문자 제거
+    safe_name = re.sub(r'[<>:"/\\|?*]', '_', safe_name)
+    # 3. 앞뒤 공백 및 점 제거
+    safe_name = safe_name.strip(' .')
+    # 4. 최대 50자
+    safe_name = safe_name[:50]
+    # 5. 빈 이름 처리
+    if not safe_name:
+        safe_name = 'unnamed'
 
     # URL 해시로 고유성 보장
     url_hash = hashlib.md5(url.encode()).hexdigest()[:8]
