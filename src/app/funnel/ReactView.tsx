@@ -154,6 +154,7 @@ interface ChannelStrategy {
 interface ChannelInfo {
   bcg_matrix?: {
     quadrant: string;
+    action?: string;
   };
   stats?: {
     users?: string | number;
