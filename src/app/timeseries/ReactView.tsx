@@ -2820,19 +2820,19 @@ export default function ReactView() {
                   <div className="view-type-section" style={{ marginBottom: 0 }}>
                     <button
                       className={`view-btn segment-trend-view-btn ${segmentTrendViewType === 'monthly' ? 'active' : ''}`}
-                      onClick={() => setSegmentTrendView('monthly')}
+                      onClick={() => setSegmentTrendViewType('monthly')}
                     >
                       월별
                     </button>
                     <button
                       className={`view-btn segment-trend-view-btn ${segmentTrendViewType === 'weekly' ? 'active' : ''}`}
-                      onClick={() => setSegmentTrendView('weekly')}
+                      onClick={() => setSegmentTrendViewType('weekly')}
                     >
                       주별
                     </button>
                     <button
                       className={`view-btn segment-trend-view-btn ${segmentTrendViewType === 'daily' ? 'active' : ''}`}
-                      onClick={() => setSegmentTrendView('daily')}
+                      onClick={() => setSegmentTrendViewType('daily')}
                     >
                       일별
                     </button>
