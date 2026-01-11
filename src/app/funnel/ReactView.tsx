@@ -1643,19 +1643,19 @@ export default function ReactView() {
       },
       1: {
         insight: '첫 방문자가 활성화되는 단계입니다.',
-        recommendation: stage.dropOffRate > 50
+        recommendation: Number(stage.dropOffRate) > 50
           ? '이탈률이 매우 높습니다. 랜딩페이지 속도, 디자인, CTA를 즉시 개선하세요.'
           : '랜딩페이지 A/B 테스트를 통해 전환율을 지속적으로 개선하세요.'
       },
       2: {
         insight: '사용자가 제품/서비스에 관심을 보이는 단계입니다.',
-        recommendation: stage.dropOffRate > 40
+        recommendation: Number(stage.dropOffRate) > 40
           ? '제품 페이지의 정보 품질과 이미지를 개선하고, 리뷰를 강화하세요.'
           : '추천 시스템과 개인화를 통해 관심을 구매로 전환하세요.'
       },
       3: {
         insight: '결제를 시작한 단계입니다.',
-        recommendation: stage.dropOffRate > 30
+        recommendation: Number(stage.dropOffRate) > 30
           ? '결제 프로세스를 단순화하고, 배송비/결제 수단을 명확히 표시하세요.'
           : '원클릭 결제, 게스트 체크아웃 등으로 마찰을 최소화하세요.'
       },
