@@ -135,7 +135,7 @@ if %SKIP_ETL%==1 (
     echo [1/3] ETL 실행 중... 클라이언트: %CLIENT_ID%
     echo.
 
-    python scripts/run_all_clients.py --client %CLIENT_ID% --with-images
+    python scripts/run_all_clients.py --client %CLIENT_ID% --with-images --verbose
 
     if errorlevel 1 (
         echo.

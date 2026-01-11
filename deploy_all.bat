@@ -160,9 +160,9 @@ if %SKIP_ETL%==1 (
     echo.
 
     if %AUTO_MODE%==1 (
-        python scripts/run_all_clients.py --with-images >> "%LOG_FILE%" 2>&1
+        python scripts/run_all_clients.py --with-images --verbose >> "%LOG_FILE%" 2>&1
     ) else (
-        python scripts/run_all_clients.py --with-images
+        python scripts/run_all_clients.py --with-images --verbose
     )
 
     if errorlevel 1 (
