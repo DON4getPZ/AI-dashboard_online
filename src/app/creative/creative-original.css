@@ -252,6 +252,10 @@ html.embed-mode .sidebar-overlay { display: none !important; }
     transform: translate(-50%, -50%);
     color: var(--grey-500);
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .creative-placeholder svg {
