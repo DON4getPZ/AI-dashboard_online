@@ -1733,7 +1733,9 @@ export default function TypeDashboardReactView() {
         // insights.json 로딩 (클라이언트 경로)
         const insightsResponse = await fetch(DATA_PATHS.insights + '?t=' + Date.now())
         const insightsJson = await insightsResponse.json()
-        setInsightsData(insightsJson)
+        // 중첩 구조에서 실제 데이터 추출: type.by_period.full
+        const actualInsights = insightsJson?.type?.by_period?.full || insightsJson
+        setInsightsData(actualInsights)
 
         // dimensions.json 로딩 (클라이언트 경로 - 모든 차원 데이터 통합)
         try {
