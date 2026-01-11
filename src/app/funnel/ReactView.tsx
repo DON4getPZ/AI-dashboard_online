@@ -1445,7 +1445,7 @@ export default function ReactView() {
       if (quadrant && quadrants[quadrant]) {
         quadrants[quadrant].channels.push({
           name: channelName,
-          cvr: channelInfo.stats?.cvr || 0,
+          cvr: Number(channelInfo.stats?.cvr) || 0,
           action: channelInfo.bcg_matrix?.action || ''
         });
       }
