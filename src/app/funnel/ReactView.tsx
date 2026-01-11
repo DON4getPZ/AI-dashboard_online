@@ -3940,10 +3940,10 @@ export default function ReactView() {
                             datalabels: { display: false },
                             tooltip: {
                               callbacks: {
-                                label: function(context: { parsed: { x: number } }) {
-                                  const val = context.parsed.x;
+                                label: function(context: { parsed: { x: number | null } }) {
+                                  const val = context.parsed.x ?? 0;
                                   if (currentKpiType === 'cvr') {
-                                    return config.label + ': ' + (val !== undefined ? val.toFixed(2) : '0') + '%';
+                                    return config.label + ': ' + val.toFixed(2) + '%';
                                   } else if (currentKpiType === 'revenue') {
                                     return config.label + ': ' + formatNumber(val) + '원';
                                   } else {
