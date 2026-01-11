@@ -10,6 +10,7 @@ test_1_fetch.bat, test_2_mapping.bat, test_3_analysis.bat에서 검증된
     python scripts/run_all_clients.py --stage fetch      # 특정 단계만
     python scripts/run_all_clients.py --dry-run          # 실행 없이 계획만 출력
     python scripts/run_all_clients.py --with-images      # 소재 이미지 다운로드 포함
+    python scripts/run_all_clients.py --verbose          # 상세 로그 출력
 """
 
 import json
@@ -92,7 +93,8 @@ def load_clients(config_path: Path) -> List[Dict[str, Any]]:
 
 def run_script(script_name: str, client_id: Optional[str],
                index: int, total: int, description: str,
-               dry_run: bool = False, with_images: bool = False) -> bool:
+               dry_run: bool = False, with_images: bool = False,
+               verbose: bool = False) -> bool:
     """
     단일 스크립트 실행
 
@@ -113,8 +115,14 @@ def run_script(script_name: str, client_id: Optional[str],
     # 진행 표시 (test_*.bat 패턴)
     client_display = f"[{client_id}]" if client_id else "[레거시]"
     print(f"\n[{index}/{total}] {script_name} ({description})")
-    print(f"  {client_display} python scripts/{script_name}" +
-          (f" --client {client_id}" if client_id else ""))
+
+    # verbose 모드면 실제 실행 명령어 전체 표시
+    cmd_display = f"python scripts/{script_name}"
+    if client_id:
+        cmd_display += f" --client {client_id}"
+    if script_name == 'fetch_creative_url.py' and with_images:
+        cmd_display += " --download-images"
+    print(f"  {client_display} {cmd_display}")
 
     if dry_run:
         print("  [DRY-RUN] 실행 건너뜀")
@@ -123,18 +131,30 @@ def run_script(script_name: str, client_id: Optional[str],
     # 스크립트 실행
     start_time = time.time()
     try:
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            encoding='utf-8',
-            cwd=PROJECT_ROOT
-        )
+        if verbose:
+            # verbose 모드: 실시간 출력
+            print("  " + "-" * 60)
+            result = subprocess.run(
+                cmd,
+                text=True,
+                encoding='utf-8',
+                cwd=PROJECT_ROOT
+            )
+            print("  " + "-" * 60)
+        else:
+            # 기본 모드: 출력 캡처
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                encoding='utf-8',
+                cwd=PROJECT_ROOT
+            )
         elapsed = time.time() - start_time
 
         if result.returncode != 0:
             print(f"  [경고] {script_name} 실패 (exit code: {result.returncode}) - 계속 진행")
-            if result.stderr:
+            if not verbose and hasattr(result, 'stderr') and result.stderr:
                 # 에러 메시지 첫 3줄만 출력
                 error_lines = result.stderr.strip().split('\n')[:3]
                 for line in error_lines:
@@ -152,7 +172,8 @@ def run_script(script_name: str, client_id: Optional[str],
 def run_client_pipeline(client_id: Optional[str],
                         scripts: List[tuple],
                         dry_run: bool = False,
-                        with_images: bool = False) -> Dict[str, Any]:
+                        with_images: bool = False,
+                        verbose: bool = False) -> Dict[str, Any]:
     """
     단일 클라이언트에 대해 전체 파이프라인 실행
 
@@ -167,6 +188,8 @@ def run_client_pipeline(client_id: Optional[str],
     print(f"실행 스크립트: {total}개")
     if with_images:
         print("이미지 다운로드: 포함")
+    if verbose:
+        print("상세 로그: 활성화")
     print("=" * 70)
 
     results = {
@@ -186,7 +209,8 @@ def run_client_pipeline(client_id: Optional[str],
             total=total,
             description=description,
             dry_run=dry_run,
-            with_images=with_images
+            with_images=with_images,
+            verbose=verbose
         )
 
         if success:
@@ -247,6 +271,11 @@ def main():
         action='store_true',
         help='소재 이미지 다운로드 포함 (fetch_creative_url.py에 --download-images 전달)'
     )
+    parser.add_argument(
+        '--verbose', '-v',
+        action='store_true',
+        help='상세 로그 출력 (각 스크립트의 실시간 출력 표시)'
+    )
 
     args = parser.parse_args()
 
@@ -259,6 +288,8 @@ def main():
     print(f"실행 단계: {args.stage}")
     if args.with_images:
         print("이미지 다운로드: 포함")
+    if args.verbose:
+        print("상세 로그: 활성화")
     if args.dry_run:
         print("[DRY-RUN 모드] 실행 없이 계획만 출력합니다.")
 
@@ -296,7 +327,8 @@ def main():
             client_id=client_id,
             scripts=scripts,
             dry_run=args.dry_run,
-            with_images=args.with_images
+            with_images=args.with_images,
+            verbose=args.verbose
         )
         all_results.append(result)
 

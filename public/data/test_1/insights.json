@@ -3771,7 +3771,7 @@
             "based_on": "prophet_forecast"
           }
         ],
-        "generated_at": "2026-01-11T19:38:13.959124",
+        "generated_at": "2026-01-11T23:39:21.571227",
         "filter_info": {
           "days": 0,
           "label": "전체 기간",
@@ -7070,7 +7070,7 @@
             "based_on": "prophet_forecast"
           }
         ],
-        "generated_at": "2026-01-11T19:38:26.473522",
+        "generated_at": "2026-01-11T23:39:34.376039",
         "filter_info": {
           "days": 180,
           "label": "최근 180일",
@@ -9900,7 +9900,7 @@
             "based_on": "prophet_forecast"
           }
         ],
-        "generated_at": "2026-01-11T19:38:47.381546",
+        "generated_at": "2026-01-11T23:39:57.926615",
         "filter_info": {
           "days": 90,
           "label": "최근 90일",
@@ -10219,7 +10219,7 @@
       },
       "seasonality_insights": []
     },
-    "generated_at": "2026-01-11T19:38:47.506864",
+    "generated_at": "2026-01-11T23:39:58.112390",
     "available_periods": [
       {
         "key": "full",
@@ -10238,7 +10238,7 @@
   "funnel": {
     "by_period": {
       "full": {
-        "generated_at": "2026-01-11T19:37:42.411310",
+        "generated_at": "2026-01-11T23:38:50.232587",
         "category": "default",
         "thresholds_used": {
           "activation_rate_warning": 50.0,
@@ -10259,7 +10259,7 @@
           "is_filtered": false
         },
         "meta": {
-          "generated_at": "2026-01-11 19:37",
+          "generated_at": "2026-01-11 23:38",
           "analysis_period": "2025-02-12 ~ 2026-01-11",
           "category": "default"
         },
@@ -12262,7 +12262,7 @@
         }
       },
       "180d": {
-        "generated_at": "2026-01-11T19:37:47.342856",
+        "generated_at": "2026-01-11T23:38:55.254557",
         "category": "default",
         "thresholds_used": {
           "activation_rate_warning": 50.0,
@@ -12283,7 +12283,7 @@
           "is_filtered": true
         },
         "meta": {
-          "generated_at": "2026-01-11 19:37",
+          "generated_at": "2026-01-11 23:38",
           "analysis_period": "2025-07-15 ~ 2026-01-11",
           "category": "default"
         },
@@ -13849,7 +13849,7 @@
         }
       },
       "90d": {
-        "generated_at": "2026-01-11T19:37:52.608151",
+        "generated_at": "2026-01-11T23:39:00.056471",
         "category": "default",
         "thresholds_used": {
           "activation_rate_warning": 50.0,
@@ -13870,7 +13870,7 @@
           "is_filtered": true
         },
         "meta": {
-          "generated_at": "2026-01-11 19:37",
+          "generated_at": "2026-01-11 23:39",
           "analysis_period": "2025-10-13 ~ 2026-01-11",
           "category": "default"
         },
@@ -15412,7 +15412,7 @@
         }
       },
       "30d": {
-        "generated_at": "2026-01-11T19:37:57.476187",
+        "generated_at": "2026-01-11T23:39:05.036182",
         "category": "default",
         "thresholds_used": {
           "activation_rate_warning": 50.0,
@@ -15433,7 +15433,7 @@
           "is_filtered": true
         },
         "meta": {
-          "generated_at": "2026-01-11 19:37",
+          "generated_at": "2026-01-11 23:39",
           "analysis_period": "2025-12-12 ~ 2026-01-11",
           "category": "default"
         },
@@ -16612,7 +16612,7 @@
         "crm_actions": []
       }
     },
-    "generated_at": "2026-01-11T19:37:58.090868",
+    "generated_at": "2026-01-11T23:39:05.580481",
     "available_periods": [
       {
         "key": "full",
@@ -16633,10 +16633,10 @@
     ]
   },
   "forecast": {
-    "generated_at": "2026-01-11T19:37:59.182742",
+    "generated_at": "2026-01-11T23:39:06.554082",
     "by_period": {
       "full": {
-        "generated_at": "2026-01-11T19:37:59.182769",
+        "generated_at": "2026-01-11T23:39:06.554103",
         "summary_card": {
           "status_title": "📉 하락세 감지",
           "status_message": "향후 매출 감소가 예상됩니다. 긴급 점검이 필요해요.",
@@ -17330,7 +17330,7 @@
         }
       },
       "180d": {
-        "generated_at": "2026-01-11T19:37:59.265381",
+        "generated_at": "2026-01-11T23:39:06.620320",
         "summary_card": {
           "status_title": "📉 하락세 감지",
           "status_message": "향후 매출 감소가 예상됩니다. 긴급 점검이 필요해요.",
@@ -17893,7 +17893,7 @@
         }
       },
       "90d": {
-        "generated_at": "2026-01-11T19:37:59.347387",
+        "generated_at": "2026-01-11T23:39:06.686596",
         "summary_card": {
           "status_title": "📉 하락세 감지",
           "status_message": "향후 매출 감소가 예상됩니다. 긴급 점검이 필요해요.",
@@ -18274,7 +18274,7 @@
         }
       },
       "30d": {
-        "generated_at": "2026-01-11T19:37:59.410824",
+        "generated_at": "2026-01-11T23:39:06.737014",
         "summary_card": {
           "status_title": "⚓ 안정적 유지",
           "status_message": "큰 변동 없이 안정적인 흐름을 보이고 있습니다.",

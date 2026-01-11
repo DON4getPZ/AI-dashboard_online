@@ -452,7 +452,187 @@ def run_prophet_forecast(paths: Optional[ClientPaths] = None, training_days: int
         print(f"\n✓ 트렌드 분석 결과 저장: {data_type_dir / 'prophet_trend_analysis.csv'}")
 
     # ============================================================================
-    # 4~12. 세부 예측 (브랜드, 상품, 성별, 연령, 기기플랫폼 등)
+    # 4. 요일별 계절성 분석 (prophet_forecast_by_seasonality.csv)
+    # ============================================================================
+    print("\n" + "=" * 100)
+    print("4. 요일별 계절성 분석 (전체 + 유형구분별)")
+    print("=" * 100)
+
+    # 요일 컬럼 추가
+    df['요일'] = df['일'].dt.day_name()
+    day_name_map = {
+        'Monday': '월요일', 'Tuesday': '화요일', 'Wednesday': '수요일',
+        'Thursday': '목요일', 'Friday': '금요일', 'Saturday': '토요일', 'Sunday': '일요일'
+    }
+    df['요일'] = df['요일'].map(day_name_map)
+
+    seasonality_results = []
+
+    # 전체 요일별 평균
+    overall_by_day = df.groupby('요일').agg({
+        '비용': 'mean', '노출': 'mean', '클릭': 'mean', '전환수': 'mean', '전환값': 'mean'
+    }).reset_index()
+
+    for _, row in overall_by_day.iterrows():
+        cost = row['비용']
+        revenue = row['전환값']
+        conversions = row['전환수']
+        roas = (revenue / cost * 100) if cost > 0 else 0
+        cpa = (cost / conversions) if conversions > 0 else 0
+        cpc = (cost / row['클릭']) if row['클릭'] > 0 else 0
+
+        seasonality_results.append({
+            '유형구분': '전체',
+            '기간유형': '요일별',
+            '요일': row['요일'],
+            '예측_비용': cost,
+            '예측_노출': row['노출'],
+            '예측_클릭': row['클릭'],
+            '예측_전환수': conversions,
+            '예측_전환값': revenue,
+            '예측_ROAS': roas,
+            '예측_CPA': cpa,
+            '예측_CPC': cpc
+        })
+
+    print(f"  - 전체 요일별: {len(overall_by_day)}개")
+
+    # 유형구분별 요일별 평균
+    categories = df['유형구분'].unique()
+    category_count = 0
+    for category in categories:
+        cat_data = df[df['유형구분'] == category]
+        if len(cat_data) < 7:  # 최소 7일 데이터 필요
+            continue
+
+        cat_by_day = cat_data.groupby('요일').agg({
+            '비용': 'mean', '노출': 'mean', '클릭': 'mean', '전환수': 'mean', '전환값': 'mean'
+        }).reset_index()
+
+        for _, row in cat_by_day.iterrows():
+            cost = row['비용']
+            revenue = row['전환값']
+            conversions = row['전환수']
+            roas = (revenue / cost * 100) if cost > 0 else 0
+            cpa = (cost / conversions) if conversions > 0 else 0
+            cpc = (cost / row['클릭']) if row['클릭'] > 0 else 0
+
+            seasonality_results.append({
+                '유형구분': category,
+                '기간유형': '요일별',
+                '요일': row['요일'],
+                '예측_비용': cost,
+                '예측_노출': row['노출'],
+                '예측_클릭': row['클릭'],
+                '예측_전환수': conversions,
+                '예측_전환값': revenue,
+                '예측_ROAS': roas,
+                '예측_CPA': cpa,
+                '예측_CPC': cpc
+            })
+        category_count += 1
+
+    print(f"  - 유형구분별 요일: {category_count}개 카테고리")
+
+    # 전체 월별 평균 추가
+    df['월'] = df['일'].dt.month
+    month_name_map = {1: '1월', 2: '2월', 3: '3월', 4: '4월', 5: '5월', 6: '6월',
+                      7: '7월', 8: '8월', 9: '9월', 10: '10월', 11: '11월', 12: '12월'}
+    df['월명'] = df['월'].map(month_name_map)
+
+    overall_by_month = df.groupby('월명').agg({
+        '비용': 'sum', '노출': 'sum', '클릭': 'sum', '전환수': 'sum', '전환값': 'sum'
+    }).reset_index()
+
+    for _, row in overall_by_month.iterrows():
+        cost = row['비용']
+        revenue = row['전환값']
+        conversions = row['전환수']
+        roas = (revenue / cost * 100) if cost > 0 else 0
+        cpa = (cost / conversions) if conversions > 0 else 0
+
+        seasonality_results.append({
+            '유형구분': '전체',
+            '기간유형': '월별',
+            '요일': row['월명'],
+            '예측_비용': cost,
+            '예측_노출': row['노출'],
+            '예측_클릭': row['클릭'],
+            '예측_전환수': conversions,
+            '예측_전환값': revenue,
+            '예측_ROAS': roas,
+            '예측_CPA': cpa,
+            '예측_CPC': 0
+        })
+
+    # 전체 분기별 평균 추가
+    def get_quarter(month):
+        if month in [1, 2, 3]:
+            return 'Q1(1~3월)'
+        elif month in [4, 5, 6]:
+            return 'Q2(4~6월)'
+        elif month in [7, 8, 9]:
+            return 'Q3(7~9월)'
+        else:
+            return 'Q4(10~12월)'
+
+    df['분기'] = df['월'].apply(get_quarter)
+
+    overall_by_quarter = df.groupby('분기').agg({
+        '비용': 'mean', '노출': 'mean', '클릭': 'mean', '전환수': 'mean', '전환값': 'mean'
+    }).reset_index()
+
+    for _, row in overall_by_quarter.iterrows():
+        cost = row['비용']
+        revenue = row['전환값']
+        conversions = row['전환수']
+        roas = (revenue / cost * 100) if cost > 0 else 0
+        cpa = (cost / conversions) if conversions > 0 else 0
+        cpc = (cost / row['클릭']) if row['클릭'] > 0 else 0
+
+        seasonality_results.append({
+            '유형구분': '전체',
+            '기간유형': '분기별',
+            '요일': row['분기'],
+            '예측_비용': cost,
+            '예측_노출': row['노출'],
+            '예측_클릭': row['클릭'],
+            '예측_전환수': conversions,
+            '예측_전환값': revenue,
+            '예측_ROAS': roas,
+            '예측_CPA': cpa,
+            '예측_CPC': cpc
+        })
+
+    # 일별 데이터 추가 (향후 30일 예측용)
+    if overall_result is not None:
+        forecast_only = overall_result[overall_result['type'] == 'forecast'].copy()
+        for _, row in forecast_only.iterrows():
+            date_str = row['일자'].strftime('%Y-%m-%d') if hasattr(row['일자'], 'strftime') else str(row['일자'])[:10]
+            seasonality_results.append({
+                '유형구분': '전체',
+                '기간유형': '일별',
+                '요일': date_str,
+                '예측_비용': row.get('예측_비용', 0),
+                '예측_노출': row.get('예측_노출', 0),
+                '예측_클릭': row.get('예측_클릭', 0),
+                '예측_전환수': row.get('예측_전환수', 0),
+                '예측_전환값': row.get('예측_전환값', 0),
+                '예측_ROAS': row.get('예측_ROAS', 0),
+                '예측_CPA': row.get('예측_CPA', 0),
+                '예측_CPC': row.get('예측_CPC', 0)
+            })
+
+    # 결과 저장
+    if seasonality_results:
+        seasonality_df = pd.DataFrame(seasonality_results)
+        seasonality_df.to_csv(data_type_dir / 'prophet_forecast_by_seasonality.csv',
+                              index=False, encoding='utf-8-sig')
+        print(f"\n✓ 계절성 분석 결과 저장: {data_type_dir / 'prophet_forecast_by_seasonality.csv'}")
+        print(f"  - 총 {len(seasonality_results)}개 레코드")
+
+    # ============================================================================
+    # 5~12. 세부 예측 (브랜드, 상품, 성별, 연령, 기기플랫폼 등)
     # ============================================================================
     # Type1 데이터 추출
     type1_data = df[df['data_type'] == 'Type1_캠페인+광고세트']
