@@ -17,16 +17,21 @@ if exist "%CONFIG_FILE%" (
     echo.
     echo 현재 등록된 클라이언트:
     echo ------------------------------------------------------------
-    type "%CONFIG_FILE%" | findstr /C:"\"id\"" /C:"\"name\""
+    python scripts/add_client.py --list
     echo ------------------------------------------------------------
     echo.
-    echo [1] 기존 설정 사용
+    echo [1] Analysis 테스트 진행
     echo [Q] 종료
+    echo.
+    echo * 클라이언트 추가: test_1_fetch.bat [2]번 옵션 사용
     echo.
     set /p CONFIG_CHOICE="선택: "
 
     if /i "!CONFIG_CHOICE!"=="Q" goto :EOF
-    goto :USE_EXISTING
+    if /i "!CONFIG_CHOICE!"=="1" goto :USE_EXISTING
+
+    echo 잘못된 선택입니다.
+    goto :EOF
 ) else (
     echo [설정 확인] %CONFIG_FILE% 파일이 존재하지 않습니다.
     echo.

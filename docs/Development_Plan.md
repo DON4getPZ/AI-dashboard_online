@@ -1,7 +1,7 @@
 # 마케팅 대시보드 마이그레이션 개발 계획
 
 **작성일**: 2025-01-05
-**수정일**: 2026-01-11
+**수정일**: 2026-01-11 (Phase 5 자동화 구현)
 **목표**: 6개 대시보드 통합 (Next.js SPA)
 
 ---
@@ -112,25 +112,92 @@ src/
 
 ---
 
-## Phase 5: 배포 및 CI/CD 구성 (3-5일)
+## Phase 5: 배포 및 CI/CD 구성 (3-5일) 🔄 진행중
 
-### 전체 클라이언트 자동화
-- [ ] `scripts/run_all_clients.py` - 전체 클라이언트 ETL 핵심 로직
-  - `config/clients.json` 읽기
-  - 각 클라이언트 순차 실행 (fetch → mapping → analysis → export)
-  - 실행 결과 로깅
-- [ ] `run_all_clients.bat` - 래퍼 스크립트
-  - `python scripts/run_all_clients.py %*` 호출
-  - Windows 작업 스케줄러 연동용
+### 사전 검증 완료 (test_*.bat)
 
-### 배포 스크립트
+Phase 5 구현 전, 아래 테스트 스크립트로 전체 파이프라인 검증 완료:
+
+| 테스트 파일 | 역할 | 검증 스크립트 수 |
+|------------|------|-----------------|
+| `test_1_fetch.bat` | Google Sheets → CSV | 5개 |
+| `test_2_mapping.bat` | CSV → 가공 데이터 | 1개 |
+| `test_3_analysis.bat` | 가공 → 분석/시각화 | 13개 |
+
+**검증 항목**: `--client` 파라미터, 실행 순서, 에러 핸들링, 경로 분리
+
+### test_*.bat 개선 ✅ 완료
+
+| 파일 | 개선 내용 |
+|------|----------|
+| `test_1_fetch.bat` | [2] 신규 클라이언트 추가 기능, [3] 전체 설정 초기화 분리 |
+| `test_2_mapping.bat` | 메뉴 단순화, 클라이언트 목록 표시 개선 |
+| `test_3_analysis.bat` | 메뉴 단순화, 클라이언트 목록 표시 개선 |
+| `scripts/add_client.py` | [신규] 클라이언트 추가 헬퍼 스크립트 |
+
+**신규 클라이언트 온보딩 플로우**:
+```
+test_1_fetch.bat [2] → 클라이언트 정보 입력 → clients.json에 추가
+    ↓
+test_1, test_2, test_3 → 개별 클라이언트 테스트/디버깅
+    ↓
+run_all_clients.bat → 전체 클라이언트 자동 실행
+```
+
+### 전체 클라이언트 자동화 ✅ 완료
+
+#### 1단계: `scripts/run_all_clients.py` (핵심 로직) ✅
+- [x] `config/clients.json` 파싱 (active 클라이언트 필터링)
+- [x] 클라이언트별 순차 실행 (subprocess.run)
+- [x] test_*.bat에서 검증된 스크립트 목록/순서 적용
+- [x] 실행 결과 로깅 (성공/실패/소요시간)
+- [x] 종료 코드 반환 (전체 성공: 0, 일부 실패: 1)
+- [x] CLI 옵션: `--client`, `--stage`, `--dry-run`, `--legacy`
+
+**실행할 스크립트 목록** (test_*.bat 기반):
+```python
+SCRIPTS = {
+    'fetch': [  # test_1_fetch.bat (5개)
+        'fetch_google_sheets.py',
+        'fetch_sheets_multi.py',
+        'fetch_creative_sheets.py',
+        'fetch_creative_url.py',
+        'fetch_ga4_sheets.py',
+    ],
+    'mapping': [  # test_2_mapping.bat (1개)
+        'process_marketing_data.py',
+    ],
+    'analysis': [  # test_3_analysis.bat (13개)
+        'run_multi_analysis.py',
+        'multi_analysis_dimension_detail.py',
+        'multi_analysis_prophet_forecast.py',
+        'generate_type_insights.py',
+        'segment_processor.py',
+        'insight_generator.py',
+        'visualization_generator.py',
+        'generate_funnel_data.py',
+        'generate_engagement_data.py',
+        'generate_funnel_data_multiperiod.py',
+        'generate_insights_multiperiod.py',
+        'generate_type_insights_multiperiod.py',
+        'export_json.py',
+    ],
+}
+```
+
+#### 2단계: `run_all_clients.bat` (래퍼) ✅
+- [x] 단순 래퍼: `python scripts/run_all_clients.py %*`
+- [x] Windows 작업 스케줄러 연동용
+- [x] 실행 후 pause (대화형 확인, 스케줄러에서는 자동 스킵)
+
+### 배포 스크립트 (TODO)
 - [ ] `deploy.bat` - 단일 클라이언트 (ETL → Git Push)
 - [ ] `deploy_all.bat` - 전체 클라이언트
 - [ ] `scheduler_register.bat` - Windows 작업 스케줄러 등록
   - 매일 트리거 (예: AM 6:00)
   - `run_all_clients.bat` 실행
 
-### GitHub Actions
+### GitHub Actions (TODO)
 - [ ] `.github/workflows/deploy.yml` - push 트리거 → Vercel 배포
 
 ### 배포 흐름
@@ -145,16 +212,26 @@ src/
 ```
 [작업 스케줄러] → run_all_clients.bat
                       ↓
-               run_all_clients.py
+               run_all_clients.py (핵심 로직)
                       ↓
-               clients.json 읽기
+               clients.json 파싱
                       ↓
                클라이언트별 순차 실행:
-                 ├── fetch (Google Sheets → CSV)
-                 ├── mapping (CSV → 가공)
-                 ├── analysis (분석/시각화)
-                 └── export (JSON)
+                 ├── fetch (5개 스크립트)
+                 ├── mapping (1개 스크립트)
+                 ├── analysis (13개 스크립트)
+                 └── 결과 로깅
 ```
+
+### Python 우선 구현의 이점
+
+| 항목 | .bat 직접 | .py → .bat |
+|------|----------|------------|
+| JSON 파싱 | 복잡 | `json.load()` |
+| 클라이언트 순회 | 제한적 | 리스트 순회 |
+| 에러 핸들링 | errorlevel | try/except |
+| 로깅 | echo | logging 모듈 |
+| 유지보수 | 어려움 | 용이 |
 
 ---
 
@@ -225,7 +302,7 @@ src/components/
 | Phase 2 | ✅ 완료 (15/15) | Python 스크립트 멀티클라이언트 대응 |
 | ~~Phase 3~~ | ❌ 취소 | ~~Standalone 통합 HTML~~ (80MB 문제) |
 | Phase 4 | ✅ 완료 | Next.js SPA (6개 대시보드 React 변환) |
-| Phase 5 | 🔲 대기 | 배포 스크립트, CI/CD |
+| Phase 5 | 🔄 진행중 | run_all_clients ✅, test_*.bat 개선 ✅, 배포/CI/CD 🔲 |
 | Phase 6 | 🔲 대기 | 테스트, 프로덕션 배포 |
 | Phase 7 | 🔲 대기 | 컴포넌트 분리 (Phase 6 완료 후) |
 
@@ -235,11 +312,15 @@ src/components/
 
 | 파일 | 역할 |
 |------|------|
-| `scripts/common/paths.py` | [신규] 멀티클라이언트 경로 관리 |
-| `scripts/export_json.py` | [신규] CSV → JSON 변환 |
-| `scripts/run_all_clients.py` | [Phase 5] 전체 클라이언트 ETL 로직 |
-| `run_all_clients.bat` | [Phase 5] 스케줄러용 래퍼 |
-| `src/middleware.ts` | [신규] 서브도메인 라우팅 |
+| `scripts/common/paths.py` | [완료] 멀티클라이언트 경로 관리 |
+| `scripts/export_json.py` | [완료] CSV → JSON 변환 |
+| `scripts/run_all_clients.py` | [완료] 전체 클라이언트 ETL 로직 (19개 스크립트) |
+| `scripts/add_client.py` | [완료] 클라이언트 추가 헬퍼 |
+| `run_all_clients.bat` | [완료] 스케줄러용 래퍼 |
+| `test_1_fetch.bat` | [완료] Fetch 테스트 + 클라이언트 추가 |
+| `test_2_mapping.bat` | [완료] Mapping 테스트 |
+| `test_3_analysis.bat` | [완료] Analysis 테스트 (13개 스크립트) |
+| `src/middleware.ts` | [완료] 서브도메인 라우팅 |
 | `src/app/*/ReactView.tsx` | [완료] 6개 대시보드 React 컴포넌트 |
 | `docs/react-ecosystem-history.md` | [참조] React 생태계 구성 히스토리 |
 | `docs/Deploy_project_implement.md` | [참조] 상세 구현 가이드 |

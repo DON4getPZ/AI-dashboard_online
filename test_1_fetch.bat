@@ -15,19 +15,21 @@ set CONFIG_FILE=config\clients.json
 if exist "%CONFIG_FILE%" (
     echo [설정 확인] %CONFIG_FILE% 파일이 존재합니다.
     echo.
-    echo 현재 설정 내용:
+    echo 현재 등록된 클라이언트:
     echo ------------------------------------------------------------
-    type "%CONFIG_FILE%" | findstr /C:"\"id\"" /C:"\"name\"" /C:"\"sheetId\""
+    python scripts/add_client.py --list
     echo ------------------------------------------------------------
     echo.
-    echo [1] 기존 설정 사용
-    echo [2] 신규 설정 작성
+    echo [1] 기존 설정 사용 (Fetch 테스트 진행)
+    echo [2] 신규 클라이언트 추가
+    echo [3] 전체 설정 초기화 (기존 설정 삭제)
     echo [Q] 종료
     echo.
     set /p CONFIG_CHOICE="선택: "
 
     if /i "!CONFIG_CHOICE!"=="Q" goto :EOF
-    if /i "!CONFIG_CHOICE!"=="2" goto :CREATE_CONFIG
+    if /i "!CONFIG_CHOICE!"=="3" goto :CREATE_CONFIG
+    if /i "!CONFIG_CHOICE!"=="2" goto :ADD_CLIENT
     if /i "!CONFIG_CHOICE!"=="1" goto :USE_EXISTING
 
     echo 잘못된 선택입니다. 기존 설정을 사용합니다.
@@ -35,13 +37,132 @@ if exist "%CONFIG_FILE%" (
 ) else (
     echo [설정 확인] %CONFIG_FILE% 파일이 존재하지 않습니다.
     echo.
+    echo [안내] 먼저 전체 설정을 초기화합니다.
     goto :CREATE_CONFIG
 )
 
+:ADD_CLIENT
+echo ============================================================
+echo  신규 클라이언트 추가
+echo ============================================================
+echo.
+echo 기존 설정을 유지하면서 새 클라이언트를 추가합니다.
+echo.
+
+:: --------------------------------------------------------
+:: 클라이언트 정보 입력
+:: --------------------------------------------------------
+echo [클라이언트 정보]
+set /p ADD_CLIENT_ID="클라이언트 ID (예: clientB): "
+if "%ADD_CLIENT_ID%"=="" (
+    echo [오류] 클라이언트 ID는 필수입니다.
+    pause
+    goto :EOF
+)
+
+set /p ADD_CLIENT_NAME="클라이언트 이름 (예: B회사): "
+if "%ADD_CLIENT_NAME%"=="" set ADD_CLIENT_NAME=%ADD_CLIENT_ID%
+
+echo.
+:: --------------------------------------------------------
+:: Google Sheets 설정
+:: --------------------------------------------------------
+echo [Google Sheets 설정]
+echo.
+echo [Raw 데이터 Sheet]
+set /p ADD_RAW_SHEET_ID="  Sheet ID: "
+if "%ADD_RAW_SHEET_ID%"=="" (
+    echo [오류] Raw Sheet ID는 필수입니다.
+    pause
+    goto :EOF
+)
+set /p ADD_RAW_WORKSHEET="  Worksheet 이름 (기본값=data_integration): "
+if "%ADD_RAW_WORKSHEET%"=="" set ADD_RAW_WORKSHEET=data_integration
+
+echo.
+echo [Multi 데이터 Sheet 설정]
+set /p ADD_MULTI_SHEET_COUNT="Multi 데이터 Sheet 개수 (0=사용안함): "
+if "%ADD_MULTI_SHEET_COUNT%"=="" set ADD_MULTI_SHEET_COUNT=0
+
+:: Multi Sheet 수집
+set ADD_MULTI_SHEETS=
+set /a ADD_MULTI_NUM=%ADD_MULTI_SHEET_COUNT% 2>nul
+if %ADD_MULTI_NUM% GTR 0 (
+    echo.
+    echo %ADD_MULTI_NUM%개의 Multi Sheet 정보를 입력하세요:
+    for /l %%i in (1,1,%ADD_MULTI_NUM%) do (
+        echo [Multi Sheet %%i/%ADD_MULTI_NUM%]
+        set /p ADD_MULTI_ID_%%i="  Sheet ID: "
+        set /p ADD_MULTI_NAME_%%i="  Worksheet 이름: "
+        if %%i==1 (
+            set ADD_MULTI_SHEETS=!ADD_MULTI_ID_%%i!:!ADD_MULTI_NAME_%%i!
+        ) else (
+            set ADD_MULTI_SHEETS=!ADD_MULTI_SHEETS!,!ADD_MULTI_ID_%%i!:!ADD_MULTI_NAME_%%i!
+        )
+    )
+)
+
+echo.
+echo [Creative 데이터 Sheet]
+set /p ADD_CREATIVE_SHEET_ID="  Sheet ID (빈값=Raw와 동일): "
+set /p ADD_CREATIVE_WORKSHEET="  Worksheet 이름 (기본값=creative_data): "
+if "%ADD_CREATIVE_WORKSHEET%"=="" set ADD_CREATIVE_WORKSHEET=creative_data
+
+echo.
+echo [Creative URL Sheet]
+set /p ADD_CREATIVE_URL_SHEET_ID="  Sheet ID (빈값=Creative와 동일): "
+set /p ADD_CREATIVE_URL_WORKSHEET="  Worksheet 이름 (기본값=creative_url): "
+if "%ADD_CREATIVE_URL_WORKSHEET%"=="" set ADD_CREATIVE_URL_WORKSHEET=creative_url
+
+echo.
+echo [GA4 데이터 Sheet]
+set /p ADD_GA4_SHEET_ID="  Sheet ID (빈값=Raw와 동일): "
+set /p ADD_GA4_WORKSHEET="  Worksheet 이름 (기본값=ga4_funnel): "
+if "%ADD_GA4_WORKSHEET%"=="" set ADD_GA4_WORKSHEET=ga4_funnel
+
+:: --------------------------------------------------------
+:: Python 헬퍼로 클라이언트 추가
+:: --------------------------------------------------------
+echo.
+echo [클라이언트 추가 중...]
+
+python scripts/add_client.py ^
+    --id "%ADD_CLIENT_ID%" ^
+    --name "%ADD_CLIENT_NAME%" ^
+    --raw-sheet-id "%ADD_RAW_SHEET_ID%" ^
+    --raw-worksheet "%ADD_RAW_WORKSHEET%" ^
+    --multi-sheets "%ADD_MULTI_SHEETS%" ^
+    --creative-sheet-id "%ADD_CREATIVE_SHEET_ID%" ^
+    --creative-worksheet "%ADD_CREATIVE_WORKSHEET%" ^
+    --creative-url-sheet-id "%ADD_CREATIVE_URL_SHEET_ID%" ^
+    --creative-url-worksheet "%ADD_CREATIVE_URL_WORKSHEET%" ^
+    --ga4-sheet-id "%ADD_GA4_SHEET_ID%" ^
+    --ga4-worksheet "%ADD_GA4_WORKSHEET%"
+
+if errorlevel 1 (
+    echo [오류] 클라이언트 추가 실패
+    pause
+    goto :EOF
+)
+
+echo.
+echo [완료] 클라이언트 '%ADD_CLIENT_ID%' 추가됨
+echo.
+echo 이제 Fetch 테스트를 진행합니다.
+set CLIENT_ID=%ADD_CLIENT_ID%
+set CLIENT_ARG=--client %ADD_CLIENT_ID%
+echo.
+pause
+goto :SELECT_FETCH
+
 :CREATE_CONFIG
 echo ============================================================
-echo  clients.json 신규 작성
+echo  clients.json 전체 초기화
 echo ============================================================
+echo.
+echo [주의] 기존 설정이 모두 삭제됩니다!
+set /p CONFIRM_RESET="계속하시겠습니까? (Y/N): "
+if /i not "%CONFIRM_RESET%"=="Y" goto :EOF
 echo.
 
 :: --------------------------------------------------------
@@ -269,6 +390,7 @@ if "%CLIENT_ID%"=="" (
     set CLIENT_ARG=--client %CLIENT_ID%
 )
 
+:SELECT_FETCH
 echo.
 echo ============================================================
 echo  실행할 스크립트 선택
