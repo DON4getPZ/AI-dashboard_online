@@ -3787,9 +3787,9 @@ export default function TypeDashboardReactView() {
         </div>
       </div>
 
-      {/* KPI 카드 - Secondary */}
+      {/* KPI 카드 - Secondary (세부 성과) */}
       {kpiView === 'all' && (
-        <div className="kpi-grid kpi-grid-secondary">
+        <div className="kpi-grid kpi-grid-secondary" data-testid="secondary-kpi">
           <div className="kpi-card secondary">
             <div className="kpi-header">
               <span className="kpi-title">총 노출</span>
