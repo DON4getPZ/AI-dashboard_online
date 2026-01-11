@@ -4440,8 +4440,8 @@ export default function ReactView() {
                             datalabels: { display: false },
                             tooltip: {
                               callbacks: {
-                                label: function(context: { parsed: { x: number } }) {
-                                  return chartLabel + ': ' + formatDecimal(context.parsed.x) + '%';
+                                label: function(context: { parsed: { x: number | null } }) {
+                                  return chartLabel + ': ' + formatDecimal(context.parsed.x ?? 0) + '%';
                                 }
                               }
                             }
