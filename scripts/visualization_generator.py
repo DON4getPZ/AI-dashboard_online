@@ -1,19 +1,30 @@
 """
 Marketing Dashboard - Business Visualization Generator
 비즈니스 의사결정용 시각화 생성
+
+사용법:
+- 레거시: python visualization_generator.py
+- 멀티클라이언트: python visualization_generator.py --client clientA
 """
 
 import json
+import argparse
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 from pathlib import Path
+from typing import Optional
 import sys
+
+# 프로젝트 루트를 path에 추가
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from scripts.common.paths import ClientPaths, parse_client_arg, PROJECT_ROOT
 
 # 한글 폰트 설정
 plt.rcParams['font.family'] = 'Malgun Gothic'
 plt.rcParams['axes.unicode_minus'] = False
 
-# 경로 설정
+# 경로 설정 (레거시 호환용)
 BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / 'data'
 FORECAST_DIR = DATA_DIR / 'forecast'
@@ -23,19 +34,30 @@ VIS_DIR = DATA_DIR / 'visualizations'
 class BusinessVisualizer:
     """비즈니스 의사결정용 시각화 생성기"""
 
-    def __init__(self):
+    def __init__(self, paths: Optional[ClientPaths] = None):
+        self.paths = paths
         self.segment_stats = None
         self.insights = None
+
+        # 경로 설정 (클라이언트 모드 vs 레거시 모드)
+        if paths:
+            self.forecast_dir = paths.forecast
+            self.vis_dir = paths.visualizations
+        else:
+            self.forecast_dir = FORECAST_DIR
+            self.vis_dir = VIS_DIR
 
     def load_data(self) -> None:
         """데이터 로드"""
         print("\n" + "="*60)
-        print("Business Visualization Generator v1.0")
+        print("Business Visualization Generator v1.1")
+        if self.paths:
+            print(f"Client: {self.paths.client_id}")
         print("="*60)
         print("\n[1/4] Loading data...")
 
         # segment_stats.json 로드
-        stats_file = FORECAST_DIR / 'segment_stats.json'
+        stats_file = self.forecast_dir / 'segment_stats.json'
         if not stats_file.exists():
             raise FileNotFoundError(f"segment_stats.json not found: {stats_file}")
 
@@ -44,7 +66,7 @@ class BusinessVisualizer:
         print(f"   Loaded: segment_stats.json")
 
         # insights.json 로드
-        insights_file = FORECAST_DIR / 'insights.json'
+        insights_file = self.forecast_dir / 'insights.json'
         if not insights_file.exists():
             raise FileNotFoundError(f"insights.json not found: {insights_file}")
 
@@ -93,7 +115,8 @@ class BusinessVisualizer:
         ax.grid(axis='x', alpha=0.3)
 
         plt.tight_layout()
-        output_file = VIS_DIR / 'channel_roas_comparison.png'
+        self.vis_dir.mkdir(parents=True, exist_ok=True)
+        output_file = self.vis_dir / 'channel_roas_comparison.png'
         plt.savefig(output_file, dpi=150, bbox_inches='tight')
         plt.close()
 
@@ -151,7 +174,8 @@ class BusinessVisualizer:
                     fontsize=14, fontweight='bold', pad=20)
 
         plt.tight_layout()
-        output_file = VIS_DIR / 'product_revenue_pie.png'
+        self.vis_dir.mkdir(parents=True, exist_ok=True)
+        output_file = self.vis_dir / 'product_revenue_pie.png'
         plt.savefig(output_file, dpi=150, bbox_inches='tight')
         plt.close()
 
@@ -224,7 +248,8 @@ class BusinessVisualizer:
         plt.title('월 예산 소진율', fontsize=14, fontweight='bold', pad=30)
         plt.tight_layout()
 
-        output_file = VIS_DIR / 'budget_gauge.png'
+        self.vis_dir.mkdir(parents=True, exist_ok=True)
+        output_file = self.vis_dir / 'budget_gauge.png'
         plt.savefig(output_file, dpi=150, bbox_inches='tight')
         plt.close()
 
@@ -240,6 +265,8 @@ class BusinessVisualizer:
 
             print("\n" + "="*60)
             print("Business visualizations generated successfully!")
+            if self.paths:
+                print(f"Client: {self.paths.client_id}")
             print("="*60)
 
         except Exception as e:
@@ -249,9 +276,22 @@ class BusinessVisualizer:
             sys.exit(1)
 
 
-def main():
+def main(client_id: Optional[str] = None):
     """메인 함수"""
-    visualizer = BusinessVisualizer()
+    parser = argparse.ArgumentParser(description='비즈니스 시각화 생성기')
+    parser.add_argument('--client', type=str, default=None,
+                        help='클라이언트 ID (멀티클라이언트 모드)')
+    args = parser.parse_args()
+
+    actual_client_id = args.client or client_id
+
+    # 클라이언트 모드 설정
+    paths = None
+    if actual_client_id:
+        paths = ClientPaths(actual_client_id).ensure_dirs()
+        print(f"[Multi-Client Mode] Client: {actual_client_id}")
+
+    visualizer = BusinessVisualizer(paths=paths)
     visualizer.generate_all()
 
 

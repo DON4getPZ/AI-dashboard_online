@@ -1,35 +1,30 @@
 {
+  "google": {
+    "credentials_path": "C:\\Users\\growthmaker\\Desktop\\marketing-dashboard_new - 복사본\\gen-lang-client-0329230680-b2a298f3ef38.json"
+  },
   "clients": [
     {
-      "id": "clientA",
-      "name": "기본 클라이언트",
-      "subdomain": "clienta",
-      "description": "기존 단일 클라이언트 데이터 (마이그레이션 대상)",
+      "id": "test_1",
+      "name": "테스트",
+      "subdomain": "test_1",
       "sheets": {
         "raw": {
-          "sheetId": "YOUR_RAW_SHEET_ID",
-          "worksheet": "data_integration"
+          "sheetId": "1ya2wZ_zmoFkKOKC8wqykD_FvllYDH4juCqO2AUvqZ80",
+          "worksheet": "데이터_통합분류"
         },
-        "multi": {
-          "sheetId": "YOUR_MULTI_SHEET_ID",
-          "worksheets": ["meta_ads", "google_ads", "kakao_moment"]
-        },
+        "multi": [{"sheetId": "1fOCDbdJzTM6E3vSp6Mhz87QUyJi5ct-sVfH7AG8oA7U", "worksheet": "Meta-분류별성과"}, {"sheetId": "1_llROjFvajFMxb6eykve5JnVcJ7X99cabndH02Ute0M", "worksheet": "Meta-분류별성과"}],
         "creative": {
-          "sheetId": "YOUR_CREATIVE_SHEET_ID",
-          "worksheet": "creative_data"
+          "sheetId": "1XlO0_bYwQwyMzDTG2Q3QXZdGLyxv2MvElhBfXWcOQ1o",
+          "worksheet": "Meta-주요성과"
         },
         "creativeUrl": {
-          "sheetId": "YOUR_CREATIVE_URL_SHEET_ID",
-          "worksheet": "creative_url"
+          "sheetId": "1XlO0_bYwQwyMzDTG2Q3QXZdGLyxv2MvElhBfXWcOQ1o",
+          "worksheet": "Meta-이미지-URL"
         },
         "ga4": {
-          "sheetId": "YOUR_GA4_SHEET_ID",
-          "worksheet": "ga4_funnel"
+          "sheetId": "1Nj4cUqOmcDPCi1pDf-IEy9DUyVIWIKPywnLPF88MRrY",
+          "worksheet": "META-AARRR"
         }
-      },
-      "accessPolicy": {
-        "allowedDomains": ["example.com"],
-        "allowedEmails": ["admin@example.com"]
       },
       "active": true
     }
@@ -37,10 +32,6 @@
   "defaults": {
     "timezone": "Asia/Seoul",
     "currency": "KRW",
-    "dateFormat": "YYYY-MM-DD",
-    "forecastDays": 90,
-    "language": "ko"
-  },
-  "version": "1.0.0",
-  "lastUpdated": "2025-01-05"
+    "dateFormat": "YYYY-MM-DD"
+  }
 }

@@ -7,6 +7,7 @@ Type 분석 인사이트 생성 - 다중 기간 버전
 
 사용법:
     python scripts/generate_type_insights_multiperiod.py
+    python scripts/generate_type_insights_multiperiod.py --client clientA
 """
 
 import pandas as pd
@@ -14,8 +15,15 @@ import numpy as np
 import json
 import subprocess
 import sys
+import argparse
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Optional
+
+# 프로젝트 루트를 path에 추가
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from scripts.common.paths import ClientPaths
 
 # 기간 설정 (365일, 180일, 90일 - 30일 제외)
 PERIODS = [
@@ -26,13 +34,22 @@ PERIODS = [
 
 # 경로 설정
 SCRIPT_DIR = Path(__file__).parent
-DATA_DIR = SCRIPT_DIR.parent / 'data' / 'type'
 INSIGHTS_SCRIPT = SCRIPT_DIR / 'generate_type_insights.py'
 PROPHET_SCRIPT = SCRIPT_DIR / 'multi_analysis_prophet_forecast.py'
 
-def run_prophet_forecast(days):
+
+def get_data_dir(client_id: Optional[str] = None) -> Path:
+    """클라이언트별 데이터 디렉토리 반환"""
+    if client_id:
+        return ClientPaths(client_id).type
+    return SCRIPT_DIR.parent / 'data' / 'type'
+
+
+def run_prophet_forecast(days, client_id: Optional[str] = None):
     """기간별 Prophet 예측 생성"""
     cmd = [sys.executable, str(PROPHET_SCRIPT)]
+    if client_id:
+        cmd.extend(['--client', client_id])
     if days > 0:
         cmd.extend(['--days', str(days)])
     cmd.extend(['--output-days', '30'])  # 모든 기간에서 30일 예측
@@ -49,9 +66,11 @@ def run_prophet_forecast(days):
     return True
 
 
-def run_insights_generation(days, output_suffix):
+def run_insights_generation(days, output_suffix, client_id: Optional[str] = None):
     """generate_type_insights.py를 특정 기간으로 실행"""
     cmd = [sys.executable, str(INSIGHTS_SCRIPT)]
+    if client_id:
+        cmd.extend(['--client', client_id])
     if days > 0:
         cmd.extend(['--days', str(days)])
 
@@ -61,7 +80,7 @@ def run_insights_generation(days, output_suffix):
 
     # 1. Prophet 예측 먼저 생성 (기간별 학습 데이터 사용)
     print("\n  [Step 1] Prophet 예측 생성 중...")
-    prophet_success = run_prophet_forecast(days)
+    prophet_success = run_prophet_forecast(days, client_id)
     if not prophet_success:
         print("  [Warning] Prophet 예측 생성 실패, 인사이트 생성 계속 진행")
 
@@ -74,15 +93,19 @@ def run_insights_generation(days, output_suffix):
         return None
 
     # 생성된 insights.json 로드
-    insights_file = DATA_DIR / 'insights.json'
+    data_dir = get_data_dir(client_id)
+    insights_file = data_dir / 'insights.json'
     if insights_file.exists():
         with open(insights_file, 'r', encoding='utf-8') as f:
             return json.load(f)
     return None
 
-def main():
+
+def main(client_id: Optional[str] = None):
     print("=" * 100)
     print("다중 기간 인사이트 생성 (중첩 구조)")
+    if client_id:
+        print(f"클라이언트: {client_id}")
     print("=" * 100)
     print(f"생성일: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"기간: {', '.join([p['label'] for p in PERIODS])}")
@@ -96,7 +119,7 @@ def main():
         print(f"# {period['label']} 데이터 생성 중...")
         print('#'*100)
 
-        insights = run_insights_generation(period['days'], period['key'])
+        insights = run_insights_generation(period['days'], period['key'], client_id)
 
         if insights:
             # 전체 기간에서 seasonality 데이터 저장 (분기별 추이용)
@@ -129,7 +152,9 @@ def main():
     }
 
     # 최종 JSON 저장
-    output_file = DATA_DIR / 'insights.json'
+    data_dir = get_data_dir(client_id)
+    data_dir.mkdir(parents=True, exist_ok=True)
+    output_file = data_dir / 'insights.json'
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(combined_insights, f, ensure_ascii=False, indent=2)
 
@@ -148,5 +173,11 @@ def main():
 
     return combined_insights
 
+
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='다중 기간 Type 인사이트 생성')
+    parser.add_argument('--client', type=str, default=None,
+                        help='클라이언트 ID (멀티클라이언트 모드)')
+    args = parser.parse_args()
+
+    main(client_id=args.client)

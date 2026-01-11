@@ -8,6 +8,7 @@
 
 사용법:
     python generate_insights_multiperiod.py
+    python generate_insights_multiperiod.py --client clientA
 
 출력 구조:
 {
@@ -28,33 +29,48 @@
 import os
 import sys
 import json
+import argparse
 from pathlib import Path
 from datetime import datetime
+from typing import Optional
 
 # 스크립트 디렉토리를 path에 추가
 SCRIPT_DIR = Path(__file__).parent
 sys.path.insert(0, str(SCRIPT_DIR))
+sys.path.insert(0, str(SCRIPT_DIR.parent))
 
 # insight_generator를 먼저 import (UTF-8 설정 포함)
 from insight_generator import InsightGenerator, NpEncoder
+from scripts.common.paths import ClientPaths
 
 # 디렉토리 설정
 BASE_DIR = SCRIPT_DIR.parent
 DATA_DIR = BASE_DIR / 'data'
-FORECAST_DIR = DATA_DIR / 'forecast'
 
 # 분석 기간 설정 (None = 전체)
 PERIODS = [None, 180, 90, 30]
 PERIOD_LABELS = {None: 'full', 180: '180d', 90: '90d', 30: '30d'}
 
 
-def generate_all_periods():
+def get_forecast_dir(client_id: Optional[str] = None) -> Path:
+    """클라이언트별 forecast 디렉토리 반환"""
+    if client_id:
+        return ClientPaths(client_id).forecast
+    return DATA_DIR / 'forecast'
+
+
+def generate_all_periods(client_id: Optional[str] = None):
     """모든 기간에 대해 인사이트 생성"""
+    paths = ClientPaths(client_id) if client_id else None
+    forecast_dir = get_forecast_dir(client_id)
+
     print("\n" + "="*70)
     print("🔄 Multi-Period Insight Generator")
+    if client_id:
+        print(f"   📁 클라이언트: {client_id}")
     print("="*70)
     print(f"   📅 기간: 전체, 180일, 90일, 30일")
-    print(f"   📁 출력: data/forecast/insights.json")
+    print(f"   📁 출력: {forecast_dir / 'insights.json'}")
     print("="*70)
 
     all_insights = {
@@ -72,7 +88,7 @@ def generate_all_periods():
 
         try:
             # InsightGenerator 실행 (개별 저장 안 함)
-            generator = InsightGenerator(days=period)
+            generator = InsightGenerator(days=period, paths=paths)
             insights = generator.generate(save=False)
 
             # 결과 저장 (period 키 제거하여 중복 방지)
@@ -96,7 +112,8 @@ def generate_all_periods():
             }
 
     # 최종 JSON 저장 (NpEncoder로 안전한 직렬화)
-    output_file = FORECAST_DIR / 'insights.json'
+    forecast_dir.mkdir(parents=True, exist_ok=True)
+    output_file = forecast_dir / 'insights.json'
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(all_insights, f, cls=NpEncoder, ensure_ascii=False, indent=2)
 
@@ -117,10 +134,10 @@ def generate_all_periods():
     return all_insights
 
 
-def main():
+def main(client_id: Optional[str] = None):
     """메인 실행 함수"""
     try:
-        insights = generate_all_periods()
+        insights = generate_all_periods(client_id)
 
         # 간단한 요약 출력
         print("\n" + "="*60)
@@ -145,4 +162,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='다중 기간 인사이트 생성')
+    parser.add_argument('--client', type=str, default=None,
+                        help='클라이언트 ID (멀티클라이언트 모드)')
+    args = parser.parse_args()
+
+    main(client_id=args.client)

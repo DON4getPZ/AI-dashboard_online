@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-from scripts.common.paths import ClientPaths, get_client_config, parse_client_arg, PROJECT_ROOT
+from scripts.common.paths import ClientPaths, get_client_config, get_google_credentials_path, parse_client_arg, PROJECT_ROOT
 
 
 def fetch_google_sheets_data(client_id: str = None):
@@ -61,25 +61,47 @@ def fetch_google_sheets_data(client_id: str = None):
         sheet_id = os.environ.get('SHEET_ID')
         worksheet_name = os.environ.get('WORKSHEET_NAME', 'data_integration')
 
-    # 환경변수에서 credentials 가져오기 (항상 환경변수 사용)
-    credentials_json = os.environ.get('GOOGLE_CREDENTIALS')
+    # Credentials 로드 우선순위:
+    # 1. clients.json의 google.credentials_path
+    # 2. 환경변수 GOOGLE_CREDENTIALS
+    # 3. config/google-credentials.json 파일
+    credentials_json = None
+    credentials_source = None
 
-    # 또는 로컬 credentials 파일 사용
+    # 1. clients.json에서 credentials 경로 확인
+    cred_path = get_google_credentials_path()
+    if cred_path and cred_path.exists():
+        print(f"   📁 clients.json credentials 사용: {cred_path}")
+        with open(cred_path, 'r', encoding='utf-8') as f:
+            credentials_json = f.read()
+        credentials_source = f"clients.json ({cred_path})"
+
+    # 2. 환경변수에서 credentials 가져오기
+    if not credentials_json:
+        credentials_json = os.environ.get('GOOGLE_CREDENTIALS')
+        if credentials_json:
+            credentials_source = "환경변수 GOOGLE_CREDENTIALS"
+
+    # 3. 기본 로컬 credentials 파일 사용
     if not credentials_json:
         credentials_file = PROJECT_ROOT / 'config' / 'google-credentials.json'
         if credentials_file.exists():
-            print(f"   📁 로컬 credentials 파일 사용: {credentials_file}")
+            print(f"   📁 기본 credentials 파일 사용: {credentials_file}")
             with open(credentials_file, 'r', encoding='utf-8') as f:
                 credentials_json = f.read()
+            credentials_source = f"config/google-credentials.json"
 
-    print(f"\n🔍 환경변수 확인...")
-    print(f"   ├ GOOGLE_CREDENTIALS: {'설정됨' if credentials_json else '❌ 없음'}")
+    print(f"\n🔍 설정 확인...")
+    print(f"   ├ GOOGLE_CREDENTIALS: {'✅ ' + credentials_source if credentials_json else '❌ 없음'}")
     print(f"   ├ SHEET_ID: {sheet_id if sheet_id else '❌ 없음'}")
     print(f"   └ WORKSHEET_NAME: {worksheet_name}")
 
     if not credentials_json:
-        print("\n❌ 오류: GOOGLE_CREDENTIALS 환경변수가 설정되지 않았습니다")
-        print("   GitHub Secrets에 Service Account JSON을 추가하세요")
+        print("\n❌ 오류: Google Credentials가 설정되지 않았습니다")
+        print("   다음 중 하나를 설정하세요:")
+        print("   1. config/clients.json의 google.credentials_path")
+        print("   2. 환경변수 GOOGLE_CREDENTIALS")
+        print("   3. config/google-credentials.json 파일")
         sys.exit(1)
 
     if not sheet_id:

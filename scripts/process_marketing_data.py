@@ -67,12 +67,16 @@ plt.rcParams['axes.unicode_minus'] = False
 
 # 명령줄 인자 파싱
 parser = argparse.ArgumentParser(description='마케팅 데이터 전처리 및 Prophet 예측 - 기간별 학습 지원')
+parser.add_argument('--client', type=str, default=None,
+                    help='클라이언트 ID (멀티클라이언트 모드)')
 parser.add_argument('--days', type=int, default=0,
                     help='학습 데이터 기간 (0=전체/365일, 180=최근180일, 90=최근90일)')
 parser.add_argument('--output-days', type=int, default=30,
                     help='예측 기간 (기본 30일)')
 args = parser.parse_args()
 
+# 클라이언트 ID
+CLIENT_ID = args.client
 # 학습 기간 설정 (일) - 명령줄 인자 또는 기본값
 TRAINING_DAYS = args.days if args.days > 0 else 365
 # 출력 기간 설정 (일) - 예측 데이터
@@ -1418,5 +1422,5 @@ def main(client_id: Optional[str] = None):
 
 
 if __name__ == '__main__':
-    client_id = parse_client_arg(required=False)
-    main(client_id)
+    # CLIENT_ID는 모듈 레벨에서 argparse로 파싱됨
+    main(CLIENT_ID)

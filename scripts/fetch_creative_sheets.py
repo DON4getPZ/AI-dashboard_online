@@ -3,11 +3,16 @@ Google Sheets 크리에이티브 데이터 가져오기 스크립트
 
 환경변수:
 - GOOGLE_CREDENTIALS: Service Account JSON 전체 내용
-- SHEET_ID: Google Sheets ID
+- SHEET_ID: Google Sheets ID (--client 사용 시 config에서 자동 로드)
 - WORKSHEET_NAME: 워크시트 이름 (기본값: Sheet1)
 
+사용법:
+- 레거시: python fetch_creative_sheets.py
+- 멀티클라이언트: python fetch_creative_sheets.py --client clientA
+
 출력:
-- data/creative/{YYYY-MM}.csv 형식으로 저장
+- 레거시: data/creative/Creative_data.csv
+- 멀티클라이언트: data/{client}/creative/Creative_data.csv
 """
 
 import os
@@ -15,24 +20,71 @@ import sys
 import json
 import csv
 from datetime import datetime
+from pathlib import Path
+from typing import Optional
+
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+# 프로젝트 루트를 path에 추가
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-def fetch_creative_sheets_data():
+from scripts.common.paths import ClientPaths, get_client_config, get_google_credentials_path, parse_client_arg, PROJECT_ROOT
+
+
+def fetch_creative_sheets_data(client_id: Optional[str] = None):
     """Google Sheets에서 크리에이티브 데이터 가져오기"""
     print("="*80)
     print("📊 Google Sheets Creative 데이터 가져오기 시작")
+    if client_id:
+        print(f"   클라이언트: {client_id}")
     print("="*80)
 
-    # 환경변수 확인
-    credentials_json = os.environ.get('GOOGLE_CREDENTIALS')
-    sheet_id = os.environ.get('SHEET_ID')
-    worksheet_name = os.environ.get('WORKSHEET_NAME', 'Sheet1')
+    # 클라이언트 모드: config에서 설정 로드
+    paths = None
+    if client_id:
+        paths = ClientPaths(client_id).ensure_dirs()
+        try:
+            config = get_client_config(client_id)
+            sheets_config = config.get('sheets', {}).get('creative', {})
+        except (FileNotFoundError, ValueError) as e:
+            print(f"\n⚠️ 클라이언트 설정 로드 실패: {e}")
+            print("   환경변수에서 설정을 읽습니다.")
+            sheets_config = {}
+    else:
+        sheets_config = {}
+
+    # Sheet 설정 (클라이언트 설정 > 환경변수)
+    sheet_id = sheets_config.get('sheetId') or os.environ.get('SHEET_ID')
+    worksheet_name = sheets_config.get('worksheet') or os.environ.get('WORKSHEET_NAME', 'Sheet1')
+
+    # Credentials 로드 우선순위:
+    # 1. clients.json의 google.credentials_path
+    # 2. 환경변수 GOOGLE_CREDENTIALS
+    credentials_json = None
+    credentials_source = None
+
+    cred_path = get_google_credentials_path()
+    if cred_path and cred_path.exists():
+        with open(cred_path, 'r', encoding='utf-8') as f:
+            credentials_json = f.read()
+        credentials_source = f"clients.json ({cred_path})"
 
     if not credentials_json:
-        print("\n❌ 오류: GOOGLE_CREDENTIALS 환경변수가 설정되지 않았습니다")
-        print("   Service Account JSON을 설정하세요")
+        credentials_json = os.environ.get('GOOGLE_CREDENTIALS')
+        if credentials_json:
+            credentials_source = "환경변수 GOOGLE_CREDENTIALS"
+
+    print(f"\n🔍 설정 확인...")
+    print(f"   ├ GOOGLE_CREDENTIALS: {'✅ ' + credentials_source if credentials_json else '❌ 없음'}")
+    print(f"   ├ SHEET_ID: {sheet_id if sheet_id else '❌ 없음'}")
+    print(f"   └ WORKSHEET_NAME: {worksheet_name}")
+
+    if not credentials_json:
+        print("\n❌ 오류: Google Credentials가 설정되지 않았습니다")
+        print("   다음 중 하나를 설정하세요:")
+        print("   1. config/clients.json의 google.credentials_path")
+        print("   2. 환경변수 GOOGLE_CREDENTIALS")
         sys.exit(1)
 
     if not sheet_id:
@@ -98,24 +150,26 @@ def fetch_creative_sheets_data():
         if len(data) > 0:
             print(f"   └ 헤더: {', '.join(data[0][:5])}{'...' if len(data[0]) > 5 else ''}")
 
-        # data/creative 디렉토리 생성
-        output_dir = os.path.join('data', 'creative')
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-
-        # 고정 파일명 사용 (overwrite 방식)
-        output_filename = "Creative_data.csv"
-        output_path = os.path.join(output_dir, output_filename)
+        # 출력 경로 설정 (클라이언트 모드 vs 레거시 모드)
+        if paths:
+            output_path = paths.creative_data
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+        else:
+            output_dir = os.path.join('data', 'creative')
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+            output_path = os.path.join(output_dir, "Creative_data.csv")
 
         # CSV로 저장
-        with open(output_path, 'w', encoding='utf-8', newline='') as f:
+        output_path_str = str(output_path)
+        with open(output_path_str, 'w', encoding='utf-8', newline='') as f:
             writer = csv.writer(f)
             writer.writerows(data)
 
-        file_size = os.path.getsize(output_path) / 1024  # KB
+        file_size = os.path.getsize(output_path_str) / 1024  # KB
 
         print(f"\n✅ CSV 파일 저장 완료!")
-        print(f"   ├ 파일명: {output_path}")
+        print(f"   ├ 파일명: {output_path_str}")
         print(f"   ├ 크기: {file_size:.1f} KB")
         if len(data) > 0:
             print(f"   ├ 헤더: {', '.join(data[0][:5])}{'...' if len(data[0]) > 5 else ''}")
@@ -136,4 +190,5 @@ def fetch_creative_sheets_data():
 
 
 if __name__ == '__main__':
-    fetch_creative_sheets_data()
+    client_id = parse_client_arg(required=False)
+    fetch_creative_sheets_data(client_id)

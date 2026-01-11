@@ -6,6 +6,7 @@
 
 사용법:
     python scripts/generate_funnel_data_multiperiod.py
+    python scripts/generate_funnel_data_multiperiod.py --client clientA
     python scripts/generate_funnel_data_multiperiod.py --category fashion
 """
 
@@ -16,6 +17,12 @@ import subprocess
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Optional
+
+# 프로젝트 루트를 path에 추가
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from scripts.common.paths import ClientPaths, parse_client_arg
 
 # 기간 설정
 PERIODS = [
@@ -27,13 +34,21 @@ PERIODS = [
 
 # 경로 설정
 SCRIPT_DIR = Path(__file__).parent
-DATA_DIR = SCRIPT_DIR.parent / 'data' / 'funnel'
 INSIGHTS_SCRIPT = SCRIPT_DIR / 'generate_funnel_data.py'
 
 
-def run_insights_generation(days, category='default'):
+def get_data_dir(client_id: Optional[str] = None) -> Path:
+    """클라이언트별 데이터 디렉토리 반환"""
+    if client_id:
+        return ClientPaths(client_id).funnel
+    return SCRIPT_DIR.parent / 'data' / 'funnel'
+
+
+def run_insights_generation(days, category='default', client_id: Optional[str] = None):
     """generate_funnel_data.py를 특정 기간으로 실행"""
     cmd = [sys.executable, str(INSIGHTS_SCRIPT), '--days', str(days)]
+    if client_id:
+        cmd.extend(['--client', client_id])
     if category and category != 'default':
         cmd.extend(['--category', category])
 
@@ -48,16 +63,19 @@ def run_insights_generation(days, category='default'):
         return None
 
     # 생성된 insights.json 로드
-    insights_file = DATA_DIR / 'insights.json'
+    data_dir = get_data_dir(client_id)
+    insights_file = data_dir / 'insights.json'
     if insights_file.exists():
         with open(insights_file, 'r', encoding='utf-8') as f:
             return json.load(f)
     return None
 
 
-def main(category='default'):
+def main(category='default', client_id: Optional[str] = None):
     print("=" * 100)
     print("다중 기간 퍼널 인사이트 생성 (중첩 구조)")
+    if client_id:
+        print(f"클라이언트: {client_id}")
     print("=" * 100)
     print(f"생성일: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"카테고리: {category}")
@@ -74,7 +92,7 @@ def main(category='default'):
         print(f"# {period['label']} 데이터 생성 중...")
         print('#'*100)
 
-        insights = run_insights_generation(period['days'], category)
+        insights = run_insights_generation(period['days'], category, client_id)
 
         if insights:
             # 전체 기간에서 churn 데이터 및 추이 분석 결과 저장
@@ -133,7 +151,9 @@ def main(category='default'):
     }
 
     # 최종 JSON 저장
-    output_file = DATA_DIR / 'insights.json'
+    data_dir = get_data_dir(client_id)
+    data_dir.mkdir(parents=True, exist_ok=True)
+    output_file = data_dir / 'insights.json'
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(combined_insights, f, ensure_ascii=False, indent=2)
 
@@ -168,8 +188,10 @@ if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='다중 기간 퍼널 인사이트 생성')
+    parser.add_argument('--client', type=str, default=None,
+                        help='클라이언트 ID (멀티클라이언트 모드)')
     parser.add_argument('--category', type=str, default='default',
                         help='비즈니스 카테고리 (default/fashion/food/electronics)')
     args = parser.parse_args()
 
-    main(category=args.category)
+    main(category=args.category, client_id=args.client)

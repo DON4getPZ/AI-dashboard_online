@@ -1,11 +1,15 @@
 """
-세그먼트별 데이터 처리 및 예측 모듈 v1.1
+세그먼트별 데이터 처리 및 예측 모듈 v1.2
 
 기능:
 1. 브랜드/채널/상품별 데이터 집계
 2. 세그먼트별 시계열 예측 (데이터 양에 따라 모델 자동 선택)
 3. data/forecast/에 세그먼트별 예측 CSV 저장
 4. 최근 365일 데이터 기반 학습 (연간 계절성 반영)
+
+사용법:
+- 레거시: python segment_processor.py
+- 멀티클라이언트: python segment_processor.py --client clientA
 
 환경변수:
 - INPUT_CSV_PATH: 입력 CSV 파일 경로 (기본값: raw_data.csv)
@@ -16,7 +20,7 @@ import sys
 import argparse
 from pathlib import Path
 from datetime import datetime, timedelta
-from typing import Dict, List, Any, Tuple
+from typing import Dict, List, Any, Tuple, Optional
 import warnings
 
 # UTF-8 출력 설정 (Windows 콘솔 호환)
@@ -25,8 +29,13 @@ if sys.platform == 'win32':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
+# 프로젝트 루트를 path에 추가
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import pandas as pd
 import numpy as np
+
+from scripts.common.paths import ClientPaths, parse_client_arg, PROJECT_ROOT
 
 # Prophet 시계열 예측 라이브러리
 try:
@@ -38,21 +47,25 @@ except ImportError:
 
 warnings.filterwarnings('ignore')
 
-# 디렉토리 설정
+# 디렉토리 설정 (레거시 호환용 - 실제 경로는 main()에서 결정)
 BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / 'data'
 RAW_DIR = DATA_DIR / 'raw'
 FORECAST_DIR = DATA_DIR / 'forecast'
 
-# 디렉토리 생성
+# 디렉토리 생성 (레거시 모드용)
 FORECAST_DIR.mkdir(parents=True, exist_ok=True)
 
-# 명령줄 인자 파싱
-parser = argparse.ArgumentParser(description='세그먼트별 Prophet 예측 - 기간별 학습 지원')
+# 명령줄 인자 파싱 (--client는 별도 처리)
+parser = argparse.ArgumentParser(description='세그먼트별 Prophet 예측 - 기간별 학습 지원', add_help=False)
 parser.add_argument('--days', type=int, default=0,
                     help='학습 데이터 기간 (0=전체/365일, 180=최근180일, 90=최근90일)')
 parser.add_argument('--output-days', type=int, default=30,
                     help='예측 기간 (기본 30일)')
+parser.add_argument('--client', type=str, default=None,
+                    help='클라이언트 ID (멀티클라이언트 모드)')
+parser.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS,
+                    help='도움말 표시')
 args = parser.parse_args()
 
 # 학습 기간 설정 (일) - 명령줄 인자 또는 기본값
@@ -64,15 +77,26 @@ OUTPUT_DAYS = args.output_days
 class SegmentProcessor:
     """세그먼트별 데이터 처리 및 예측 클래스"""
 
-    def __init__(self, input_file: str = None):
+    def __init__(self, input_file: str = None, paths: Optional[ClientPaths] = None):
         """
         초기화
 
         Args:
             input_file: 입력 CSV 파일 경로. None이면 모든 월별 데이터 로드
+            paths: ClientPaths 인스턴스 (멀티클라이언트 모드)
         """
         self.input_file = input_file
+        self.paths = paths
         self.df = None
+
+        # 경로 설정 (클라이언트 모드 vs 레거시 모드)
+        if paths:
+            self.raw_dir = paths.raw
+            self.forecast_dir = paths.forecast
+        else:
+            self.raw_dir = RAW_DIR
+            self.forecast_dir = FORECAST_DIR
+
         self.segment_configs = [
             {'name': 'brand', 'column': '브랜드명', 'min_days': 14},
             {'name': 'channel', 'column': '유형구분', 'min_days': 7},
@@ -85,19 +109,21 @@ class SegmentProcessor:
     def load_data(self) -> pd.DataFrame:
         """데이터 로드"""
         print("\n" + "="*60)
-        print("Segment Processor v1.1")
+        print("Segment Processor v1.2")
+        if self.paths:
+            print(f"Client: {self.paths.client_id}")
         print("="*60)
         print("\n[1/4] Loading data...")
 
-        # 우선순위: 1) input_file 2) data/raw/raw_data.csv
-        raw_data_file = RAW_DIR / 'raw_data.csv'
+        # 우선순위: 1) input_file 2) raw_dir/raw_data.csv (클라이언트 모드 지원)
+        raw_data_file = self.raw_dir / 'raw_data.csv'
 
         if self.input_file and os.path.exists(self.input_file):
             # 지정된 파일 로드
             df = pd.read_csv(self.input_file, encoding='utf-8')
             print(f"   Loaded from: {self.input_file}")
         elif raw_data_file.exists():
-            # data/raw/raw_data.csv 로드
+            # raw_data.csv 로드
             df = pd.read_csv(raw_data_file, encoding='utf-8')
             print(f"   Loaded from: {raw_data_file}")
         else:
@@ -333,8 +359,9 @@ class SegmentProcessor:
             result_df = self.process_segment(config)
 
             if not result_df.empty:
-                # CSV 저장
-                output_file = FORECAST_DIR / f"segment_{config['name']}.csv"
+                # CSV 저장 (클라이언트 모드 지원)
+                self.forecast_dir.mkdir(parents=True, exist_ok=True)
+                output_file = self.forecast_dir / f"segment_{config['name']}.csv"
                 result_df.to_csv(output_file, index=False, encoding='utf-8')
                 results[config['name']] = result_df
                 print(f"   Saved: {output_file.name}")
@@ -392,25 +419,33 @@ class SegmentProcessor:
 
             stats[segment_name] = segment_stats
 
-        # JSON으로 저장 (인사이트 생성기가 사용)
+        # JSON으로 저장 (인사이트 생성기가 사용) - 클라이언트 모드 지원
         import json
-        stats_file = FORECAST_DIR / 'segment_stats.json'
+        stats_file = self.forecast_dir / 'segment_stats.json'
         with open(stats_file, 'w', encoding='utf-8') as f:
             json.dump(stats, f, ensure_ascii=False, indent=2)
 
         print(f"   Saved: {stats_file.name}")
 
 
-def main():
+def main(client_id: Optional[str] = None):
     """메인 실행 함수"""
     input_file = os.environ.get('INPUT_CSV_PATH', None)
 
-    processor = SegmentProcessor(input_file)
+    # 클라이언트 모드 설정
+    paths = None
+    if client_id:
+        paths = ClientPaths(client_id).ensure_dirs()
+        print(f"[Multi-Client Mode] Client: {client_id}")
+
+    processor = SegmentProcessor(input_file, paths=paths)
 
     try:
         results = processor.run()
         print("\n" + "="*60)
         print("Segment processing completed successfully!")
+        if client_id:
+            print(f"Client: {client_id}")
         print("="*60)
 
     except Exception as e:
@@ -421,4 +456,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(args.client)

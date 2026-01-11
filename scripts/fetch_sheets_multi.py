@@ -19,7 +19,7 @@
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from scripts.common.paths import ClientPaths, get_client_config, parse_client_arg, PROJECT_ROOT
+from scripts.common.paths import ClientPaths, get_client_config, get_google_credentials_path, parse_client_arg, PROJECT_ROOT
 
 import os
 import json
@@ -216,25 +216,67 @@ def fetch_sheets_multi(client_id: str = None):
         print("   (레거시 모드)")
     print("="*80)
 
-    # 경로 설정 (클라이언트 모드 vs 레거시 모드)
-    if client_id:
-        paths = ClientPaths(client_id)
-        paths.ensure_dirs()
-        output_dir = str(paths.type)
-    else:
-        output_dir = None  # config에서 읽어옴
-
-    # 1. Config 파일 로드
+    # 1. Config 로드
     print("\n[단계 1/5] Config 파일 로드 중...")
-    config = load_config()
 
-    credentials_path = config['google']['credentials_path']
-    sheets = config['google']['sheets']
-    merged_filename = config['google']['output']['merged_filename']
+    credentials_path = None
+    sheets = []
+    merged_filename = "merged_data.csv"
+    output_dir = None
 
-    # 레거시 모드일 경우 config에서 output_dir 읽기
-    if output_dir is None:
-        output_dir = config['google']['output']['directory']
+    # 클라이언트 모드: clients.json 사용
+    if client_id:
+        try:
+            client_config = get_client_config(client_id)
+            paths = ClientPaths(client_id)
+            paths.ensure_dirs()
+            output_dir = str(paths.type)
+
+            # credentials 경로 (clients.json의 google.credentials_path)
+            cred_path = get_google_credentials_path()
+            if cred_path and cred_path.exists():
+                credentials_path = str(cred_path)
+
+            # multi sheets 설정 (clients.json의 sheets.multi 배열)
+            multi_config = client_config.get('sheets', {}).get('multi', [])
+            if isinstance(multi_config, list) and len(multi_config) > 0:
+                sheets = []
+                for idx, item in enumerate(multi_config):
+                    sheets.append({
+                        'sheet_id': item.get('sheetId'),
+                        'worksheet_name': item.get('worksheet'),
+                        'description': f"Multi Sheet {idx + 1}"
+                    })
+                print(f"   ✅ clients.json에서 설정 로드")
+            else:
+                print(f"   ⚠️ clients.json에 multi sheets 설정이 없습니다")
+
+        except (FileNotFoundError, ValueError) as e:
+            print(f"   ⚠️ 클라이언트 설정 로드 실패: {e}")
+
+    # 레거시 모드 또는 클라이언트 설정 실패 시: config_multi.json 사용
+    if not sheets:
+        print("   📁 config_multi.json에서 설정 로드...")
+        config = load_config()
+        credentials_path = config['google']['credentials_path']
+        sheets = config['google']['sheets']
+        merged_filename = config['google']['output']['merged_filename']
+        if output_dir is None:
+            output_dir = config['google']['output']['directory']
+
+    # credentials 경로 검증
+    if not credentials_path:
+        cred_path = get_google_credentials_path()
+        if cred_path and cred_path.exists():
+            credentials_path = str(cred_path)
+
+    if not credentials_path or not os.path.exists(credentials_path):
+        print(f"\n❌ 오류: Google Credentials 파일을 찾을 수 없습니다")
+        print(f"   확인된 경로: {credentials_path}")
+        print(f"   다음을 확인하세요:")
+        print(f"   1. config/clients.json의 google.credentials_path")
+        print(f"   2. config_multi.json의 google.credentials_path")
+        sys.exit(1)
 
     print(f"   ✅ Config 로드 완료")
     print(f"   ├ 인증 파일: {credentials_path}")

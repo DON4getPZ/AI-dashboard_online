@@ -1,23 +1,36 @@
 # -*- coding: utf-8 -*-
 """
 채널별 참여도 및 재방문율 분석 데이터 생성 스크립트
+
+사용법:
+- 레거시: python generate_engagement_data.py
+- 멀티클라이언트: python generate_engagement_data.py --client clientA
 """
 
+import argparse
 import pandas as pd
 import numpy as np
 from pathlib import Path
+from typing import Optional
+import sys
 
-# 데이터 경로 설정 (scripts 디렉토리에서 상위의 data 디렉토리 참조)
+# 프로젝트 루트를 path에 추가
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from scripts.common.paths import ClientPaths, parse_client_arg, PROJECT_ROOT
+
+# 데이터 경로 설정 (레거시 호환용)
 BASE_DIR = Path(__file__).parent.parent / 'data'
 GA4_FILE = BASE_DIR / 'GA4' / 'GA4_data.csv'
 NEW_VS_RETURNING_FILE = BASE_DIR / 'funnel' / 'new_vs_returning.csv'
 CHANNEL_FUNNEL_FILE = BASE_DIR / 'funnel' / 'channel_funnel.csv'
 
-# 출력 파일 경로
+# 출력 파일 경로 (레거시)
 OUTPUT_ENGAGEMENT = BASE_DIR / 'funnel' / 'channel_engagement.csv'
 OUTPUT_NEW_VS_RETURNING_CVR = BASE_DIR / 'funnel' / 'new_vs_returning_conversion.csv'
 
-def generate_channel_engagement_data():
+
+def generate_channel_engagement_data(paths: Optional[ClientPaths] = None):
     """
     채널별 참여도 및 재방문율 데이터 생성
     - Sessions, Engaged sessions, Avg session duration, Bounce rate
@@ -25,13 +38,23 @@ def generate_channel_engagement_data():
     """
     print("=== 채널별 참여도 데이터 생성 시작 ===")
 
+    # 경로 설정 (클라이언트 모드 vs 레거시 모드)
+    if paths:
+        ga4_file = paths.ga4_data
+        nvr_file = paths.new_vs_returning
+        output_file = paths.channel_engagement
+    else:
+        ga4_file = GA4_FILE
+        nvr_file = NEW_VS_RETURNING_FILE
+        output_file = OUTPUT_ENGAGEMENT
+
     # GA4 데이터 로드
-    print(f"GA4 데이터 로드 중: {GA4_FILE}")
-    ga4_df = pd.read_csv(GA4_FILE, encoding='utf-8-sig')
+    print(f"GA4 데이터 로드 중: {ga4_file}")
+    ga4_df = pd.read_csv(ga4_file, encoding='utf-8-sig')
 
     # new_vs_returning 데이터 로드 (재방문율 계산용)
-    print(f"재방문 데이터 로드 중: {NEW_VS_RETURNING_FILE}")
-    nvr_df = pd.read_csv(NEW_VS_RETURNING_FILE, encoding='utf-8-sig')
+    print(f"재방문 데이터 로드 중: {nvr_file}")
+    nvr_df = pd.read_csv(nvr_file, encoding='utf-8-sig')
 
     # 채널별로 집계
     print("채널별 집계 중...")
@@ -86,8 +109,9 @@ def generate_channel_engagement_data():
     ]]
 
     # CSV 저장
-    print(f"데이터 저장 중: {OUTPUT_ENGAGEMENT}")
-    result.to_csv(OUTPUT_ENGAGEMENT, index=False, encoding='utf-8-sig')
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    print(f"데이터 저장 중: {output_file}")
+    result.to_csv(output_file, index=False, encoding='utf-8-sig')
     print(f"✓ 채널별 참여도 데이터 생성 완료: {len(result)}개 채널")
     print(f"\n생성된 데이터 샘플:")
     print(result.head())
@@ -95,15 +119,23 @@ def generate_channel_engagement_data():
     return result
 
 
-def generate_new_vs_returning_conversion():
+def generate_new_vs_returning_conversion(paths: Optional[ClientPaths] = None):
     """
     신규 vs 재방문 고객의 퍼널 단계별 전환율 비교 데이터 생성
     """
     print("\n=== 신규 vs 재방문 고객 전환율 비교 데이터 생성 시작 ===")
 
+    # 경로 설정 (클라이언트 모드 vs 레거시 모드)
+    if paths:
+        nvr_file = paths.new_vs_returning
+        output_file = paths.funnel / 'new_vs_returning_conversion.csv'
+    else:
+        nvr_file = NEW_VS_RETURNING_FILE
+        output_file = OUTPUT_NEW_VS_RETURNING_CVR
+
     # new_vs_returning 데이터 로드
-    print(f"재방문 데이터 로드 중: {NEW_VS_RETURNING_FILE}")
-    nvr_df = pd.read_csv(NEW_VS_RETURNING_FILE, encoding='utf-8-sig')
+    print(f"재방문 데이터 로드 중: {nvr_file}")
+    nvr_df = pd.read_csv(nvr_file, encoding='utf-8-sig')
 
     print(f"데이터 행 수: {len(nvr_df)}")
     print(f"컬럼: {nvr_df.columns.tolist()}")
@@ -149,8 +181,9 @@ def generate_new_vs_returning_conversion():
         ).round(2) if acquisition_returning > 0 else 0
 
     # CSV 저장
-    print(f"데이터 저장 중: {OUTPUT_NEW_VS_RETURNING_CVR}")
-    result_df.to_csv(OUTPUT_NEW_VS_RETURNING_CVR, index=False, encoding='utf-8-sig')
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    print(f"데이터 저장 중: {output_file}")
+    result_df.to_csv(output_file, index=False, encoding='utf-8-sig')
     print(f"✓ 신규 vs 재방문 고객 전환율 데이터 생성 완료: {len(result_df)}개 단계")
     print(f"\n생성된 데이터:")
     print(result_df)
@@ -158,25 +191,38 @@ def generate_new_vs_returning_conversion():
     return result_df
 
 
-def main():
+def main(client_id: Optional[str] = None):
     """메인 실행 함수"""
+    parser = argparse.ArgumentParser(description='재방문 및 참여도 분석 데이터 생성')
+    parser.add_argument('--client', type=str, default=None,
+                        help='클라이언트 ID (멀티클라이언트 모드)')
+    args = parser.parse_args()
+
+    actual_client_id = args.client or client_id
+
+    # 클라이언트 모드 설정
+    paths = None
+    if actual_client_id:
+        paths = ClientPaths(actual_client_id).ensure_dirs()
+
     print("=" * 60)
     print("재방문 및 참여도 분석 데이터 생성 스크립트")
+    if actual_client_id:
+        print(f"Client: {actual_client_id}")
     print("=" * 60)
 
     try:
         # 1. 채널별 참여도 데이터 생성
-        engagement_data = generate_channel_engagement_data()
+        engagement_data = generate_channel_engagement_data(paths)
 
         # 2. 신규 vs 재방문 고객 전환율 비교 데이터 생성
-        conversion_data = generate_new_vs_returning_conversion()
+        conversion_data = generate_new_vs_returning_conversion(paths)
 
         print("\n" + "=" * 60)
         print("✓ 모든 데이터 생성 완료!")
+        if actual_client_id:
+            print(f"Client: {actual_client_id}")
         print("=" * 60)
-        print(f"\n생성된 파일:")
-        print(f"  1. {OUTPUT_ENGAGEMENT}")
-        print(f"  2. {OUTPUT_NEW_VS_RETURNING_CVR}")
 
     except Exception as e:
         print(f"\n❌ 오류 발생: {e}")

@@ -233,6 +233,42 @@ class ClientPaths:
         return self.public_data / 'meta.json'
 
 
+def load_clients_config() -> Dict[str, Any]:
+    """
+    clients.json 전체 설정 로드
+
+    Returns:
+        전체 설정 딕셔너리
+
+    Raises:
+        FileNotFoundError: 설정 파일이 없는 경우
+    """
+    config_path = PROJECT_ROOT / 'config' / 'clients.json'
+
+    if not config_path.exists():
+        raise FileNotFoundError(f"클라이언트 설정 파일을 찾을 수 없습니다: {config_path}")
+
+    with open(config_path, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+
+def get_google_credentials_path() -> Optional[Path]:
+    """
+    clients.json에서 Google credentials 경로 조회
+
+    Returns:
+        credentials 파일 경로 또는 None
+    """
+    try:
+        config = load_clients_config()
+        cred_path = config.get('google', {}).get('credentials_path')
+        if cred_path:
+            return Path(cred_path)
+        return None
+    except FileNotFoundError:
+        return None
+
+
 def get_client_config(client_id: str) -> Dict[str, Any]:
     """
     클라이언트 설정 조회
@@ -246,13 +282,7 @@ def get_client_config(client_id: str) -> Dict[str, Any]:
     Raises:
         ValueError: 클라이언트를 찾을 수 없는 경우
     """
-    config_path = PROJECT_ROOT / 'config' / 'clients.json'
-
-    if not config_path.exists():
-        raise FileNotFoundError(f"클라이언트 설정 파일을 찾을 수 없습니다: {config_path}")
-
-    with open(config_path, 'r', encoding='utf-8') as f:
-        config = json.load(f)
+    config = load_clients_config()
 
     for client in config.get('clients', []):
         if client.get('id') == client_id:

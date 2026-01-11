@@ -58,9 +58,14 @@ if sys.platform == 'win32':
 import pandas as pd
 import numpy as np
 
+# 프로젝트 루트를 path에 추가
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from scripts.common.paths import ClientPaths, parse_client_arg, PROJECT_ROOT
+
 warnings.filterwarnings('ignore')
 
-# 디렉토리 설정
+# 디렉토리 설정 (레거시 호환용 - 실제 경로는 클래스에서 결정)
 BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / 'data'
 FORECAST_DIR = DATA_DIR / 'forecast'
@@ -438,18 +443,26 @@ class InsightMicroAnalyzer:
 class InsightGenerator:
     """마케팅 인사이트 생성 클래스 (AI Consultant Edition + Multi-Period)"""
 
-    def __init__(self, days: Optional[int] = None):
+    def __init__(self, days: Optional[int] = None, paths: Optional[ClientPaths] = None):
         """초기화
 
         Args:
             days: 분석 기간 (None=전체, 180, 90, 30)
+            paths: ClientPaths 인스턴스 (멀티클라이언트 모드)
         """
         self.days = days
+        self.paths = paths
         self.period_label = 'full' if days is None else f'{days}d'
         self.segment_data = {}
         self.segment_stats = {}
         self.forecasts = {}
         self.predictions_data = {}  # predictions_*.csv 데이터
+
+        # 경로 설정 (클라이언트 모드 vs 레거시 모드)
+        if paths:
+            self.forecast_dir = paths.forecast
+        else:
+            self.forecast_dir = FORECAST_DIR
         self.insights = {
             'generated_at': datetime.now().isoformat(),
             'period': self.period_label,  # 분석 기간 표시
@@ -567,18 +580,20 @@ class InsightGenerator:
     def load_data(self) -> bool:
         """세그먼트 데이터 로드 및 기간 필터링"""
         print("\n" + "="*60)
-        print("🧠 AI Marketing Insight Generator v2.1 (Multi-Period)")
+        print("🧠 AI Marketing Insight Generator v2.2 (Multi-Client + Multi-Period)")
+        if self.paths:
+            print(f"   📁 Client: {self.paths.client_id}")
         print("="*60)
         period_display = "전체" if self.days is None else f"최근 {self.days}일"
         print(f"   📅 분석 기간: {period_display}")
         print("\n[1/6] Loading segment data...")
 
-        # 세그먼트별 예측 데이터 로드
+        # 세그먼트별 예측 데이터 로드 (클라이언트 모드 지원)
         segment_files = {
-            'brand': FORECAST_DIR / 'segment_brand.csv',
-            'channel': FORECAST_DIR / 'segment_channel.csv',
-            'product': FORECAST_DIR / 'segment_product.csv',
-            'promotion': FORECAST_DIR / 'segment_promotion.csv'
+            'brand': self.forecast_dir / 'segment_brand.csv',
+            'channel': self.forecast_dir / 'segment_channel.csv',
+            'product': self.forecast_dir / 'segment_product.csv',
+            'promotion': self.forecast_dir / 'segment_promotion.csv'
         }
 
         loaded_count = 0
@@ -602,11 +617,11 @@ class InsightGenerator:
         if self.segment_stats:
             print(f"   Calculated segment_stats from filtered data ({len(self.segment_stats)} segments)")
 
-        # predictions_*.csv 파일 로드
+        # predictions_*.csv 파일 로드 (클라이언트 모드 지원)
         predictions_files = {
-            'daily': FORECAST_DIR / 'predictions_daily.csv',
-            'weekly': FORECAST_DIR / 'predictions_weekly.csv',
-            'monthly': FORECAST_DIR / 'predictions_monthly.csv'
+            'daily': self.forecast_dir / 'predictions_daily.csv',
+            'weekly': self.forecast_dir / 'predictions_weekly.csv',
+            'monthly': self.forecast_dir / 'predictions_monthly.csv'
         }
 
         for name, filepath in predictions_files.items():
@@ -1666,8 +1681,9 @@ class InsightGenerator:
             return obj
 
     def save_insights(self) -> None:
-        """인사이트 저장 (NpEncoder로 안전한 JSON 직렬화)"""
-        output_file = FORECAST_DIR / 'insights.json'
+        """인사이트 저장 (NpEncoder로 안전한 JSON 직렬화) - 클라이언트 모드 지원"""
+        self.forecast_dir.mkdir(parents=True, exist_ok=True)
+        output_file = self.forecast_dir / 'insights.json'
 
         # pandas 타입을 Python 네이티브 타입으로 변환 후 NpEncoder로 저장
         insights_converted = self.convert_to_native_types(self.insights)
@@ -1675,7 +1691,7 @@ class InsightGenerator:
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(insights_converted, f, cls=NpEncoder, ensure_ascii=False, indent=2)
 
-        print(f"\n   ✅ Saved: {output_file.name}")
+        print(f"\n   ✅ Saved: {output_file}")
 
     def generate(self, save: bool = True) -> Dict[str, Any]:
         """전체 인사이트 생성 실행
@@ -1737,10 +1753,10 @@ class InsightGenerator:
         return self.insights
 
 
-def main():
+def main(client_id: Optional[str] = None):
     """메인 실행 함수 (커맨드라인 인자 지원)"""
     parser = argparse.ArgumentParser(
-        description='마케팅 인사이트 생성 모듈 v2.1 (Multi-Period 지원)'
+        description='마케팅 인사이트 생성 모듈 v2.2 (Multi-Client + Multi-Period 지원)'
     )
     parser.add_argument(
         '--days',
@@ -1749,10 +1765,25 @@ def main():
         default=None,
         help='분석 기간 (일 수). 미지정시 전체 기간 분석. 예: --days 30'
     )
+    parser.add_argument(
+        '--client',
+        type=str,
+        default=None,
+        help='클라이언트 ID (멀티클라이언트 모드). 예: --client clientA'
+    )
 
     args = parser.parse_args()
 
-    generator = InsightGenerator(days=args.days)
+    # --client 인자가 있으면 사용, 아니면 함수 파라미터 사용
+    actual_client_id = args.client or client_id
+
+    # 클라이언트 모드 설정
+    paths = None
+    if actual_client_id:
+        paths = ClientPaths(actual_client_id).ensure_dirs()
+        print(f"[Multi-Client Mode] Client: {actual_client_id}")
+
+    generator = InsightGenerator(days=args.days, paths=paths)
 
     try:
         insights = generator.generate()
@@ -1760,6 +1791,8 @@ def main():
         # 최종 요약 출력
         print("\n" + "="*60)
         print("MARKETING INSIGHTS SUMMARY")
+        if actual_client_id:
+            print(f"Client: {actual_client_id}")
         print("="*60)
         print(insights['summary'])
 
