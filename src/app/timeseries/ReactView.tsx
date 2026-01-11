@@ -1364,7 +1364,7 @@ export default function ReactView() {
       })
 
       // 연결을 위해 마지막 실제값을 예측 시작점에 추가
-      const lastActualIdx = actualValues.reduce((last, v, i) => v !== null ? i : last, -1)
+      const lastActualIdx: number = actualValues.reduce((last, v, i) => v !== null ? i : last, -1)
       if (lastActualIdx >= 0 && lastActualIdx < forecastValues.length - 1) {
         forecastValues[lastActualIdx] = actualValues[lastActualIdx]
       }
