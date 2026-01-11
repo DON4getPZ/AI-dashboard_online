@@ -658,10 +658,17 @@ export default function ReactView() {
           const creativeName = row['광고,에셋이름'] || row['광고']
           const url = row['url']
           const originalUrl = row['원본 url / ID'] || row['원본url/ID'] || ''
+          const localImagePath = row['local_image_path'] || ''
 
-          if (creativeName && url) {
+          if (creativeName && (url || localImagePath)) {
             if (originalUrl && originalUrl !== '-' && !newOriginalUrlMap[creativeName]) {
               newOriginalUrlMap[creativeName] = originalUrl
+            }
+
+            // 로컬 이미지 경로가 있으면 최우선 사용
+            if (localImagePath) {
+              newImageUrlMap[creativeName] = localImagePath
+              continue
             }
 
             const isGoogleDrive = url.includes('drive.google.com')
