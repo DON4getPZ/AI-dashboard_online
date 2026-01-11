@@ -48,7 +48,36 @@ class NpEncoder(json.JSONEncoder):
             return obj.isoformat()
         if pd.isna(obj):
             return None
+        # Python native float NaN/Inf 처리
+        if isinstance(obj, float):
+            if obj != obj or obj == float('inf') or obj == float('-inf'):  # NaN check: NaN != NaN
+                return None
         return super().default(obj)
+
+
+def clean_nan_values(data: Any) -> Any:
+    """
+    재귀적으로 모든 NaN/Inf 값을 None으로 변환
+    JSON 직렬화 전에 호출하여 안전하게 처리
+    """
+    if isinstance(data, dict):
+        return {k: clean_nan_values(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [clean_nan_values(item) for item in data]
+    elif isinstance(data, float):
+        # NaN check: NaN != NaN, also check for inf
+        if data != data or data == float('inf') or data == float('-inf'):
+            return None
+        return data
+    elif isinstance(data, np.floating):
+        if np.isnan(data) or np.isinf(data):
+            return None
+        return float(data)
+    elif isinstance(data, np.integer):
+        return int(data)
+    elif pd.isna(data):
+        return None
+    return data
 
 
 def load_csv_as_dict(file_path: Path) -> List[Dict]:
@@ -82,11 +111,13 @@ def load_json_file(file_path: Path) -> Dict:
 
 
 def save_json(data: Any, file_path: Path) -> bool:
-    """JSON 파일 저장"""
+    """JSON 파일 저장 (NaN/Inf 값 자동 정리)"""
     try:
         file_path.parent.mkdir(parents=True, exist_ok=True)
+        # NaN/Inf 값을 None으로 변환 (JSON 호환성 보장)
+        cleaned_data = clean_nan_values(data)
         with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2, cls=NpEncoder)
+            json.dump(cleaned_data, f, ensure_ascii=False, indent=2, cls=NpEncoder)
         return True
     except Exception as e:
         print(f"  ❌ 저장 실패 {file_path.name}: {e}")
