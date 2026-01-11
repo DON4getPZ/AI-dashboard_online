@@ -14,7 +14,7 @@ import {
   ArcElement
 } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
-import { Bar, Line } from 'react-chartjs-2'
+import { Bar, Line, Chart } from 'react-chartjs-2'
 
 ChartJS.register(
   CategoryScale,
@@ -5908,7 +5908,8 @@ export default function TypeDashboardReactView() {
 
                         return (
                           <div style={{ height: 280 }}>
-                              <Bar
+                              <Chart
+                                type="bar"
                                 data={{
                                   labels: sortedQuarterly.map(q => q.quarter),
                                   datasets: [
@@ -5925,7 +5926,7 @@ export default function TypeDashboardReactView() {
                                     {
                                       label: 'ROAS (%)',
                                       data: roasData,
-                                      type: 'line' as const,
+                                      type: 'line',
                                       borderColor: '#34a853',
                                       backgroundColor: 'rgba(52, 168, 83, 0.1)',
                                       borderWidth: 3,
@@ -5941,7 +5942,7 @@ export default function TypeDashboardReactView() {
                                     {
                                       label: 'CPA (천원)',
                                       data: cpaData,
-                                      type: 'line' as const,
+                                      type: 'line',
                                       borderColor: '#ea4335',
                                       backgroundColor: 'rgba(234, 67, 53, 0.1)',
                                       borderWidth: 3,
