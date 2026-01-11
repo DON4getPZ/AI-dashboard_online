@@ -409,6 +409,20 @@ Vercel 배포
 프로덕션 URL 업데이트
 ```
 
+**수동 워크플로우 실행** (테스트/긴급 배포 시):
+
+1. GitHub Repository → **Actions** 탭 클릭
+2. 좌측 사이드바에서 **Deploy to Vercel** 선택
+3. 우측 **Run workflow** 드롭다운 클릭
+4. Branch: `main`, 배포 환경: `production` 선택
+5. 초록색 **Run workflow** 버튼 클릭
+6. 새로고침하여 실행 상태 확인 (2-5분 소요)
+
+**성공 확인**:
+- 모든 단계에 녹색 체크마크 ✓
+- 마지막 단계에서 Vercel 배포 URL 출력
+- Vercel Dashboard에서 새 배포 확인
+
 ---
 
 ## 스크립트 상세
