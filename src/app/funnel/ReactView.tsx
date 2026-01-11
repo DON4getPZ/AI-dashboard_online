@@ -871,10 +871,10 @@ export default function ReactView() {
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // 툴팁 생성 (body에 직접 추가)
-    let tooltip = d3.select('body').select('.funnel-tooltip');
+    let tooltip = d3.select('body').select<HTMLDivElement>('.funnel-tooltip');
     if (tooltip.empty()) {
       tooltip = d3.select('body')
-        .append('div')
+        .append<HTMLDivElement>('div')
         .attr('class', 'funnel-tooltip');
     }
 
