@@ -40,8 +40,8 @@ from scripts.common.paths import ClientPaths, get_client_config, get_google_cred
 # 이미지 다운로드 관련 함수
 # ========================================
 
-def get_image_filename(creative_name: str, url: str) -> str:
-    """소재명과 URL로 고유한 파일명 생성"""
+def get_image_filename(creative_name: str) -> str:
+    """소재명으로 고유한 파일명 생성 (URL 무관하게 동일 소재는 동일 파일)"""
     # 소재명 정제 (파일명에 사용 불가능한 문자 및 제어 문자 제거)
     # 1. 제어 문자 제거 (0x00-0x1F, 0x7F)
     safe_name = re.sub(r'[\x00-\x1f\x7f]', '', creative_name)
@@ -55,10 +55,10 @@ def get_image_filename(creative_name: str, url: str) -> str:
     if not safe_name:
         safe_name = 'unnamed'
 
-    # URL 해시로 고유성 보장
-    url_hash = hashlib.md5(url.encode()).hexdigest()[:8]
+    # 소재명 해시로 고유성 보장 (URL과 무관)
+    name_hash = hashlib.md5(creative_name.encode()).hexdigest()[:8]
 
-    return f"{safe_name}_{url_hash}.jpg"
+    return f"{safe_name}_{name_hash}.jpg"
 
 
 def is_downloadable_url(url: str) -> bool:
@@ -149,8 +149,8 @@ def download_creative_images(csv_path: Path, images_dir: Path) -> dict:
             skip_count += 1
             continue
 
-        # 파일명 생성
-        filename = get_image_filename(creative_name, url)
+        # 파일명 생성 (소재명 기준 - URL 변경되어도 동일 파일)
+        filename = get_image_filename(creative_name)
         save_path = images_dir / filename
 
         # 이미 존재하면 스킵 (캐싱)
