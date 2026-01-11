@@ -15,6 +15,7 @@ import {
 } from 'chart.js';
 import { Bar, Line, Scatter } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import annotationPlugin from 'chartjs-plugin-annotation';
 import * as d3 from 'd3';
 
 ChartJS.register(
@@ -27,7 +28,8 @@ ChartJS.register(
   Tooltip,
   Legend,
   Filler,
-  ChartDataLabels
+  ChartDataLabels,
+  annotationPlugin
 );
 
 // ========================================
