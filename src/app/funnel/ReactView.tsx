@@ -4785,11 +4785,11 @@ export default function ReactView() {
                             bodyFont: { size: 13 },
                             callbacks: {
                               title: (context) => context[0].label + ' 단계',
-                              label: (context) => `${context.dataset.label}: ${(context.parsed.y).toFixed(2)}%`,
+                              label: (context) => `${context.dataset.label}: ${(context.parsed.y ?? 0).toFixed(2)}%`,
                               afterBody: (context) => {
                                 if (context.length === 2) {
-                                  const newValue = context[0].parsed.y;
-                                  const returningValue = context[1].parsed.y;
+                                  const newValue = context[0].parsed.y ?? 0;
+                                  const returningValue = context[1].parsed.y ?? 0;
                                   const gap = Math.abs(returningValue - newValue);
                                   const higherGroup = returningValue > newValue ? '재방문 고객' : '신규 고객';
                                   return ['', `📊 전환율 차이: ${gap.toFixed(2)}%p`, `${higherGroup}이 더 높음`];
