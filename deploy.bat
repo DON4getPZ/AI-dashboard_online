@@ -42,6 +42,55 @@ shift
 goto :PARSE_ARGS
 
 :: ============================================================
+:: Git 설정 확인
+:: ============================================================
+:CHECK_GIT
+echo [Git 설정 확인]
+
+:: Git 설치 확인
+git --version >nul 2>&1
+if errorlevel 1 (
+    echo [오류] Git이 설치되어 있지 않습니다.
+    echo [안내] git_setup.bat을 실행하세요.
+    pause
+    goto :EOF
+)
+
+:: Git 저장소 확인
+if not exist ".git" (
+    echo [오류] Git 저장소가 아닙니다.
+    echo [안내] git_setup.bat을 실행하세요.
+    pause
+    goto :EOF
+)
+
+:: Remote 확인
+for /f "tokens=1" %%r in ('git remote 2^>nul') do set REMOTE_NAME=%%r
+if "%REMOTE_NAME%"=="" (
+    echo [오류] Git remote가 설정되어 있지 않습니다.
+    echo [안내] git_setup.bat을 실행하세요.
+    pause
+    goto :EOF
+)
+
+:: 현재 브랜치 확인
+for /f "tokens=*" %%b in ('git branch --show-current 2^>nul') do set CURRENT_BRANCH=%%b
+
+:: Upstream 확인
+for /f "tokens=*" %%u in ('git rev-parse --abbrev-ref %CURRENT_BRANCH%@{upstream} 2^>nul') do set UPSTREAM=%%u
+if "%UPSTREAM%"=="" (
+    echo [오류] Upstream 브랜치가 설정되어 있지 않습니다.
+    echo [안내] git_setup.bat을 실행하거나 아래 명령을 실행하세요:
+    echo        git push --set-upstream %REMOTE_NAME% %CURRENT_BRANCH%
+    pause
+    goto :EOF
+)
+
+echo   Remote: %REMOTE_NAME%, Branch: %CURRENT_BRANCH%, Upstream: %UPSTREAM%
+echo   [O] Git 설정 확인 완료
+echo.
+
+:: ============================================================
 :: 설정 파일 확인
 :: ============================================================
 :CHECK_CONFIG
@@ -81,9 +130,9 @@ echo.
 :: 1단계: ETL 실행
 :: ============================================================
 if %SKIP_ETL%==1 (
-    echo [1/3] ETL 건너뜀 (--skip-etl)
+    echo [1/3] ETL 건너뜀 --skip-etl
 ) else (
-    echo [1/3] ETL 실행 중... (클라이언트: %CLIENT_ID%)
+    echo [1/3] ETL 실행 중... 클라이언트: %CLIENT_ID%
     echo.
 
     python scripts/run_all_clients.py --client %CLIENT_ID%
@@ -93,7 +142,7 @@ if %SKIP_ETL%==1 (
         echo [오류] ETL 실행 실패
         echo [안내] 오류를 확인하고 다시 시도하세요.
         echo.
-        set /p CONTINUE_DEPLOY="그래도 Git Push를 진행하시겠습니까? (Y/N): "
+        set /p CONTINUE_DEPLOY="그래도 Git Push를 진행하시겠습니까? [Y/N]: "
         if /i not "!CONTINUE_DEPLOY!"=="Y" (
             echo [취소] 배포가 취소되었습니다.
             pause
@@ -155,13 +204,13 @@ git commit -m "%COMMIT_MSG%"
 
 if errorlevel 1 (
     echo.
-    echo [경고] 커밋 실패 (변경사항이 없거나 오류 발생)
+    echo [경고] 커밋 실패 - 변경사항이 없거나 오류 발생
 ) else (
     echo.
     echo [완료] 커밋 성공
 
     echo.
-    set /p DO_PUSH="원격 저장소에 Push 하시겠습니까? (Y/N): "
+    set /p DO_PUSH="원격 저장소에 Push 하시겠습니까? [Y/N]: "
     if /i "!DO_PUSH!"=="Y" (
         echo.
         echo Push 중...

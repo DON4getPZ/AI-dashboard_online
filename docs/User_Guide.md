@@ -32,13 +32,15 @@ Marketing Dashboard는 Google Sheets 데이터를 가져와 분석하고, Next.j
 ### 전체 플로우
 
 ```
-[설정] → [테스트] → [자동화] → [배포]
+[설정] → [테스트] → [Git 설정] → [배포] → [자동화]
 
 test_1_fetch.bat     → 클라이언트 설정 + Fetch 테스트
 test_2_mapping.bat   → 데이터 가공 테스트
 test_3_analysis.bat  → 분석/시각화 테스트
         ↓
 run_all_clients.bat  → ETL 일괄 실행
+        ↓
+git_setup.bat        → Git 환경 설정 (최초 1회)
         ↓
 deploy.bat           → Git Commit + Push
 deploy_all.bat       → 전체 클라이언트 배포
@@ -94,9 +96,11 @@ marketing-dashboard/
 ├── test_2_mapping.bat         # [2단계] Mapping 테스트
 ├── test_3_analysis.bat        # [3단계] Analysis 테스트
 ├── run_all_clients.bat        # ETL 일괄 실행
+├── git_setup.bat              # Git 환경 설정 마법사
 ├── deploy.bat                 # 단일 클라이언트 배포
 ├── deploy_all.bat             # 전체 클라이언트 배포
-└── scheduler_register.bat     # 스케줄러 등록
+├── scheduler_register.bat     # 스케줄러 등록
+└── logs/                      # 배포 로그 (--auto 모드)
 ```
 
 ---
@@ -214,6 +218,44 @@ python scripts/run_all_clients.py --dry-run           # 테스트 실행
 ```
 
 **결과물**: 모든 클라이언트의 데이터 갱신
+
+---
+
+### Phase 3.5: Git 환경 설정 (최초 1회)
+
+배포 전 Git 환경을 설정합니다. `git_setup.bat`은 7단계로 Git 환경을 자동 구성합니다.
+
+```bash
+git_setup.bat           # 대화형 설정 마법사
+git_setup.bat --check   # 설정 확인만 (변경 없음)
+```
+
+**설정 단계**:
+
+| 단계 | 항목 | 자동화 수준 |
+|:----:|------|:----------:|
+| 1/7 | Git 설치 확인 | winget 자동 설치 또는 다운로드 안내 |
+| 2/7 | 사용자 정보 설정 | 미설정 시 입력 프롬프트 |
+| 3/7 | 인증 헬퍼 설정 | **자동** - credential.helper manager |
+| 4/7 | 인코딩 설정 | **자동** - UTF-8, CRLF, 한글 지원 |
+| 5/7 | Git 저장소 초기화 | 확인 후 git init + 초기 커밋 |
+| 6/7 | Remote 설정 | URL 입력 후 자동 추가 |
+| 7/7 | Upstream 설정 | 확인 후 자동 push --set-upstream |
+
+**자동 설정되는 Git 옵션**:
+
+```bash
+# 인증 (Windows Credential Manager)
+git config --global credential.helper manager
+
+# 인코딩 설정
+git config --global core.autocrlf true          # CRLF 자동 변환
+git config --global core.quotepath false        # 한글 파일명 지원
+git config --global i18n.commitEncoding utf-8   # 커밋 메시지 UTF-8
+git config --global i18n.logOutputEncoding utf-8
+```
+
+**결과**: deploy.bat, deploy_all.bat, scheduler 사용 가능
 
 ---
 
@@ -427,11 +469,55 @@ conda install -c conda-forge prophet
 2. `run_all_clients.py --dry-run`으로 실행 계획 확인
 3. `data/{client_id}/raw/` 폴더의 CSV 타임스탬프 확인
 
+### Q6: Git 설정 확인
+
+```
+git_setup.bat --check
+```
+
+**해결**:
+- 모든 단계가 [O]로 표시되어야 정상
+- [X] 표시 항목이 있으면 `git_setup.bat` 재실행
+
+### Q7: Upstream 브랜치 오류
+
+```
+fatal: The current branch main has no upstream branch
+```
+
+**해결**:
+```bash
+git_setup.bat
+# → 7단계에서 Upstream 설정 진행
+# 또는 수동 실행:
+git push --set-upstream origin main
+```
+
+### Q8: 한글 파일명/커밋 메시지 깨짐
+
+**해결**:
+```bash
+git_setup.bat
+# → 4단계에서 인코딩 자동 설정
+# 또는 수동 실행:
+git config --global core.quotepath false
+git config --global i18n.commitEncoding utf-8
+```
+
+### Q9: --auto 모드 실패 확인
+
+**로그 위치**: `logs\deploy_YYYYMMDD_HHMMSS.log`
+
+**체크리스트**:
+1. 로그 파일에서 [오류] 또는 FAILED 검색
+2. Git 환경이 사전 설정되어 있는지 확인: `git_setup.bat --check`
+3. 인터넷 연결 확인
+
 ---
 
 ## 부록: 빠른 시작 가이드
 
-### 최초 설정 (5분)
+### 최초 설정
 
 ```bash
 # 1. 첫 클라이언트 설정
@@ -446,6 +532,11 @@ test_3_analysis.bat # Analysis 테스트
 
 # 3. 결과 확인
 dir data\{client_id}\json\
+
+# 4. Git 환경 설정 (최초 1회)
+git_setup.bat
+# → 자동으로 7단계 설정 진행
+# → Remote URL 입력 필요
 ```
 
 ### 일일 운영
@@ -456,6 +547,8 @@ deploy_all.bat
 
 # 또는 자동화
 scheduler_register.bat  # 최초 1회
+# → 이후 매일 자동 실행
+# → 로그 확인: logs\deploy_*.log
 ```
 
 ---

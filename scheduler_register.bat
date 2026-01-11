@@ -154,7 +154,7 @@ echo [작업 삭제 중...]
 schtasks /delete /tn "%TASK_NAME%" /f
 
 if errorlevel 1 (
-    echo [오류] 작업 삭제 실패 (작업이 없거나 권한 부족)
+    echo [오류] 작업 삭제 실패 - 작업이 없거나 권한 부족
 ) else (
     echo [완료] 작업 '%TASK_NAME%' 삭제됨
 )

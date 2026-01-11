@@ -192,7 +192,7 @@ if not exist "%CREDENTIALS_PATH%" (
 echo %CREDENTIALS_PATH% | findstr /i /c:".json" >nul
 if errorlevel 1 (
     echo [경고] 파일이 .json 확장자를 가지고 있지 않습니다.
-    set /p CONTINUE_JSON="계속하시겠습니까? (Y/N): "
+    set /p CONTINUE_JSON="계속하시겠습니까? [Y/N]: "
     if /i "!CONTINUE_JSON!" NEQ "Y" goto :CREATE_CONFIG
 )
 
