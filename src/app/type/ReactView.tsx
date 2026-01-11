@@ -1383,6 +1383,8 @@ export default function TypeDashboardReactView() {
   // 상태 관리
   // ========================================
   const [insightsData, setInsightsData] = useState<InsightsData | null>(null)
+  const [allPeriodsData, setAllPeriodsData] = useState<Record<string, InsightsData | null>>({})
+  const [seasonalityData, setSeasonalityData] = useState<any>(null)
   const [adsetDimensionData, setAdsetDimensionData] = useState<DimensionRow[]>([])
   const [dimensionData, setDimensionData] = useState<DimensionRow[]>([])
   // 각 탭별 dimension 데이터
@@ -1733,8 +1735,21 @@ export default function TypeDashboardReactView() {
         // insights.json 로딩 (클라이언트 경로)
         const insightsResponse = await fetch(DATA_PATHS.insights + '?t=' + Date.now())
         const insightsJson = await insightsResponse.json()
-        // 중첩 구조에서 실제 데이터 추출: type.by_period.full
-        const actualInsights = insightsJson?.type?.by_period?.full || insightsJson
+
+        // 모든 기간 데이터 저장
+        const byPeriod = insightsJson?.type?.by_period || {}
+        setAllPeriodsData(byPeriod)
+
+        // 계절성 데이터 로딩 (type.seasonality.seasonality_analysis)
+        const seasonality = insightsJson?.type?.seasonality?.seasonality_analysis || null
+        setSeasonalityData(seasonality)
+
+        // 현재 선택된 기간 데이터 설정 (기본: full)
+        const actualInsights = byPeriod.full || insightsJson
+        // 계절성 데이터 병합
+        if (seasonality) {
+          actualInsights.seasonality_analysis = seasonality
+        }
         setInsightsData(actualInsights)
 
         // dimensions.json 로딩 (클라이언트 경로 - 모든 차원 데이터 통합)
@@ -1779,6 +1794,21 @@ export default function TypeDashboardReactView() {
 
     loadData()
   }, [])
+
+  // 기간 선택 변경 시 insightsData 업데이트
+  useEffect(() => {
+    if (Object.keys(allPeriodsData).length > 0) {
+      const periodData = allPeriodsData[currentPeriod] || allPeriodsData.full
+      if (periodData) {
+        // 계절성 데이터 병합
+        const updatedData = { ...periodData }
+        if (seasonalityData) {
+          updatedData.seasonality_analysis = seasonalityData
+        }
+        setInsightsData(updatedData as InsightsData)
+      }
+    }
+  }, [currentPeriod, allPeriodsData, seasonalityData])
 
   // 기간 및 필터 옵션 초기화
   useEffect(() => {
