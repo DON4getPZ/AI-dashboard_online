@@ -97,6 +97,12 @@ interface PeriodData {
   channel_clusters?: ChannelClusters;
   ab_test_results?: AbTestResult[];
   top_channels?: TopChannel[];
+  overall?: {
+    current_period?: {
+      start_date: string;
+      end_date: string;
+    };
+  };
   [key: string]: unknown;
 }
 
