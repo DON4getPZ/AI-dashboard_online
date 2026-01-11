@@ -668,7 +668,7 @@ export default function ReactView() {
             // 로컬 이미지 경로가 있으면 최우선 사용
             if (localImagePath) {
               newImageUrlMap[creativeName] = localImagePath
-              continue
+              return
             }
 
             const isGoogleDrive = url.includes('drive.google.com')
