@@ -1,7 +1,7 @@
 # 마케팅 대시보드 마이그레이션 개발 계획
 
 **작성일**: 2025-01-05
-**수정일**: 2026-01-11 (Phase 5 자동화 구현)
+**수정일**: 2026-01-11 (Phase 5 완료 - 배포/CI/CD)
 **목표**: 6개 대시보드 통합 (Next.js SPA)
 
 ---
@@ -112,7 +112,7 @@ src/
 
 ---
 
-## Phase 5: 배포 및 CI/CD 구성 (3-5일) 🔄 진행중
+## Phase 5: 배포 및 CI/CD 구성 ✅ 완료
 
 ### 사전 검증 완료 (test_*.bat)
 
@@ -190,37 +190,56 @@ SCRIPTS = {
 - [x] Windows 작업 스케줄러 연동용
 - [x] 실행 후 pause (대화형 확인, 스케줄러에서는 자동 스킵)
 
-### 배포 스크립트 (TODO)
-- [ ] `deploy.bat` - 단일 클라이언트 (ETL → Git Push)
-- [ ] `deploy_all.bat` - 전체 클라이언트
-- [ ] `scheduler_register.bat` - Windows 작업 스케줄러 등록
-  - 매일 트리거 (예: AM 6:00)
-  - `run_all_clients.bat` 실행
+### 배포 스크립트 ✅ 완료
+- [x] `git_setup.bat` - Git 환경 설정 마법사 (7단계)
+  - Git 설치 확인/자동 설치 (winget)
+  - 사용자 정보, 인증 헬퍼 자동 설정
+  - 인코딩 설정 (UTF-8, CRLF, 한글 지원)
+  - Remote/Upstream 설정
+- [x] `deploy.bat` - 단일 클라이언트 (ETL → Git Push)
+- [x] `deploy_all.bat` - 전체 클라이언트
+  - `--auto` 모드: 스케줄러용 (확인 없이 자동 실행)
+  - `--skip-etl` 모드: Git Push만 실행
+  - 로그 기록: `logs/deploy_YYYYMMDD_HHMMSS.log`
+- [x] `scheduler_register.bat` - Windows 작업 스케줄러 등록
+  - 매일 트리거 (사용자 지정 시간)
+  - `deploy_all.bat --auto` 실행
 
-### GitHub Actions (TODO)
-- [ ] `.github/workflows/deploy.yml` - push 트리거 → Vercel 배포
+### GitHub Actions ✅ 완료
+- [x] `.github/workflows/deploy.yml` - push 트리거 → Vercel 배포
+  - main 브랜치 push 시 자동 트리거
+  - data/, public/data/, src/ 변경 감지
+  - workflow_dispatch로 수동 실행 지원
+  - 필수 Secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
 
 ### 배포 흐름
 ```
-[1] .bat 트리거 → Python ETL
-[2] Git Commit + Push
+[0] git_setup.bat → Git 환경 설정 (최초 1회)
+[1] deploy*.bat 트리거 → Python ETL (19개 스크립트)
+[2] Git Commit + Push (자동)
 [3] GitHub Actions → Next.js 빌드
 [4] Vercel → React 앱 서빙
 ```
 
 ### 자동화 흐름 (매일 스케줄)
 ```
-[작업 스케줄러] → run_all_clients.bat
+[사전 설정 - 최초 1회]
+git_setup.bat → Git 환경 완전 설정 (7단계)
+scheduler_register.bat → 작업 스케줄러 등록
+
+[매일 자동 실행]
+작업 스케줄러 → deploy_all.bat --auto
                       ↓
-               run_all_clients.py (핵심 로직)
+               Git 환경 체크 (실패 시 로그 기록 후 종료)
                       ↓
-               clients.json 파싱
-                      ↓
-               클라이언트별 순차 실행:
+               run_all_clients.py (ETL)
                  ├── fetch (5개 스크립트)
                  ├── mapping (1개 스크립트)
-                 ├── analysis (13개 스크립트)
-                 └── 결과 로깅
+                 └── analysis (13개 스크립트)
+                      ↓
+               Git Commit + Push
+                      ↓
+               로그 저장: logs/deploy_*.log
 ```
 
 ### Python 우선 구현의 이점
@@ -302,7 +321,7 @@ src/components/
 | Phase 2 | ✅ 완료 (15/15) | Python 스크립트 멀티클라이언트 대응 |
 | ~~Phase 3~~ | ❌ 취소 | ~~Standalone 통합 HTML~~ (80MB 문제) |
 | Phase 4 | ✅ 완료 | Next.js SPA (6개 대시보드 React 변환) |
-| Phase 5 | 🔄 진행중 | run_all_clients ✅, test_*.bat 개선 ✅, 배포/CI/CD 🔲 |
+| Phase 5 | ✅ 완료 | 배포 스크립트, GitHub Actions, 로그 기능 |
 | Phase 6 | 🔲 대기 | 테스트, 프로덕션 배포 |
 | Phase 7 | 🔲 대기 | 컴포넌트 분리 (Phase 6 완료 후) |
 
@@ -317,9 +336,15 @@ src/components/
 | `scripts/run_all_clients.py` | [완료] 전체 클라이언트 ETL 로직 (19개 스크립트) |
 | `scripts/add_client.py` | [완료] 클라이언트 추가 헬퍼 |
 | `run_all_clients.bat` | [완료] 스케줄러용 래퍼 |
+| `git_setup.bat` | [완료] Git 환경 설정 마법사 (7단계) |
+| `deploy.bat` | [완료] 단일 클라이언트 배포 |
+| `deploy_all.bat` | [완료] 전체 클라이언트 배포 + 로그 |
+| `scheduler_register.bat` | [완료] Windows 작업 스케줄러 등록 |
 | `test_1_fetch.bat` | [완료] Fetch 테스트 + 클라이언트 추가 |
 | `test_2_mapping.bat` | [완료] Mapping 테스트 |
 | `test_3_analysis.bat` | [완료] Analysis 테스트 (13개 스크립트) |
+| `docs/User_Guide.md` | [완료] 사용자 가이드 (git_setup, CI/CD 포함) |
+| `.github/workflows/deploy.yml` | [완료] Vercel 자동 배포 워크플로우 |
 | `src/middleware.ts` | [완료] 서브도메인 라우팅 |
 | `src/app/*/ReactView.tsx` | [완료] 6개 대시보드 React 컴포넌트 |
 | `docs/react-ecosystem-history.md` | [참조] React 생태계 구성 히스토리 |

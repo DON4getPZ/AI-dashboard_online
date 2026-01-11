@@ -1,0 +1,138 @@
+# ============================================================
+# Marketing Dashboard - Vercel 자동 배포
+# ============================================================
+#
+# 트리거:
+#   - main 브랜치 push (data/, public/data/ 변경 시)
+#   - 수동 실행 (workflow_dispatch)
+#
+# 필수 Secrets (GitHub Repository Settings에서 설정):
+#   - VERCEL_TOKEN: Vercel API 토큰
+#   - VERCEL_ORG_ID: Vercel Organization ID
+#   - VERCEL_PROJECT_ID: Vercel Project ID
+#
+# ============================================================
+
+name: Deploy to Vercel
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'data/**'
+      - 'public/data/**'
+      - 'src/**'
+      - 'package.json'
+      - 'next.config.js'
+
+  # 수동 실행 허용
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: '배포 환경'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - preview
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ========================================
+      # 1. 코드 체크아웃
+      # ========================================
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ========================================
+      # 2. Node.js 설정
+      # ========================================
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # ========================================
+      # 3. 의존성 설치
+      # ========================================
+      - name: Install dependencies
+        run: npm ci
+
+      # ========================================
+      # 4. 빌드 테스트 (선택적)
+      # ========================================
+      - name: Build check
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+
+      # ========================================
+      # 5. Vercel CLI 설치
+      # ========================================
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      # ========================================
+      # 6. Vercel 프로젝트 연결
+      # ========================================
+      - name: Pull Vercel Environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      # ========================================
+      # 7. Vercel 빌드
+      # ========================================
+      - name: Build for Vercel
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      # ========================================
+      # 8. Vercel 배포
+      # ========================================
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          if [ "${{ github.event.inputs.environment }}" = "preview" ]; then
+            URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          else
+            URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          fi
+          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "Deployed to: $URL"
+
+      # ========================================
+      # 9. 배포 결과 코멘트 (PR인 경우)
+      # ========================================
+      - name: Comment deployment URL
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🚀 Preview deployed to: ${{ steps.deploy.outputs.url }}'
+            })
+
+      # ========================================
+      # 10. 배포 완료 알림
+      # ========================================
+      - name: Deployment Summary
+        run: |
+          echo "============================================"
+          echo "  Deployment Complete!"
+          echo "============================================"
+          echo "  Environment: ${{ github.event.inputs.environment || 'production' }}"
+          echo "  URL: ${{ steps.deploy.outputs.url }}"
+          echo "  Commit: ${{ github.sha }}"
+          echo "  Branch: ${{ github.ref_name }}"
+          echo "============================================"

@@ -296,6 +296,8 @@ deploy_all.bat --skip-etl       # ETL 건너뛰기
 
 ### Phase 5: 자동화 설정
 
+#### 5-1. Windows 스케줄러 등록
+
 ```bash
 scheduler_register.bat          # 관리자 권한 필요
 ```
@@ -316,6 +318,95 @@ Windows 작업 스케줄러 등록
 schtasks /query /tn "MarketingDashboard_DailyETL"   # 확인
 schtasks /run /tn "MarketingDashboard_DailyETL"     # 수동 실행
 schtasks /delete /tn "MarketingDashboard_DailyETL" /f  # 삭제
+```
+
+#### 5-2. GitHub Actions + Vercel 자동 배포
+
+Git Push 후 자동으로 Vercel에 배포됩니다.
+
+**사전 설정 (최초 1회)**:
+
+1. **Vercel 프로젝트 생성**
+   - [vercel.com](https://vercel.com) 접속 → Import Git Repository
+   - GitHub 저장소 연결
+
+2. **Vercel 토큰 생성**
+   - Vercel Dashboard → Settings → Tokens
+   - 새 토큰 생성 후 복사
+
+3. **Vercel 프로젝트 연결**
+   ```bash
+   # Vercel CLI 설치 (최초 1회)
+   npm i -g vercel
+
+   # Vercel 로그인
+   vercel login
+
+   # 프로젝트 디렉토리에서 연결
+   cd "프로젝트 경로"
+   vercel link
+   ```
+
+   **vercel link 대화형 프롬프트 응답**:
+   | 질문 | 응답 |
+   |------|------|
+   | Set up "..."? | **Y** |
+   | Which scope? | 본인 계정 선택 |
+   | Link to existing project? | Y (기존) 또는 N (신규) |
+   | In which directory is your code located? | **Enter** (현재 디렉토리) |
+   | Do you want to change additional project settings? | **N** |
+   | Detected a repository. Connect it to this project? | **Y** |
+
+   **결과**: `.vercel/project.json` 생성됨
+   ```json
+   {
+     "projectId": "prj_xxx...",
+     "orgId": "team_xxx...",
+     "projectName": "프로젝트명"
+   }
+   ```
+
+4. **Vercel 토큰 생성**
+   - [Vercel Tokens 페이지](https://vercel.com/account/tokens) 접속
+   - **Create Token** 클릭
+   - 토큰 이름 입력 (예: `github-actions`)
+   - Scope: **Full Account** 선택
+   - **Create** 클릭 → 토큰 복사 (한 번만 표시됨)
+
+5. **GitHub Secrets 등록**
+   - GitHub Repository → **Settings** 탭
+   - 좌측 메뉴: **Secrets and variables** → **Actions**
+   - **New repository secret** 클릭하여 3개 등록:
+
+   | Secret Name | 값 | 확인 위치 |
+   |-------------|-----|----------|
+   | `VERCEL_TOKEN` | 4단계에서 생성한 토큰 | Vercel Dashboard |
+   | `VERCEL_ORG_ID` | `team_xxx...` | `.vercel/project.json` |
+   | `VERCEL_PROJECT_ID` | `prj_xxx...` | `.vercel/project.json` |
+
+   **등록 예시**:
+   ```
+   Name: VERCEL_TOKEN
+   Secret: vercel_xxxxxxxxxxxxxxxxxxxx
+   → Add secret
+   ```
+
+**자동 배포 트리거**:
+- `main` 브랜치에 push 시 자동 실행
+- `data/`, `public/data/`, `src/` 변경 시에만 트리거
+- 수동 실행: Actions 탭 → Deploy to Vercel → Run workflow
+
+**배포 흐름**:
+```
+deploy_all.bat → Git Push
+        ↓
+GitHub Actions 트리거
+        ↓
+npm ci → npm run build
+        ↓
+Vercel 배포
+        ↓
+프로덕션 URL 업데이트
 ```
 
 ---
@@ -557,5 +648,6 @@ scheduler_register.bat  # 최초 1회
 
 | 날짜 | 버전 | 변경 내용 |
 |------|------|----------|
+| 2026-01-11 | 1.2 | GitHub Actions + Vercel 자동 배포 문서 추가 |
 | 2026-01-11 | 1.1 | git_setup.bat 문서 추가, 로그 기능 문서화 |
 | 2026-01-11 | 1.0 | 초기 작성 |
